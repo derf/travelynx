@@ -1,0 +1,47 @@
+% if ($error) {
+	<div class="row">
+		<div class="col s12 m6">
+			<div class="card red darken-4">
+				<div class="card-content white-text">
+					<span class="card-title">I am Error</span>
+					<p><%= $error %></p>
+				</div>
+				<div class="card-action">
+					% if (param('station')) {
+						<a href="/<%= param('station') %>">Zurück zu den Abfahrten</a>
+					% }
+					% else {
+						<a href="/">Zur Hauptseite</a>
+					% }
+			</div>
+		</div>
+	</div>
+% }
+% else {
+	<div class="row">
+		<div class="col s12">
+			<div class="card green darken-4">
+				<div class="card-content white-text">
+					<span class="card-title">Eingecheckt in <%= $train->line %></span>
+					<p>Abfahrt um <%= $train->sched_departure->strftime('%H:%M') %>
+						% if ($train->departure_delay) {
+							+<%= $train->departure_delay %>
+						% }
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s12">
+			Weitere Route:
+			<ul>
+			% for my $station ($train->route_post) {
+				<li><%= $station %>
+					(<a href="/a/checkout?station=<%= $station %>">hier auschecken</a>)
+				</li>
+			% }
+			</ul>
+		</div>
+	</div>
+% }

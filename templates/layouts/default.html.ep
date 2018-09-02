@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<title><%= stash('title') // 'travelynx' %></title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	%= stylesheet '/static/css/materialize.min.css'
+	%= stylesheet '/static/css/material-icons.css'
+	%= stylesheet '/static/css/local.css'
+	%= javascript '/static/js/jquery-2.2.4.min.js'
+	%= javascript '/static/js/materialize.min.js'
+</head>
+<body>
+
+<nav class="blue">
+	<div class="nav-wrapper container">
+		<a href="/" class="brand-logo left">travelynx</a>
+		<ul id="nav-mobile" class="right">
+			<li class="<%= navbar_class('/') %>"><a href='/' title="Einchecken"><i class="material-icons">Check In</i></a></li>
+		</ul>
+	</div>
+</nav>
+
+<div class="container">
+	%= content
+</div>
+
+</body>
+</html>
