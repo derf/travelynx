@@ -424,7 +424,7 @@ helper 'get_user_id' => sub {
 helper 'get_user_travels' => sub {
 	my ($self) = @_;
 
-	my $uid = $self->get_user_id( $self->get_user_name );
+	my $uid = $self->get_user_id;
 	$self->app->get_all_actions_query->execute($uid);
 
 	my @travels;
@@ -473,7 +473,7 @@ helper 'get_user_travels' => sub {
 helper 'get_user_status' => sub {
 	my ($self) = @_;
 
-	my $uid = $self->get_user_id( $self->get_user_name );
+	my $uid = $self->get_user_id;
 	$self->app->get_last_actions_query->execute($uid);
 	my $rows = $self->app->get_last_actions_query->fetchall_arrayref;
 
