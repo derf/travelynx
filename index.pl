@@ -244,7 +244,7 @@ helper 'checkin' => sub {
 		}
 		else {
 			my $success = $self->app->checkin_query->execute(
-				$self->app->get_user_id,
+				$self->get_user_id,
 				$self->get_station_id(
 					ds100 => $status->{station_ds100},
 					name  => $status->{station_name}
