@@ -190,7 +190,7 @@ sub epoch_to_dt {
 sub get_departures {
 	my ( $station, $lookbehind ) = @_;
 
-	$lookbehind //= 20;
+	$lookbehind //= 60;
 
 	my @station_matches
 	  = Travel::Status::DE::IRIS::Stations::get_station($station);
@@ -290,7 +290,7 @@ helper 'checkout' => sub {
 		if ( not defined $train ) {
 			if ($force) {
 				my $success = $self->app->checkout_query->execute(
-					$self->app->get_user_id,
+					$self->get_user_id,
 					$self->get_station_id(
 						ds100 => $status->{station_ds100},
 						name  => $status->{station_name}
@@ -312,7 +312,7 @@ helper 'checkout' => sub {
 		}
 		else {
 			my $success = $self->app->checkout_query->execute(
-				$self->app->get_user_id,
+				$self->get_user_id,
 				$self->get_station_id(
 					ds100 => $status->{station_ds100},
 					name  => $status->{station_name}
@@ -322,8 +322,8 @@ helper 'checkout' => sub {
 				$train->line_no,
 				$train->train_no,
 				$train->train_id,
-				$train->sched_departure->epoch,
-				$train->departure->epoch,
+				$train->sched_arrival ? $train->sched_arrival->epoch : undef,
+				$train->arrival       ? $train->arrival->epoch       : undef,
 				join( '|', $train->route ),
 				join( '|',
 					map { ( $_->[0] ? $_->[0]->epoch : q{} ) . ':' . $_->[1] }
