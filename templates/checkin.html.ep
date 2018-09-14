@@ -35,13 +35,20 @@
 	<div class="row">
 		<div class="col s12">
 			Weitere Route:
-			<ul>
-			% for my $station ($train->route_post) {
-				<li><%= $station %>
-					(<a href="/a/checkout?station=<%= $station %>">hier auschecken</a>)
-				</li>
-			% }
-			</ul>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s12">
+			<table>
+				<tbody>
+					% for my $station ($train->route_post) {
+						<tr>
+							<td><%= $station %></td>
+							<td><a href="/a/checkout?station=<%= $station %>">hier auschecken</a></td>
+						</tr>
+					% }
+				</tbody>
+			</table>
 		</div>
 	</div>
 % }

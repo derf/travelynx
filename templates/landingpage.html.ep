@@ -8,14 +8,15 @@
 					<p>Du bist gerade eingecheckt in
 						<%= $status->{train_type} %> <%= $status->{train_no} %>
 						ab <%= $status->{station_name} %>.</p>
-					<p>Auschecken?
-						<ul>
+					<p>Auschecken?</p>
+					<table>
+						<tbody>
 							% my $is_after = 0;
 							% for my $station (@{$status->{route_after}}) {
-								<li><a href="/a/checkout?station=<%= $station %>"><%= $station %></a></li>
+								<tr><td><a href="/a/checkout?station=<%= $station %>"><%= $station %></a></td></tr>
 							% }
-						</ul>
-					</p>
+						</tbody>
+					</table>
 				</div>
 			</div>
 		% }
