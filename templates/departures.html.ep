@@ -9,7 +9,9 @@
 						ab <%= $status->{station_name} %></p>
 				</div>
 				<div class="card-action">
-					<a href="/a/checkout?station=<%= $ds100 %>">Hier auschecken</a>
+					<a class="action-checkout" data-station="<%= $ds100 %>">
+						Hier auschecken
+					</a>
 				</div>
 			</div>
 		% }
@@ -28,12 +30,12 @@
 			% for my $result (@{$results}) {
 				<tr>
 					<td>
-						<a href="/a/checkin?station=<%= $ds100 %>&amp;train=<%= $result->train_id %>" title="Check In">
+						<a class="action-checkin" data-station="<%= $ds100 %>" data-train="<%= $result->train_id %>">
 							<%= $result->line %>
 						</a>
 					</td>
 					<td>
-						<a href="/a/checkin?station=<%= $ds100 %>&amp;train=<%= $result->train_id %>" title="Check In">
+						<a class="action-checkin" data-station="<%= $ds100 %>" data-train="<%= $result->train_id %>">
 							<%= $result->destination %>
 						</a>
 					</td>

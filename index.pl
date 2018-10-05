@@ -181,6 +181,10 @@ app->attr(
 sub epoch_to_dt {
 	my ($epoch) = @_;
 
+	# Bugs (and user errors) may lead to undefined timestamps. Set them to
+	# 1970-01-01 to avoid crashing and show obviously wrong data instead.
+	$epoch //= 0;
+
 	return DateTime->from_epoch(
 		epoch     => $epoch,
 		time_zone => 'Europe/Berlin'
@@ -479,10 +483,7 @@ helper 'get_user_status' => sub {
 
 	if ( @{$rows} ) {
 		my $now = DateTime->now( time_zone => 'Europe/Berlin' );
-		my $ts = DateTime->from_epoch(
-			epoch     => $rows->[0][1],
-			time_zone => 'Europe/Berlin'
-		);
+		my $ts = epoch_to_dt( $rows->[0][1] );
 		my $checkin_station_name = $rows->[0][3];
 		my @route = split( qr{[|]}, $rows->[0][8] // q{} );
 		my @route_after;
@@ -529,41 +530,63 @@ get '/' => sub {
 	$self->render('landingpage');
 };
 
-get '/a/checkin' => sub {
-	my ($self)   = @_;
-	my $station  = $self->param('station');
-	my $train_id = $self->param('train');
+post '/action' => sub {
+	my ($self) = @_;
+	my $params = $self->req->json;
 
-	my ( $train, $error ) = $self->checkin( $station, $train_id );
+	if ( not exists $params->{action} ) {
+		$params = $self->req->params->to_hash;
+	}
 
-	if ($error) {
+	if ( not $params->{action} ) {
 		$self->render(
-			'checkin',
-			error => $error,
-			train => undef
+			json   => {},
+			status => 400,
 		);
+		return;
 	}
-	else {
-		$self->render(
-			'checkin',
-			error => undef,
-			train => $train
-		);
+
+	my $station = $params->{station};
+
+	if ( $params->{action} eq 'checkin' ) {
+
+		my ( $train, $error )
+		  = $self->checkin( $params->{station}, $params->{train}, );
+
+		if ($error) {
+			$self->render(
+				json => {
+					success => 0,
+					error   => $error,
+				},
+			);
+		}
+		else {
+			$self->render(
+				json => {
+					success => 1,
+				},
+			);
+		}
 	}
-};
+	elsif ( $params->{action} eq 'checkout' ) {
+		my $error = $self->checkout( $params->{station}, $params->{force}, );
 
-get '/a/checkout' => sub {
-	my ($self)  = @_;
-	my $station = $self->param('station');
-	my $force   = $self->param('force');
-
-	my $error = $self->checkout( $station, $force );
-
-	if ($error) {
-		$self->render( 'checkout', error => $error );
-	}
-	else {
-		$self->redirect_to("/${station}");
+		if ($error) {
+			$self->render(
+				json => {
+					success => 0,
+					error   => $error,
+				},
+			);
+		}
+		else {
+			$self->render(
+				json => {
+					success => 1,
+				},
+			);
+		}
 	}
 };
 
