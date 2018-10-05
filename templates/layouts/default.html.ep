@@ -17,7 +17,7 @@
 	<div class="nav-wrapper container">
 		<a href="/" class="brand-logo left">travelynx</a>
 		<ul id="nav-mobile" class="right">
-			<li class="<%= navbar_class('/') %>"><a href='/' title="Einchecken"><i class="material-icons">Check In</i></a></li>
+			<!--<li class="<%= navbar_class('/') %>"><a href='/' title="Einchecken"><i class="material-icons">Check In</i></a></li>-->
 		</ul>
 	</div>
 </nav>
