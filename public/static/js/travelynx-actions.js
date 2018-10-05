@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	var error_icon = '<i class="material-icons">error</i>';
 	$('.action-checkin').click(function() {
 		var link = $(this);
 		req = {
@@ -6,9 +7,16 @@ $(document).ready(function() {
 			station: link.data('station'),
 			train: link.data('train'),
 		};
-		link.replaceWith('<div class="progress"><div class="indeterminate"></div></div>');
+		progressbar = $('<div class="progress"><div class="indeterminate"></div></div>');
+		link.replaceWith(progressbar);
 		$.post('/action', req, function(data) {
-			$(location).attr('href', '/');
+			if (data.success) {
+				$(location).attr('href', '/');
+			} else {
+				M.toast({html: error_icon + ' ' + data.error});
+				link.append(' ' + error_icon);
+				progressbar.replaceWith(link);
+			}
 		});
 	});
 	$('.action-checkout').click(function() {
@@ -18,9 +26,16 @@ $(document).ready(function() {
 			station: link.data('station'),
 			force: link.data('force'),
 		};
-		link.replaceWith('<div class="progress"><div class="indeterminate"></div></div>');
+		progressbar = $('<div class="progress"><div class="indeterminate"></div></div>');
+		link.replaceWith(progressbar);
 		$.post('/action', req, function(data) {
-			$(location).attr('href', '/' + req.station);
+			if (data.success) {
+				$(location).attr('href', '/' + req.station);
+			} else {
+				M.toast({html: error_icon + ' ' + data.error});
+				link.append(' ' + error_icon);
+				progressbar.replaceWith(link);
+			}
 		});
 	});
 });
