@@ -4,7 +4,9 @@ use Mojolicious::Lite;
 use Cache::File;
 use DateTime;
 use DBI;
+use Geo::Distance;
 use List::Util qw(first);
+use List::MoreUtils qw(after_incl before_incl);
 use Travel::Status::DE::IRIS;
 use Travel::Status::DE::IRIS::Stations;
 
@@ -233,6 +235,18 @@ sub get_departures {
 	}
 }
 
+sub get_station {
+	my ($station_name) = @_;
+
+	my @candidates
+	  = Travel::Status::DE::IRIS::Stations::get_station($station_name);
+
+	if ( @candidates == 1 ) {
+		return $candidates[0];
+	}
+	return undef;
+}
+
 helper 'checkin' => sub {
 	my ( $self, $station, $train_id ) = @_;
 
@@ -450,7 +464,8 @@ helper 'get_user_travels' => sub {
 					type            => $train_type,
 					line            => $train_line,
 					no              => $train_no,
-					messages        => [ split( qr{|}, $raw_messages ) ],
+					messages        => [ split( qr{[|]}, $raw_messages ) ],
+					route           => [ split( qr{[|]}, $raw_route ) ],
 					completed       => 0,
 				}
 			);
@@ -464,7 +479,7 @@ helper 'get_user_travels' => sub {
 			if ($train_no) {
 				$ref->{sched_arrival} = epoch_to_dt($raw_sched_ts),
 				  $ref->{rt_arrival}  = epoch_to_dt($raw_real_ts),
-				  $ref->{messages}    = [ split( qr{|}, $raw_messages ) ];
+				  $ref->{messages}    = [ split( qr{[|]}, $raw_messages ) ];
 			}
 		}
 	}
@@ -514,6 +529,36 @@ helper 'get_user_status' => sub {
 		checked_in => 0,
 		timestamp  => 0
 	};
+};
+
+helper 'get_travel_distance' => sub {
+	my ( $self, $from, $to, $route_ref ) = @_;
+
+	my $distance = 0;
+	my $geo      = Geo::Distance->new();
+	my @route    = after_incl { $_ eq $from } @{$route_ref};
+	@route = before_incl { $_ eq $to } @route;
+
+	if ( @route < 2 ) {
+
+		# I AM ERROR
+		return 0;
+	}
+
+	my $prev_station = get_station( shift @route );
+	if ( not $prev_station ) {
+		return 0;
+	}
+
+	for my $station_name (@route) {
+		if ( my $station = get_station($station_name) ) {
+			$distance += $geo->distance( 'kilometer', $prev_station->[3],
+				$prev_station->[4], $station->[3], $station->[4] );
+			$prev_station = $station;
+		}
+	}
+
+	return $distance;
 };
 
 helper 'navbar_class' => sub {
