@@ -4,6 +4,7 @@
 	<title><%= stash('title') // 'travelynx' %></title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="theme-color" content="#673ab7">
 	%= stylesheet '/static/css/materialize.min.css'
 	%= stylesheet '/static/css/material-icons.css'
 	%= stylesheet '/static/css/local.css'
@@ -16,7 +17,7 @@
 </head>
 <body>
 
-<nav class="blue">
+<nav class="deep-purple">
 	<div class="nav-wrapper container">
 		<a href="/" class="brand-logo left">travelynx</a>
 		<ul id="nav-mobile" class="right">
