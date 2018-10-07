@@ -1,0 +1,13 @@
+<div class="row">
+	<div class="col s12">
+		<a href="https://git.finalrewind.org/travelynx">travelynx</a> v<%= stash('version') // '???' %><br/>
+		Backend:
+		<a href="https://finalrewind.org/projects/Travel-Status-DE-IRIS/">Travel::Status::DE::IRIS</a>
+		v<%= $Travel::Status::DE::IRIS::VERSION %><br/>
+		<a href="http://data.deutschebahn.com/dataset/data-haltestellen">Haltestellendaten</a>
+		© DB Station&amp;Service AG,
+		Europaplatz 1,
+		10557 Berlin, lizensiert unter CC-BY 4.0
+	</div>
+</div>
+

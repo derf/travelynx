@@ -640,6 +640,12 @@ post '/action' => sub {
 	}
 };
 
+get '/x/about' => sub {
+	my ($self) = @_;
+
+	$self->render( 'about', version => $VERSION );
+};
+
 post '/x/geolocation' => sub {
 	my ($self) = @_;
 
