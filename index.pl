@@ -4,6 +4,7 @@ use Mojolicious::Lite;
 use Cache::File;
 use DateTime;
 use DBI;
+use Encode qw(decode);
 use Geo::Distance;
 use List::Util qw(first);
 use List::MoreUtils qw(after_incl before_incl);
@@ -454,6 +455,10 @@ helper 'get_user_travels' => sub {
 			$raw_sched_ts, $raw_real_ts, $raw_route, $raw_messages
 		) = @row;
 
+		$name         = decode( 'UTF-8', $name );
+		$raw_route    = decode( 'UTF-8', $raw_route );
+		$raw_messages = decode( 'UTF-8', $raw_messages );
+
 		if ( $action == $action_type{checkin} ) {
 			push(
 				@travels,
@@ -499,8 +504,8 @@ helper 'get_user_status' => sub {
 	if ( @{$rows} ) {
 		my $now = DateTime->now( time_zone => 'Europe/Berlin' );
 		my $ts = epoch_to_dt( $rows->[0][1] );
-		my $checkin_station_name = $rows->[0][3];
-		my @route = split( qr{[|]}, $rows->[0][8] // q{} );
+		my $checkin_station_name = decode( 'UTF-8', $rows->[0][3] );
+		my @route = split( qr{[|]}, decode( 'UTF-8', $rows->[0][8] // q{} ) );
 		my @route_after;
 		my $is_after = 0;
 		for my $station (@route) {
