@@ -50,8 +50,6 @@
 						<td><%= $travel->{from_name} %> → <%= $travel->{to_name} %></td>
 						% if ($travel->{rt_arrival} and $travel->{rt_departure}) {
 							<td><%= ($travel->{rt_arrival}->epoch - $travel->{rt_departure}->epoch) / 60 %> min
-							/
-							<%= sprintf('%.f', $self->get_travel_distance($travel->{from_name}, $travel->{to_name}, $travel->{route})) %>km
 							</td>
 						% } else {
 							<td><%= sprintf('%.f', $self->get_travel_distance($travel->{from_name}, $travel->{to_name}, $travel->{route})) %>km</td>
