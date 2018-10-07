@@ -25,6 +25,10 @@
 				<div class="card-content white-text">
 					<span class="card-title">Hallo, <%= $self->get_user_name %>!</span>
 					<p>Du bist gerade nicht eingecheckt.</p>
+					<p class="geolocationhint">Stationen in der Umgebung:</p>
+					<div class="geolocation">
+						<div class="progress"><div class="indeterminate"></div></div>
+					</div>
 				</div>
 			</div>
 		% }

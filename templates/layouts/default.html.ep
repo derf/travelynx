@@ -10,6 +10,9 @@
 	%= javascript '/static/js/jquery-2.2.4.min.js'
 	%= javascript '/static/js/materialize.min.js'
 	%= javascript '/static/js/travelynx-actions.js'
+	% if (stash('with_geolocation')) {
+		%= javascript '/static/js/geolocation.js'
+	% }
 </head>
 <body>
 

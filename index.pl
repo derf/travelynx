@@ -577,7 +577,7 @@ helper 'navbar_class' => sub {
 
 get '/' => sub {
 	my ($self) = @_;
-	$self->render('landingpage');
+	$self->render( 'landingpage', with_geolocation => 1 );
 };
 
 post '/action' => sub {
@@ -638,6 +638,36 @@ post '/action' => sub {
 			);
 		}
 	}
+};
+
+post '/x/geolocation' => sub {
+	my ($self) = @_;
+
+	my $lon = $self->param('lon');
+	my $lat = $self->param('lat');
+
+	if ( not $lon or not $lat ) {
+		$self->render( json => { error => 'Invalid lon/lat received' } );
+	}
+	else {
+		my @candidates = map {
+			{
+				ds100    => $_->[0][0],
+				name     => $_->[0][1],
+				eva      => $_->[0][2],
+				lon      => $_->[0][3],
+				lat      => $_->[0][4],
+				distance => $_->[1],
+			}
+		} Travel::Status::DE::IRIS::Stations::get_station_by_location( $lon,
+			$lat, 5 );
+		$self->render(
+			json => {
+				candidates => [@candidates],
+			}
+		);
+	}
+
 };
 
 get '/*station' => sub {
