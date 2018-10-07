@@ -447,9 +447,9 @@ helper 'get_user_travels' => sub {
 
 	my $uid   = $self->get_user_id;
 	my $query = $self->app->get_all_actions_query;
-	if ($limit) {
-		$query = $self->app->get_last_actions_query;
-	}
+	#if ($limit) {
+	#	$query = $self->app->get_last_actions_query;
+	#}
 	$query->execute($uid);
 
 	my @travels;
