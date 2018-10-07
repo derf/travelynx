@@ -131,7 +131,9 @@ app->attr(
 		return $self->app->dbh->prepare(
 			qq{
 			select action_id, action_time, stations.ds100, stations.name,
-			train_type, train_line, train_no, train_id, route
+			train_type, train_line, train_no, train_id,
+			sched_time, real_time,
+			route, messages
 			from user_actions
 			join stations on station_id = stations.id
 			where user_id = ?
@@ -441,14 +443,18 @@ helper 'get_user_id' => sub {
 };
 
 helper 'get_user_travels' => sub {
-	my ($self) = @_;
+	my ( $self, $limit ) = @_;
 
-	my $uid = $self->get_user_id;
-	$self->app->get_all_actions_query->execute($uid);
+	my $uid   = $self->get_user_id;
+	my $query = $self->app->get_all_actions_query;
+	if ($limit) {
+		$query = $self->app->get_last_actions_query;
+	}
+	$query->execute($uid);
 
 	my @travels;
 
-	while ( my @row = $self->app->get_all_actions_query->fetchrow_array ) {
+	while ( my @row = $query->fetchrow_array ) {
 		my (
 			$action,       $raw_ts,      $ds100,     $name,
 			$train_type,   $train_line,  $train_no,  $train_id,
@@ -505,7 +511,7 @@ helper 'get_user_status' => sub {
 		my $now = DateTime->now( time_zone => 'Europe/Berlin' );
 		my $ts = epoch_to_dt( $rows->[0][1] );
 		my $checkin_station_name = decode( 'UTF-8', $rows->[0][3] );
-		my @route = split( qr{[|]}, decode( 'UTF-8', $rows->[0][8] // q{} ) );
+		my @route = split( qr{[|]}, decode( 'UTF-8', $rows->[0][10] // q{} ) );
 		my @route_after;
 		my $is_after = 0;
 		for my $station (@route) {

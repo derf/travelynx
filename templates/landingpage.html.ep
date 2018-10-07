@@ -34,7 +34,7 @@
 		% }
 	</div>
 </div>
-<h1>Bisherige Fahrten</h1>
+<h1>Letzte Fahrten</h1>
 <div class="row">
 	<table class="striped">
 		<thead>
@@ -46,7 +46,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			% for my $travel (get_user_travels()) {
+			% for my $travel (get_user_travels(1)) {
 				% if ($travel->{completed}) {
 					<tr>
 						<td><%= $travel->{sched_departure}->strftime('%d.%m.%Y') %></td>
