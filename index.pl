@@ -119,7 +119,7 @@ app->attr(
 			from user_actions
 			join stations on station_id = stations.id
 			where user_id = ?
-			order by action_time asc
+			order by action_time desc
 		}
 		);
 	}
@@ -447,9 +447,9 @@ helper 'get_user_travels' => sub {
 
 	my $uid   = $self->get_user_id;
 	my $query = $self->app->get_all_actions_query;
-	#if ($limit) {
-	#	$query = $self->app->get_last_actions_query;
-	#}
+	if ($limit) {
+		$query = $self->app->get_last_actions_query;
+	}
 	$query->execute($uid);
 
 	my @travels;
@@ -465,37 +465,38 @@ helper 'get_user_travels' => sub {
 		$raw_route    = decode( 'UTF-8', $raw_route );
 		$raw_messages = decode( 'UTF-8', $raw_messages );
 
-		if ( $action == $action_type{checkin} ) {
+		if ( $action == $action_type{checkout} ) {
 			push(
 				@travels,
 				{
-					from_name       => $name,
-					sched_departure => epoch_to_dt($raw_sched_ts),
-					rt_departure    => epoch_to_dt($raw_real_ts),
-					type            => $train_type,
-					line            => $train_line,
-					no              => $train_no,
-					messages        => [ split( qr{[|]}, $raw_messages ) ],
-					route           => [ split( qr{[|]}, $raw_route ) ],
-					completed       => 0,
+					to_name       => $name,
+					sched_arrival => epoch_to_dt($raw_sched_ts),
+					rt_arrival    => epoch_to_dt($raw_real_ts),
+					type          => $train_type,
+					line          => $train_line,
+					no            => $train_no,
+					messages      => $raw_messages
+					? [ split( qr{[|]}, $raw_messages ) ]
+					: undef,
+					route => $raw_route ? [ split( qr{[|]}, $raw_route ) ]
+					: undef,
+					completed => 0,
 				}
 			);
 		}
-		elsif ( $action == $action_type{checkout} ) {
+		elsif ( $action == $action_type{checkin} and @travels ) {
 			my $ref = $travels[-1];
-			$ref->{to_name}   = $name;
-			$ref->{completed} = 1;
-
-			# if train_no is undef, we have a forced checkout without data
-			if ($train_no) {
-				$ref->{sched_arrival} = epoch_to_dt($raw_sched_ts),
-				  $ref->{rt_arrival}  = epoch_to_dt($raw_real_ts),
-				  $ref->{messages}    = [ split( qr{[|]}, $raw_messages ) ];
-			}
+			$ref->{from_name}       = $name;
+			$ref->{completed}       = 1;
+			$ref->{sched_departure} = epoch_to_dt($raw_sched_ts),
+			  $ref->{rt_departure}  = epoch_to_dt($raw_real_ts),
+			  $ref->{type}   //= $train_type;
+			$ref->{line}     //= $train_line;
+			$ref->{no}       //= $train_no;
+			$ref->{messages} //= [ split( qr{[|]}, $raw_messages ) ];
+			$ref->{route}    //= [ split( qr{[|]}, $raw_route ) ];
 		}
 	}
-
-	@travels = reverse @travels;
 
 	return @travels;
 };
