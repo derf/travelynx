@@ -647,6 +647,12 @@ post '/action' => sub {
 	}
 };
 
+get '/a/history' => sub {
+	my ($self) = @_;
+
+	$self->render('history');
+};
+
 get '/x/about' => sub {
 	my ($self) = @_;
 

@@ -1,0 +1,30 @@
+<h1>Bisherige Fahrten</h1>
+<div class="row">
+	<table class="striped">
+		<thead>
+			<tr>
+				<th>Datum</th>
+				<th>Zug</th>
+				<th>Strecke</th>
+				<th>Dauer</th>
+			</tr>
+		</thead>
+		<tbody>
+			% for my $travel (get_user_travels(0)) {
+				% if ($travel->{completed}) {
+					<tr>
+						<td><%= $travel->{sched_departure}->strftime('%d.%m.%Y') %></td>
+						<td><%= $travel->{type} %> <%= $travel->{line} // $travel->{no} %></td>
+						<td><%= $travel->{from_name} %> → <%= $travel->{to_name} %></td>
+						% if ($travel->{rt_arrival} and $travel->{rt_departure}) {
+							<td><%= ($travel->{rt_arrival}->epoch - $travel->{rt_departure}->epoch) / 60 %> min</td>
+						% }
+						% else {
+							<td>?</td>
+						% }
+					</tr>
+				% }
+			% }
+		</tbody>
+	</tabel>
+</div>

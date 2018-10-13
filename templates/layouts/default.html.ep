@@ -21,6 +21,7 @@
 	<div class="nav-wrapper container">
 		<a href="/" class="brand-logo left">travelynx</a>
 		<ul id="nav-mobile" class="right">
+			<li class="<%= navbar_class('/a/history') %>"><a href='/a/history' title="History"><i class="material-icons">history</i></a></li>
 			<li class="<%= navbar_class('/x/about') %>"><a href='/x/about' title="About"><i class="material-icons">info_outline</i></a></li>
 		</ul>
 	</div>
