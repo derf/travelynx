@@ -453,6 +453,7 @@ helper 'get_user_travels' => sub {
 	$query->execute($uid);
 
 	my @travels;
+	my $prev_action = 0;
 
 	while ( my @row = $query->fetchrow_array ) {
 		my (
@@ -484,7 +485,7 @@ helper 'get_user_travels' => sub {
 				}
 			);
 		}
-		elsif ( $action == $action_type{checkin} and @travels ) {
+		elsif ( $action == $action_type{checkin} and $prev_action == $action_type{checkout} ) {
 			my $ref = $travels[-1];
 			$ref->{from_name}       = $name;
 			$ref->{completed}       = 1;
@@ -496,6 +497,7 @@ helper 'get_user_travels' => sub {
 			$ref->{messages} //= [ split( qr{[|]}, $raw_messages ) ];
 			$ref->{route}    //= [ split( qr{[|]}, $raw_route ) ];
 		}
+		$prev_action = $action;
 	}
 
 	return @travels;
