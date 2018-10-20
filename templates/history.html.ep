@@ -15,7 +15,7 @@
 				% if ($travel->{completed}) {
 					<tr>
 						<td><%= $travel->{sched_departure}->strftime('%d.%m.%Y') %></td>
-						<td><%= $travel->{type} %> <%= $travel->{line} // $travel->{no} %></td>
+						<td><%= $travel->{type} %> <%= $travel->{line} // '' %> <%= $travel->{no} %></td>
 						<td><%= $travel->{from_name} %> → <%= $travel->{to_name} %></td>
 						<td><%= $travel->{rt_departure}->strftime('%H:%M') %>
 						% if ($travel->{sched_departure} != $travel->{rt_departure}) {
