@@ -10,9 +10,9 @@
 	%= stylesheet '/static/css/local.css'
 	%= javascript '/static/js/jquery-2.2.4.min.js'
 	%= javascript '/static/js/materialize.min.js'
-	%= javascript '/static/js/travelynx-actions.js'
+	%= javascript '/static/js/travelynx-actions.min.js'
 	% if (stash('with_geolocation')) {
-		%= javascript '/static/js/geolocation.js'
+		%= javascript '/static/js/geolocation.min.js'
 	% }
 </head>
 <body>

@@ -1,4 +1,4 @@
-function travelynx_run_action(link, req, redir, err_callback) {
+function tvly_run(link, req, redir, err_callback) {
 	var error_icon = '<i class="material-icons">error</i>';
 	var progressbar = $('<div class="progress"><div class="indeterminate"></div></div>');
 	link.hide();
@@ -25,7 +25,7 @@ $(document).ready(function() {
 			station: link.data('station'),
 			train: link.data('train'),
 		};
-		travelynx_run_action(link, req, '/');
+		tvly_run(link, req, '/');
 	});
 	$('.action-checkout').click(function() {
 		var link = $(this);
@@ -34,7 +34,7 @@ $(document).ready(function() {
 			station: link.data('station'),
 			force: link.data('force'),
 		};
-		travelynx_run_action(link, req, '/' + req.station, function() {
+		tvly_run(link, req, '/' + req.station, function() {
 			link.append(' – Keine Echtzeitdaten vorhanden')
 			link.data('force', true);
 		});
