@@ -299,39 +299,17 @@ helper 'checkout' => sub {
 	my $user     = $self->get_user_status;
 	my $train_id = $user->{train_id};
 
-	if ( $status->{errstr} and not $force ) {
-		return $status->{errstr};
-	}
 	if ( not $user->{checked_in} ) {
 		return 'You are not checked into any train';
 	}
-	else {
-		my ($train)
-		  = first { $_->train_id eq $train_id } @{ $status->{results} };
-		if ( not defined $train ) {
-			if ($force) {
-				my $success = $self->app->checkout_query->execute(
-					$self->get_user_id,
-					$self->get_station_id(
-						ds100 => $status->{station_ds100},
-						name  => $status->{station_name}
-					),
-					DateTime->now( time_zone => 'Europe/Berlin' )->epoch,
-					undef, undef, undef, undef, undef,
-					undef, undef, undef
-				);
-				if ( defined $success ) {
-					return;
-				}
-				else {
-					return 'INSERT failed';
-				}
-			}
-			else {
-				return "Train ${train_id} not found";
-			}
-		}
-		else {
+	if ( $status->{errstr} and not $force ) {
+		return $status->{errstr};
+	}
+
+	my ($train)
+		= first { $_->train_id eq $train_id } @{ $status->{results} };
+	if ( not defined $train ) {
+		if ($force) {
 			my $success = $self->app->checkout_query->execute(
 				$self->get_user_id,
 				$self->get_station_id(
@@ -339,16 +317,8 @@ helper 'checkout' => sub {
 					name  => $status->{station_name}
 				),
 				DateTime->now( time_zone => 'Europe/Berlin' )->epoch,
-				$train->type,
-				$train->line_no,
-				$train->train_no,
-				$train->train_id,
-				$train->sched_arrival ? $train->sched_arrival->epoch : undef,
-				$train->arrival       ? $train->arrival->epoch       : undef,
-				join( '|', $train->route ),
-				join( '|',
-					map { ( $_->[0] ? $_->[0]->epoch : q{} ) . ':' . $_->[1] }
-					  $train->messages )
+				undef, undef, undef, undef, undef,
+				undef, undef, undef
 			);
 			if ( defined $success ) {
 				return;
@@ -356,6 +326,35 @@ helper 'checkout' => sub {
 			else {
 				return 'INSERT failed';
 			}
+		}
+		else {
+			return "Train ${train_id} not found";
+		}
+	}
+	else {
+		my $success = $self->app->checkout_query->execute(
+			$self->get_user_id,
+			$self->get_station_id(
+				ds100 => $status->{station_ds100},
+				name  => $status->{station_name}
+			),
+			DateTime->now( time_zone => 'Europe/Berlin' )->epoch,
+			$train->type,
+			$train->line_no,
+			$train->train_no,
+			$train->train_id,
+			$train->sched_arrival ? $train->sched_arrival->epoch : undef,
+			$train->arrival       ? $train->arrival->epoch       : undef,
+			join( '|', $train->route ),
+			join( '|',
+				map { ( $_->[0] ? $_->[0]->epoch : q{} ) . ':' . $_->[1] }
+					$train->messages )
+		);
+		if ( defined $success ) {
+			return;
+		}
+		else {
+			return 'INSERT failed';
 		}
 	}
 };

@@ -1,41 +1,42 @@
-$(document).ready(function() {
+function travelynx_run_action(link, req, redir, err_callback) {
 	var error_icon = '<i class="material-icons">error</i>';
+	var progressbar = $('<div class="progress"><div class="indeterminate"></div></div>');
+	link.hide();
+	link.after(progressbar);
+	$.post('/action', req, function(data) {
+		if (data.success) {
+			$(location).attr('href', redir);
+		} else {
+			M.toast({html: error_icon + ' ' + data.error});
+			progressbar.remove();
+			if (err_callback) {
+				err_callback();
+			}
+			link.append(' ' + error_icon);
+			link.show();
+		}
+	});
+}
+$(document).ready(function() {
 	$('.action-checkin').click(function() {
 		var link = $(this);
-		req = {
+		var req = {
 			action: 'checkin',
 			station: link.data('station'),
 			train: link.data('train'),
 		};
-		progressbar = $('<div class="progress"><div class="indeterminate"></div></div>');
-		link.replaceWith(progressbar);
-		$.post('/action', req, function(data) {
-			if (data.success) {
-				$(location).attr('href', '/');
-			} else {
-				M.toast({html: error_icon + ' ' + data.error});
-				link.append(' ' + error_icon);
-				progressbar.replaceWith(link);
-			}
-		});
+		travelynx_run_action(link, req, '/');
 	});
 	$('.action-checkout').click(function() {
 		var link = $(this);
-		req = {
+		var req = {
 			action: 'checkout',
 			station: link.data('station'),
 			force: link.data('force'),
 		};
-		progressbar = $('<div class="progress"><div class="indeterminate"></div></div>');
-		link.replaceWith(progressbar);
-		$.post('/action', req, function(data) {
-			if (data.success) {
-				$(location).attr('href', '/' + req.station);
-			} else {
-				M.toast({html: error_icon + ' ' + data.error});
-				link.append(' ' + error_icon);
-				progressbar.replaceWith(link);
-			}
+		travelynx_run_action(link, req, '/' + req.station, function() {
+			link.append(' – Keine Echtzeitdaten vorhanden')
+			link.data('force', true);
 		});
 	});
 });
