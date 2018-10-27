@@ -213,7 +213,7 @@ sub get_departures {
 			lookbehind     => 20,
 			datetime       => DateTime->now( time_zone => 'Europe/Berlin' )
 			  ->subtract( minutes => $lookbehind ),
-			lookahead => $lookbehind + 20,
+			lookahead => $lookbehind + 10,
 		);
 		return {
 			results => [ $status->results ],
@@ -700,10 +700,13 @@ get '/*station' => sub {
 		$self->render( 'landingpage', error => $status->{errstr} );
 	}
 	else {
-		my @results = sort { $a->line cmp $b->line } @{ $status->{results} };
-
 		# You can't check into a train which terminates here
-		@results = grep { $_->departure } @results;
+		my @results = grep { $_->departure } @{ $status->{results} };
+
+		@results = map { $_->[0] }
+			sort { $b->[1] <=> $a->[1] }
+			map { [$_, $_->sched_departure->epoch // $_->departure->epoch] } @results;
+
 		$self->render(
 			'departures',
 			ds100   => $status->{station_ds100},
