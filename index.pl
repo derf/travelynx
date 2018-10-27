@@ -307,7 +307,7 @@ helper 'checkout' => sub {
 	}
 
 	my ($train)
-		= first { $_->train_id eq $train_id } @{ $status->{results} };
+	  = first { $_->train_id eq $train_id } @{ $status->{results} };
 	if ( not defined $train ) {
 		if ($force) {
 			my $success = $self->app->checkout_query->execute(
@@ -317,8 +317,8 @@ helper 'checkout' => sub {
 					name  => $status->{station_name}
 				),
 				DateTime->now( time_zone => 'Europe/Berlin' )->epoch,
-				undef, undef, undef, undef, undef,
-				undef, undef, undef
+				undef, undef, undef, undef, undef, undef,
+				undef, undef
 			);
 			if ( defined $success ) {
 				return;
@@ -348,7 +348,7 @@ helper 'checkout' => sub {
 			join( '|', $train->route ),
 			join( '|',
 				map { ( $_->[0] ? $_->[0]->epoch : q{} ) . ':' . $_->[1] }
-					$train->messages )
+				  $train->messages )
 		);
 		if ( defined $success ) {
 			return;
@@ -484,7 +484,9 @@ helper 'get_user_travels' => sub {
 				}
 			);
 		}
-		elsif ( $action == $action_type{checkin} and $prev_action == $action_type{checkout} ) {
+		elsif ( $action == $action_type{checkin}
+			and $prev_action == $action_type{checkout} )
+		{
 			my $ref = $travels[-1];
 			$ref->{from_name}       = $name;
 			$ref->{completed}       = 1;
@@ -704,8 +706,9 @@ get '/*station' => sub {
 		my @results = grep { $_->departure } @{ $status->{results} };
 
 		@results = map { $_->[0] }
-			sort { $b->[1] <=> $a->[1] }
-			map { [$_, $_->sched_departure->epoch // $_->departure->epoch] } @results;
+		  sort { $b->[1] <=> $a->[1] }
+		  map { [ $_, $_->sched_departure->epoch // $_->departure->epoch ] }
+		  @results;
 
 		$self->render(
 			'departures',
