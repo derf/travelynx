@@ -117,7 +117,7 @@ app->attr(
 			sched_time, real_time,
 			route, messages
 			from user_actions
-			join stations on station_id = stations.id
+			left outer join stations on station_id = stations.id
 			where user_id = ?
 			order by action_time desc
 		}
@@ -135,7 +135,7 @@ app->attr(
 			sched_time, real_time,
 			route, messages
 			from user_actions
-			join stations on station_id = stations.id
+			left outer join stations on station_id = stations.id
 			where user_id = ?
 			order by action_time desc
 			limit 10
