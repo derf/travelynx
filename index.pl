@@ -303,6 +303,10 @@ helper 'undo' => sub {
 		return 'Nested undo (undoing an undo) is not supported';
 	}
 
+	if ( @{$rows} > 1 and $rows->[1][0] == $action_type{undo}) {
+		return 'Repeated undo is not supported';
+	}
+
 	my $success = $self->app->undo_query->execute(
 		$self->get_user_id,
 		DateTime->now( time_zone => 'Europe/Berlin' )->epoch,
