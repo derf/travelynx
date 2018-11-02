@@ -7,7 +7,11 @@
 					<span class="card-title">Hallo, <%= $self->get_user_name %>!</span>
 					<p>Du bist gerade eingecheckt in
 						<%= $status->{train_type} %> <%= $status->{train_no} %>
-						ab <%= $status->{station_name} %>.</p>
+						ab <%= $status->{station_name} %>.
+						% if ($status->{timestamp_delta} < 3600) {
+							<a class="action-undo"><i class="material-icons">undo</i> Rückgängig</a>
+						% }
+						</p>
 					<p>Auschecken?</p>
 					<table>
 						<tbody>

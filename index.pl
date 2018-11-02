@@ -30,7 +30,7 @@ my $dbname = $ENV{TRAVELYNX_DB_FILE} // 'travelynx.sqlite';
 my %action_type = (
 	checkin  => 1,
 	checkout => 2,
-	undo     => -1
+	undo     => 3,
 );
 
 app->defaults( layout => 'default' );
@@ -174,7 +174,7 @@ app->attr(
 		return $self->app->dbh->prepare(
 			qq{
 			insert into user_actions (
-				user_id, action_id, action_time,
+				user_id, action_id, action_time
 			) values (
 				?, $action_type{undo}, ?
 			)
@@ -289,6 +289,30 @@ helper 'checkin' => sub {
 				return ( undef, 'INSERT failed' );
 			}
 		}
+	}
+};
+
+helper 'undo' => sub {
+	my ($self) = @_;
+
+	my $uid = $self->get_user_id;
+	$self->app->get_last_actions_query->execute($uid);
+	my $rows = $self->app->get_last_actions_query->fetchall_arrayref;
+
+	if ( @{$rows} and $rows->[0][0] == $action_type{undo}) {
+		return 'Nested undo (undoing an undo) is not supported';
+	}
+
+	my $success = $self->app->undo_query->execute(
+		$self->get_user_id,
+		DateTime->now( time_zone => 'Europe/Berlin' )->epoch,
+	);
+
+	if (defined $success) {
+		return;
+	}
+	else {
+		return 'INSERT failed';
 	}
 };
 
@@ -513,9 +537,15 @@ helper 'get_user_status' => sub {
 
 	if ( @{$rows} ) {
 		my $now = DateTime->now( time_zone => 'Europe/Berlin' );
-		my $ts = epoch_to_dt( $rows->[0][1] );
-		my $checkin_station_name = decode( 'UTF-8', $rows->[0][3] );
-		my @route = split( qr{[|]}, decode( 'UTF-8', $rows->[0][10] // q{} ) );
+
+		my @cols = @{$rows->[0]};
+		if (@{$rows} > 2 and $rows->[0][0] == $action_type{undo}) {
+			@cols = @{$rows->[2]};
+		}
+
+		my $ts = epoch_to_dt( $cols[1] );
+		my $checkin_station_name = decode( 'UTF-8', $cols[3] );
+		my @route = split( qr{[|]}, decode( 'UTF-8', $cols[10] // q{} ) );
 		my @route_after;
 		my $is_after = 0;
 		for my $station (@route) {
@@ -527,15 +557,15 @@ helper 'get_user_status' => sub {
 			}
 		}
 		return {
-			checked_in      => ( $rows->[0][0] == $action_type{checkin} ),
+			checked_in      => ( $cols[0] == $action_type{checkin} ),
 			timestamp       => $ts,
-			timestamp_delta => $now->subtract_datetime($ts),
-			station_ds100   => $rows->[0][2],
-			station_name    => $rows->[0][3],
-			train_type      => $rows->[0][4],
-			train_line      => $rows->[0][5],
-			train_no        => $rows->[0][6],
-			train_id        => $rows->[0][7],
+			timestamp_delta => $now->epoch - $ts->epoch,
+			station_ds100   => $cols[2],
+			station_name    => $cols[3],
+			train_type      => $cols[4],
+			train_line      => $cols[5],
+			train_no        => $cols[6],
+			train_id        => $cols[7],
 			route           => \@route,
 			route_after     => \@route_after,
 		};
@@ -600,7 +630,10 @@ post '/action' => sub {
 
 	if ( not $params->{action} ) {
 		$self->render(
-			json   => {},
+			json   => {
+				success => 0,
+				error => 'Missing action value',
+			},
 			status => 400,
 		);
 		return;
@@ -647,6 +680,33 @@ post '/action' => sub {
 				},
 			);
 		}
+	}
+	elsif ( $params->{action} eq 'undo' ) {
+		my $error = $self->undo;
+		if ($error) {
+			$self->render(
+				json => {
+					success => 0,
+					error   => $error,
+				},
+			);
+		}
+		else {
+			$self->render(
+				json => {
+					success => 1,
+				},
+			);
+		}
+	}
+	else {
+		$self->render(
+			json   => {
+				success => 0,
+				error => 'invalid action value',
+			},
+			status => 400,
+		);
 	}
 };
 

@@ -39,4 +39,11 @@ $(document).ready(function() {
 			link.data('force', true);
 		});
 	});
+	$('.action-undo').click(function() {
+		var link = $(this);
+		var req = {
+			action: 'undo',
+		};
+		tvly_run(link, req, window.location.href);
+	});
 });
