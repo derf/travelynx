@@ -771,7 +771,7 @@ get '/*station' => sub {
 
 		@results = map { $_->[0] }
 		  sort { $b->[1] <=> $a->[1] }
-		  map { [ $_, $_->sched_departure->epoch // $_->departure->epoch ] }
+		  map { [ $_, $_->departure->epoch // $_->sched_departure->epoch ] }
 		  @results;
 
 		$self->render(
