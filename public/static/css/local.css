@@ -1,0 +1,5 @@
+.action-checkin,
+.action-checkout,
+.action-undo {
+	cursor: pointer;
+}
