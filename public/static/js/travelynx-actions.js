@@ -35,7 +35,7 @@ $(document).ready(function() {
 			force: link.data('force'),
 		};
 		tvly_run(link, req, '/' + req.station, function() {
-			link.append(' – Keine Echtzeitdaten vorhanden')
+			link.append(' – Ohne Echtzeitdaten auschecken?')
 			link.data('force', true);
 		});
 	});
