@@ -264,6 +264,22 @@ helper 'checkin' => sub {
 			return ( undef, "Train ${train_id} not found" );
 		}
 		else {
+
+			my $user = $self->get_user_status;
+			if ( $user->{checked_in} ) {
+
+              # If a user is already checked in, we assume that they forgot to
+              # check out and do it for them.
+              # XXX this is an ugly workaround for the UNIQUE constraint on
+              # (user id, action timestamp): Ensure that checkout and re-checkin
+              # work even if the previous checkin was less than a second ago.
+				sleep(1);
+				$self->checkout( $station, 1 );
+
+             # XXX same workaround: We can't checkin immediately after checkout.
+				sleep(1);
+			}
+
 			my $success = $self->app->checkin_query->execute(
 				$self->get_user_id,
 				$self->get_station_id(
