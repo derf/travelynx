@@ -315,20 +315,20 @@ helper 'undo' => sub {
 	$self->app->get_last_actions_query->execute($uid);
 	my $rows = $self->app->get_last_actions_query->fetchall_arrayref;
 
-	if ( @{$rows} and $rows->[0][0] == $action_type{undo}) {
+	if ( @{$rows} and $rows->[0][0] == $action_type{undo} ) {
 		return 'Nested undo (undoing an undo) is not supported';
 	}
 
-	if ( @{$rows} > 1 and $rows->[1][0] == $action_type{undo}) {
+	if ( @{$rows} > 1 and $rows->[1][0] == $action_type{undo} ) {
 		return 'Repeated undo is not supported';
 	}
 
-	my $success = $self->app->undo_query->execute(
-		$self->get_user_id,
+	my $success
+	  = $self->app->undo_query->execute( $self->get_user_id,
 		DateTime->now( time_zone => 'Europe/Berlin' )->epoch,
-	);
+	  );
 
-	if (defined $success) {
+	if ( defined $success ) {
 		return;
 	}
 	else {
@@ -558,9 +558,9 @@ helper 'get_user_status' => sub {
 	if ( @{$rows} ) {
 		my $now = DateTime->now( time_zone => 'Europe/Berlin' );
 
-		my @cols = @{$rows->[0]};
-		if (@{$rows} > 2 and $rows->[0][0] == $action_type{undo}) {
-			@cols = @{$rows->[2]};
+		my @cols = @{ $rows->[0] };
+		if ( @{$rows} > 2 and $rows->[0][0] == $action_type{undo} ) {
+			@cols = @{ $rows->[2] };
 		}
 
 		my $ts = epoch_to_dt( $cols[1] );
@@ -650,9 +650,9 @@ post '/action' => sub {
 
 	if ( not $params->{action} ) {
 		$self->render(
-			json   => {
+			json => {
 				success => 0,
-				error => 'Missing action value',
+				error   => 'Missing action value',
 			},
 			status => 400,
 		);
@@ -721,9 +721,9 @@ post '/action' => sub {
 	}
 	else {
 		$self->render(
-			json   => {
+			json => {
 				success => 0,
-				error => 'invalid action value',
+				error   => 'invalid action value',
 			},
 			status => 400,
 		);
