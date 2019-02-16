@@ -1,0 +1,16 @@
+[Unit]
+Description=travelynx.finalrewind.org
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/srv/www/travelynx/index.pl daemon -m production -l 'http://127.0.0.1:8093'
+User=db-fakedisplay
+WorkingDirectory=/srv/www/travelynx
+Environment=LANG=en_US.UTF-8
+Environment=TRAVELYNX_IRIS_CACHE=/var/cache/dbf/iris
+Environment=TRAVELYNX_IRISRT_CACHE=/var/cache/dbf/iris-rt
+Environment=TRAVELYNX_DB_FILE=/srv/www/travelynx/run/travelynx.sqlite
+
+[Install]
+WantedBy=multi-user.target
