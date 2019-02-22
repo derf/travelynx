@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 
 use Mojolicious::Lite;
+use Mojolicious::Plugin::Authentication;
 use Cache::File;
 use DateTime;
 use DBI;
@@ -32,6 +33,27 @@ my %action_type = (
 	checkout => 2,
 	undo     => 3,
 );
+
+app->plugin(authentication => {
+	autoload_user => 1,
+	session_key => 'foodor',
+	load_user => sub {
+		my ($app, $uid) = @_;
+		if ($uid == 1) {
+			return {
+				name => 'derf',
+			};
+		}
+		return undef;
+	},
+	validate_user => sub {
+		my ($c, $username, $password, $extradata) = @_;
+		if ($username eq 'derf' and $password eq 'hallo') {
+			return 1;
+		}
+		return undef;
+	},
+});
 
 app->defaults( layout => 'default' );
 
@@ -770,6 +792,16 @@ post '/x/geolocation' => sub {
 		);
 	}
 
+};
+
+get '/x/login' => sub {
+	my ($self) = @_;
+	$self->render('login');
+};
+
+get '/x/register' => sub {
+	my ($self) = @_;
+	$self->render('register');
 };
 
 get '/*station' => sub {
