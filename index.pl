@@ -766,6 +766,18 @@ get '/x/about' => sub {
 	$self->render( 'about', version => $VERSION );
 };
 
+get '/x/impressum' => sub {
+	my ($self) = @_;
+
+	$self->render('imprint');
+};
+
+get '/x/imprint' => sub {
+	my ($self) = @_;
+
+	$self->render('imprint');
+};
+
 post '/x/geolocation' => sub {
 	my ($self) = @_;
 
