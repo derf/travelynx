@@ -34,26 +34,28 @@ my %action_type = (
 	undo     => 3,
 );
 
-app->plugin(authentication => {
-	autoload_user => 1,
-	session_key => 'foodor',
-	load_user => sub {
-		my ($app, $uid) = @_;
-		if ($uid == 1) {
-			return {
-				name => 'derf',
-			};
-		}
-		return undef;
-	},
-	validate_user => sub {
-		my ($c, $username, $password, $extradata) = @_;
-		if ($username eq 'derf' and $password eq 'hallo') {
-			return 1;
-		}
-		return undef;
-	},
-});
+app->plugin(
+	authentication => {
+		autoload_user => 1,
+		session_key   => 'foodor',
+		load_user     => sub {
+			my ( $app, $uid ) = @_;
+			if ( $uid == 1 ) {
+				return {
+					name => 'dev',
+				};
+			}
+			return undef;
+		},
+		validate_user => sub {
+			my ( $c, $username, $password, $extradata ) = @_;
+			if ( $username eq 'dev' and $password eq 'ohai' ) {
+				return 1;
+			}
+			return undef;
+		},
+	}
+);
 
 app->defaults( layout => 'default' );
 
@@ -797,6 +799,27 @@ post '/x/geolocation' => sub {
 get '/x/login' => sub {
 	my ($self) = @_;
 	$self->render('login');
+};
+
+post '/x/login' => sub {
+	my ($self)   = @_;
+	my $user     = $self->req->param('user');
+	my $password = $self->req->param('password');
+
+	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
+		$self->render(
+			'login',
+			invalid => 'csrf',
+		);
+	}
+	else {
+		if ( $self->authenticate( $user, $password ) ) {
+			$self->redirect_to('/');
+		}
+		else {
+			$self->render( 'login', invalid => 'credentials' );
+		}
+	}
 };
 
 get '/x/register' => sub {

@@ -36,3 +36,19 @@
 		</div>
 	%= end
 </div>
+<div class="row">
+	<div class="col s12">
+		<p>
+			Die Mail-Adresse wird ausschließlich zur Bestätigung der Anmeldung
+			und für die "Passwort vergessen"-Funktionalität verwendet und nicht
+			an Dritte weitergegeben. Weitere erhobene Daten sowie deren Zweck
+			und Speicherfristen werden in der <a
+			href="/x/impressum">Datenschutzerklärung</a> beschrieben.
+		</p>
+		<p>
+			Für jeden Account wird das Datum der letzten Anmeldung gespeichert.
+			Accounts, die mehr als ein Jahr (12 Monate) nicht genutzt wurden,
+			werden automatisch und unwiderruflich gelöscht.
+		</p>
+	</div>
+</div>
