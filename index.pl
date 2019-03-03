@@ -504,7 +504,7 @@ helper 'get_user_id' => sub {
 	else {
 		$self->app->add_user_query->execute($user_name);
 		$self->app->get_userid_query->execute($user_name);
-		my $rows = $self->app->get_userid_query->fetchall_arrayref;
+		$rows = $self->app->get_userid_query->fetchall_arrayref;
 		return $rows->[0][0];
 	}
 };
@@ -835,6 +835,12 @@ post '/x/login' => sub {
 			$self->render( 'login', invalid => 'credentials' );
 		}
 	}
+};
+
+get '/x/logout' => sub {
+	my ($self) = @_;
+	$self->logout;
+	$self->redirect_to('/x/login');
 };
 
 get '/x/register' => sub {

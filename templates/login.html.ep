@@ -1,3 +1,19 @@
+% if (my $user = current_user()) {
+	<div class="row">
+		<div class="col s12">
+			<div class="card grey darken-4">
+				<div class="card-content white-text">
+					<span class="card-title">Hallo, <%= $user->{name} %>!</span>
+					<p>
+						Du bist bereits angemeldet. Falls du mehrere Accounts hast
+						und auf einen anderen wechseln möchtest, musst du dich
+						vorher <a href="/x/logout">abmelden</a>.
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+% }
 % if (my $invalid = stash('invalid')) {
 	<div class="row">
 		<div class="col s12">
