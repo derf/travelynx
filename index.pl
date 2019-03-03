@@ -818,6 +818,9 @@ post '/x/login' => sub {
 	my $user     = $self->req->param('user');
 	my $password = $self->req->param('password');
 
+	# Keep cookies for 6 months
+	$self->session( expiration => 60 * 60 * 24 * 180 );
+
 	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
 		$self->render(
 			'login',
