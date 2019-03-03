@@ -34,6 +34,8 @@ my %action_type = (
 	undo     => 3,
 );
 
+my @action_types = (qw(checkin checkout undo));
+
 app->plugin(
 	authentication => {
 		autoload_user => 1,
@@ -752,6 +754,58 @@ post '/action' => sub {
 			status => 400,
 		);
 	}
+};
+
+get '/a/account' => sub {
+	my ($self) = @_;
+
+	$self->render('account');
+};
+
+get '/a/export.json' => sub {
+	my ($self) = @_;
+	my $uid    = $self->get_user_id;
+	my $query  = $self->app->get_all_actions_query;
+
+	$query->execute($uid);
+
+	my @entries;
+
+	while ( my @row = $query->fetchrow_array ) {
+		my (
+			$action,       $raw_ts,      $ds100,     $name,
+			$train_type,   $train_line,  $train_no,  $train_id,
+			$raw_sched_ts, $raw_real_ts, $raw_route, $raw_messages
+		) = @row;
+
+		$name         = decode( 'UTF-8', $name );
+		$raw_route    = decode( 'UTF-8', $raw_route );
+		$raw_messages = decode( 'UTF-8', $raw_messages );
+		push(
+			@entries,
+			{
+				action        => $action_types[ $action - 1 ],
+				action_ts     => $raw_ts,
+				station_ds100 => $ds100,
+				station_name  => $name,
+				train_type    => $train_type,
+				train_line    => $train_line,
+				train_no      => $train_no,
+				train_id      => $train_id,
+				scheduled_ts  => $raw_sched_ts,
+				realtime_ts   => $raw_real_ts,
+				messages      => $raw_messages
+				? [ map { [ split(qr{:}) ] } split( qr{[|]}, $raw_messages ) ]
+				: undef,
+				route => $raw_route ? [ split( qr{[|]}, $raw_route ) ]
+				: undef,
+			}
+		);
+	}
+
+	$self->render(
+		json => [@entries],
+	);
 };
 
 get '/a/history' => sub {

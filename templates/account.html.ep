@@ -1,0 +1,27 @@
+<h1>Account</h1>
+<div class="row">
+	<table class="striped">
+		<tr>
+			<th scope="row">Name</th>
+			<td><%= get_user_name() %></td>
+		</tr>
+		<tr>
+			<th scope="row">Mail</th>
+			<td>fnord@example.org</td>
+		</tr>
+		<tr>
+			<th scope="row">Registriert am</th>
+			<td>01.01.1970 00:00</td>
+		</tr>
+	</table>
+</div>
+
+<h1>Export</h1>
+
+<div class="row">
+	<div class="col s12">
+		<ul>
+			<li><a href="/a/export.json">Rohdaten</a> (Kein API-Ersatz, das Format kann sich jederzeit ändern)</li>
+		</ul>
+	</div>
+</div>
