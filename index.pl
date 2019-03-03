@@ -223,7 +223,7 @@ sub epoch_to_dt {
 sub get_departures {
 	my ( $station, $lookbehind ) = @_;
 
-	$lookbehind //= 60;
+	$lookbehind //= 180;
 
 	my @station_matches
 	  = Travel::Status::DE::IRIS::Stations::get_station($station);
