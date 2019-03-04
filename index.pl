@@ -5,7 +5,9 @@ use Mojolicious::Plugin::Authentication;
 use Cache::File;
 use DateTime;
 use DBI;
-use Encode qw(decode);
+use Encode qw(decode encode);
+use Email::Sender::Simple qw(sendmail);
+use Email::Simple;
 use Geo::Distance;
 use List::Util qw(first);
 use List::MoreUtils qw(after_incl before_incl);
@@ -554,6 +556,18 @@ helper 'get_user_id' => sub {
 	}
 };
 
+helper 'check_if_user_name_exists' => sub {
+	my ( $self, $user_name ) = @_;
+
+	$self->app->get_userid_query->execute($user_name);
+	my $rows = $self->app->get_userid_query->fetchall_arrayref;
+
+	if ( @{$rows} ) {
+		return 1;
+	}
+	return 0;
+};
+
 helper 'get_user_travels' => sub {
 	my ( $self, $limit ) = @_;
 
@@ -943,6 +957,88 @@ get '/x/logout' => sub {
 get '/x/register' => sub {
 	my ($self) = @_;
 	$self->render('register');
+};
+
+post '/x/register' => sub {
+	my ($self)    = @_;
+	my $user      = $self->req->param('user');
+	my $email     = $self->req->param('email');
+	my $password  = $self->req->param('password');
+	my $password2 = $self->req->param('password2');
+	my $ip        = $self->req->headers->header('X-Forwarded-For');
+	my $ua        = $self->req->headers->user_agent;
+	my $date = DateTime->now( time_zone => 'Europe/Berlin' )
+	  ->strftime('%d.%m.%Y %H:%M:%S %z');
+
+	# In case Mojolicious is not running behind a reverse proxy
+	$ip
+	  //= sprintf( '%s:%s', $self->tx->remote_address, $self->tx->remote_port );
+
+	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
+		$self->render(
+			'register',
+			invalid => 'csrf',
+		);
+		return;
+	}
+
+	if ( not length($user) ) {
+		$self->render( 'register', invalid => 'user_empty' );
+		return;
+	}
+
+	if ( $user !~ m{ ^ [0-9a-zA-Z_-]+ $ }x ) {
+		$self->render( 'register', invalid => 'user_format' );
+		return;
+	}
+
+	if ( $self->check_if_user_name_exists($user) ) {
+		$self->render( 'register', invalid => 'user_collision' );
+		return;
+	}
+
+	if ( $password ne $password2 ) {
+		$self->render( 'register', invalid => 'password_notequal' );
+		return;
+	}
+
+	if ( length($password) < 8 ) {
+		$self->render( 'register', invalid => 'password_short' );
+		return;
+	}
+
+	my $body = "Hallo, ${user}!\n\n";
+	$body .= "Mit deiner E-Mail-Adresse (${email}) wurde ein Account auf\n";
+	$body .= "travelynx.finalrewind.org angelegt.\n\n";
+	$body
+	  .= "Falls die Registrierung von dir ausging, kannst du den Account unter\n";
+	$body .= "https://travelynx.finalrewind.org/x/TODO freischalten.\n\n";
+	$body
+	  .= "Falls nicht, ignoriere diese Mail bitte. Nach 48 Stunden wird deine\n";
+	$body
+	  .= "Mail-Adresse erneut zur Registrierung freigeschaltet. Falls auch diese fehlschlägt,\n";
+	$body
+	  .= "werden wir sie dauerhaft sperren und keine Mails mehr dorthin schicken.\n\n";
+	$body .= "Daten zur Registrierung:\n";
+	$body .= " * Datum: ${date}\n";
+	$body .= " * Verwendete IP: ${ip}\n";
+	$body .= " * Verwendeter Browser gemäß User Agent: ${ua}\n\n\n";
+	$body .= "Impressum: https://travelynx.finalrewind.org/x/impressum\n";
+
+	# TODO create user object
+
+	my $reg_mail = Email::Simple->create(
+		header => [
+			To             => $email,
+			From           => 'Travelynx <travelynx@finalrewind.org>',
+			Subject        => 'Registrierung auf travelynx.finalrewind.org',
+			'Content-Type' => 'text/plain; charset=UTF-8',
+		],
+		body => encode( 'utf-8', $body ),
+	);
+	sendmail($reg_mail);
+
+	$self->render( 'login', from => 'register' );
 };
 
 get '/*station' => sub {

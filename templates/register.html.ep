@@ -1,24 +1,50 @@
+% if (my $invalid = stash('invalid')) {
+	<div class="row">
+		<div class="col s12">
+			<div class="card red darken-4">
+				<div class="card-content white-text">
+					% if ($invalid eq 'csrf') {
+						<span class="card-title">Ungültiger CSRF-Token</span>
+						<p>Sind Cookies aktiviert? Ansonsten könnte es sich um einen
+						Fall von <a
+						href="https://de.wikipedia.org/wiki/Cross-Site-Request-Forgery">CSRF</a>
+						handeln.</p>
+					% }
+					% elsif ($invalid eq 'credentials') {
+						<span class="card-title">Ungültige Logindaten</span>
+						<p>Falscher Account oder falsches Passwort.</p>
+					% }
+					% else {
+						<span class="card-title">Unbekannter Fehler</span>
+						<p>„<%= $invalid %>“</p>
+					% }
+				</div>
+			</div>
+		</div>
+	</div>
+% }
 <div class="row">
 	%= form_for '/x/register' => (class => 'col s12', method => 'POST') => begin
+		%= csrf_field
 		<div class="row">
 			<div class="input-field col l6 m12 s12">
 				<i class="material-icons prefix">account_circle</i>
-				<input id="account" type="text" class="validate">
+				<input name="user" id="account" type="text" class="validate">
 				<label for="account">Name</label>
 			</div>
 			<div class="input-field col l6 m12 s12">
 				<i class="material-icons prefix">email</i>
-				<input id="email" type="email" class="validate">
+				<input name="email" id="email" type="email" class="validate">
 				<label for="email">Mail-Adresse</label>
 			</div>
 			<div class="input-field col l6 m12 s12">
 				<i class="material-icons prefix">lock</i>
-				<input id="password" type="password" class="validate">
+				<input name="password" id="password" type="password" class="validate">
 				<label for="password">Passwort</label>
 			</div>
 			<div class="input-field col l6 m12 s12">
 				<i class="material-icons prefix">lock</i>
-				<input id="password2" type="password" class="validate">
+				<input name="password2" id="password2" type="password" class="validate">
 				<label for="password2">Passwort wiederholen</label>
 			</div>
 		</div>
