@@ -992,7 +992,7 @@ post '/x/register' => sub {
 		return;
 	}
 
-	if ( $self->check_if_user_name_exists($user) ) {
+	if ( $self->check_if_user_name_exists($user) or $user eq 'dev' ) {
 		$self->render( 'register', invalid => 'user_collision' );
 		return;
 	}
@@ -1036,9 +1036,12 @@ post '/x/register' => sub {
 		],
 		body => encode( 'utf-8', $body ),
 	);
-	sendmail($reg_mail);
 
-	$self->render( 'login', from => 'register' );
+	# TODO re-enable once remaining registration code is complete
+	#sendmail($reg_mail);
+	#$self->render( 'login', from => 'register' );
+
+	$self->render( 'register', invalid => 'not implemented yet' );
 };
 
 get '/*station' => sub {
