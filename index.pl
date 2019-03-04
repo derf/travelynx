@@ -178,6 +178,20 @@ app->attr(
 	}
 );
 app->attr(
+	get_user_query => sub {
+		my ($self) = @_;
+
+		return $self->app->dbh->prepare(
+			qq{
+			select
+				id, name, status, is_public, email,
+				registered_at, last_login, deletion_requested
+			from users where id = ?
+		}
+		);
+	}
+);
+app->attr(
 	get_stationid_by_ds100_query => sub {
 		my ($self) = @_;
 
@@ -443,6 +457,35 @@ helper 'get_station_id' => sub {
 		my $rows = $self->app->get_stationid_by_ds100_query->fetchall_arrayref;
 		return $rows->[0][0];
 	}
+};
+
+helper 'get_user_data' => sub {
+	my ($self) = @_;
+
+	my $uid   = $self->get_user_id;
+	my $query = $self->app->get_user_query;
+	$query->execute($uid);
+	my $rows = $query->fetchall_arrayref;
+	if ( @{$rows} ) {
+		my @row = @{ $rows->[0] };
+		return {
+			id            => $row[0],
+			name          => $row[1],
+			status        => $row[2],
+			is_public     => $row[3],
+			email         => $row[4],
+			registered_at => DateTime->from_epoch(
+				epoch     => $row[5],
+				time_zone => 'Europe/Berlin'
+			),
+			last_seen => DateTime->from_epoch(
+				epoch     => $row[6],
+				time_zone => 'Europe/Berlin'
+			),
+			deletion_requested => $row[7]
+		};
+	}
+	return;
 };
 
 helper 'get_user_name' => sub {

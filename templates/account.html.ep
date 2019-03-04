@@ -1,17 +1,18 @@
 <h1>Account</h1>
+% my $acc = get_user_data();
 <div class="row">
 	<table class="striped">
 		<tr>
 			<th scope="row">Name</th>
-			<td><%= get_user_name() %></td>
+			<td><%= $acc->{name} %></td>
 		</tr>
 		<tr>
 			<th scope="row">Mail</th>
-			<td>fnord@example.org</td>
+			<td><%= $acc->{email} %></td>
 		</tr>
 		<tr>
 			<th scope="row">Registriert am</th>
-			<td>01.01.1970 00:00</td>
+			<td><%= $acc->{registered_at}->strftime('%d.%m.%Y %H:%M') %></td>
 		</tr>
 	</table>
 </div>
