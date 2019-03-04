@@ -29,22 +29,22 @@
 		<div class="row">
 			<div class="input-field col l6 m12 s12">
 				<i class="material-icons prefix">account_circle</i>
-				<input name="user" id="account" type="text" class="validate">
+				%= text_field 'user', id => 'account', class => 'validate'
 				<label for="account">Name</label>
 			</div>
 			<div class="input-field col l6 m12 s12">
 				<i class="material-icons prefix">email</i>
-				<input name="email" id="email" type="email" class="validate">
+				%= email_field 'email', id => 'email', class => 'validate'
 				<label for="email">Mail-Adresse</label>
 			</div>
 			<div class="input-field col l6 m12 s12">
 				<i class="material-icons prefix">lock</i>
-				<input name="password" id="password" type="password" class="validate">
+				%= password_field 'password', id => 'password', class => 'validate'
 				<label for="password">Passwort</label>
 			</div>
 			<div class="input-field col l6 m12 s12">
 				<i class="material-icons prefix">lock</i>
-				<input name="password2" id="password2" type="password" class="validate">
+				%= password_field 'password2', id => 'password2', class => 'validate'
 				<label for="password2">Passwort wiederholen</label>
 			</div>
 		</div>
