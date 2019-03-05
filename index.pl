@@ -6,7 +6,7 @@ use Cache::File;
 use DateTime;
 use DBI;
 use Encode qw(decode encode);
-use Email::Sender::Simple qw(sendmail);
+use Email::Sender::Simple qw(try_to_sendmail);
 use Email::Simple;
 use Geo::Distance;
 use List::Util qw(first);
@@ -504,11 +504,26 @@ helper 'get_user_id' => sub {
 	$user_name //= $self->get_user_name;
 
 	if ( not -e $dbname ) {
+		$self->app->dbh->begin_work;
+		$self->app->dbh->do(
+			qq{
+			create table schema_version (
+				version integer primary key
+			);
+		}
+		);
 		$self->app->dbh->do(
 			qq{
 			create table users (
 				id integer primary key,
-				name char(64) not null unique
+				name char(64) not null unique,
+				status int not null,
+				is_public bool not null,
+				email char(256),
+				password text,
+				registered_at datetime not null,
+				last_login datetime not null,
+				deletion_requested datetime
 			)
 		}
 		);
@@ -540,6 +555,12 @@ helper 'get_user_id' => sub {
 			)
 		}
 		);
+		$self->app->dbh->do(
+			qq{
+			insert into schema_version (version) values (1);
+		}
+		);
+		$self->app->dbh->commit;
 	}
 
 	$self->app->get_userid_query->execute($user_name);
@@ -987,6 +1008,11 @@ post '/x/register' => sub {
 		return;
 	}
 
+	if ( not length($email) ) {
+		$self->render( 'register', invalid => 'mail_empty' );
+		return;
+	}
+
 	if ( $user !~ m{ ^ [0-9a-zA-Z_-]+ $ }x ) {
 		$self->render( 'register', invalid => 'user_format' );
 		return;
@@ -1038,8 +1064,13 @@ post '/x/register' => sub {
 	);
 
 	# TODO re-enable once remaining registration code is complete
-	#sendmail($reg_mail);
-	#$self->render( 'login', from => 'register' );
+	#my $success = try_to_sendmail($reg_mail);
+	#if ($success) {
+	#	$self->render( 'login', from => 'register' );
+	#}
+	#else {
+	#	$self->render( 'register', invalid => 'sendmail' );
+	#}
 
 	$self->render( 'register', invalid => 'not implemented yet' );
 };
