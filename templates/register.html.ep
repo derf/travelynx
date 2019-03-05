@@ -60,22 +60,22 @@
 		<div class="row">
 			<div class="input-field col l6 m12 s12">
 				<i class="material-icons prefix">account_circle</i>
-				%= text_field 'user', id => 'account', class => 'validate'
+				%= text_field 'user', id => 'account', class => 'validate', required => undef, pattern => '[0-9a-zA-Z_-]+', maxlength => 60
 				<label for="account">Name</label>
 			</div>
 			<div class="input-field col l6 m12 s12">
 				<i class="material-icons prefix">email</i>
-				%= email_field 'email', id => 'email', class => 'validate'
+				%= email_field 'email', id => 'email', class => 'validate', required => undef, maxlength => 250
 				<label for="email">Mail-Adresse</label>
 			</div>
 			<div class="input-field col l6 m12 s12">
 				<i class="material-icons prefix">lock</i>
-				%= password_field 'password', id => 'password', class => 'validate'
+				%= password_field 'password', id => 'password', class => 'validate', required => undef, minlength => 8
 				<label for="password">Passwort</label>
 			</div>
 			<div class="input-field col l6 m12 s12">
 				<i class="material-icons prefix">lock</i>
-				%= password_field 'password2', id => 'password2', class => 'validate'
+				%= password_field 'password2', id => 'password2', class => 'validate', required => undef, minlength => 8
 				<label for="password2">Passwort wiederholen</label>
 			</div>
 		</div>
