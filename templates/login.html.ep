@@ -45,12 +45,12 @@
 		<div class="row">
 			<div class="input-field col s12">
 				<i class="material-icons prefix">account_circle</i>
-				%= text_field 'user', id => 'user', class => 'validate'
+				%= text_field 'user', id => 'user', class => 'validate', required => undef, maxlength => 60
 				<label for="user">Account</label>
 			</div>
 			<div class="input-field col s12">
 				<i class="material-icons prefix">lock</i>
-				%= password_field 'password', id => 'password', class => 'validate'
+				%= password_field 'password', id => 'password', class => 'validate', required => undef
 				<label for="password">Passwort</label>
 			</div>
 		</div>
