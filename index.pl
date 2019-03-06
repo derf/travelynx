@@ -187,7 +187,7 @@ app->attr(
 		return $self->app->dbh->prepare(
 			qq{
 			select
-				id, name, status, is_public, email,
+				id, name, status, public_level, email,
 				registered_at, last_login, deletion_requested
 			from users where id = ?
 		}
@@ -536,8 +536,9 @@ helper 'get_user_id' => sub {
 				id integer primary key,
 				name char(64) not null unique,
 				status int not null,
-				is_public bool not null,
+				public_level bool not null,
 				email char(256),
+				token char(80),
 				password text,
 				registered_at datetime not null,
 				last_login datetime not null,

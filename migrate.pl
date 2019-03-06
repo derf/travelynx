@@ -78,7 +78,7 @@ my @migrations = (
 			insert into new_users
 				(id, name, status, is_public, registered_at, last_login)
 				values
-				(?, ?, ?, ?, ?, ?)
+				(?, ?, ?, ?, ?, ?);
 		}
 		);
 		$get_users_query->execute;
@@ -96,6 +96,80 @@ my @migrations = (
 		$dbh->do(
 			qq{
 			alter table new_users rename to users;
+		}
+		);
+		$dbh->commit;
+	},
+
+	# v1 -> v2
+	sub {
+		$dbh->begin_work;
+		$dbh->do(
+			qq{
+			update schema_version set version = 2;
+		}
+		);
+		$dbh->do(
+			qq{
+			create table new_users (
+				id integer primary key,
+				name char(64) not null unique,
+				status int not null,
+				public_level int not null,
+				email char(256),
+				token char(80),
+				password text,
+				registered_at datetime not null,
+				last_login datetime not null,
+				deletion_requested datetime
+			);
+		}
+		);
+		my $get_users_query = $dbh->prepare(
+			qq{
+			select * from users;
+		}
+		);
+
+		# At this point, some "users" fields were never used -> skip those
+		# during migration.
+		my $add_user_query = $dbh->prepare(
+			qq{
+			insert into new_users
+				(id, name, status, public_level, registered_at, last_login)
+				values
+				(?, ?, ?, ?, ?, ?);
+		}
+		);
+
+		$get_users_query->execute;
+
+		while ( my @row = $get_users_query->fetchrow_array ) {
+			my (
+				$id,        $name,       $status,
+				$is_public, $email,      $password,
+				$reg_at,    $last_login, $del_requested
+			) = @row;
+			$add_user_query->execute( $id, $name, $status, $is_public, $reg_at,
+				$last_login );
+		}
+		$dbh->do(
+			qq{
+			drop table users;
+		}
+		);
+		$dbh->do(
+			qq{
+			alter table new_users rename to users;
+		}
+		);
+		$dbh->do(
+			qq{
+			create table pending_mails (
+				email char(256) not null primary key,
+				num_tries int not null,
+				last_try datetime not null
+			);
 		}
 		);
 		$dbh->commit;
