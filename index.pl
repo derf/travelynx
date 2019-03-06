@@ -12,6 +12,7 @@ use Email::Simple;
 use Geo::Distance;
 use List::Util qw(first);
 use List::MoreUtils qw(after_incl before_incl);
+use UUID::Tiny qw(:std);
 use Travel::Status::DE::IRIS;
 use Travel::Status::DE::IRIS::Stations;
 
@@ -44,18 +45,24 @@ app->plugin(
 		autoload_user => 1,
 		session_key   => 'foodor',
 		load_user     => sub {
-			my ( $app, $uid ) = @_;
-			if ( $uid == 1 ) {
-				return {
-					name => 'dev',
-				};
+			my ( $self, $uid ) = @_;
+			my $data = $self->get_user_data($uid);
+			if ($data) {
+				return { name => $data->{name} };
 			}
 			return undef;
 		},
 		validate_user => sub {
-			my ( $c, $username, $password, $extradata ) = @_;
-			if ( $username eq 'dev' and $password eq 'ohai' ) {
-				return 1;
+			my ( $self, $username, $password, $extradata ) = @_;
+			my $user_info = $self->get_user_password($username);
+			if ( not $user_info ) {
+				return undef;
+			}
+			if ( $user_info->{status} != 1 ) {
+				return undef;
+			}
+			if ( check_password( $password, $user_info->{password_hash} ) ) {
+				return $user_info->{id};
 			}
 			return undef;
 		},
@@ -90,14 +97,47 @@ app->attr(
 	}
 );
 app->attr(
+	set_email_query => sub {
+		my ($self) = @_;
+
+		return $self->app->dbh->prepare(
+			qq{
+				update users set email = ?, token = ? where id = ?;
+			}
+		);
+	}
+);
+app->attr(
+	set_password_query => sub {
+		my ($self) = @_;
+
+		return $self->app->dbh->prepare(
+			qq{
+				update users set password = ? where id = ?;
+			}
+		);
+	}
+);
+app->attr(
 	add_mail_query => sub {
 		my ($self) = @_;
 
-		return $sefl->app->dbh->prepare(
+		return $self->app->dbh->prepare(
 			qq{
 				insert into pending_mails (
 					email, num_tries, last_try
 				) values (?, ?, ?);
+			}
+		);
+	}
+);
+app->attr(
+	set_status_query => sub {
+		my ($self) = @_;
+
+		return $self->app->dbh->prepare(
+			qq{
+				update users set status = ? where id = ?;
 			}
 		);
 	}
@@ -211,6 +251,32 @@ app->attr(
 	}
 );
 app->attr(
+	get_password_query => sub {
+		my ($self) = @_;
+
+		return $self->app->dbh->prepare(
+			qq{
+			select
+				id, name, status, password
+			from users where name = ?
+		}
+		);
+	}
+);
+app->attr(
+	get_token_query => sub {
+		my ($self) = @_;
+
+		return $self->app->dbh->prepare(
+			qq{
+			select
+				name, status, token
+			from users where id = ?
+		}
+		);
+	}
+);
+app->attr(
 	get_stationid_by_ds100_query => sub {
 		my ($self) = @_;
 
@@ -245,7 +311,7 @@ app->attr(
 sub hash_password {
 	my ($password) = @_;
 	my @salt_bytes = map { int( rand(255) ) + 1 } ( 1 .. 16 );
-	my $salt = en_base64( pack( 'c[16]', @salt_bytes ) );
+	my $salt = en_base64( pack( 'C[16]', @salt_bytes ) );
 
 	return bcrypt( $password, '$2a$12$' . $salt );
 }
@@ -260,7 +326,7 @@ sub check_password {
 }
 
 sub make_token {
-	return join( q{}, map { chr( int( rand(26) ) + 97 ) } ( 1 .. 70 ) );
+	return create_uuid_as_string(UUID_V4);
 }
 
 sub epoch_to_dt {
@@ -499,10 +565,22 @@ helper 'get_station_id' => sub {
 	}
 };
 
-helper 'get_user_data' => sub {
-	my ($self) = @_;
+helper 'get_user_token' => sub {
+	my ( $self, $uid ) = @_;
 
-	my $uid   = $self->get_user_id;
+	my $query = $self->app->get_token_query;
+	$query->execute($uid);
+	my $rows = $query->fetchall_arrayref;
+	if ( @{$rows} ) {
+		return @{ $rows->[0] };
+	}
+	return;
+};
+
+helper 'get_user_data' => sub {
+	my ( $self, $uid ) = @_;
+
+	$uid //= $self->get_user_id;
 	my $query = $self->app->get_user_query;
 	$query->execute($uid);
 	my $rows = $query->fetchall_arrayref;
@@ -528,6 +606,23 @@ helper 'get_user_data' => sub {
 	return;
 };
 
+helper 'get_user_password' => sub {
+	my ( $self, $name ) = @_;
+	my $query = $self->app->get_password_query;
+	$query->execute($name);
+	my $rows = $query->fetchall_arrayref;
+	if ( @{$rows} ) {
+		my @row = @{ $rows->[0] };
+		return {
+			id            => $row[0],
+			name          => $row[1],
+			status        => $row[2],
+			password_hash => $row[3],
+		};
+	}
+	return;
+};
+
 helper 'get_user_name' => sub {
 	my ($self) = @_;
 
@@ -537,7 +632,7 @@ helper 'get_user_name' => sub {
 };
 
 helper 'get_user_id' => sub {
-	my ( $self, $user_name, $mail, $token, $password ) = @_;
+	my ( $self, $user_name, $email, $token, $password ) = @_;
 
 	$user_name //= $self->get_user_name;
 
@@ -606,11 +701,20 @@ helper 'get_user_id' => sub {
 	my $rows = $self->app->get_userid_query->fetchall_arrayref;
 
 	if ( @{$rows} ) {
-		return $rows->[0][0];
+		my $id = $rows->[0][0];
+
+		# transition code for closed beta account -> normal account
+		if ($email) {
+			$self->app->set_email_query->execute( $email, $token, $id );
+		}
+		if ($password) {
+			$self->app->set_password_query->execute( $password, $id );
+		}
+		return $id;
 	}
 	else {
 		my $now = DateTime->now( time_zone => 'Europe/Berlin' )->epoch;
-		$self->app->add_user_query->execute( $user_name, $mail, $token,
+		$self->app->add_user_query->execute( $user_name, $email, $token,
 			$password, $now, $now );
 		$self->app->get_userid_query->execute($user_name);
 		$rows = $self->app->get_userid_query->fetchall_arrayref;
@@ -1059,7 +1163,8 @@ post '/x/register' => sub {
 		return;
 	}
 
-	if ( $self->check_if_user_name_exists($user) or $user eq 'dev' ) {
+	#if ( $self->check_if_user_name_exists($user) or $user eq 'dev' ) {
+	if ( $user ne $self->get_user_name ) {
 		$self->render( 'register', invalid => 'user_collision' );
 		return;
 	}
@@ -1083,8 +1188,7 @@ post '/x/register' => sub {
 	$body .= "travelynx.finalrewind.org angelegt.\n\n";
 	$body
 	  .= "Falls die Registrierung von dir ausging, kannst du den Account unter\n";
-	$body
-	  .= "https://travelynx.finalrewind.org/x/confirm/${user_id}/${token}\n";
+	$body .= "https://travelynx.finalrewind.org/x/reg/${user_id}/${token}\n";
 	$body .= "freischalten.\n\n";
 	$body
 	  .= "Falls nicht, ignoriere diese Mail bitte. Nach 48 Stunden wird deine\n";
@@ -1098,8 +1202,6 @@ post '/x/register' => sub {
 	$body .= " * Verwendeter Browser gemäß User Agent: ${ua}\n\n\n";
 	$body .= "Impressum: https://travelynx.finalrewind.org/x/impressum\n";
 
-	# TODO create user object
-
 	my $reg_mail = Email::Simple->create(
 		header => [
 			To             => $email,
@@ -1110,16 +1212,36 @@ post '/x/register' => sub {
 		body => encode( 'utf-8', $body ),
 	);
 
-	# TODO re-enable once remaining registration code is complete
-	#my $success = try_to_sendmail($reg_mail);
-	#if ($success) {
-	#	$self->render( 'login', from => 'register' );
-	#}
-	#else {
-	#	$self->render( 'register', invalid => 'sendmail' );
-	#}
+	my $success = try_to_sendmail($reg_mail);
+	if ($success) {
+		$self->render( 'login', from => 'register' );
+	}
+	else {
+		$self->render( 'register', invalid => 'sendmail' );
+	}
+};
 
-	$self->render( 'register', invalid => 'not implemented yet' );
+get '/x/reg/:id/:token' => sub {
+	my ($self) = @_;
+
+	my $id    = $self->stash('id');
+	my $token = $self->stash('token');
+
+	my @db_user = $self->get_user_token($id);
+
+	if ( not @db_user ) {
+		$self->render( 'register', invalid => 'token' );
+		return;
+	}
+
+	my ( $db_name, $db_status, $db_token ) = @db_user;
+
+	if ( not $db_name or $token ne $db_token or $db_status != 0 ) {
+		$self->render( 'register', invalid => 'token' );
+		return;
+	}
+	$self->app->set_status_query->execute( 1, $id );
+	$self->render( 'login', from => 'verification' );
 };
 
 get '/*station' => sub {

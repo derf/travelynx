@@ -45,6 +45,10 @@
 						<p>Die Bestätigungsmail konnte nicht verschickt werden.
 							Überprüfe bitte, ob die Adresse gültig ist.</p>
 					% }
+					% elsif ($invalid eq 'token') {
+						<span class="card-title">Ungültiger Token</span>
+						<p>Die Verifikation deiner Mail-Adresse ist fehlgeschlagen oder du hast den Token schon einmal verwendet.</p>
+					% }
 					% else {
 						<span class="card-title">Unbekannter Fehler</span>
 						<p>„<%= $invalid %>“</p>
