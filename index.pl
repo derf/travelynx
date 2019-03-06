@@ -3,6 +3,7 @@
 use Mojolicious::Lite;
 use Mojolicious::Plugin::Authentication;
 use Cache::File;
+use Crypt::Eksblowfish::Bcrypt qw(bcrypt en_base64);
 use DateTime;
 use DBI;
 use Encode qw(decode encode);
@@ -224,6 +225,23 @@ app->attr(
 		);
 	},
 );
+
+sub hash_password {
+	my ($password) = @_;
+	my @salt_bytes = map { int( rand(255) ) + 1 } ( 1 .. 16 );
+	my $salt = en_base64( pack( 'c[16]', @salt_bytes ) );
+
+	return bcrypt( $password, '$2a$12$' . $salt );
+}
+
+sub check_password {
+	my ( $password, $hash ) = @_;
+
+	if ( bcrypt( $password, $hash ) eq $hash ) {
+		return 1;
+	}
+	return 0;
+}
 
 sub epoch_to_dt {
 	my ($epoch) = @_;
