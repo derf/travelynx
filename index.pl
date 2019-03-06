@@ -81,8 +81,24 @@ app->attr(
 
 		return $self->app->dbh->prepare(
 			qq{
-			insert into users (name) values (?)
+			insert into users (
+				name, status, public_level, email, token, password,
+				registered_at, last_login
+			) values (?, 0, 0, ?, ?, ?, ?, ?);
 		}
+		);
+	}
+);
+app->attr(
+	add_mail_query => sub {
+		my ($self) = @_;
+
+		return $sefl->app->dbh->prepare(
+			qq{
+				insert into pending_mails (
+					email, num_tries, last_try
+				) values (?, ?, ?);
+			}
 		);
 	}
 );
@@ -241,6 +257,10 @@ sub check_password {
 		return 1;
 	}
 	return 0;
+}
+
+sub make_token {
+	return join( q{}, map { chr( int( rand(26) ) + 97 ) } ( 1 .. 70 ) );
 }
 
 sub epoch_to_dt {
@@ -517,7 +537,7 @@ helper 'get_user_name' => sub {
 };
 
 helper 'get_user_id' => sub {
-	my ( $self, $user_name ) = @_;
+	my ( $self, $user_name, $mail, $token, $password ) = @_;
 
 	$user_name //= $self->get_user_name;
 
@@ -589,7 +609,9 @@ helper 'get_user_id' => sub {
 		return $rows->[0][0];
 	}
 	else {
-		$self->app->add_user_query->execute($user_name);
+		my $now = DateTime->now( time_zone => 'Europe/Berlin' )->epoch;
+		$self->app->add_user_query->execute( $user_name, $mail, $token,
+			$password, $now, $now );
 		$self->app->get_userid_query->execute($user_name);
 		$rows = $self->app->get_userid_query->fetchall_arrayref;
 		return $rows->[0][0];
@@ -1052,12 +1074,18 @@ post '/x/register' => sub {
 		return;
 	}
 
+	my $token   = make_token();
+	my $pw_hash = hash_password($password);
+	my $user_id = $self->get_user_id( $user, $email, $token, $pw_hash );
+
 	my $body = "Hallo, ${user}!\n\n";
 	$body .= "Mit deiner E-Mail-Adresse (${email}) wurde ein Account auf\n";
 	$body .= "travelynx.finalrewind.org angelegt.\n\n";
 	$body
 	  .= "Falls die Registrierung von dir ausging, kannst du den Account unter\n";
-	$body .= "https://travelynx.finalrewind.org/x/TODO freischalten.\n\n";
+	$body
+	  .= "https://travelynx.finalrewind.org/x/confirm/${user_id}/${token}\n";
+	$body .= "freischalten.\n\n";
 	$body
 	  .= "Falls nicht, ignoriere diese Mail bitte. Nach 48 Stunden wird deine\n";
 	$body
