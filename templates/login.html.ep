@@ -7,7 +7,7 @@
 					<p>
 						Du bist bereits angemeldet. Falls du mehrere Accounts hast
 						und auf einen anderen wechseln möchtest, musst du dich
-						vorher <a href="/x/logout">abmelden</a>.
+						vorher <a href="/logout">abmelden</a>.
 					</p>
 				</div>
 			</div>
@@ -64,7 +64,7 @@
 	</div>
 % }
 <div class="row">
-	%= form_for '/x/login' => (class => 'col s12', method => 'POST') => begin
+	%= form_for '/login' => (class => 'col s12', method => 'POST') => begin
 		%= csrf_field
 		<div class="row">
 			<div class="input-field col s12">

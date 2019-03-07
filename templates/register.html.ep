@@ -59,7 +59,7 @@
 	</div>
 % }
 <div class="row">
-	%= form_for '/x/register' => (class => 'col s12', method => 'POST') => begin
+	%= form_for '/register' => (class => 'col s12', method => 'POST') => begin
 		%= csrf_field
 		<div class="row">
 			<div class="input-field col l6 m12 s12">
@@ -103,7 +103,7 @@
 			Die Mail-Adresse wird ausschließlich zur Bestätigung der Anmeldung
 			und für die "Passwort vergessen"-Funktionalität verwendet und nicht
 			an Dritte weitergegeben.  Die <a
-			href="/x/impressum">Datenschutzerklärung</a> beschreibt weitere
+			href="/impressum">Datenschutzerklärung</a> beschreibt weitere
 			erhobene Daten sowie deren Zweck und Speicherfristen.
 			Accounts werden nach einem Jahr ohne Nutzung automatisch gelöscht.
 		</p>

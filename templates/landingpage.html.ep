@@ -1,72 +1,77 @@
-<div class="row">
-	<div class="col s12">
-		% my $status = $self->get_user_status;
-		% if ($status->{checked_in}) {
-			<div class="card green darken-4">
-				<div class="card-content white-text">
-					<span class="card-title">Hallo, <%= $self->get_user_name %>!</span>
-					<p>Du bist gerade eingecheckt in
-						<%= $status->{train_type} %> <%= $status->{train_no} %>
-						ab <%= $status->{station_name} %>.
-						% if ($status->{timestamp_delta} < 3600) {
-							<a class="action-undo"><i class="material-icons">undo</i> Rückgängig</a>
-						% }
-						</p>
-					<p>Auschecken?</p>
-					<table>
-						<tbody>
-							% my $is_after = 0;
-							% for my $station (@{$status->{route_after}}) {
-								<tr><td><a class="action-checkout" data-station="<%= $station %>"><%= $station %></a></td></tr>
+% if (is_user_authenticated()) {
+	<div class="row">
+		<div class="col s12">
+			% my $status = get_user_status();
+			% if ($status->{checked_in}) {
+				<div class="card green darken-4">
+					<div class="card-content white-text">
+						<span class="card-title">Hallo, <%= current_user()->{name} %>!</span>
+						<p>Du bist gerade eingecheckt in
+							<%= $status->{train_type} %> <%= $status->{train_no} %>
+							ab <%= $status->{station_name} %>.
+							% if ($status->{timestamp_delta} < 3600) {
+								<a class="action-undo"><i class="material-icons">undo</i> Rückgängig</a>
 							% }
-						</tbody>
-					</table>
-				</div>
-			</div>
-		% }
-		% else {
-			<div class="card grey darken-4">
-				<div class="card-content white-text">
-					<span class="card-title">Hallo, <%= $self->get_user_name %>!</span>
-					<p>Du bist gerade nicht eingecheckt.</p>
-					<p class="geolocationhint">Stationen in der Umgebung:</p>
-					<div class="geolocation">
-						<div class="progress"><div class="indeterminate"></div></div>
+							</p>
+						<p>Auschecken?</p>
+						<table>
+							<tbody>
+								% my $is_after = 0;
+								% for my $station (@{$status->{route_after}}) {
+									<tr><td><a class="action-checkout" data-station="<%= $station %>"><%= $station %></a></td></tr>
+								% }
+							</tbody>
+						</table>
 					</div>
 				</div>
-			</div>
-		% }
-	</div>
-</div>
-<h1>Letzte Fahrten</h1>
-<div class="row">
-	<table class="striped">
-		<thead>
-			<tr>
-				<th>Datum</th>
-				<th>Zug</th>
-				<th>Strecke</th>
-				<th>Dauer</th>
-			</tr>
-		</thead>
-		<tbody>
-			% for my $travel (get_user_travels(1)) {
-				% if ($travel->{completed}) {
-					<tr>
-						<td><%= $travel->{sched_departure}->strftime('%d.%m.%Y') %></td>
-						<td><%= $travel->{type} %> <%= $travel->{line} // $travel->{no} %></td>
-						<td><%= $travel->{from_name} %> → <%= $travel->{to_name} %></td>
-						% if ($travel->{rt_arrival}->epoch and $travel->{rt_departure}->epoch) {
-							<td><%= ($travel->{rt_arrival}->epoch - $travel->{rt_departure}->epoch) / 60 %> min
-							</td>
-						% } else {
-							<td><%= sprintf('%.f', $self->get_travel_distance($travel->{from_name}, $travel->{to_name}, $travel->{route})) %>km
-								<i class="material-icons">timer_off</i>
-							</td>
-						% }
-					</tr>
-				% }
 			% }
-		</tbody>
-	</tabel>
-</div>
+			% else {
+				<div class="card grey darken-4">
+					<div class="card-content white-text">
+						<span class="card-title">Hallo, <%= current_user()->{name} %>!</span>
+						<p>Du bist gerade nicht eingecheckt.</p>
+						<p class="geolocationhint">Stationen in der Umgebung:</p>
+						<div class="geolocation">
+							<div class="progress"><div class="indeterminate"></div></div>
+						</div>
+					</div>
+				</div>
+			% }
+		</div>
+	</div>
+	<h1>Letzte Fahrten</h1>
+	<div class="row">
+		<table class="striped">
+			<thead>
+				<tr>
+					<th>Datum</th>
+					<th>Zug</th>
+					<th>Strecke</th>
+					<th>Dauer</th>
+				</tr>
+			</thead>
+			<tbody>
+				% for my $travel (get_user_travels(1)) {
+					% if ($travel->{completed}) {
+						<tr>
+							<td><%= $travel->{sched_departure}->strftime('%d.%m.%Y') %></td>
+							<td><%= $travel->{type} %> <%= $travel->{line} // $travel->{no} %></td>
+							<td><%= $travel->{from_name} %> → <%= $travel->{to_name} %></td>
+							% if ($travel->{rt_arrival}->epoch and $travel->{rt_departure}->epoch) {
+								<td><%= ($travel->{rt_arrival}->epoch - $travel->{rt_departure}->epoch) / 60 %> min
+								</td>
+							% } else {
+								<td><%= sprintf('%.f', $self->get_travel_distance($travel->{from_name}, $travel->{to_name}, $travel->{route})) %>km
+									<i class="material-icons">timer_off</i>
+								</td>
+							% }
+						</tr>
+					% }
+				% }
+			</tbody>
+		</tabel>
+	</div>
+% }
+% else {
+Huhu!
+% }

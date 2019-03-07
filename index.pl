@@ -44,13 +44,10 @@ app->plugin(
 	authentication => {
 		autoload_user => 1,
 		session_key   => 'foodor',
+		fail_render   => { template => 'login' },
 		load_user     => sub {
 			my ( $self, $uid ) = @_;
-			my $data = $self->get_user_data($uid);
-			if ($data) {
-				return { name => $data->{name} };
-			}
-			return undef;
+			return $self->get_user_data($uid);
 		},
 		validate_user => sub {
 			my ( $self, $username, $password, $extradata ) = @_;
@@ -68,6 +65,7 @@ app->plugin(
 		},
 	}
 );
+app->sessions->default_expiration( 60 * 60 * 24 * 180 );
 
 app->defaults( layout => 'default' );
 
@@ -427,7 +425,7 @@ helper 'checkin' => sub {
 			}
 
 			my $success = $self->app->checkin_query->execute(
-				$self->get_user_id,
+				$self->current_user->{id},
 				$self->get_station_id(
 					ds100 => $status->{station_ds100},
 					name  => $status->{station_name}
@@ -457,7 +455,7 @@ helper 'checkin' => sub {
 helper 'undo' => sub {
 	my ($self) = @_;
 
-	my $uid = $self->get_user_id;
+	my $uid = $self->current_user->{id};
 	$self->app->get_last_actions_query->execute($uid);
 	my $rows = $self->app->get_last_actions_query->fetchall_arrayref;
 
@@ -469,10 +467,10 @@ helper 'undo' => sub {
 		return 'Repeated undo is not supported';
 	}
 
-	my $success
-	  = $self->app->undo_query->execute( $self->get_user_id,
+	my $success = $self->app->undo_query->execute(
+		$self->current_user->{id},
 		DateTime->now( time_zone => 'Europe/Berlin' )->epoch,
-	  );
+	);
 
 	if ( defined $success ) {
 		return;
@@ -501,7 +499,7 @@ helper 'checkout' => sub {
 	if ( not defined $train ) {
 		if ($force) {
 			my $success = $self->app->checkout_query->execute(
-				$self->get_user_id,
+				$self->current_user->{id},
 				$self->get_station_id(
 					ds100 => $status->{station_ds100},
 					name  => $status->{station_name}
@@ -523,7 +521,7 @@ helper 'checkout' => sub {
 	}
 	else {
 		my $success = $self->app->checkout_query->execute(
-			$self->get_user_id,
+			$self->current_user->{id},
 			$self->get_station_id(
 				ds100 => $status->{station_ds100},
 				name  => $status->{station_name}
@@ -580,7 +578,7 @@ helper 'get_user_token' => sub {
 helper 'get_user_data' => sub {
 	my ( $self, $uid ) = @_;
 
-	$uid //= $self->get_user_id;
+	$uid //= $self->current_user->{id};
 	my $query = $self->app->get_user_query;
 	$query->execute($uid);
 	my $rows = $query->fetchall_arrayref;
@@ -603,7 +601,7 @@ helper 'get_user_data' => sub {
 			deletion_requested => $row[7]
 		};
 	}
-	return;
+	return undef;
 };
 
 helper 'get_user_password' => sub {
@@ -623,79 +621,8 @@ helper 'get_user_password' => sub {
 	return;
 };
 
-helper 'get_user_name' => sub {
-	my ($self) = @_;
-
-	my $user = $self->req->headers->header('X-Remote-User') // 'dev';
-
-	return $user;
-};
-
-helper 'get_user_id' => sub {
+helper 'add_user' => sub {
 	my ( $self, $user_name, $email, $token, $password ) = @_;
-
-	$user_name //= $self->get_user_name;
-
-	if ( not -e $dbname ) {
-		$self->app->dbh->begin_work;
-		$self->app->dbh->do(
-			qq{
-			create table schema_version (
-				version integer primary key
-			);
-		}
-		);
-		$self->app->dbh->do(
-			qq{
-			create table users (
-				id integer primary key,
-				name char(64) not null unique,
-				status int not null,
-				public_level bool not null,
-				email char(256),
-				token char(80),
-				password text,
-				registered_at datetime not null,
-				last_login datetime not null,
-				deletion_requested datetime
-			)
-		}
-		);
-		$self->app->dbh->do(
-			qq{
-			create table stations (
-				id integer primary key,
-				ds100 char(16) not null unique,
-				name char(64) not null unique
-			)
-		}
-		);
-		$self->app->dbh->do(
-			qq{
-			create table user_actions (
-				user_id int not null,
-				action_id int not null,
-				station_id int,
-				action_time int not null,
-				train_type char(16),
-				train_line char(16),
-				train_no char(16),
-				train_id char(128),
-				sched_time int,
-				real_time int,
-				route text,
-				messages text,
-				primary key (user_id, action_time)
-			)
-		}
-		);
-		$self->app->dbh->do(
-			qq{
-			insert into schema_version (version) values (1);
-		}
-		);
-		$self->app->dbh->commit;
-	}
 
 	$self->app->get_userid_query->execute($user_name);
 	my $rows = $self->app->get_userid_query->fetchall_arrayref;
@@ -737,7 +664,7 @@ helper 'check_if_user_name_exists' => sub {
 helper 'get_user_travels' => sub {
 	my ( $self, $limit ) = @_;
 
-	my $uid   = $self->get_user_id;
+	my $uid   = $self->current_user->{id};
 	my $query = $self->app->get_all_actions_query;
 	if ($limit) {
 		$query = $self->app->get_last_actions_query;
@@ -800,7 +727,7 @@ helper 'get_user_travels' => sub {
 helper 'get_user_status' => sub {
 	my ($self) = @_;
 
-	my $uid = $self->get_user_id;
+	my $uid = $self->current_user->{id};
 	$self->app->get_last_actions_query->execute($uid);
 	my $rows = $self->app->get_last_actions_query->fetchall_arrayref;
 
@@ -886,7 +813,217 @@ helper 'navbar_class' => sub {
 
 get '/' => sub {
 	my ($self) = @_;
-	$self->render( 'landingpage', with_geolocation => 1 );
+	if ( $self->is_user_authenticated ) {
+		$self->render( 'landingpage', with_geolocation => 1 );
+	}
+	else {
+		$self->render( 'landingpage', intro => 1 );
+	}
+};
+
+get '/about' => sub {
+	my ($self) = @_;
+
+	$self->render( 'about', version => $VERSION );
+};
+
+get '/impressum' => sub {
+	my ($self) = @_;
+
+	$self->render('imprint');
+};
+
+get '/imprint' => sub {
+	my ($self) = @_;
+
+	$self->render('imprint');
+};
+
+post '/geolocation' => sub {
+	my ($self) = @_;
+
+	my $lon = $self->param('lon');
+	my $lat = $self->param('lat');
+
+	if ( not $lon or not $lat ) {
+		$self->render( json => { error => 'Invalid lon/lat received' } );
+	}
+	else {
+		my @candidates = map {
+			{
+				ds100    => $_->[0][0],
+				name     => $_->[0][1],
+				eva      => $_->[0][2],
+				lon      => $_->[0][3],
+				lat      => $_->[0][4],
+				distance => $_->[1],
+			}
+		} Travel::Status::DE::IRIS::Stations::get_station_by_location( $lon,
+			$lat, 5 );
+		$self->render(
+			json => {
+				candidates => [@candidates],
+			}
+		);
+	}
+
+};
+
+get '/login' => sub {
+	my ($self) = @_;
+	$self->render('login');
+};
+
+post '/login' => sub {
+	my ($self)   = @_;
+	my $user     = $self->req->param('user');
+	my $password = $self->req->param('password');
+
+	# Keep cookies for 6 months
+	$self->session( expiration => 60 * 60 * 24 * 180 );
+
+	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
+		$self->render(
+			'login',
+			invalid => 'csrf',
+		);
+	}
+	else {
+		if ( $self->authenticate( $user, $password ) ) {
+			$self->redirect_to('/');
+		}
+		else {
+			$self->render( 'login', invalid => 'credentials' );
+		}
+	}
+};
+
+get '/register' => sub {
+	my ($self) = @_;
+	$self->render('register');
+};
+
+post '/register' => sub {
+	my ($self)    = @_;
+	my $user      = $self->req->param('user');
+	my $email     = $self->req->param('email');
+	my $password  = $self->req->param('password');
+	my $password2 = $self->req->param('password2');
+	my $ip        = $self->req->headers->header('X-Forwarded-For');
+	my $ua        = $self->req->headers->user_agent;
+	my $date = DateTime->now( time_zone => 'Europe/Berlin' )
+	  ->strftime('%d.%m.%Y %H:%M:%S %z');
+
+	# In case Mojolicious is not running behind a reverse proxy
+	$ip
+	  //= sprintf( '%s:%s', $self->tx->remote_address, $self->tx->remote_port );
+
+	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
+		$self->render(
+			'register',
+			invalid => 'csrf',
+		);
+		return;
+	}
+
+	if ( not length($user) ) {
+		$self->render( 'register', invalid => 'user_empty' );
+		return;
+	}
+
+	if ( not length($email) ) {
+		$self->render( 'register', invalid => 'mail_empty' );
+		return;
+	}
+
+	if ( $user !~ m{ ^ [0-9a-zA-Z_-]+ $ }x ) {
+		$self->render( 'register', invalid => 'user_format' );
+		return;
+	}
+
+	if ( $self->check_if_user_name_exists($user) ) {
+		$self->render( 'register', invalid => 'user_collision' );
+		return;
+	}
+
+	if ( $password ne $password2 ) {
+		$self->render( 'register', invalid => 'password_notequal' );
+		return;
+	}
+
+	if ( length($password) < 8 ) {
+		$self->render( 'register', invalid => 'password_short' );
+		return;
+	}
+
+	my $token   = make_token();
+	my $pw_hash = hash_password($password);
+	my $user_id = $self->add_user( $user, $email, $token, $pw_hash );
+
+	my $body = "Hallo, ${user}!\n\n";
+	$body .= "Mit deiner E-Mail-Adresse (${email}) wurde ein Account auf\n";
+	$body .= "travelynx.finalrewind.org angelegt.\n\n";
+	$body
+	  .= "Falls die Registrierung von dir ausging, kannst du den Account unter\n";
+	$body .= "https://travelynx.finalrewind.org/reg/${user_id}/${token}\n";
+	$body .= "freischalten.\n\n";
+	$body
+	  .= "Falls nicht, ignoriere diese Mail bitte. Nach 48 Stunden wird deine\n";
+	$body
+	  .= "Mail-Adresse erneut zur Registrierung freigeschaltet. Falls auch diese fehlschlägt,\n";
+	$body
+	  .= "werden wir sie dauerhaft sperren und keine Mails mehr dorthin schicken.\n\n";
+	$body .= "Daten zur Registrierung:\n";
+	$body .= " * Datum: ${date}\n";
+	$body .= " * Verwendete IP: ${ip}\n";
+	$body .= " * Verwendeter Browser gemäß User Agent: ${ua}\n\n\n";
+	$body .= "Impressum: https://travelynx.finalrewind.org/impressum\n";
+
+	my $reg_mail = Email::Simple->create(
+		header => [
+			To             => $email,
+			From           => 'Travelynx <travelynx@finalrewind.org>',
+			Subject        => 'Registrierung auf travelynx.finalrewind.org',
+			'Content-Type' => 'text/plain; charset=UTF-8',
+		],
+		body => encode( 'utf-8', $body ),
+	);
+
+	my $success = try_to_sendmail($reg_mail);
+	if ($success) {
+		$self->render( 'login', from => 'register' );
+	}
+	else {
+		$self->render( 'register', invalid => 'sendmail' );
+	}
+};
+
+get '/reg/:id/:token' => sub {
+	my ($self) = @_;
+
+	my $id    = $self->stash('id');
+	my $token = $self->stash('token');
+
+	my @db_user = $self->get_user_token($id);
+
+	if ( not @db_user ) {
+		$self->render( 'register', invalid => 'token' );
+		return;
+	}
+
+	my ( $db_name, $db_status, $db_token ) = @db_user;
+
+	if ( not $db_name or $token ne $db_token or $db_status != 0 ) {
+		$self->render( 'register', invalid => 'token' );
+		return;
+	}
+	$self->app->set_status_query->execute( 1, $id );
+	$self->render( 'login', from => 'verification' );
+};
+
+under sub {
+	my ($self) = @_;
+	return $self->is_user_authenticated;
 };
 
 post '/action' => sub {
@@ -979,15 +1116,21 @@ post '/action' => sub {
 	}
 };
 
-get '/a/account' => sub {
+get '/account' => sub {
 	my ($self) = @_;
 
 	$self->render('account');
 };
 
-get '/a/export.json' => sub {
+get '/history' => sub {
 	my ($self) = @_;
-	my $uid    = $self->get_user_id;
+
+	$self->render('history');
+};
+
+get '/export.json' => sub {
+	my ($self) = @_;
+	my $uid    = $self->current_user->{id};
 	my $query  = $self->app->get_all_actions_query;
 
 	$query->execute($uid);
@@ -1031,220 +1174,13 @@ get '/a/export.json' => sub {
 	);
 };
 
-get '/a/history' => sub {
-	my ($self) = @_;
-
-	$self->render('history');
-};
-
-get '/x/about' => sub {
-	my ($self) = @_;
-
-	$self->render( 'about', version => $VERSION );
-};
-
-get '/x/impressum' => sub {
-	my ($self) = @_;
-
-	$self->render('imprint');
-};
-
-get '/x/imprint' => sub {
-	my ($self) = @_;
-
-	$self->render('imprint');
-};
-
-post '/x/geolocation' => sub {
-	my ($self) = @_;
-
-	my $lon = $self->param('lon');
-	my $lat = $self->param('lat');
-
-	if ( not $lon or not $lat ) {
-		$self->render( json => { error => 'Invalid lon/lat received' } );
-	}
-	else {
-		my @candidates = map {
-			{
-				ds100    => $_->[0][0],
-				name     => $_->[0][1],
-				eva      => $_->[0][2],
-				lon      => $_->[0][3],
-				lat      => $_->[0][4],
-				distance => $_->[1],
-			}
-		} Travel::Status::DE::IRIS::Stations::get_station_by_location( $lon,
-			$lat, 5 );
-		$self->render(
-			json => {
-				candidates => [@candidates],
-			}
-		);
-	}
-
-};
-
-get '/x/login' => sub {
-	my ($self) = @_;
-	$self->render('login');
-};
-
-post '/x/login' => sub {
-	my ($self)   = @_;
-	my $user     = $self->req->param('user');
-	my $password = $self->req->param('password');
-
-	# Keep cookies for 6 months
-	$self->session( expiration => 60 * 60 * 24 * 180 );
-
-	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
-		$self->render(
-			'login',
-			invalid => 'csrf',
-		);
-	}
-	else {
-		if ( $self->authenticate( $user, $password ) ) {
-			$self->redirect_to('/');
-		}
-		else {
-			$self->render( 'login', invalid => 'credentials' );
-		}
-	}
-};
-
-get '/x/logout' => sub {
+post '/logout' => sub {
 	my ($self) = @_;
 	$self->logout;
-	$self->redirect_to('/x/login');
+	$self->redirect_to('/login');
 };
 
-get '/x/register' => sub {
-	my ($self) = @_;
-	$self->render('register');
-};
-
-post '/x/register' => sub {
-	my ($self)    = @_;
-	my $user      = $self->req->param('user');
-	my $email     = $self->req->param('email');
-	my $password  = $self->req->param('password');
-	my $password2 = $self->req->param('password2');
-	my $ip        = $self->req->headers->header('X-Forwarded-For');
-	my $ua        = $self->req->headers->user_agent;
-	my $date = DateTime->now( time_zone => 'Europe/Berlin' )
-	  ->strftime('%d.%m.%Y %H:%M:%S %z');
-
-	# In case Mojolicious is not running behind a reverse proxy
-	$ip
-	  //= sprintf( '%s:%s', $self->tx->remote_address, $self->tx->remote_port );
-
-	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
-		$self->render(
-			'register',
-			invalid => 'csrf',
-		);
-		return;
-	}
-
-	if ( not length($user) ) {
-		$self->render( 'register', invalid => 'user_empty' );
-		return;
-	}
-
-	if ( not length($email) ) {
-		$self->render( 'register', invalid => 'mail_empty' );
-		return;
-	}
-
-	if ( $user !~ m{ ^ [0-9a-zA-Z_-]+ $ }x ) {
-		$self->render( 'register', invalid => 'user_format' );
-		return;
-	}
-
-	#if ( $self->check_if_user_name_exists($user) or $user eq 'dev' ) {
-	if ( $user ne $self->get_user_name ) {
-		$self->render( 'register', invalid => 'user_collision' );
-		return;
-	}
-
-	if ( $password ne $password2 ) {
-		$self->render( 'register', invalid => 'password_notequal' );
-		return;
-	}
-
-	if ( length($password) < 8 ) {
-		$self->render( 'register', invalid => 'password_short' );
-		return;
-	}
-
-	my $token   = make_token();
-	my $pw_hash = hash_password($password);
-	my $user_id = $self->get_user_id( $user, $email, $token, $pw_hash );
-
-	my $body = "Hallo, ${user}!\n\n";
-	$body .= "Mit deiner E-Mail-Adresse (${email}) wurde ein Account auf\n";
-	$body .= "travelynx.finalrewind.org angelegt.\n\n";
-	$body
-	  .= "Falls die Registrierung von dir ausging, kannst du den Account unter\n";
-	$body .= "https://travelynx.finalrewind.org/x/reg/${user_id}/${token}\n";
-	$body .= "freischalten.\n\n";
-	$body
-	  .= "Falls nicht, ignoriere diese Mail bitte. Nach 48 Stunden wird deine\n";
-	$body
-	  .= "Mail-Adresse erneut zur Registrierung freigeschaltet. Falls auch diese fehlschlägt,\n";
-	$body
-	  .= "werden wir sie dauerhaft sperren und keine Mails mehr dorthin schicken.\n\n";
-	$body .= "Daten zur Registrierung:\n";
-	$body .= " * Datum: ${date}\n";
-	$body .= " * Verwendete IP: ${ip}\n";
-	$body .= " * Verwendeter Browser gemäß User Agent: ${ua}\n\n\n";
-	$body .= "Impressum: https://travelynx.finalrewind.org/x/impressum\n";
-
-	my $reg_mail = Email::Simple->create(
-		header => [
-			To             => $email,
-			From           => 'Travelynx <travelynx@finalrewind.org>',
-			Subject        => 'Registrierung auf travelynx.finalrewind.org',
-			'Content-Type' => 'text/plain; charset=UTF-8',
-		],
-		body => encode( 'utf-8', $body ),
-	);
-
-	my $success = try_to_sendmail($reg_mail);
-	if ($success) {
-		$self->render( 'login', from => 'register' );
-	}
-	else {
-		$self->render( 'register', invalid => 'sendmail' );
-	}
-};
-
-get '/x/reg/:id/:token' => sub {
-	my ($self) = @_;
-
-	my $id    = $self->stash('id');
-	my $token = $self->stash('token');
-
-	my @db_user = $self->get_user_token($id);
-
-	if ( not @db_user ) {
-		$self->render( 'register', invalid => 'token' );
-		return;
-	}
-
-	my ( $db_name, $db_status, $db_token ) = @db_user;
-
-	if ( not $db_name or $token ne $db_token or $db_status != 0 ) {
-		$self->render( 'register', invalid => 'token' );
-		return;
-	}
-	$self->app->set_status_query->execute( 1, $id );
-	$self->render( 'login', from => 'verification' );
-};
-
-get '/*station' => sub {
+get '/s/*station' => sub {
 	my ($self) = @_;
 	my $station = $self->stash('station');
 

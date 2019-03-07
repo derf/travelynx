@@ -5,14 +5,15 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="theme-color" content="#673ab7">
-	%= stylesheet '/static/css/materialize.min.css'
-	%= stylesheet '/static/css/material-icons.css'
-	%= stylesheet '/static/css/local.css'
-	%= javascript '/static/js/jquery-2.2.4.min.js'
-	%= javascript '/static/js/materialize.min.js'
-	%= javascript '/static/js/travelynx-actions.min.js'
+	% my $av = 'v1'; # asset version
+	%= stylesheet "/static/${av}/css/materialize.min.css"
+	%= stylesheet "/static/${av}/css/material-icons.css"
+	%= stylesheet "/static/${av}/css/local.css"
+	%= javascript "/static/${av}/js/jquery-2.2.4.min.js"
+	%= javascript "/static/${av}/js/materialize.min.js"
+	%= javascript "/static/${av}/js/travelynx-actions.min.js"
 	% if (stash('with_geolocation')) {
-		%= javascript '/static/js/geolocation.min.js'
+		%= javascript "/static/${av}/js/geolocation.min.js"
 	% }
 </head>
 <body>
@@ -21,9 +22,11 @@
 	<div class="nav-wrapper container">
 		<a href="/" class="brand-logo left">travelynx</a>
 		<ul id="nav-mobile" class="right">
-			<li class="<%= navbar_class('/a/history') %>"><a href='/a/history' title="History"><i class="material-icons">history</i></a></li>
-			<li class="<%= navbar_class('/a/account') %>"><a href="/a/account" title="Account"><i class="material-icons">account_circle</i></a></li>
-			<li class="<%= navbar_class('/x/about') %>"><a href='/x/about' title="About"><i class="material-icons">info_outline</i></a></li>
+			% if (is_user_authenticated()) {
+				<li class="<%= navbar_class('/history') %>"><a href='/history' title="History"><i class="material-icons">history</i></a></li>
+				<li class="<%= navbar_class('/account') %>"><a href="/account" title="Account"><i class="material-icons">account_circle</i></a></li>
+			% }
+			<li class="<%= navbar_class('/about') %>"><a href='/about' title="About"><i class="material-icons">info_outline</i></a></li>
 		</ul>
 	</div>
 </nav>

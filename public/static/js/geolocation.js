@@ -25,14 +25,14 @@ $(document).ready(function() {
 				stationlink.attr('href', ds100);
 				stationlink.text(name);
 
-				resultBody.append('<tr><td><a href="/' + ds100 + '">' + name + '</a></td></tr>');
+				resultBody.append('<tr><td><a href="/s/' + ds100 + '">' + name + '</a></td></tr>');
 			});
 			placeholder.replaceWith(resultTable);
 		}
 	};
 
 	var processLocation = function(loc) {
-		$.post('/x/geolocation', {lon: loc.coords.longitude, lat: loc.coords.latitude}, processResult);
+		$.post('/geolocation', {lon: loc.coords.longitude, lat: loc.coords.latitude}, processResult);
 	};
 
 	var processError = function(error) {

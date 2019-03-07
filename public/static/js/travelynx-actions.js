@@ -34,7 +34,7 @@ $(document).ready(function() {
 			station: link.data('station'),
 			force: link.data('force'),
 		};
-		tvly_run(link, req, '/' + req.station, function() {
+		tvly_run(link, req, '/s/' + req.station, function() {
 			link.append(' – Ohne Echtzeitdaten auschecken?')
 			link.data('force', true);
 		});
