@@ -1226,11 +1226,13 @@ app->defaults( layout => 'default' );
 
 app->config(
 	hypnotoad => {
-		accepts  => 10,
-		listen   => [ $ENV{DBFAKEDISPLAY_LISTEN} // 'http://*:8092' ],
-		pid_file => '/tmp/db-fakedisplay.pid',
-		workers  => $ENV{DBFAKEDISPLAY_WORKERS} // 2,
+		accepts  => 40,
+		listen   => [ $ENV{TRAVELYNX_LISTEN} // 'http://*:8093' ],
+		pid_file => '/tmp/travelynx.pid',
+		workers  => $ENV{TRAVELYNX_WORKERS} // 2,
 	},
 );
+
+app->types( json => 'application/json; charset=utf-8' );
 
 app->start;
