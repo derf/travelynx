@@ -11,6 +11,16 @@
 	</div>
 </div>
 
+<div class="row">
+	<div class="col s3 m3 l3">
+	</div>
+	<div class="col s6 m6 l6 center-align">
+		<a href="https://github.com/derf/travelynx/issues" class="waves-effect waves-light btn"><i class="material-icons left">bug_report</i>Bugs?</a>
+	</div>
+	<div class="col s3 m3 l3">
+	</div>
+</div>
+
 % if (-e 'templates/imprint.html.ep') {
 %= include 'imprint'
 % }
