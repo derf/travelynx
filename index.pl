@@ -1162,7 +1162,11 @@ post '/action' => sub {
 
 under sub {
 	my ($self) = @_;
-	return $self->is_user_authenticated;
+	if ( $self->is_user_authenticated ) {
+		return 1;
+	}
+	$self->render('login');
+	return undef;
 };
 
 get '/account' => sub {
