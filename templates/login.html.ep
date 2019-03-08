@@ -7,7 +7,13 @@
 					<p>
 						Du bist bereits angemeldet. Falls du mehrere Accounts hast
 						und auf einen anderen wechseln möchtest, musst du dich
-						vorher <a href="/logout">abmelden</a>.
+						vorher
+						%= form_for 'logout' => begin
+							%= csrf_field
+							<button class="btn waves-effect waves-light" type="submit" name="action" value="logout">
+								Abmelden
+							</button>
+						%= end
 					</p>
 				</div>
 			</div>

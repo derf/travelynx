@@ -1176,6 +1176,10 @@ get '/export.json' => sub {
 
 post '/logout' => sub {
 	my ($self) = @_;
+	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
+		$self->render( 'login', invalid => 'csrf' );
+		return;
+	}
 	$self->logout;
 	$self->redirect_to('/login');
 };
