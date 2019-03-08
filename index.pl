@@ -1021,11 +1021,6 @@ get '/reg/:id/:token' => sub {
 	$self->render( 'login', from => 'verification' );
 };
 
-under sub {
-	my ($self) = @_;
-	return $self->is_user_authenticated;
-};
-
 post '/action' => sub {
 	my ($self) = @_;
 	my $params = $self->req->json;
@@ -1034,13 +1029,25 @@ post '/action' => sub {
 		$params = $self->req->params->to_hash;
 	}
 
+	if ( not $self->is_user_authenticated ) {
+
+		# We deliberately do not set the HTTP status for these replies, as it
+		# confuses jquery.
+		$self->render(
+			json => {
+				success => 0,
+				error   => 'Session error, please login again',
+			},
+		);
+		return;
+	}
+
 	if ( not $params->{action} ) {
 		$self->render(
 			json => {
 				success => 0,
 				error   => 'Missing action value',
 			},
-			status => 400,
 		);
 		return;
 	}
@@ -1111,9 +1118,13 @@ post '/action' => sub {
 				success => 0,
 				error   => 'invalid action value',
 			},
-			status => 400,
 		);
 	}
+};
+
+under sub {
+	my ($self) = @_;
+	return $self->is_user_authenticated;
 };
 
 get '/account' => sub {
