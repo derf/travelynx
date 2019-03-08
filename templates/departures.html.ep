@@ -32,34 +32,37 @@
 	</div>
 </div>
 <div class="row">
-	<table class="striped">
-		<thead>
-			<tr>
-				<th>Zug</th>
-				<th></th>
-				<th>Abfahrt</th>
-			</tr>
-		</thead>
-		<tbody>
-			% for my $result (@{$results}) {
+	<div class="col s12">
+		Zug auswählen zum Einchecken.<br/>
+		<table class="striped">
+			<thead>
 				<tr>
-					<td>
-						<a class="action-checkin" data-station="<%= $ds100 %>" data-train="<%= $result->train_id %>">
-							<%= $result->line %>
-						</a>
-					</td>
-					<td>
-						<a class="action-checkin" data-station="<%= $ds100 %>" data-train="<%= $result->train_id %>">
-							<%= $result->destination %>
-						</a>
-					</td>
-					<td><%= $result->departure->strftime('%H:%M') %>
-						% if ($result->departure_delay) {
-							(+<%= $result->departure_delay %>)
-						% }
-					</td>
+					<th>Zug</th>
+					<th></th>
+					<th>Abfahrt</th>
 				</tr>
-			% }
-		</tbody>
-	</table>
+			</thead>
+			<tbody>
+				% for my $result (@{$results}) {
+					<tr>
+						<td>
+							<a class="action-checkin" data-station="<%= $ds100 %>" data-train="<%= $result->train_id %>">
+								<%= $result->line %>
+							</a>
+						</td>
+						<td>
+							<a class="action-checkin" data-station="<%= $ds100 %>" data-train="<%= $result->train_id %>">
+								<%= $result->destination %>
+							</a>
+						</td>
+						<td><%= $result->departure->strftime('%H:%M') %>
+							% if ($result->departure_delay) {
+								(+<%= $result->departure_delay %>)
+							% }
+						</td>
+					</tr>
+				% }
+			</tbody>
+		</table>
+	</div>
 </div>
