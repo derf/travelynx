@@ -1234,8 +1234,9 @@ post '/logout' => sub {
 };
 
 get '/s/*station' => sub {
-	my ($self) = @_;
+	my ($self)  = @_;
 	my $station = $self->stash('station');
+	my $train   = $self->param('train');
 
 	my $status = get_departures($station);
 
@@ -1250,6 +1251,11 @@ get '/s/*station' => sub {
 		  sort { $b->[1] <=> $a->[1] }
 		  map { [ $_, $_->departure->epoch // $_->sched_departure->epoch ] }
 		  @results;
+
+		if ($train) {
+			@results
+			  = grep { $_->type . ' ' . $_->train_no eq $train } @results;
+		}
 
 		$self->render(
 			'departures',
