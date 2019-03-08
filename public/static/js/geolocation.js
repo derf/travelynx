@@ -4,6 +4,15 @@ $(document).ready(function() {
 	var showError = function(header, message, code) {
 		prePlaceholder.remove();
 		placeholder.remove();
+		var errnode = $(document.createElement('div'));
+		errnode.attr('class', 'error');
+		errnode.text(message + '. Alternativ kannst du unter „travelynx.de/s/Name der Station“ einchecken.');
+
+		var headnode = $(document.createElement('strong'));
+		headnode.text(header);
+		errnode.prepend(headnode);
+
+		$('div.geolocation').append(errnode);
 	};
 
 	var processResult = function(data) {

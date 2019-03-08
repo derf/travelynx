@@ -5,7 +5,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="theme-color" content="#673ab7">
-	% my $av = 'v1'; # asset version
+	% my $av = 'v2'; # asset version
 	%= stylesheet "/static/${av}/css/materialize.min.css"
 	%= stylesheet "/static/${av}/css/material-icons.css"
 	%= stylesheet "/static/${av}/css/local.css"
