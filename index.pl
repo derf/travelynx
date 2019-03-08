@@ -235,6 +235,22 @@ app->attr(
 	}
 );
 app->attr(
+	get_pending_mails_query => sub {
+		my ($self) = @_;
+
+		return $self->app->dbh->prepare(
+			qq{select id from users where email = ? and status = 0;});
+	}
+);
+app->attr(
+	get_listed_mails_query => sub {
+		my ($self) = @_;
+
+		return $self->app->dbh->prepare(
+			qq{select * from pending_mails where email = ?;});
+	}
+);
+app->attr(
 	get_user_query => sub {
 		my ($self) = @_;
 
@@ -661,6 +677,20 @@ helper 'check_if_user_name_exists' => sub {
 	return 0;
 };
 
+helper 'check_if_mail_is_blacklisted' => sub {
+	my ( $self, $mail ) = @_;
+
+	$self->app->get_pending_mails_query->execute($mail);
+	if ( @{ $self->app->get_pending_mails_query->fetchall_arrayref } ) {
+		return 1;
+	}
+	$self->app->get_listed_mails_query->execute($mail);
+	if ( @{ $self->app->get_listed_mails_query->fetchall_arrayref } ) {
+		return 1;
+	}
+	return 0;
+};
+
 helper 'get_user_travels' => sub {
 	my ( $self, $limit ) = @_;
 
@@ -946,6 +976,11 @@ post '/register' => sub {
 		return;
 	}
 
+	if ( $self->check_if_mail_is_blacklisted($email) ) {
+		$self->render( 'register', invalid => 'mail_blacklisted' );
+		return;
+	}
+
 	if ( $password ne $password2 ) {
 		$self->render( 'register', invalid => 'password_notequal' );
 		return;
@@ -958,6 +993,7 @@ post '/register' => sub {
 
 	my $token   = make_token();
 	my $pw_hash = hash_password($password);
+	$self->app->dbh->begin_work;
 	my $user_id = $self->add_user( $user, $email, $token, $pw_hash );
 
 	my $body = "Hallo, ${user}!\n\n";
@@ -991,9 +1027,11 @@ post '/register' => sub {
 
 	my $success = try_to_sendmail($reg_mail);
 	if ($success) {
+		$self->app->dbh->commit;
 		$self->render( 'login', from => 'register' );
 	}
 	else {
+		$self->app->dbh->rollback;
 		$self->render( 'register', invalid => 'sendmail' );
 	}
 };

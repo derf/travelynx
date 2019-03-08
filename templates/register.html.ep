@@ -37,7 +37,7 @@
 					% }
 					% elsif ($invalid eq 'mail_blacklisted') {
 						<span class="card-title">Mailadresse nicht nutzbar</span>
-						<p>Mit der angegebenen E-Mail-Adresse können keine
+						<p>Mit der angegebenen E-Mail-Adresse können derzeit keine
 							travelynx-Accounts registriert werden.</p>
 					% }
 					% elsif ($invalid eq 'sendmail') {
