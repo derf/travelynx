@@ -1233,6 +1233,6 @@ app->config(
 	},
 );
 
-app->types( json => 'application/json; charset=utf-8' );
+app->types->type( json => 'application/json; charset=utf-8' );
 
 app->start;
