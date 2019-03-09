@@ -1,40 +1,49 @@
 <h1>Bisherige Fahrten</h1>
 <div class="row">
-	<table class="striped">
-		<thead>
-			<tr>
-				<th>Datum</th>
-				<th>Zug</th>
-				<th>Strecke</th>
-				<th>Abfahrt</th>
-				<th>Ankunft</th>
-			</tr>
-		</thead>
-		<tbody>
-			% for my $travel (get_user_travels(0)) {
-				% if ($travel->{completed}) {
-					<tr>
-						<td><%= $travel->{sched_departure}->strftime('%d.%m.%Y') %></td>
-						<td><%= $travel->{type} %> <%= $travel->{line} // '' %> <%= $travel->{no} %></td>
-						<td><%= $travel->{from_name} %> → <%= $travel->{to_name} %></td>
-						<td><%= $travel->{rt_departure}->strftime('%H:%M') %>
-						% if ($travel->{sched_departure} != $travel->{rt_departure}) {
-							(+<%= ($travel->{rt_departure}->epoch - $travel->{sched_departure}->epoch) / 60 %>)
-						% }
-						</td>
-						<td>
-						% if ($travel->{rt_arrival}->epoch == 0 and $travel->{sched_arrival}->epoch == 0) {
-							<i class="material-icons">timer_off</i>
-						% } else {
-							%= $travel->{rt_arrival}->strftime('%H:%M');
-							% if ($travel->{sched_arrival} != $travel->{rt_arrival}) {
-								(+<%= ($travel->{rt_arrival}->epoch - $travel->{sched_arrival}->epoch) / 60 %>)
+	<div class="col s12">
+		<ul>
+			<li><a href="/history.json">JSON-Export</a> (Das Datenlayout ist noch nicht final)</li>
+		</ul>
+	</div>
+</div>
+<div class="row">
+	<div class="col s12">
+		<table class="striped">
+			<thead>
+				<tr>
+					<th>Datum</th>
+					<th>Zug</th>
+					<th>Strecke</th>
+					<th>Abfahrt</th>
+					<th>Ankunft</th>
+				</tr>
+			</thead>
+			<tbody>
+				% for my $travel (get_user_travels(0)) {
+					% if ($travel->{completed}) {
+						<tr>
+							<td><%= $travel->{sched_departure}->strftime('%d.%m.%Y') %></td>
+							<td><%= $travel->{type} %> <%= $travel->{line} // '' %> <%= $travel->{no} %></td>
+							<td><%= $travel->{from_name} %> → <%= $travel->{to_name} %></td>
+							<td><%= $travel->{rt_departure}->strftime('%H:%M') %>
+							% if ($travel->{sched_departure} != $travel->{rt_departure}) {
+								(+<%= ($travel->{rt_departure}->epoch - $travel->{sched_departure}->epoch) / 60 %>)
 							% }
-						% }
-						</td>
-					</tr>
+							</td>
+							<td>
+							% if ($travel->{rt_arrival}->epoch == 0 and $travel->{sched_arrival}->epoch == 0) {
+								<i class="material-icons">timer_off</i>
+							% } else {
+								%= $travel->{rt_arrival}->strftime('%H:%M');
+								% if ($travel->{sched_arrival} != $travel->{rt_arrival}) {
+									(+<%= ($travel->{rt_arrival}->epoch - $travel->{sched_arrival}->epoch) / 60 %>)
+								% }
+							% }
+							</td>
+						</tr>
+					% }
 				% }
-			% }
-		</tbody>
-	</table>
+			</tbody>
+		</table>
+	</div>
 </div>

@@ -1184,7 +1184,16 @@ get '/account' => sub {
 get '/history' => sub {
 	my ($self) = @_;
 
-	$self->render('history');
+	$self->respond_to(
+		json => { json     => [ $self->get_user_travels(0) ] },
+		any  => { template => 'history' }
+	);
+};
+
+get '/history.json' => sub {
+	my ($self) = @_;
+
+	$self->render( json => [ $self->get_user_travels(0) ] );
 };
 
 get '/export.json' => sub {
