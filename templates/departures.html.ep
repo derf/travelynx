@@ -33,7 +33,15 @@
 </div>
 <div class="row">
 	<div class="col s12">
-		Zug auswählen zum Einchecken.<br/>
+		%= $station
+		% if (@{$results}) {
+			– Zug auswählen zum Einchecken.
+		% }
+		% else {
+			– Keine Abfahrten gefunden. Ein Checkin ist frühestens 10 Minuten vor
+			und maximal 180 Minuten nach Abfahrt möglich.
+		% }
+		<br/>
 		<table class="striped">
 			<thead>
 				<tr>

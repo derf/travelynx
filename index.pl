@@ -1271,7 +1271,8 @@ get '/s/*station' => sub {
 			'departures',
 			ds100   => $status->{station_ds100},
 			results => \@results,
-			station => $status->{station_name}
+			station => $status->{station_name},
+			title   => "travelynx: $status->{station_name}",
 		);
 	}
 };

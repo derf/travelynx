@@ -13,7 +13,7 @@
 								<a class="action-undo"><i class="material-icons">undo</i> Rückgängig</a>
 							% }
 							</p>
-						<p>Bei Ankunft am Zielbahnhof: Auswählen zum Auschecken.</p>
+						<p>Bei Ankunft: Station auswählen zum Auschecken.</p>
 						<table>
 							<tbody>
 								% my $is_after = 0;
