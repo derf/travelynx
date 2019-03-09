@@ -34,11 +34,15 @@
 					% }
 					% elsif ($invalid eq 'credentials') {
 						<span class="card-title">Ungültige Logindaten</span>
-						<p>Falscher (oder noch nicht freigeschalteter) Account oder falsches Passwort.</p>
+						<p>Falscher Account oder falsches Passwort.</p>
+					% }
+					% elsif ($invalid eq 'confirmation') {
+						<span class="card-title">Account nicht freigeschaltet</span>
+						<p>Bitte besuche zuerst den per Mail verschickten Bestätigungslink.</p>
 					% }
 					% else {
 						<span class="card-title">Unbekannter Fehler</span>
-						<p>Das sollte nicht passieren™</p>
+						<p>„<%= $invalid %>“</p>
 					% }
 				</div>
 			</div>

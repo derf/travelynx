@@ -923,7 +923,13 @@ post '/login' => sub {
 			$self->redirect_to('/');
 		}
 		else {
-			$self->render( 'login', invalid => 'credentials' );
+			my $data = $self->get_user_password($user);
+			if ( $data and $data->{status} == 0 ) {
+				$self->render( 'login', invalid => 'confirmation' );
+			}
+			else {
+				$self->render( 'login', invalid => 'credentials' );
+			}
 		}
 	}
 };
