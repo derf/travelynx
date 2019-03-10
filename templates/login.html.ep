@@ -76,6 +76,9 @@
 <div class="row">
 	%= form_for '/login' => (class => 'col s12', method => 'POST') => begin
 		%= csrf_field
+		% if (stash('redirect_to')) {
+			%= hidden_field 'redirect_to' => $redirect_to
+		% }
 		<div class="row">
 			<div class="input-field col s12">
 				<i class="material-icons prefix">account_circle</i>

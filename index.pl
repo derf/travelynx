@@ -920,7 +920,7 @@ post '/login' => sub {
 	}
 	else {
 		if ( $self->authenticate( $user, $password ) ) {
-			$self->redirect_to('/');
+			$self->redirect_to( $self->req->param('redirect_to') // '/' );
 		}
 		else {
 			my $data = $self->get_user_password($user);
@@ -1173,7 +1173,7 @@ under sub {
 	if ( $self->is_user_authenticated ) {
 		return 1;
 	}
-	$self->render('login');
+	$self->render( 'login', redirect_to => $self->req->url );
 	return undef;
 };
 
