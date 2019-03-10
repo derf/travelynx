@@ -1005,8 +1005,8 @@ post '/register' => sub {
 	my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
 
 	my $body = "Hallo, ${user}!\n\n";
-	$body .= "Mit deiner E-Mail-Adresse (${email}) wurde ein Account auf\n";
-	$body .= "travelynx.de angelegt.\n\n";
+	$body .= "Mit deiner E-Mail-Adresse (${email}) wurde ein Account bei\n";
+	$body .= "travelynx angelegt.\n\n";
 	$body
 	  .= "Falls die Registrierung von dir ausging, kannst du den Account unter\n";
 	$body .= "${reg_url}/${user_id}/${token}\n";
