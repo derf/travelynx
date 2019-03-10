@@ -1000,14 +1000,16 @@ post '/register' => sub {
 	my $token   = make_token();
 	my $pw_hash = hash_password($password);
 	$self->app->dbh->begin_work;
-	my $user_id = $self->add_user( $user, $email, $token, $pw_hash );
+	my $user_id     = $self->add_user( $user, $email, $token, $pw_hash );
+	my $reg_url     = $self->url_for('reg')->to_abs->scheme('https');
+	my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
 
 	my $body = "Hallo, ${user}!\n\n";
 	$body .= "Mit deiner E-Mail-Adresse (${email}) wurde ein Account auf\n";
 	$body .= "travelynx.de angelegt.\n\n";
 	$body
 	  .= "Falls die Registrierung von dir ausging, kannst du den Account unter\n";
-	$body .= "https://travelynx.de/reg/${user_id}/${token}\n";
+	$body .= "${reg_url}/${user_id}/${token}\n";
 	$body .= "freischalten.\n\n";
 	$body
 	  .= "Falls nicht, ignoriere diese Mail bitte. Nach 48 Stunden wird deine\n";
@@ -1019,13 +1021,13 @@ post '/register' => sub {
 	$body .= " * Datum: ${date}\n";
 	$body .= " * Verwendete IP: ${ip}\n";
 	$body .= " * Verwendeter Browser gemäß User Agent: ${ua}\n\n\n";
-	$body .= "Impressum: https://travelynx.de/impressum\n";
+	$body .= "Impressum: ${imprint_url}\n";
 
 	my $reg_mail = Email::Simple->create(
 		header => [
 			To             => $email,
 			From           => 'Travelynx <travelynx@finalrewind.org>',
-			Subject        => 'Registrierung auf travelynx.de',
+			Subject        => 'Registrierung bei travelynx',
 			'Content-Type' => 'text/plain; charset=UTF-8',
 		],
 		body => encode( 'utf-8', $body ),
