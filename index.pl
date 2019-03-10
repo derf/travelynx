@@ -43,7 +43,6 @@ my @action_types = (qw(checkin checkout undo));
 app->plugin(
 	authentication => {
 		autoload_user => 1,
-		session_key   => 'foodor',
 		fail_render   => { template => 'login' },
 		load_user     => sub {
 			my ( $self, $uid ) = @_;
@@ -1287,6 +1286,10 @@ get '/s/*station' => sub {
 		);
 	}
 };
+
+if ( $ENV{TRAVELYNX_SECRETS} ) {
+	app->secrets( [ split( qr{:}, $ENV{TRAVELYNX_SECRETS} ) ] );
+}
 
 app->defaults( layout => 'default' );
 
