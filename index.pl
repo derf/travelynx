@@ -246,7 +246,7 @@ app->attr(
 		my ($self) = @_;
 
 		return $self->app->dbh->prepare(
-			qq{select * from pending_mails where email = ?;});
+			qq{select * from pending_mails where email = ? and num_tries > 1;});
 	}
 );
 app->attr(
@@ -1011,7 +1011,7 @@ post '/register' => sub {
 	$body .= "${reg_url}/${user_id}/${token}\n";
 	$body .= "freischalten.\n\n";
 	$body
-	  .= "Falls nicht, ignoriere diese Mail bitte. Nach 48 Stunden wird deine\n";
+	  .= "Falls nicht, ignoriere diese Mail bitte. Nach etwa 48 Stunden wird deine\n";
 	$body
 	  .= "Mail-Adresse erneut zur Registrierung freigeschaltet. Falls auch diese fehlschlägt,\n";
 	$body

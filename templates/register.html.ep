@@ -100,6 +100,11 @@
 <div class="row">
 	<div class="col s12">
 		<p>
+			Nach der Registrierung wird ein für 48 Stunden gültiger
+			Bestätigungslink an die angegebene Mail-Adresse geschickt. Eine
+			Anmeldung ist erst nach Bestätigung der Mail-Adresse möglich.
+		</p>
+		<p>
 			Die Mail-Adresse wird ausschließlich zur Bestätigung der Anmeldung
 			und für die "Passwort vergessen"-Funktionalität verwendet und nicht
 			an Dritte weitergegeben.  Die <a
