@@ -1,0 +1,24 @@
+<div class="row">
+	<div class="col s12">
+		<div class="card red darken-4">
+			<div class="card-content white-text">
+				<span class="card-title">Account wird gelöscht</span>
+				<p>
+					Dein Account wird am <%= $timestamp->clone->add(days => 3)->strftime('%d.%m.%Y ab %H:%M') %> Uhr
+					gelöscht, da er am <%= $timestamp->strftime('%d.%m.%Y um %H:%M') %> Uhr
+					zum Löschen vorgemerkt wurde.
+				</p>
+				<p>
+					Falls du dich umentschieden hast, kannst du den Löschauftrag
+					hier zurücknehmen.
+					%= form_for 'delete' => begin
+						%= csrf_field
+						<button class="btn-flat waves-effect waves-light white black-text" type="submit" name="action" value="undelete">
+							Account Nicht löschen
+						</button>
+					%= end
+				</p>
+			</div>
+		</div>
+	</div>
+</div>

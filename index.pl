@@ -140,6 +140,17 @@ app->attr(
 	}
 );
 app->attr(
+	mark_for_deletion_query => sub {
+		my ($self) = @_;
+
+		return $self->app->dbh->prepare(
+			qq{
+				update users set deletion_requested = ? where id = ?;
+			}
+		);
+	}
+);
+app->attr(
 	checkin_query => sub {
 		my ($self) = @_;
 
@@ -614,6 +625,11 @@ helper 'get_user_data' => sub {
 				time_zone => 'Europe/Berlin'
 			),
 			deletion_requested => $row[7]
+			? DateTime->from_epoch(
+				epoch     => $row[7],
+				time_zone => 'Europe/Berlin'
+			  )
+			: undef,
 		};
 	}
 	return undef;
@@ -1241,6 +1257,24 @@ get '/export.json' => sub {
 	$self->render(
 		json => [@entries],
 	);
+};
+
+post '/delete' => sub {
+	my ($self) = @_;
+	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
+		$self->render( 'account', invalid => 'csrf' );
+		return;
+	}
+	my $now = DateTime->now( time_zone => 'Europe/Berlin' )->epoch;
+	if ( $self->param('action') eq 'delete' ) {
+		$self->app->mark_for_deletion_query->execute( $now,
+			$self->current_user->{id} );
+	}
+	else {
+		$self->app->mark_for_deletion_query->execute( undef,
+			$self->current_user->{id} );
+	}
+	$self->redirect_to('account');
 };
 
 post '/logout' => sub {

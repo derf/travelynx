@@ -32,6 +32,10 @@
 </nav>
 
 <div class="container">
+	% my $acc = get_user_data();
+	% if ($acc and $acc->{deletion_requested}) {
+		%= include '_deletion_note', timestamp => $acc->{deletion_requested}
+	% }
 	%= content
 </div>
 
