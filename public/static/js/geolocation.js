@@ -6,7 +6,7 @@ $(document).ready(function() {
 		placeholder.remove();
 		var errnode = $(document.createElement('div'));
 		errnode.attr('class', 'error');
-		errnode.text(message + '. Alternativ kannst du unter „travelynx.de/s/Name der Station“ einchecken.');
+		errnode.text(message);
 
 		var headnode = $(document.createElement('strong'));
 		headnode.text(header);

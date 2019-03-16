@@ -34,6 +34,18 @@
 						<div class="geolocation">
 							<div class="progress"><div class="indeterminate"></div></div>
 						</div>
+						%= form_for 'list_departures' => begin
+							<div class="input-field text-white">
+								%= text_field 'station', id => 'station', class => 'white-text', require => undef
+								<label for="station">Manuelle Eingabe (Name oder DS100)</label>
+							</div>
+							<div class="center-align">
+								<button class="btn waves-effect waves-light btn-flat white" type="submit" name="action" value="departures">
+									<i class="material-icons left">send</i>
+									Abfahrten
+								</button>
+							</div>
+						%= end
 					</div>
 				</div>
 			% }

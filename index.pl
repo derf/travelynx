@@ -988,6 +988,13 @@ post '/geolocation' => sub {
 
 };
 
+post '/list_departures' => sub {
+	my ($self) = @_;
+	my $station = $self->param('station');
+
+	$self->redirect_to("/s/${station}");
+};
+
 get '/api/v0/:action/:token' => sub {
 	my ($self) = @_;
 
