@@ -36,7 +36,7 @@
 						</div>
 						%= form_for 'list_departures' => begin
 							<div class="input-field text-white">
-								%= text_field 'station', id => 'station', class => 'white-text', require => undef
+								%= text_field 'station', id => 'station', class => 'autocomplete white-text', require => undef
 								<label for="station">Manuelle Eingabe (Name oder DS100)</label>
 							</div>
 							<div class="center-align">

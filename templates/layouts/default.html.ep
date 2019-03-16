@@ -13,6 +13,7 @@
 	%= javascript "/static/${av}/js/materialize.min.js"
 	%= javascript "/static/${av}/js/travelynx-actions.min.js"
 	% if (stash('with_geolocation')) {
+		%= javascript "/static/${av}/js/autocomplete.min.js"
 		%= javascript "/static/${av}/js/geolocation.min.js"
 	% }
 </head>
