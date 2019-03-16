@@ -33,16 +33,15 @@
 	</div>
 </div>
 
-<h1>API</h1>
 % my $token = get_api_token();
 <div class="row">
 	<div class="col s12">
+	<h2>API</h2>
 		<p>
 			Die folgenden API-Token erlauben den passwortlosen automatisierten Zugriff auf
 			API-Endpunkte.  Bitte umsichtig behandeln – sobald ein Token gesetzt
-			ist, können mit Kenntnis von Token und Nutzer-ID alle zugehörigen
-			API-Aktionen ausgeführt werden. Logindaten sind dazu nicht
-			erforderlich.
+			ist, können damit ohne Logindaten alle zugehörigen API-Aktionen
+			ausgeführt werden.
 		</p>
 		<table class="striped">
 			<tr>
@@ -118,8 +117,8 @@
 	</div>
 </div>
 
-<h2>Status</h2>
 % my $api_root = $self->url_for('/api/v0')->to_abs->scheme('https');
+<h3>Status</h3>
 <div class="row">
 	<div class="col s12">
 		<p>
@@ -152,7 +151,25 @@
 	</div>
 </div>
 
-<h1>Export</h1>
+<h3>History</h3>
+<div class="row">
+	<div class="col s12">
+		<p>
+			Coming soon.
+		</p>
+	</div>
+</div>
+
+<h3>Travel</h3>
+<div class="row">
+	<div class="col s12">
+		<p>
+			Ein- und Auschecken per API. Coming soon.
+		</p>
+	</div>
+</div>
+
+<h2>Export</h2>
 
 <div class="row">
 	<div class="col s12">
@@ -163,13 +180,14 @@
 </div>
 
 % if (not $acc->{deletion_requested}) {
-	<h1>Account löschen</h1>
+	<h2>Löschen</h2>
 	<div class="row">
 		<div class="col s12">
 			<p>
-				Der Account wird zunächst nur zur Löschung vorgemerkt.  Wenn der
-				Auftrag nach drei Tagen nicht zurückgenommen wird, wird der Account
-				mit allen zugehörigen Reisedaten ohne weitere Rückfragen entfernt.
+				Der Löschauftrag wird vorgemerkt und erst nach drei Tagen
+				umgesetzt, bis dahin kann er jederzeit zurückgenommen werden.  Nach
+				Ablauf der drei Tage wird der Account mit allen zugehörigen
+				Reisedaten ohne weitere Rückfragen entfernt.
 			</p>
 		</div>
 	</div>
