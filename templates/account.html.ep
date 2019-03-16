@@ -33,6 +33,125 @@
 	</div>
 </div>
 
+<h1>API</h1>
+% my $token = get_api_token();
+<div class="row">
+	<div class="col s12">
+		<p>
+			Die folgenden API-Token erlauben den passwortlosen automatisierten Zugriff auf
+			API-Endpunkte.  Bitte umsichtig behandeln – sobald ein Token gesetzt
+			ist, können mit Kenntnis von Token und Nutzer-ID alle zugehörigen
+			API-Aktionen ausgeführt werden. Logindaten sind dazu nicht
+			erforderlich.
+		</p>
+		<table class="striped">
+			<tr>
+				<th scope="row">Status</th>
+				<td>
+					% if ($token->{status}) {
+						%= $acc->{id} . '-' . $token->{status}
+					% }
+					% else {
+						—
+					% }
+				</td>
+				<td>
+					%= form_for 'set_token' => begin
+						%= csrf_field
+						%= hidden_field 'token' => 'status'
+						<button class="btn waves-effect waves-light" type="submit" name="action" value="generate">
+							Generieren
+						</button>
+						<button class="btn waves-effect waves-light red" type="submit" name="action" value="delete">
+							Löschen
+						</button>
+					%= end
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">History</th>
+				<td>
+					% if ($token->{history}) {
+						%= $acc->{id} . '-' . $token->{history}
+					% }
+					% else {
+						—
+					% }
+				</td>
+				<td>
+					%= form_for 'set_token' => begin
+						%= csrf_field
+						%= hidden_field 'token' => 'history'
+						<button class="btn waves-effect waves-light" type="submit" name="action" value="generate">
+							Generieren
+						</button>
+						<button class="btn waves-effect waves-light red" type="submit" name="action" value="delete">
+							Löschen
+						</button>
+					%= end
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">Travel</th>
+				<td>
+					% if ($token->{action}) {
+						%= $acc->{id} . '-' . $token->{action}
+					% }
+					% else {
+						—
+					% }
+				</td>
+				<td>
+					%= form_for 'set_token' => begin
+						%= csrf_field
+						%= hidden_field 'token' => 'action'
+						<button class="btn waves-effect waves-light" type="submit" name="action" value="generate">
+							Generieren
+						</button>
+						<button class="btn waves-effect waves-light red" type="submit" name="action" value="delete">
+							Löschen
+						</button>
+					%= end
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+<h2>Status</h2>
+% my $api_root = $self->url_for('/api/v0')->to_abs->scheme('https');
+<div class="row">
+	<div class="col s12">
+		<p>
+			Das Format der API v0 kann sich noch ändern, ab v1 ist es stabil.
+		</p>
+		<p style="font-family: Monospace;">
+			% if ($token->{status}) {
+				curl <%= $api_root %>/status/<%= $acc->{id} %>-<%= $token->{status} // 'TOKEN' %>
+			% }
+			% else {
+				curl <%= $api_root %>/status/TOKEN
+			% }
+		</p>
+		<p style="font-family: Monospace;">
+		{<br/>
+			"checked_in" : true / false,<br/>
+			"station_ds100" : "EE", (DS100-Kürzel der letzten Station)<br/>
+			"station_name" : "Essen Hbf", (Name der letzten Station)<br/>
+			"train_type" : "ICE", (aktueller / letzter Zugtyp)<br/>
+			"train_line" : "", (Linie, ggf. null)<br/>
+			"train_no" : "1234", (Zugnummer)<br/>
+			"action_ts" : 1234567, (UNIX-Timestamp des letzten Checkin/Checkout)<br/>
+			"sched_ts" : 1234567, (UNIX-Timestamp der zugehörigen Ankunft/Abfahrt gemäß Fahrplan. Ggf. 0)<br/>
+			"real_ts" : 1234567, (UNIX-Timestamp der zugehörigen Ankunft/Abfahrt laut Echtzeitdaten. Ggf. 0)<br/>
+		}
+		</p>
+		<p>
+			Im Fehlerfall: <span style="font-family: Monospace;">{ "error" : "Begründung" }</span>
+		</p>
+	</div>
+</div>
+
 <h1>Export</h1>
 
 <div class="row">

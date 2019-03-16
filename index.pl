@@ -37,8 +37,13 @@ my %action_type = (
 	checkout => 2,
 	undo     => 3,
 );
-
 my @action_types = (qw(checkin checkout undo));
+my %token_type   = (
+	status  => 1,
+	history => 2,
+	action  => 3,
+);
+my @token_types = (qw(status history action));
 
 app->plugin(
 	authentication => {
@@ -270,6 +275,57 @@ app->attr(
 				id, name, status, public_level, email,
 				registered_at, last_login, deletion_requested
 			from users where id = ?
+		}
+		);
+	}
+);
+app->attr(
+	get_api_tokens_query => sub {
+		my ($self) = @_;
+
+		return $self->app->dbh->prepare(
+			qq{
+			select
+				type, token
+			from tokens where user_id = ?
+		}
+		);
+	}
+);
+app->attr(
+	get_api_token_query => sub {
+		my ($self) = @_;
+
+		return $self->app->dbh->prepare(
+			qq{
+			select
+				token
+			from tokens where user_id = ? and type = ?
+		}
+		);
+	}
+);
+app->attr(
+	drop_api_token_query => sub {
+		my ($self) = @_;
+
+		return $self->app->dbh->prepare(
+			qq{
+			delete from tokens where user_id = ? and type = ?
+		}
+		);
+	}
+);
+app->attr(
+	set_api_token_query => sub {
+		my ($self) = @_;
+
+		return $self->app->dbh->prepare(
+			qq{
+			insert or replace into tokens
+				(user_id, type, token)
+			values
+				(?, ?, ?)
 		}
 		);
 	}
@@ -635,6 +691,18 @@ helper 'get_user_data' => sub {
 	return undef;
 };
 
+helper 'get_api_token' => sub {
+	my ( $self, $uid ) = @_;
+	$uid //= $self->current_user->{id};
+	$self->app->get_api_tokens_query->execute($uid);
+	my $rows  = $self->app->get_api_tokens_query->fetchall_arrayref;
+	my $token = {};
+	for my $row ( @{$rows} ) {
+		$token->{ $token_types[ $row->[0] - 1 ] } = $row->[1];
+	}
+	return $token;
+};
+
 helper 'get_user_password' => sub {
 	my ( $self, $name ) = @_;
 	my $query = $self->app->get_password_query;
@@ -770,9 +838,9 @@ helper 'get_user_travels' => sub {
 };
 
 helper 'get_user_status' => sub {
-	my ($self) = @_;
+	my ( $self, $uid ) = @_;
 
-	my $uid = $self->current_user->{id};
+	$uid //= $self->current_user->{id};
 	$self->app->get_last_actions_query->execute($uid);
 	my $rows = $self->app->get_last_actions_query->fetchall_arrayref;
 
@@ -784,7 +852,9 @@ helper 'get_user_status' => sub {
 			@cols = @{ $rows->[2] };
 		}
 
-		my $ts = epoch_to_dt( $cols[1] );
+		my $action_ts            = epoch_to_dt( $cols[1] );
+		my $sched_ts             = epoch_to_dt( $cols[8] );
+		my $real_ts              = epoch_to_dt( $cols[9] );
 		my $checkin_station_name = decode( 'UTF-8', $cols[3] );
 		my @route = split( qr{[|]}, decode( 'UTF-8', $cols[10] // q{} ) );
 		my @route_after;
@@ -799,8 +869,10 @@ helper 'get_user_status' => sub {
 		}
 		return {
 			checked_in      => ( $cols[0] == $action_type{checkin} ),
-			timestamp       => $ts,
-			timestamp_delta => $now->epoch - $ts->epoch,
+			timestamp       => $action_ts,
+			timestamp_delta => $now->epoch - $action_ts->epoch,
+			sched_ts        => $sched_ts,
+			real_ts         => $real_ts,
 			station_ds100   => $cols[2],
 			station_name    => $checkin_station_name,
 			train_type      => $cols[4],
@@ -813,7 +885,9 @@ helper 'get_user_status' => sub {
 	}
 	return {
 		checked_in => 0,
-		timestamp  => 0
+		timestamp  => epoch_to_dt(0),
+		sched_ts   => epoch_to_dt(0),
+		real_ts    => epoch_to_dt(0),
 	};
 };
 
@@ -912,6 +986,63 @@ post '/geolocation' => sub {
 		);
 	}
 
+};
+
+get '/api/v0/:action/:token' => sub {
+	my ($self) = @_;
+
+	my $api_action = $self->stash('action');
+	my $api_token  = $self->stash('token');
+	if ( $api_action !~ qr{ ^ (?: status | history | action ) $ }x ) {
+		$self->render(
+			json => {
+				error => 'Invalid action',
+			},
+		);
+		return;
+	}
+	if ( $api_token !~ qr{ ^ (?<id> \d+ ) - (?<token> .* ) $ }x ) {
+		$self->render(
+			json => {
+				error => 'Malformed token',
+			},
+		);
+		return;
+	}
+	my $uid = $+{id};
+	$api_token = $+{token};
+	my $token = $self->get_api_token($uid);
+	if ( $api_token ne $token->{$api_action} ) {
+		$self->render(
+			json => {
+				error => 'Invalid token',
+			},
+		);
+		return;
+	}
+	if ( $api_action eq 'status' ) {
+		my $status = $self->get_user_status($uid);
+		$self->render(
+			json => {
+				checked_in    => $status->{checked_in} ? \1 : \0,
+				station_ds100 => $status->{station_ds100},
+				station_name  => $status->{station_name},
+				train_type    => $status->{train_type},
+				train_line    => $status->{train_line},
+				train_no      => $status->{train_no},
+				action_ts     => $status->{timestamp}->epoch,
+				sched_ts      => $status->{sched_ts}->epoch,
+				real_ts       => $status->{real_ts}->epoch,
+			},
+		);
+	}
+	else {
+		$self->render(
+			json => {
+				error => 'not implemented',
+			},
+		);
+	}
 };
 
 get '/login' => sub {
@@ -1285,6 +1416,31 @@ post '/logout' => sub {
 	}
 	$self->logout;
 	$self->redirect_to('/login');
+};
+
+post '/set_token' => sub {
+	my ($self) = @_;
+	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
+		$self->render( 'account', invalid => 'csrf' );
+		return;
+	}
+	my $token    = make_token();
+	my $token_id = $token_type{ $self->param('token') };
+
+	if ( not $token_id ) {
+		$self->redirect_to('account');
+		return;
+	}
+
+	if ( $self->param('action') eq 'delete' ) {
+		$self->app->drop_api_token_query->execute( $self->current_user->{id},
+			$token_id );
+	}
+	else {
+		$self->app->set_api_token_query->execute( $self->current_user->{id},
+			$token_id, $token );
+	}
+	$self->redirect_to('account');
 };
 
 get '/s/*station' => sub {

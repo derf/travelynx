@@ -174,6 +174,27 @@ my @migrations = (
 		);
 		$dbh->commit;
 	},
+
+	# v2 -> v3
+	sub {
+		$dbh->begin_work;
+		$dbh->do(
+			qq{
+			update schema_version set version = 3;
+		}
+		);
+		$dbh->do(
+			qq{
+			create table tokens (
+				user_id integer not null,
+				type integer not null,
+				token char(80) not null,
+				primary key (user_id, type)
+			);
+		}
+		);
+		$dbh->commit;
+	},
 );
 
 my $schema_version = get_schema_version();
