@@ -84,9 +84,16 @@
 			</p>
 			<p>
 				Die Idee dazu kommt von <a
-				href="https://traewelling.de/">Träwelling</a> – im Gegensatz dazu
-				gibt es hier keine Twitter-Anbindung und keine Leaderboards,
-				sondern einfach nur Daten.
+				href="https://traewelling.de/">Träwelling</a>, hier gibt es aber
+				keine Twitter-Anbindung und keine öffentlichen Leaderboards.
+			</p>
+			<p>
+				Features:
+				<ul>
+					<li>Protokoll von Fahrplan- und Echtzeitdaten an Start- und
+						Zielbahnhof</li>
+					<li>API zum automatisierten Auslesen der letzten Reisen</li>
+				</ul>
 			</p>
 			<p>
 				Travelynx ist ein kostenfreies, privat betriebenes Projekt ohne
@@ -94,7 +101,7 @@
 				kurzfristige Einstellung dieser Seite sind nicht vorgesehen, aber
 				möglich. Wer mag, kann auch den
 				<a href="https://finalrewind.org/projects/travelynx">Quelltext</a>
-				laden und eine eigene travelynx-Instanz aufsetzen.
+				laden und eine eigene Instanz aufsetzen.
 			</p>
 		</div>
 	</div>
