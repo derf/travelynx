@@ -1458,7 +1458,11 @@ get '/s/*station' => sub {
 	my $status = get_departures($station);
 
 	if ( $status->{errstr} ) {
-		$self->render( 'landingpage', error => $status->{errstr} );
+		$self->render(
+			'landingpage',
+			with_geolocation => 1,
+			error            => $status->{errstr}
+		);
 	}
 	else {
 		# You can't check into a train which terminates here

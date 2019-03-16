@@ -1,4 +1,16 @@
 % if (is_user_authenticated()) {
+	% if (stash('error')) {
+		<div class="row">
+			<div class="col s12">
+				<div class="card red darken-4">
+					<div class="card-content white-text">
+						<span class="card-title">Backend-Fehler</span>
+						<p><%= stash('error') %></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	% }
 	<div class="row">
 		<div class="col s12">
 			% my $status = get_user_status();
@@ -35,7 +47,7 @@
 							<div class="progress"><div class="indeterminate"></div></div>
 						</div>
 						%= form_for 'list_departures' => begin
-							<div class="input-field text-white">
+							<div class="input-field">
 								%= text_field 'station', id => 'station', class => 'autocomplete white-text', require => undef
 								<label for="station">Manuelle Eingabe (Name oder DS100)</label>
 							</div>
