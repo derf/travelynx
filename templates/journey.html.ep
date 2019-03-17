@@ -65,9 +65,8 @@
 					<td>
 						% for my $message (@{$journey->{messages} // []}) {
 							% my ($ts, $msg) = @{$message};
-							<%= $ts->strftime('%d.%m.%Y %H:%M') %> : <%= $msg %>
+							<%= $ts->strftime('%d.%m.%Y %H:%M') %> : <%= $msg %><br/>
 						% }
-						<br/>
 					</td>
 				</tr>
 				<tr>
