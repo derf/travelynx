@@ -866,7 +866,7 @@ helper 'get_user_travels' => sub {
 					my ( $ts, $msg ) = split( qr{:}, $message );
 					push( @parsed_messages, [ epoch_to_dt($ts), $msg ] );
 				}
-				$ref->{messages} = [@parsed_messages];
+				$ref->{messages} = [ reverse @parsed_messages ];
 			}
 		}
 		$prev_action = $action;
