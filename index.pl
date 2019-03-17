@@ -242,6 +242,26 @@ app->attr(
 	}
 );
 app->attr(
+	get_journey_actions_query => sub {
+		my ($self) = @_;
+
+		return $self->app->dbh->prepare(
+			qq{
+			select action_id, action_time, stations.ds100, stations.name,
+			train_type, train_line, train_no, train_id,
+			sched_time, real_time,
+			route, messages
+			from user_actions
+			left outer join stations on station_id = stations.id
+			where user_id = ?
+			and (action_time = ? or action_time = ?)
+			order by action_time desc
+			limit 2
+		}
+		);
+	}
+);
+app->attr(
 	get_userid_query => sub {
 		my ($self) = @_;
 
@@ -775,14 +795,21 @@ helper 'check_if_mail_is_blacklisted' => sub {
 };
 
 helper 'get_user_travels' => sub {
-	my ( $self, $limit ) = @_;
+	my ( $self, %opt ) = @_;
 
 	my $uid   = $self->current_user->{id};
 	my $query = $self->app->get_all_actions_query;
-	if ($limit) {
+	if ( $opt{limit} ) {
 		$query = $self->app->get_last_actions_query;
 	}
-	$query->execute($uid);
+
+	if ( $opt{uid} and $opt{checkin_epoch} and $opt{checkout_epoch} ) {
+		$query = $self->app->get_journey_actions_query;
+		$query->execute( $opt{uid}, $opt{checkin_epoch}, $opt{checkout_epoch} );
+	}
+	else {
+		$query->execute($uid);
+	}
 
 	my @travels;
 	my $prev_action = 0;
@@ -805,6 +832,7 @@ helper 'get_user_travels' => sub {
 					to_name       => $name,
 					sched_arrival => epoch_to_dt($raw_sched_ts),
 					rt_arrival    => epoch_to_dt($raw_real_ts),
+					checkout      => epoch_to_dt($raw_ts),
 					type          => $train_type,
 					line          => $train_line,
 					no            => $train_no,
@@ -823,13 +851,23 @@ helper 'get_user_travels' => sub {
 			my $ref = $travels[-1];
 			$ref->{from_name}       = $name;
 			$ref->{completed}       = 1;
-			$ref->{sched_departure} = epoch_to_dt($raw_sched_ts),
-			  $ref->{rt_departure}  = epoch_to_dt($raw_real_ts),
-			  $ref->{type}   //= $train_type;
+			$ref->{sched_departure} = epoch_to_dt($raw_sched_ts);
+			$ref->{rt_departure}    = epoch_to_dt($raw_real_ts);
+			$ref->{checkin}         = epoch_to_dt($raw_ts);
+			$ref->{type}     //= $train_type;
 			$ref->{line}     //= $train_line;
 			$ref->{no}       //= $train_no;
 			$ref->{messages} //= [ split( qr{[|]}, $raw_messages ) ];
 			$ref->{route}    //= [ split( qr{[|]}, $raw_route ) ];
+
+			if ( $opt{verbose} ) {
+				my @parsed_messages;
+				for my $message ( @{ $ref->{messages} // [] } ) {
+					my ( $ts, $msg ) = split( qr{:}, $message );
+					push( @parsed_messages, [ epoch_to_dt($ts), $msg ] );
+				}
+				$ref->{messages} = [@parsed_messages];
+			}
 		}
 		$prev_action = $action;
 	}
@@ -1340,7 +1378,7 @@ get '/history' => sub {
 	my ($self) = @_;
 
 	$self->respond_to(
-		json => { json     => [ $self->get_user_travels(0) ] },
+		json => { json     => [ $self->get_user_travels ] },
 		any  => { template => 'history' }
 	);
 };
@@ -1348,7 +1386,42 @@ get '/history' => sub {
 get '/history.json' => sub {
 	my ($self) = @_;
 
-	$self->render( json => [ $self->get_user_travels(0) ] );
+	$self->render( json => [ $self->get_user_travels ] );
+};
+
+get '/journey/:id' => sub {
+	my ($self) = @_;
+	my ( $uid, $checkin_ts, $checkout_ts ) = split( qr{-}, $self->stash('id') );
+
+	if ( $uid != $self->current_user->{id} ) {
+		$self->render(
+			'journey',
+			error   => 'notfound',
+			journey => {}
+		);
+		return;
+	}
+
+	my @journeys = $self->get_user_travels(
+		uid            => $uid,
+		checkin_epoch  => $checkin_ts,
+		checkout_epoch => $checkout_ts,
+		verbose        => 1,
+	);
+	if ( @journeys == 0 ) {
+		$self->render(
+			'journey',
+			error   => 'notfound',
+			journey => {}
+		);
+		return;
+	}
+
+	$self->render(
+		'journey',
+		error   => undef,
+		journey => $journeys[0]
+	);
 };
 
 get '/export.json' => sub {

@@ -19,12 +19,13 @@
 				</tr>
 			</thead>
 			<tbody>
-				% for my $travel (get_user_travels(0)) {
+				% for my $travel (get_user_travels()) {
 					% if ($travel->{completed}) {
+						% my $detail_link = '/journey/' . current_user()->{id} . '-' . $travel->{checkin}->epoch . '-' . $travel->{checkout}->epoch;
 						<tr>
 							<td><%= $travel->{sched_departure}->strftime('%d.%m.%Y') %></td>
-							<td><%= $travel->{type} %> <%= $travel->{line} // '' %> <%= $travel->{no} %></td>
-							<td><%= $travel->{from_name} %> → <%= $travel->{to_name} %></td>
+							<td><a href="<%= $detail_link %>"><%= $travel->{type} %> <%= $travel->{line} // '' %> <%= $travel->{no} %></a></td>
+							<td><a href="<%= $detail_link %>"><%= $travel->{from_name} %> → <%= $travel->{to_name} %></a></td>
 							<td><%= $travel->{rt_departure}->strftime('%H:%M') %>
 							% if ($travel->{sched_departure} != $travel->{rt_departure}) {
 								(+<%= ($travel->{rt_departure}->epoch - $travel->{sched_departure}->epoch) / 60 %>)
