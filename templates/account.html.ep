@@ -1,3 +1,30 @@
+% if (my $invalid = stash('invalid')) {
+	<div class="row">
+		<div class="col s12">
+			<div class="card red darken-4">
+				<div class="card-content white-text">
+					% if ($invalid eq 'csrf') {
+						<span class="card-title">Ungültiger CSRF-Token</span>
+						<p>Sind Cookies aktiviert? Ansonsten könnte es sich um einen
+						Fall von <a
+						href="https://de.wikipedia.org/wiki/Cross-Site-Request-Forgery">CSRF</a>
+						handeln.</p>
+					% }
+					% elsif ($invalid eq 'password') {
+						<span class="card-title">Ungültiges Passwort</span>
+						<p>Aus Sicherheitsgründen kann der Account nur nach Passworteingabe
+						gelöscht werden.</p>
+					% }
+					% else {
+						<span class="card-title">Unbekannter Fehler</span>
+						<p>„<%= $invalid %>“</p>
+					% }
+				</div>
+			</div>
+		</div>
+	</div>
+% }
+
 <h1>Account</h1>
 % my $acc = current_user();
 <div class="row">
@@ -192,17 +219,18 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col s1 m1 l3">
-		</div>
-		<div class="col s10 m10 l6 center-align">
-			%= form_for 'delete' => begin
+		%= form_for 'delete' => begin
+			<div class="input-field col s12 m12 l8">
+				<i class="material-icons prefix">lock</i>
+				%= password_field 'password', id => 'password', class => 'validate', required => undef, autocomplete => 'current-password'
+				<label for="password">Passwort</label>
+			</div>
+			<div class="input-field col s12 m12 l4 center-align">
 				%= csrf_field
 				<button class="btn waves-effect waves-light red" type="submit" name="action" value="delete">
 					Account löschen
 				</button>
-			%= end
-		</div>
-		<div class="col s1 m1 l3">
-		</div>
+			</div>
+		%= end
 	</div>
 % }

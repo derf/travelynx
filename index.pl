@@ -1479,8 +1479,14 @@ post '/delete' => sub {
 		$self->render( 'account', invalid => 'csrf' );
 		return;
 	}
+
 	my $now = DateTime->now( time_zone => 'Europe/Berlin' )->epoch;
+
 	if ( $self->param('action') eq 'delete' ) {
+		if (not $self->authenticate($self->current_user->{name}, $self->param('password'))) {
+			$self->render( 'account', invalid => 'password' );
+			return;
+		}
 		$self->app->mark_for_deletion_query->execute( $now,
 			$self->current_user->{id} );
 	}
