@@ -677,6 +677,9 @@ helper 'get_user_token' => sub {
 	return;
 };
 
+# This helper should only be called directly when also providing a user ID.
+# If you don't have one, use current_user() instead (get_user_data will
+# delegate to it anyways).
 helper 'get_user_data' => sub {
 	my ( $self, $uid ) = @_;
 

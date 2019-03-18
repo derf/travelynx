@@ -34,7 +34,7 @@
 
 <div class="container">
 	% if (is_user_authenticated()) {
-		% my $acc = get_user_data();
+		% my $acc = current_user();
 		% if ($acc and $acc->{deletion_requested}) {
 			%= include '_deletion_note', timestamp => $acc->{deletion_requested}
 		% }
