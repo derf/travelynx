@@ -156,7 +156,7 @@ app->attr(
 	}
 );
 app->attr(
-	checkin_query => sub {
+	action_query => sub {
 		my ($self) = @_;
 
 		return $self->app->dbh->prepare(
@@ -167,7 +167,7 @@ app->attr(
 				sched_time, real_time,
 				route, messages
 			) values (
-				?, $action_type{checkin}, ?, ?,
+				?, ?, ?, ?,
 				?, ?, ?, ?,
 				?, ?,
 				?, ?
@@ -175,27 +175,6 @@ app->attr(
 		}
 		);
 	},
-);
-app->attr(
-	checkout_query => sub {
-		my ($self) = @_;
-
-		return $self->app->dbh->prepare(
-			qq{
-			insert into user_actions (
-				user_id, action_id, station_id, action_time,
-				train_type, train_line, train_no, train_id,
-				sched_time, real_time,
-				route, messages
-			) values (
-				?, $action_type{checkout}, ?, ?,
-				?, ?, ?, ?,
-				?, ?,
-				?, ?
-			)
-		}
-		);
-	}
 );
 app->attr(
 	dbh => sub {
@@ -526,8 +505,9 @@ helper 'checkin' => sub {
 				sleep(1);
 			}
 
-			my $success = $self->app->checkin_query->execute(
+			my $success = $self->app->action_query->execute(
 				$self->current_user->{id},
+				$action_type{checkin},
 				$self->get_station_id(
 					ds100 => $status->{station_ds100},
 					name  => $status->{station_name}
@@ -600,8 +580,9 @@ helper 'checkout' => sub {
 	  = first { $_->train_id eq $train_id } @{ $status->{results} };
 	if ( not defined $train ) {
 		if ($force) {
-			my $success = $self->app->checkout_query->execute(
+			my $success = $self->app->action_query->execute(
 				$self->current_user->{id},
+				$action_type{checkout},
 				$self->get_station_id(
 					ds100 => $status->{station_ds100},
 					name  => $status->{station_name}
@@ -622,8 +603,9 @@ helper 'checkout' => sub {
 		}
 	}
 	else {
-		my $success = $self->app->checkout_query->execute(
+		my $success = $self->app->action_query->execute(
 			$self->current_user->{id},
+			$action_type{checkout},
 			$self->get_station_id(
 				ds100 => $status->{station_ds100},
 				name  => $status->{station_name}
