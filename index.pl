@@ -808,6 +808,11 @@ helper 'get_user_travels' => sub {
 	else {
 		$query->execute($uid);
 	}
+	my @match_actions = ( $action_type{checkout}, $action_type{checkin} );
+	if ( $opt{cancelled} ) {
+		@match_actions
+		  = ( $action_type{cancelled_to}, $action_type{cancelled_from} );
+	}
 
 	my @travels;
 	my $prev_action = 0;
@@ -823,7 +828,9 @@ helper 'get_user_travels' => sub {
 		$raw_route    = decode( 'UTF-8', $raw_route );
 		$raw_messages = decode( 'UTF-8', $raw_messages );
 
-		if ( $action == $action_type{checkout} ) {
+		if ( $action == $match_actions[0]
+			or ( $opt{checkout_epoch} and $raw_ts == $opt{checkout_epoch} ) )
+		{
 			push(
 				@travels,
 				{
@@ -843,8 +850,13 @@ helper 'get_user_travels' => sub {
 				}
 			);
 		}
-		elsif ( $action == $action_type{checkin}
-			and $prev_action == $action_type{checkout} )
+		elsif (
+			(
+				    $action == $match_actions[1]
+				and $prev_action == $match_actions[0]
+			)
+			or ( $opt{checkin_epoch} and $raw_ts == $opt{checkin_epoch} )
+		  )
 		{
 			my $ref = $travels[-1];
 			$ref->{from_name}       = $name;
@@ -865,6 +877,11 @@ helper 'get_user_travels' => sub {
 					push( @parsed_messages, [ epoch_to_dt($ts), $msg ] );
 				}
 				$ref->{messages} = [ reverse @parsed_messages ];
+			}
+			if (    $opt{checkin_epoch}
+				and $action == $action_type{cancelled_from} )
+			{
+				$ref->{cancelled} = 1;
 			}
 		}
 		$prev_action = $action;
@@ -1442,17 +1459,21 @@ get '/account' => sub {
 
 get '/history' => sub {
 	my ($self) = @_;
+	my $cancelled = $self->param('cancelled') ? 1 : 0;
 
 	$self->respond_to(
-		json => { json     => [ $self->get_user_travels ] },
-		any  => { template => 'history' }
+		json =>
+		  { json => [ $self->get_user_travels( cancelled => $cancelled ) ] },
+		any => { template => 'history' }
 	);
 };
 
 get '/history.json' => sub {
 	my ($self) = @_;
+	my $cancelled = $self->param('cancelled') ? 1 : 0;
 
-	$self->render( json => [ $self->get_user_travels ] );
+	$self->render(
+		json => [ $self->get_user_travels( cancelled => $cancelled ) ] );
 };
 
 get '/journey/:id' => sub {

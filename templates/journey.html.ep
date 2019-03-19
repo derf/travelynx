@@ -14,7 +14,12 @@
 	<div class="row">
 		<div class="col s12">
 			<p>
-				Fahrt von
+				% if ($journey->{cancelled}) {
+					Ausgefallene Fahrt von
+				% }
+				% else {
+					Fahrt von
+				% }
 				<b><%= $journey->{from_name} %></b>
 				nach
 				<b><%= $journey->{to_name} %></b>
@@ -34,7 +39,11 @@
 				<tr>
 					<th scope="row">Abfahrt</th>
 					<td>
-						% if ($journey->{rt_departure} != $journey->{sched_departure}) {
+						% if ($journey->{cancelled}) {
+							<i class="material-icons">cancel</i>
+							(Plan: <%= $journey->{sched_departure}->strftime('%H:%M'); %>)
+						% }
+						% elsif ($journey->{rt_departure} != $journey->{sched_departure}) {
 							%= $journey->{rt_departure}->strftime('%H:%M');
 							(+<%= ($journey->{rt_departure}->epoch - $journey->{sched_departure}->epoch) / 60 %>,
 							Plan: <%= $journey->{sched_departure}->strftime('%H:%M'); %>)
@@ -47,7 +56,13 @@
 				<tr>
 					<th scope="row">Ankunft</th>
 					<td>
-						% if ($journey->{rt_arrival}->epoch == 0 and $journey->{sched_arrival}->epoch == 0) {
+						% if ($journey->{cancelled}) {
+							<i class="material-icons">cancel</i>
+							% if ($journey->{sched_arrival}->epoch != 0) {
+								(Plan: <%= $journey->{sched_arrival}->strftime('%H:%M'); %>)
+							% }
+						% }
+						% elsif ($journey->{rt_arrival}->epoch == 0 and $journey->{sched_arrival}->epoch == 0) {
 							<i class="material-icons">timer_off</i>
 						% }
 						% elsif ($journey->{rt_arrival} != $journey->{sched_arrival}) {
