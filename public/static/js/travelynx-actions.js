@@ -44,6 +44,24 @@ $(document).ready(function() {
 		var req = {
 			action: 'undo',
 		};
-		tvly_run(link, req, window.location.href);
+		tvly_run(link, req, '/');
+	});
+	$('.action-cancelled-from').click(function() {
+		var link = $(this);
+		var req = {
+			action: 'cancelled_from',
+			station: link.data('station'),
+			train: link.data('train'),
+		};
+		tvly_run(link, req, '/');
+	});
+	$('.action-cancelled-to').click(function() {
+		var link = $(this);
+		var req = {
+			action: 'cancelled_to',
+			station: link.data('station'),
+			force: true,
+		};
+		tvly_run(link, req, '/');
 	});
 });

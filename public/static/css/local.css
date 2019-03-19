@@ -1,6 +1,8 @@
 .action-checkin,
 .action-checkout,
-.action-undo {
+.action-undo,
+.action-cancelled-from,
+.action-cancelled-to {
 	cursor: pointer;
 }
 

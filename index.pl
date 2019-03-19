@@ -33,11 +33,13 @@ my $cache_iris_rt = Cache::File->new(
 my $dbname = $ENV{TRAVELYNX_DB_FILE} // 'travelynx.sqlite';
 
 my %action_type = (
-	checkin  => 1,
-	checkout => 2,
-	undo     => 3,
+	checkin        => 1,
+	checkout       => 2,
+	undo           => 3,
+	cancelled_from => 4,
+	cancelled_to   => 5,
 );
-my @action_types = (qw(checkin checkout undo));
+my @action_types = (qw(checkin checkout undo cancelled_from cancelled_to));
 my %token_type   = (
 	status  => 1,
 	history => 2,
@@ -476,7 +478,9 @@ sub get_station {
 }
 
 helper 'checkin' => sub {
-	my ( $self, $station, $train_id ) = @_;
+	my ( $self, $station, $train_id, $action_id ) = @_;
+
+	$action_id //= $action_type{checkin};
 
 	my $status = get_departures($station);
 	if ( $status->{errstr} ) {
@@ -504,10 +508,17 @@ helper 'checkin' => sub {
              # XXX same workaround: We can't checkin immediately after checkout.
 				sleep(1);
 			}
+			elsif ( $user->{cancelled} ) {
+
+				# Same
+				sleep(1);
+				$self->cancelled_to($station);
+				sleep(1);
+			}
 
 			my $success = $self->app->action_query->execute(
 				$self->current_user->{id},
-				$action_type{checkin},
+				$action_id,
 				$self->get_station_id(
 					ds100 => $status->{station_ds100},
 					name  => $status->{station_name}
@@ -563,13 +574,15 @@ helper 'undo' => sub {
 };
 
 helper 'checkout' => sub {
-	my ( $self, $station, $force ) = @_;
+	my ( $self, $station, $force, $action_id ) = @_;
+
+	$action_id //= $action_type{checkout};
 
 	my $status   = get_departures( $station, 180 );
 	my $user     = $self->get_user_status;
 	my $train_id = $user->{train_id};
 
-	if ( not $user->{checked_in} ) {
+	if ( not $user->{checked_in} and not $user->{cancelled} ) {
 		return 'You are not checked into any train';
 	}
 	if ( $status->{errstr} and not $force ) {
@@ -582,7 +595,7 @@ helper 'checkout' => sub {
 		if ($force) {
 			my $success = $self->app->action_query->execute(
 				$self->current_user->{id},
-				$action_type{checkout},
+				$action_id,
 				$self->get_station_id(
 					ds100 => $status->{station_ds100},
 					name  => $status->{station_name}
@@ -892,6 +905,7 @@ helper 'get_user_status' => sub {
 		}
 		return {
 			checked_in      => ( $cols[0] == $action_type{checkin} ),
+			cancelled       => ( $cols[0] == $action_type{cancelled_from} ),
 			timestamp       => $action_ts,
 			timestamp_delta => $now->epoch - $action_ts->epoch,
 			sched_ts        => $sched_ts,
@@ -1070,8 +1084,11 @@ get '/api/v0/:action/:token' => sub {
 		$self->render(
 			json => {
 				deprecated => \0,
-				checked_in => $status->{checked_in} ? \1 : \0,
-				station    => {
+				checked_in => (
+					     $status->{checked_in}
+					  or $status->{cancelled}
+				) ? \1 : \0,
+				station => {
 					ds100     => $status->{station_ds100},
 					name      => $status->{station_name},
 					uic       => $station_eva,
@@ -1302,7 +1319,7 @@ post '/action' => sub {
 	if ( $params->{action} eq 'checkin' ) {
 
 		my ( $train, $error )
-		  = $self->checkin( $params->{station}, $params->{train}, );
+		  = $self->checkin( $params->{station}, $params->{train} );
 
 		if ($error) {
 			$self->render(
@@ -1321,7 +1338,7 @@ post '/action' => sub {
 		}
 	}
 	elsif ( $params->{action} eq 'checkout' ) {
-		my $error = $self->checkout( $params->{station}, $params->{force}, );
+		my $error = $self->checkout( $params->{station}, $params->{force} );
 
 		if ($error) {
 			$self->render(
@@ -1341,6 +1358,47 @@ post '/action' => sub {
 	}
 	elsif ( $params->{action} eq 'undo' ) {
 		my $error = $self->undo;
+		if ($error) {
+			$self->render(
+				json => {
+					success => 0,
+					error   => $error,
+				},
+			);
+		}
+		else {
+			$self->render(
+				json => {
+					success => 1,
+				},
+			);
+		}
+	}
+	elsif ( $params->{action} eq 'cancelled_from' ) {
+		my ( undef, $error )
+		  = $self->checkin( $params->{station}, $params->{train},
+			$action_type{cancelled_from} );
+
+		if ($error) {
+			$self->render(
+				json => {
+					success => 0,
+					error   => $error,
+				},
+			);
+		}
+		else {
+			$self->render(
+				json => {
+					success => 1,
+				},
+			);
+		}
+	}
+	elsif ( $params->{action} eq 'cancelled_to' ) {
+		my $error = $self->checkout( $params->{station}, 1,
+			$action_type{cancelled_to} );
+
 		if ($error) {
 			$self->render(
 				json => {
