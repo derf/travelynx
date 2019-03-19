@@ -1070,17 +1070,40 @@ get '/api/v0/:action/:token' => sub {
 	}
 	if ( $api_action eq 'status' ) {
 		my $status = $self->get_user_status($uid);
+
+		my @station_descriptions;
+		my $station_eva = undef;
+		my $station_lon = undef;
+		my $station_lat = undef;
+
+		if ( $status->{station_ds100} ) {
+			@station_descriptions
+			  = Travel::Status::DE::IRIS::Stations::get_station(
+				$status->{station_ds100} );
+		}
+		if ( @station_descriptions == 1 ) {
+			( undef, undef, $station_eva, $station_lon, $station_lat )
+			  = @{ $station_descriptions[0] };
+		}
 		$self->render(
 			json => {
-				checked_in    => $status->{checked_in} ? \1 : \0,
-				station_ds100 => $status->{station_ds100},
-				station_name  => $status->{station_name},
-				train_type    => $status->{train_type},
-				train_line    => $status->{train_line},
-				train_no      => $status->{train_no},
-				action_ts     => $status->{timestamp}->epoch,
-				sched_ts      => $status->{sched_ts}->epoch,
-				real_ts       => $status->{real_ts}->epoch,
+				deprecated => \0,
+				checked_in => $status->{checked_in} ? \1 : \0,
+				station    => {
+					ds100     => $status->{station_ds100},
+					name      => $status->{station_name},
+					uic       => $station_eva,
+					longitude => $station_lon,
+					latitude  => $station_lat,
+				},
+				train => {
+					type => $status->{train_type},
+					line => $status->{train_line},
+					no   => $status->{train_no},
+				},
+				action_ts => $status->{timestamp}->epoch,
+				sched_ts  => $status->{sched_ts}->epoch,
+				real_ts   => $status->{real_ts}->epoch,
 			},
 		);
 	}
@@ -1483,7 +1506,13 @@ post '/delete' => sub {
 	my $now = DateTime->now( time_zone => 'Europe/Berlin' )->epoch;
 
 	if ( $self->param('action') eq 'delete' ) {
-		if (not $self->authenticate($self->current_user->{name}, $self->param('password'))) {
+		if (
+			not $self->authenticate(
+				$self->current_user->{name},
+				$self->param('password')
+			)
+		  )
+		{
 			$self->render( 'account', invalid => 'password' );
 			return;
 		}

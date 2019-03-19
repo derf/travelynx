@@ -148,9 +148,6 @@
 <h3>Status</h3>
 <div class="row">
 	<div class="col s12">
-		<p>
-			Das Format der API v0 kann sich noch ändern, ab v1 ist es stabil.
-		</p>
 		<p style="font-family: Monospace;">
 			% if ($token->{status}) {
 				curl <%= $api_root %>/status/<%= $acc->{id} %>-<%= $token->{status} // 'TOKEN' %>
@@ -159,14 +156,25 @@
 				curl <%= $api_root %>/status/TOKEN
 			% }
 		</p>
+		<p>
+		Beispiel / Layout:
+		</p>
 		<p style="font-family: Monospace;">
 		{<br/>
+			"deprecated" : true / false, (falls true: Diese API-Version wird irgendwann abgeschaltet, bitte auf eine neue umsteigen)<br/>
 			"checked_in" : true / false,<br/>
-			"station_ds100" : "EE", (DS100-Kürzel der letzten Station)<br/>
-			"station_name" : "Essen Hbf", (Name der letzten Station)<br/>
-			"train_type" : "ICE", (aktueller / letzter Zugtyp)<br/>
-			"train_line" : "", (Linie, ggf. null)<br/>
-			"train_no" : "1234", (Zugnummer)<br/>
+			"station" : {<br/>
+				"name" : "Essen Hbf", (Name der letzten Station)<br/>
+				"ds100" : "EE", (DS100-Kürzel)<br/>
+				"uic" : 8000098, (Internationale Bahnhofsnummer)<br/>
+				"longitude" : 7.014793,<br/>
+				"latitude" : 51.451355,<br/>
+			},<br/>
+			"train" : {<br/>
+			"type" : "ICE", (aktueller / letzter Zugtyp)<br/>
+			"line" : null, (Linie als String, nicht immer numerisch, ggf. null)<br/>
+			"no" : "1234", (Zugnummer als String)<br/>
+			},<br/>
 			"action_ts" : 1234567, (UNIX-Timestamp des letzten Checkin/Checkout)<br/>
 			"sched_ts" : 1234567, (UNIX-Timestamp der zugehörigen Ankunft/Abfahrt gemäß Fahrplan. Ggf. 0)<br/>
 			"real_ts" : 1234567, (UNIX-Timestamp der zugehörigen Ankunft/Abfahrt laut Echtzeitdaten. Ggf. 0)<br/>
