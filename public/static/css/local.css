@@ -3,3 +3,7 @@
 .action-undo {
 	cursor: pointer;
 }
+
+td.cancelled {
+	text-decoration: line-through;
+}

@@ -52,18 +52,22 @@
 			</thead>
 			<tbody>
 				% for my $result (@{$results}) {
+					% my $class = "";
+					% if ($result->departure_is_cancelled) {
+						% $class = "cancelled";
+					% }
 					<tr>
 						<td>
 							<a class="action-checkin" data-station="<%= $ds100 %>" data-train="<%= $result->train_id %>">
 								<%= $result->line %>
 							</a>
 						</td>
-						<td>
+						<td class="<%= $class %>">
 							<a class="action-checkin" data-station="<%= $ds100 %>" data-train="<%= $result->train_id %>">
 								<%= $result->destination %>
 							</a>
 						</td>
-						<td><%= $result->departure->strftime('%H:%M') %>
+						<td class="<%= $class %>"><%= $result->departure->strftime('%H:%M') %>
 							% if ($result->departure_delay) {
 								(+<%= $result->departure_delay %>)
 							% }
