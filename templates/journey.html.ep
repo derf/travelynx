@@ -32,7 +32,7 @@
 					<td>
 						<%= $journey->{type} %> <%= $journey->{no} %>
 						% if ($journey->{line}) {
-							(Linie <%= $journey->{type} %> <%= $journey->{line} %>)
+							(Linie <%= $journey->{line} %>)
 						% }
 					</td>
 				</tr>
@@ -73,6 +73,17 @@
 						% else {
 							%= $journey->{sched_arrival}->strftime('%H:%M');
 						% }
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">Entfernung</th>
+					<td>
+						% my $distance = get_travel_distance($journey->{from_name}, $journey->{to_name}, $journey->{route});
+						% my $beeline = get_travel_distance($journey->{from_name}, $journey->{to_name}, [$journey->{from_name}, $journey->{to_name}]);
+						% if ($distance > 0.1) {
+							ca. <%= sprintf('%.f', $distance) %> km
+						% }
+						(Luftlinie: <%= sprintf('%.f', $beeline) %> km)
 					</td>
 				</tr>
 				<tr>
