@@ -175,9 +175,9 @@
 			"line" : null, (Linie als String, nicht immer numerisch, ggf. null)<br/>
 			"no" : "1234", (Zugnummer als String)<br/>
 			},<br/>
-			"action_ts" : 1234567, (UNIX-Timestamp des letzten Checkin/Checkout)<br/>
-			"sched_ts" : 1234567, (UNIX-Timestamp der zugehörigen Ankunft/Abfahrt gemäß Fahrplan. Ggf. 0)<br/>
-			"real_ts" : 1234567, (UNIX-Timestamp der zugehörigen Ankunft/Abfahrt laut Echtzeitdaten. Ggf. 0)<br/>
+			"actionTime" : 1234567, (UNIX-Timestamp des letzten Checkin/Checkout)<br/>
+			"scheduledTime" : 1234567, (UNIX-Timestamp der zugehörigen Ankunft/Abfahrt gemäß Fahrplan. Ggf. 0)<br/>
+			"realTime" : 1234567, (UNIX-Timestamp der zugehörigen Ankunft/Abfahrt laut Echtzeitdaten. Ggf. 0)<br/>
 		}
 		</p>
 		<p>

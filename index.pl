@@ -1117,9 +1117,9 @@ get '/api/v0/:action/:token' => sub {
 					line => $status->{train_line},
 					no   => $status->{train_no},
 				},
-				action_ts => $status->{timestamp}->epoch,
-				sched_ts  => $status->{sched_ts}->epoch,
-				real_ts   => $status->{real_ts}->epoch,
+				actionTime => $status->{timestamp}->epoch,
+				scheduledTime  => $status->{sched_ts}->epoch,
+				realTime   => $status->{real_ts}->epoch,
 			},
 		);
 	}
