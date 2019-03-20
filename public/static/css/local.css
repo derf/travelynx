@@ -9,3 +9,18 @@
 td.cancelled {
 	text-decoration: line-through;
 }
+
+h1 {
+	font-size: 2.92rem;
+	margin: 1.9466666667rem 0 1.168rem 0;
+}
+
+h2 {
+	font-size: 2.28rem;
+	margin: 1.52rem 0 .912rem 0;
+}
+
+h3 {
+	font-size: 1.64rem;
+	margin: 1.0933333333rem 0 .656rem 0;
+}
