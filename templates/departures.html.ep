@@ -71,7 +71,7 @@
 						</td>
 						<td class="<%= $td_class %>"><%= $result->departure->strftime('%H:%M') %>
 							% if ($result->departure_delay) {
-								(+<%= $result->departure_delay %>)
+								(<%= sprintf('%+d', $result->departure_delay) %>)
 							% }
 						</td>
 					</tr>

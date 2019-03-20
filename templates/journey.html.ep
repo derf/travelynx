@@ -45,7 +45,7 @@
 						% }
 						% elsif ($journey->{rt_departure} != $journey->{sched_departure}) {
 							%= $journey->{rt_departure}->strftime('%H:%M');
-							(+<%= ($journey->{rt_departure}->epoch - $journey->{sched_departure}->epoch) / 60 %>,
+							(<%= sprintf('%+d', ($journey->{rt_departure}->epoch - $journey->{sched_departure}->epoch) / 60) %>,
 							Plan: <%= $journey->{sched_departure}->strftime('%H:%M'); %>)
 						% }
 						% else {
@@ -67,7 +67,7 @@
 						% }
 						% elsif ($journey->{rt_arrival} != $journey->{sched_arrival}) {
 							%= $journey->{rt_arrival}->strftime('%H:%M');
-							(+<%= ($journey->{rt_arrival}->epoch - $journey->{sched_arrival}->epoch) / 60 %>,
+							(<%= sprintf('%+d', ($journey->{rt_arrival}->epoch - $journey->{sched_arrival}->epoch) / 60) %>,
 							Plan: <%= $journey->{sched_arrival}->strftime('%H:%M'); %>)
 						% }
 						% else {

@@ -47,7 +47,7 @@
 							% else {
 								<%= $travel->{rt_departure}->strftime('%H:%M') %>
 								% if ($travel->{sched_departure} != $travel->{rt_departure}) {
-									(+<%= ($travel->{rt_departure}->epoch - $travel->{sched_departure}->epoch) / 60 %>)
+									(<%= sprintf('%+d', ($travel->{rt_departure}->epoch - $travel->{sched_departure}->epoch) / 60) %>)
 								% }
 							% }
 							</td>
@@ -61,7 +61,7 @@
 								% } else {
 									%= $travel->{rt_arrival}->strftime('%H:%M');
 									% if ($travel->{sched_arrival} != $travel->{rt_arrival}) {
-										(+<%= ($travel->{rt_arrival}->epoch - $travel->{sched_arrival}->epoch) / 60 %>)
+										(<%= sprintf('%+d', ($travel->{rt_arrival}->epoch - $travel->{sched_arrival}->epoch) / 60) %>)
 									% }
 								% }
 							% }
