@@ -877,6 +877,31 @@ helper 'get_user_travels' => sub {
 					push( @parsed_messages, [ epoch_to_dt($ts), $msg ] );
 				}
 				$ref->{messages} = [ reverse @parsed_messages ];
+				$ref->{sched_duration}
+				  = $ref->{sched_arrival}
+				  ? $ref->{sched_arrival}->epoch
+				  - $ref->{sched_departure}->epoch
+				  : undef;
+				$ref->{rt_duration}
+				  = $ref->{rt_arrival}
+				  ? $ref->{rt_arrival}->epoch - $ref->{rt_departure}->epoch
+				  : undef;
+				$ref->{km_route}
+				  = $self->get_travel_distance( $ref->{from_name},
+					$ref->{to_name}, $ref->{route} );
+				$ref->{km_beeline}
+				  = $self->get_travel_distance( $ref->{from_name},
+					$ref->{to_name}, [ $ref->{from_name}, $ref->{to_name} ] );
+				$ref->{kmh_route}
+				  = $ref->{km_route}
+				  / (
+					( $ref->{rt_duration} // $ref->{sched_duration} // 999999 )
+					/ 3600 );
+				$ref->{kmh_beeline}
+				  = $ref->{km_beeline}
+				  / (
+					( $ref->{rt_duration} // $ref->{sched_duration} // 999999 )
+					/ 3600 );
 			}
 			if (    $opt{checkin_epoch}
 				and $action == $action_type{cancelled_from} )
@@ -1117,9 +1142,9 @@ get '/api/v0/:action/:token' => sub {
 					line => $status->{train_line},
 					no   => $status->{train_no},
 				},
-				actionTime => $status->{timestamp}->epoch,
-				scheduledTime  => $status->{sched_ts}->epoch,
-				realTime   => $status->{real_ts}->epoch,
+				actionTime    => $status->{timestamp}->epoch,
+				scheduledTime => $status->{sched_ts}->epoch,
+				realTime      => $status->{real_ts}->epoch,
 			},
 		);
 	}

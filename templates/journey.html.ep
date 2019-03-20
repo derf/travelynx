@@ -78,12 +78,17 @@
 				<tr>
 					<th scope="row">Entfernung</th>
 					<td>
-						% my $distance = get_travel_distance($journey->{from_name}, $journey->{to_name}, $journey->{route});
-						% my $beeline = get_travel_distance($journey->{from_name}, $journey->{to_name}, [$journey->{from_name}, $journey->{to_name}]);
-						% if ($distance > 0.1) {
-							ca. <%= sprintf('%.f', $distance) %> km
+						% if ($journey->{km_route} > 0.1) {
+							ca. <%= sprintf('%.f', $journey->{km_route}) %> km
 						% }
-						(Luftlinie: <%= sprintf('%.f', $beeline) %> km)
+						(Luftlinie: <%= sprintf('%.f', $journey->{km_beeline}) %> km)
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">Geschwindigkeit</th>
+					<td>
+						∅ <%= sprintf('%.f', $journey->{kmh_route}) %> km/h
+						(<%= sprintf('%.f', $journey->{kmh_beeline}) %> km/h)
 					</td>
 				</tr>
 				<tr>
