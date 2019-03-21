@@ -195,6 +195,36 @@ my @migrations = (
 		);
 		$dbh->commit;
 	},
+
+	# v3 -> v4
+	sub {
+		$dbh->begin_work;
+		$dbh->do(
+			qq{
+			update schema_version set version = 4;
+		}
+		);
+		$dbh->do(
+			qq{
+			create table monthly_stats (
+				user_id integer not null,
+				year int not null,
+				month int not null,
+				km_route int not null,
+				km_beeline int not null,
+				min_travel_sched int not null,
+				min_travel_real int not null,
+				min_change_sched int not null,
+				min_change_real int not null,
+				num_cancelled int not null,
+				num_trains int not null,
+				num_journeys int not null,
+				primary key (user_id, year, month)
+			);
+		}
+		);
+		$dbh->commit;
+	},
 );
 
 my $schema_version = get_schema_version();
