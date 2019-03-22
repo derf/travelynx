@@ -76,6 +76,8 @@ sub startup {
 		$self->secrets( [ split( qr{:}, $ENV{TRAVELYNX_SECRETS} ) ] );
 	}
 
+	push( @{ $self->commands->namespaces }, 'Travelynx::Command' );
+
 	$self->defaults( layout => 'default' );
 
 	$self->config(
