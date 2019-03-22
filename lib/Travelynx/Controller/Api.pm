@@ -4,13 +4,6 @@ use Mojo::Base 'Mojolicious::Controller';
 use Travel::Status::DE::IRIS::Stations;
 use UUID::Tiny qw(:std);
 
-my %token_type   = (
-	status  => 1,
-	history => 2,
-	action  => 3,
-);
-my @token_types = (qw(status history action));
-
 sub make_token {
 	return create_uuid_as_string(UUID_V4);
 }
@@ -105,7 +98,7 @@ sub set_token {
 		return;
 	}
 	my $token    = make_token();
-	my $token_id = $token_type{ $self->param('token') };
+	my $token_id = $self->app->token_type->{ $self->param('token') };
 
 	if ( not $token_id ) {
 		$self->redirect_to('account');

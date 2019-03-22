@@ -27,23 +27,6 @@ my $cache_iris_rt = Cache::File->new(
 	lock_level      => Cache::File::LOCK_LOCAL(),
 );
 
-my $dbname = $ENV{TRAVELYNX_DB_FILE} // 'travelynx.sqlite';
-
-my %action_type = (
-	checkin        => 1,
-	checkout       => 2,
-	undo           => 3,
-	cancelled_from => 4,
-	cancelled_to   => 5,
-);
-my @action_types = (qw(checkin checkout undo cancelled_from cancelled_to));
-my %token_type   = (
-	status  => 1,
-	history => 2,
-	action  => 3,
-);
-my @token_types = (qw(status history action));
-
 sub hash_password {
 	my ($password) = @_;
 	my @salt_bytes = map { int( rand(255) ) + 1 } ( 1 .. 16 );
@@ -134,6 +117,29 @@ $self->plugin(
 $self->sessions->default_expiration( 60 * 60 * 24 * 180 );
 
 $self->defaults( layout => 'default' );
+
+$self->attr(action_type => sub {
+	return {
+	checkin        => 1,
+	checkout       => 2,
+	undo           => 3,
+	cancelled_from => 4,
+	cancelled_to   => 5,
+}});
+$self->attr(action_types => sub {
+	return [
+	qw(checkin checkout undo cancelled_from cancelled_to)
+]});
+$self->attr(token_type => sub {
+	return {
+	status  => 1,
+	history => 2,
+	action  => 3,
+}});
+$self->attr(token_types => sub {
+	return [
+	qw(status history action)
+]});
 
 $self->attr(
 	add_station_query => sub {
@@ -241,6 +247,8 @@ $self->attr(
 $self->attr(
 	dbh => sub {
 		my ($self) = @_;
+
+		my $dbname = $ENV{TRAVELYNX_DB_FILE} // 'travelynx.sqlite';
 
 		return DBI->connect( "dbi:SQLite:dbname=${dbname}", q{}, q{} );
 	}
@@ -442,7 +450,7 @@ $self->attr(
 			insert into user_actions (
 				user_id, action_id, action_time
 			) values (
-				?, $action_type{undo}, ?
+				?, $self->app->action_type->{undo}, ?
 			)
 		}
 		);
@@ -494,7 +502,7 @@ $self->helper('get_departures' => sub {
 $self->helper('checkin' => sub {
 	my ( $self, $station, $train_id, $action_id ) = @_;
 
-	$action_id //= $action_type{checkin};
+	$action_id //= $self->app->action_type->{checkin};
 
 	my $status = $self->get_departures($station);
 	if ( $status->{errstr} ) {
@@ -566,11 +574,11 @@ $self->helper('undo' => sub {
 	$self->app->get_last_actions_query->execute($uid);
 	my $rows = $self->app->get_last_actions_query->fetchall_arrayref;
 
-	if ( @{$rows} and $rows->[0][0] == $action_type{undo} ) {
+	if ( @{$rows} and $rows->[0][0] == $self->app->action_type->{undo} ) {
 		return 'Nested undo (undoing an undo) is not supported';
 	}
 
-	if ( @{$rows} > 1 and $rows->[1][0] == $action_type{undo} ) {
+	if ( @{$rows} > 1 and $rows->[1][0] == $self->app->action_type->{undo} ) {
 		return 'Repeated undo is not supported';
 	}
 
@@ -590,7 +598,7 @@ $self->helper('undo' => sub {
 $self->helper('checkout' => sub {
 	my ( $self, $station, $force, $action_id ) = @_;
 
-	$action_id //= $action_type{checkout};
+	$action_id //= $self->app->action_type->{checkout};
 
 	my $status   = $self->get_departures( $station, 180 );
 	my $user     = $self->get_user_status;
@@ -632,7 +640,7 @@ $self->helper('checkout' => sub {
 	else {
 		my $success = $self->app->action_query->execute(
 			$self->current_user->{id},
-			$action_type{checkout},
+			$self->app->action_type->{checkout},
 			$self->get_station_id(
 				ds100 => $status->{station_ds100},
 				name  => $status->{station_name}
@@ -730,7 +738,7 @@ $self->helper('get_api_token' => sub {
 	my $rows  = $self->app->get_api_tokens_query->fetchall_arrayref;
 	my $token = {};
 	for my $row ( @{$rows} ) {
-		$token->{ $token_types[ $row->[0] - 1 ] } = $row->[1];
+		$token->{ $self->app->token_types->[ $row->[0] - 1 ] } = $row->[1];
 	}
 	return $token;
 });
@@ -822,10 +830,10 @@ $self->helper('get_user_travels' => sub {
 	else {
 		$query->execute($uid);
 	}
-	my @match_actions = ( $action_type{checkout}, $action_type{checkin} );
+	my @match_actions = ( $self->app->action_type->{checkout}, $self->app->action_type->{checkin} );
 	if ( $opt{cancelled} ) {
 		@match_actions
-		  = ( $action_type{cancelled_to}, $action_type{cancelled_from} );
+		  = ( $self->app->action_type->{cancelled_to}, $self->app->action_type->{cancelled_from} );
 	}
 
 	my @travels;
@@ -918,7 +926,7 @@ $self->helper('get_user_travels' => sub {
 					/ 3600 );
 			}
 			if (    $opt{checkin_epoch}
-				and $action == $action_type{cancelled_from} )
+				and $action == $self->app->action_type->{cancelled_from} )
 			{
 				$ref->{cancelled} = 1;
 			}
@@ -940,7 +948,7 @@ $self->helper('get_user_status' => sub {
 		my $now = DateTime->now( time_zone => 'Europe/Berlin' );
 
 		my @cols = @{ $rows->[0] };
-		if ( @{$rows} > 2 and $rows->[0][0] == $action_type{undo} ) {
+		if ( @{$rows} > 2 and $rows->[0][0] == $self->app->action_type->{undo} ) {
 			@cols = @{ $rows->[2] };
 		}
 
@@ -960,8 +968,8 @@ $self->helper('get_user_status' => sub {
 			}
 		}
 		return {
-			checked_in      => ( $cols[0] == $action_type{checkin} ),
-			cancelled       => ( $cols[0] == $action_type{cancelled_from} ),
+			checked_in      => ( $cols[0] == $self->app->action_type->{checkin} ),
+			cancelled       => ( $cols[0] == $self->app->action_type->{cancelled_from} ),
 			timestamp       => $action_ts,
 			timestamp_delta => $now->epoch - $action_ts->epoch,
 			sched_ts        => $sched_ts,
@@ -1025,41 +1033,20 @@ $self->helper('navbar_class' => sub {
 
 my $r = $self->routes;
 
+
 $r->get('/')->to('traveling#homepage');
-
-$r->get('/about' => sub {
-	my ($self) = @_;
-
-	$self->render( 'about', version => $VERSION );
-});
-
-$r->get('/impressum' => sub {
-	my ($self) = @_;
-
-	$self->render('imprint');
-});
-
-$r->get('/imprint' => sub {
-	my ($self) = @_;
-
-	$self->render('imprint');
-});
-
-$r->post('/geolocation')->to('traveling#geolocation');
-
-$r->post('/list_departures')->to('traveling#redirect_to_station');
-
+$r->get('/about')->to('static#about');
+$r->get('/impressum')->to('static#imprint');
+$r->get('/imprint')->to('static#imprint');
 $r->get('/api/v0/:user_action/:token')->to('api#get_v0');
-
-$r->get('/login')->to('login#login_form');
-$r->post('/login')->to('login#do_login');
-
-$r->get('/register')->to('login#registration_form');
-$r->post('/register')->to('login#register');
-
-$r->get('/reg/:id/:token')->to('login#verify');
-
+$r->get('/login')->to('account#login_form');
+$r->get('/register')->to('account#registration_form');
+$r->get('/reg/:id/:token')->to('account#verify');
 $r->post('/action')->to('traveling#log_action');
+$r->post('/geolocation')->to('traveling#geolocation');
+$r->post('/list_departures')->to('traveling#redirect_to_station');
+$r->post('/login')->to('account#do_login');
+$r->post('/register')->to('account#register');
 
 my $authed_r = $r->under(sub {
 	my ($self) = @_;
@@ -1070,119 +1057,15 @@ my $authed_r = $r->under(sub {
 	return undef;
 });
 
-$authed_r->get('/account' => sub {
-	my ($self) = @_;
-
-	$self->render('account');
-});
-
-$authed_r->get('/history' => sub {
-	my ($self) = @_;
-	my $cancelled = $self->param('cancelled') ? 1 : 0;
-
-	$self->respond_to(
-		json =>
-		  { json => [ $self->get_user_travels( cancelled => $cancelled ) ] },
-		any => { template => 'history' }
-	);
-});
-
-$authed_r->get('/history.json' => sub {
-	my ($self) = @_;
-	my $cancelled = $self->param('cancelled') ? 1 : 0;
-
-	$self->render(
-		json => [ $self->get_user_travels( cancelled => $cancelled ) ] );
-});
-
-$authed_r->get('/journey/:id' => sub {
-	my ($self) = @_;
-	my ( $uid, $checkin_ts, $checkout_ts ) = split( qr{-}, $self->stash('id') );
-
-	if ( $uid != $self->current_user->{id} ) {
-		$self->render(
-			'journey',
-			error   => 'notfound',
-			journey => {}
-		);
-		return;
-	}
-
-	my @journeys = $self->get_user_travels(
-		uid            => $uid,
-		checkin_epoch  => $checkin_ts,
-		checkout_epoch => $checkout_ts,
-		verbose        => 1,
-	);
-	if ( @journeys == 0 ) {
-		$self->render(
-			'journey',
-			error   => 'notfound',
-			journey => {}
-		);
-		return;
-	}
-
-	$self->render(
-		'journey',
-		error   => undef,
-		journey => $journeys[0]
-	);
-});
-
-$authed_r->get('/export.json' => sub {
-	my ($self) = @_;
-	my $uid    = $self->current_user->{id};
-	my $query  = $self->app->get_all_actions_query;
-
-	$query->execute($uid);
-
-	my @entries;
-
-	while ( my @row = $query->fetchrow_array ) {
-		my (
-			$action,       $raw_ts,      $ds100,     $name,
-			$train_type,   $train_line,  $train_no,  $train_id,
-			$raw_sched_ts, $raw_real_ts, $raw_route, $raw_messages
-		) = @row;
-
-		$name         = decode( 'UTF-8', $name );
-		$raw_route    = decode( 'UTF-8', $raw_route );
-		$raw_messages = decode( 'UTF-8', $raw_messages );
-		push(
-			@entries,
-			{
-				action        => $action_types[ $action - 1 ],
-				action_ts     => $raw_ts,
-				station_ds100 => $ds100,
-				station_name  => $name,
-				train_type    => $train_type,
-				train_line    => $train_line,
-				train_no      => $train_no,
-				train_id      => $train_id,
-				scheduled_ts  => $raw_sched_ts,
-				realtime_ts   => $raw_real_ts,
-				messages      => $raw_messages
-				? [ map { [ split(qr{:}) ] } split( qr{[|]}, $raw_messages ) ]
-				: undef,
-				route => $raw_route ? [ split( qr{[|]}, $raw_route ) ]
-				: undef,
-			}
-		);
-	}
-
-	$self->render(
-		json => [@entries],
-	);
-});
-
-$authed_r->post('/delete')->to('login#delete');
-
-$authed_r->post('/logout')->to('login#do_logout');
-
-$authed_r->post('/set_token')->to('api#set_token');
-
+$authed_r->get('/account')->to('account#account');
+$authed_r->get('/export.json')->to('account#json_export');
+$authed_r->get('/history')->to('traveling#history');
+$authed_r->get('/history.json')->to('traveling#json_history');
+$authed_r->get('/journey/:id')->to('traveling#journey_details');
 $authed_r->get('/s/*station')->to('traveling#station');
+$authed_r->post('/delete')->to('account#delete');
+$authed_r->post('/logout')->to('account#do_logout');
+$authed_r->post('/set_token')->to('api#set_token');
 
 }
 

@@ -3,15 +3,6 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use Travel::Status::DE::IRIS::Stations;
 
-my %action_type = (
-	checkin        => 1,
-	checkout       => 2,
-	undo           => 3,
-	cancelled_from => 4,
-	cancelled_to   => 5,
-);
-my @action_types = (qw(checkin checkout undo cancelled_from cancelled_to));
-
 sub homepage {
 	my ($self) = @_;
 	if ( $self->is_user_authenticated ) {
@@ -145,7 +136,7 @@ sub log_action {
 	elsif ( $params->{action} eq 'cancelled_from' ) {
 		my ( undef, $error )
 		  = $self->checkin( $params->{station}, $params->{train},
-			$action_type{cancelled_from} );
+			$self->app->action_type->{cancelled_from} );
 
 		if ($error) {
 			$self->render(
@@ -165,7 +156,7 @@ sub log_action {
 	}
 	elsif ( $params->{action} eq 'cancelled_to' ) {
 		my $error = $self->checkout( $params->{station}, 1,
-			$action_type{cancelled_to} );
+			$self->app->action_type->{cancelled_to} );
 
 		if ($error) {
 			$self->render(
@@ -236,6 +227,60 @@ sub redirect_to_station {
 	my $station = $self->param('station');
 
 	$self->redirect_to("/s/${station}");
+}
+
+sub history {
+	my ($self) = @_;
+	my $cancelled = $self->param('cancelled') ? 1 : 0;
+
+	$self->respond_to(
+		json =>
+		  { json => [ $self->get_user_travels( cancelled => $cancelled ) ] },
+		any => { template => 'history' }
+	);
+}
+
+sub json_history {
+	my ($self) = @_;
+	my $cancelled = $self->param('cancelled') ? 1 : 0;
+
+	$self->render(
+		json => [ $self->get_user_travels( cancelled => $cancelled ) ] );
+}
+
+sub journey_details {
+	my ($self) = @_;
+	my ( $uid, $checkin_ts, $checkout_ts ) = split( qr{-}, $self->stash('id') );
+
+	if ( $uid != $self->current_user->{id} ) {
+		$self->render(
+			'journey',
+			error   => 'notfound',
+			journey => {}
+		);
+		return;
+	}
+
+	my @journeys = $self->get_user_travels(
+		uid            => $uid,
+		checkin_epoch  => $checkin_ts,
+		checkout_epoch => $checkout_ts,
+		verbose        => 1,
+	);
+	if ( @journeys == 0 ) {
+		$self->render(
+			'journey',
+			error   => 'notfound',
+			journey => {}
+		);
+		return;
+	}
+
+	$self->render(
+		'journey',
+		error   => undef,
+		journey => $journeys[0]
+	);
 }
 
 1;
