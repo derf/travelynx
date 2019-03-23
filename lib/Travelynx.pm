@@ -74,10 +74,12 @@ sub startup {
 
 	$self->config(
 		hypnotoad => {
-			accepts  => 40,
+			accepts  => $ENV{TRAVELYNX_ACCEPTS} // 100,
+			clients  => $ENV{TRAVELYNX_CLIENS} // 10,
 			listen   => [ $ENV{TRAVELYNX_LISTEN} // 'http://*:8093' ],
-			pid_file => '/tmp/travelynx.pid',
+			pid_file => $ENV{TRAVELYNX_PID_FILE} // '/tmp/travelynx.pid',
 			workers  => $ENV{TRAVELYNX_WORKERS} // 2,
+			spare    => $ENV{TRAVELYNX_SPARE} // 2,
 		},
 	);
 
