@@ -252,7 +252,8 @@ sub startup {
 
 			my $dbname = $ENV{TRAVELYNX_DB_FILE} // 'travelynx.sqlite';
 
-			return DBI->connect( "dbi:SQLite:dbname=${dbname}", q{}, q{} );
+			return DBI->connect( "dbi:SQLite:dbname=${dbname}", undef, undef,
+				{ AutoCommit => 1 } );
 		}
 	);
 	$self->attr(
