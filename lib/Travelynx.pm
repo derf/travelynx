@@ -27,14 +27,6 @@ my $cache_iris_rt = Cache::File->new(
 	lock_level      => Cache::File::LOCK_LOCAL(),
 );
 
-sub hash_password {
-	my ($password) = @_;
-	my @salt_bytes = map { int( rand(255) ) + 1 } ( 1 .. 16 );
-	my $salt = en_base64( pack( 'C[16]', @salt_bytes ) );
-
-	return bcrypt( $password, '$2a$12$' . $salt );
-}
-
 sub check_password {
 	my ( $password, $hash ) = @_;
 
