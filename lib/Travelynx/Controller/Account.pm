@@ -2,7 +2,7 @@ package Travelynx::Controller::Account;
 use Mojo::Base 'Mojolicious::Controller';
 
 use Crypt::Eksblowfish::Bcrypt qw(bcrypt en_base64);
-use Encode qw(decode);
+use Encode qw(decode encode);
 use Email::Sender::Simple qw(try_to_sendmail);
 use Email::Simple;
 use UUID::Tiny qw(:std);

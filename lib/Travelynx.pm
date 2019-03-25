@@ -165,7 +165,7 @@ sub startup {
 			insert into users (
 				name, status, public_level, email, token, password,
 				registered_at, last_login
-			) values (?, 0, 0, ?, ?, ?, ?, ?);
+			) values (?, 0, 0, ?, ?, ?, to_timestamp(?), to_timestamp(?));
 		}
 			);
 		}
@@ -200,7 +200,7 @@ sub startup {
 				qq{
 				insert into pending_mails (
 					email, num_tries, last_try
-				) values (?, ?, ?);
+				) values (?, ?, to_timestamp(?));
 			}
 			);
 		}
@@ -222,7 +222,7 @@ sub startup {
 
 			return $self->app->dbh->prepare(
 				qq{
-				update users set deletion_requested = ? where id = ?;
+				update users set deletion_requested = to_timestamp(?) where id = ?;
 			}
 			);
 		}
@@ -239,9 +239,9 @@ sub startup {
 				sched_time, real_time,
 				route, messages
 			) values (
+				?, ?, ?, to_timestamp(?),
 				?, ?, ?, ?,
-				?, ?, ?, ?,
-				?, ?,
+				to_timestamp(?), to_timestamp(?),
 				?, ?
 			)
 		}
@@ -252,10 +252,15 @@ sub startup {
 		dbh => sub {
 			my ($self) = @_;
 
-			my $dbname = $ENV{TRAVELYNX_DB_FILE} // 'travelynx.sqlite';
+			my $dbname = $ENV{TRAVELYNX_DB_NAME} // 'travelynx_dev';
+			my $host   = $ENV{TRAVELYNX_DB_HOST} // 'localhost';
+			my $port   = $ENV{TRAVELYNX_DB_PORT} // '5432';
+			my $user   = $ENV{TRAVELYNX_DB_USER};
+			my $pw     = $ENV{TRAVELYNX_DB_PASSWORD};
 
-			return DBI->connect( "dbi:SQLite:dbname=${dbname}", undef, undef,
-				{ AutoCommit => 1 } );
+			return DBI->connect(
+				"dbi:Pg:dbname=${dbname};host=${host};port=${port}",
+				$user, $pw, { AutoCommit => 1 } );
 		}
 	);
 	$self->attr(
@@ -264,9 +269,9 @@ sub startup {
 
 			return $self->app->dbh->prepare(
 				qq{
-			select action_id, action_time, stations.ds100, stations.name,
+			select action_id, extract(epoch from action_time), stations.ds100, stations.name,
 			train_type, train_line, train_no, train_id,
-			sched_time, real_time,
+			extract(epoch from sched_time), extract(epoch from real_time),
 			route, messages
 			from user_actions
 			left outer join stations on station_id = stations.id
@@ -282,9 +287,9 @@ sub startup {
 
 			return $self->app->dbh->prepare(
 				qq{
-			select action_id, action_time, stations.ds100, stations.name,
+			select action_id, extract(epoch from action_time), stations.ds100, stations.name,
 			train_type, train_line, train_no, train_id,
-			sched_time, real_time,
+			extract(epoch from sched_time), extract(epoch from real_time),
 			route, messages
 			from user_actions
 			left outer join stations on station_id = stations.id
@@ -301,14 +306,14 @@ sub startup {
 
 			return $self->app->dbh->prepare(
 				qq{
-			select action_id, action_time, stations.ds100, stations.name,
+			select action_id, extract(epoch from action_time), stations.ds100, stations.name,
 			train_type, train_line, train_no, train_id,
-			sched_time, real_time,
+			extract(epoch from sched_time), extract(epoch from real_time),
 			route, messages
 			from user_actions
 			left outer join stations on station_id = stations.id
 			where user_id = ?
-			and (action_time = ? or action_time = ?)
+			and (action_time = to_timestamp(?) or action_time = to_timestamp(?))
 			order by action_time desc
 			limit 2
 		}
@@ -348,7 +353,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 				qq{
 			select
 				id, name, status, public_level, email,
-				registered_at, last_login, deletion_requested
+				extract(epoch from registered_at), extract(epoch from last_login), extract(epoch from deletion_requested)
 			from users where id = ?
 		}
 			);
@@ -397,10 +402,12 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 
 			return $self->app->dbh->prepare(
 				qq{
-			insert or replace into tokens
+			insert into tokens
 				(user_id, type, token)
 			values
 				(?, ?, ?)
+			on conflict (user_id, type)
+			do update set token = EXCLUDED.token
 		}
 			);
 		}
@@ -456,7 +463,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 			insert into user_actions (
 				user_id, action_id, action_time
 			) values (
-				?, $self->app->action_type->{undo}, ?
+				?, $self->app->action_type->{undo}, to_timestamp(?)
 			)
 		}
 			);
