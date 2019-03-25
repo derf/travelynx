@@ -26,7 +26,7 @@ sub run {
 
 	my $checkin_window_query
 	= $dbh->prepare(
-	qq{select count(*) from user_actions where action_id = 1 and action_time > ?;}
+	qq{select count(*) from user_actions where action_id = 1 and action_time > to_timestamp(?);}
 	);
 
 	query_to_munin( 'reg_user_count',
