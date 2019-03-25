@@ -582,7 +582,11 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 						return ( $train, undef );
 					}
 					else {
-						return ( undef, 'INSERT failed' );
+						my $uid = $self->current_user->{id};
+						my $err = $self->app->action_query->errstr;
+						$self->app->log->error(
+							"Checkin($uid, $action_id): INSERT failed: $err");
+						return ( undef, 'INSERT failed: ' . $err );
 					}
 				}
 			}
@@ -617,7 +621,10 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 				return;
 			}
 			else {
-				return 'INSERT failed';
+				my $uid = $self->current_user->{id};
+				my $err = $self->app->action_query->errstr;
+				$self->app->log->error("Undo($uid): INSERT failed: $err");
+				return 'INSERT failed: ' . $err;
 			}
 		}
 	);
@@ -658,7 +665,12 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 						return;
 					}
 					else {
-						return 'INSERT failed';
+						my $uid = $self->current_user->{id};
+						my $err = $self->app->action_query->errstr;
+						$self->app->log->error(
+"Force checkout($uid, $action_id): INSERT failed: $err"
+						);
+						return 'INSERT failed: ' . $err;
 					}
 				}
 				else {
@@ -695,7 +707,11 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 					return;
 				}
 				else {
-					return 'INSERT failed';
+					my $uid = $self->current_user->{id};
+					my $err = $self->app->action_query->errstr;
+					$self->app->log->error(
+						"Checkout($uid, $action_id): INSERT failed: $err");
+					return 'INSERT failed: ' . $err;
 				}
 			}
 		}
