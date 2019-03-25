@@ -21,7 +21,7 @@
 
 <nav class="deep-purple">
 	<div class="nav-wrapper container">
-		<a href="/" class="brand-logo left">travelynx</a>
+		<a href="/" class="brand-logo left"><%= $ENV{TRAVELYNX_DB_NAME} eq 'travelynx_dev' ? 'develynx' : 'travelynx' %></a>
 		<ul id="nav-mobile" class="right">
 			% if (is_user_authenticated()) {
 				<li class="<%= navbar_class('/history') %>"><a href='/history' title="History"><i class="material-icons">history</i></a></li>
