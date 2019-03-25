@@ -249,9 +249,6 @@ sub json_export {
 			$raw_sched_ts, $raw_real_ts, $raw_route, $raw_messages
 		) = @row;
 
-		$name         = decode( 'UTF-8', $name );
-		$raw_route    = decode( 'UTF-8', $raw_route );
-		$raw_messages = decode( 'UTF-8', $raw_messages );
 		push(
 			@entries,
 			{

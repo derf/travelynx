@@ -910,10 +910,6 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 					$raw_real_ts, $raw_route,  $raw_messages
 				) = @row;
 
-				$name         = decode( 'UTF-8', $name );
-				$raw_route    = decode( 'UTF-8', $raw_route );
-				$raw_messages = decode( 'UTF-8', $raw_messages );
-
 				if (
 					$action == $match_actions[0]
 					or
@@ -1034,9 +1030,8 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 				my $action_ts            = epoch_to_dt( $cols[1] );
 				my $sched_ts             = epoch_to_dt( $cols[8] );
 				my $real_ts              = epoch_to_dt( $cols[9] );
-				my $checkin_station_name = decode( 'UTF-8', $cols[3] );
-				my @route
-				  = split( qr{[|]}, decode( 'UTF-8', $cols[10] // q{} ) );
+				my $checkin_station_name = $cols[3];
+				my @route                = split( qr{[|]}, $cols[10] // q{} );
 				my @route_after;
 				my $is_after = 0;
 				for my $station (@route) {
