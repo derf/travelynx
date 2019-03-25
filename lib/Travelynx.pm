@@ -536,23 +536,14 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 					my $user = $self->get_user_status;
 					if ( $user->{checked_in} ) {
 
-              # If a user is already checked in, we assume that they forgot to
-              # check out and do it for them.
-              # XXX this is an ugly workaround for the UNIQUE constraint on
-              # (user id, action timestamp): Ensure that checkout and re-checkin
-              # work even if the previous checkin was less than a second ago.
-						sleep(1);
+                # If a user is already checked in, we assume that they forgot to
+                # check out and do it for them.
 						$self->checkout( $station, 1 );
-
-             # XXX same workaround: We can't checkin immediately after checkout.
-						sleep(1);
 					}
 					elsif ( $user->{cancelled} ) {
 
 						# Same
-						sleep(1);
 						$self->cancelled_to($station);
-						sleep(1);
 					}
 
 					my $success = $self->app->action_query->execute(
