@@ -4,13 +4,31 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/srv/www/travelynx/index.pl daemon -m production -l 'http://127.0.0.1:8093'
-User=db-fakedisplay
+RemainAfterExit=yes
+PIDFile=/tmp/travelynx.pid
+
+ExecStart=/usr/bin/hypnotoad -f index.pl
+ExecStop=/usr/bin/hypnotoad -s index.pl
+ExecReload=/usr/bin/hypnotoad index.pl
+
+User=travelynx
 WorkingDirectory=/srv/www/travelynx
+
 Environment=LANG=en_US.UTF-8
+
+Environment=TRAVELYNX_DB_NAME=travelynx
+Environment=TRAVELYNX_DB_HOST=localhost
+Environment=TRAVELYNX_DB_PORT=5432
+Environment=TRAVELYNX_DB_USER=travelynx
+Environment=TRAVELYNX_DB_PASSWORD= ! CHANGEME !
+
+Environment=TRAVELYNX_SECRETS= ! CHANGEME !
+
+Environment=TRAVELYNX_WORKERS=2
+Environment=TRAVELYNX_LISTEN=http://127.0.0.1:8093
+
 Environment=TRAVELYNX_IRIS_CACHE=/var/cache/dbf/iris
 Environment=TRAVELYNX_IRISRT_CACHE=/var/cache/dbf/iris-rt
-Environment=TRAVELYNX_DB_FILE=/srv/www/travelynx/run/travelynx.sqlite
 
 [Install]
 WantedBy=multi-user.target
