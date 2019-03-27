@@ -300,7 +300,8 @@ sub monthly_history {
 			template   => 'history',
 			journeys   => [@journeys],
 			year       => $year,
-			month      => $months[ $month - 1 ],
+			month      => $month,
+			month_name => $months[ $month - 1 ],
 			statistics => $stats
 		}
 	);
