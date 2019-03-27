@@ -1,6 +1,7 @@
 package Travelynx::Controller::Traveling;
 use Mojo::Base 'Mojolicious::Controller';
 
+use DateTime;
 use Travel::Status::DE::IRIS::Stations;
 
 sub homepage {
@@ -233,10 +234,14 @@ sub history {
 	my ($self) = @_;
 	my $cancelled = $self->param('cancelled') ? 1 : 0;
 
+	my @journeys = $self->get_user_travels( cancelled => $cancelled );
+
 	$self->respond_to(
-		json =>
-		  { json => [ $self->get_user_travels( cancelled => $cancelled ) ] },
-		any => { template => 'history' }
+		json => { json => [@journeys] },
+		any  => {
+			template => 'history',
+			journeys => [@journeys]
+		}
 	);
 }
 
@@ -246,6 +251,60 @@ sub json_history {
 
 	$self->render(
 		json => [ $self->get_user_travels( cancelled => $cancelled ) ] );
+}
+
+sub monthly_history {
+	my ($self) = @_;
+	my $year   = $self->stash('year');
+	my $month  = $self->stash('month');
+	my $cancelled = $self->param('cancelled') ? 1 : 0;
+	my @journeys;
+	my $stats;
+	my @months
+	  = (
+		qw(Januar Februar März April Mai Juni Juli August September Oktober November Dezember)
+	  );
+
+	if ( not( $year =~ m{ ^ [0-9]{4} $ }x and $month =~ m{ ^ [0-9]{1,2} $ }x ) )
+	{
+		@journeys = $self->get_user_travels( cancelled => $cancelled );
+	}
+	else {
+		my $interval_start = DateTime->new(
+			time_zone => 'Europe/Berlin',
+			year      => $year,
+			month     => $month,
+			day       => 1,
+			hour      => 0,
+			minute    => 0,
+			second    => 0,
+		);
+		my $interval_end = $interval_start->clone->add( months => 1 );
+		@journeys = $self->get_user_travels(
+			cancelled => $cancelled,
+			verbose   => 1,
+			after     => $interval_start,
+			before    => $interval_end
+		);
+		$stats = $self->compute_journey_stats(@journeys);
+	}
+
+	$self->respond_to(
+		json => {
+			json => {
+				journeys   => [@journeys],
+				statistics => $stats
+			}
+		},
+		any => {
+			template   => 'history',
+			journeys   => [@journeys],
+			year       => $year,
+			month      => $months[ $month - 1 ],
+			statistics => $stats
+		}
+	);
+
 }
 
 sub journey_details {

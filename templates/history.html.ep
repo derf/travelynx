@@ -1,4 +1,32 @@
-% if (param('cancelled')) {
+% if (my $stats = stash('statistics')) {
+<h1><%= stash('month') %> <%= stash('year') %></h1>
+	<div class="row">
+		<div class="col s12">
+			<table class="striped">
+				<tr>
+					<th scope="row">Fahrten</th>
+					<td><%= $stats->{num_trains} %></td>
+				</tr>
+				<tr>
+					<th scope="row">Entfernung</th>
+					<td>ca. <%= sprintf('%.f', $stats->{km_route}) %> km
+						(Luftlinie: <%= sprintf('%.f', $stats->{km_beeline}) %> km)</td>
+				</tr>
+				<tr>
+					<th scope="row">Fahrtzeit</th>
+					<td><%= sprintf('%02d:%02d', $stats->{min_travel_real} / 60, $stats->{min_travel_real} % 60) %> Stunden
+						(nach Fahrplan: <%= sprintf('%02d:%02d', $stats->{min_travel_sched} / 60, $stats->{min_travel_sched} % 60) %>)<td>
+				</tr>
+				<tr>
+					<th scope="row">Kumulierte Verspätung</th>
+					<td>Bei Abfahrt: <%= sprintf('%02d:%02d', $stats->{delay_dep} / 60, $stats->{delay_dep} % 60) %> Stunden<br/>
+						Bei Ankunft: <%= sprintf('%02d:%02d', $stats->{delay_arr} / 60, $stats->{delay_arr} % 60) %> Stunden</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+% }
+% elsif (param('cancelled')) {
 <h1>Ausgefallene Fahrten</h1>
 <div class="row">
 	<div class="col s12">
@@ -10,7 +38,7 @@
 </div>
 % }
 % else {
-<h1>Bisherige Fahrten</h1>
+<h1>Fahrten</h1>
 <div class="row">
 	<div class="col s12">
 		<ul>
@@ -33,7 +61,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				% for my $travel (get_user_travels(cancelled => (param('cancelled') ? 1 : 0))) {
+				% for my $travel (@{$journeys}) {
 					% if ($travel->{completed}) {
 						% my $detail_link = '/journey/' . current_user()->{id} . '-' . $travel->{checkin}->epoch . '-' . $travel->{checkout}->epoch;
 						<tr>

@@ -301,6 +301,29 @@ sub startup {
 		}
 	);
 	$self->attr(
+		get_interval_actions_query => sub {
+			my ($self) = @_;
+
+			# Note: Selecting on real_time would be more intuitive, but is not
+			# possible at the moment -- non-realtime checkouts and undo actions
+			# lack both sched_time and real_time.
+			return $self->app->dbh->prepare(
+				qq{
+			select action_id, extract(epoch from action_time), stations.ds100, stations.name,
+			train_type, train_line, train_no, train_id,
+			extract(epoch from sched_time), extract(epoch from real_time),
+			route, messages
+			from user_actions
+			left outer join stations on station_id = stations.id
+			where user_id = ?
+			and action_time >= to_timestamp(?)
+			and action_time < to_timestamp(?)
+			order by action_time desc
+		}
+			);
+		}
+	);
+	$self->attr(
 		get_journey_actions_query => sub {
 			my ($self) = @_;
 
@@ -881,16 +904,44 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 		'get_user_travels' => sub {
 			my ( $self, %opt ) = @_;
 
-			my $uid   = $self->current_user->{id};
+			my $uid = $opt{uid} || $self->current_user->{id};
 			my $query = $self->app->get_all_actions_query;
 			if ( $opt{limit} ) {
 				$query = $self->app->get_last_actions_query;
 			}
 
-			if ( $opt{uid} and $opt{checkin_epoch} and $opt{checkout_epoch} ) {
+			if ( $opt{checkin_epoch} and $opt{checkout_epoch} ) {
 				$query = $self->app->get_journey_actions_query;
-				$query->execute( $opt{uid}, $opt{checkin_epoch},
+				$query->execute( $uid, $opt{checkin_epoch},
 					$opt{checkout_epoch} );
+			}
+			elsif ( $opt{after} and $opt{before} ) {
+
+         # Each journey consists of at least two database entries: one for
+         # checkin, one for checkout. A simple query using e.g.
+         # after = YYYY-01-01T00:00:00 and before YYYY-02-01T00:00:00
+         # will miss journeys where checkin and checkout take place in
+         # different months.
+         # We therefore add one day to the before timestamp and filter out
+         # journeys whose checkin lies outside the originally requested
+         # time range afterwards.
+         # For an additional twist, get_interval_actions_query filters based
+         # on the action time, not actual departure, as undo and force
+         # checkout actions lack sched_time and real_time data. By
+         # subtracting one day from "after" (i.e., moving it one day into
+         # the past), we make sure not to miss journeys where the real departure
+         # time falls into the interval, but the checkin time does not.
+         # Again, this is addressed in postprocessing at the bottom of this
+         # helper.
+         # This works under the assumption that there are no DB trains whose
+         # journey takes more than 24 hours. If this no longer holds,
+         # please adjust the intervals accordingly.
+				$query = $self->app->get_interval_actions_query;
+				$query->execute(
+					$uid,
+					$opt{after}->clone->subtract( days => 1 )->epoch,
+					$opt{before}->clone->add( days => 1 )->epoch
+				);
 			}
 			else {
 				$query->execute($uid);
@@ -989,18 +1040,15 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 						  = $self->get_travel_distance( $ref->{from_name},
 							$ref->{to_name},
 							[ $ref->{from_name}, $ref->{to_name} ] );
-						$ref->{kmh_route} = $ref->{km_route} / (
-							(
-								$ref->{rt_duration} // $ref->{sched_duration}
-								  // 999999
-							) / 3600
-						);
-						$ref->{kmh_beeline} = $ref->{km_beeline} / (
-							(
-								$ref->{rt_duration} // $ref->{sched_duration}
-								  // 999999
-							) / 3600
-						);
+						my $kmh_divisor
+						  = ( $ref->{rt_duration} // $ref->{sched_duration}
+							  // 999999 ) / 3600;
+						$ref->{kmh_route}
+						  = $kmh_divisor ? $ref->{km_route} / $kmh_divisor : -1;
+						$ref->{kmh_beeline}
+						  = $kmh_divisor
+						  ? $ref->{km_beeline} / $kmh_divisor
+						  : -1;
 					}
 					if (    $opt{checkin_epoch}
 						and $action
@@ -1010,6 +1058,13 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 					}
 				}
 				$prev_action = $action;
+			}
+
+			if ( $opt{before} and $opt{after} ) {
+				@travels = grep {
+					      $_->{rt_departure} >= $opt{after}
+					  and $_->{rt_departure} < $opt{before}
+				} @travels;
 			}
 
 			return @travels;
@@ -1112,6 +1167,54 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 	);
 
 	$self->helper(
+		'compute_journey_stats' => sub {
+			my ( $self, @journeys ) = @_;
+			my $km_route         = 0;
+			my $km_beeline       = 0;
+			my $min_travel_sched = 0;
+			my $min_travel_real  = 0;
+			my $delay_dep        = 0;
+			my $delay_arr        = 0;
+			my $num_trains       = 0;
+			my $num_journeys     = 0;
+
+			for my $journey (@journeys) {
+				$num_trains++;
+				$num_journeys++;
+				$km_route   += $journey->{km_route};
+				$km_beeline += $journey->{km_beeline};
+				if ( $journey->{sched_duration} > 0 ) {
+					$min_travel_sched += $journey->{sched_duration} / 60;
+				}
+				if ( $journey->{rt_duration} > 0 ) {
+					$min_travel_real += $journey->{rt_duration} / 60;
+				}
+				if ( $journey->{sched_departure} and $journey->{rt_departure} )
+				{
+					$delay_dep
+					  += (  $journey->{rt_departure}->epoch
+						  - $journey->{sched_departure}->epoch ) / 60;
+				}
+				if ( $journey->{sched_arrival} and $journey->{rt_arrival} ) {
+					$delay_arr
+					  += (  $journey->{rt_arrival}->epoch
+						  - $journey->{sched_arrival}->epoch ) / 60;
+				}
+			}
+			return {
+				km_route         => $km_route,
+				km_beeline       => $km_beeline,
+				num_trains       => $num_trains,
+				num_journeys     => $num_journeys,
+				min_travel_sched => $min_travel_sched,
+				min_travel_real  => $min_travel_real,
+				delay_dep        => $delay_dep,
+				delay_arr        => $delay_arr,
+			};
+		}
+	);
+
+	$self->helper(
 		'navbar_class' => sub {
 			my ( $self, $path ) = @_;
 
@@ -1152,6 +1255,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 	$authed_r->get('/account')->to('account#account');
 	$authed_r->get('/export.json')->to('account#json_export');
 	$authed_r->get('/history')->to('traveling#history');
+	$authed_r->get('/history/:year/:month')->to('traveling#monthly_history');
 	$authed_r->get('/history.json')->to('traveling#json_history');
 	$authed_r->get('/journey/:id')->to('traveling#journey_details');
 	$authed_r->get('/s/*station')->to('traveling#station');
