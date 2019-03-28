@@ -71,9 +71,9 @@
 			<thead>
 				<tr>
 					<th>Datum</th>
+					<th>Zeit</th>
 					<th>Zug</th>
 					<th>Strecke</th>
-					<th>Zeit</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -82,8 +82,6 @@
 						% my $detail_link = '/journey/' . current_user()->{id} . '-' . $travel->{checkin}->epoch . '-' . $travel->{checkout}->epoch;
 						<tr>
 							<td><%= $travel->{sched_departure}->strftime('%d.%m.%Y') %></td>
-							<td><a href="<%= $detail_link %>"><%= $travel->{type} %> <%= $travel->{line} // '' %> <%= $travel->{no} %></a></td>
-							<td><a href="<%= $detail_link %>"><%= $travel->{from_name} %> → <%= $travel->{to_name} %></a></td>
 							<td>
 							% if (param('cancelled') and $travel->{sched_arrival}->epoch != 0) {
 								%= $travel->{sched_arrival}->strftime('%H:%M')
@@ -109,6 +107,8 @@
 								% }
 							% }
 							</td>
+							<td><a href="<%= $detail_link %>"><%= $travel->{type} %> <%= $travel->{line} // '' %> <%= $travel->{no} %></a></td>
+							<td><a href="<%= $detail_link %>"><%= $travel->{from_name} %> → <%= $travel->{to_name} %></a></td>
 						</tr>
 					% }
 				% }
