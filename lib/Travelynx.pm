@@ -1067,6 +1067,13 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 				} @travels;
 			}
 
+         # user_actions are sorted by action_time. As users are allowed to check
+         # into trains in arbitrary order, action_time does not always
+         # correspond to departure/arrival time, so we ensure a proper sort
+         # order here.
+			@travels
+			  = sort { $b->{rt_departure} <=> $a->{rt_departure} } @travels;
+
 			return @travels;
 		}
 	);
