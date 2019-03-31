@@ -119,7 +119,6 @@ sub startup {
 			return {
 				checkin        => 1,
 				checkout       => 2,
-				undo           => 3,
 				cancelled_from => 4,
 				cancelled_to   => 5,
 			};
@@ -307,7 +306,7 @@ sub startup {
 			my ($self) = @_;
 
 			# Note: Selecting on real_time would be more intuitive, but is not
-			# possible at the moment -- non-realtime checkouts and undo actions
+			# possible at the moment -- non-realtime checkouts
 			# lack both sched_time and real_time.
 			return $self->app->dbh->prepare(
 				qq{
@@ -609,17 +608,18 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 
 	$self->helper(
 		'undo' => sub {
-			my ($self, $action_id) = @_;
+			my ( $self, $action_id ) = @_;
 
 			my $status = $self->get_user_status;
 
-			if ($action_id < 1 or $status->{action_id} != $action_id) {
-				return "Invalid action ID: $action_id != $status->{action_id}. Note that you can only undo your latest action.";
+			if ( $action_id < 1 or $status->{action_id} != $action_id ) {
+				return
+"Invalid action ID: $action_id != $status->{action_id}. Note that you can only undo your latest action.";
 			}
 
 			my $success = $self->app->undo_query->execute($action_id);
 
-			if (defined $success) {
+			if ( defined $success ) {
 				return;
 			}
 			else {
@@ -914,7 +914,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
          # journeys whose checkin lies outside the originally requested
          # time range afterwards.
          # For an additional twist, get_interval_actions_query filters based
-         # on the action time, not actual departure, as undo and force
+         # on the action time, not actual departure, as force
          # checkout actions lack sched_time and real_time data. By
          # subtracting one day from "after" (i.e., moving it one day into
          # the past), we make sure not to miss journeys where the real departure
@@ -950,10 +950,11 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 
 			while ( my @row = $query->fetchrow_array ) {
 				my (
-					$action_id, $action,      $raw_ts,     $ds100,
-					$name,        $train_type, $train_line,
-					$train_no,    $train_id,   $raw_sched_ts,
-					$raw_real_ts, $raw_route,  $raw_messages
+					$action_id,    $action,      $raw_ts,
+					$ds100,        $name,        $train_type,
+					$train_line,   $train_no,    $train_id,
+					$raw_sched_ts, $raw_real_ts, $raw_route,
+					$raw_messages
 				) = @row;
 
 				if (
@@ -965,7 +966,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 					push(
 						@travels,
 						{
-							ids           => [undef, $action_id],
+							ids           => [ undef, $action_id ],
 							to_name       => $name,
 							sched_arrival => epoch_to_dt($raw_sched_ts),
 							rt_arrival    => epoch_to_dt($raw_real_ts),
@@ -1080,11 +1081,6 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 				my $now = DateTime->now( time_zone => 'Europe/Berlin' );
 
 				my @cols = @{ $rows->[0] };
-				if ( @{$rows} > 2
-					and $rows->[0][1] == $self->app->action_type->{undo} )
-				{
-					@cols = @{ $rows->[2] };
-				}
 
 				my $action_ts            = epoch_to_dt( $cols[2] );
 				my $sched_ts             = epoch_to_dt( $cols[9] );
