@@ -326,7 +326,7 @@ sub journey_details {
 		checkout_id  => $checkout_id,
 		verbose        => 1,
 	);
-	if ( @journeys == 0 or $journeys[0]{ids}[1] != $checkout_id) {
+	if ( @journeys == 0 or not $journeys[0]{completed} or $journeys[0]{ids}[1] != $checkout_id) {
 		$self->render(
 			'journey',
 			error   => 'notfound',
