@@ -13,9 +13,10 @@ Dependencies
  * perl >= 5.10
  * Cache::File (part of the Cache module)
  * DBI
- * DBD::SQLite
+ * DBD::Pg
  * Geo::Distance
  * Mojolicious
+ * Mojolicious::Plugin::Authentication
  * Travel::Status::DE::IRIS
 
 Setup
@@ -37,17 +38,14 @@ scheduled and actual journey times.
 ## Checking in
 
 You can check into a train up to 10 minutes before its scheduled departure and
-up to 60 minutes after its actual departure (including delays). I recommend
+up to 3 hours after its actual departure (including delays). I recommend
 doing so when it arrives at the station or shortly after boarding.
 
 First, you need to select the station you want to check in from.
-Navigate to `travelynx.de` or use the travelynx text in the navigation
+Navigate to `travelynx.de` or click/tap on the travelynx text in the navigation
 bar. You will see a list of the five stations closest to your current location
-(as reported by your browser). Select the station you're at.
-
-If it is not in the list, you can also directly go do "travelynx.de/*station
-name*", e.g. "travelynx.de/Essen Hbf" or "travelynx.de/EE". Both names and
-DS100 codes are supported.
+(as reported by your browser). Select the station you're at or enter its
+name or DS100 code manually.
 
 Now, as soon as you select a train, you will be checked in and travelynx
 will switch to the journey / checkout view.
@@ -60,8 +58,8 @@ data for your arrival is available.  I recommend checking out when arriving at
 your destination or shortly after having left the train.
 
 Once checked in, `travelynx.de` will show a list of all upcoming stops. Select
-one to check out there. You can also check out at a specific station
-by navigating to "travelynx.de/*station name*" and selecting "Hier auschecken".
+one to check out there. You can also check out at a specific station by
+navigating to "travelynx.de/s/*station name*" and selecting "Hier auschecken".
 
 If you forgot to check out in time, or are departing the train at a station
 which is not part of its documented route (and also not part of its documented
