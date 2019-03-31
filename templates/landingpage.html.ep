@@ -21,8 +21,8 @@
 						<p>Du bist gerade eingecheckt in
 							<%= $status->{train_type} %> <%= $status->{train_no} %>
 							ab <%= $status->{station_name} %>.
-							% if ($status->{timestamp_delta} < 3600) {
-								<a class="action-undo"><i class="material-icons">undo</i> Rückgängig</a>
+							% if ($status->{timestamp_delta} < 180) {
+								<a class="action-undo" data-id="<%= $status->{action_id} %>"><i class="material-icons">undo</i> Rückgängig</a>
 							% }
 							</p>
 						<p>Bei Ankunft: Station auswählen zum Auschecken.</p>
@@ -44,8 +44,8 @@
 						<p>Prinzipiell wärest du nun eingecheckt in
 							<%= $status->{train_type} %> <%= $status->{train_no} %>
 							ab <%= $status->{station_name} %>, doch dieser Zug fällt aus.
-							% if ($status->{timestamp_delta} < 3600) {
-								<a class="action-undo"><i class="material-icons">undo</i> Checkinversuch rückgängig</a>
+							% if ($status->{timestamp_delta} < 180) {
+								<a class="action-undo" data-id="<%= $status->{action_id} %>"><i class="material-icons">undo</i> Checkinversuch rückgängig</a>
 							% }
 							</p>
 						<p>Falls du den Zugausfall z.B. für ein Fahrgastrechteformular

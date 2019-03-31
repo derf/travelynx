@@ -269,7 +269,8 @@ sub startup {
 
 			return $self->app->dbh->prepare(
 				qq{
-			select action_id, extract(epoch from action_time), stations.ds100, stations.name,
+			select user_actions.id, action_id, extract(epoch from action_time),
+			stations.ds100, stations.name,
 			train_type, train_line, train_no, train_id,
 			extract(epoch from sched_time), extract(epoch from real_time),
 			route, messages
@@ -287,7 +288,8 @@ sub startup {
 
 			return $self->app->dbh->prepare(
 				qq{
-			select action_id, extract(epoch from action_time), stations.ds100, stations.name,
+			select user_actions.id, action_id, extract(epoch from action_time),
+			stations.ds100, stations.name,
 			train_type, train_line, train_no, train_id,
 			extract(epoch from sched_time), extract(epoch from real_time),
 			route, messages
@@ -309,7 +311,8 @@ sub startup {
 			# lack both sched_time and real_time.
 			return $self->app->dbh->prepare(
 				qq{
-			select action_id, extract(epoch from action_time), stations.ds100, stations.name,
+			select user_actions.id, action_id, extract(epoch from action_time),
+			stations.ds100, stations.name,
 			train_type, train_line, train_no, train_id,
 			extract(epoch from sched_time), extract(epoch from real_time),
 			route, messages
@@ -329,7 +332,8 @@ sub startup {
 
 			return $self->app->dbh->prepare(
 				qq{
-			select action_id, extract(epoch from action_time), stations.ds100, stations.name,
+			select user_actions.id, action_id, extract(epoch from action_time),
+			stations.ds100, stations.name,
 			train_type, train_line, train_no, train_id,
 			extract(epoch from sched_time), extract(epoch from real_time),
 			route, messages
@@ -483,12 +487,8 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 
 			return $self->app->dbh->prepare(
 				qq{
-			insert into user_actions (
-				user_id, action_id, action_time
-			) values (
-				?, $self->app->action_type->{undo}, to_timestamp(?)
-			)
-		}
+					delete from user_actions where id = ?
+				}
 			);
 		},
 	);
@@ -609,36 +609,24 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 
 	$self->helper(
 		'undo' => sub {
-			my ($self) = @_;
+			my ($self, $action_id) = @_;
 
-			my $uid = $self->current_user->{id};
-			$self->app->get_last_actions_query->execute($uid);
-			my $rows = $self->app->get_last_actions_query->fetchall_arrayref;
+			my $status = $self->get_user_status;
 
-			if ( @{$rows} and $rows->[0][0] == $self->app->action_type->{undo} )
-			{
-				return 'Nested undo (undoing an undo) is not supported';
+			if ($action_id < 1 or $status->{action_id} != $action_id) {
+				return "Invalid action ID: $action_id != $status->{action_id}. Note that you can only undo your latest action.";
 			}
 
-			if ( @{$rows} > 1
-				and $rows->[1][0] == $self->app->action_type->{undo} )
-			{
-				return 'Repeated undo is not supported';
-			}
+			my $success = $self->app->undo_query->execute($action_id);
 
-			my $success = $self->app->undo_query->execute(
-				$self->current_user->{id},
-				DateTime->now( time_zone => 'Europe/Berlin' )->epoch,
-			);
-
-			if ( defined $success ) {
+			if (defined $success) {
 				return;
 			}
 			else {
 				my $uid = $self->current_user->{id};
-				my $err = $self->app->action_query->errstr;
-				$self->app->log->error("Undo($uid): INSERT failed: $err");
-				return 'INSERT failed: ' . $err;
+				my $err = $self->app->undo_query->errstr;
+				$self->app->log->error("Undo($uid): DELETE failed: $err");
+				return 'DELETE failed: ' . $err;
 			}
 		}
 	);
@@ -962,7 +950,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 
 			while ( my @row = $query->fetchrow_array ) {
 				my (
-					$action,      $raw_ts,     $ds100,
+					$action_id, $action,      $raw_ts,     $ds100,
 					$name,        $train_type, $train_line,
 					$train_no,    $train_id,   $raw_sched_ts,
 					$raw_real_ts, $raw_route,  $raw_messages
@@ -977,6 +965,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 					push(
 						@travels,
 						{
+							ids           => [undef, $action_id],
 							to_name       => $name,
 							sched_arrival => epoch_to_dt($raw_sched_ts),
 							rt_arrival    => epoch_to_dt($raw_real_ts),
@@ -1004,6 +993,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 				  )
 				{
 					my $ref = $travels[-1];
+					$ref->{ids}->[0]        = $action_id;
 					$ref->{from_name}       = $name;
 					$ref->{completed}       = 1;
 					$ref->{sched_departure} = epoch_to_dt($raw_sched_ts);
@@ -1091,16 +1081,16 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 
 				my @cols = @{ $rows->[0] };
 				if ( @{$rows} > 2
-					and $rows->[0][0] == $self->app->action_type->{undo} )
+					and $rows->[0][1] == $self->app->action_type->{undo} )
 				{
 					@cols = @{ $rows->[2] };
 				}
 
-				my $action_ts            = epoch_to_dt( $cols[1] );
-				my $sched_ts             = epoch_to_dt( $cols[8] );
-				my $real_ts              = epoch_to_dt( $cols[9] );
-				my $checkin_station_name = $cols[3];
-				my @route                = split( qr{[|]}, $cols[10] // q{} );
+				my $action_ts            = epoch_to_dt( $cols[2] );
+				my $sched_ts             = epoch_to_dt( $cols[9] );
+				my $real_ts              = epoch_to_dt( $cols[10] );
+				my $checkin_station_name = $cols[4];
+				my @route                = split( qr{[|]}, $cols[11] // q{} );
 				my @route_after;
 				my $is_after = 0;
 				for my $station (@route) {
@@ -1114,19 +1104,20 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 				}
 				return {
 					checked_in =>
-					  ( $cols[0] == $self->app->action_type->{checkin} ),
+					  ( $cols[1] == $self->app->action_type->{checkin} ),
 					cancelled =>
-					  ( $cols[0] == $self->app->action_type->{cancelled_from} ),
+					  ( $cols[1] == $self->app->action_type->{cancelled_from} ),
 					timestamp       => $action_ts,
 					timestamp_delta => $now->epoch - $action_ts->epoch,
+					action_id       => $cols[0],
 					sched_ts        => $sched_ts,
 					real_ts         => $real_ts,
-					station_ds100   => $cols[2],
+					station_ds100   => $cols[3],
 					station_name    => $checkin_station_name,
-					train_type      => $cols[4],
-					train_line      => $cols[5],
-					train_no        => $cols[6],
-					train_id        => $cols[7],
+					train_type      => $cols[5],
+					train_line      => $cols[6],
+					train_no        => $cols[7],
+					train_id        => $cols[8],
 					route           => \@route,
 					route_after     => \@route_after,
 				};

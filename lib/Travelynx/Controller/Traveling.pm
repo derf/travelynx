@@ -117,7 +117,7 @@ sub log_action {
 		}
 	}
 	elsif ( $params->{action} eq 'undo' ) {
-		my $error = $self->undo;
+		my $error = $self->undo( $params->{undo_id} );
 		if ($error) {
 			$self->render(
 				json => {

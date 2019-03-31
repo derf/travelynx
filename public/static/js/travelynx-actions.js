@@ -43,6 +43,7 @@ $(document).ready(function() {
 		var link = $(this);
 		var req = {
 			action: 'undo',
+			undo_id: link.data('id'),
 		};
 		tvly_run(link, req, '/');
 	});
