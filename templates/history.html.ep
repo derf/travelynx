@@ -79,7 +79,7 @@
 			<tbody>
 				% for my $travel (@{$journeys}) {
 					% if ($travel->{completed}) {
-						% my $detail_link = '/journey/' . current_user()->{id} . '-' . $travel->{checkin}->epoch . '-' . $travel->{checkout}->epoch;
+						% my $detail_link = '/journey/' . current_user()->{id} . '-' . $travel->{ids}->[1];
 						<tr>
 							<td><%= $travel->{sched_departure}->strftime('%d.%m.%Y') %></td>
 							<td>

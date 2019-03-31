@@ -339,7 +339,7 @@ sub startup {
 			from user_actions
 			left outer join stations on station_id = stations.id
 			where user_id = ?
-			and (action_time = to_timestamp(?) or action_time = to_timestamp(?))
+			and user_actions.id <= ?
 			order by action_time desc
 			limit 2
 		}
@@ -898,10 +898,9 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 				$query = $self->app->get_last_actions_query;
 			}
 
-			if ( $opt{checkin_epoch} and $opt{checkout_epoch} ) {
+			if ( $opt{checkout_id} ) {
 				$query = $self->app->get_journey_actions_query;
-				$query->execute( $uid, $opt{checkin_epoch},
-					$opt{checkout_epoch} );
+				$query->execute( $uid, $opt{checkout_id});
 			}
 			elsif ( $opt{after} and $opt{before} ) {
 
@@ -960,7 +959,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 				if (
 					$action == $match_actions[0]
 					or
-					( $opt{checkout_epoch} and $raw_ts == $opt{checkout_epoch} )
+					( $opt{checkout_id} and not @travels )
 				  )
 				{
 					push(
@@ -989,8 +988,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 						    $action == $match_actions[1]
 						and $prev_action == $match_actions[0]
 					)
-					or
-					( $opt{checkin_epoch} and $raw_ts == $opt{checkin_epoch} )
+					or $opt{checkout_id}
 				  )
 				{
 					my $ref = $travels[-1];
@@ -1041,7 +1039,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 						  ? $ref->{km_beeline} / $kmh_divisor
 						  : -1;
 					}
-					if (    $opt{checkin_epoch}
+					if (    $opt{checkout_id}
 						and $action
 						== $self->app->action_type->{cancelled_from} )
 					{

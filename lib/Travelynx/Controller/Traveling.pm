@@ -310,9 +310,9 @@ sub monthly_history {
 
 sub journey_details {
 	my ($self) = @_;
-	my ( $uid, $checkin_ts, $checkout_ts ) = split( qr{-}, $self->stash('id') );
+	my ( $uid, $checkout_id ) = split( qr{-}, $self->stash('id') );
 
-	if ( $uid != $self->current_user->{id} ) {
+	if ( not ($uid == $self->current_user->{id} and $checkout_id)) {
 		$self->render(
 			'journey',
 			error   => 'notfound',
@@ -323,11 +323,10 @@ sub journey_details {
 
 	my @journeys = $self->get_user_travels(
 		uid            => $uid,
-		checkin_epoch  => $checkin_ts,
-		checkout_epoch => $checkout_ts,
+		checkout_id  => $checkout_id,
 		verbose        => 1,
 	);
-	if ( @journeys == 0 ) {
+	if ( @journeys == 0 or not $journeys[0]{completed}) {
 		$self->render(
 			'journey',
 			error   => 'notfound',
