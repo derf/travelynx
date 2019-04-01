@@ -900,7 +900,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 
 			if ( $opt{checkout_id} ) {
 				$query = $self->app->get_journey_actions_query;
-				$query->execute( $uid, $opt{checkout_id});
+				$query->execute( $uid, $opt{checkout_id} );
 			}
 			elsif ( $opt{after} and $opt{before} ) {
 
@@ -956,11 +956,8 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 					$raw_messages
 				) = @row;
 
-				if (
-					$action == $match_actions[0]
-					or
-					( $opt{checkout_id} and not @travels )
-				  )
+				if ( $action == $match_actions[0]
+					or ( $opt{checkout_id} and not @travels ) )
 				{
 					push(
 						@travels,
@@ -1167,12 +1164,14 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 			my $min_travel_real  = 0;
 			my $delay_dep        = 0;
 			my $delay_arr        = 0;
+			my $interchange_real = 0;
 			my $num_trains       = 0;
 			my $num_journeys     = 0;
 
+			my $next_departure = 0;
+
 			for my $journey (@journeys) {
 				$num_trains++;
-				$num_journeys++;
 				$km_route   += $journey->{km_route};
 				$km_beeline += $journey->{km_beeline};
 				if ( $journey->{sched_duration} > 0 ) {
@@ -1192,16 +1191,32 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 					  += (  $journey->{rt_arrival}->epoch
 						  - $journey->{sched_arrival}->epoch ) / 60;
 				}
+
+				# Note that journeys are sorted from recent to older entries
+				if (    $journey->{rt_arrival}
+					and $next_departure
+					and $next_departure - $journey->{rt_arrival}->epoch
+					< ( 60 * 60 ) )
+				{
+					$interchange_real
+					  += ( $next_departure - $journey->{rt_arrival}->epoch )
+					  / 60;
+				}
+				else {
+					$num_journeys++;
+				}
+				$next_departure = $journey->{rt_departure}->epoch;
 			}
 			return {
-				km_route         => $km_route,
-				km_beeline       => $km_beeline,
-				num_trains       => $num_trains,
-				num_journeys     => $num_journeys,
-				min_travel_sched => $min_travel_sched,
-				min_travel_real  => $min_travel_real,
-				delay_dep        => $delay_dep,
-				delay_arr        => $delay_arr,
+				km_route             => $km_route,
+				km_beeline           => $km_beeline,
+				num_trains           => $num_trains,
+				num_journeys         => $num_journeys,
+				min_travel_sched     => $min_travel_sched,
+				min_travel_real      => $min_travel_real,
+				min_interchange_real => $interchange_real,
+				delay_dep            => $delay_dep,
+				delay_arr            => $delay_arr,
 			};
 		}
 	);

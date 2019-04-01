@@ -22,6 +22,10 @@
 			<table class="striped">
 				<tr>
 					<th scope="row">Fahrten</th>
+					<td><%= $stats->{num_journeys} %></td>
+				</tr>
+				<tr>
+					<th scope="row">Züge</th>
 					<td><%= $stats->{num_trains} %></td>
 				</tr>
 				<tr>
@@ -33,6 +37,10 @@
 					<th scope="row">Fahrtzeit</th>
 					<td><%= sprintf('%02d:%02d', $stats->{min_travel_real} / 60, $stats->{min_travel_real} % 60) %> Stunden
 						(nach Fahrplan: <%= sprintf('%02d:%02d', $stats->{min_travel_sched} / 60, $stats->{min_travel_sched} % 60) %>)<td>
+				</tr>
+				<tr>
+					<th scope="row">Wartezeit (nur Umstiege)</th>
+					<td><%= sprintf('%02d:%02d', $stats->{min_interchange_real} / 60, $stats->{min_interchange_real} % 60) %> Stunden
 				</tr>
 				<tr>
 					<th scope="row">Kumulierte Verspätung</th>
