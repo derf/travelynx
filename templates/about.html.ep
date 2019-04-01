@@ -1,6 +1,7 @@
 <div class="row">
 	<div class="col s12">
 		<a href="https://git.finalrewind.org/travelynx">travelynx</a> v<%= stash('version') // '???' %><br/>
+		Entwickelt von <a href="https://twitter.com/derfnull">@derfnull</a><br/>
 		Backend:
 		<a href="https://finalrewind.org/projects/Travel-Status-DE-IRIS/">Travel::Status::DE::IRIS</a>
 		v<%= $Travel::Status::DE::IRIS::VERSION %><br/>
@@ -15,6 +16,7 @@
 	<div class="col s3 m3 l3">
 	</div>
 	<div class="col s6 m6 l6 center-align">
+		<a href="https://twitter.com/derfnull" class="waves-effect waves-light btn"><i class="material-icons left">message</i>Kontakt</a>
 		<a href="https://github.com/derf/travelynx/issues" class="waves-effect waves-light btn"><i class="material-icons left">bug_report</i>Bugs?</a>
 	</div>
 	<div class="col s3 m3 l3">
