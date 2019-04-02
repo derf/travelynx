@@ -58,45 +58,43 @@
 		</div>
 	</div>
 % }
-<div class="row">
-	%= form_for '/register' => (class => 'col s12', method => 'POST') => begin
-		%= csrf_field
-		<div class="row">
-			<div class="input-field col l6 m12 s12">
-				<i class="material-icons prefix">account_circle</i>
-				%= text_field 'user', id => 'account', class => 'validate', required => undef, pattern => '[0-9a-zA-Z_-]+', maxlength => 60, autocomplete => 'username'
-				<label for="account">Name (alphanumerisch)</label>
-			</div>
-			<div class="input-field col l6 m12 s12">
-				<i class="material-icons prefix">email</i>
-				%= email_field 'email', id => 'email', class => 'validate', required => undef, maxlength => 250
-				<label for="email">Mail-Adresse</label>
-			</div>
-			<div class="input-field col l6 m12 s12">
-				<i class="material-icons prefix">lock</i>
-				%= password_field 'password', id => 'password', class => 'validate', required => undef, minlength => 8, autocomplete => 'new-password'
-				<label for="password">Passwort</label>
-			</div>
-			<div class="input-field col l6 m12 s12">
-				<i class="material-icons prefix">lock</i>
-				%= password_field 'password2', id => 'password2', class => 'validate', required => undef, minlength => 8, autocomplete => 'new-password'
-				<label for="password2">Passwort wiederholen</label>
-			</div>
+%= form_for '/register' => (method => 'POST') => begin
+	%= csrf_field
+	<div class="row">
+		<div class="input-field col l6 m12 s12">
+			<i class="material-icons prefix">account_circle</i>
+			%= text_field 'user', id => 'account', class => 'validate', required => undef, pattern => '[0-9a-zA-Z_-]+', maxlength => 60, autocomplete => 'username'
+			<label for="account">Name (alphanumerisch)</label>
 		</div>
-		<div class="row">
-			<div class="col s3 m3 l3">
-			</div>
-			<div class="col s6 m6 l6 center-align">
-				<button class="btn waves-effect waves-light" type="submit" name="action" value="register">
-					Registrieren
-					<i class="material-icons right">send</i>
-				</button>
-			</div>
-			<div class="col s3 m3 l3">
-			</div>
+		<div class="input-field col l6 m12 s12">
+			<i class="material-icons prefix">email</i>
+			%= email_field 'email', id => 'email', class => 'validate', required => undef, maxlength => 250
+			<label for="email">Mail-Adresse</label>
 		</div>
-	%= end
-</div>
+		<div class="input-field col l6 m12 s12">
+			<i class="material-icons prefix">lock</i>
+			%= password_field 'password', id => 'password', class => 'validate', required => undef, minlength => 8, autocomplete => 'new-password'
+			<label for="password">Passwort</label>
+		</div>
+		<div class="input-field col l6 m12 s12">
+			<i class="material-icons prefix">lock</i>
+			%= password_field 'password2', id => 'password2', class => 'validate', required => undef, minlength => 8, autocomplete => 'new-password'
+			<label for="password2">Passwort wiederholen</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s3 m3 l3">
+		</div>
+		<div class="col s6 m6 l6 center-align">
+			<button class="btn waves-effect waves-light" type="submit" name="action" value="register">
+				Registrieren
+				<i class="material-icons right">send</i>
+			</button>
+		</div>
+		<div class="col s3 m3 l3">
+		</div>
+	</div>
+%= end
 <div class="row">
 	<div class="col s12">
 		<p>

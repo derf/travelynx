@@ -73,35 +73,33 @@
 		</div>
 	</div>
 % }
-<div class="row">
-	%= form_for '/login' => (class => 'col s12', method => 'POST') => begin
-		%= csrf_field
-		% if (stash('redirect_to')) {
-			%= hidden_field 'redirect_to' => stash('redirect_to')
-		% }
-		<div class="row">
-			<div class="input-field col s12">
-				<i class="material-icons prefix">account_circle</i>
-				%= text_field 'user', id => 'user', class => 'validate', required => undef, maxlength => 60, autocomplete => 'username'
-				<label for="user">Account</label>
-			</div>
-			<div class="input-field col s12">
-				<i class="material-icons prefix">lock</i>
-				%= password_field 'password', id => 'password', class => 'validate', required => undef, autocomplete => 'current-password'
-				<label for="password">Passwort</label>
-			</div>
+%= form_for '/login' => (method => 'POST') => begin
+	%= csrf_field
+	% if (stash('redirect_to')) {
+		%= hidden_field 'redirect_to' => stash('redirect_to')
+	% }
+	<div class="row">
+		<div class="input-field col s12">
+			<i class="material-icons prefix">account_circle</i>
+			%= text_field 'user', id => 'user', class => 'validate', required => undef, maxlength => 60, autocomplete => 'username'
+			<label for="user">Account</label>
 		</div>
-		<div class="row">
-			<div class="col s3 m3 l3">
-			</div>
-			<div class="col s6 m6 l6 center-align">
-				<button class="btn waves-effect waves-light" type="submit" name="action" value="login">
-					Anmelden
-					<i class="material-icons right">send</i>
-				</button>
-			</div>
-			<div class="col s3 m3 l3">
-			</div>
+		<div class="input-field col s12">
+			<i class="material-icons prefix">lock</i>
+			%= password_field 'password', id => 'password', class => 'validate', required => undef, autocomplete => 'current-password'
+			<label for="password">Passwort</label>
 		</div>
-	%= end
-</div>
+	</div>
+	<div class="row">
+		<div class="col s3 m3 l3">
+		</div>
+		<div class="col s6 m6 l6 center-align">
+			<button class="btn waves-effect waves-light" type="submit" name="action" value="login">
+				Anmelden
+				<i class="material-icons right">send</i>
+			</button>
+		</div>
+		<div class="col s3 m3 l3">
+		</div>
+	</div>
+%= end
