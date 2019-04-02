@@ -42,7 +42,8 @@
 					% }
 					% elsif ($invalid eq 'sendmail') {
 						<span class="card-title">Mailversand fehlgeschlagen</span>
-						<p>Die Bestätigungsmail konnte nicht verschickt werden.
+						<p>Der Account wurde nicht angelegt, da die Bestätigungsmail
+							nicht verschickt werden konnte.
 							Überprüfe bitte, ob die Adresse gültig ist.</p>
 					% }
 					% elsif ($invalid eq 'token') {
