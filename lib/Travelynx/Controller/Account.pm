@@ -2,9 +2,6 @@ package Travelynx::Controller::Account;
 use Mojo::Base 'Mojolicious::Controller';
 
 use Crypt::Eksblowfish::Bcrypt qw(bcrypt en_base64);
-use Encode qw(decode encode);
-use Email::Sender::Simple qw(try_to_sendmail);
-use Email::Simple;
 use UUID::Tiny qw(:std);
 
 sub hash_password {
@@ -143,17 +140,7 @@ sub register {
 	$body .= " * Verwendeter Browser gemäß User Agent: ${ua}\n\n\n";
 	$body .= "Impressum: ${imprint_url}\n";
 
-	my $reg_mail = Email::Simple->create(
-		header => [
-			To             => $email,
-			From           => 'Travelynx <travelynx@finalrewind.org>',
-			Subject        => 'Registrierung bei travelynx',
-			'Content-Type' => 'text/plain; charset=UTF-8',
-		],
-		body => encode( 'utf-8', $body ),
-	);
-
-	my $success = try_to_sendmail($reg_mail);
+	my $success = $self->sendmail->custom($email, 'Registrierung bei travelynx', $body);
 	if ($success) {
 		$self->app->dbh->commit;
 		$self->render( 'login', from => 'register' );

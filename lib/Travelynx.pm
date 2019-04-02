@@ -12,6 +12,7 @@ use List::Util qw(first);
 use List::MoreUtils qw(after_incl before_incl);
 use Travel::Status::DE::IRIS;
 use Travel::Status::DE::IRIS::Stations;
+use Travelynx::Helper::Sendmail;
 
 our $VERSION = qx{git describe --dirty} || 'experimental';
 
@@ -491,6 +492,8 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 			);
 		},
 	);
+
+	$self->helper(sendmail => sub { state $sendmail = Travelynx::Helper::Sendmail->new; });
 
 	$self->helper(
 		'get_departures' => sub {
