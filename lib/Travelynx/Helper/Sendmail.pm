@@ -28,7 +28,7 @@ sub custom {
 		body => encode( 'utf-8', $body ),
 	);
 
-	if ($ENV{TRAVELYNX_DB_NAME} eq 'travelynx_deva') {
+	if ($ENV{TRAVELYNX_DB_NAME} eq 'travelynx_dev') {
 		# Do not send mail in dev mode
 		say "sendmail to ${to}: ${subject}\n\n${body}";
 		return 1;
