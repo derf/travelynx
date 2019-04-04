@@ -348,6 +348,19 @@ sub startup {
 		}
 	);
 	$self->attr(
+		drop_journey_query => sub {
+			my ($self) = @_;
+
+			return $self->app->dbh->prepare(
+				qq{
+					delete from user_actions
+					where user_id = ?
+					and (id = ? or id = ?)
+				}
+			);
+		}
+	);
+	$self->attr(
 		get_userid_query => sub {
 			my ($self) = @_;
 
@@ -493,7 +506,9 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 		},
 	);
 
-	$self->helper(sendmail => sub { state $sendmail = Travelynx::Helper::Sendmail->new; });
+	$self->helper(
+		sendmail => sub { state $sendmail = Travelynx::Helper::Sendmail->new; }
+	);
 
 	$self->helper(
 		'get_departures' => sub {
@@ -888,6 +903,50 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 				return 1;
 			}
 			return 0;
+		}
+	);
+
+	$self->helper(
+		'delete_journey' => sub {
+			my ( $self, $checkin_id, $checkout_id, $checkin_epoch,
+				$checkout_epoch )
+			  = @_;
+			my $uid = $self->current_user->{id};
+
+			my @journeys = $self->get_user_travels(
+				uid         => $uid,
+				checkout_id => $checkout_id
+			);
+			if ( @journeys == 0 ) {
+				return 'Journey not found';
+			}
+			my $journey = $journeys[0];
+
+			# Double-check (comparing both ID and action epoch) to make sure we
+			# are really deleting the right journey and the user isn't just
+			# playing around with POST requests.
+			if (   $journey->{ids}[0] != $checkin_id
+				or $journey->{ids}[1] != $checkout_id
+				or $journey->{checkin}->epoch != $checkin_epoch
+				or $journey->{checkout}->epoch != $checkout_epoch )
+			{
+				return 'Invalid journey data';
+			}
+			my $query = $self->app->drop_journey_query;
+			my $success = $query->execute( $uid, $checkin_id, $checkout_id );
+			if ($success) {
+				if ( $query->rows == 2 ) {
+					return undef;
+				}
+				else {
+					return
+					  sprintf( 'Deleted %d rows, expected 2', $query->rows );
+				}
+			}
+			my $err = $self->app->drop_journey_query->errstr;
+			$self->app->log->error(
+				"Delete($uid, $checkin_id, $checkout_id): DELETE failed: $err");
+			return 'DELETE failed: ' . $err;
 		}
 	);
 

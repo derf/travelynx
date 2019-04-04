@@ -175,6 +175,26 @@ sub log_action {
 			);
 		}
 	}
+	elsif ( $params->{action} eq 'delete' ) {
+		my ( $from, $to ) = split( qr{,}, $params->{ids} );
+		my $error = $self->delete_journey( $from, $to, $params->{checkin},
+			$params->{checkout} );
+		if ($error) {
+			$self->render(
+				json => {
+					success => 0,
+					error   => $error,
+				},
+			);
+		}
+		else {
+			$self->render(
+				json => {
+					success => 1,
+				},
+			);
+		}
+	}
 	else {
 		$self->render(
 			json => {
@@ -312,7 +332,7 @@ sub journey_details {
 	my ($self) = @_;
 	my ( $uid, $checkout_id ) = split( qr{-}, $self->stash('id') );
 
-	if ( not ($uid == $self->current_user->{id} and $checkout_id)) {
+	if ( not( $uid == $self->current_user->{id} and $checkout_id ) ) {
 		$self->render(
 			'journey',
 			error   => 'notfound',
@@ -322,11 +342,14 @@ sub journey_details {
 	}
 
 	my @journeys = $self->get_user_travels(
-		uid            => $uid,
-		checkout_id  => $checkout_id,
-		verbose        => 1,
+		uid         => $uid,
+		checkout_id => $checkout_id,
+		verbose     => 1,
 	);
-	if ( @journeys == 0 or not $journeys[0]{completed} or $journeys[0]{ids}[1] != $checkout_id) {
+	if (   @journeys == 0
+		or not $journeys[0]{completed}
+		or $journeys[0]{ids}[1] != $checkout_id )
+	{
 		$self->render(
 			'journey',
 			error   => 'notfound',

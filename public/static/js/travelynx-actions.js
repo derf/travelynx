@@ -65,4 +65,17 @@ $(document).ready(function() {
 		};
 		tvly_run(link, req, '/');
 	});
+	$('.action-delete').click(function() {
+		var link = $(this);
+		var req = {
+			action: 'delete',
+			ids: link.data('id'),
+			checkin: link.data('checkin'),
+			checkout: link.data('checkout'),
+		};
+		really_delete = confirm("Diese Zugfahrt wirklich löschen? Der Eintrag wird sofort aus der Datenbank entfernt und kann nicht wiederhergestellt werden.");
+		if (really_delete) {
+			tvly_run(link, req, '/history');
+		}
+	});
 });
