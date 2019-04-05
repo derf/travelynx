@@ -231,7 +231,7 @@ sub json_export {
 
 	while ( my @row = $query->fetchrow_array ) {
 		my (
-			$action,       $raw_ts,      $ds100,     $name,
+			$action_id, $action,       $raw_ts,      $ds100,     $name,
 			$train_type,   $train_line,  $train_no,  $train_id,
 			$raw_sched_ts, $raw_real_ts, $raw_route, $raw_messages
 		) = @row;
