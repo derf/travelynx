@@ -700,7 +700,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 			else {
 				my $success = $self->app->action_query->execute(
 					$self->current_user->{id},
-					$self->app->action_type->{checkout},
+					$action_id,
 					$self->get_station_id(
 						ds100 => $status->{station_ds100},
 						name  => $status->{station_name}
