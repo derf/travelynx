@@ -583,7 +583,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 					elsif ( $user->{cancelled} ) {
 
 						# Same
-						$self->cancelled_to($station);
+						$self->checkout($station, 1, $self->app->action_type->{cancelled_to});
 					}
 
 					my $success = $self->app->action_query->execute(
