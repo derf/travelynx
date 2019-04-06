@@ -12,17 +12,48 @@ Dependencies
 
  * perl >= 5.10
  * Cache::File (part of the Cache module)
+ * Crypt::Eksblowfish
  * DBI
  * DBD::Pg
+ * Email::Sender
  * Geo::Distance
  * Mojolicious
  * Mojolicious::Plugin::Authentication
  * Travel::Status::DE::IRIS
+ * UUID::Tiny
 
 Setup
 ---
 
-TODO
+First, you need to set up a PostgreSQL database so that travelynx can store
+user accounts and journeys. Version 9.6 or later with UTF-8 locale (e.g.
+`en_US.UTF-8`) should work fine.  The following steps describe setup on a
+Debian 9 system, though setup on other distribution should be similar.
+
+* Write down a strong random password
+* Create a postgres user for travelynx: `sudo -u postgres createuser -P travelynx`
+  (enter password when prompted)
+* Create the database: `sudo -u postgres createdb -O travelynx travelynx`
+* Initialize the database: `TRAVELYNX_DB_HOST=... TRAVELYNX_DB_NAME=... `
+  `TRAVELYNX_DB_USER=... TRAVELYNX_DB_PASSWORD=... perl index.pl setup`
+
+Your server also needs to be able to send mail. Set up your MTA of choice and
+make sure that the sendmail binary can be used for outgoing mails. Mail
+reception on the server is not required.
+
+Finally, configure the web service:
+
+* Set up a travelynx service using the service supervisor of your choice
+  (see `examples/travelynx.service` for a systemd unit file)
+* Configure your web server to reverse-provy requests to the travelynx
+  instance. See `examples/nginx-site` for an nginx config.
+
+You can now start the travelynx service, navigate to the website and register
+your first account.
+
+Please open an issue on <https://github.com/derf/travelynx/issues> or send a
+mail to derf+travelynx@finalrewind.org if there is anything missing or
+ambiguous in this setup manual.
 
 Usage
 ---
