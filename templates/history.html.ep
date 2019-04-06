@@ -9,7 +9,7 @@
 				% my $link_to = $since->strftime('%Y/%m');
 				% my $class = $link_to eq $ref ? 'active' : 'waves-effect';
 				<li class="<%= $class %>"><a href="/history/<%= $link_to %>"><%= $since->strftime('%m.%Y') %></a></li>
-				% $since->add(months => 1);
+				% $since->add(months => 1)->set(day => 1, hour => 0, minute => 0, second => 0);
 			% }
 			<!--<li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>-->
 		</ul>
