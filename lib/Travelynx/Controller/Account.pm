@@ -136,11 +136,12 @@ sub register {
 	  .= "werden wir sie dauerhaft sperren und keine Mails mehr dorthin schicken.\n\n";
 	$body .= "Daten zur Registrierung:\n";
 	$body .= " * Datum: ${date}\n";
-	$body .= " * Verwendete IP: ${ip}\n";
-	$body .= " * Verwendeter Browser gemäß User Agent: ${ua}\n\n\n";
+	$body .= " * Client: ${ip}\n";
+	$body .= " * UserAgent: ${ua}\n\n\n";
 	$body .= "Impressum: ${imprint_url}\n";
 
-	my $success = $self->sendmail->custom($email, 'Registrierung bei travelynx', $body);
+	my $success
+	  = $self->sendmail->custom( $email, 'Registrierung bei travelynx', $body );
 	if ($success) {
 		$self->app->dbh->commit;
 		$self->render( 'login', from => 'register' );
@@ -214,6 +215,73 @@ sub do_logout {
 	$self->redirect_to('/login');
 }
 
+sub password_form {
+	my ($self) = @_;
+
+	$self->render('change_password');
+}
+
+sub change_password {
+	my ($self)       = @_;
+	my $old_password = $self->req->param('oldpw');
+	my $password     = $self->req->param('newpw');
+	my $password2    = $self->req->param('newpw2');
+
+	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
+		$self->render( 'change_password', invalid => 'csrf' );
+		return;
+	}
+
+	if ( $password ne $password2 ) {
+		$self->render( 'change_password', invalid => 'password_notequal' );
+		return;
+	}
+
+	if ( length($password) < 8 ) {
+		$self->render( 'change_password', invalid => 'password_short' );
+		return;
+	}
+
+	if (
+		not $self->authenticate(
+			$self->current_user->{name},
+			$self->param('oldpw')
+		)
+	  )
+	{
+		$self->render( 'change_password', invalid => 'password' );
+		return;
+	}
+
+	my $pw_hash = hash_password($password);
+	$self->set_user_password( $self->current_user->{id}, $pw_hash );
+
+	$self->redirect_to('account');
+
+	my $user  = $self->current_user->{name};
+	my $email = $self->current_user->{email};
+	my $ip    = $self->req->headers->header('X-Forwarded-For');
+	my $ua    = $self->req->headers->user_agent;
+	my $date  = DateTime->now( time_zone => 'Europe/Berlin' )
+	  ->strftime('%d.%m.%Y %H:%M:%S %z');
+
+	# In case Mojolicious is not running behind a reverse proxy
+	$ip
+	  //= sprintf( '%s:%s', $self->tx->remote_address, $self->tx->remote_port );
+	my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
+
+	my $body = "Hallo ${user},\n\n";
+	$body
+	  .= "Das Passwort deines travelynx-Accounts wurde soeben geändert.\n\n";
+	$body .= "Daten zur Änderung:\n";
+	$body .= " * Datum: ${date}\n";
+	$body .= " * Client: ${ip}\n";
+	$body .= " * UserAgent: ${ua}\n\n\n";
+	$body .= "Impressum: ${imprint_url}\n";
+
+	$self->sendmail->custom( $email, 'travelynx: Passwort geändert', $body );
+}
+
 sub account {
 	my ($self) = @_;
 
@@ -231,9 +299,10 @@ sub json_export {
 
 	while ( my @row = $query->fetchrow_array ) {
 		my (
-			$action_id, $action,       $raw_ts,      $ds100,     $name,
-			$train_type,   $train_line,  $train_no,  $train_id,
-			$raw_sched_ts, $raw_real_ts, $raw_route, $raw_messages
+			$action_id, $action,       $raw_ts,      $ds100,
+			$name,      $train_type,   $train_line,  $train_no,
+			$train_id,  $raw_sched_ts, $raw_real_ts, $raw_route,
+			$raw_messages
 		) = @row;
 
 		push(

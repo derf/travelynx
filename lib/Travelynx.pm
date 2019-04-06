@@ -583,7 +583,8 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 					elsif ( $user->{cancelled} ) {
 
 						# Same
-						$self->checkout($station, 1, $self->app->action_type->{cancelled_to});
+						$self->checkout( $station, 1,
+							$self->app->action_type->{cancelled_to} );
 					}
 
 					my $success = $self->app->action_query->execute(
@@ -873,6 +874,13 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 				$rows = $self->app->get_userid_query->fetchall_arrayref;
 				return $rows->[0][0];
 			}
+		}
+	);
+
+	$self->helper(
+		'set_user_password' => sub {
+			my ( $self, $uid, $password ) = @_;
+			$self->app->set_password_query->execute( $password, $uid );
 		}
 	);
 
@@ -1322,12 +1330,14 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 	);
 
 	$authed_r->get('/account')->to('account#account');
+	$authed_r->get('/change_password')->to('account#password_form');
 	$authed_r->get('/export.json')->to('account#json_export');
 	$authed_r->get('/history')->to('traveling#history');
 	$authed_r->get('/history/:year/:month')->to('traveling#monthly_history');
 	$authed_r->get('/history.json')->to('traveling#json_history');
 	$authed_r->get('/journey/:id')->to('traveling#journey_details');
 	$authed_r->get('/s/*station')->to('traveling#station');
+	$authed_r->post('/change_password')->to('account#change_password');
 	$authed_r->post('/delete')->to('account#delete');
 	$authed_r->post('/logout')->to('account#do_logout');
 	$authed_r->post('/set_token')->to('api#set_token');
