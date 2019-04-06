@@ -144,7 +144,8 @@
 				<ul>
 					<li>Protokoll von Fahrplan- und Echtzeitdaten an Start- und
 						Zielbahnhof</li>
-					<li>API zum automatisierten Auslesen der letzten Reisen</li>
+					<li>API zum automatisierten Auslesen des aktuellen Status</li>
+					<li>Statistiken über Reisezeiten und Verspätungen</li>
 				</ul>
 			</p>
 			<p>
