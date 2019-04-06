@@ -93,7 +93,7 @@
 						</button>
 					%= end
 				</td>
-			</tr>
+			</tr><!--
 			<tr>
 				<th scope="row">History</th>
 				<td>
@@ -139,7 +139,7 @@
 						</button>
 					%= end
 				</td>
-			</tr>
+			</tr> -->
 		</table>
 	</div>
 </div>
@@ -185,7 +185,7 @@
 		</p>
 	</div>
 </div>
-
+<!--
 <h3>History</h3>
 <div class="row">
 	<div class="col s12">
@@ -203,7 +203,7 @@
 		</p>
 	</div>
 </div>
-
+-->
 <h2>Export</h2>
 
 <div class="row">
