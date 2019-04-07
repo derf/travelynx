@@ -65,7 +65,7 @@ or not.
 ```
 git pull
 chmod -R a+rX . # only needed if travelynx is running under a different user
-if perl index.pl database has-current-schema; then
+if perl index.pl database has-current-schema | grep -Fq yes; then
     systemctl reload travelynx
 else
     systemctl stop travelynx
