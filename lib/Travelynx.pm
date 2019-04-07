@@ -690,6 +690,34 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 	);
 
 	$self->helper(
+		'invalidate_stats_cache' => sub {
+			my ( $self, $ts ) = @_;
+
+			my $uid = $self->current_user->{id};
+			$ts //= DateTime->now( time_zone => 'Europe/Berlin' );
+
+			# ts is the checkout timestamp or (for manual entries) the
+			# time of arrival. As the journey may span a month or year boundary,
+			# there is a total of five cache entries we need to invalidate:
+			# * year, month
+			# * year
+			# * (year, month) - 1 month   (with wraparound)
+			# * (year) - 1 year
+			# * total stats
+
+			$self->app->drop_stats_query->execute( $uid, $ts->year,
+				$ts->month );
+			$self->app->drop_stats_query->execute( $uid, $ts->year, 0 );
+			$ts->subtract( months => 1 );
+			$self->app->drop_stats_query->execute( $uid, $ts->year,
+				$ts->month );
+			$ts->subtract( months => 11 );
+			$self->app->drop_stats_query->execute( $uid, $ts->year, 0 );
+			$self->app->drop_stats_query->execute( $uid, 0,         0 );
+		}
+	);
+
+	$self->helper(
 		'checkout' => sub {
 			my ( $self, $station, $force, $action_id ) = @_;
 
@@ -706,6 +734,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 				return $status->{errstr};
 			}
 
+			my $now = DateTime->now( time_zone => 'Europe/Berlin' );
 			my ($train)
 			  = first { $_->train_id eq $train_id } @{ $status->{results} };
 			if ( not defined $train ) {
@@ -717,11 +746,12 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 							ds100 => $status->{station_ds100},
 							name  => $status->{station_name}
 						),
-						DateTime->now( time_zone => 'Europe/Berlin' )->epoch,
+						$now->epoch,
 						undef, undef, undef, undef, undef,
 						undef, undef, undef
 					);
 					if ( defined $success ) {
+						$self->invalidate_stats_cache;
 						return;
 					}
 					else {
@@ -745,7 +775,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 						ds100 => $status->{station_ds100},
 						name  => $status->{station_name}
 					),
-					DateTime->now( time_zone => 'Europe/Berlin' )->epoch,
+					$now->epoch,
 					$train->type,
 					$train->line_no,
 					$train->train_no,
@@ -764,6 +794,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 					)
 				);
 				if ( defined $success ) {
+					$self->invalidate_stats_cache;
 					return;
 				}
 				else {
@@ -983,6 +1014,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 			my $success = $query->execute( $uid, $checkin_id, $checkout_id );
 			if ($success) {
 				if ( $query->rows == 2 ) {
+					$self->invalidate_stats_cache( $journey->{checkout} );
 					return undef;
 				}
 				else {
