@@ -1,0 +1,94 @@
+% if ($error and $error eq 'notfound') {
+	<div class="row">
+		<div class="col s12">
+			<div class="card red darken-4">
+				<div class="card-content white-text">
+					<span class="card-title">Fehler</span>
+					<p>Zugfahrt nicht gefunden.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+% }
+% else {
+	% if ($error) {
+		<div class="row">
+			<div class="col s12">
+				<div class="card red darken-4">
+					<div class="card-content white-text">
+						<span class="card-title">Ungültige Eingabe</span>
+						<p><%= $error %></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	% }
+	%= form_for '/journey/edit' => (method => 'POST') => begin
+		%= csrf_field
+		<div class="row">
+			<div class="col s12">
+				<p>
+					Fahrt von
+					<b><%= $journey->{from_name} %></b>
+					nach
+					<b><%= $journey->{to_name} %></b>
+					am
+					<b><%= $journey->{sched_departure}->strftime('%d.%m.%Y') %></b>
+				</p>
+				<table class="striped">
+					<tr>
+						<th scope="row">Zug</th>
+						<td>
+							<%= $journey->{type} %> <%= $journey->{no} %>
+							% if ($journey->{line}) {
+								(Linie <%= $journey->{line} %>)
+							% }
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Geplante Abfahrt</th>
+						<td>
+							%= text_field 'sched_departure', id => 'sched_departure', class => 'validate', required => undef, pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Tatsächliche Abfahrt</th>
+						<td>
+							%= text_field 'rt_departure', id => 'real_departure', class => 'validate', pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Geplante Ankunft</th>
+						<td>
+							%= text_field 'sched_arrival', id => 'sched_arrival', class => 'validate', required => undef, pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Tatsächliche Ankunft</th>
+						<td>
+							%= text_field 'rt_arrival', id => 'real_arrival', class => 'validate', pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Route</th>
+						<td>
+							%= text_area 'route', id => 'route', cols => 40, rows => 20
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col s3 m3 l3">
+			</div>
+			<div class="col s6 m6 l6 center-align">
+				<button class="btn waves-effect waves-light" type="submit" name="action" value="save">
+					Speichern
+					<i class="material-icons right">send</i>
+				</button>
+			</div>
+			<div class="col s3 m3 l3">
+			</div>
+		</div>
+	%= end
+% }

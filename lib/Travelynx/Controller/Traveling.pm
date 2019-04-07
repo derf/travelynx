@@ -378,6 +378,8 @@ sub journey_details {
 	my ($self) = @_;
 	my ( $uid, $checkout_id ) = split( qr{-}, $self->stash('id') );
 
+	$self->param( journey_id => $checkout_id );
+
 	if ( not( $uid == $self->current_user->{id} and $checkout_id ) ) {
 		$self->render(
 			'journey',
@@ -409,6 +411,62 @@ sub journey_details {
 		error   => undef,
 		journey => $journeys[0]
 	);
+}
+
+sub edit_journey {
+	my ($self)      = @_;
+	my $checkout_id = $self->param('journey_id');
+	my $uid         = $self->current_user->{id};
+
+	if ( not( $uid == $self->current_user->{id} and $checkout_id ) ) {
+		$self->render(
+			'edit_journey',
+			error   => 'notfound',
+			journey => {}
+		);
+		return;
+	}
+
+	my @journeys = $self->get_user_travels(
+		uid         => $uid,
+		checkout_id => $checkout_id,
+	);
+	if (   @journeys == 0
+		or not $journeys[0]{completed}
+		or $journeys[0]{ids}[1] != $checkout_id )
+	{
+		$self->render(
+			'edit_journey',
+			error   => 'notfound',
+			journey => {}
+		);
+		return;
+	}
+
+	my $journey = $journeys[0];
+
+	for my $key (qw(sched_departure rt_departure sched_arrival rt_arrival)) {
+		if ( $journey->{$key} and $journey->{$key}->epoch ) {
+			$self->param(
+				$key => $journey->{$key}->strftime('%d.%m.%Y %H:%M') );
+		}
+	}
+
+	if ( $journey->{route} ) {
+		$self->param( route => join( "\n", @{ $journey->{route} } ) );
+	}
+
+	$self->render(
+		'edit_journey',
+		error   => undef,
+		journey => $journey
+	);
+}
+
+sub add_journey_form {
+	my ($self) = @_;
+
+	$self->render( 'add_journey', error => undef );
 }
 
 1;

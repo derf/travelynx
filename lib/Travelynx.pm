@@ -1475,8 +1475,10 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 	$authed_r->get('/history')->to('traveling#history');
 	$authed_r->get('/history/:year')->to('traveling#yearly_history');
 	$authed_r->get('/history/:year/:month')->to('traveling#monthly_history');
+	$authed_r->get('/journey/add')->to('traveling#add_journey_form');
 	$authed_r->get('/journey/:id')->to('traveling#journey_details');
 	$authed_r->get('/s/*station')->to('traveling#station');
+	$authed_r->post('/journey/edit')->to('traveling#edit_journey');
 	$authed_r->post('/change_password')->to('account#change_password');
 	$authed_r->post('/delete')->to('account#delete');
 	$authed_r->post('/logout')->to('account#do_logout');
