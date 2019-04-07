@@ -55,6 +55,28 @@ Please open an issue on <https://github.com/derf/travelynx/issues> or send a
 mail to derf+travelynx@finalrewind.org if there is anything missing or
 ambiguous in this setup manual.
 
+Updating
+---
+
+It is recommended to run travelynx directly from the git repository. When
+updating, the workflow depends on whether schema updates need to applied
+or not.
+
+```
+git pull
+chmod -R a+rX . # only needed if travelynx is running under a different user
+if perl index.pl database has-current-schema; then
+    systemctl reload travelynx
+else
+    systemctl stop travelynx
+    perl index.pl migrate
+    systemctl start travelynx
+fi
+```
+
+Note that this is subject to change -- the application may perform schema
+updates automatically in the future.
+
 Usage
 ---
 

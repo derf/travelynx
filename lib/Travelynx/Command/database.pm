@@ -106,6 +106,14 @@ sub run {
 			$dbh->commit;
 		}
 	}
+	elsif ( $command eq 'has-current-schema' ) {
+		if ( get_schema_version($dbh) == $#migrations ) {
+			say "yes";
+		}
+		else {
+			say "no";
+		}
+	}
 	else {
 		$self->help;
 	}
@@ -120,7 +128,7 @@ __END__
 
 =head1 SYNOPSIS
 
-  Usage: index.pl database <setup|migrate>
+  Usage: index.pl database <setup|migrate|has-current-schema>
 
   Upgrades the database layout to the latest schema.
 
