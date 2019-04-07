@@ -71,7 +71,28 @@ sub initialize_db {
 	);
 }
 
-my @migrations = ();
+my @migrations = (
+
+	# v0 -> v1
+	sub {
+		my ($dbh) = @_;
+		return $dbh->do(
+			qq{
+				alter table user_actions
+					add column edited smallint;
+				drop table if exists monthly_stats;
+				create table journey_stats (
+					user_id integer not null references users (id),
+					year smallint not null,
+					month smallint not null,
+					data jsonb not null,
+					primary key (user_id, year, month)
+				);
+				update schema_version set version = 1;
+			}
+		);
+	},
+);
 
 sub run {
 	my ( $self, $command ) = @_;
@@ -96,18 +117,18 @@ sub run {
 		}
 		for my $i ( $schema_version .. $#migrations ) {
 			printf( "Updating to v%d ...\n", $i + 1 );
-			if ( not $migrations[$i]() ) {
+			if ( not $migrations[$i]($dbh) ) {
 				say "Aborting migration; rollback to v${schema_version}";
 				$dbh->rollback;
 				last;
 			}
 		}
-		if ( get_schema_version($dbh) == $#migrations ) {
+		if ( get_schema_version($dbh) == @migrations ) {
 			$dbh->commit;
 		}
 	}
 	elsif ( $command eq 'has-current-schema' ) {
-		if ( get_schema_version($dbh) == $#migrations ) {
+		if ( get_schema_version($dbh) == @migrations ) {
 			say "yes";
 		}
 		else {

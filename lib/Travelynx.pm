@@ -8,6 +8,7 @@ use DateTime;
 use DBI;
 use Encode qw(decode encode);
 use Geo::Distance;
+use JSON;
 use List::Util qw(first);
 use List::MoreUtils qw(after_incl before_incl);
 use Travel::Status::DE::IRIS;
@@ -224,6 +225,44 @@ sub startup {
 				qq{
 				update users set deletion_requested = to_timestamp(?) where id = ?;
 			}
+			);
+		}
+	);
+	$self->attr(
+		get_stats_query => sub {
+			my ($self) = @_;
+
+			return $self->app->dbh->prepare(
+				qq{
+					select data from journey_stats
+					where user_id = ? and year = ? and month = ?
+				}
+			);
+		}
+	);
+	$self->attr(
+		add_stats_query => sub {
+			my ($self) = @_;
+
+			return $self->app->dbh->prepare(
+				qq{
+					insert into journey_stats
+					(user_id, year, month, data)
+					values
+					(?, ?, ?, ?)
+				}
+			);
+		}
+	);
+	$self->attr(
+		drop_stats_query => sub {
+			my ($self) = @_;
+
+			return $self->app->dbh->prepare(
+				qq{
+					delete from journey_stats
+					where user_id = ? and year = ? and month = ?
+				}
 			);
 		}
 	);
@@ -955,6 +994,73 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 			$self->app->log->error(
 				"Delete($uid, $checkin_id, $checkout_id): DELETE failed: $err");
 			return 'DELETE failed: ' . $err;
+		}
+	);
+
+	$self->helper(
+		'get_journey_stats' => sub {
+			my ( $self, %opt ) = @_;
+
+			if ( $opt{cancelled} ) {
+				$self->app->log->warning(
+'get_journey_stats called with illegal option cancelled => 1'
+				);
+				return {};
+			}
+
+			my $uid   = $self->current_user->{id};
+			my $year  = $opt{year} // 0;
+			my $month = $opt{month} // 0;
+
+			# Assumption: If the stats cache contains an entry it is up-to-date.
+			# -> Cache entries must be explicitly invalidated whenever the user
+			# checks out of a train or manually edits/adds a journey.
+
+			$self->app->get_stats_query->execute( $uid, $year, $month );
+			my $rows = $self->app->get_stats_query->fetchall_arrayref;
+
+			if ( @{$rows} == 1 ) {
+				return JSON->new->decode( $rows->[0][0] );
+			}
+
+			my $interval_start = DateTime->new(
+				time_zone => 'Europe/Berlin',
+				year      => 2000,
+				month     => 1,
+				day       => 1,
+				hour      => 0,
+				minute    => 0,
+				second    => 0,
+			);
+
+          # I wonder if people will still be traveling by train in the year 3000
+			my $interval_end = $interval_start->clone->add( years => 1000 );
+
+			if ( $opt{year} and $opt{month} ) {
+				$interval_start->set(
+					year  => $opt{year},
+					month => $opt{month}
+				);
+				$interval_end = $interval_start->clone->add( months => 1 );
+			}
+			elsif ( $opt{year} ) {
+				$interval_start->set( year => $opt{year} );
+				$interval_end = $interval_start->clone->add( years => 1 );
+			}
+
+			my @journeys = $self->get_user_travels(
+				cancelled => $opt{cancelled} ? 1 : 0,
+				verbose   => 1,
+				after     => $interval_start,
+				before    => $interval_end
+			);
+			my $stats = $self->compute_journey_stats(@journeys);
+
+			$self->app->drop_stats_query->execute( $uid, $year, $month );
+			$self->app->add_stats_query->execute( $uid, $year, $month,
+				JSON->new->encode($stats) );
+
+			return $stats;
 		}
 	);
 

@@ -285,7 +285,9 @@ sub monthly_history {
 		qw(Januar Februar März April Mai Juni Juli August September Oktober November Dezember)
 	  );
 
-	if ( not( $year =~ m{ ^ [0-9]{4} $ }x and $month =~ m{ ^ [0-9]{1,2} $ }x ) )
+	if ( $cancelled
+		or
+		not( $year =~ m{ ^ [0-9]{4} $ }x and $month =~ m{ ^ [0-9]{1,2} $ }x ) )
 	{
 		@journeys = $self->get_user_travels( cancelled => $cancelled );
 	}
@@ -301,12 +303,13 @@ sub monthly_history {
 		);
 		my $interval_end = $interval_start->clone->add( months => 1 );
 		@journeys = $self->get_user_travels(
-			cancelled => $cancelled,
-			verbose   => 1,
-			after     => $interval_start,
-			before    => $interval_end
+			after  => $interval_start,
+			before => $interval_end
 		);
-		$stats = $self->compute_journey_stats(@journeys);
+		$stats = $self->get_journey_stats(
+			year  => $year,
+			month => $month
+		);
 	}
 
 	$self->respond_to(
