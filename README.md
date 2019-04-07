@@ -69,7 +69,7 @@ if perl index.pl database has-current-schema | grep -Fq yes; then
     systemctl reload travelynx
 else
     systemctl stop travelynx
-    perl index.pl migrate
+    perl index.pl database migrate
     systemctl start travelynx
 fi
 ```
