@@ -1,0 +1,16 @@
+<h1>Zugausfälle</h1>
+<div class="row">
+	<div class="col s12">
+		Die folgenden Zugfahrten haben nicht stattgefunden.
+	</div>
+</div>
+<div class="row">
+	<div class="col s12">
+		<ul>
+			<li><a href="/cancelled.json">JSON-Export</a> (Das Datenlayout ist noch nicht final)</li>
+			<li><a href="/history">Reguläre Zugfahrten</a></li>
+		</ul>
+	</div>
+</div>
+
+%= include '_history_trains', journeys => stash('journeys');

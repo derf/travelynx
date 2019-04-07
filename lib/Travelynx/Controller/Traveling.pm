@@ -250,34 +250,79 @@ sub redirect_to_station {
 	$self->redirect_to("/s/${station}");
 }
 
-sub history {
+sub cancelled {
 	my ($self) = @_;
-	my $cancelled = $self->param('cancelled') ? 1 : 0;
-
-	my @journeys = $self->get_user_travels( cancelled => $cancelled );
+	my @journeys = $self->get_user_travels( cancelled => 1 );
 
 	$self->respond_to(
 		json => { json => [@journeys] },
 		any  => {
-			template => 'history',
+			template => 'cancelled',
 			journeys => [@journeys]
 		}
 	);
 }
 
+sub history {
+	my ($self) = @_;
+
+	$self->render( template => 'history' );
+}
+
 sub json_history {
 	my ($self) = @_;
-	my $cancelled = $self->param('cancelled') ? 1 : 0;
 
-	$self->render(
-		json => [ $self->get_user_travels( cancelled => $cancelled ) ] );
+	$self->render( json => [ $self->get_user_travels ] );
+}
+
+sub yearly_history {
+	my ($self) = @_;
+	my $year = $self->stash('year');
+	my @journeys;
+	my $stats;
+
+	if ( not $year =~ m{ ^ [0-9]{4} $ }x ) {
+		@journeys = $self->get_user_travels;
+	}
+	else {
+		my $interval_start = DateTime->new(
+			time_zone => 'Europe/Berlin',
+			year      => $year,
+			month     => 1,
+			day       => 1,
+			hour      => 0,
+			minute    => 0,
+			second    => 0,
+		);
+		my $interval_end = $interval_start->clone->add( years => 1 );
+		@journeys = $self->get_user_travels(
+			after  => $interval_start,
+			before => $interval_end
+		);
+		$stats = $self->get_journey_stats( year => $year );
+	}
+
+	$self->respond_to(
+		json => {
+			json => {
+				journeys   => [@journeys],
+				statistics => $stats
+			}
+		},
+		any => {
+			template   => 'history_by_year',
+			journeys   => [@journeys],
+			year       => $year,
+			statistics => $stats
+		}
+	);
+
 }
 
 sub monthly_history {
 	my ($self) = @_;
 	my $year   = $self->stash('year');
 	my $month  = $self->stash('month');
-	my $cancelled = $self->param('cancelled') ? 1 : 0;
 	my @journeys;
 	my $stats;
 	my @months
@@ -285,11 +330,9 @@ sub monthly_history {
 		qw(Januar Februar März April Mai Juni Juli August September Oktober November Dezember)
 	  );
 
-	if ( $cancelled
-		or
-		not( $year =~ m{ ^ [0-9]{4} $ }x and $month =~ m{ ^ [0-9]{1,2} $ }x ) )
+	if ( not( $year =~ m{ ^ [0-9]{4} $ }x and $month =~ m{ ^ [0-9]{1,2} $ }x ) )
 	{
-		@journeys = $self->get_user_travels( cancelled => $cancelled );
+		@journeys = $self->get_user_travels;
 	}
 	else {
 		my $interval_start = DateTime->new(
@@ -320,7 +363,7 @@ sub monthly_history {
 			}
 		},
 		any => {
-			template   => 'history',
+			template   => 'history_by_month',
 			journeys   => [@journeys],
 			year       => $year,
 			month      => $month,

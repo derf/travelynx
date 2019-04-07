@@ -1,0 +1,12 @@
+<div class="row">
+	<div class="col s12">
+		<ul class="pagination">
+			% while ($since < $now) {
+				% my $link_to = $since->strftime('%Y/%m');
+				% my $class = $link_to eq $current ? 'active' : 'waves-effect';
+				<li class="<%= $class %>"><a href="/history/<%= $link_to %>"><%= $since->strftime('%m.%Y') %></a></li>
+				% $since->add(months => 1)->set(day => 1, hour => 0, minute => 0, second => 0);
+			% }
+		</ul>
+	</div>
+</div>

@@ -1,0 +1,13 @@
+% my $since = get_user_data()->{registered_at};
+% my $now = DateTime->now(time_zone => 'Europe/Berlin');
+%= include '_history_years', current => $year, since => $since, now => $now;
+
+<h1>Jahresrückblick <%= $year %></h1>
+
+% if (stash('statistics')) {
+	%= include '_history_stats', stats => stash('statistics');
+% }
+
+% if (stash('journeys')) {
+	%= include '_history_trains', journeys => stash('journeys');
+% }

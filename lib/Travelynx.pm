@@ -1468,11 +1468,13 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 	);
 
 	$authed_r->get('/account')->to('account#account');
+	$authed_r->get('/cancelled')->to('traveling#cancelled');
 	$authed_r->get('/change_password')->to('account#password_form');
 	$authed_r->get('/export.json')->to('account#json_export');
-	$authed_r->get('/history')->to('traveling#history');
-	$authed_r->get('/history/:year/:month')->to('traveling#monthly_history');
 	$authed_r->get('/history.json')->to('traveling#json_history');
+	$authed_r->get('/history')->to('traveling#history');
+	$authed_r->get('/history/:year')->to('traveling#yearly_history');
+	$authed_r->get('/history/:year/:month')->to('traveling#monthly_history');
 	$authed_r->get('/journey/:id')->to('traveling#journey_details');
 	$authed_r->get('/s/*station')->to('traveling#station');
 	$authed_r->post('/change_password')->to('account#change_password');

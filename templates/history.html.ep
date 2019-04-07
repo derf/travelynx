@@ -1,126 +1,29 @@
+<h1>Fahrten</h1>
+
+<div class="row">
+	<div class="col s12">
+		Hier finden sich alle bisherigen Zugfahrten und Statistiken für jedes
+		Jahr und jeden Monat.
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12">
+		<ul>
+			<li><a href="/history.json">JSON-Export aller Zugfahrten</a> (Das Datenlayout ist noch nicht final)</li>
+			<li><a href="/cancelled">Ausgefallene Züge</a></li>
+		</ul>
+	</div>
+</div>
+
+<h2>Nach Jahr</h2>
 % my $since = get_user_data()->{registered_at};
 % my $now = DateTime->now(time_zone => 'Europe/Berlin');
-<div class="row">
-	<div class="col s12">
-		<ul class="pagination">
-			<!--<li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>-->
-			% my $ref = stash('year') ? stash('year') . '/' . stash('month') : '';
-			% while ($since < $now) {
-				% my $link_to = $since->strftime('%Y/%m');
-				% my $class = $link_to eq $ref ? 'active' : 'waves-effect';
-				<li class="<%= $class %>"><a href="/history/<%= $link_to %>"><%= $since->strftime('%m.%Y') %></a></li>
-				% $since->add(months => 1)->set(day => 1, hour => 0, minute => 0, second => 0);
-			% }
-			<!--<li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>-->
-		</ul>
-	</div>
-</div>
-% if (my $stats = stash('statistics')) {
-<h1><%= stash('month_name') %> <%= stash('year') %></h1>
-	<div class="row">
-		<div class="col s12">
-			<table class="striped">
-				<tr>
-					<th scope="row">Fahrten</th>
-					<td><%= $stats->{num_journeys} %></td>
-				</tr>
-				<tr>
-					<th scope="row">Züge</th>
-					<td><%= $stats->{num_trains} %></td>
-				</tr>
-				<tr>
-					<th scope="row">Entfernung</th>
-					<td>ca. <%= sprintf('%.f', $stats->{km_route}) %> km
-						(Luftlinie: <%= sprintf('%.f', $stats->{km_beeline}) %> km)</td>
-				</tr>
-				<tr>
-					<th scope="row">Fahrtzeit</th>
-					<td><%= sprintf('%02d:%02d', $stats->{min_travel_real} / 60, $stats->{min_travel_real} % 60) %> Stunden
-						(nach Fahrplan: <%= sprintf('%02d:%02d', $stats->{min_travel_sched} / 60, $stats->{min_travel_sched} % 60) %>)<td>
-				</tr>
-				<tr>
-					<th scope="row">Wartezeit (nur Umstiege)</th>
-					<td><%= sprintf('%02d:%02d', $stats->{min_interchange_real} / 60, $stats->{min_interchange_real} % 60) %> Stunden
-				</tr>
-				<tr>
-					<th scope="row">Kumulierte Verspätung</th>
-					<td>Bei Abfahrt: <%= sprintf('%02d:%02d', $stats->{delay_dep} / 60, $stats->{delay_dep} % 60) %> Stunden<br/>
-						Bei Ankunft: <%= sprintf('%02d:%02d', $stats->{delay_arr} / 60, $stats->{delay_arr} % 60) %> Stunden</td>
-				</tr>
-			</table>
-		</div>
-	</div>
+%= include '_history_years', current => '', since => $since->clone, now => $now;
+
+<h2>Nach Monat</h2>
+%= include '_history_months', current => '', since => $since->clone, now => $now;
+
+% if (stash('statistics')) {
+	%= include '_history_stats', stats => stash('statistics');
 % }
-% elsif (param('cancelled')) {
-<h1>Ausgefallene Fahrten</h1>
-<div class="row">
-	<div class="col s12">
-		<ul>
-			<li><a href="/history.json?cancelled=1">JSON-Export</a> (Das Datenlayout ist noch nicht final)</li>
-			<li><a href="/history">Reguläre Zugfahrten</a></li>
-		</ul>
-	</div>
-</div>
-% }
-% else {
-<h1>Fahrten</h1>
-<div class="row">
-	<div class="col s12">
-		<ul>
-			<li><a href="/history.json">JSON-Export</a> (Das Datenlayout ist noch nicht final)</li>
-			<li><a href="/history?cancelled=1">Ausgefallene Züge</a></li>
-		</ul>
-	</div>
-</div>
-% }
-<div class="row">
-	<div class="col s12">
-		<table class="striped">
-			<thead>
-				<tr>
-					<th>Datum</th>
-					<th>Zeit</th>
-					<th>Zug</th>
-					<th>Strecke</th>
-				</tr>
-			</thead>
-			<tbody>
-				% for my $travel (@{$journeys}) {
-					% if ($travel->{completed}) {
-						% my $detail_link = '/journey/' . current_user()->{id} . '-' . $travel->{ids}->[1];
-						<tr>
-							<td><%= $travel->{sched_departure}->strftime('%d.%m.%Y') %></td>
-							<td>
-							% if (param('cancelled') and $travel->{sched_arrival}->epoch != 0) {
-								%= $travel->{sched_arrival}->strftime('%H:%M')
-							% }
-							% else {
-								% if ($travel->{rt_arrival}->epoch == 0 and $travel->{sched_arrival}->epoch == 0) {
-									<i class="material-icons">timer_off</i>
-								% } else {
-									%= $travel->{rt_arrival}->strftime('%H:%M');
-									% if ($travel->{sched_arrival} != $travel->{rt_arrival}) {
-										(<%= sprintf('%+d', ($travel->{rt_arrival}->epoch - $travel->{sched_arrival}->epoch) / 60) %>)
-									% }
-								% }
-							% }
-							<br/>
-							% if (param('cancelled')) {
-								%= $travel->{sched_departure}->strftime('%H:%M')
-							% }
-							% else {
-								<%= $travel->{rt_departure}->strftime('%H:%M') %>
-								% if ($travel->{sched_departure} != $travel->{rt_departure}) {
-									(<%= sprintf('%+d', ($travel->{rt_departure}->epoch - $travel->{sched_departure}->epoch) / 60) %>)
-								% }
-							% }
-							</td>
-							<td><a href="<%= $detail_link %>"><%= $travel->{type} %> <%= $travel->{line} // '' %> <%= $travel->{no} %></a></td>
-							<td><a href="<%= $detail_link %>"><%= $travel->{from_name} %> → <%= $travel->{to_name} %></a></td>
-						</tr>
-					% }
-				% }
-			</tbody>
-		</table>
-	</div>
-</div>
