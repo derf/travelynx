@@ -267,6 +267,37 @@ sub startup {
 		}
 	);
 	$self->attr(
+		action_set_sched_time_query => sub {
+			my ($self) = @_;
+
+         # TODO (re-)initialize all automatically added journeys with edited = 0
+         # and use it as a bit field to precisely indicate which fields have
+         # been edited. -> ".. set edited = edited | 1", "... | 2" etc.
+         # The action_id check is redundant, but better safe than sorry
+			return $self->app->dbh->prepare(
+				qq{
+					update user_actions
+					set sched_time = to_timestamp(?), edited = 1
+					where id = ? and action_id = ?
+				}
+			);
+		}
+	);
+	$self->attr(
+		action_set_real_time_query => sub {
+			my ($self) = @_;
+
+			# The action_id check is redundant, but better safe than sorry
+			return $self->app->dbh->prepare(
+				qq{
+					update user_actions
+					set real_time = to_timestamp(?), edited = 1
+					where id = ? and action_id = ?
+				}
+			);
+		}
+	);
+	$self->attr(
 		action_query => sub {
 			my ($self) = @_;
 
@@ -312,7 +343,7 @@ sub startup {
 			stations.ds100, stations.name,
 			train_type, train_line, train_no, train_id,
 			extract(epoch from sched_time), extract(epoch from real_time),
-			route, messages
+			route, messages, edited
 			from user_actions
 			left outer join stations on station_id = stations.id
 			where user_id = ?
@@ -331,7 +362,7 @@ sub startup {
 			stations.ds100, stations.name,
 			train_type, train_line, train_no, train_id,
 			extract(epoch from sched_time), extract(epoch from real_time),
-			route, messages
+			route, messages, edited
 			from user_actions
 			left outer join stations on station_id = stations.id
 			where user_id = ?
@@ -354,7 +385,7 @@ sub startup {
 			stations.ds100, stations.name,
 			train_type, train_line, train_no, train_id,
 			extract(epoch from sched_time), extract(epoch from real_time),
-			route, messages
+			route, messages, edited
 			from user_actions
 			left outer join stations on station_id = stations.id
 			where user_id = ?
@@ -375,7 +406,7 @@ sub startup {
 			stations.ds100, stations.name,
 			train_type, train_line, train_no, train_id,
 			extract(epoch from sched_time), extract(epoch from real_time),
-			route, messages
+			route, messages, edited
 			from user_actions
 			left outer join stations on station_id = stations.id
 			where user_id = ?
@@ -809,6 +840,77 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 	);
 
 	$self->helper(
+		'update_journey_part' => sub {
+			my ( $self, $checkin_id, $checkout_id, $key, $value ) = @_;
+			my ( $query, $id, $action_type );
+
+			if ( $key eq 'sched_departure' ) {
+				$query       = $self->app->action_set_sched_time_query;
+				$id          = $checkin_id;
+				$action_type = $self->app->action_type->{checkin};
+			}
+			elsif ( $key eq 'rt_departure' ) {
+				$query       = $self->app->action_set_real_time_query;
+				$id          = $checkin_id;
+				$action_type = $self->app->action_type->{checkin};
+			}
+			elsif ( $key eq 'sched_arrival' ) {
+				$query       = $self->app->action_set_sched_time_query;
+				$id          = $checkout_id;
+				$action_type = $self->app->action_type->{checkout};
+			}
+			elsif ( $key eq 'rt_arrival' ) {
+				$query       = $self->app->action_set_real_time_query;
+				$id          = $checkout_id;
+				$action_type = $self->app->action_type->{checkout};
+			}
+			else {
+				$self->app->log->error(
+					"update_journey_part(id = $id): Invalid key $key");
+				return 'Internal Error';
+			}
+
+			my $success = $query->execute( $value, $id, $action_type );
+			if ($success) {
+				if ( $query->rows == 1 ) {
+					return undef;
+				}
+				return 'UPDATE failed: did not match any journey part';
+			}
+			my $err = $query->errstr;
+			$self->app->log->error(
+				"update_journey_part($id): UPDATE failed: $err");
+			return 'UPDATE failed: ' . $err;
+		}
+	);
+
+	$self->helper(
+		'journey_sanity_check' => sub {
+			my ( $self, $journey ) = @_;
+
+			if ( $journey->{sched_duration} and $journey->{sched_duration} < 0 )
+			{
+				return 'Die geplante Dauer dieser Zugfahrt ist negativ';
+			}
+			if ( $journey->{rt_duration} and $journey->{rt_duration} < 0 ) {
+				return 'Die Dauer dieser Zugfahrt ist negativ';
+			}
+			if (    $journey->{sched_duration}
+				and $journey->{sched_duration} > 60 * 60 * 24 )
+			{
+				return 'Die Zugfahrt ist länger als 24 Stunden';
+			}
+			if (    $journey->{rt_duration}
+				and $journey->{rt_duration} > 60 * 60 * 24 )
+			{
+				return 'Die Zugfahrt ist länger als 24 Stunden';
+			}
+
+			return undef;
+		}
+	);
+
+	$self->helper(
 		'get_station_id' => sub {
 			my ( $self, %opt ) = @_;
 
@@ -1161,7 +1263,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 					$ds100,        $name,        $train_type,
 					$train_line,   $train_no,    $train_id,
 					$raw_sched_ts, $raw_real_ts, $raw_route,
-					$raw_messages
+					$raw_messages, $edited
 				) = @row;
 
 				if ( $action == $match_actions[0]
@@ -1185,6 +1287,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 							? [ split( qr{[|]}, $raw_route ) ]
 							: undef,
 							completed => 0,
+							edited    => $edited // 0,
 						}
 					);
 				}
@@ -1208,6 +1311,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 					$ref->{no}       //= $train_no;
 					$ref->{messages} //= [ split( qr{[|]}, $raw_messages ) ];
 					$ref->{route}    //= [ split( qr{[|]}, $raw_route ) ];
+					$ref->{edited} += $edited;
 
 					if ( $opt{verbose} ) {
 						my @parsed_messages;
@@ -1269,6 +1373,22 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 			  = sort { $b->{rt_departure} <=> $a->{rt_departure} } @travels;
 
 			return @travels;
+		}
+	);
+
+	$self->helper(
+		'get_journey' => sub {
+			my ( $self, %opt ) = @_;
+
+			my @journeys = $self->get_user_travels(%opt);
+			if (   @journeys == 0
+				or not $journeys[0]{completed}
+				or $journeys[0]{ids}[1] != $opt{checkout_id} )
+			{
+				return undef;
+			}
+
+			return $journeys[0];
 		}
 	);
 

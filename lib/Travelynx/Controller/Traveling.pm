@@ -2,6 +2,7 @@ package Travelynx::Controller::Traveling;
 use Mojo::Base 'Mojolicious::Controller';
 
 use DateTime;
+use DateTime::Format::Strptime;
 use Travel::Status::DE::IRIS::Stations;
 
 sub homepage {
@@ -427,14 +428,12 @@ sub edit_journey {
 		return;
 	}
 
-	my @journeys = $self->get_user_travels(
+	my $journey = $self->get_journey(
 		uid         => $uid,
-		checkout_id => $checkout_id,
+		checkout_id => $checkout_id
 	);
-	if (   @journeys == 0
-		or not $journeys[0]{completed}
-		or $journeys[0]{ids}[1] != $checkout_id )
-	{
+
+	if ( not $journey ) {
 		$self->render(
 			'edit_journey',
 			error   => 'notfound',
@@ -443,7 +442,59 @@ sub edit_journey {
 		return;
 	}
 
-	my $journey = $journeys[0];
+	my $error = undef;
+
+	if ( $self->param('action') and $self->param('action') eq 'cancel' ) {
+		$self->redirect_to("/journey/${uid}-${checkout_id}");
+		return;
+	}
+
+	if ( $self->param('action') and $self->param('action') eq 'save' ) {
+		my $parser = DateTime::Format::Strptime->new(
+			pattern   => '%d.%m.%Y %H:%M',
+			locale    => 'de_DE',
+			time_zone => 'Europe/Berlin'
+		);
+
+		$self->app->dbh->begin_work;
+
+		for my $key (qw(sched_departure rt_departure sched_arrival rt_arrival))
+		{
+			my $datetime = $parser->parse_datetime( $self->param($key) );
+			if ( $datetime and $datetime->epoch ne $journey->{$key}->epoch ) {
+				$error = $self->update_journey_part(
+					$journey->{ids}[0],
+					$journey->{ids}[1],
+					$key, $datetime->epoch
+				);
+				if ($error) {
+					last;
+				}
+			}
+		}
+
+		if ($error) {
+			$self->app->dbh->rollback;
+		}
+		else {
+			$journey = $self->get_journey(
+				uid         => $uid,
+				checkout_id => $checkout_id,
+				verbose     => 1
+			);
+			$error = $self->journey_sanity_check($journey);
+			if ($error) {
+				$self->app->dbh->rollback;
+			}
+			else {
+				$self->invalidate_stats_cache( $journey->{checkout} );
+				$self->app->dbh->commit;
+				$self->redirect_to("/journey/${uid}-${checkout_id}");
+				return;
+			}
+		}
+
+	}
 
 	for my $key (qw(sched_departure rt_departure sched_arrival rt_arrival)) {
 		if ( $journey->{$key} and $journey->{$key}->epoch ) {
@@ -458,7 +509,7 @@ sub edit_journey {
 
 	$self->render(
 		'edit_journey',
-		error   => undef,
+		error   => $error,
 		journey => $journey
 	);
 }

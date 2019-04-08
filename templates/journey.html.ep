@@ -26,6 +26,9 @@
 				am
 				<b><%= $journey->{sched_departure}->strftime('%d.%m.%Y') %></b>
 			</p>
+			% if ($journey->{edited}) {
+				<p>Die Ankunfts- und Abfahrtsdaten wurden nachträglich bearbeitet.</p>
+			% }
 			<table class="striped">
 				<tr>
 					<th scope="row">Zug</th>
@@ -141,7 +144,7 @@
 		<div class="col s6 m6 l6 center-align">
 			%= form_for '/journey/edit' => (method => 'POST') => begin
 				%= hidden_field 'journey_id' => param('journey_id')
-				<button class="btn waves-effect waves-light" type="submit" name="action" value="edit" disabled="disabled">
+				<button class="btn waves-effect waves-light" type="submit" name="action" value="edit">
 					Bearbeiten
 				</button>
 			%= end

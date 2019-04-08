@@ -13,6 +13,8 @@ Dependencies
  * perl >= 5.10
  * Cache::File (part of the Cache module)
  * Crypt::Eksblowfish
+ * DateTime
+ * DateTime::Format::Strptime
  * DBI
  * DBD::Pg
  * Email::Sender
