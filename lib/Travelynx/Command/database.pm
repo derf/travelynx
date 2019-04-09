@@ -46,6 +46,7 @@ sub initialize_db {
 				action_id smallint not null,
 				station_id int references stations (id),
 				action_time timestamptz not null,
+				edited not null,
 				train_type varchar(16),
 				train_line varchar(16),
 				train_no varchar(16),
@@ -66,7 +67,7 @@ sub initialize_db {
 				token varchar(80) not null,
 				primary key (user_id, type)
 			);
-			insert into schema_version values (0);
+			insert into schema_version values (2);
 		}
 	);
 }
@@ -89,6 +90,19 @@ my @migrations = (
 					primary key (user_id, year, month)
 				);
 				update schema_version set version = 1;
+			}
+		);
+	},
+
+	# v1 -> v2
+	sub {
+		my ($dbh) = @_;
+		return $dbh->do(
+			qq{
+				update user_actions set edited = 0;
+				alter table user_actions
+					alter column edited set not null;
+				update schema_version set version = 2;
 			}
 		);
 	},

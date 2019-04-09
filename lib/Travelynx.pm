@@ -277,7 +277,7 @@ sub startup {
 			return $self->app->dbh->prepare(
 				qq{
 					update user_actions
-					set sched_time = to_timestamp(?), edited = 1
+					set sched_time = to_timestamp(?), edited = edited | 1
 					where id = ? and action_id = ?
 				}
 			);
@@ -291,7 +291,7 @@ sub startup {
 			return $self->app->dbh->prepare(
 				qq{
 					update user_actions
-					set real_time = to_timestamp(?), edited = 1
+					set real_time = to_timestamp(?), edited = edited | 2
 					where id = ? and action_id = ?
 				}
 			);
@@ -304,12 +304,12 @@ sub startup {
 			return $self->app->dbh->prepare(
 				qq{
 			insert into user_actions (
-				user_id, action_id, station_id, action_time,
+				user_id, action_id, station_id, action_time, edited,
 				train_type, train_line, train_no, train_id,
 				sched_time, real_time,
 				route, messages
 			) values (
-				?, ?, ?, to_timestamp(?),
+				?, ?, ?, to_timestamp(?), ?
 				?, ?, ?, ?,
 				to_timestamp(?), to_timestamp(?),
 				?, ?
@@ -665,6 +665,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 							name  => $status->{station_name}
 						),
 						DateTime->now( time_zone => 'Europe/Berlin' )->epoch,
+						0,
 						$train->type,
 						$train->line_no,
 						$train->train_no,
@@ -778,8 +779,8 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 							name  => $status->{station_name}
 						),
 						$now->epoch,
-						undef, undef, undef, undef, undef,
-						undef, undef, undef
+						0,     undef, undef, undef, undef,
+						undef, undef, undef, undef
 					);
 					if ( defined $success ) {
 						$self->invalidate_stats_cache;
@@ -807,6 +808,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 						name  => $status->{station_name}
 					),
 					$now->epoch,
+					0,
 					$train->type,
 					$train->line_no,
 					$train->train_no,
@@ -1289,7 +1291,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 							? [ split( qr{[|]}, $raw_route ) ]
 							: undef,
 							completed => 0,
-							edited    => $edited // 0,
+							edited    => $edited << 8,
 						}
 					);
 				}
@@ -1313,7 +1315,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 					$ref->{no}       //= $train_no;
 					$ref->{messages} //= [ split( qr{[|]}, $raw_messages ) ];
 					$ref->{route}    //= [ split( qr{[|]}, $raw_route ) ];
-					$ref->{edited} += $edited;
+					$ref->{edited} |= $edited;
 
 					if ( $opt{verbose} ) {
 						my @parsed_messages;

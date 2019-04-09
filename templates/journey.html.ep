@@ -27,7 +27,9 @@
 				<b><%= $journey->{sched_departure}->strftime('%d.%m.%Y') %></b>
 			</p>
 			% if ($journey->{edited}) {
-				<p>Die Ankunfts- und Abfahrtsdaten wurden nachträglich bearbeitet.</p>
+				<p>
+					∗ Daten wurden manuell eingetragen
+				</p>
 			% }
 			<table class="striped">
 				<tr>
@@ -54,6 +56,9 @@
 						% else {
 							%= $journey->{sched_departure}->strftime('%H:%M');
 						% }
+						% if ($journey->{edited} & 0x0003) {
+							∗
+						% }
 					</td>
 				</tr>
 				<tr>
@@ -76,6 +81,9 @@
 						% else {
 							%= $journey->{sched_arrival}->strftime('%H:%M');
 						% }
+						% if ($journey->{edited} & 0x0300) {
+							∗
+						% }
 					</td>
 				</tr>
 				<tr>
@@ -92,6 +100,9 @@
 					<td>
 						∅ <%= sprintf('%.f', $journey->{kmh_route}) %> km/h
 						(<%= sprintf('%.f', $journey->{kmh_beeline}) %> km/h)
+						% if ($journey->{edited} & 0x0303) {
+							∗
+						% }
 					</td>
 				</tr>
 				<tr>
