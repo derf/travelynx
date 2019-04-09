@@ -890,20 +890,22 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 
 			if ( $journey->{sched_duration} and $journey->{sched_duration} < 0 )
 			{
-				return 'Die geplante Dauer dieser Zugfahrt ist negativ';
+				return
+'Die geplante Dauer dieser Zugfahrt ist negativ. Zeitreisen werden aktuell nicht unterstützt.';
 			}
 			if ( $journey->{rt_duration} and $journey->{rt_duration} < 0 ) {
-				return 'Die Dauer dieser Zugfahrt ist negativ';
+				return
+'Die Dauer dieser Zugfahrt ist negativ. Zeitreisen werden aktuell nicht unterstützt.';
 			}
 			if (    $journey->{sched_duration}
 				and $journey->{sched_duration} > 60 * 60 * 24 )
 			{
-				return 'Die Zugfahrt ist länger als 24 Stunden';
+				return 'Die Zugfahrt ist länger als 24 Stunden.';
 			}
 			if (    $journey->{rt_duration}
 				and $journey->{rt_duration} > 60 * 60 * 24 )
 			{
-				return 'Die Zugfahrt ist länger als 24 Stunden';
+				return 'Die Zugfahrt ist länger als 24 Stunden.';
 			}
 
 			return undef;
