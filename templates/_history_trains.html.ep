@@ -4,9 +4,9 @@
 			<thead>
 				<tr>
 					<th>Datum</th>
-					<th>Zeit</th>
 					<th>Zug</th>
-					<th>Strecke</th>
+					<th>Von</th>
+					<th>Nach</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -14,8 +14,25 @@
 					% if ($travel->{completed}) {
 						% my $detail_link = '/journey/' . current_user()->{id} . '-' . $travel->{ids}->[1];
 						<tr>
-							<td><%= $travel->{sched_departure}->strftime('%d.%m.%Y') %></td>
+							<td><%= $travel->{sched_departure}->strftime('%d.%m.') %></td>
+							<td><a href="<%= $detail_link %>"><%= $travel->{type} %> <%= $travel->{line} // '' %> <%= $travel->{no} %></a></td>
 							<td>
+							<a href="<%= $detail_link %>" class="unmarked">
+							% if (param('cancelled')) {
+								%= $travel->{sched_departure}->strftime('%H:%M')
+							% }
+							% else {
+								<%= $travel->{rt_departure}->strftime('%H:%M') %>
+								% if ($travel->{sched_departure} != $travel->{rt_departure}) {
+									(<%= sprintf('%+d', ($travel->{rt_departure}->epoch - $travel->{sched_departure}->epoch) / 60) %>)
+								% }
+							% }
+							<br/>
+							<%= $travel->{from_name} %>
+							</a>
+							</td>
+							<td>
+							<a href="<%= $detail_link %>" class="unmarked">
 							% if (param('cancelled') and $travel->{sched_arrival}->epoch != 0) {
 								%= $travel->{sched_arrival}->strftime('%H:%M')
 							% }
@@ -30,18 +47,8 @@
 								% }
 							% }
 							<br/>
-							% if (param('cancelled')) {
-								%= $travel->{sched_departure}->strftime('%H:%M')
-							% }
-							% else {
-								<%= $travel->{rt_departure}->strftime('%H:%M') %>
-								% if ($travel->{sched_departure} != $travel->{rt_departure}) {
-									(<%= sprintf('%+d', ($travel->{rt_departure}->epoch - $travel->{sched_departure}->epoch) / 60) %>)
-								% }
-							% }
-							</td>
-							<td><a href="<%= $detail_link %>"><%= $travel->{type} %> <%= $travel->{line} // '' %> <%= $travel->{no} %></a></td>
-							<td><a href="<%= $detail_link %>"><%= $travel->{from_name} %> → <%= $travel->{to_name} %></a></td>
+							<%= $travel->{to_name} %>
+							</a></td>
 						</tr>
 					% }
 				% }
