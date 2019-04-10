@@ -309,7 +309,7 @@ sub startup {
 				sched_time, real_time,
 				route, messages
 			) values (
-				?, ?, ?, to_timestamp(?), ?
+				?, ?, ?, to_timestamp(?), ?,
 				?, ?, ?, ?,
 				to_timestamp(?), to_timestamp(?),
 				?, ?
