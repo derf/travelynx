@@ -15,7 +15,7 @@
 						% my $detail_link = '/journey/' . current_user()->{id} . '-' . $travel->{ids}->[1];
 						<tr>
 							<td><%= $travel->{sched_departure}->strftime('%d.%m.') %></td>
-							<td><a href="<%= $detail_link %>"><%= $travel->{type} %> <%= $travel->{line} // '' %> <%= $travel->{no} %></a></td>
+							<td><a href="<%= $detail_link %>"><%= $travel->{type} %> <%= $travel->{line} // $travel->{no} %></a></td>
 							<td>
 							<a href="<%= $detail_link %>" class="unmarked">
 							% if (param('cancelled')) {
