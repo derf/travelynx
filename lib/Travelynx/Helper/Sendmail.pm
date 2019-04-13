@@ -10,9 +10,9 @@ use Email::Sender::Simple qw(try_to_sendmail);
 use Email::Simple;
 
 sub new {
-	my ($class) = @_;
+	my ( $class, %opt ) = @_;
 
-	return bless( {}, $class );
+	return bless( \%opt, $class );
 }
 
 sub custom {
@@ -28,7 +28,7 @@ sub custom {
 		body => encode( 'utf-8', $body ),
 	);
 
-	if ( $self->app->config->{db}->{database} =~ m{travelynx_dev} ) {
+	if ( $self->{config}->{db}->{database} =~ m{travelynx_dev} ) {
 
 		# Do not send mail in dev mode
 		say "sendmail to ${to}: ${subject}\n\n${body}";

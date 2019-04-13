@@ -581,7 +581,10 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 	);
 
 	$self->helper(
-		sendmail => sub { state $sendmail = Travelynx::Helper::Sendmail->new; }
+		sendmail => sub {
+			state $sendmail
+			  = Travelynx::Helper::Sendmail->new( config => $self->config );
+		}
 	);
 
 	$self->helper(
