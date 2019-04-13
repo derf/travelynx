@@ -1,4 +1,4 @@
-FROM debian:stretch
+FROM debian:stretch-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 	libpq-dev \
 	git \
 	ssmtp \
-	&& cpanm -in \
+	&& cpanm -in --no-man-pages \
 	Cache::File \
 	Crypt::Eksblowfish \
 	DateTime \
