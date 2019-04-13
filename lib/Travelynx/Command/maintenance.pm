@@ -39,7 +39,7 @@ qq{delete from users where status = 0 and registered_at < to_timestamp(?);}
 	my $drop_tokens_query
 	  = $dbh->prepare(qq{delete from tokens where user_id = ?;});
 	my $drop_stats_query
-	  = $dbh->prepare(qq{delete from monthly_stats where user_id = ?;});
+	  = $dbh->prepare(qq{delete from journey_stats where user_id = ?;});
 	my $drop_actions_query
 	  = $dbh->prepare(qq{delete from user_actions where user_id = ?;});
 	my $drop_user_query = $dbh->prepare(qq{delete from users where id = ?;});
