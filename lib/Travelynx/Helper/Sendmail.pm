@@ -28,7 +28,7 @@ sub custom {
 		body => encode( 'utf-8', $body ),
 	);
 
-	if ( $self->{config}->{db}->{database} =~ m{travelynx_dev} ) {
+	if ( $self->{config}->{disabled} ) {
 
 		# Do not send mail in dev mode
 		say "sendmail to ${to}: ${subject}\n\n${body}";
