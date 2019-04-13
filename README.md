@@ -23,6 +23,22 @@ Dependencies
  * Mojolicious::Plugin::Authentication
  * Travel::Status::DE::IRIS
  * UUID::Tiny
+ * JSON
+
+Recommended
+---
+
+ * Geo::Distance::XS (speeds up statistics)
+ * JSON::XS (speeds up API and statistics)
+
+Dependencies On Docker
+---
+
+ * cpanminus
+ * build-essential
+ * libpq-dev
+ * git
+ * ssmtp
 
 Setup
 ---
