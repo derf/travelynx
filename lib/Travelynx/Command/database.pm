@@ -110,6 +110,7 @@ my @migrations = (
 
 sub run {
 	my ( $self, $command ) = @_;
+	my $exit_status = 0;
 
 	my $dbh = $self->app->dbh;
 
@@ -120,6 +121,7 @@ sub run {
 		}
 		else {
 			$dbh->rollback;
+			$exit_status = 1;
 		}
 	}
 	elsif ( $command eq 'migrate' ) {
@@ -134,6 +136,7 @@ sub run {
 			if ( not $migrations[$i]($dbh) ) {
 				say "Aborting migration; rollback to v${schema_version}";
 				$dbh->rollback;
+				$exit_status = 1;
 				last;
 			}
 		}
@@ -147,6 +150,7 @@ sub run {
 		}
 		else {
 			say "no";
+			$exit_status = 1;
 		}
 	}
 	else {
@@ -155,6 +159,7 @@ sub run {
 
 	$dbh->disconnect;
 
+	exit($exit_status);
 }
 
 1;
