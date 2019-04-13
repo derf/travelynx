@@ -30,6 +30,10 @@
 	</div>
 	<div class="row">
 		<div class="input-field col s12">
+			%= text_field 'dep_station', id => 'dep_station', class => 'autocomplete validate', required => undef
+			<label for="dep_station">Startbahnhof (Name oder DS100)</label>
+		</div>
+		<div class="input-field col s12">
 			%= text_field 'sched_departure', id => 'sched_departure', class => 'validate', required => undef, pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
 			<label for="sched_departure">Geplante Abfahrt</label>
 		</div>
@@ -39,6 +43,10 @@
 		</div>
 	</div>
 	<div class="row">
+		<div class="input-field col s12">
+			%= text_field 'arr_station', id => 'arr_station', class => 'autocomplete validate', required => undef
+			<label for="arr_station">Zielbahnhof (Name oder DS100)</label>
+		</div>
 		<div class="input-field col s12">
 			%= text_field 'sched_arrival', id => 'sched_arrival', class => 'validate', required => undef, pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
 			<label for="sched_arrival">Geplante Ankunft</label>

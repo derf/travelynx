@@ -8,7 +8,11 @@ use Travel::Status::DE::IRIS::Stations;
 sub homepage {
 	my ($self) = @_;
 	if ( $self->is_user_authenticated ) {
-		$self->render( 'landingpage', with_geolocation => 1 );
+		$self->render(
+			'landingpage',
+			with_autocomplete => 1,
+			with_geolocation  => 1
+		);
 	}
 	else {
 		$self->render( 'landingpage', intro => 1 );
@@ -216,8 +220,9 @@ sub station {
 	if ( $status->{errstr} ) {
 		$self->render(
 			'landingpage',
-			with_geolocation => 1,
-			error            => $status->{errstr}
+			with_autocomplete => 1,
+			with_geolocation  => 1,
+			error             => $status->{errstr}
 		);
 	}
 	else {
@@ -517,7 +522,68 @@ sub edit_journey {
 sub add_journey_form {
 	my ($self) = @_;
 
-	$self->render( 'add_journey', error => undef );
+	if ( $self->param('action') and $self->param('action') eq 'save' ) {
+		my $parser = DateTime::Format::Strptime->new(
+			pattern   => '%d.%m.%Y %H:%M',
+			locale    => 'de_DE',
+			time_zone => 'Europe/Berlin'
+		);
+		my %opt;
+
+		my @parts = split( qr{\s+}, $self->param('train') );
+
+		if ( @parts == 2 ) {
+			@opt{ 'train_type', 'train_no' } = @parts;
+		}
+		elsif ( @parts == 3 ) {
+			@opt{ 'train_type', 'train_line', 'train_no' } = @parts;
+		}
+		else {
+			$self->render(
+				'add_journey',
+				with_autocomplete => 1,
+				error =>
+'Zug muss als „Typ Nummer“ oder „Typ Linie Nummer“ eingegeben werden.'
+			);
+			return;
+		}
+
+		for my $key (qw(sched_departure rt_departure sched_arrival rt_arrival))
+		{
+			my $datetime = $parser->parse_datetime( $self->param($key) );
+			if ( not $datetime ) {
+				$self->render(
+					'add_journey',
+					with_autocomplete => 1,
+					error => "${key}: Ungültiges Datums-/Zeitformat"
+				);
+				return;
+			}
+			$opt{$key} = $datetime;
+		}
+
+		for my $key (qw(dep_station arr_station)) {
+			$opt{$key} = $self->param($key);
+		}
+
+		$self->app->dbh->begin_work;
+
+		my ( $checkin_id, $checkout_id, $error ) = $self->add_journey(%opt);
+
+		$self->app->dbh->rollback;
+		$self->render(
+			'add_journey',
+			with_autocomplete => 1,
+			error             => $error
+		);
+		return;
+	}
+
+	$self->render(
+		'add_journey',
+		with_autocomplete => 1,
+		error             => undef
+	);
 }
 
 1;

@@ -625,6 +625,91 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 		}
 	);
 
+	# Returns (checkin id, checkout id, error)
+	# Must be called during a transaction.
+	# Must perform a rollback on error.
+	$self->helper(
+		'add_journey' => sub {
+			my ( $self, %opt ) = @_;
+
+			my $user_status = $self->get_user_status;
+			if ( $user_status->{checked_in} or $user_status->{cancelled} ) {
+
+            # TODO: change database schema to one row per journey instead of two
+				return ( undef, undef,
+'Während einer Zugfahrt können momentan keine manuellen Einträge vorgenommen werden. Klingt komisch, ist aber so.'
+				);
+			}
+
+			my $uid         = $self->current_user->{id};
+			my $dep_station = get_station( $opt{dep_station} );
+			my $arr_station = get_station( $opt{arr_station} );
+
+			if ( not $dep_station ) {
+				return ( undef, undef, 'Unbekannter Startbahnhof' );
+			}
+			if ( not $arr_station ) {
+				return ( undef, undef, 'Unbekannter Zielbahnhof' );
+			}
+
+			say $dep_station->[0];
+			say $dep_station->[1];
+			say $arr_station->[0];
+			say $arr_station->[1];
+
+			my $success = $self->app->action_query->execute(
+				$uid,
+				$self->app->action_type->{checkin},
+				$self->get_station_id(
+					ds100 => $dep_station->[0],
+					name  => $dep_station->[1],
+				),
+				DateTime->now( time_zone => 'Europe/Berlin' )->epoch,
+				0x0f,
+				$opt{train_type},
+				$opt{train_line},
+				$opt{train_no},
+				undef,
+				$opt{sched_departure}->epoch,
+				$opt{rt_departure} ? $opt{rt_departure}->epoch : undef,
+				undef, undef
+			);
+			if ( not $success ) {
+				my $err = $self->app->action_query->errstr;
+				$self->app->log->error(
+					"add_journey($uid, checkin): INSERT failed: $err");
+				return ( undef, undef, 'INSERT failed: ' . $err );
+			}
+			my $checkin_id = $self->app->action_query->last_insert_id;
+
+			$success = $self->app->action_query->execute(
+				$uid,
+				$self->app->action_type->{checkout},
+				$self->get_station_id(
+					ds100 => $arr_station->[0],
+					name  => $arr_station->[1],
+				),
+				DateTime->now( time_zone => 'Europe/Berlin' )->epoch,
+				0x0f,
+				$opt{train_type},
+				$opt{train_line},
+				$opt{train_no},
+				undef,
+				$opt{sched_arrival}->epoch,
+				$opt{rt_arrival} ? $opt{rt_arrival}->epoch : undef,
+				undef, undef
+			);
+			if ( not $success ) {
+				my $err = $self->app->action_query->errstr;
+				$self->app->log->error(
+					"add_journey($uid, checkout): INSERT failed: $err");
+				return ( undef, undef, 'INSERT failed: ' . $err );
+			}
+			my $checkout_id = $self->app->action_query->last_insert_id;
+			return ( $checkin_id, $checkout_id, undef );
+		}
+	);
+
 	$self->helper(
 		'checkin' => sub {
 			my ( $self, $station, $train_id, $action_id ) = @_;
@@ -1218,7 +1303,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 			}
 			elsif ( $opt{after} and $opt{before} ) {
 
-         # Each journey consists of at least two database entries: one for
+         # Each journey consists of exactly two database entries: one for
          # checkin, one for checkout. A simple query using e.g.
          # after = YYYY-01-01T00:00:00 and before YYYY-02-01T00:00:00
          # will miss journeys where checkin and checkout take place in
@@ -1602,6 +1687,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 	$authed_r->get('/journey/add')->to('traveling#add_journey_form');
 	$authed_r->get('/journey/:id')->to('traveling#journey_details');
 	$authed_r->get('/s/*station')->to('traveling#station');
+	$authed_r->post('/journey/add')->to('traveling#add_journey_form');
 	$authed_r->post('/journey/edit')->to('traveling#edit_journey');
 	$authed_r->post('/change_password')->to('account#change_password');
 	$authed_r->post('/delete')->to('account#delete');
