@@ -12,11 +12,11 @@ use Email::Simple;
 sub new {
 	my ($class) = @_;
 
-	return bless({}, $class);
+	return bless( {}, $class );
 }
 
 sub custom {
-	my ($self, $to, $subject, $body) = @_;
+	my ( $self, $to, $subject, $body ) = @_;
 
 	my $reg_mail = Email::Simple->create(
 		header => [
@@ -28,7 +28,8 @@ sub custom {
 		body => encode( 'utf-8', $body ),
 	);
 
-	if ($ENV{TRAVELYNX_DB_NAME} =~ m{travelynx_dev}) {
+	if ( $self->app->config->{db}->{database} =~ m{travelynx_dev} ) {
+
 		# Do not send mail in dev mode
 		say "sendmail to ${to}: ${subject}\n\n${body}";
 		return 1;

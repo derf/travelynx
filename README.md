@@ -36,8 +36,9 @@ Debian 9 system, though setup on other distribution should be similar.
 * Create a postgres user for travelynx: `sudo -u postgres createuser -P travelynx`
   (enter password when prompted)
 * Create the database: `sudo -u postgres createdb -O travelynx travelynx`
-* Initialize the database: `TRAVELYNX_DB_HOST=... TRAVELYNX_DB_NAME=... `
-  `TRAVELYNX_DB_USER=... TRAVELYNX_DB_PASSWORD=... perl index.pl setup`
+* Copy `examples/travelynx.conf` to the application root directory
+  (the one in which `index.pl` resides) and configure it
+* Initialize the database: `perl index.pl database setup`
 
 Your server also needs to be able to send mail. Set up your MTA of choice and
 make sure that the sendmail binary can be used for outgoing mails. Mail

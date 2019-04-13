@@ -17,18 +17,6 @@ use Travelynx::Helper::Sendmail;
 
 our $VERSION = qx{git describe --dirty} || 'experimental';
 
-my $cache_iris_main = Cache::File->new(
-	cache_root      => $ENV{TRAVELYNX_IRIS_CACHE} // '/tmp/dbf-iris-main',
-	default_expires => '6 hours',
-	lock_level      => Cache::File::LOCK_LOCAL(),
-);
-
-my $cache_iris_rt = Cache::File->new(
-	cache_root      => $ENV{TRAVELYNX_IRISRT_CACHE} // '/tmp/dbf-iris-realtime',
-	default_expires => '70 seconds',
-	lock_level      => Cache::File::LOCK_LOCAL(),
-);
-
 sub check_password {
 	my ( $password, $hash ) = @_;
 
@@ -66,26 +54,17 @@ sub get_station {
 sub startup {
 	my ($self) = @_;
 
-	if ( $ENV{TRAVELYNX_SECRETS} ) {
-		$self->secrets( [ split( qr{:}, $ENV{TRAVELYNX_SECRETS} ) ] );
-	}
-
 	push( @{ $self->commands->namespaces }, 'Travelynx::Command' );
 
 	$self->defaults( layout => 'default' );
 
-	$self->config(
-		hypnotoad => {
-			accepts  => $ENV{TRAVELYNX_ACCEPTS} // 100,
-			clients  => $ENV{TRAVELYNX_CLIENS} // 10,
-			listen   => [ $ENV{TRAVELYNX_LISTEN} // 'http://*:8093' ],
-			pid_file => $ENV{TRAVELYNX_PID_FILE} // '/tmp/travelynx.pid',
-			workers  => $ENV{TRAVELYNX_WORKERS} // 2,
-			spare    => $ENV{TRAVELYNX_SPARE} // 2,
-		},
-	);
-
 	$self->types->type( json => 'application/json; charset=utf-8' );
+
+	$self->plugin('Config');
+
+	if ( $self->config->{secrets} ) {
+		$self->secrets( $self->config->{secrets} );
+	}
 
 	$self->plugin(
 		authentication => {
@@ -115,6 +94,30 @@ sub startup {
 	$self->sessions->default_expiration( 60 * 60 * 24 * 180 );
 
 	$self->defaults( layout => 'default' );
+
+	$self->attr(
+		cache_iris_main => sub {
+			my ($self) = @_;
+
+			return Cache::File->new(
+				cache_root      => $self->app->config->{cache}->{schedule},
+				default_expires => '6 hours',
+				lock_level      => Cache::File::LOCK_LOCAL(),
+			);
+		}
+	);
+
+	$self->attr(
+		cache_iris_rt => sub {
+			my ($self) = @_;
+
+			return Cache::File->new(
+				cache_root      => $self->app->config->{cache}->{realtime},
+				default_expires => '70 seconds',
+				lock_level      => Cache::File::LOCK_LOCAL(),
+			);
+		}
+	);
 
 	$self->attr(
 		action_type => sub {
@@ -321,12 +324,13 @@ sub startup {
 	$self->attr(
 		dbh => sub {
 			my ($self) = @_;
+			my $config = $self->app->config;
 
-			my $dbname = $ENV{TRAVELYNX_DB_NAME} // 'travelynx_dev';
-			my $host   = $ENV{TRAVELYNX_DB_HOST} // 'localhost';
-			my $port   = $ENV{TRAVELYNX_DB_PORT} // '5432';
-			my $user   = $ENV{TRAVELYNX_DB_USER};
-			my $pw     = $ENV{TRAVELYNX_DB_PASSWORD};
+			my $dbname = $config->{db}->{database};
+			my $host   = $config->{db}->{host} // 'localhost';
+			my $port   = $config->{db}->{port} // 5432;
+			my $user   = $config->{db}->{user};
+			my $pw     = $config->{db}->{password};
 
 			return DBI->connect(
 				"dbi:Pg:dbname=${dbname};host=${host};port=${port}",
@@ -593,8 +597,8 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 				$station = $station_matches[0][0];
 				my $status = Travel::Status::DE::IRIS->new(
 					station        => $station,
-					main_cache     => $cache_iris_main,
-					realtime_cache => $cache_iris_rt,
+					main_cache     => $self->app->cache_iris_main,
+					realtime_cache => $self->app->cache_iris_rt,
 					lookbehind     => 20,
 					datetime => DateTime->now( time_zone => 'Europe/Berlin' )
 					  ->subtract( minutes => $lookbehind ),
