@@ -9,10 +9,18 @@ has usage => sub { shift->extract_usage };
 
 sub get_schema_version {
 	my ($dbh) = @_;
-	for my $entry (
-		$dbh->selectall_array(qq{select version from schema_version}) )
-	{
-		return $entry->[0];
+	my $schema_version
+	  = $dbh->selectall_arrayref(qq{select version from schema_version});
+
+	if ( not defined $schema_version ) {
+		return undef;
+	}
+	elsif ( @{$schema_version} == 1 ) {
+		return $schema_version->[0][0];
+	}
+	else {
+		printf( "Found multiple schema versions: %s", @{$schema_version} );
+		exit(1);
 	}
 }
 
@@ -46,7 +54,6 @@ sub initialize_db {
 				action_id smallint not null,
 				station_id int references stations (id),
 				action_time timestamptz not null,
-				edited smallint not null,
 				train_type varchar(16),
 				train_line varchar(16),
 				train_no varchar(16),
@@ -67,7 +74,7 @@ sub initialize_db {
 				token varchar(80) not null,
 				primary key (user_id, type)
 			);
-			insert into schema_version values (2);
+			insert into schema_version values (0);
 		}
 	);
 }
@@ -108,41 +115,55 @@ my @migrations = (
 	},
 );
 
+sub setup_db {
+	my ($dbh) = @_;
+	$dbh->begin_work;
+	if ( initialize_db($dbh) ) {
+		$dbh->commit;
+	}
+	else {
+		$dbh->rollback;
+		printf( "Database initialization was not successful: %s",
+			$DBI::errstr );
+	}
+}
+
+sub migrate_db {
+	my ($dbh) = @_;
+	$dbh->begin_work;
+	my $schema_version = get_schema_version($dbh);
+	say "Found travelynx schema v${schema_version}";
+	if ( $schema_version == @migrations ) {
+		say "Database layout is up-to-date";
+	}
+	for my $i ( $schema_version .. $#migrations ) {
+		printf( "Updating to v%d ...\n", $i + 1 );
+		if ( not $migrations[$i]($dbh) ) {
+			say "Aborting migration; rollback to v${schema_version}";
+			$dbh->rollback;
+			exit(1);
+		}
+	}
+	if ( get_schema_version($dbh) == @migrations ) {
+		$dbh->commit;
+	}
+}
+
 sub run {
 	my ( $self, $command ) = @_;
-	my $exit_status = 0;
 
 	my $dbh = $self->app->dbh;
 
-	if ( $command eq 'setup' ) {
-		$dbh->begin_work;
-		if ( initialize_db($dbh) ) {
-			$dbh->commit;
-		}
-		else {
-			$dbh->rollback;
-			$exit_status = 1;
-		}
+	if ( not defined $dbh ) {
+		printf( "Can't connect to the database: %s\n", $DBI::errstr );
+		exit(1);
 	}
-	elsif ( $command eq 'migrate' ) {
-		$dbh->begin_work;
-		my $schema_version = get_schema_version($dbh);
-		say "Found travelynx schema v${schema_version}";
-		if ( $schema_version == @migrations ) {
-			say "Database layout is up-to-date";
+
+	if ( $command eq 'migrate' ) {
+		if ( not defined get_schema_version($dbh) ) {
+			setup_db($dbh);
 		}
-		for my $i ( $schema_version .. $#migrations ) {
-			printf( "Updating to v%d ...\n", $i + 1 );
-			if ( not $migrations[$i]($dbh) ) {
-				say "Aborting migration; rollback to v${schema_version}";
-				$dbh->rollback;
-				$exit_status = 1;
-				last;
-			}
-		}
-		if ( get_schema_version($dbh) == @migrations ) {
-			$dbh->commit;
-		}
+		migrate_db($dbh);
 	}
 	elsif ( $command eq 'has-current-schema' ) {
 		if ( get_schema_version($dbh) == @migrations ) {
@@ -150,7 +171,7 @@ sub run {
 		}
 		else {
 			say "no";
-			$exit_status = 1;
+			exit(1);
 		}
 	}
 	else {
@@ -158,8 +179,6 @@ sub run {
 	}
 
 	$dbh->disconnect;
-
-	exit($exit_status);
 }
 
 1;
@@ -168,12 +187,11 @@ __END__
 
 =head1 SYNOPSIS
 
-  Usage: index.pl database <setup|migrate|has-current-schema>
+  Usage: index.pl database <migrate|has-current-schema>
 
   Upgrades the database layout to the latest schema.
 
   Recommended workflow:
   > systemctl stop travelynx
-  > TRAVELYNX_DB_HOST=... TRAVELYNX_DB_NAME=... TRAVELYNX_DB_USER=... \
-    TRAVELYNX_DB_PASSWORD=... perl index.pl migrate
+  > perl index.pl migrate
   > systemctl start travelynx
