@@ -1,13 +1,14 @@
 FROM debian:stretch
 
-RUN apt-get update && apt-get install -y \
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install --no-install-recommends -y \
 	cpanminus \
 	build-essential \
 	libpq-dev \
 	git \
-	ssmtp
-
-RUN cpanm -in \
+	ssmtp \
+	&& cpanm -in \
 	Cache::File \
 	Crypt::Eksblowfish \
 	DateTime \
@@ -21,10 +22,14 @@ RUN cpanm -in \
 	Mojolicious::Plugin::Authentication \
 	Travel::Status::DE::IRIS \
 	UUID::Tiny \
-	JSON
+	JSON \
+	&& rm -rf ~/.cpanm \
+	&& apt-get purge -y \
+	build-essential \
+	cpanminus \
+	&& apt-get autoremove -y
 
 COPY . /app
 WORKDIR /app
-
 
 CMD /app/docker-run.sh
