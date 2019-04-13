@@ -23,7 +23,7 @@
 
 <nav class="deep-purple">
 	<div class="nav-wrapper container">
-		<a href="/" class="brand-logo left"><%= app->config->{db}->{database} =~ m{travelynx_dev} ? 'develynx' : 'travelynx' %></a>
+		<a href="/" class="brand-logo left">travelynx</a>
 		<ul id="nav-mobile" class="right">
 			% if (is_user_authenticated()) {
 				<li class="<%= navbar_class('/history') %>"><a href='/history' title="History"><i class="material-icons">history</i></a></li>
@@ -33,6 +33,17 @@
 		</ul>
 	</div>
 </nav>
+
+% if (app->mode eq 'development') {
+<div class="container">
+	<div class="row">
+		<div class="col s12 red darken-4 white-text">
+			Development Mode – Datenbank: <%= app->config->{db}->{database} %>
+			@ <%= app->config->{db}->{host} %>
+		</div>
+	</div>
+</div>
+% }
 
 <div class="container">
 	% if (is_user_authenticated()) {
