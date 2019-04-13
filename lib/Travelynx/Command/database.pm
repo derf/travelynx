@@ -46,7 +46,7 @@ sub initialize_db {
 				action_id smallint not null,
 				station_id int references stations (id),
 				action_time timestamptz not null,
-				edited not null,
+				edited smallint not null,
 				train_type varchar(16),
 				train_line varchar(16),
 				train_no varchar(16),
