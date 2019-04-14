@@ -9,17 +9,27 @@ has usage => sub { shift->extract_usage };
 
 sub get_schema_version {
 	my ($dbh) = @_;
-	my $schema_version
-	  = $dbh->selectall_arrayref(qq{select version from schema_version});
 
-	if ( not defined $schema_version ) {
+	# We do not want DBD to print an SQL error if schema_version does not
+	# exist, as this is not an error in this case. Setting $dbh->{PrintError} =
+	# 0 would disable error printing for all subsequent SQL operations, however,
+	# we only want to disable it for this specific query. Hence we use a
+	# prepared statement and only disable error printing only there.
+	my $sth = $dbh->prepare(qq{select version from schema_version});
+	$sth->{PrintError} = 0;
+	my $success = $sth->execute;
+
+	if ( not defined $success ) {
 		return undef;
 	}
-	elsif ( @{$schema_version} == 1 ) {
-		return $schema_version->[0][0];
+
+	my $rows = $sth->fetchall_arrayref;
+
+	if ( @{$rows} == 1 ) {
+		return $rows->[0][0];
 	}
 	else {
-		printf( "Found multiple schema versions: %s", @{$schema_version} );
+		printf( "Found multiple schema versions: %s", @{$rows} );
 		exit(1);
 	}
 }
