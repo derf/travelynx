@@ -15,8 +15,6 @@ use Travel::Status::DE::IRIS;
 use Travel::Status::DE::IRIS::Stations;
 use Travelynx::Helper::Sendmail;
 
-our $VERSION = qx{git describe --dirty} || 'experimental';
-
 sub check_password {
 	my ( $password, $hash ) = @_;
 
