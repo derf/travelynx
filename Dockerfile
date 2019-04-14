@@ -32,4 +32,4 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 COPY . /app
 WORKDIR /app
 
-CMD /app/docker-run.sh
+CMD ["/app/docker-run.sh"]
