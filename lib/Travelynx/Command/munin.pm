@@ -8,37 +8,40 @@ has description => 'Generate statistics for munin-node';
 has usage => sub { shift->extract_usage };
 
 sub query_to_munin {
-	my ( $label, $query, @args ) = @_;
+	my ( $label, $value ) = @_;
 
-	$query->execute(@args);
-	my $rows = $query->fetchall_arrayref;
-	if ( @{$rows} ) {
-		printf( "%s.value %d\n", $label, $rows->[0][0] );
+	if ( defined $value ) {
+		printf( "%s.value %d\n", $label, $value );
 	}
 }
 
 sub run {
-	my ($self, $filename) = @_;
+	my ( $self, $filename ) = @_;
 
-	my $dbh = $self->app->dbh;
+	my $db = $self->app->pg->db;
 
 	my $now = DateTime->now( time_zone => 'Europe/Berlin' );
 
 	my $checkin_window_query
-	= $dbh->prepare(
-	qq{select count(*) from user_actions where action_id = 1 and action_time > to_timestamp(?);}
-	);
+	  = qq{select count(*) as count from user_actions where action_id = 1 and action_time > to_timestamp(?);};
 
 	query_to_munin( 'reg_user_count',
-		$dbh->prepare(qq{select count(*) from users where status = 1;}) );
-	query_to_munin( 'checkins_24h', $checkin_window_query,
-		$now->subtract( hours => 24 )->epoch );
-	query_to_munin( 'checkins_7d', $checkin_window_query,
-		$now->subtract( days => 7 )->epoch );
-	query_to_munin( 'checkins_30d', $checkin_window_query,
-		$now->subtract( days => 30 )->epoch );
-
-	$dbh->disconnect;
+		$db->select( 'users', 'count(*) as count', { status => 1 } )
+		  ->hash->{count} );
+	query_to_munin(
+		'checkins_24h',
+		$db->query( $checkin_window_query,
+			$now->subtract( hours => 24 )->epoch )->hash->{count}
+	);
+	query_to_munin( 'checkins_7d',
+		$db->query( $checkin_window_query, $now->subtract( days => 7 )->epoch )
+		  ->hash->{count} );
+	query_to_munin(
+		'checkins_30d',
+		$db->query(
+			$checkin_window_query, $now->subtract( days => 30 )->epoch
+		)->hash->{count}
+	);
 }
 
 1;
