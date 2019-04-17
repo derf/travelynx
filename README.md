@@ -21,6 +21,7 @@ Dependencies
  * Geo::Distance
  * Mojolicious
  * Mojolicious::Plugin::Authentication
+ * Mojo::Pg
  * Travel::Status::DE::IRIS
  * UUID::Tiny
  * JSON

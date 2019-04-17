@@ -1,6 +1,7 @@
 package Travelynx;
 use Mojo::Base 'Mojolicious';
 
+use Mojo::Pg;
 use Mojolicious::Plugin::Authentication;
 use Cache::File;
 use Crypt::Eksblowfish::Bcrypt qw(bcrypt en_base64);
@@ -236,32 +237,6 @@ sub startup {
 			return $self->app->dbh->prepare(
 				qq{
 					select data from journey_stats
-					where user_id = ? and year = ? and month = ?
-				}
-			);
-		}
-	);
-	$self->attr(
-		add_stats_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-					insert into journey_stats
-					(user_id, year, month, data)
-					values
-					(?, ?, ?, ?)
-				}
-			);
-		}
-	);
-	$self->attr(
-		drop_stats_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-					delete from journey_stats
 					where user_id = ? and year = ? and month = ?
 				}
 			);
@@ -566,23 +541,30 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 				qq{select id from stations where name = ?});
 		}
 	);
-	$self->attr(
-		undo_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-					delete from user_actions where id = ?
-				}
-			);
-		},
-	);
 
 	$self->helper(
 		sendmail => sub {
-			state $sendmail
-			  = Travelynx::Helper::Sendmail->new(
-				config => ( $self->config->{mail} // {} ) );
+			state $sendmail = Travelynx::Helper::Sendmail->new(
+				config => ( $self->config->{mail} // {} ),
+				log    => $self->log
+			);
+		}
+	);
+
+	$self->helper(
+		pg => sub {
+			my ($self) = @_;
+			my $config = $self->app->config;
+
+			my $dbname = $config->{db}->{database};
+			my $host   = $config->{db}->{host} // 'localhost';
+			my $port   = $config->{db}->{port} // 5432;
+			my $user   = $config->{db}->{user};
+			my $pw     = $config->{db}->{password};
+
+			state $pg
+			  = Mojo::Pg->new("postgresql://${user}\@${host}:${port}/${dbname}")
+			  ->password($pw);
 		}
 	);
 
@@ -798,17 +780,16 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 "Invalid action ID: $action_id != $status->{action_id}. Note that you can only undo your latest action.";
 			}
 
-			my $success = $self->app->undo_query->execute($action_id);
-
-			if ( defined $success ) {
-				return;
-			}
-			else {
+			eval {
+				$self->pg->db->delete( 'user_actions', { id => $action_id } );
+			};
+			if ($@) {
 				my $uid = $self->current_user->{id};
-				my $err = $self->app->undo_query->errstr;
-				$self->app->log->error("Undo($uid): DELETE failed: $err");
-				return 'DELETE failed: ' . $err;
+				$self->app->log->error(
+					"Undo($uid, $action_id): DELETE failed: $@");
+				return 'DELETE failed: ' . $@;
 			}
+			return;
 		}
 	);
 
@@ -828,15 +809,48 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 			# * (year) - 1 year
 			# * total stats
 
-			$self->app->drop_stats_query->execute( $uid, $ts->year,
-				$ts->month );
-			$self->app->drop_stats_query->execute( $uid, $ts->year, 0 );
+			$self->pg->db->delete(
+				'journey_stats',
+				{
+					user_id => $uid,
+					year    => $ts->year,
+					month   => $ts->month,
+				}
+			);
+			$self->pg->db->delete(
+				'journey_stats',
+				{
+					user_id => $uid,
+					year    => $ts->year,
+					month   => 0,
+				}
+			);
 			$ts->subtract( months => 1 );
-			$self->app->drop_stats_query->execute( $uid, $ts->year,
-				$ts->month );
+			$self->pg->db->delete(
+				'journey_stats',
+				{
+					user_id => $uid,
+					year    => $ts->year,
+					month   => $ts->month,
+				}
+			);
 			$ts->subtract( months => 11 );
-			$self->app->drop_stats_query->execute( $uid, $ts->year, 0 );
-			$self->app->drop_stats_query->execute( $uid, 0,         0 );
+			$self->pg->db->delete(
+				'journey_stats',
+				{
+					user_id => $uid,
+					year    => $ts->year,
+					month   => 0,
+				}
+			);
+			$self->pg->db->delete(
+				'journey_stats',
+				{
+					user_id => $uid,
+					year    => 0,
+					month   => 0,
+				}
+			);
 		}
 	);
 
@@ -1285,9 +1299,15 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 			);
 			my $stats = $self->compute_journey_stats(@journeys);
 
-			$self->app->drop_stats_query->execute( $uid, $year, $month );
-			$self->app->add_stats_query->execute( $uid, $year, $month,
-				JSON->new->encode($stats) );
+			$self->pg->db->insert(
+				'journey_stats',
+				{
+					user_id => $uid,
+					year    => $year,
+					month   => $month,
+					data    => JSON->new->encode($stats),
+				}
+			);
 
 			return $stats;
 		}
