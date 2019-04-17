@@ -243,58 +243,6 @@ sub startup {
 		}
 	);
 	$self->attr(
-		action_set_sched_time_query => sub {
-			my ($self) = @_;
-
-         # TODO (re-)initialize all automatically added journeys with edited = 0
-         # and use it as a bit field to precisely indicate which fields have
-         # been edited. -> ".. set edited = edited | 1", "... | 2" etc.
-         # The action_id check is redundant, but better safe than sorry
-			return $self->app->dbh->prepare(
-				qq{
-					update user_actions
-					set sched_time = to_timestamp(?), edited = edited | 1
-					where id = ? and action_id = ?
-				}
-			);
-		}
-	);
-	$self->attr(
-		action_set_real_time_query => sub {
-			my ($self) = @_;
-
-			# The action_id check is redundant, but better safe than sorry
-			return $self->app->dbh->prepare(
-				qq{
-					update user_actions
-					set real_time = to_timestamp(?), edited = edited | 2
-					where id = ? and action_id = ?
-				}
-			);
-		}
-	);
-	$self->attr(
-		action_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-			insert into user_actions (
-				user_id, action_id, station_id, action_time, edited,
-				train_type, train_line, train_no, train_id,
-				sched_time, real_time,
-				route, messages
-			) values (
-				?, ?, ?, to_timestamp(?), ?,
-				?, ?, ?, ?,
-				to_timestamp(?), to_timestamp(?),
-				?, ?
-			)
-		}
-			);
-		},
-	);
-	$self->attr(
 		dbh => sub {
 			my ($self) = @_;
 			my $config = $self->app->config;
@@ -391,19 +339,6 @@ sub startup {
 			order by action_time desc
 			limit 2
 		}
-			);
-		}
-	);
-	$self->attr(
-		drop_journey_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-					delete from user_actions
-					where user_id = ?
-					and (id = ? or id = ?)
-				}
 			);
 		}
 	);
@@ -640,60 +575,65 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 				return ( undef, undef, 'Unbekannter Zielbahnhof' );
 			}
 
-			say $dep_station->[0];
-			say $dep_station->[1];
-			say $arr_station->[0];
-			say $arr_station->[1];
+			my $checkin_id;
+			my $checkout_id;
 
-			my $success = $self->app->action_query->execute(
-				$uid,
-				$self->app->action_type->{checkin},
-				$self->get_station_id(
-					ds100 => $dep_station->[0],
-					name  => $dep_station->[1],
-				),
-				DateTime->now( time_zone => 'Europe/Berlin' )->epoch,
-				0x0f,
-				$opt{train_type},
-				$opt{train_line},
-				$opt{train_no},
-				undef,
-				$opt{sched_departure}->epoch,
-				$opt{rt_departure} ? $opt{rt_departure}->epoch : undef,
-				undef, undef
-			);
-			if ( not $success ) {
-				my $err = $self->app->action_query->errstr;
-				$self->app->log->error(
-					"add_journey($uid, checkin): INSERT failed: $err");
-				return ( undef, undef, 'INSERT failed: ' . $err );
-			}
-			my $checkin_id = $self->app->action_query->last_insert_id;
+			eval {
+				$checkin_id = $self->pg->db->insert(
+					'user_actions',
+					{
+						user_id    => $uid,
+						action_id  => $self->app->action_type->{checkin},
+						station_id => $self->get_station_id(
+							ds100 => $dep_station->[0],
+							name  => $dep_station->[1],
+						),
+						action_time =>
+						  DateTime->now( time_zone => 'Europe/Berlin' ),
+						edited     => 0x0f,
+						train_type => $opt{train_type},
+						train_line => $opt{train_line},
+						train_no   => $opt{train_no},
+						sched_time => $opt{sched_departure},
+						real_time  => $opt{rt_departure},
+					},
+					{ returning => 'id' }
+				)->hash->{id};
+			};
 
-			$success = $self->app->action_query->execute(
-				$uid,
-				$self->app->action_type->{checkout},
-				$self->get_station_id(
-					ds100 => $arr_station->[0],
-					name  => $arr_station->[1],
-				),
-				DateTime->now( time_zone => 'Europe/Berlin' )->epoch,
-				0x0f,
-				$opt{train_type},
-				$opt{train_line},
-				$opt{train_no},
-				undef,
-				$opt{sched_arrival}->epoch,
-				$opt{rt_arrival} ? $opt{rt_arrival}->epoch : undef,
-				undef, undef
-			);
-			if ( not $success ) {
-				my $err = $self->app->action_query->errstr;
+			if ($@) {
 				$self->app->log->error(
-					"add_journey($uid, checkout): INSERT failed: $err");
-				return ( undef, undef, 'INSERT failed: ' . $err );
+					"add_journey($uid, checkin): INSERT failed: $@");
+				return ( undef, undef, 'INSERT failed: ' . $@ );
 			}
-			my $checkout_id = $self->app->action_query->last_insert_id;
+
+			eval {
+				$checkout_id = $self->pg->db->insert(
+					'user_actions',
+					{
+						user_id    => $uid,
+						action_id  => $self->app->action_type->{checkout},
+						station_id => $self->get_station_id(
+							ds100 => $arr_station->[0],
+							name  => $arr_station->[1],
+						),
+						action_time =>
+						  DateTime->now( time_zone => 'Europe/Berlin' ),
+						edited     => 0x0f,
+						train_type => $opt{train_type},
+						train_line => $opt{train_line},
+						train_no   => $opt{train_no},
+						sched_time => $opt{sched_arrival},
+						real_time  => $opt{rt_arrival},
+					},
+					{ returnning => 'id' }
+				)->hash->{id};
+			};
+			if ($@) {
+				$self->app->log->error(
+					"add_journey($uid, checkout): INSERT failed: $@");
+				return ( undef, undef, 'INSERT failed: ' . $@ );
+			}
 			return ( $checkin_id, $checkout_id, undef );
 		}
 	);
@@ -730,40 +670,43 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 							$self->app->action_type->{cancelled_to} );
 					}
 
-					my $success = $self->app->action_query->execute(
-						$self->current_user->{id},
-						$action_id,
-						$self->get_station_id(
-							ds100 => $status->{station_ds100},
-							name  => $status->{station_name}
-						),
-						DateTime->now( time_zone => 'Europe/Berlin' )->epoch,
-						0,
-						$train->type,
-						$train->line_no,
-						$train->train_no,
-						$train->train_id,
-						$train->sched_departure->epoch,
-						$train->departure->epoch,
-						join( '|', $train->route ),
-						join(
-							'|',
-							map {
-								( $_->[0] ? $_->[0]->epoch : q{} ) . ':'
-								  . $_->[1]
-							} $train->messages
-						)
-					);
-					if ( defined $success ) {
-						return ( $train, undef );
-					}
-					else {
+					eval {
+						$self->pg->db->insert(
+							'user_actions',
+							{
+								user_id    => $self->current_user->{id},
+								action_id  => $action_id,
+								station_id => $self->get_station_id(
+									ds100 => $status->{station_ds100},
+									name  => $status->{station_name}
+								),
+								action_time =>
+								  DateTime->now( time_zone => 'Europe/Berlin' ),
+								edited     => 0,
+								train_type => $train->type,
+								train_line => $train->line_no,
+								train_no   => $train->train_no,
+								train_id   => $train->train_id,
+								sched_time => $train->sched_departure,
+								real_time  => $train->departure,
+								route      => join( '|', $train->route ),
+								messages   => join(
+									'|',
+									map {
+										( $_->[0] ? $_->[0]->epoch : q{} ) . ':'
+										  . $_->[1]
+									} $train->messages
+								)
+							}
+						);
+					};
+					if ($@) {
 						my $uid = $self->current_user->{id};
-						my $err = $self->app->action_query->errstr;
 						$self->app->log->error(
-							"Checkin($uid, $action_id): INSERT failed: $err");
-						return ( undef, 'INSERT failed: ' . $err );
+							"Checkin($uid, $action_id): INSERT failed: $@");
+						return ( undef, 'INSERT failed: ' . $@ );
 					}
+					return ( $train, undef );
 				}
 			}
 		}
@@ -876,72 +819,73 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 			  = first { $_->train_id eq $train_id } @{ $status->{results} };
 			if ( not defined $train ) {
 				if ($force) {
-					my $success = $self->app->action_query->execute(
-						$self->current_user->{id},
-						$action_id,
-						$self->get_station_id(
-							ds100 => $status->{station_ds100},
-							name  => $status->{station_name}
-						),
-						$now->epoch,
-						0,     undef, undef, undef, undef,
-						undef, undef, undef, undef
-					);
-					if ( defined $success ) {
-						$self->invalidate_stats_cache;
-						return;
-					}
-					else {
-						my $uid = $self->current_user->{id};
-						my $err = $self->app->action_query->errstr;
-						$self->app->log->error(
-"Force checkout($uid, $action_id): INSERT failed: $err"
+					eval {
+						$self->pg->db->insert(
+							'user_actions',
+							{
+								user_id    => $self->current_user->{id},
+								action_id  => $action_id,
+								station_id => $self->get_station_id(
+									ds100 => $status->{station_ds100},
+									name  => $status->{station_name}
+								),
+								action_time => $now,
+								edited      => 0
+							}
 						);
-						return 'INSERT failed: ' . $err;
+					};
+					if ($@) {
+						my $uid = $self->current_user->{id};
+						$self->app->log->error(
+"Force checkout($uid, $action_id): INSERT failed: $@"
+						);
+						return 'INSERT failed: ' . $@;
 					}
+					$self->invalidate_stats_cache;
+					return;
 				}
 				else {
 					return "Train ${train_id} not found";
 				}
 			}
 			else {
-				my $success = $self->app->action_query->execute(
-					$self->current_user->{id},
-					$action_id,
-					$self->get_station_id(
-						ds100 => $status->{station_ds100},
-						name  => $status->{station_name}
-					),
-					$now->epoch,
-					0,
-					$train->type,
-					$train->line_no,
-					$train->train_no,
-					$train->train_id,
-					$train->sched_arrival
-					? $train->sched_arrival->epoch
-					: undef,
-					$train->arrival ? $train->arrival->epoch : undef,
-					join( '|', $train->route ),
-					join(
-						'|',
-						map {
-							( $_->[0] ? $_->[0]->epoch : q{} ) . ':'
-							  . $_->[1]
-						} $train->messages
-					)
-				);
-				if ( defined $success ) {
-					$self->invalidate_stats_cache;
-					return;
-				}
-				else {
+				eval {
+					$self->pg->db->insert(
+						'user_actions',
+						{
+							user_id    => $self->current_user->{id},
+							action_id  => $action_id,
+							station_id => $self->get_station_id(
+								ds100 => $status->{station_ds100},
+								name  => $status->{station_name}
+							),
+							action_time => $now,
+							edited      => 0,
+							train_type  => $train->type,
+							train_line  => $train->line_no,
+							train_no    => $train->train_no,
+							train_id    => $train->train_id,
+							sched_time  => $train->sched_arrival,
+							real_time   => $train->arrival,
+							route       => join( '|', $train->route ),
+							messages    => join(
+								'|',
+								map {
+									( $_->[0] ? $_->[0]->epoch : q{} ) . ':'
+									  . $_->[1]
+								} $train->messages
+							)
+						}
+					);
+				};
+				if ($@) {
 					my $uid = $self->current_user->{id};
-					my $err = $self->app->action_query->errstr;
 					$self->app->log->error(
-						"Checkout($uid, $action_id): INSERT failed: $err");
-					return 'INSERT failed: ' . $err;
+						"Checkout($uid, $action_id): INSERT failed: $@");
+					return 'INSERT failed: ' . $@;
 				}
+				$self->invalidate_stats_cache;
+				return;
 			}
 		}
 	);
@@ -949,45 +893,75 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 	$self->helper(
 		'update_journey_part' => sub {
 			my ( $self, $checkin_id, $checkout_id, $key, $value ) = @_;
-			my ( $query, $id, $action_type );
+			my $rows;
 
-			if ( $key eq 'sched_departure' ) {
-				$query       = $self->app->action_set_sched_time_query;
-				$id          = $checkin_id;
-				$action_type = $self->app->action_type->{checkin};
-			}
-			elsif ( $key eq 'rt_departure' ) {
-				$query       = $self->app->action_set_real_time_query;
-				$id          = $checkin_id;
-				$action_type = $self->app->action_type->{checkin};
-			}
-			elsif ( $key eq 'sched_arrival' ) {
-				$query       = $self->app->action_set_sched_time_query;
-				$id          = $checkout_id;
-				$action_type = $self->app->action_type->{checkout};
-			}
-			elsif ( $key eq 'rt_arrival' ) {
-				$query       = $self->app->action_set_real_time_query;
-				$id          = $checkout_id;
-				$action_type = $self->app->action_type->{checkout};
-			}
-			else {
-				$self->app->log->error(
-					"update_journey_part(id = $id): Invalid key $key");
-				return 'Internal Error';
-			}
-
-			my $success = $query->execute( $value, $id, $action_type );
-			if ($success) {
-				if ( $query->rows == 1 ) {
-					return undef;
+			eval {
+				my $db = $self->pg->db;
+				if ( $key eq 'sched_departure' ) {
+					$rows = $db->update(
+						'user_actions',
+						{
+							sched_time => $value,
+						},
+						{
+							id        => $checkin_id,
+							action_id => $self->app->action_type->{checkin},
+						}
+					)->rows;
 				}
-				return 'UPDATE failed: did not match any journey part';
+				elsif ( $key eq 'rt_departure' ) {
+					$rows = $db->update(
+						'user_actions',
+						{
+							real_time => $value,
+						},
+						{
+							id        => $checkin_id,
+							action_id => $self->app->action_type->{checkin},
+						}
+					)->rows;
+				}
+				elsif ( $key eq 'sched_arrival' ) {
+					$rows = $db->update(
+						'user_actions',
+						{
+							sched_time => $value,
+						},
+						{
+							id        => $checkout_id,
+							action_id => $self->app->action_type->{checkout},
+						}
+					)->rows;
+				}
+				elsif ( $key eq 'rt_arrival' ) {
+					$rows = $db->update(
+						'user_actions',
+						{
+							real_time => $value,
+						},
+						{
+							id        => $checkout_id,
+							action_id => $self->app->action_type->{checkout},
+						}
+					)->rows;
+				}
+				else {
+					$self->app->log->error(
+"update_journey_part($checkin_id, $checkout_id): Invalid key $key"
+					);
+				}
+			};
+
+			if ($@) {
+				$self->app->log->error(
+"update_journey_part($checkin_id, $checkout_id): UPDATE failed: $@"
+				);
+				return 'UPDATE failed: ' . $@;
 			}
-			my $err = $query->errstr;
-			$self->app->log->error(
-				"update_journey_part($id): UPDATE failed: $err");
-			return 'UPDATE failed: ' . $err;
+			if ( $rows == 1 ) {
+				return undef;
+			}
+			return 'UPDATE failed: did not match any journey part';
 		}
 	);
 
@@ -1221,22 +1195,30 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 			{
 				return 'Invalid journey data';
 			}
-			my $query = $self->app->drop_journey_query;
-			my $success = $query->execute( $uid, $checkin_id, $checkout_id );
-			if ($success) {
-				if ( $query->rows == 2 ) {
-					$self->invalidate_stats_cache( $journey->{checkout} );
-					return undef;
-				}
-				else {
-					return
-					  sprintf( 'Deleted %d rows, expected 2', $query->rows );
-				}
+
+			my $rows;
+			eval {
+				$rows = $self->pg->db->delete(
+					'user_actions',
+					{
+						user_id => $uid,
+						id      => [ $checkin_id, $checkout_id ]
+					}
+				)->rows;
+			};
+
+			if ($@) {
+				$self->app->log->error(
+					"Delete($uid, $checkin_id, $checkout_id): DELETE failed: $@"
+				);
+				return 'DELETE failed: ' . $@;
 			}
-			my $err = $self->app->drop_journey_query->errstr;
-			$self->app->log->error(
-				"Delete($uid, $checkin_id, $checkout_id): DELETE failed: $err");
-			return 'DELETE failed: ' . $err;
+
+			if ( $rows == 2 ) {
+				$self->invalidate_stats_cache( $journey->{checkout} );
+				return undef;
+			}
+			return sprintf( 'Deleted %d rows, expected 2', $rows );
 		}
 	);
 

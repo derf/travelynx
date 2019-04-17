@@ -470,7 +470,7 @@ sub edit_journey {
 				$error = $self->update_journey_part(
 					$journey->{ids}[0],
 					$journey->{ids}[1],
-					$key, $datetime->epoch
+					$key, $datetime
 				);
 				if ($error) {
 					last;
