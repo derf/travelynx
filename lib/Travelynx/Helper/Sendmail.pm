@@ -31,7 +31,7 @@ sub custom {
 	if ( $self->{config}->{disabled} ) {
 
 		# Do not send mail in dev mode
-		say "sendmail to ${to}: ${subject}\n\n${body}";
+		$self->{log}->info("sendmail to ${to}: ${subject}\n\n${body}");
 		return 1;
 	}
 
