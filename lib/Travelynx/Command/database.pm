@@ -187,8 +187,6 @@ sub run {
 	else {
 		$self->help;
 	}
-
-	$dbh->disconnect;
 }
 
 1;
