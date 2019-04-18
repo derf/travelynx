@@ -149,15 +149,11 @@ Testing
 ---
 
 The test scripts assume that travelynx.conf contains a valid database
-connection. However, they will override db.user to `travelynx_temp`. This
-must be an account which has the same password as the one specified in
-travelynx.conf, but uses a temporary schema. This way, tests will always
-start from a clean slate and will not leave any trace in the database.
+connection. They will create a test-specific schema, perform all operations in
+it, and then drop the schema. As such, the database specified in the config is
+not affected.
 
-Create this account as follows:
-
-* `createuser -P travelynx_temp` (enter the password you are using for the
-  regular development user)
-* from inside a psql admin shell: `alter role travelynx_temp set search_path = pg_temp;`
+Nevertheless, bugs may happen. Do NOT run tests on your production database.
+Please use a separate development database instead.
 
 Run the tests by executing `prove`.
