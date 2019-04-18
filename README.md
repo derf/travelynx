@@ -144,3 +144,20 @@ If you use the checkout link again, travelynx will perform a force checkout: it
 will log that you have left the train at the specified station, but omit
 arrival time, delay, and other real-time data. At the moment, this data cannot
 be specified manually.
+
+Testing
+---
+
+The test scripts assume that travelynx.conf contains a valid database
+connection. However, they will override db.user to `travelynx_temp`. This
+must be an account which has the same password as the one specified in
+travelynx.conf, but uses a temporary schema. This way, tests will always
+start from a clean slate and will not leave any trace in the database.
+
+Create this account as follows:
+
+* `createuser -P travelynx_temp` (enter the password you are using for the
+  regular development user)
+* from inside a psql admin shell: `alter role travelynx_temp set search_path = pg_temp;`
+
+Run the tests by executing `prove`.
