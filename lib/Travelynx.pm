@@ -209,17 +209,6 @@ sub startup {
 		}
 	);
 	$self->attr(
-		set_status_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-				update users set status = ? where id = ?;
-			}
-			);
-		}
-	);
-	$self->attr(
 		mark_for_deletion_query => sub {
 			my ($self) = @_;
 
@@ -443,19 +432,6 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 			select
 				id, name, status, password
 			from users where name = ?
-		}
-			);
-		}
-	);
-	$self->attr(
-		get_token_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-			select
-				name, status, token
-			from users where id = ?
 		}
 			);
 		}
@@ -1019,11 +995,14 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 		'get_user_token' => sub {
 			my ( $self, $uid ) = @_;
 
-			my $query = $self->app->get_token_query;
-			$query->execute($uid);
-			my $rows = $query->fetchall_arrayref;
-			if ( @{$rows} ) {
-				return @{ $rows->[0] };
+			my $res = $self->pg->db->select(
+				'users',
+				[ 'name', 'status', 'token' ],
+				{ id => $uid }
+			);
+
+			if ( my $ret = $res->array ) {
+				return @{$ret};
 			}
 			return;
 		}

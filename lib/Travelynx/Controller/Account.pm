@@ -171,7 +171,7 @@ sub verify {
 		$self->render( 'register', invalid => 'token' );
 		return;
 	}
-	$self->app->set_status_query->execute( 1, $id );
+	$self->app->pg->db->update( 'users', { status => 1 }, { id => $id } );
 	$self->render( 'login', from => 'verification' );
 }
 
