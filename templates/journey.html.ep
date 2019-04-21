@@ -89,19 +89,35 @@
 				<tr>
 					<th scope="row">Entfernung</th>
 					<td>
+						% if ($journey->{skip_route}) {
+							<i class="material-icons right">gps_off</i>
+							<%= numify_skipped_stations($journey->{skip_route}) %><br/>
+						% }
 						% if ($journey->{km_route} > 0.1) {
 							ca. <%= sprintf('%.f', $journey->{km_route}) %> km
+							(Luftlinie: <%= sprintf('%.f', $journey->{km_beeline}) %> km)
 						% }
-						(Luftlinie: <%= sprintf('%.f', $journey->{km_beeline}) %> km)
+						% else {
+							?
+						% }
 					</td>
 				</tr>
 				<tr>
 					<th scope="row">Geschwindigkeit</th>
 					<td>
-						∅ <%= sprintf('%.f', $journey->{kmh_route}) %> km/h
-						(<%= sprintf('%.f', $journey->{kmh_beeline}) %> km/h)
-						% if ($journey->{edited} & 0x0303) {
-							∗
+						% if ($journey->{skip_route}) {
+							<i class="material-icons right">gps_off</i>
+							<%= numify_skipped_stations($journey->{skip_route}) %><br/>
+						% }
+						% if ($journey->{km_route} > 0.1 and $journey->{kmh_route} > 0.01) {
+							∅ <%= sprintf('%.f', $journey->{kmh_route}) %> km/h
+							(<%= sprintf('%.f', $journey->{kmh_beeline}) %> km/h)
+							% if ($journey->{edited} & 0x0303) {
+								∗
+							% }
+						% }
+						% else {
+							?
 						% }
 					</td>
 				</tr>

@@ -480,6 +480,22 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 	);
 
 	$self->helper(
+		'numify_skipped_stations' => sub {
+			my ( $self, $count ) = @_;
+
+			if ( $count == 0 ) {
+				return 'INTERNAL ERROR';
+			}
+			if ( $count == 1 ) {
+				return
+'Eine Station ohne Geokoordinaten wurde nicht berücksichtigt.';
+			}
+			return
+"${count} Stationen ohne Geookordinaten wurden nicht berücksichtigt.";
+		}
+	);
+
+	$self->helper(
 		'get_departures' => sub {
 			my ( $self, $station, $lookbehind ) = @_;
 
@@ -1407,13 +1423,17 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 						  ? $ref->{rt_arrival}->epoch
 						  - $ref->{rt_departure}->epoch
 						  : undef;
-						$ref->{km_route}
+						my ( $km, $skip )
 						  = $self->get_travel_distance( $ref->{from_name},
 							$ref->{to_name}, $ref->{route} );
-						$ref->{km_beeline}
+						$ref->{km_route}   = $km;
+						$ref->{skip_route} = $skip;
+						( $km, $skip )
 						  = $self->get_travel_distance( $ref->{from_name},
 							$ref->{to_name},
 							[ $ref->{from_name}, $ref->{to_name} ] );
+						$ref->{km_beeline}   = $km;
+						$ref->{skip_beeline} = $skip;
 						my $kmh_divisor
 						  = ( $ref->{rt_duration} // $ref->{sched_duration}
 							  // 999999 ) / 3600;
@@ -1531,6 +1551,7 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 			my ( $self, $from, $to, $route_ref ) = @_;
 
 			my $distance = 0;
+			my $skipped  = 0;
 			my $geo      = Geo::Distance->new();
 			my @route    = after_incl { $_ eq $from } @{$route_ref};
 			@route = before_incl { $_ eq $to } @route;
@@ -1548,14 +1569,19 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 
 			for my $station_name (@route) {
 				if ( my $station = get_station($station_name) ) {
-					$distance
-					  += $geo->distance( 'kilometer', $prev_station->[3],
-						$prev_station->[4], $station->[3], $station->[4] );
+					if ( $#{$prev_station} >= 4 and $#{$station} >= 4 ) {
+						$distance
+						  += $geo->distance( 'kilometer', $prev_station->[3],
+							$prev_station->[4], $station->[3], $station->[4] );
+					}
+					else {
+						$skipped++;
+					}
 					$prev_station = $station;
 				}
 			}
 
-			return $distance;
+			return ( $distance, $skipped );
 		}
 	);
 

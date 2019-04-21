@@ -123,6 +123,20 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v2 -> v3
+	# A bug in the journey distance calculation caused excessive distances to be
+	# reported for routes covering stations without GPS coordinates. Ensure
+	# all caches are rebuilt.
+	sub {
+		my ($dbh) = @_;
+		return $dbh->do(
+			qq{
+				delete from journey_stats;
+				update schema_version set version = 3;
+			}
+		);
+	},
 );
 
 sub setup_db {
