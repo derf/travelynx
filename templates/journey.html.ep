@@ -90,7 +90,7 @@
 					<th scope="row">Entfernung</th>
 					<td>
 						% if ($journey->{skip_route}) {
-							<i class="material-icons right">gps_off</i>
+							<i class="material-icons right">location_off</i>
 							<%= numify_skipped_stations($journey->{skip_route}) %><br/>
 						% }
 						% if ($journey->{km_route} > 0.1) {
@@ -106,7 +106,7 @@
 					<th scope="row">Geschwindigkeit</th>
 					<td>
 						% if ($journey->{skip_route}) {
-							<i class="material-icons right">gps_off</i>
+							<i class="material-icons right">location_off</i>
 							<%= numify_skipped_stations($journey->{skip_route}) %><br/>
 						% }
 						% if ($journey->{km_route} > 0.1 and $journey->{kmh_route} > 0.01) {
