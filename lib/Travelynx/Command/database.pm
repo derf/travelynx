@@ -132,7 +132,7 @@ my @migrations = (
 		my ($dbh) = @_;
 		return $dbh->do(
 			qq{
-				delete from journey_stats;
+				truncate journey_stats;
 				update schema_version set version = 3;
 			}
 		);
