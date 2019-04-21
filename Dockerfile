@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 	Travel::Status::DE::IRIS \
 	UUID::Tiny \
 	JSON \
+	Mojo::Pg \
 	&& rm -rf ~/.cpanm \
 	&& apt-get purge -y \
 	build-essential \
