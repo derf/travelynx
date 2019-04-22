@@ -12,6 +12,10 @@ require "$FindBin::Bin/../index.pl";
 
 my $t = Test::Mojo->new('Travelynx');
 
+if (not $t->app->config->{db}) {
+	plan(skip_all => 'No database configured');
+}
+
 $t->app->pg->db->query('drop schema if exists travelynx_test_02 cascade');
 $t->app->pg->db->query('create schema travelynx_test_02');
 $t->app->pg->db->query('set search_path to travelynx_test_02');
