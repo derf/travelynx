@@ -18,5 +18,4 @@ before_script:
   - cp .travis.travelynx.conf travelynx.conf
   - psql -c 'create database travelynx_ci_test;' -U postgres
 script:
-  - carton install
-  - carton exec prove -lv
+  - prove -lv
