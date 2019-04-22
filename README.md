@@ -45,9 +45,9 @@ Setup
 ---
 
 First, you need to set up a PostgreSQL database so that travelynx can store
-user accounts and journeys. Version 9.6 or later with UTF-8 locale (e.g.
-`en_US.UTF-8`) should work fine.  The following steps describe setup on a
-Debian 9 system, though setup on other distribution should be similar.
+user accounts and journeys. It must be at least version 9.4 and should use a
+UTF-8 locale. The following steps describe setup on a Debian 9 system, though
+setup on other distribution should be similar.
 
 * Write down a strong random password
 * Create a postgres user for travelynx: `sudo -u postgres createuser -P travelynx`
