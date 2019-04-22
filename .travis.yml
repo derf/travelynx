@@ -11,6 +11,7 @@ addons:
   apt:
     packages:
       - libcache-perl
+      - libdb-dev
       - libpq-dev
       - libxml2-dev
 before_script:
