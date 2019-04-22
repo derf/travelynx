@@ -10,90 +10,91 @@ has usage => sub { shift->extract_usage };
 sub run {
 	my ( $self, $filename ) = @_;
 
-	my $dbh = $self->app->dbh;
-
 	my $now = DateTime->now( time_zone => 'Europe/Berlin' );
-	my $verification_deadline = $now->subtract( hours => 48 )->epoch;
-	my $deletion_deadline     = $now->subtract( hours => 72 )->epoch;
+	my $verification_deadline = $now->clone->subtract( hours => 48 );
+	my $deletion_deadline     = $now->clone->subtract( hours => 72 );
 
-	my $get_unverified_query
-	  = $dbh->prepare(
-qq{select email, extract(epoch from registered_at) from users where status = 0 and registered_at < to_timestamp(?);}
-	  );
-	my $get_pending_query
-	  = $dbh->prepare(qq{select num_tries from pending_mails where email = ?;});
-	my $get_deleted_query = $dbh->prepare(
-		qq{select id from users where deletion_requested < to_timestamp(?);});
-	my $set_pending_query
-	  = $dbh->prepare(
-qq{update pending_mails set num_tries = ?, last_try = to_timestamp(?) where email = ?;}
-	  );
-	my $add_pending_query
-	  = $dbh->prepare(
-qq{insert into pending_mails (email, num_tries, last_try) values (?, ?, to_timestamp(?));}
-	  );
-	my $drop_unverified_query
-	  = $dbh->prepare(
-qq{delete from users where status = 0 and registered_at < to_timestamp(?);}
-	  );
-	my $drop_tokens_query
-	  = $dbh->prepare(qq{delete from tokens where user_id = ?;});
-	my $drop_stats_query
-	  = $dbh->prepare(qq{delete from journey_stats where user_id = ?;});
-	my $drop_actions_query
-	  = $dbh->prepare(qq{delete from user_actions where user_id = ?;});
-	my $drop_user_query = $dbh->prepare(qq{delete from users where id = ?;});
+	my $db = $self->app->pg->db;
+	my $tx = $db->begin;
 
-	$dbh->begin_work;
-	$get_unverified_query->execute($verification_deadline);
-	while ( my @row = $get_unverified_query->fetchrow_array ) {
-		my ( $mail, $reg_date ) = @row;
-
-		if ($mail) {
-			$get_pending_query->execute($mail);
-			my $rows = $get_pending_query->fetchall_arrayref;
-
-			if ( @{$rows} ) {
-				my $num_tries = $rows->[0][0];
-				$set_pending_query->execute( $num_tries + 1, $reg_date, $mail );
-			}
-			else {
-				$add_pending_query->execute( $mail, 1, $reg_date );
-			}
+	my $unverified = $db->select(
+		'users',
+		'id, email, extract(epoch from registered_at) as registered_ts',
+		{
+			status        => 0,
+			registered_at => { '<', $verification_deadline }
 		}
-	}
-	$drop_unverified_query->execute($verification_deadline);
-	printf( "Pruned %d unverified accounts from database\n",
-		$drop_unverified_query->rows );
-	$dbh->commit;
+	);
 
-	$dbh->begin_work;
-	$get_deleted_query->execute($deletion_deadline);
-	my @uids_to_delete
-	  = map { $_->[0] } @{ $get_deleted_query->fetchall_arrayref };
+	for my $user ( $unverified->hashes->each ) {
+		my $mail     = $user->{email};
+		my $reg_date = DateTime->from_epoch(
+			epoch     => $user->{registered_ts},
+			time_zone => 'Europe/Berlin'
+		);
 
-	if ( @uids_to_delete < 10 ) {
-		for my $uid (@uids_to_delete) {
-			say "Deleting uid ${uid}...";
-			$drop_tokens_query->execute($uid);
-			$drop_stats_query->execute($uid);
-			$drop_actions_query->execute($uid);
-			$drop_user_query->execute($uid);
-			printf( "    %d tokens, %d monthly stats, %d actions\n",
-				$drop_tokens_query->rows, $drop_stats_query->rows,
-				$drop_actions_query->rows );
+		my $pending
+		  = $db->select( 'pending_mails', ['num_tries'], { email => $mail } );
+		my $pending_h = $pending->hash;
+
+		if ($pending_h) {
+			my $num_tries = $pending_h->{num_tries} + 1;
+			$db->update(
+				'pending_mails',
+				{
+					num_tries => $num_tries,
+					last_try  => $reg_date
+				},
+				{ email => $mail }
+			);
 		}
+		else {
+			$db->insert(
+				'pending_mails',
+				{
+					email     => $mail,
+					num_tries => 1,
+					last_try  => $reg_date
+				}
+			);
+		}
+		$db->delete( 'users', { id => $user->{id} } );
+		printf( "Pruned unverified user %d\n", $user->{id} );
 	}
-	else {
-		printf(
-			"Unusually high number of deletion requests (%d accounts)"
-			  . " -- skipping automatic deletion, please investigate\n",
+
+	my $to_delete = $db->select( 'users', ['id'],
+		{ deletion_requested => { '<', $deletion_deadline } } );
+	my @uids_to_delete = $to_delete->arrays->map( sub { shift->[0] } )->each;
+
+	if ( @uids_to_delete > 10 ) {
+		printf STDERR (
+			"About to delete %d accounts, which is quite a lot.\n",
 			scalar @uids_to_delete
 		);
+		say STDERR 'Aborting maintenance. Please investigate.';
+		exit(1);
 	}
-	$dbh->commit;
 
-	$dbh->disconnect;
+	for my $uid (@uids_to_delete) {
+		say "Deleting uid ${uid}...";
+		my $tokens_res  = $db->delete( 'tokens',        { user_id => $uid } );
+		my $stats_res   = $db->delete( 'journey_stats', { user_id => $uid } );
+		my $actions_res = $db->delete( 'user_actions',  { user_id => $uid } );
+		my $user_res    = $db->delete( 'users',         { id      => $uid } );
+
+		printf( "    %d tokens, %d monthly stats, %d actions\n",
+			$tokens_res->rows, $stats_res->rows, $actions_res->rows );
+
+		if ( $user_res->rows != 1 ) {
+			printf STDERR (
+				"Deleted %d rows from users, expected 1. Rollback and abort.\n",
+				$user_res->rows
+			);
+			exit(1);
+		}
+	}
+
+	$tx->commit;
 }
 
 1;

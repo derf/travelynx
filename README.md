@@ -15,8 +15,6 @@ Dependencies
  * Crypt::Eksblowfish
  * DateTime
  * DateTime::Format::Strptime
- * DBI
- * DBD::Pg
  * Email::Sender
  * Geo::Distance
  * Mojolicious

@@ -2,8 +2,6 @@ requires 'Cache';
 requires 'Crypt::Eksblowfish';
 requires 'DateTime';
 requires 'DateTime::Format::Strptime';
-requires 'DBI';
-requires 'DBD::Pg';
 requires 'Email::Sender';
 requires 'Geo::Distance';
 requires 'Geo::Distance::XS';

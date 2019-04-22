@@ -6,7 +6,6 @@ use Mojolicious::Plugin::Authentication;
 use Cache::File;
 use Crypt::Eksblowfish::Bcrypt qw(bcrypt en_base64);
 use DateTime;
-use DBI;
 use Encode qw(decode encode);
 use Geo::Distance;
 use JSON;
@@ -145,23 +144,6 @@ sub startup {
 	$self->attr(
 		token_types => sub {
 			return [qw(status history action)];
-		}
-	);
-
-	$self->attr(
-		dbh => sub {
-			my ($self) = @_;
-			my $config = $self->app->config;
-
-			my $dbname = $config->{db}->{database};
-			my $host   = $config->{db}->{host} // 'localhost';
-			my $port   = $config->{db}->{port} // 5432;
-			my $user   = $config->{db}->{user};
-			my $pw     = $config->{db}->{password};
-
-			return DBI->connect(
-				"dbi:Pg:dbname=${dbname};host=${host};port=${port}",
-				$user, $pw, { AutoCommit => 1 } );
 		}
 	);
 

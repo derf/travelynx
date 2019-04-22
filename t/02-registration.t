@@ -19,7 +19,6 @@ if ( not $t->app->config->{db} ) {
 $t->app->pg->db->query('drop schema if exists travelynx_test_02 cascade');
 $t->app->pg->db->query('create schema travelynx_test_02');
 $t->app->pg->db->query('set search_path to travelynx_test_02');
-$t->app->dbh->do('set search_path to travelynx_test_02');
 $t->app->pg->on(
 	connection => sub {
 		my ( $pg, $dbh ) = @_;
