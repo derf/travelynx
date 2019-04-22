@@ -8,35 +8,22 @@ has description => 'Initialize or upgrade database layout';
 has usage => sub { shift->extract_usage };
 
 sub get_schema_version {
-	my ($dbh) = @_;
+	my ($db) = @_;
+	my $version;
 
-	# We do not want DBD to print an SQL error if schema_version does not
-	# exist, as this is not an error in this case. Setting $dbh->{PrintError} =
-	# 0 would disable error printing for all subsequent SQL operations, however,
-	# we only want to disable it for this specific query. Hence we use a
-	# prepared statement and only disable error printing only there.
-	my $sth = $dbh->prepare(qq{select version from schema_version});
-	$sth->{PrintError} = 0;
-	my $success = $sth->execute;
-
-	if ( not defined $success ) {
+	eval {
+		$version = $db->select( 'schema_version', ['version'] )->hash->{version};
+	};
+	if ($@) {
+		# If it failed, the version table does not exist -> run setup first.
 		return undef;
 	}
-
-	my $rows = $sth->fetchall_arrayref;
-
-	if ( @{$rows} == 1 ) {
-		return $rows->[0][0];
-	}
-	else {
-		printf( "Found multiple schema versions: %s", @{$rows} );
-		exit(1);
-	}
+	return $version;
 }
 
 sub initialize_db {
-	my ($dbh) = @_;
-	return $dbh->do(
+	my ($db) = @_;
+	$db->query(
 		qq{
 			create table schema_version (
 				version integer primary key
@@ -93,8 +80,8 @@ my @migrations = (
 
 	# v0 -> v1
 	sub {
-		my ($dbh) = @_;
-		return $dbh->do(
+		my ($db) = @_;
+		$db->query(
 			qq{
 				alter table user_actions
 					add column edited smallint;
@@ -113,8 +100,8 @@ my @migrations = (
 
 	# v1 -> v2
 	sub {
-		my ($dbh) = @_;
-		return $dbh->do(
+		my ($db) = @_;
+		$db->query(
 			qq{
 				update user_actions set edited = 0;
 				alter table user_actions
@@ -129,8 +116,8 @@ my @migrations = (
 	# reported for routes covering stations without GPS coordinates. Ensure
 	# all caches are rebuilt.
 	sub {
-		my ($dbh) = @_;
-		return $dbh->do(
+		my ($db) = @_;
+		$db->query(
 			qq{
 				truncate journey_stats;
 				update schema_version set version = 3;
@@ -140,57 +127,73 @@ my @migrations = (
 );
 
 sub setup_db {
-	my ($dbh) = @_;
-	$dbh->begin_work;
-	if ( initialize_db($dbh) ) {
-		$dbh->commit;
-	}
-	else {
-		$dbh->rollback;
-		printf( "Database initialization was not successful: %s",
-			$DBI::errstr );
+	my ($db) = @_;
+	my $tx = $db->begin;
+	eval {
+		initialize_db($db);
+		$tx->commit;
+	};
+	if ($@) {
+		say "Database initialization failed: $@";
+		exit(1);
 	}
 }
 
 sub migrate_db {
-	my ($dbh) = @_;
-	$dbh->begin_work;
-	my $schema_version = get_schema_version($dbh);
+	my ($db) = @_;
+	my $tx = $db->begin;
+
+	my $schema_version = get_schema_version($db);
 	say "Found travelynx schema v${schema_version}";
+
 	if ( $schema_version == @migrations ) {
 		say "Database layout is up-to-date";
 	}
-	for my $i ( $schema_version .. $#migrations ) {
-		printf( "Updating to v%d ...\n", $i + 1 );
-		if ( not $migrations[$i]($dbh) ) {
-			say "Aborting migration; rollback to v${schema_version}";
-			$dbh->rollback;
-			exit(1);
+
+	eval {
+		for my $i ( $schema_version .. $#migrations ) {
+			printf( "Updating to v%d ...\n", $i + 1 );
+			$migrations[$i]($db);
 		}
+	};
+	if ($@) {
+		say STDERR "Migration failed: $@";
+		say STDERR "Rolling back to v${schema_version}";
+		exit(1);
 	}
-	if ( get_schema_version($dbh) == @migrations ) {
-		$dbh->commit;
+
+	if ( get_schema_version($db) == @migrations ) {
+		$tx->commit;
+	}
+	else {
+		printf STDERR (
+			"Database schema mismatch after migrations: Expected %d, got %d\n",
+			scalar @migrations,
+			get_schema_version($db)
+		);
+		say STDERR "Rolling back to v${schema_version}";
+		exit(1);
 	}
 }
 
 sub run {
 	my ( $self, $command ) = @_;
 
-	my $dbh = $self->app->dbh;
+	my $db = $self->app->pg->db;
 
-	if ( not defined $dbh ) {
-		printf( "Can't connect to the database: %s\n", $DBI::errstr );
-		exit(1);
-	}
+	#if ( not defined $dbh ) {
+	#	printf( "Can't connect to the database: %s\n", $DBI::errstr );
+	#	exit(1);
+	#}
 
 	if ( $command eq 'migrate' ) {
-		if ( not defined get_schema_version($dbh) ) {
-			setup_db($dbh);
+		if ( not defined get_schema_version($db) ) {
+			setup_db($db);
 		}
-		migrate_db($dbh);
+		migrate_db($db);
 	}
 	elsif ( $command eq 'has-current-schema' ) {
-		if ( get_schema_version($dbh) == @migrations ) {
+		if ( get_schema_version($db) == @migrations ) {
 			say "yes";
 		}
 		else {
