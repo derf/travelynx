@@ -80,6 +80,16 @@ my ( $uid, $token ) = @{ $res->hash }{qw{id token}};
 $t->get_ok("/reg/${uid}/${token}");
 $t->status_is(200)->content_like(qr{freigeschaltet});
 
+# Failed login (wrong password)
+$t->post_ok(
+	'/login' => form => {
+		csrf_token => $csrf_token,
+		user       => 'someone',
+		password   => 'definitely invalid',
+	}
+);
+$t->status_is(200)->content_like(qr{falsches Passwort});
+
 # Successful login
 $t->post_ok(
 	'/login' => form => {
@@ -115,6 +125,40 @@ $t->post_ok(
 $t->status_is(302)->header_is( location => '/account' );
 $t->get_ok('/account');
 $t->status_is(200)->content_unlike(qr{wird gelöscht});
+
+$csrf_token
+  = $t->ua->get('/change_password')->res->dom->at('input[name=csrf_token]')
+  ->attr('value');
+
+$t->post_ok(
+	'/change_password' => form => {
+		csrf_token => $csrf_token,
+		oldpw      => 'foofoofoo',
+		newpw      => 'barbarbar',
+		newpw2     => 'barbarbar',
+	}
+);
+$t->status_is(302)->header_is( location => '/account' );
+
+$csrf_token = $t->ua->get('/account')->res->dom->at('input[name=csrf_token]')
+  ->attr('value');
+$t->post_ok(
+	'/logout' => form => {
+		csrf_token => $csrf_token,
+	}
+);
+$t->status_is(302)->header_is( location => '/login' );
+
+$csrf_token = $t->ua->get('/login')->res->dom->at('input[name=csrf_token]')
+  ->attr('value');
+$t->post_ok(
+	'/login' => form => {
+		csrf_token => $csrf_token,
+		user       => 'someone',
+		password   => 'barbarbar',
+	}
+);
+$t->status_is(302)->header_is( location => '/' );
 
 $t->app->pg->db->query('drop schema travelynx_test_02 cascade');
 done_testing();
