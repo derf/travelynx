@@ -149,89 +149,6 @@ sub startup {
 	);
 
 	$self->attr(
-		add_station_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-			insert into stations (ds100, name) values (?, ?)
-		}
-			);
-		}
-	);
-	$self->attr(
-		add_user_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-			insert into users (
-				name, status, public_level, email, token, password,
-				registered_at, last_login
-			) values (?, 0, 0, ?, ?, ?, to_timestamp(?), to_timestamp(?));
-		}
-			);
-		}
-	);
-	$self->attr(
-		set_email_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-				update users set email = ?, token = ? where id = ?;
-			}
-			);
-		}
-	);
-	$self->attr(
-		set_password_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-				update users set password = ? where id = ?;
-			}
-			);
-		}
-	);
-	$self->attr(
-		add_mail_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-				insert into pending_mails (
-					email, num_tries, last_try
-				) values (?, ?, to_timestamp(?));
-			}
-			);
-		}
-	);
-	$self->attr(
-		mark_for_deletion_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-				update users set deletion_requested = to_timestamp(?) where id = ?;
-			}
-			);
-		}
-	);
-	$self->attr(
-		get_stats_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-					select data from journey_stats
-					where user_id = ? and year = ? and month = ?
-				}
-			);
-		}
-	);
-	$self->attr(
 		dbh => sub {
 			my ($self) = @_;
 			my $config = $self->app->config;
@@ -332,45 +249,6 @@ sub startup {
 		}
 	);
 	$self->attr(
-		get_userid_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{select id from users where name = ?});
-		}
-	);
-	$self->attr(
-		get_pending_mails_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{select id from users where email = ? and status = 0;});
-		}
-	);
-	$self->attr(
-		get_listed_mails_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-qq{select * from pending_mails where email = ? and num_tries > 1;}
-			);
-		}
-	);
-	$self->attr(
-		get_user_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-			select
-				id, name, status, public_level, email,
-				extract(epoch from registered_at), extract(epoch from last_login), extract(epoch from deletion_requested)
-			from users where id = ?
-		}
-			);
-		}
-	);
-	$self->attr(
 		get_api_tokens_query => sub {
 			my ($self) = @_;
 
@@ -421,35 +299,6 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 			do update set token = EXCLUDED.token
 		}
 			);
-		}
-	);
-	$self->attr(
-		get_password_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-			select
-				id, name, status, password
-			from users where name = ?
-		}
-			);
-		}
-	);
-	$self->attr(
-		get_stationid_by_ds100_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{select id from stations where ds100 = ?});
-		}
-	);
-	$self->attr(
-		get_stationid_by_name_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{select id from stations where name = ?});
 		}
 	);
 
@@ -989,21 +838,27 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 		'get_station_id' => sub {
 			my ( $self, %opt ) = @_;
 
-			$self->app->get_stationid_by_ds100_query->execute( $opt{ds100} );
-			my $rows
-			  = $self->app->get_stationid_by_ds100_query->fetchall_arrayref;
-			if ( @{$rows} ) {
-				return $rows->[0][0];
+			my $res = $self->pg->db->select( 'stations', ['id'],
+				{ ds100 => $opt{ds100} } );
+			my $res_h = $res->hash;
+
+			if ($res_h) {
+				$res->finish;
+				return $res_h->{id};
 			}
-			else {
-				$self->app->add_station_query->execute( $opt{ds100},
-					$opt{name} );
-				$self->app->get_stationid_by_ds100_query->execute(
-					$opt{ds100} );
-				my $rows
-				  = $self->app->get_stationid_by_ds100_query->fetchall_arrayref;
-				return $rows->[0][0];
-			}
+
+			$self->pg->db->insert(
+				'stations',
+				{
+					ds100 => $opt{ds100},
+					name  => $opt{name},
+				}
+			);
+			$res = $self->pg->db->select( 'stations', ['id'],
+				{ ds100 => $opt{ds100} } );
+			my $id = $res->hash->{id};
+			$res->finish;
+			return $id;
 		}
 	);
 
@@ -1032,28 +887,34 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 			my ( $self, $uid ) = @_;
 
 			$uid //= $self->current_user->{id};
-			my $query = $self->app->get_user_query;
-			$query->execute($uid);
-			my $rows = $query->fetchall_arrayref;
-			if ( @{$rows} ) {
-				my @row = @{ $rows->[0] };
+
+			my $user_data = $self->pg->db->select(
+				'users',
+				'id, name, status, public_level, email, '
+				  . 'extract(epoch from registered_at) as registered_at_ts, '
+				  . 'extract(epoch from last_login) as last_login_ts, '
+				  . 'extract(epoch from deletion_requested) as deletion_requested_ts',
+				{ id => $uid }
+			)->hash;
+
+			if ($user_data) {
 				return {
-					id            => $row[0],
-					name          => $row[1],
-					status        => $row[2],
-					is_public     => $row[3],
-					email         => $row[4],
+					id            => $user_data->{id},
+					name          => $user_data->{name},
+					status        => $user_data->{status},
+					is_public     => $user_data->{public_level},
+					email         => $user_data->{email},
 					registered_at => DateTime->from_epoch(
-						epoch     => $row[5],
+						epoch     => $user_data->{registered_at_ts},
 						time_zone => 'Europe/Berlin'
 					),
 					last_seen => DateTime->from_epoch(
-						epoch     => $row[6],
+						epoch     => $user_data->{last_login_ts},
 						time_zone => 'Europe/Berlin'
 					),
-					deletion_requested => $row[7]
+					deletion_requested => $user_data->{deletion_requested_ts}
 					? DateTime->from_epoch(
-						epoch     => $row[7],
+						epoch     => $user_data->{deletion_requested_ts},
 						time_zone => 'Europe/Berlin'
 					  )
 					: undef,
@@ -1081,19 +942,14 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 	$self->helper(
 		'get_user_password' => sub {
 			my ( $self, $name ) = @_;
-			my $query = $self->app->get_password_query;
-			$query->execute($name);
-			my $rows = $query->fetchall_arrayref;
-			if ( @{$rows} ) {
-				my @row = @{ $rows->[0] };
-				return {
-					id            => $row[0],
-					name          => $row[1],
-					status        => $row[2],
-					password_hash => $row[3],
-				};
-			}
-			return;
+
+			my $res_h = $self->pg->db->select(
+				'users',
+				'id, name, status, password as password_hash',
+				{ name => $name }
+			)->hash;
+
+			return $res_h;
 		}
 	);
 
@@ -1101,36 +957,68 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 		'add_user' => sub {
 			my ( $self, $user_name, $email, $token, $password ) = @_;
 
-			$self->app->get_userid_query->execute($user_name);
-			my $rows = $self->app->get_userid_query->fetchall_arrayref;
+			my $now = DateTime->now( time_zone => 'Europe/Berlin' );
 
-			if ( @{$rows} ) {
-				my $id = $rows->[0][0];
+			my $res = $self->pg->db->insert(
+				'users',
+				{
+					name          => $user_name,
+					status        => 0,
+					public_level  => 0,
+					email         => $email,
+					token         => $token,
+					password      => $password,
+					registered_at => $now,
+					last_login    => $now,
+				},
+				{ returning => 'id' }
+			);
 
-				# transition code for closed beta account -> normal account
-				if ($email) {
-					$self->app->set_email_query->execute( $email, $token, $id );
+			return $res->hash->{id};
+		}
+	);
+
+	$self->helper(
+		'flag_user_deletion' => sub {
+			my ( $self, $uid ) = @_;
+
+			my $now = DateTime->now( time_zone => 'Europe/Berlin' );
+
+			$self->pg->db->update(
+				'users',
+				{ deletion_requested => $now },
+				{
+					id => $uid,
 				}
-				if ($password) {
-					$self->app->set_password_query->execute( $password, $id );
+			);
+		}
+	);
+
+	$self->helper(
+		'unflag_user_deletion' => sub {
+			my ( $self, $uid ) = @_;
+
+			$self->pg->db->update(
+				'users',
+				{
+					deletion_requested => undef,
+				},
+				{
+					id => $uid,
 				}
-				return $id;
-			}
-			else {
-				my $now = DateTime->now( time_zone => 'Europe/Berlin' )->epoch;
-				$self->app->add_user_query->execute( $user_name, $email, $token,
-					$password, $now, $now );
-				$self->app->get_userid_query->execute($user_name);
-				$rows = $self->app->get_userid_query->fetchall_arrayref;
-				return $rows->[0][0];
-			}
+			);
 		}
 	);
 
 	$self->helper(
 		'set_user_password' => sub {
 			my ( $self, $uid, $password ) = @_;
-			$self->app->set_password_query->execute( $password, $uid );
+
+			$self->pg->db->update(
+				'users',
+				{ password => $password },
+				{ id       => $uid }
+			);
 		}
 	);
 
@@ -1138,10 +1026,13 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 		'check_if_user_name_exists' => sub {
 			my ( $self, $user_name ) = @_;
 
-			$self->app->get_userid_query->execute($user_name);
-			my $rows = $self->app->get_userid_query->fetchall_arrayref;
+			my $count = $self->pg->db->select(
+				'users',
+				'count(*) as count',
+				{ name => $user_name }
+			)->hash->{count};
 
-			if ( @{$rows} ) {
+			if ($count) {
 				return 1;
 			}
 			return 0;
@@ -1152,12 +1043,29 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 		'check_if_mail_is_blacklisted' => sub {
 			my ( $self, $mail ) = @_;
 
-			$self->app->get_pending_mails_query->execute($mail);
-			if ( @{ $self->app->get_pending_mails_query->fetchall_arrayref } ) {
+			my $count = $self->pg->db->select(
+				'users',
+				'count(*) as count',
+				{
+					email  => $mail,
+					status => 0,
+				}
+			)->hash->{count};
+
+			if ($count) {
 				return 1;
 			}
-			$self->app->get_listed_mails_query->execute($mail);
-			if ( @{ $self->app->get_listed_mails_query->fetchall_arrayref } ) {
+
+			$count = $self->pg->db->select(
+				'pending_mails',
+				'count(*) as count',
+				{
+					email     => $mail,
+					num_tries => { '>', 1 },
+				}
+			)->hash->{count};
+
+			if ($count) {
 				return 1;
 			}
 			return 0;
@@ -1236,11 +1144,21 @@ qq{select * from pending_mails where email = ? and num_tries > 1;}
 			# -> Cache entries must be explicitly invalidated whenever the user
 			# checks out of a train or manually edits/adds a journey.
 
-			$self->app->get_stats_query->execute( $uid, $year, $month );
-			my $rows = $self->app->get_stats_query->fetchall_arrayref;
+			my $res = $self->pg->db->select(
+				'journey_stats',
+				['data'],
+				{
+					user_id => $uid,
+					year    => $year,
+					month   => $month
+				}
+			);
 
-			if ( @{$rows} == 1 ) {
-				return JSON->new->decode( $rows->[0][0] );
+			my $res_h = $res->expand->hash;
+
+			if ($res_h) {
+				$res->finish;
+				return $res_h->{data};
 			}
 
 			my $interval_start = DateTime->new(

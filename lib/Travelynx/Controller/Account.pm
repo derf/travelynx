@@ -182,8 +182,6 @@ sub delete {
 		return;
 	}
 
-	my $now = DateTime->now( time_zone => 'Europe/Berlin' )->epoch;
-
 	if ( $self->param('action') eq 'delete' ) {
 		if (
 			not $self->authenticate(
@@ -195,12 +193,10 @@ sub delete {
 			$self->render( 'account', invalid => 'password' );
 			return;
 		}
-		$self->app->mark_for_deletion_query->execute( $now,
-			$self->current_user->{id} );
+		$self->flag_user_deletion( $self->current_user->{id} );
 	}
 	else {
-		$self->app->mark_for_deletion_query->execute( undef,
-			$self->current_user->{id} );
+		$self->unflag_user_deletion( $self->current_user->{id} );
 	}
 	$self->redirect_to('account');
 }
