@@ -165,90 +165,6 @@ sub startup {
 		}
 	);
 	$self->attr(
-		get_all_actions_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-			select user_actions.id, action_id, extract(epoch from action_time),
-			stations.ds100, stations.name,
-			train_type, train_line, train_no, train_id,
-			extract(epoch from sched_time), extract(epoch from real_time),
-			route, messages, edited
-			from user_actions
-			left outer join stations on station_id = stations.id
-			where user_id = ?
-			order by action_time desc
-		}
-			);
-		}
-	);
-	$self->attr(
-		get_last_actions_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-			select user_actions.id, action_id, extract(epoch from action_time),
-			stations.ds100, stations.name,
-			train_type, train_line, train_no, train_id,
-			extract(epoch from sched_time), extract(epoch from real_time),
-			route, messages, edited
-			from user_actions
-			left outer join stations on station_id = stations.id
-			where user_id = ?
-			order by action_time desc
-			limit 10
-		}
-			);
-		}
-	);
-	$self->attr(
-		get_interval_actions_query => sub {
-			my ($self) = @_;
-
-			# Note: Selecting on real_time would be more intuitive, but is not
-			# possible at the moment -- non-realtime checkouts
-			# lack both sched_time and real_time.
-			return $self->app->dbh->prepare(
-				qq{
-			select user_actions.id, action_id, extract(epoch from action_time),
-			stations.ds100, stations.name,
-			train_type, train_line, train_no, train_id,
-			extract(epoch from sched_time), extract(epoch from real_time),
-			route, messages, edited
-			from user_actions
-			left outer join stations on station_id = stations.id
-			where user_id = ?
-			and action_time >= to_timestamp(?)
-			and action_time < to_timestamp(?)
-			order by action_time desc
-		}
-			);
-		}
-	);
-	$self->attr(
-		get_journey_actions_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-			select user_actions.id, action_id, extract(epoch from action_time),
-			stations.ds100, stations.name,
-			train_type, train_line, train_no, train_id,
-			extract(epoch from sched_time), extract(epoch from real_time),
-			route, messages, edited
-			from user_actions
-			left outer join stations on station_id = stations.id
-			where user_id = ?
-			and user_actions.id <= ?
-			order by action_time desc
-			limit 2
-		}
-			);
-		}
-	);
-	$self->attr(
 		get_api_tokens_query => sub {
 			my ($self) = @_;
 
@@ -1213,14 +1129,31 @@ sub startup {
 			my ( $self, %opt ) = @_;
 
 			my $uid = $opt{uid} || $self->current_user->{id};
-			my $query = $self->app->get_all_actions_query;
+
+			my $selection = qq{
+			user_actions.id as action_log_id, action_id,
+			extract(epoch from action_time) as action_time_ts,
+			stations.ds100 as ds100, stations.name as name,
+			train_type, train_line, train_no, train_id,
+			extract(epoch from sched_time) as sched_time_ts,
+			extract(epoch from real_time) as real_time_ts,
+			route, messages, edited
+			};
+			$selection =~ tr{\n}{}d;
+			my %where = ( user_id => $uid );
+			my %order = (
+				order_by => {
+					-desc => 'action_time',
+				}
+			);
+
 			if ( $opt{limit} ) {
-				$query = $self->app->get_last_actions_query;
+				$order{limit} = 10;
 			}
 
 			if ( $opt{checkout_id} ) {
-				$query = $self->app->get_journey_actions_query;
-				$query->execute( $uid, $opt{checkout_id} );
+				$where{action_log_id} = { '<=', $opt{checkout_id} };
+				$order{limit} = 2;
 			}
 			elsif ( $opt{after} and $opt{before} ) {
 
@@ -1243,16 +1176,14 @@ sub startup {
          # This works under the assumption that there are no DB trains whose
          # journey takes more than 24 hours. If this no longer holds,
          # please adjust the intervals accordingly.
-				$query = $self->app->get_interval_actions_query;
-				$query->execute(
-					$uid,
-					$opt{after}->clone->subtract( days => 1 )->epoch,
-					$opt{before}->clone->add( days => 1 )->epoch
-				);
+				$where{action_time} = {
+					-between => [
+						$opt{after}->clone->subtract( days => 1 ),
+						$opt{before}->clone->add( days => 1 )
+					]
+				};
 			}
-			else {
-				$query->execute($uid);
-			}
+
 			my @match_actions = (
 				$self->app->action_type->{checkout},
 				$self->app->action_type->{checkin}
@@ -1267,61 +1198,71 @@ sub startup {
 			my @travels;
 			my $prev_action = 0;
 
-			while ( my @row = $query->fetchrow_array ) {
-				my (
-					$action_id,    $action,      $raw_ts,
-					$ds100,        $name,        $train_type,
-					$train_line,   $train_no,    $train_id,
-					$raw_sched_ts, $raw_real_ts, $raw_route,
-					$raw_messages, $edited
-				) = @row;
+			my $res = $self->pg->db->select(
+				[
+					'user_actions',
+					[
+						-left => 'stations',
+						id    => 'station_id'
+					]
+				],
+				$selection,
+				\%where,
+				\%order
+			);
 
-				if ( $action == $match_actions[0]
+			for my $entry ( $res->hashes->each ) {
+
+				if ( $entry->{action_id} == $match_actions[0]
 					or ( $opt{checkout_id} and not @travels ) )
 				{
 					push(
 						@travels,
 						{
-							ids           => [ undef, $action_id ],
-							to_name       => $name,
-							sched_arrival => epoch_to_dt($raw_sched_ts),
-							rt_arrival    => epoch_to_dt($raw_real_ts),
-							checkout      => epoch_to_dt($raw_ts),
-							type          => $train_type,
-							line          => $train_line,
-							no            => $train_no,
-							messages      => $raw_messages
-							? [ split( qr{[|]}, $raw_messages ) ]
+							ids     => [ undef, $entry->{action_log_id} ],
+							to_name => $entry->{name},
+							sched_arrival =>
+							  epoch_to_dt( $entry->{sched_time_ts} ),
+							rt_arrival => epoch_to_dt( $entry->{real_time_ts} ),
+							checkout => epoch_to_dt( $entry->{action_time_ts} ),
+							type     => $entry->{train_type},
+							line     => $entry->{train_line},
+							no       => $entry->{train_no},
+							messages => $entry->{messages}
+							? [ split( qr{[|]}, $entry->{messages} ) ]
 							: undef,
-							route => $raw_route
-							? [ split( qr{[|]}, $raw_route ) ]
+							route => $entry->{route}
+							? [ split( qr{[|]}, $entry->{route} ) ]
 							: undef,
 							completed => 0,
-							edited    => $edited << 8,
+							edited    => $entry->{edited} << 8,
 						}
 					);
 				}
 				elsif (
 					(
-						    $action == $match_actions[1]
+						    $entry->{action_id} == $match_actions[1]
 						and $prev_action == $match_actions[0]
 					)
 					or $opt{checkout_id}
 				  )
 				{
 					my $ref = $travels[-1];
-					$ref->{ids}->[0]        = $action_id;
-					$ref->{from_name}       = $name;
-					$ref->{completed}       = 1;
-					$ref->{sched_departure} = epoch_to_dt($raw_sched_ts);
-					$ref->{rt_departure}    = epoch_to_dt($raw_real_ts);
-					$ref->{checkin}         = epoch_to_dt($raw_ts);
-					$ref->{type}     //= $train_type;
-					$ref->{line}     //= $train_line;
-					$ref->{no}       //= $train_no;
-					$ref->{messages} //= [ split( qr{[|]}, $raw_messages ) ];
-					$ref->{route}    //= [ split( qr{[|]}, $raw_route ) ];
-					$ref->{edited} |= $edited;
+					$ref->{ids}->[0]  = $entry->{action_log_id};
+					$ref->{from_name} = $entry->{name};
+					$ref->{completed} = 1;
+					$ref->{sched_departure}
+					  = epoch_to_dt( $entry->{sched_time_ts} );
+					$ref->{rt_departure}
+					  = epoch_to_dt( $entry->{real_time_ts} );
+					$ref->{checkin} = epoch_to_dt( $entry->{action_time_ts} );
+					$ref->{type} //= $entry->{train_type};
+					$ref->{line} //= $entry->{train_line};
+					$ref->{no}   //= $entry->{train_no};
+					$ref->{messages}
+					  //= [ split( qr{[|]}, $entry->{messages} ) ];
+					$ref->{route} //= [ split( qr{[|]}, $entry->{route} ) ];
+					$ref->{edited} |= $entry->{edited};
 
 					if ( $opt{verbose} ) {
 						my @parsed_messages;
@@ -1363,13 +1304,13 @@ sub startup {
 						  : -1;
 					}
 					if (    $opt{checkout_id}
-						and $action
+						and $entry->{action_id}
 						== $self->app->action_type->{cancelled_from} )
 					{
 						$ref->{cancelled} = 1;
 					}
 				}
-				$prev_action = $action;
+				$prev_action = $entry->{action_id};
 			}
 
 			if ( $opt{before} and $opt{after} ) {
@@ -1411,19 +1352,47 @@ sub startup {
 			my ( $self, $uid ) = @_;
 
 			$uid //= $self->current_user->{id};
-			$self->app->get_last_actions_query->execute($uid);
-			my $rows = $self->app->get_last_actions_query->fetchall_arrayref;
 
-			if ( @{$rows} ) {
+			my $selection = qq{
+			user_actions.id as action_log_id, action_id,
+			extract(epoch from action_time) as action_time_ts,
+			stations.ds100 as ds100, stations.name as name,
+			train_type, train_line, train_no, train_id,
+			extract(epoch from sched_time) as sched_time_ts,
+			extract(epoch from real_time) as real_time_ts,
+			route
+			};
+			$selection =~ tr{\n}{}d;
+
+			my $res = $self->pg->db->select(
+				[
+					'user_actions',
+					[
+						-left => 'stations',
+						id    => 'station_id'
+					]
+				],
+				$selection,
+				{
+					user_id => $uid,
+				},
+				{
+					order_by => {
+						-desc => 'action_time',
+					},
+					limit => 1,
+				}
+			);
+			my $status = $res->hash;
+
+			if ($status) {
 				my $now = DateTime->now( time_zone => 'Europe/Berlin' );
 
-				my @cols = @{ $rows->[0] };
-
-				my $action_ts            = epoch_to_dt( $cols[2] );
-				my $sched_ts             = epoch_to_dt( $cols[9] );
-				my $real_ts              = epoch_to_dt( $cols[10] );
-				my $checkin_station_name = $cols[4];
-				my @route                = split( qr{[|]}, $cols[11] // q{} );
+				my $action_ts = epoch_to_dt( $status->{action_time_ts} );
+				my $sched_ts  = epoch_to_dt( $status->{sched_time_ts} );
+				my $real_ts   = epoch_to_dt( $status->{real_time_ts} );
+				my $checkin_station_name = $status->{name};
+				my @route = split( qr{[|]}, $status->{route} // q{} );
 				my @route_after;
 				my $is_after = 0;
 				for my $station (@route) {
@@ -1436,21 +1405,25 @@ sub startup {
 					}
 				}
 				return {
-					checked_in =>
-					  ( $cols[1] == $self->app->action_type->{checkin} ),
-					cancelled =>
-					  ( $cols[1] == $self->app->action_type->{cancelled_from} ),
+					checked_in => (
+						$status->{action_id}
+						  == $self->app->action_type->{checkin}
+					),
+					cancelled => (
+						$status->{action_id}
+						  == $self->app->action_type->{cancelled_from}
+					),
 					timestamp       => $action_ts,
 					timestamp_delta => $now->epoch - $action_ts->epoch,
-					action_id       => $cols[0],
+					action_id       => $status->{action_log_id},
 					sched_ts        => $sched_ts,
 					real_ts         => $real_ts,
-					station_ds100   => $cols[3],
+					station_ds100   => $status->{ds100},
 					station_name    => $checkin_station_name,
-					train_type      => $cols[5],
-					train_line      => $cols[6],
-					train_no        => $cols[7],
-					train_id        => $cols[8],
+					train_type      => $status->{train_type},
+					train_line      => $status->{train_line},
+					train_no        => $status->{train_no},
+					train_id        => $status->{train_id},
 					route           => \@route,
 					route_after     => \@route_after,
 				};
