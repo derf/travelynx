@@ -12,8 +12,8 @@ require "$FindBin::Bin/../index.pl";
 
 my $t = Test::Mojo->new('Travelynx');
 
-if (not $t->app->config->{db}) {
-	plan(skip_all => 'No database configured');
+if ( not $t->app->config->{db} ) {
+	plan( skip_all => 'No database configured' );
 }
 
 $t->app->pg->db->query('drop schema if exists travelynx_test_02 cascade');
@@ -89,6 +89,32 @@ $t->post_ok(
 	}
 );
 $t->status_is(302)->header_is( location => '/' );
+
+# Request deletion
+
+$csrf_token = $t->ua->get('/account')->res->dom->at('input[name=csrf_token]')
+  ->attr('value');
+
+$t->post_ok(
+	'/delete' => form => {
+		action     => 'delete',
+		csrf_token => $csrf_token,
+		password   => 'foofoofoo',
+	}
+);
+$t->status_is(302)->header_is( location => '/account' );
+$t->get_ok('/account');
+$t->status_is(200)->content_like(qr{wird gelöscht});
+
+$t->post_ok(
+	'/delete' => form => {
+		action     => 'undelete',
+		csrf_token => $csrf_token,
+	}
+);
+$t->status_is(302)->header_is( location => '/account' );
+$t->get_ok('/account');
+$t->status_is(200)->content_unlike(qr{wird gelöscht});
 
 $t->app->pg->db->query('drop schema travelynx_test_02 cascade');
 done_testing();
