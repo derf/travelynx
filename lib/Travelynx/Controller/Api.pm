@@ -106,12 +106,27 @@ sub set_token {
 	}
 
 	if ( $self->param('action') eq 'delete' ) {
-		$self->app->drop_api_token_query->execute( $self->current_user->{id},
-			$token_id );
+		$self->pg->db->delete(
+			'tokens',
+			{
+				user_id => $self->current_user->{id},
+				type    => $token_id
+			}
+		);
 	}
 	else {
-		$self->app->set_api_token_query->execute( $self->current_user->{id},
-			$token_id, $token );
+		$self->pg->db->insert(
+			'tokens',
+			{
+				user_id => $self->current_user->{id},
+				type    => $token_id,
+				token   => $token
+			},
+			{
+				on_conflict => \
+				  '(user_id, type) do update set token = EXCLUDED.token'
+			},
+		);
 	}
 	$self->redirect_to('account');
 }

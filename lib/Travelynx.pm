@@ -164,59 +164,6 @@ sub startup {
 				$user, $pw, { AutoCommit => 1 } );
 		}
 	);
-	$self->attr(
-		get_api_tokens_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-			select
-				type, token
-			from tokens where user_id = ?
-		}
-			);
-		}
-	);
-	$self->attr(
-		get_api_token_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-			select
-				token
-			from tokens where user_id = ? and type = ?
-		}
-			);
-		}
-	);
-	$self->attr(
-		drop_api_token_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-			delete from tokens where user_id = ? and type = ?
-		}
-			);
-		}
-	);
-	$self->attr(
-		set_api_token_query => sub {
-			my ($self) = @_;
-
-			return $self->app->dbh->prepare(
-				qq{
-			insert into tokens
-				(user_id, type, token)
-			values
-				(?, ?, ?)
-			on conflict (user_id, type)
-			do update set token = EXCLUDED.token
-		}
-			);
-		}
-	);
 
 	$self->helper(
 		sendmail => sub {
@@ -649,11 +596,10 @@ sub startup {
 
 	$self->helper(
 		'update_journey_part' => sub {
-			my ( $self, $checkin_id, $checkout_id, $key, $value ) = @_;
+			my ( $self, $db, $checkin_id, $checkout_id, $key, $value ) = @_;
 			my $rows;
 
 			eval {
-				my $db = $self->pg->db;
 				if ( $key eq 'sched_departure' ) {
 					$rows = $db->update(
 						'user_actions',
@@ -844,13 +790,19 @@ sub startup {
 		'get_api_token' => sub {
 			my ( $self, $uid ) = @_;
 			$uid //= $self->current_user->{id};
-			$self->app->get_api_tokens_query->execute($uid);
-			my $rows  = $self->app->get_api_tokens_query->fetchall_arrayref;
+
 			my $token = {};
-			for my $row ( @{$rows} ) {
-				$token->{ $self->app->token_types->[ $row->[0] - 1 ] }
-				  = $row->[1];
+			my $res   = $self->pg->db->select(
+				'tokens',
+				[ 'type', 'token' ],
+				{ user_id => $uid }
+			);
+
+			for my $entry ( $res->hashes->each ) {
+				$token->{ $self->app->token_types->[ $entry->{type} - 1 ] }
+				  = $entry->{token};
 			}
+
 			return $token;
 		}
 	);
@@ -871,11 +823,17 @@ sub startup {
 
 	$self->helper(
 		'add_user' => sub {
-			my ( $self, $user_name, $email, $token, $password ) = @_;
+			my ( $self, $db, $user_name, $email, $token, $password ) = @_;
+
+          # This helper must be called during a transaction, as user creation
+          # may fail even after the database entry has been generated, e.g.  if
+          # the registration mail cannot be sent. We therefore use $db (the
+          # database handle performing the transaction) instead of $self->pg->db
+          # (which may be a new handle not belonging to the transaction).
 
 			my $now = DateTime->now( time_zone => 'Europe/Berlin' );
 
-			my $res = $self->pg->db->insert(
+			my $res = $db->insert(
 				'users',
 				{
 					name          => $user_name,
@@ -1130,6 +1088,11 @@ sub startup {
 
 			my $uid = $opt{uid} || $self->current_user->{id};
 
+			# If get_user_travels is called from inside a transaction, db
+			# specifies the database handle performing the transaction.
+			# Otherwise, we grab a fresh one.
+			my $db = $opt{db} // $self->pg->db;
+
 			my $selection = qq{
 			user_actions.id as action_log_id, action_id,
 			extract(epoch from action_time) as action_time_ts,
@@ -1152,7 +1115,7 @@ sub startup {
 			}
 
 			if ( $opt{checkout_id} ) {
-				$where{action_log_id} = { '<=', $opt{checkout_id} };
+				$where{'user_actions.id'} = { '<=', $opt{checkout_id} };
 				$order{limit} = 2;
 			}
 			elsif ( $opt{after} and $opt{before} ) {
@@ -1198,7 +1161,7 @@ sub startup {
 			my @travels;
 			my $prev_action = 0;
 
-			my $res = $self->pg->db->select(
+			my $res = $db->select(
 				[
 					'user_actions',
 					[

@@ -114,10 +114,11 @@ sub register {
 		return;
 	}
 
-	my $token   = make_token();
-	my $pw_hash = hash_password($password);
-	$self->app->dbh->begin_work;
-	my $user_id     = $self->add_user( $user, $email, $token, $pw_hash );
+	my $token       = make_token();
+	my $pw_hash     = hash_password($password);
+	my $db          = $self->pg->db;
+	my $tx          = $db->begin;
+	my $user_id     = $self->add_user( $db, $user, $email, $token, $pw_hash );
 	my $reg_url     = $self->url_for('reg')->to_abs->scheme('https');
 	my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
 
@@ -143,11 +144,10 @@ sub register {
 	my $success
 	  = $self->sendmail->custom( $email, 'Registrierung bei travelynx', $body );
 	if ($success) {
-		$self->app->dbh->commit;
+		$tx->commit;
 		$self->render( 'login', from => 'register' );
 	}
 	else {
-		$self->app->dbh->rollback;
 		$self->render( 'register', invalid => 'sendmail' );
 	}
 }

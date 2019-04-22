@@ -461,13 +461,15 @@ sub edit_journey {
 			time_zone => 'Europe/Berlin'
 		);
 
-		$self->app->dbh->begin_work;
+		my $db = $self->pg->db;
+		my $tx = $db->begin;
 
 		for my $key (qw(sched_departure rt_departure sched_arrival rt_arrival))
 		{
 			my $datetime = $parser->parse_datetime( $self->param($key) );
 			if ( $datetime and $datetime->epoch ne $journey->{$key}->epoch ) {
 				$error = $self->update_journey_part(
+					$db,
 					$journey->{ids}[0],
 					$journey->{ids}[1],
 					$key, $datetime
@@ -478,27 +480,21 @@ sub edit_journey {
 			}
 		}
 
-		if ($error) {
-			$self->app->dbh->rollback;
-		}
-		else {
+		if ( not $error ) {
 			$journey = $self->get_journey(
 				uid         => $uid,
+				db          => $db,
 				checkout_id => $checkout_id,
 				verbose     => 1
 			);
 			$error = $self->journey_sanity_check($journey);
-			if ($error) {
-				$self->app->dbh->rollback;
-			}
-			else {
-				$self->invalidate_stats_cache( $journey->{checkout} );
-				$self->app->dbh->commit;
-				$self->redirect_to("/journey/${uid}-${checkout_id}");
-				return;
-			}
 		}
-
+		if ( not $error ) {
+			$tx->commit;
+			$self->redirect_to("/journey/${uid}-${checkout_id}");
+			$self->invalidate_stats_cache( $journey->{checkout} );
+			return;
+		}
 	}
 
 	for my $key (qw(sched_departure rt_departure sched_arrival rt_arrival)) {
@@ -566,15 +562,12 @@ sub add_journey_form {
 			$opt{$key} = $self->param($key);
 		}
 
-		$self->app->dbh->begin_work;
+		#my ( $checkin_id, $checkout_id, $error ) = $self->add_journey(%opt);
 
-		my ( $checkin_id, $checkout_id, $error ) = $self->add_journey(%opt);
-
-		$self->app->dbh->rollback;
 		$self->render(
 			'add_journey',
 			with_autocomplete => 1,
-			error             => $error
+			error             => 'not implemented',
 		);
 		return;
 	}
