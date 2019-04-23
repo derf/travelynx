@@ -118,21 +118,6 @@ sub startup {
 	);
 
 	$self->attr(
-		action_type => sub {
-			return {
-				checkin        => 1,
-				checkout       => 2,
-				cancelled_from => 4,
-				cancelled_to   => 5,
-			};
-		}
-	);
-	$self->attr(
-		action_types => sub {
-			return [qw(checkin checkout undo cancelled_from cancelled_to)];
-		}
-	);
-	$self->attr(
 		token_type => sub {
 			return {
 				status  => 1,
@@ -274,7 +259,7 @@ sub startup {
 					'user_actions',
 					{
 						user_id    => $uid,
-						action_id  => $self->app->action_type->{checkin},
+						action_id  => 'checkin',
 						station_id => $self->get_station_id(
 							ds100 => $dep_station->[0],
 							name  => $dep_station->[1],
@@ -303,7 +288,7 @@ sub startup {
 					'user_actions',
 					{
 						user_id    => $uid,
-						action_id  => $self->app->action_type->{checkout},
+						action_id  => 'checkout',
 						station_id => $self->get_station_id(
 							ds100 => $arr_station->[0],
 							name  => $arr_station->[1],
