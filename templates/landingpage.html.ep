@@ -36,7 +36,7 @@
 						<p>
 							Abfahrt
 							% if ($dep_wait > 0) {
-								in <%= int(($status->{real_departure}->epoch - $now->epoch)/60) %> Minute<%= $dep_wait >= 2 ? 'n' : '' %>
+								in <%= int(($status->{real_departure}->epoch - $now->epoch)/60) %> Minute<%= $dep_wait == 1 ? '' : 'n' %>
 							% }
 							um <b><%= $status->{real_departure}->strftime('%H:%M') %></b>
 							% if ($status->{real_departure}->epoch != $status->{sched_departure}->epoch) {
