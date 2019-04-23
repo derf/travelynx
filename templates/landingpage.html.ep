@@ -14,12 +14,6 @@
 	<div class="row">
 		<div class="col s12">
 			% my $status = get_user_status();
-			% my $now = DateTime->now(time_zone => 'Europe/Berlin');
-			% my $dep_wait = ($status->{real_departure}->epoch - $now->epoch)/60;
-			% my $arr_wait = undef;
-			% if ($status->{real_arrival}->epoch) {
-				% $arr_wait = ($status->{real_arrival}->epoch - $now->epoch)/60;
-			% }
 			% if ($status->{checked_in}) {
 				<div class="card green darken-4">
 					<div class="card-content white-text">
@@ -34,30 +28,42 @@
 							% }
 						</p>
 						<p>
-							Abfahrt
-							% if ($dep_wait > 0) {
-								in <%= int(($status->{real_departure}->epoch - $now->epoch)/60) %> Minute<%= $dep_wait == 1 ? '' : 'n' %>
-							% }
-							um <b><%= $status->{real_departure}->strftime('%H:%M') %></b>
+							<b><%= $status->{real_departure}->strftime('%H:%M') %></b>
 							% if ($status->{real_departure}->epoch != $status->{sched_departure}->epoch) {
-								(+<%= int(($status->{real_departure}->epoch - $status->{sched_departure}->epoch)/60) %>)
+								(<%= sprintf('%+d', ($status->{real_departure}->epoch - $status->{sched_departure}->epoch)/60) %>)
 							% }
-						</p>
-						<p>
+							→
 							% if ($status->{real_arrival}->epoch) {
-								Voraussichtliche Ankunft um <b><%= $status->{real_arrival}->strftime('%H:%M') %></b>
+								<b><%= $status->{real_arrival}->strftime('%H:%M') %></b>
 								% if ($status->{real_arrival}->epoch != $status->{sched_arrival}->epoch) {
-									(+<%= int(($status->{real_arrival}->epoch - $status->{sched_arrival}->epoch)/60) %>)
+									(<%= sprintf('%+d', ($status->{real_arrival}->epoch - $status->{sched_arrival}->epoch)/60) %>)
 								% }
 							% }
 							% else {
-								Ankunft: noch nicht bekannt
+								unbekannt
 							% }
 						</p>
 						<p>
-							<b>Achtung:</b> Automatischer Checkout ist noch nicht
-							implementiert. Bitte spätestens eine Stunde nach Ankunft
-							am Ziel manuell auschecken.
+							<div class="center">
+								% if ($status->{departure_countdown} > 120) {
+									Abfahrt in <%= int($status->{departure_countdown} / 60) %> Minuten
+								% }
+								% elsif ($status->{arrival_countdown}) {
+									% if ($status->{arrival_countdown} > 0) {
+										Ankunft in <%= int($status->{arrival_countdown} / 60) %>
+										Minute<%= int($status->{arrival_countdown} / 60) == 1 ? '' : 'n' %>
+									% }
+									% else {
+										Ziel erreicht
+									% }
+								% }
+								% elsif ($status->{arr_name}) {
+									Ankunft in mehr als zwei Stunden
+								% }
+							</div>
+							<div class="progress green darken-3" style="height: 1ex;">
+								<div class="determinate white" style="width: <%= sprintf('%.2f', 100 * $status->{journey_completion}); %>%;"></div>
+							</div>
 						</p>
 						% if ($status->{arr_name}) {
 							<p>Zielstation ändern?</p>

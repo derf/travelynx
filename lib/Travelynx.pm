@@ -474,10 +474,10 @@ sub startup {
 	# called twice: once with the old and once with the new value.
 	$self->helper(
 		'invalidate_stats_cache' => sub {
-			my ( $self, $ts, $db ) = @_;
+			my ( $self, $ts, $db, $uid ) = @_;
 
-			my $uid = $self->current_user->{id};
-			$db //= $self->pg->db;
+			$uid //= $self->current_user->{id};
+			$db  //= $self->pg->db;
 
 			$self->pg->db->delete(
 				'journey_stats',
@@ -500,12 +500,12 @@ sub startup {
 
 	$self->helper(
 		'checkout' => sub {
-			my ( $self, $station, $force ) = @_;
+			my ( $self, $station, $force, $uid ) = @_;
 
-			my $db       = $self->pg->db;
-			my $uid      = $self->current_user->{id};
-			my $status   = $self->get_departures( $station, 120, 120 );
-			my $user     = $self->get_user_status;
+			my $db = $self->pg->db;
+			my $status = $self->get_departures( $station, 120, 120 );
+			$uid //= $self->current_user->{id};
+			my $user     = $self->get_user_status($uid);
 			my $train_id = $user->{train_id};
 
 			if ( not $user->{checked_in} and not $user->{cancelled} ) {
@@ -602,7 +602,7 @@ sub startup {
 							month => $+{month}
 						);
 					}
-					$self->invalidate_stats_cache( $cache_ts, $db );
+					$self->invalidate_stats_cache( $cache_ts, $db, $uid );
 				}
 
 				$tx->commit;
@@ -1268,7 +1268,7 @@ sub startup {
 				  // $in_transit->{checkin_ts};
 				my $action_time = epoch_to_dt($ts);
 
-				return {
+				my $ret = {
 					checked_in      => !$in_transit->{cancelled},
 					cancelled       => $in_transit->{cancelled},
 					timestamp       => $action_time,
@@ -1288,6 +1288,30 @@ sub startup {
 					arr_name      => $in_transit->{arr_name},
 					route_after   => \@route_after,
 				};
+
+				$ret->{departure_countdown}
+				  = $ret->{real_departure}->epoch - $now->epoch;
+				if ( $in_transit->{real_arr_ts} ) {
+					$ret->{arrival_countdown}
+					  = $ret->{real_arrival}->epoch - $now->epoch;
+					$ret->{journey_duration} = $ret->{real_arrival}->epoch
+					  - $ret->{real_departure}->epoch;
+					$ret->{journey_completion} = 1 - (
+						$ret->{arrival_countdown} / $ret->{journey_duration} );
+					if ( $ret->{journey_completion} > 1 ) {
+						$ret->{journey_completion} = 1;
+					}
+					elsif ( $ret->{journey_completion} < 0 ) {
+						$ret->{journey_completion} = 0;
+					}
+				}
+				else {
+					$ret->{arrival_countdown}  = undef;
+					$ret->{journey_duration}   = undef;
+					$ret->{journey_completion} = undef;
+				}
+
+				return $ret;
 			}
 
 			my $latest = $db->select(
