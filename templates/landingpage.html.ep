@@ -12,94 +12,10 @@
 		</div>
 	% }
 	<div class="row">
-		<div class="col s12">
+		<div class="col s12 statuscol">
 			% my $status = get_user_status();
 			% if ($status->{checked_in}) {
-				<div class="card green darken-4">
-					<div class="card-content white-text">
-						<span class="card-title">Eingecheckt</span>
-						<p>
-							In <b><%= $status->{train_type} %> <%= $status->{train_no} %></b>
-							% if ($status->{arr_name}) {
-								von <b><%= $status->{dep_name} %></b> nach <b><%= $status->{arr_name} %></b>.
-							% }
-							% else {
-								ab <b><%= $status->{dep_name} %></b>.
-							% }
-						</p>
-						<p>
-							<b><%= $status->{real_departure}->strftime('%H:%M') %></b>
-							% if ($status->{real_departure}->epoch != $status->{sched_departure}->epoch) {
-								(<%= sprintf('%+d', ($status->{real_departure}->epoch - $status->{sched_departure}->epoch)/60) %>)
-							% }
-							→
-							% if ($status->{real_arrival}->epoch) {
-								<b><%= $status->{real_arrival}->strftime('%H:%M') %></b>
-								% if ($status->{real_arrival}->epoch != $status->{sched_arrival}->epoch) {
-									(<%= sprintf('%+d', ($status->{real_arrival}->epoch - $status->{sched_arrival}->epoch)/60) %>)
-								% }
-							% }
-							% else {
-								unbekannt
-							% }
-						</p>
-						<p>
-							<div class="center">
-								% if ($status->{departure_countdown} > 120) {
-									Abfahrt in <%= int($status->{departure_countdown} / 60) %> Minuten
-								% }
-								% elsif ($status->{arrival_countdown}) {
-									% if ($status->{arrival_countdown} > 0) {
-										Ankunft in <%= int($status->{arrival_countdown} / 60) %>
-										Minute<%= int($status->{arrival_countdown} / 60) == 1 ? '' : 'n' %>
-									% }
-									% else {
-										Ziel erreicht
-									% }
-								% }
-								% elsif ($status->{arr_name}) {
-									Ankunft in mehr als zwei Stunden
-								% }
-							</div>
-							<div class="progress green darken-3" style="height: 1ex;">
-								<div class="determinate white" style="width: <%= sprintf('%.2f', 100 * $status->{journey_completion}); %>%;"></div>
-							</div>
-						</p>
-						% if ($status->{arr_name}) {
-							<p>Zielstation ändern?</p>
-						% }
-						% else {
-							<p>Zielstation wählen:</p>
-						% }
-						<table>
-							<tbody>
-								% my $is_after = 0;
-								% for my $station (@{$status->{route_after}}) {
-									% if ($status->{arr_name} and $station eq $status->{arr_name}) {
-										<tr><td><b><a class="action-checkout" data-station="<%= $station %>"><%= $station %></a></b></td></tr>
-									% }
-									% else {
-										<tr><td><a class="action-checkout" data-station="<%= $station %>"><%= $station %></a></td></tr>
-									% }
-								% }
-							</tbody>
-						</table>
-						% if ($status->{arr_name}) {
-							<p>
-								Falls das Backend ausgefallen ist oder der Zug aus anderen
-								Gründen verloren ging: <a class="action-checkout"
-								data-force="1" data-station="<%= $status->{arr_name}
-								%>">Ohne Echtzeitdaten in <%= $status->{arr_name} %>
-								auschecken</a>.
-							</p>
-						% }
-					</div>
-					<div class="card-action">
-						<a class="action-undo" data-id="in_transit">
-							<i class="material-icons">undo</i> Checkin Rückgängig?
-						</a>
-					</div>
-				</div>
+				%= include '_checked_in', status => $status;
 			% }
 			% elsif ($status->{cancelled}) {
 				<div class="card yellow lighten-4">

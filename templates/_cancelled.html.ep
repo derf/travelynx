@@ -1,0 +1,27 @@
+<div class="card yellow lighten-4">
+	<div class="card-content">
+		<span class="card-title">Zugausfall dokumentieren</span>
+		<p>Prinzipiell wärest du nun eingecheckt in
+			<%= $status->{train_type} %> <%= $status->{train_no} %>
+			ab <%= $status->{station_name} %>, doch dieser Zug fällt aus.
+			</p>
+		<p>Falls du den Zugausfall z.B. für ein Fahrgastrechteformular
+			dokumentieren möchtest, wähle bitte jetzt deine geplante
+			Zielstation aus. Achtung: Momentan wird dabei keine
+			Soll-Ankunftszeit gespeichert, das zu beheben steht auf
+			der Todoliste.</p>
+		<table>
+			<tbody>
+				% my $is_after = 0;
+				% for my $station (@{$status->{route_after}}) {
+					<tr><td><a class="action-cancelled-to" data-station="<%= $station %>"><%= $station %></a></td></tr>
+				% }
+			</tbody>
+		</table>
+	</div>
+	<div class="card-action">
+		<a class="action-undo" data-id="in_transit">
+			<i class="material-icons">undo</i> Checkinversuch Rückgängig?
+		</a>
+	</div>
+</div>

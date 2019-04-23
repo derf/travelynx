@@ -17,7 +17,16 @@ function tvly_run(link, req, err_callback) {
 		}
 	});
 }
-$(document).ready(function() {
+function tvly_update() {
+	$.get('/ajax/status_card.html', function(data) {
+		$('.statuscol').html(data);
+		tvly_reg_handlers();
+		setTimeout(tvly_update, 15000);
+	}).fail(function() {
+		setTimeout(tvly_update, 15000);
+	});
+}
+function tvly_reg_handlers() {
 	$('.action-checkin').click(function() {
 		var link = $(this);
 		var req = {
@@ -78,4 +87,10 @@ $(document).ready(function() {
 			tvly_run(link, req);
 		}
 	});
+}
+$(document).ready(function() {
+	tvly_reg_handlers();
+	if ($('.statuscol .autorefresh').length) {
+		setTimeout(tvly_update, 15000);
+	}
 });

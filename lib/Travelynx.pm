@@ -1505,6 +1505,7 @@ sub startup {
 	);
 
 	$authed_r->get('/account')->to('account#account');
+	$authed_r->get('/ajax/status_card.html')->to('traveling#status_card');
 	$authed_r->get('/cancelled')->to('traveling#cancelled');
 	$authed_r->get('/change_password')->to('account#password_form');
 	$authed_r->get('/export.json')->to('account#json_export');

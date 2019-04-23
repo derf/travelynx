@@ -19,6 +19,20 @@ sub homepage {
 	}
 }
 
+sub status_card {
+	my ($self) = @_;
+	my $status = $self->get_user_status;
+
+	delete $self->stash->{layout};
+
+	if ( $status->{checked_in} ) {
+		$self->render( '_checked_in', status => $status );
+	}
+	else {
+		$self->render( '_checked_out', status => $status );
+	}
+}
+
 sub geolocation {
 	my ($self) = @_;
 
