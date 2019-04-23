@@ -45,7 +45,7 @@
 				% }
 			</div>
 			<div class="progress green darken-3" style="height: 1ex;">
-				<div class="determinate white" style="width: <%= sprintf('%.2f', 100 * $status->{journey_completion}); %>%;"></div>
+				<div class="determinate white" style="width: <%= sprintf('%.2f', 100 * ($status->{journey_completion} // 0)); %>%;"></div>
 			</div>
 		</p>
 		% if ($status->{arr_name}) {
