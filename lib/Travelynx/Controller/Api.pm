@@ -48,10 +48,10 @@ sub get_v0 {
 		my $station_lon = undef;
 		my $station_lat = undef;
 
-		if ( $status->{station_ds100} ) {
+		if ( $status->{arr_ds100} // $status->{dep_ds100} ) {
 			@station_descriptions
 			  = Travel::Status::DE::IRIS::Stations::get_station(
-				$status->{station_ds100} );
+				$status->{arr_ds100} // $status->{dep_ds100} );
 		}
 		if ( @station_descriptions == 1 ) {
 			( undef, undef, $station_eva, $station_lon, $station_lat )
@@ -59,14 +59,14 @@ sub get_v0 {
 		}
 		$self->render(
 			json => {
-				deprecated => \0,
+				deprecated => \1,
 				checked_in => (
 					     $status->{checked_in}
 					  or $status->{cancelled}
 				) ? \1 : \0,
 				station => {
-					ds100     => $status->{station_ds100},
-					name      => $status->{station_name},
+					ds100     => $status->{arr_ds100} // $status->{dep_ds100},
+					name      => $status->{arr_ds100} // $status->{dep_ds100},
 					uic       => $station_eva,
 					longitude => $station_lon,
 					latitude  => $station_lat,
@@ -77,8 +77,10 @@ sub get_v0 {
 					no   => $status->{train_no},
 				},
 				actionTime    => $status->{timestamp}->epoch,
-				scheduledTime => $status->{sched_ts}->epoch,
-				realTime      => $status->{real_ts}->epoch,
+				scheduledTime => $status->{sched_arrival}->epoch
+				  || $status->{sched_departure}->epoch,
+				realTime => $status->{real_arrival}->epoch
+				  || $status->{real_departure}->epoch,
 			},
 		);
 	}

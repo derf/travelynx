@@ -6,7 +6,8 @@ my $travelynx_version = qx{git describe --dirty} || 'experimental';
 sub about {
 	my ($self) = @_;
 
-	$self->render( 'about', version => $self->app->config->{version} // 'UNKNOWN' );
+	$self->render( 'about',
+		version => $self->app->config->{version} // 'UNKNOWN' );
 }
 
 sub imprint {

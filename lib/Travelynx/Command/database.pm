@@ -12,9 +12,11 @@ sub get_schema_version {
 	my $version;
 
 	eval {
-		$version = $db->select( 'schema_version', ['version'] )->hash->{version};
+		$version
+		  = $db->select( 'schema_version', ['version'] )->hash->{version};
 	};
 	if ($@) {
+
 		# If it failed, the version table does not exist -> run setup first.
 		return undef;
 	}
@@ -123,6 +125,210 @@ my @migrations = (
 				update schema_version set version = 3;
 			}
 		);
+	},
+
+	# v3 -> v4
+	# Introduces "journeys", containing one row for each complete
+	# journey, and "in_transit", containing the journey which is currently
+	# in progress (if any). "user_actions" is no longer used, but still kept
+	# as a backup for now.
+	sub {
+		my ($db) = @_;
+
+		$db->query(
+			qq{
+				create table journeys (
+					id serial not null primary key,
+					user_id integer not null references users (id),
+					train_type varchar(16) not null,
+					train_line varchar(16),
+					train_no varchar(16) not null,
+					train_id varchar(128) not null,
+					checkin_station_id integer not null references stations (id),
+					checkin_time timestamptz not null,
+					sched_departure timestamptz not null,
+					real_departure timestamptz not null,
+					checkout_station_id integer not null references stations (id),
+					checkout_time timestamptz not null,
+					sched_arrival timestamptz,
+					real_arrival timestamptz,
+					cancelled boolean not null,
+					edited smallint not null,
+					route text,
+					messages text
+				);
+				create table in_transit (
+					user_id integer not null references users (id) primary key,
+					train_type varchar(16) not null,
+					train_line varchar(16),
+					train_no varchar(16) not null,
+					train_id varchar(128) not null,
+					checkin_station_id integer not null references stations (id),
+					checkin_time timestamptz not null,
+					sched_departure timestamptz not null,
+					real_departure timestamptz not null,
+					checkout_station_id int references stations (id),
+					checkout_time timestamptz,
+					sched_arrival timestamptz,
+					real_arrival timestamptz,
+					cancelled boolean not null,
+					route text,
+					messages text
+				);
+				create view journeys_str as select
+					journeys.id as journey_id, user_id,
+					train_type, train_line, train_no, train_id,
+					extract(epoch from checkin_time) as checkin_ts,
+					extract(epoch from sched_departure) as sched_dep_ts,
+					extract(epoch from real_departure) as real_dep_ts,
+					dep_stations.ds100 as dep_ds100,
+					dep_stations.name as dep_name,
+					extract(epoch from checkout_time) as checkout_ts,
+					extract(epoch from sched_arrival) as sched_arr_ts,
+					extract(epoch from real_arrival) as real_arr_ts,
+					arr_stations.ds100 as arr_ds100,
+					arr_stations.name as arr_name,
+					cancelled, edited, route, messages
+					from journeys
+					join stations as dep_stations on dep_stations.id = checkin_station_id
+					join stations as arr_stations on arr_stations.id = checkout_station_id
+					;
+				create view in_transit_str as select
+					user_id,
+					train_type, train_line, train_no, train_id,
+					extract(epoch from checkin_time) as checkin_ts,
+					extract(epoch from sched_departure) as sched_dep_ts,
+					extract(epoch from real_departure) as real_dep_ts,
+					dep_stations.ds100 as dep_ds100,
+					dep_stations.name as dep_name,
+					extract(epoch from checkout_time) as checkout_ts,
+					extract(epoch from sched_arrival) as sched_arr_ts,
+					extract(epoch from real_arrival) as real_arr_ts,
+					arr_stations.ds100 as arr_ds100,
+					arr_stations.name as arr_name,
+					cancelled, route, messages
+					from in_transit
+					join stations as dep_stations on dep_stations.id = checkin_station_id
+					left join stations as arr_stations on arr_stations.id = checkout_station_id
+					;
+			}
+		);
+
+		my @uids
+		  = $db->select( 'users', ['id'] )->hashes->map( sub { shift->{id} } )
+		  ->each;
+		my $count = 0;
+
+		for my $uid (@uids) {
+			my %cache;
+			my $prev_action_type = 0;
+			my $actions          = $db->select(
+				'user_actions', '*',
+				{ user_id  => $uid },
+				{ order_by => { -asc => 'id' } }
+			);
+			for my $action ( $actions->hashes->each ) {
+				my $action_type = $action->{action_id};
+				my $id          = $action->{id};
+
+				if ( $action_type == 2 and $prev_action_type != 1 ) {
+					die(
+"Inconsistent data at uid ${uid} action ${id}: Illegal transition $prev_action_type -> $action_type.\n"
+					);
+				}
+
+				if ( $action_type == 5 and $prev_action_type != 4 ) {
+					die(
+"Inconsistent data at uid ${uid} action ${id}: Illegal transition $prev_action_type -> $action_type.\n"
+					);
+				}
+
+				if ( $action_type == 1 or $action_type == 4 ) {
+					%cache = (
+						train_type         => $action->{train_type},
+						train_line         => $action->{train_line},
+						train_no           => $action->{train_no},
+						train_id           => $action->{train_id},
+						checkin_station_id => $action->{station_id},
+						checkin_time       => $action->{action_time},
+						sched_departure    => $action->{sched_time},
+						real_departure     => $action->{real_time},
+						route              => $action->{route},
+						messages           => $action->{messages},
+						cancelled          => $action->{action_id} == 4 ? 1 : 0,
+						edited             => $action->{edited},
+					);
+				}
+				elsif ( $action_type == 2 or $action_type == 5 ) {
+					$cache{checkout_station_id} = $action->{station_id};
+					$cache{checkout_time}       = $action->{action_time};
+					$cache{sched_arrival}       = $action->{sched_time};
+					$cache{real_arrival}        = $action->{real_time};
+					$cache{edited} |= $action->{edited} << 8;
+					if ( $action->{route} ) {
+						$cache{route} = $action->{route};
+					}
+					if ( $action->{messages} ) {
+						$cache{messages} = $action->{messages};
+					}
+
+					$db->insert(
+						'journeys',
+						{
+							user_id             => $uid,
+							train_type          => $cache{train_type},
+							train_line          => $cache{train_line},
+							train_no            => $cache{train_no},
+							train_id            => $cache{train_id},
+							checkin_station_id  => $cache{checkin_station_id},
+							checkin_time        => $cache{checkin_time},
+							sched_departure     => $cache{sched_departure},
+							real_departure      => $cache{real_departure},
+							checkout_station_id => $cache{checkout_station_id},
+							checkout_time       => $cache{checkout_time},
+							sched_arrival       => $cache{sched_arrival},
+							real_arrival        => $cache{real_arrival},
+							cancelled           => $cache{cancelled},
+							edited              => $cache{edited},
+							route               => $cache{route},
+							messages            => $cache{messages}
+						}
+					);
+
+					%cache = ();
+
+				}
+
+				$prev_action_type = $action_type;
+			}
+
+			if (%cache) {
+
+				# user is currently in transit
+				$db->insert(
+					'in_transit',
+					{
+						user_id            => $uid,
+						train_type         => $cache{train_type},
+						train_line         => $cache{train_line},
+						train_no           => $cache{train_no},
+						train_id           => $cache{train_id},
+						checkin_station_id => $cache{checkin_station_id},
+						checkin_time       => $cache{checkin_time},
+						sched_departure    => $cache{sched_departure},
+						real_departure     => $cache{real_departure},
+						cancelled          => $cache{cancelled},
+						route              => $cache{route},
+						messages           => $cache{messages}
+					}
+				);
+			}
+
+			$count++;
+			printf( "    journey storage migration: %3.0f%% complete\n",
+				$count * 100 / @uids );
+		}
+		$db->update( 'schema_version', { version => 4 } );
 	},
 );
 

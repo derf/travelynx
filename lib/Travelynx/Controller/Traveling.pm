@@ -97,13 +97,16 @@ sub log_action {
 		else {
 			$self->render(
 				json => {
-					success => 1,
+					success     => 1,
+					redirect_to => '/',
 				},
 			);
 		}
 	}
 	elsif ( $params->{action} eq 'checkout' ) {
-		my $error = $self->checkout( $params->{station}, $params->{force} );
+		my ( $still_checked_in, $error )
+		  = $self->checkout( $params->{station}, $params->{force} );
+		my $station_link = '/s/' . $params->{station};
 
 		if ($error) {
 			$self->render(
@@ -116,7 +119,8 @@ sub log_action {
 		else {
 			$self->render(
 				json => {
-					success => 1,
+					success     => 1,
+					redirect_to => $still_checked_in ? '/' : $station_link,
 				},
 			);
 		}
@@ -134,7 +138,8 @@ sub log_action {
 		else {
 			$self->render(
 				json => {
-					success => 1,
+					success     => 1,
+					redirect_to => '/',
 				},
 			);
 		}
@@ -155,13 +160,15 @@ sub log_action {
 		else {
 			$self->render(
 				json => {
-					success => 1,
+					success     => 1,
+					redirect_to => '/',
 				},
 			);
 		}
 	}
 	elsif ( $params->{action} eq 'cancelled_to' ) {
-		my $error = $self->checkout( $params->{station}, 1,
+		my ( undef, $error )
+		  = $self->checkout( $params->{station}, 1,
 			$self->app->action_type->{cancelled_to} );
 
 		if ($error) {
@@ -175,14 +182,14 @@ sub log_action {
 		else {
 			$self->render(
 				json => {
-					success => 1,
+					success     => 1,
+					redirect_to => '/',
 				},
 			);
 		}
 	}
 	elsif ( $params->{action} eq 'delete' ) {
-		my ( $from, $to ) = split( qr{,}, $params->{ids} );
-		my $error = $self->delete_journey( $from, $to, $params->{checkin},
+		my $error = $self->delete_journey( $params->{id}, $params->{checkin},
 			$params->{checkout} );
 		if ($error) {
 			$self->render(
@@ -195,7 +202,8 @@ sub log_action {
 		else {
 			$self->render(
 				json => {
-					success => 1,
+					success     => 1,
+					redirect_to => '/history',
 				},
 			);
 		}
@@ -215,7 +223,7 @@ sub station {
 	my $station = $self->stash('station');
 	my $train   = $self->param('train');
 
-	my $status = $self->get_departures($station);
+	my $status = $self->get_departures( $station, 120, 30 );
 
 	if ( $status->{errstr} ) {
 		$self->render(
@@ -382,11 +390,13 @@ sub monthly_history {
 
 sub journey_details {
 	my ($self) = @_;
-	my ( $uid, $checkout_id ) = split( qr{-}, $self->stash('id') );
+	my $journey_id = $self->stash('id');
 
-	$self->param( journey_id => $checkout_id );
+	my $uid = $self->current_user->{id};
 
-	if ( not( $uid == $self->current_user->{id} and $checkout_id ) ) {
+	$self->param( journey_id => $journey_id );
+
+	if ( not($journey_id) ) {
 		$self->render(
 			'journey',
 			error   => 'notfound',
@@ -395,36 +405,35 @@ sub journey_details {
 		return;
 	}
 
-	my @journeys = $self->get_user_travels(
-		uid         => $uid,
-		checkout_id => $checkout_id,
-		verbose     => 1,
+	my $journey = $self->get_journey(
+		uid        => $uid,
+		journey_id => $journey_id,
+		verbose    => 1,
 	);
-	if (   @journeys == 0
-		or not $journeys[0]{completed}
-		or $journeys[0]{ids}[1] != $checkout_id )
-	{
+
+	if ($journey) {
+		$self->render(
+			'journey',
+			error   => undef,
+			journey => $journey,
+		);
+	}
+	else {
 		$self->render(
 			'journey',
 			error   => 'notfound',
 			journey => {}
 		);
-		return;
 	}
 
-	$self->render(
-		'journey',
-		error   => undef,
-		journey => $journeys[0]
-	);
 }
 
 sub edit_journey {
-	my ($self)      = @_;
-	my $checkout_id = $self->param('journey_id');
-	my $uid         = $self->current_user->{id};
+	my ($self)     = @_;
+	my $journey_id = $self->param('journey_id');
+	my $uid        = $self->current_user->{id};
 
-	if ( not( $uid == $self->current_user->{id} and $checkout_id ) ) {
+	if ( not( $journey_id =~ m{ ^ \d+ $ }x ) ) {
 		$self->render(
 			'edit_journey',
 			error   => 'notfound',
@@ -434,8 +443,8 @@ sub edit_journey {
 	}
 
 	my $journey = $self->get_journey(
-		uid         => $uid,
-		checkout_id => $checkout_id
+		uid        => $uid,
+		journey_id => $journey_id
 	);
 
 	if ( not $journey ) {
@@ -448,11 +457,6 @@ sub edit_journey {
 	}
 
 	my $error = undef;
-
-	if ( $self->param('action') and $self->param('action') eq 'cancel' ) {
-		$self->redirect_to("/journey/${uid}-${checkout_id}");
-		return;
-	}
 
 	if ( $self->param('action') and $self->param('action') eq 'save' ) {
 		my $parser = DateTime::Format::Strptime->new(
@@ -468,12 +472,8 @@ sub edit_journey {
 		{
 			my $datetime = $parser->parse_datetime( $self->param($key) );
 			if ( $datetime and $datetime->epoch ne $journey->{$key}->epoch ) {
-				$error = $self->update_journey_part(
-					$db,
-					$journey->{ids}[0],
-					$journey->{ids}[1],
-					$key, $datetime
-				);
+				$error = $self->update_journey_part( $db, $journey->{id},
+					$key, $datetime );
 				if ($error) {
 					last;
 				}
@@ -482,17 +482,16 @@ sub edit_journey {
 
 		if ( not $error ) {
 			$journey = $self->get_journey(
-				uid         => $uid,
-				db          => $db,
-				checkout_id => $checkout_id,
-				verbose     => 1
+				uid        => $uid,
+				db         => $db,
+				journey_id => $journey_id,
+				verbose    => 1
 			);
 			$error = $self->journey_sanity_check($journey);
 		}
 		if ( not $error ) {
 			$tx->commit;
-			$self->redirect_to("/journey/${uid}-${checkout_id}");
-			$self->invalidate_stats_cache( $journey->{checkout} );
+			$self->redirect_to("/journey/${journey_id}");
 			return;
 		}
 	}

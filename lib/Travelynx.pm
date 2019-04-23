@@ -191,9 +191,10 @@ sub startup {
 
 	$self->helper(
 		'get_departures' => sub {
-			my ( $self, $station, $lookbehind ) = @_;
+			my ( $self, $station, $lookbehind, $lookahead ) = @_;
 
 			$lookbehind //= 180;
+			$lookahead  //= 30;
 
 			my @station_matches
 			  = Travel::Status::DE::IRIS::Stations::get_station($station);
@@ -207,7 +208,7 @@ sub startup {
 					lookbehind     => 20,
 					datetime => DateTime->now( time_zone => 'Europe/Berlin' )
 					  ->subtract( minutes => $lookbehind ),
-					lookahead => $lookbehind + 10,
+					lookahead => $lookbehind + $lookahead,
 				);
 				return {
 					results       => [ $status->results ],
@@ -240,6 +241,10 @@ sub startup {
 	$self->helper(
 		'add_journey' => sub {
 			my ( $self, %opt ) = @_;
+
+			$self->app->log->error(
+				"add_journey is not implemented at the moment");
+			return ( undef, undef, 'not implemented' );
 
 			my $user_status = $self->get_user_status;
 			if ( $user_status->{checked_in} or $user_status->{cancelled} ) {
@@ -326,11 +331,9 @@ sub startup {
 
 	$self->helper(
 		'checkin' => sub {
-			my ( $self, $station, $train_id, $action_id ) = @_;
+			my ( $self, $station, $train_id ) = @_;
 
-			$action_id //= $self->app->action_type->{checkin};
-
-			my $status = $self->get_departures($station);
+			my $status = $self->get_departures( $station, 140, 30 );
 			if ( $status->{errstr} ) {
 				return ( undef, $status->{errstr} );
 			}
@@ -343,40 +346,35 @@ sub startup {
 				else {
 
 					my $user = $self->get_user_status;
-					if ( $user->{checked_in} ) {
+					if ( $user->{checked_in} or $user->{cancelled} ) {
 
                 # If a user is already checked in, we assume that they forgot to
                 # check out and do it for them.
 						$self->checkout( $station, 1 );
 					}
-					elsif ( $user->{cancelled} ) {
-
-						# Same
-						$self->checkout( $station, 1,
-							$self->app->action_type->{cancelled_to} );
-					}
 
 					eval {
 						$self->pg->db->insert(
-							'user_actions',
+							'in_transit',
 							{
-								user_id    => $self->current_user->{id},
-								action_id  => $action_id,
-								station_id => $self->get_station_id(
+								user_id   => $self->current_user->{id},
+								cancelled => $train->departure_is_cancelled
+								? 1
+								: 0,
+								checkin_station_id => $self->get_station_id(
 									ds100 => $status->{station_ds100},
 									name  => $status->{station_name}
 								),
-								action_time =>
+								checkin_time =>
 								  DateTime->now( time_zone => 'Europe/Berlin' ),
-								edited     => 0,
-								train_type => $train->type,
-								train_line => $train->line_no,
-								train_no   => $train->train_no,
-								train_id   => $train->train_id,
-								sched_time => $train->sched_departure,
-								real_time  => $train->departure,
-								route      => join( '|', $train->route ),
-								messages   => join(
+								train_type      => $train->type,
+								train_line      => $train->line_no,
+								train_no        => $train->train_no,
+								train_id        => $train->train_id,
+								sched_departure => $train->sched_departure,
+								real_departure  => $train->departure,
+								route           => join( '|', $train->route ),
+								messages        => join(
 									'|',
 									map {
 										( $_->[0] ? $_->[0]->epoch : q{} ) . ':'
@@ -389,7 +387,7 @@ sub startup {
 					if ($@) {
 						my $uid = $self->current_user->{id};
 						$self->app->log->error(
-							"Checkin($uid, $action_id): INSERT failed: $@");
+							"Checkin($uid): INSERT failed: $@");
 						return ( undef, 'INSERT failed: ' . $@ );
 					}
 					return ( $train, undef );
@@ -400,43 +398,86 @@ sub startup {
 
 	$self->helper(
 		'undo' => sub {
-			my ( $self, $action_id ) = @_;
+			my ( $self, $journey_id ) = @_;
+			my $uid = $self->current_user->{id};
 
-			my $status = $self->get_user_status;
-
-			if ( $action_id < 1 or $status->{action_id} != $action_id ) {
-				return
-"Invalid action ID: $action_id != $status->{action_id}. Note that you can only undo your latest action.";
+			if ( $journey_id eq 'in_transit' ) {
+				eval {
+					$self->pg->db->delete( 'in_transit', { user_id => $uid } );
+				};
+				if ($@) {
+					$self->app->log->error("Undo($uid, $journey_id): $@");
+					return "Undo($journey_id): $@";
+				}
+				return undef;
+			}
+			if ( $journey_id !~ m{ ^ \d+ $ }x ) {
+				return 'Invalid Journey ID';
 			}
 
 			eval {
-				$self->pg->db->delete( 'user_actions', { id => $action_id } );
+				my $db = $self->pg->db;
+				my $tx = $db->begin;
+
+				my $journey = $db->select(
+					'journeys',
+					'*',
+					{
+						user_id => $uid,
+						id      => $journey_id
+					}
+				)->hash;
+				$db->delete(
+					'journeys',
+					{
+						user_id => $uid,
+						id      => $journey_id
+					}
+				);
+
+				if ( $journey->{edited} ) {
+					die(
+"Cannot undo a journey which has already been edited. Please delete manually.\n"
+					);
+				}
+
+				delete $journey->{edited};
+				delete $journey->{id};
+
+				$db->insert( 'in_transit', $journey );
+
+				my $cache_ts = DateTime->now( time_zone => 'Europe/Berlin' );
+				if ( $journey->{real_departure}
+					=~ m{ ^ (?<year> \d{4} ) - (?<month> \d{2} ) }x )
+				{
+					$cache_ts->set(
+						year  => $+{year},
+						month => $+{month}
+					);
+				}
+
+				$self->invalidate_stats_cache( $cache_ts, $db );
+
+				$tx->commit;
 			};
 			if ($@) {
-				my $uid = $self->current_user->{id};
-				$self->app->log->error(
-					"Undo($uid, $action_id): DELETE failed: $@");
-				return 'DELETE failed: ' . $@;
+				$self->app->log->error("Undo($uid, $journey_id): $@");
+				return "Undo($journey_id): $@";
 			}
-			return;
+			return undef;
 		}
 	);
 
+	# Statistics are partitioned by real_departure, which must be provided
+	# when calling this function e.g. after journey deletion or editing.
+	# If a joureny's real_departure has been edited, this function must be
+	# called twice: once with the old and once with the new value.
 	$self->helper(
 		'invalidate_stats_cache' => sub {
-			my ( $self, $ts ) = @_;
+			my ( $self, $ts, $db ) = @_;
 
 			my $uid = $self->current_user->{id};
-			$ts //= DateTime->now( time_zone => 'Europe/Berlin' );
-
-			# ts is the checkout timestamp or (for manual entries) the
-			# time of arrival. As the journey may span a month or year boundary,
-			# there is a total of five cache entries we need to invalidate:
-			# * year, month
-			# * year
-			# * (year, month) - 1 month   (with wraparound)
-			# * (year) - 1 year
-			# * total stats
+			$db //= $self->pg->db;
 
 			$self->pg->db->delete(
 				'journey_stats',
@@ -451,32 +492,6 @@ sub startup {
 				{
 					user_id => $uid,
 					year    => $ts->year,
-					month   => 0,
-				}
-			);
-			$ts->subtract( months => 1 );
-			$self->pg->db->delete(
-				'journey_stats',
-				{
-					user_id => $uid,
-					year    => $ts->year,
-					month   => $ts->month,
-				}
-			);
-			$ts->subtract( months => 11 );
-			$self->pg->db->delete(
-				'journey_stats',
-				{
-					user_id => $uid,
-					year    => $ts->year,
-					month   => 0,
-				}
-			);
-			$self->pg->db->delete(
-				'journey_stats',
-				{
-					user_id => $uid,
-					year    => 0,
 					month   => 0,
 				}
 			);
@@ -485,165 +500,202 @@ sub startup {
 
 	$self->helper(
 		'checkout' => sub {
-			my ( $self, $station, $force, $action_id ) = @_;
+			my ( $self, $station, $force ) = @_;
 
-			$action_id //= $self->app->action_type->{checkout};
-
-			my $status   = $self->get_departures( $station, 180 );
+			my $db       = $self->pg->db;
+			my $uid      = $self->current_user->{id};
+			my $status   = $self->get_departures( $station, 120, 120 );
 			my $user     = $self->get_user_status;
 			my $train_id = $user->{train_id};
 
 			if ( not $user->{checked_in} and not $user->{cancelled} ) {
-				return 'You are not checked into any train';
+				return ( 0, 'You are not checked into any train' );
 			}
 			if ( $status->{errstr} and not $force ) {
-				return $status->{errstr};
+				return ( 1, $status->{errstr} );
 			}
 
 			my $now = DateTime->now( time_zone => 'Europe/Berlin' );
+			my $journey
+			  = $db->select( 'in_transit', '*', { user_id => $uid } )->hash;
 			my ($train)
 			  = first { $_->train_id eq $train_id } @{ $status->{results} };
-			if ( not defined $train ) {
-				if ($force) {
-					eval {
-						$self->pg->db->insert(
-							'user_actions',
-							{
-								user_id    => $self->current_user->{id},
-								action_id  => $action_id,
-								station_id => $self->get_station_id(
-									ds100 => $status->{station_ds100},
-									name  => $status->{station_name}
-								),
-								action_time => $now,
-								edited      => 0
-							}
-						);
-					};
-					if ($@) {
-						my $uid = $self->current_user->{id};
-						$self->app->log->error(
-"Force checkout($uid, $action_id): INSERT failed: $@"
-						);
-						return 'INSERT failed: ' . $@;
-					}
-					$self->invalidate_stats_cache;
-					return;
-				}
-				else {
-					return "Train ${train_id} not found";
-				}
+
+			# Store the intended checkout station regardless of this operation's
+			# success.
+			my $new_checkout_station_id = $self->get_station_id(
+				ds100 => $status->{station_ds100},
+				name  => $status->{station_name}
+			);
+			$db->update(
+				'in_transit',
+				{
+					checkout_station_id => $new_checkout_station_id,
+				},
+				{ user_id => $uid }
+			);
+
+			# If in_transit already contains arrival data for another estimated
+			# destination, we must invalidate it.
+			if ( defined $journey->{checkout_station_id}
+				and $journey->{checkout_station_id}
+				!= $new_checkout_station_id )
+			{
+				$db->update(
+					'in_transit',
+					{
+						checkout_time => undef,
+						sched_arrival => undef,
+						real_arrival  => undef,
+					},
+					{ user_id => $uid }
+				);
 			}
-			else {
-				eval {
-					$self->pg->db->insert(
-						'user_actions',
+
+			if ( not( defined $train or $force ) ) {
+				return ( 1, undef );
+			}
+
+			my $has_arrived = 0;
+
+			eval {
+
+				my $tx = $db->begin;
+
+				if ( defined $train ) {
+					$has_arrived = $train->arrival->epoch < $now->epoch ? 1 : 0;
+					$db->update(
+						'in_transit',
 						{
-							user_id    => $self->current_user->{id},
-							action_id  => $action_id,
-							station_id => $self->get_station_id(
-								ds100 => $status->{station_ds100},
-								name  => $status->{station_name}
-							),
-							action_time => $now,
-							edited      => 0,
-							train_type  => $train->type,
-							train_line  => $train->line_no,
-							train_no    => $train->train_no,
-							train_id    => $train->train_id,
-							sched_time  => $train->sched_arrival,
-							real_time   => $train->arrival,
-							route       => join( '|', $train->route ),
-							messages    => join(
+							checkout_time => $now,
+							sched_arrival => $train->sched_arrival,
+							real_arrival  => $train->arrival,
+							cancelled => $train->arrival_is_cancelled ? 1 : 0,
+							route     => join( '|', $train->route ),
+							messages  => join(
 								'|',
 								map {
 									( $_->[0] ? $_->[0]->epoch : q{} ) . ':'
 									  . $_->[1]
 								} $train->messages
-							)
-						}
+							),
+						},
+						{ user_id => $uid }
 					);
-				};
-				if ($@) {
-					my $uid = $self->current_user->{id};
-					$self->app->log->error(
-						"Checkout($uid, $action_id): INSERT failed: $@");
-					return 'INSERT failed: ' . $@;
 				}
-				$self->invalidate_stats_cache;
-				return;
+
+				$journey
+				  = $db->select( 'in_transit', '*', { user_id => $uid } )->hash;
+
+				if ( $has_arrived or $force ) {
+					$journey->{edited}        = 0;
+					$journey->{checkout_time} = $now;
+					$db->insert( 'journeys', $journey );
+					$db->delete( 'in_transit', { user_id => $uid } );
+
+					my $cache_ts = $now->clone;
+					if ( $journey->{real_departure}
+						=~ m{ ^ (?<year> \d{4} ) - (?<month> \d{2} ) }x )
+					{
+						$cache_ts->set(
+							year  => $+{year},
+							month => $+{month}
+						);
+					}
+					$self->invalidate_stats_cache( $cache_ts, $db );
+				}
+
+				$tx->commit;
+			};
+
+			if ($@) {
+				$self->app->log->error("Checkout($uid): $@");
+				return ( 1, 'Checkout error: ' . $@ );
 			}
+
+			if ( $has_arrived or $force ) {
+				return ( 0, undef );
+			}
+			return ( 1, undef );
 		}
 	);
 
 	$self->helper(
 		'update_journey_part' => sub {
-			my ( $self, $db, $checkin_id, $checkout_id, $key, $value ) = @_;
+			my ( $self, $db, $journey_id, $key, $value ) = @_;
 			my $rows;
+
+			my $journey = $self->get_journey(
+				db         => $db,
+				journey_id => $journey_id,
+			);
 
 			eval {
 				if ( $key eq 'sched_departure' ) {
 					$rows = $db->update(
-						'user_actions',
+						'journeys',
 						{
-							sched_time => $value,
+							sched_departure => $value,
+							edited          => $journey->{edited} | 0x0001,
 						},
 						{
-							id        => $checkin_id,
-							action_id => $self->app->action_type->{checkin},
+							id => $journey_id,
 						}
 					)->rows;
 				}
 				elsif ( $key eq 'rt_departure' ) {
 					$rows = $db->update(
-						'user_actions',
+						'journeys',
 						{
-							real_time => $value,
+							real_departure => $value,
+							edited         => $journey->{edited} | 0x0002,
 						},
 						{
-							id        => $checkin_id,
-							action_id => $self->app->action_type->{checkin},
+							id => $journey_id,
 						}
 					)->rows;
+
+                 # stats are partitioned by rt_departure -> both the cache for
+                 # the old value (see bottom of this function) and the new value
+                 # (here) must be invalidated.
+					$self->invalidate_stats_cache( $value, $db );
 				}
 				elsif ( $key eq 'sched_arrival' ) {
 					$rows = $db->update(
-						'user_actions',
+						'journeys',
 						{
-							sched_time => $value,
+							sched_arrival => $value,
+							edited        => $journey->{edited} | 0x0100,
 						},
 						{
-							id        => $checkout_id,
-							action_id => $self->app->action_type->{checkout},
+							id => $journey_id,
 						}
 					)->rows;
 				}
 				elsif ( $key eq 'rt_arrival' ) {
 					$rows = $db->update(
-						'user_actions',
+						'journeys',
 						{
-							real_time => $value,
+							real_arrival => $value,
+							edited       => $journey->{edited} | 0x0200,
 						},
 						{
-							id        => $checkout_id,
-							action_id => $self->app->action_type->{checkout},
+							id => $journey_id,
 						}
 					)->rows;
 				}
 				else {
-					$self->app->log->error(
-"update_journey_part($checkin_id, $checkout_id): Invalid key $key"
-					);
+					die("Invalid key $key\n");
 				}
 			};
 
 			if ($@) {
 				$self->app->log->error(
-"update_journey_part($checkin_id, $checkout_id): UPDATE failed: $@"
-				);
-				return 'UPDATE failed: ' . $@;
+					"update_journey_part($journey_id, $key): $@");
+				return "update_journey_part($key): $@";
 			}
 			if ( $rows == 1 ) {
+				$self->invalidate_stats_cache( $journey->{rt_departure}, $db );
 				return undef;
 			}
 			return 'UPDATE failed: did not match any journey part';
@@ -930,14 +982,12 @@ sub startup {
 
 	$self->helper(
 		'delete_journey' => sub {
-			my ( $self, $checkin_id, $checkout_id, $checkin_epoch,
-				$checkout_epoch )
-			  = @_;
+			my ( $self, $journey_id, $checkin_epoch, $checkout_epoch ) = @_;
 			my $uid = $self->current_user->{id};
 
 			my @journeys = $self->get_user_travels(
-				uid         => $uid,
-				checkout_id => $checkout_id
+				uid        => $uid,
+				journey_id => $journey_id
 			);
 			if ( @journeys == 0 ) {
 				return 'Journey not found';
@@ -947,8 +997,7 @@ sub startup {
 			# Double-check (comparing both ID and action epoch) to make sure we
 			# are really deleting the right journey and the user isn't just
 			# playing around with POST requests.
-			if (   $journey->{ids}[0] != $checkin_id
-				or $journey->{ids}[1] != $checkout_id
+			if (   $journey->{id} != $journey_id
 				or $journey->{checkin}->epoch != $checkin_epoch
 				or $journey->{checkout}->epoch != $checkout_epoch )
 			{
@@ -958,26 +1007,24 @@ sub startup {
 			my $rows;
 			eval {
 				$rows = $self->pg->db->delete(
-					'user_actions',
+					'journeys',
 					{
 						user_id => $uid,
-						id      => [ $checkin_id, $checkout_id ]
+						id      => $journey_id,
 					}
 				)->rows;
 			};
 
 			if ($@) {
-				$self->app->log->error(
-					"Delete($uid, $checkin_id, $checkout_id): DELETE failed: $@"
-				);
+				$self->app->log->error("Delete($uid, $journey_id): $@");
 				return 'DELETE failed: ' . $@;
 			}
 
-			if ( $rows == 2 ) {
-				$self->invalidate_stats_cache( $journey->{checkout} );
+			if ( $rows == 1 ) {
+				$self->invalidate_stats_cache( $journey->{rt_departure} );
 				return undef;
 			}
-			return sprintf( 'Deleted %d rows, expected 2', $rows );
+			return sprintf( 'Deleted %d rows, expected 1', $rows );
 		}
 	);
 
@@ -1075,202 +1122,102 @@ sub startup {
 			# Otherwise, we grab a fresh one.
 			my $db = $opt{db} // $self->pg->db;
 
-			my $selection = qq{
-			user_actions.id as action_log_id, action_id,
-			extract(epoch from action_time) as action_time_ts,
-			stations.ds100 as ds100, stations.name as name,
-			train_type, train_line, train_no, train_id,
-			extract(epoch from sched_time) as sched_time_ts,
-			extract(epoch from real_time) as real_time_ts,
-			route, messages, edited
-			};
-			$selection =~ tr{\n}{}d;
-			my %where = ( user_id => $uid );
+			my %where = (
+				user_id   => $uid,
+				cancelled => 0
+			);
 			my %order = (
 				order_by => {
-					-desc => 'action_time',
+					-desc => 'real_dep_ts',
 				}
 			);
 
-			if ( $opt{limit} ) {
-				$order{limit} = 10;
+			if ( $opt{cancelled} ) {
+				$where{cancelled} = 1;
 			}
 
-			if ( $opt{checkout_id} ) {
-				$where{'user_actions.id'} = { '<=', $opt{checkout_id} };
-				$order{limit} = 2;
+			if ( $opt{limit} ) {
+				$order{limit} = $opt{limit};
+			}
+
+			if ( $opt{journey_id} ) {
+				$where{journey_id} = $opt{journey_id};
+				delete $where{cancelled};
 			}
 			elsif ( $opt{after} and $opt{before} ) {
-
-         # Each journey consists of exactly two database entries: one for
-         # checkin, one for checkout. A simple query using e.g.
-         # after = YYYY-01-01T00:00:00 and before YYYY-02-01T00:00:00
-         # will miss journeys where checkin and checkout take place in
-         # different months.
-         # We therefore add one day to the before timestamp and filter out
-         # journeys whose checkin lies outside the originally requested
-         # time range afterwards.
-         # For an additional twist, get_interval_actions_query filters based
-         # on the action time, not actual departure, as force
-         # checkout actions lack sched_time and real_time data. By
-         # subtracting one day from "after" (i.e., moving it one day into
-         # the past), we make sure not to miss journeys where the real departure
-         # time falls into the interval, but the checkin time does not.
-         # Again, this is addressed in postprocessing at the bottom of this
-         # helper.
-         # This works under the assumption that there are no DB trains whose
-         # journey takes more than 24 hours. If this no longer holds,
-         # please adjust the intervals accordingly.
-				$where{action_time} = {
-					-between => [
-						$opt{after}->clone->subtract( days => 1 ),
-						$opt{before}->clone->add( days => 1 )
-					]
-				};
-			}
-
-			my @match_actions = (
-				$self->app->action_type->{checkout},
-				$self->app->action_type->{checkin}
-			);
-			if ( $opt{cancelled} ) {
-				@match_actions = (
-					$self->app->action_type->{cancelled_to},
-					$self->app->action_type->{cancelled_from}
-				);
+				$where{real_dep_ts} = {
+					-between => [ $opt{after}->epoch, $opt{before}->epoch, ] };
 			}
 
 			my @travels;
-			my $prev_action = 0;
 
-			my $res = $db->select(
-				[
-					'user_actions',
-					[
-						-left => 'stations',
-						id    => 'station_id'
-					]
-				],
-				$selection,
-				\%where,
-				\%order
-			);
+			my $res = $db->select( 'journeys_str', '*', \%where, \%order );
 
 			for my $entry ( $res->hashes->each ) {
 
-				if ( $entry->{action_id} == $match_actions[0]
-					or ( $opt{checkout_id} and not @travels ) )
-				{
-					push(
-						@travels,
-						{
-							ids     => [ undef, $entry->{action_log_id} ],
-							to_name => $entry->{name},
-							sched_arrival =>
-							  epoch_to_dt( $entry->{sched_time_ts} ),
-							rt_arrival => epoch_to_dt( $entry->{real_time_ts} ),
-							checkout => epoch_to_dt( $entry->{action_time_ts} ),
-							type     => $entry->{train_type},
-							line     => $entry->{train_line},
-							no       => $entry->{train_no},
-							messages => $entry->{messages}
-							? [ split( qr{[|]}, $entry->{messages} ) ]
-							: undef,
-							route => $entry->{route}
-							? [ split( qr{[|]}, $entry->{route} ) ]
-							: undef,
-							completed => 0,
-							edited    => $entry->{edited} << 8,
-						}
-					);
-				}
-				elsif (
-					(
-						    $entry->{action_id} == $match_actions[1]
-						and $prev_action == $match_actions[0]
-					)
-					or $opt{checkout_id}
-				  )
-				{
-					my $ref = $travels[-1];
-					$ref->{ids}->[0]  = $entry->{action_log_id};
-					$ref->{from_name} = $entry->{name};
-					$ref->{completed} = 1;
-					$ref->{sched_departure}
-					  = epoch_to_dt( $entry->{sched_time_ts} );
-					$ref->{rt_departure}
-					  = epoch_to_dt( $entry->{real_time_ts} );
-					$ref->{checkin} = epoch_to_dt( $entry->{action_time_ts} );
-					$ref->{type} //= $entry->{train_type};
-					$ref->{line} //= $entry->{train_line};
-					$ref->{no}   //= $entry->{train_no};
-					$ref->{messages}
-					  //= [ split( qr{[|]}, $entry->{messages} ) ];
-					$ref->{route} //= [ split( qr{[|]}, $entry->{route} ) ];
-					$ref->{edited} |= $entry->{edited};
+				my $ref = {
+					id              => $entry->{journey_id},
+					type            => $entry->{train_type},
+					line            => $entry->{train_line},
+					no              => $entry->{train_no},
+					from_name       => $entry->{dep_name},
+					checkin         => epoch_to_dt( $entry->{checkin_ts} ),
+					sched_departure => epoch_to_dt( $entry->{sched_dep_ts} ),
+					rt_departure    => epoch_to_dt( $entry->{real_dep_ts} ),
+					to_name         => $entry->{arr_name},
+					checkout        => epoch_to_dt( $entry->{checkout_ts} ),
+					sched_arrival   => epoch_to_dt( $entry->{sched_arr_ts} ),
+					rt_arrival      => epoch_to_dt( $entry->{real_arr_ts} ),
+					messages        => $entry->{messages}
+					? [ split( qr{[|]}, $entry->{messages} ) ]
+					: undef,
+					route => $entry->{route}
+					? [ split( qr{[|]}, $entry->{route} ) ]
+					: undef,
+					edited => $entry->{edited},
+				};
 
-					if ( $opt{verbose} ) {
-						my @parsed_messages;
-						for my $message ( @{ $ref->{messages} // [] } ) {
-							my ( $ts, $msg ) = split( qr{:}, $message );
-							push( @parsed_messages,
-								[ epoch_to_dt($ts), $msg ] );
-						}
-						$ref->{messages} = [ reverse @parsed_messages ];
-						$ref->{sched_duration}
-						  = $ref->{sched_arrival}
-						  ? $ref->{sched_arrival}->epoch
-						  - $ref->{sched_departure}->epoch
-						  : undef;
-						$ref->{rt_duration}
-						  = $ref->{rt_arrival}
-						  ? $ref->{rt_arrival}->epoch
-						  - $ref->{rt_departure}->epoch
-						  : undef;
-						my ( $km, $skip )
-						  = $self->get_travel_distance( $ref->{from_name},
-							$ref->{to_name}, $ref->{route} );
-						$ref->{km_route}   = $km;
-						$ref->{skip_route} = $skip;
-						( $km, $skip )
-						  = $self->get_travel_distance( $ref->{from_name},
-							$ref->{to_name},
-							[ $ref->{from_name}, $ref->{to_name} ] );
-						$ref->{km_beeline}   = $km;
-						$ref->{skip_beeline} = $skip;
-						my $kmh_divisor
-						  = ( $ref->{rt_duration} // $ref->{sched_duration}
-							  // 999999 ) / 3600;
-						$ref->{kmh_route}
-						  = $kmh_divisor ? $ref->{km_route} / $kmh_divisor : -1;
-						$ref->{kmh_beeline}
-						  = $kmh_divisor
-						  ? $ref->{km_beeline} / $kmh_divisor
-						  : -1;
+				if ( $opt{verbose} ) {
+					$ref->{cancelled} = $entry->{cancelled};
+					my @parsed_messages;
+					for my $message ( @{ $ref->{messages} // [] } ) {
+						my ( $ts, $msg ) = split( qr{:}, $message );
+						push( @parsed_messages, [ epoch_to_dt($ts), $msg ] );
 					}
-					if (    $opt{checkout_id}
-						and $entry->{action_id}
-						== $self->app->action_type->{cancelled_from} )
-					{
-						$ref->{cancelled} = 1;
-					}
+					$ref->{messages} = [ reverse @parsed_messages ];
+					$ref->{sched_duration}
+					  = $ref->{sched_arrival}
+					  ? $ref->{sched_arrival}->epoch
+					  - $ref->{sched_departure}->epoch
+					  : undef;
+					$ref->{rt_duration}
+					  = $ref->{rt_arrival}
+					  ? $ref->{rt_arrival}->epoch - $ref->{rt_departure}->epoch
+					  : undef;
+					my ( $km, $skip )
+					  = $self->get_travel_distance( $ref->{from_name},
+						$ref->{to_name}, $ref->{route} );
+					$ref->{km_route}   = $km;
+					$ref->{skip_route} = $skip;
+					( $km, $skip )
+					  = $self->get_travel_distance( $ref->{from_name},
+						$ref->{to_name},
+						[ $ref->{from_name}, $ref->{to_name} ] );
+					$ref->{km_beeline}   = $km;
+					$ref->{skip_beeline} = $skip;
+					my $kmh_divisor
+					  = ( $ref->{rt_duration} // $ref->{sched_duration}
+						  // 999999 ) / 3600;
+					$ref->{kmh_route}
+					  = $kmh_divisor ? $ref->{km_route} / $kmh_divisor : -1;
+					$ref->{kmh_beeline}
+					  = $kmh_divisor
+					  ? $ref->{km_beeline} / $kmh_divisor
+					  : -1;
 				}
-				$prev_action = $entry->{action_id};
-			}
 
-			if ( $opt{before} and $opt{after} ) {
-				@travels = grep {
-					      $_->{rt_departure} >= $opt{after}
-					  and $_->{rt_departure} < $opt{before}
-				} @travels;
+				push( @travels, $ref );
 			}
-
-         # user_actions are sorted by action_time. As users are allowed to check
-         # into trains in arbitrary order, action_time does not always
-         # correspond to departure/arrival time, so we ensure a proper sort
-         # order here.
-			@travels
-			  = sort { $b->{rt_departure} <=> $a->{rt_departure} } @travels;
 
 			return @travels;
 		}
@@ -1280,11 +1227,9 @@ sub startup {
 		'get_journey' => sub {
 			my ( $self, %opt ) = @_;
 
+			$opt{cancelled} = 'any';
 			my @journeys = $self->get_user_travels(%opt);
-			if (   @journeys == 0
-				or not $journeys[0]{completed}
-				or $journeys[0]{ids}[1] != $opt{checkout_id} )
-			{
+			if ( @journeys == 0 ) {
 				return undef;
 			}
 
@@ -1298,86 +1243,96 @@ sub startup {
 
 			$uid //= $self->current_user->{id};
 
-			my $selection = qq{
-			user_actions.id as action_log_id, action_id,
-			extract(epoch from action_time) as action_time_ts,
-			stations.ds100 as ds100, stations.name as name,
-			train_type, train_line, train_no, train_id,
-			extract(epoch from sched_time) as sched_time_ts,
-			extract(epoch from real_time) as real_time_ts,
-			route
-			};
-			$selection =~ tr{\n}{}d;
+			my $db = $self->pg->db;
+			my $now = DateTime->now( time_zone => 'Europe/Berlin' );
 
-			my $res = $self->pg->db->select(
-				[
-					'user_actions',
-					[
-						-left => 'stations',
-						id    => 'station_id'
-					]
-				],
-				$selection,
-				{
-					user_id => $uid,
-				},
-				{
-					order_by => {
-						-desc => 'action_time',
-					},
-					limit => 1,
-				}
-			);
-			my $status = $res->hash;
+			my $in_transit
+			  = $db->select( 'in_transit_str', '*', { user_id => $uid } )->hash;
 
-			if ($status) {
-				my $now = DateTime->now( time_zone => 'Europe/Berlin' );
+			if ($in_transit) {
 
-				my $action_ts = epoch_to_dt( $status->{action_time_ts} );
-				my $sched_ts  = epoch_to_dt( $status->{sched_time_ts} );
-				my $real_ts   = epoch_to_dt( $status->{real_time_ts} );
-				my $checkin_station_name = $status->{name};
-				my @route = split( qr{[|]}, $status->{route} // q{} );
+				my @route = split( qr{[|]}, $in_transit->{route} // q{} );
 				my @route_after;
 				my $is_after = 0;
 				for my $station (@route) {
 
-					if ( $station eq $checkin_station_name ) {
+					if ( $station eq $in_transit->{dep_name} ) {
 						$is_after = 1;
 					}
 					if ($is_after) {
 						push( @route_after, $station );
 					}
 				}
+
+				my $ts = $in_transit->{checkout_ts}
+				  // $in_transit->{checkin_ts};
+				my $action_time = epoch_to_dt($ts);
+
 				return {
-					checked_in => (
-						$status->{action_id}
-						  == $self->app->action_type->{checkin}
-					),
-					cancelled => (
-						$status->{action_id}
-						  == $self->app->action_type->{cancelled_from}
-					),
-					timestamp       => $action_ts,
-					timestamp_delta => $now->epoch - $action_ts->epoch,
-					action_id       => $status->{action_log_id},
-					sched_ts        => $sched_ts,
-					real_ts         => $real_ts,
-					station_ds100   => $status->{ds100},
-					station_name    => $checkin_station_name,
-					train_type      => $status->{train_type},
-					train_line      => $status->{train_line},
-					train_no        => $status->{train_no},
-					train_id        => $status->{train_id},
-					route           => \@route,
-					route_after     => \@route_after,
+					checked_in      => !$in_transit->{cancelled},
+					cancelled       => $in_transit->{cancelled},
+					timestamp       => $action_time,
+					timestamp_delta => $now->epoch - $action_time->epoch,
+					train_type      => $in_transit->{train_type},
+					train_line      => $in_transit->{train_line},
+					train_no        => $in_transit->{train_no},
+					train_id        => $in_transit->{train_id},
+					sched_departure =>
+					  epoch_to_dt( $in_transit->{sched_dep_ts} ),
+					real_departure => epoch_to_dt( $in_transit->{real_dep_ts} ),
+					dep_ds100      => $in_transit->{dep_ds100},
+					dep_name       => $in_transit->{dep_name},
+					sched_arrival => epoch_to_dt( $in_transit->{sched_arr_ts} ),
+					real_arrival  => epoch_to_dt( $in_transit->{real_arr_ts} ),
+					arr_ds100     => $in_transit->{arr_ds100},
+					arr_name      => $in_transit->{arr_name},
+					route_after   => \@route_after,
 				};
 			}
+
+			my $latest = $db->select(
+				'journeys_str',
+				'*',
+				{
+					user_id   => $uid,
+					cancelled => 0
+				},
+				{
+					order_by => { -desc => 'journey_id' },
+					limit    => 1
+				}
+			)->hash;
+
+			if ($latest) {
+				my $ts          = $latest->{checkout_ts};
+				my $action_time = epoch_to_dt($ts);
+				return {
+					checked_in      => 0,
+					cancelled       => 0,
+					journey_id      => $latest->{journey_id},
+					timestamp       => $action_time,
+					timestamp_delta => $now->epoch - $action_time->epoch,
+					train_type      => $latest->{train_type},
+					train_line      => $latest->{train_line},
+					train_no        => $latest->{train_no},
+					train_id        => $latest->{train_id},
+					sched_departure => epoch_to_dt( $latest->{sched_dep_ts} ),
+					real_departure  => epoch_to_dt( $latest->{real_dep_ts} ),
+					dep_ds100       => $latest->{dep_ds100},
+					dep_name        => $latest->{dep_name},
+					sched_arrival   => epoch_to_dt( $latest->{sched_arr_ts} ),
+					real_arrival    => epoch_to_dt( $latest->{real_arr_ts} ),
+					arr_ds100       => $latest->{arr_ds100},
+					arr_name        => $latest->{arr_name},
+				};
+			}
+
 			return {
-				checked_in => 0,
-				timestamp  => epoch_to_dt(0),
-				sched_ts   => epoch_to_dt(0),
-				real_ts    => epoch_to_dt(0),
+				checked_in      => 0,
+				cancelled       => 0,
+				no_journeys_yet => 1,
+				timestamp       => epoch_to_dt(0),
+				timestamp_delta => $now->epoch,
 			};
 		}
 	);

@@ -286,45 +286,18 @@ sub account {
 
 sub json_export {
 	my ($self) = @_;
-	my $uid    = $self->current_user->{id};
-	my $query  = $self->app->get_all_actions_query;
+	my $uid = $self->current_user->{id};
 
-	$query->execute($uid);
-
-	my @entries;
-
-	while ( my @row = $query->fetchrow_array ) {
-		my (
-			$action_id, $action,       $raw_ts,      $ds100,
-			$name,      $train_type,   $train_line,  $train_no,
-			$train_id,  $raw_sched_ts, $raw_real_ts, $raw_route,
-			$raw_messages
-		) = @row;
-
-		push(
-			@entries,
-			{
-				action        => $self->app->action_types->[ $action - 1 ],
-				action_ts     => $raw_ts,
-				station_ds100 => $ds100,
-				station_name  => $name,
-				train_type    => $train_type,
-				train_line    => $train_line,
-				train_no      => $train_no,
-				train_id      => $train_id,
-				scheduled_ts  => $raw_sched_ts,
-				realtime_ts   => $raw_real_ts,
-				messages      => $raw_messages
-				? [ map { [ split(qr{:}) ] } split( qr{[|]}, $raw_messages ) ]
-				: undef,
-				route => $raw_route ? [ split( qr{[|]}, $raw_route ) ]
-				: undef,
-			}
-		);
-	}
+	my $db = $self->pg->db;
 
 	$self->render(
-		json => [@entries],
+		json => {
+			account  => $db->select( 'users', '*', { id => $uid } )->hash,
+			journeys => [
+				$db->select( 'journeys', '*', { user_id => $uid } )
+				  ->hashes->each
+			],
+		}
 	);
 }
 

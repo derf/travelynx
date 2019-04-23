@@ -161,7 +161,7 @@
 	<div class="row">
 		<div class="col s6 m6 l6 center-align">
 			<a class="waves-effect waves-light red btn action-delete"
-					data-id="<%= join(q{,}, @{$journey->{ids}}) %>"
+					data-id="<%= $journey->{id} %>"
 					data-checkin="<%= $journey->{checkin}->epoch %>"
 					data-checkout="<%= $journey->{checkout}->epoch %>">
 				<i class="material-icons left">delete_forever</i>

@@ -6,10 +6,10 @@
 				<div class="card-content white-text">
 					<span class="card-title">Aktuell eingecheckt</span>
 					<p>In <%= $status->{train_type} %> <%= $status->{train_no} %>
-						ab <%= $status->{station_name} %></p>
+						ab <%= $status->{dep_name} %></p>
 				</div>
 				<div class="card-action">
-					<a class="action-checkout" data-station="<%= $ds100 %>">
+					<a class="action-checkout" data-station="<%= $ds100 %>" data-force="1">
 						Hier auschecken
 					</a>
 				</div>
@@ -20,10 +20,10 @@
 				<div class="card-content white-text">
 					<span class="card-title">Ausgecheckt</span>
 					<p>Aus <%= $status->{train_type} %> <%= $status->{train_no} %>
-						bis <%= $status->{station_name} %></p>
+						bis <%= $status->{arr_name} %></p>
 				</div>
 				<div class="card-action">
-					<a class="action-undo" data-id="<%= $status->{action_id} %>">
+					<a class="action-undo" data-id="<%= $status->{journey_id} %>">
 						<i class="material-icons">undo</i> Rückgängig?
 					</a>
 				</div>
@@ -38,8 +38,8 @@
 			– Zug auswählen zum Einchecken.
 		% }
 		% else {
-			– Keine Abfahrten gefunden. Ein Checkin ist frühestens 10 Minuten vor
-			und maximal 180 Minuten nach Abfahrt möglich.
+			– Keine Abfahrten gefunden. Ein Checkin ist frühestens 30 Minuten vor
+			und maximal 120 Minuten nach Abfahrt möglich.
 		% }
 		<br/>
 		<table class="striped">

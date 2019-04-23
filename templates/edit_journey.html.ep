@@ -80,7 +80,7 @@
 		</div>
 		<div class="row">
 			<div class="col s6 m6 l6 center-align">
-				<a href="/journey/<%= current_user()->{id} %>-<%= param('journey_id') %>" class="waves-effect waves-light btn">
+				<a href="/journey/<%= param('journey_id') %>" class="waves-effect waves-light btn">
 					Abbrechen
 				</a>
 			</div>
