@@ -160,8 +160,7 @@ sub log_action {
 	}
 	elsif ( $params->{action} eq 'cancelled_from' ) {
 		my ( undef, $error )
-		  = $self->checkin( $params->{station}, $params->{train},
-			$self->app->action_type->{cancelled_from} );
+		  = $self->checkin( $params->{station}, $params->{train} );
 
 		if ($error) {
 			$self->render(
@@ -182,8 +181,7 @@ sub log_action {
 	}
 	elsif ( $params->{action} eq 'cancelled_to' ) {
 		my ( undef, $error )
-		  = $self->checkout( $params->{station}, 1,
-			$self->app->action_type->{cancelled_to} );
+		  = $self->checkout( $params->{station}, 1 );
 
 		if ($error) {
 			$self->render(
