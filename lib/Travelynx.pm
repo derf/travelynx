@@ -1272,7 +1272,17 @@ sub startup {
 					arr_ds100     => $in_transit->{arr_ds100},
 					arr_name      => $in_transit->{arr_name},
 					route_after   => \@route_after,
+					messages      => $in_transit->{messages}
+					? [ split( qr{[|]}, $in_transit->{messages} ) ]
+					: undef,
 				};
+
+				my @parsed_messages;
+				for my $message ( @{ $ret->{messages} // [] } ) {
+					my ( $ts, $msg ) = split( qr{:}, $message );
+					push( @parsed_messages, [ epoch_to_dt($ts), $msg ] );
+				}
+				$ret->{messages} = [ reverse @parsed_messages ];
 
 				$ret->{departure_countdown}
 				  = $ret->{real_departure}->epoch - $now->epoch;

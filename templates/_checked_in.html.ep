@@ -57,6 +57,17 @@
 				<div class="determinate white" style="width: <%= sprintf('%.2f', 100 * ($journey->{journey_completion} // 0)); %>%;"></div>
 			</div>
 		</p>
+		% if (@{$journey->{messages} // []} > 0 and $journey->{messages}[0]) {
+			<p style="margin-bottom: 2ex;">
+				<ul>
+					% for my $message (reverse @{$journey->{messages} // []}) {
+						% if ($journey->{sched_departure}->epoch - $message->[0]->epoch < 1800) {
+							<li> <i class="material-icons tiny">warning</i> <%= $message->[0]->strftime('%H:%M') %>: <%= $message->[1] %></li>
+						% }
+					% }
+				</ul>
+			</p>
+		% }
 		% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} <= 0) {
 			<p>
 				Der automatische Checkout erfolgt in wenigen Minuten. Zum Umsteigen:
