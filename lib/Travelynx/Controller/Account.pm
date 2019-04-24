@@ -292,7 +292,11 @@ sub json_export {
 
 	$self->render(
 		json => {
-			account  => $db->select( 'users', '*', { id => $uid } )->hash,
+			account    => $db->select( 'users', '*', { id => $uid } )->hash,
+			in_transit => [
+				$db->select( 'in_transit', '*', { user_id => $uid } )
+				  ->hashes->each
+			],
 			journeys => [
 				$db->select( 'journeys', '*', { user_id => $uid } )
 				  ->hashes->each
