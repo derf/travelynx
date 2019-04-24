@@ -31,6 +31,12 @@
 				% if ($journey->{departure_countdown} > 120) {
 					Abfahrt in <%= sprintf('%.f', $journey->{departure_countdown} / 60) %> Minuten
 				% }
+				% elsif ($journey->{departure_countdown} > 60) {
+					Abfahrt in einer Minute
+				% }
+				% elsif ($journey->{departure_countdown} > 0) {
+					Abfahrt in weniger als einer Minute
+				% }
 				% elsif (defined $journey->{arrival_countdown}) {
 					% if ($journey->{arrival_countdown} > 60) {
 						Ankunft in <%= sprintf('%.f', $journey->{arrival_countdown} / 60) %>
@@ -58,7 +64,7 @@
 				Ziel wählen.
 			</p>
 		% }
-		% if ($journey->{arr_name}) {
+		% elsif ($journey->{arr_name}) {
 			<p>Ziel ändern?</p>
 		% }
 		% else {
