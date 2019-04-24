@@ -8,11 +8,14 @@
 </div>
 
 <div class="row">
-	<div class="col s12">
-		<ul>
-			<li><a href="/history.json">JSON-Export aller Zugfahrten</a> (Das Datenlayout ist noch nicht final)</li>
-			<li><a href="/cancelled">Ausgefallene Züge</a></li>
-		</ul>
+	<div class="col s12 m12 l4 center-align">
+		<a href="/cancelled" class="waves-effect waves-light btn"><i class="material-icons left">cancel</i> Zugausfälle</a>
+	</div>
+	<div class="col s12 m12 l4">
+	&nbsp;
+	</div>
+	<div class="col s12 m12 l4 center-align">
+		<a href="/history.json" class="waves-effect waves-light btn"><i class="material-icons left">cloud</i> JSON-Export</a>
 	</div>
 </div>
 

@@ -4,12 +4,16 @@
 		Die folgenden Zugfahrten haben nicht stattgefunden.
 	</div>
 </div>
+
 <div class="row">
-	<div class="col s12">
-		<ul>
-			<li><a href="/cancelled.json">JSON-Export</a> (Das Datenlayout ist noch nicht final)</li>
-			<li><a href="/history">Reguläre Zugfahrten</a></li>
-		</ul>
+	<div class="col s12 m12 l4 center-align">
+		<a href="/history" class="waves-effect waves-light btn"><i class="material-icons left">timeline</i> Reguläre Fahrten</a>
+	</div>
+	<div class="col s12 m12 l4">
+	&nbsp;
+	</div>
+	<div class="col s12 m12 l4 center-align">
+		<a href="/cancelled.json" class="waves-effect waves-light btn"><i class="material-icons left">cloud</i> JSON-Export</a>
 	</div>
 </div>
 
