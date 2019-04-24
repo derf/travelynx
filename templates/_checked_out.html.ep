@@ -2,7 +2,7 @@
 	<div class="card-content white-text">
 		<span class="card-title">Ausgecheckt</span>
 		<p>Aus <%= $status->{train_type} %> <%= $status->{train_no} %>
-			bis <%= $status->{arr_name} %></p>
+			bis <a href="/s/<%= $status->{arr_ds100} %>"><%= $status->{arr_name} %></a></p>
 	</div>
 	<div class="card-action">
 		<a class="action-undo" data-id="<%= $status->{journey_id} %>">
