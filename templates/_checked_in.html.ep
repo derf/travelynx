@@ -32,7 +32,7 @@
 					Abfahrt in <%= sprintf('%.f', $status->{departure_countdown} / 60) %> Minuten
 				% }
 				% elsif (defined $status->{arrival_countdown}) {
-					% if ($status->{arrival_countdown} > 1) {
+					% if ($status->{arrival_countdown} > 60) {
 						Ankunft in <%= sprintf('%.f', $status->{arrival_countdown} / 60) %>
 						Minute<%= sprintf('%.f', $status->{arrival_countdown} / 60) == 1 ? '' : 'n' %>
 					% }
