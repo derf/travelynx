@@ -31,7 +31,7 @@
 				% if ($status->{departure_countdown} > 120) {
 					Abfahrt in <%= int($status->{departure_countdown} / 60) %> Minuten
 				% }
-				% elsif ($status->{arrival_countdown}) {
+				% elsif (defined $status->{arrival_countdown}) {
 					% if ($status->{arrival_countdown} > 0) {
 						Ankunft in <%= int($status->{arrival_countdown} / 60) %>
 						Minute<%= int($status->{arrival_countdown} / 60) == 1 ? '' : 'n' %>
