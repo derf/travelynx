@@ -1469,6 +1469,7 @@ sub startup {
 	$r->get('/impressum')->to('static#imprint');
 	$r->get('/imprint')->to('static#imprint');
 	$r->get('/api/v0/:user_action/:token')->to('api#get_v0');
+	$r->get('/api/v1/:user_action/:token')->to('api#get_v1');
 	$r->get('/login')->to('account#login_form');
 	$r->get('/register')->to('account#registration_form');
 	$r->get('/reg/:id/:token')->to('account#verify');
