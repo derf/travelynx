@@ -16,7 +16,7 @@
 			</div>
 		% }
 		% elsif ($status->{timestamp_delta} < 180) {
-			%= include '_checked_out', status => $status;
+			%= include '_checked_out', journey => $status;
 		% }
 	</div>
 </div>

@@ -2,24 +2,24 @@
 	<div class="card-content white-text">
 		<span class="card-title">Eingecheckt</span>
 		<p>
-			In <b><%= $status->{train_type} %> <%= $status->{train_no} %></b>
-			% if ($status->{arr_name}) {
-				von <b><%= $status->{dep_name} %></b> nach <b><%= $status->{arr_name} %></b>.
+			In <b><%= $journey->{train_type} %> <%= $journey->{train_no} %></b>
+			% if ($journey->{arr_name}) {
+				von <b><%= $journey->{dep_name} %></b> nach <b><%= $journey->{arr_name} %></b>.
 			% }
 			% else {
-				ab <b><%= $status->{dep_name} %></b>.
+				ab <b><%= $journey->{dep_name} %></b>.
 			% }
 		</p>
 		<p>
-			<b><%= $status->{real_departure}->strftime('%H:%M') %></b>
-			% if ($status->{real_departure}->epoch != $status->{sched_departure}->epoch) {
-				(<%= sprintf('%+d', ($status->{real_departure}->epoch - $status->{sched_departure}->epoch)/60) %>)
+			<b><%= $journey->{real_departure}->strftime('%H:%M') %></b>
+			% if ($journey->{real_departure}->epoch != $journey->{sched_departure}->epoch) {
+				(<%= sprintf('%+d', ($journey->{real_departure}->epoch - $journey->{sched_departure}->epoch)/60) %>)
 			% }
 			→
-			% if ($status->{real_arrival}->epoch) {
-				<b><%= $status->{real_arrival}->strftime('%H:%M') %></b>
-				% if ($status->{real_arrival}->epoch != $status->{sched_arrival}->epoch) {
-					(<%= sprintf('%+d', ($status->{real_arrival}->epoch - $status->{sched_arrival}->epoch)/60) %>)
+			% if ($journey->{real_arrival}->epoch) {
+				<b><%= $journey->{real_arrival}->strftime('%H:%M') %></b>
+				% if ($journey->{real_arrival}->epoch != $journey->{sched_arrival}->epoch) {
+					(<%= sprintf('%+d', ($journey->{real_arrival}->epoch - $journey->{sched_arrival}->epoch)/60) %>)
 				% }
 			% }
 			% else {
@@ -28,37 +28,37 @@
 		</p>
 		<p>
 			<div class="center">
-				% if ($status->{departure_countdown} > 120) {
-					Abfahrt in <%= sprintf('%.f', $status->{departure_countdown} / 60) %> Minuten
+				% if ($journey->{departure_countdown} > 120) {
+					Abfahrt in <%= sprintf('%.f', $journey->{departure_countdown} / 60) %> Minuten
 				% }
-				% elsif (defined $status->{arrival_countdown}) {
-					% if ($status->{arrival_countdown} > 60) {
-						Ankunft in <%= sprintf('%.f', $status->{arrival_countdown} / 60) %>
-						Minute<%= sprintf('%.f', $status->{arrival_countdown} / 60) == 1 ? '' : 'n' %>
+				% elsif (defined $journey->{arrival_countdown}) {
+					% if ($journey->{arrival_countdown} > 60) {
+						Ankunft in <%= sprintf('%.f', $journey->{arrival_countdown} / 60) %>
+						Minute<%= sprintf('%.f', $journey->{arrival_countdown} / 60) == 1 ? '' : 'n' %>
 					% }
-					% elsif ($status->{arrival_countdown} > 0) {
+					% elsif ($journey->{arrival_countdown} > 0) {
 						Ankunft in weniger als einer Minute
 					% }
 					% else {
 						Ziel erreicht
 					% }
 				% }
-				% elsif ($status->{arr_name}) {
+				% elsif ($journey->{arr_name}) {
 					Ankunft in mehr als zwei Stunden
 				% }
 			</div>
 			<div class="progress green darken-3" style="height: 1ex;">
-				<div class="determinate white" style="width: <%= sprintf('%.2f', 100 * ($status->{journey_completion} // 0)); %>%;"></div>
+				<div class="determinate white" style="width: <%= sprintf('%.2f', 100 * ($journey->{journey_completion} // 0)); %>%;"></div>
 			</div>
 		</p>
-		% if (defined $status->{arrival_countdown} and $status->{arrival_countdown} <= 0) {
+		% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} <= 0) {
 			<p>
 				Der automatische Checkout erfolgt in wenigen Minuten. Zum Umsteigen:
 				Aktuelle Station in der Liste auswählen. Zum Weiterfahren: Neues
 				Ziel wählen.
 			</p>
 		% }
-		% if ($status->{arr_name}) {
+		% if ($journey->{arr_name}) {
 			<p>Ziel ändern?</p>
 		% }
 		% else {
@@ -67,8 +67,8 @@
 		<table>
 			<tbody>
 				% my $is_after = 0;
-				% for my $station (@{$status->{route_after}}) {
-					% if ($status->{arr_name} and $station eq $status->{arr_name}) {
+				% for my $station (@{$journey->{route_after}}) {
+					% if ($journey->{arr_name} and $station eq $journey->{arr_name}) {
 						<tr><td><b><a class="action-checkout" data-station="<%= $station %>"><%= $station %></a></b></td></tr>
 					% }
 					% else {
@@ -77,12 +77,12 @@
 				% }
 			</tbody>
 		</table>
-		% if ($status->{arr_name}) {
+		% if ($journey->{arr_name}) {
 			<p>
 				Falls das Backend ausgefallen ist oder der Zug aus anderen
 				Gründen verloren ging: <a class="action-checkout"
-				data-force="1" data-station="<%= $status->{arr_name}
-				%>">Ohne Echtzeitdaten in <%= $status->{arr_name} %>
+				data-force="1" data-station="<%= $journey->{arr_name}
+				%>">Ohne Echtzeitdaten in <%= $journey->{arr_name} %>
 				auschecken</a>.
 			</p>
 		% }

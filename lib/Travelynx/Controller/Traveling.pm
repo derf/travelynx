@@ -26,10 +26,10 @@ sub status_card {
 	delete $self->stash->{layout};
 
 	if ( $status->{checked_in} ) {
-		$self->render( '_checked_in', status => $status );
+		$self->render( '_checked_in', journey => $status );
 	}
 	else {
-		$self->render( '_checked_out', status => $status );
+		$self->render( '_checked_out', journey => $status );
 	}
 }
 

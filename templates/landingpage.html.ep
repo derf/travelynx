@@ -15,7 +15,7 @@
 		<div class="col s12 statuscol">
 			% my $status = get_user_status();
 			% if ($status->{checked_in}) {
-				%= include '_checked_in', status => $status;
+				%= include '_checked_in', journey => $status;
 			% }
 			% elsif ($status->{cancelled}) {
 				<div class="card yellow lighten-4">
