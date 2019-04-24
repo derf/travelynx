@@ -77,13 +77,14 @@ sub run {
 
 	for my $uid (@uids_to_delete) {
 		say "Deleting uid ${uid}...";
-		my $tokens_res  = $db->delete( 'tokens',        { user_id => $uid } );
-		my $stats_res   = $db->delete( 'journey_stats', { user_id => $uid } );
-		my $actions_res = $db->delete( 'user_actions',  { user_id => $uid } );
-		my $user_res    = $db->delete( 'users',         { id      => $uid } );
+		my $tokens_res   = $db->delete( 'tokens',        { user_id => $uid } );
+		my $stats_res    = $db->delete( 'journey_stats', { user_id => $uid } );
+		my $journeys_res = $db->delete( 'journeys',      { user_id => $uid } );
+		my $transit_res  = $db->delete( 'in_transit',    { user_id => $uid } );
+		my $user_res     = $db->delete( 'users',         { id      => $uid } );
 
-		printf( "    %d tokens, %d monthly stats, %d actions\n",
-			$tokens_res->rows, $stats_res->rows, $actions_res->rows );
+		printf( "    %d tokens, %d monthly stats, %d journeys\n",
+			$tokens_res->rows, $stats_res->rows, $journeys_res->rows );
 
 		if ( $user_res->rows != 1 ) {
 			printf STDERR (

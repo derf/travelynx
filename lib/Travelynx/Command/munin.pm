@@ -23,7 +23,7 @@ sub run {
 	my $now = DateTime->now( time_zone => 'Europe/Berlin' );
 
 	my $checkin_window_query
-	  = qq{select count(*) as count from user_actions where action_id = 1 and action_time > to_timestamp(?);};
+	  = qq{select count(*) as count from journeys where checkin_time > to_timestamp(?);};
 
 	query_to_munin( 'reg_user_count',
 		$db->select( 'users', 'count(*) as count', { status => 1 } )
