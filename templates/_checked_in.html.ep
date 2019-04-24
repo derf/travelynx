@@ -29,12 +29,15 @@
 		<p>
 			<div class="center">
 				% if ($status->{departure_countdown} > 120) {
-					Abfahrt in <%= int($status->{departure_countdown} / 60) %> Minuten
+					Abfahrt in <%= sprintf('%.f', $status->{departure_countdown} / 60) %> Minuten
 				% }
 				% elsif (defined $status->{arrival_countdown}) {
-					% if ($status->{arrival_countdown} > 0) {
-						Ankunft in <%= int($status->{arrival_countdown} / 60) %>
-						Minute<%= int($status->{arrival_countdown} / 60) == 1 ? '' : 'n' %>
+					% if ($status->{arrival_countdown} > 1) {
+						Ankunft in <%= sprintf('%.f', $status->{arrival_countdown} / 60) %>
+						Minute<%= sprintf('%.f', $status->{arrival_countdown} / 60) == 1 ? '' : 'n' %>
+					% }
+					% elsif ($status->{arrival_countdown} > 0) {
+						Ankunft in weniger als einer Minute
 					% }
 					% else {
 						Ziel erreicht
@@ -48,11 +51,18 @@
 				<div class="determinate white" style="width: <%= sprintf('%.2f', 100 * ($status->{journey_completion} // 0)); %>%;"></div>
 			</div>
 		</p>
+		% if (defined $status->{arrival_countdown} and $status->{arrival_countdown} <= 0) {
+			<p>
+				Der automatische Checkout erfolgt in wenigen Minuten. Zum Umsteigen:
+				Aktuelle Station in der Liste auswählen. Zum Weiterfahren: Neues
+				Ziel wählen.
+			</p>
+		% }
 		% if ($status->{arr_name}) {
-			<p>Zielstation ändern?</p>
+			<p>Ziel ändern?</p>
 		% }
 		% else {
-			<p>Zielstation wählen:</p>
+			<p>Ziel wählen:</p>
 		% }
 		<table>
 			<tbody>
