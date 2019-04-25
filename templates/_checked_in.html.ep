@@ -22,6 +22,9 @@
 					(<%= sprintf('%+d', ($journey->{real_arrival}->epoch - $journey->{sched_arrival}->epoch)/60) %>)
 				% }
 			% }
+			% elsif ($journey->{arr_name}) {
+				noch nicht bekannt
+			% }
 			% else {
 				unbekannt
 			% }
