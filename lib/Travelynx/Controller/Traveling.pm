@@ -140,6 +140,7 @@ sub log_action {
 		}
 	}
 	elsif ( $params->{action} eq 'undo' ) {
+		my $status = $self->get_user_status;
 		my $error = $self->undo( $params->{undo_id} );
 		if ($error) {
 			$self->render(
@@ -150,10 +151,14 @@ sub log_action {
 			);
 		}
 		else {
+			my $redir = '/';
+			if ($status->{checked_in} or $status->{cancelled}) {
+				$redir = '/s/' . $status->{dep_ds100};
+			}
 			$self->render(
 				json => {
 					success     => 1,
-					redirect_to => '/',
+					redirect_to => $redir,
 				},
 			);
 		}
