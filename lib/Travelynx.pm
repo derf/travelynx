@@ -234,10 +234,10 @@ sub startup {
 			my $arr_station = get_station( $opt{arr_station} );
 
 			if ( not $dep_station ) {
-				return ( undef, undef, 'Unbekannter Startbahnhof' );
+				return ( undef, 'Unbekannter Startbahnhof' );
 			}
 			if ( not $arr_station ) {
-				return ( undef, undef, 'Unbekannter Zielbahnhof' );
+				return ( undef, 'Unbekannter Zielbahnhof' );
 			}
 
 			my $entry = {
