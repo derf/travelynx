@@ -274,6 +274,7 @@ sub startup {
 				$journey_id
 				  = $db->insert( 'journeys', $entry, { returning => 'id' } )
 				  ->hash->{id};
+				$self->invalidate_stats_cache( $opt{rt_departure}, $db );
 			};
 
 			if ($@) {
