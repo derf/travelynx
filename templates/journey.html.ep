@@ -121,15 +121,27 @@
 						% }
 					</td>
 				</tr>
-				<tr>
-					<th scope="row">Meldungen</th>
-					<td>
-						% for my $message (@{$journey->{messages} // []}) {
-							% my ($ts, $msg) = @{$message};
-							<%= $ts->strftime('%d.%m.%Y %H:%M') %> : <%= $msg %><br/>
-						% }
-					</td>
-				</tr>
+				% if ($journey->{edited} == 0x3fff) {
+					<tr>
+						<th scope="row">Kommentar</th>
+						<td>
+							% for my $message (@{$journey->{messages} // []}) {
+								<%= $message->[1] %><br/>
+							% }
+						</td>
+					</tr>
+				% }
+				% else {
+					<tr>
+						<th scope="row">Meldungen</th>
+						<td>
+							% for my $message (@{$journey->{messages} // []}) {
+								% my ($ts, $msg) = @{$message};
+								<%= $ts->strftime('%d.%m.%Y %H:%M') %> : <%= $msg %><br/>
+							% }
+						</td>
+					</tr>
+				% }
 				<tr>
 					<th scope="row">Route</th>
 					<td>
@@ -172,6 +184,7 @@
 			%= form_for '/journey/edit' => (method => 'POST') => begin
 				%= hidden_field 'journey_id' => param('journey_id')
 				<button class="btn waves-effect waves-light" type="submit" name="action" value="edit">
+					<i class="material-icons left">edit</i>
 					Bearbeiten
 				</button>
 			%= end

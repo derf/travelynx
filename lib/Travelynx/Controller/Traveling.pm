@@ -141,7 +141,7 @@ sub log_action {
 	}
 	elsif ( $params->{action} eq 'undo' ) {
 		my $status = $self->get_user_status;
-		my $error = $self->undo( $params->{undo_id} );
+		my $error  = $self->undo( $params->{undo_id} );
 		if ($error) {
 			$self->render(
 				json => {
@@ -152,7 +152,7 @@ sub log_action {
 		}
 		else {
 			my $redir = '/';
-			if ($status->{checked_in} or $status->{cancelled}) {
+			if ( $status->{checked_in} or $status->{cancelled} ) {
 				$redir = '/s/' . $status->{dep_ds100};
 			}
 			$self->render(
@@ -562,37 +562,60 @@ sub add_journey_form {
 
 		for my $key (qw(sched_departure rt_departure sched_arrival rt_arrival))
 		{
-			my $datetime = $parser->parse_datetime( $self->param($key) );
-			if ( not $datetime ) {
-				$self->render(
-					'add_journey',
-					with_autocomplete => 1,
-					error => "${key}: Ungültiges Datums-/Zeitformat"
-				);
-				return;
+			if ( $self->param($key) ) {
+				my $datetime = $parser->parse_datetime( $self->param($key) );
+				if ( not $datetime ) {
+					$self->render(
+						'add_journey',
+						with_autocomplete => 1,
+						error => "${key}: Ungültiges Datums-/Zeitformat"
+					);
+					return;
+				}
+				$opt{$key} = $datetime;
 			}
-			$opt{$key} = $datetime;
 		}
 
-		for my $key (qw(dep_station arr_station)) {
+		for my $key (qw(dep_station arr_station cancelled comment)) {
 			$opt{$key} = $self->param($key);
 		}
 
-		#my ( $checkin_id, $checkout_id, $error ) = $self->add_journey(%opt);
+		my $db = $self->pg->db;
+		my $tx = $db->begin;
 
+		$opt{db} = $db;
+
+		my ( $journey_id, $error ) = $self->add_journey(%opt);
+
+		if ( not $error ) {
+			my $journey = $self->get_journey(
+				uid        => $self->current_user->{id},
+				db         => $db,
+				journey_id => $journey_id,
+				verbose    => 1
+			);
+			$error = $self->journey_sanity_check($journey);
+		}
+
+		if ($error) {
+			$self->render(
+				'add_journey',
+				with_autocomplete => 1,
+				error             => $error,
+			);
+		}
+		else {
+			$tx->commit;
+			$self->redirect_to("/journey/${journey_id}");
+		}
+	}
+	else {
 		$self->render(
 			'add_journey',
 			with_autocomplete => 1,
-			error             => 'not implemented',
+			error             => undef
 		);
-		return;
 	}
-
-	$self->render(
-		'add_journey',
-		with_autocomplete => 1,
-		error             => undef
-	);
 }
 
 1;

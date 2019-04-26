@@ -73,7 +73,7 @@
 		</div>
 	</div>
 	<h1>Letzte Fahrten</h1>
-	%= include '_history_trains', journeys => [get_user_travels(limit => 5)];
+	%= include '_history_trains', date_format => '%d.%m', journeys => [get_user_travels(limit => 5)];
 % }
 % else {
 	<div class="row">

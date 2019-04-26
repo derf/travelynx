@@ -1,4 +1,4 @@
-% my $since = get_user_data()->{registered_at};
+% my $since = get_oldest_journey_ts();
 % my $now = DateTime->now(time_zone => 'Europe/Berlin');
 %= include '_history_years', current => $year, since => $since, now => $now;
 
@@ -9,5 +9,5 @@
 % }
 
 % if (stash('journeys')) {
-	%= include '_history_trains', journeys => stash('journeys');
+	%= include '_history_trains', date_format => '%d.%m.', journeys => stash('journeys');
 % }

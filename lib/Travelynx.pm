@@ -220,27 +220,16 @@ sub startup {
 		}
 	);
 
-	# Returns (checkin id, checkout id, error)
+	# Returns (journey id, error)
 	# Must be called during a transaction.
 	# Must perform a rollback on error.
 	$self->helper(
 		'add_journey' => sub {
 			my ( $self, %opt ) = @_;
 
-			$self->app->log->error(
-				"add_journey is not implemented at the moment");
-			return ( undef, undef, 'not implemented' );
-
-			my $user_status = $self->get_user_status;
-			if ( $user_status->{checked_in} or $user_status->{cancelled} ) {
-
-            # TODO: change database schema to one row per journey instead of two
-				return ( undef, undef,
-'Während einer Zugfahrt können momentan keine manuellen Einträge vorgenommen werden. Klingt komisch, ist aber so.'
-				);
-			}
-
+			my $db          = $opt{db};
 			my $uid         = $self->current_user->{id};
+			my $now         = DateTime->now( time_zone => 'Europe/Berlin' );
 			my $dep_station = get_station( $opt{dep_station} );
 			my $arr_station = get_station( $opt{arr_station} );
 
@@ -251,66 +240,48 @@ sub startup {
 				return ( undef, undef, 'Unbekannter Zielbahnhof' );
 			}
 
-			my $checkin_id;
-			my $checkout_id;
+			my $entry = {
+				user_id            => $uid,
+				train_type         => $opt{train_type},
+				train_line         => $opt{train_line},
+				train_no           => $opt{train_no},
+				train_id           => 'manual',
+				checkin_station_id => $self->get_station_id(
+					ds100 => $dep_station->[0],
+					name  => $dep_station->[1],
+				),
+				checkin_time        => $now,
+				sched_departure     => $opt{sched_departure},
+				real_departure      => $opt{rt_departure},
+				checkout_station_id => $self->get_station_id(
+					ds100 => $arr_station->[0],
+					name  => $arr_station->[1],
+				),
+				sched_arrival => $opt{sched_arrival},
+				real_arrival  => $opt{rt_arrival},
+				checkout_time => $now,
+				edited        => 0x3fff,
+				cancelled     => $opt{cancelled} ? 1 : 0,
+				route         => $dep_station->[1] . '|' . $arr_station->[1],
+			};
 
+			if ( $opt{comment} ) {
+				$entry->{messages} = '0:' . $opt{comment};
+			}
+
+			my $journey_id = undef;
 			eval {
-				$checkin_id = $self->pg->db->insert(
-					'user_actions',
-					{
-						user_id    => $uid,
-						action_id  => 'checkin',
-						station_id => $self->get_station_id(
-							ds100 => $dep_station->[0],
-							name  => $dep_station->[1],
-						),
-						action_time =>
-						  DateTime->now( time_zone => 'Europe/Berlin' ),
-						edited     => 0x0f,
-						train_type => $opt{train_type},
-						train_line => $opt{train_line},
-						train_no   => $opt{train_no},
-						sched_time => $opt{sched_departure},
-						real_time  => $opt{rt_departure},
-					},
-					{ returning => 'id' }
-				)->hash->{id};
+				$journey_id
+				  = $db->insert( 'journeys', $entry, { returning => 'id' } )
+				  ->hash->{id};
 			};
 
 			if ($@) {
-				$self->app->log->error(
-					"add_journey($uid, checkin): INSERT failed: $@");
-				return ( undef, undef, 'INSERT failed: ' . $@ );
+				$self->app->log->error("add_journey($uid): $@");
+				return ( undef, 'add_journey failed: ' . $@ );
 			}
 
-			eval {
-				$checkout_id = $self->pg->db->insert(
-					'user_actions',
-					{
-						user_id    => $uid,
-						action_id  => 'checkout',
-						station_id => $self->get_station_id(
-							ds100 => $arr_station->[0],
-							name  => $arr_station->[1],
-						),
-						action_time =>
-						  DateTime->now( time_zone => 'Europe/Berlin' ),
-						edited     => 0x0f,
-						train_type => $opt{train_type},
-						train_line => $opt{train_line},
-						train_no   => $opt{train_no},
-						sched_time => $opt{sched_arrival},
-						real_time  => $opt{rt_arrival},
-					},
-					{ returnning => 'id' }
-				)->hash->{id};
-			};
-			if ($@) {
-				$self->app->log->error(
-					"add_journey($uid, checkout): INSERT failed: $@");
-				return ( undef, undef, 'INSERT failed: ' . $@ );
-			}
-			return ( $checkin_id, $checkout_id, undef );
+			return ( $journey_id, undef );
 		}
 	);
 
@@ -1097,6 +1068,31 @@ sub startup {
 	);
 
 	$self->helper(
+		'get_oldest_journey_ts' => sub {
+			my ($self) = @_;
+
+			my $res_h = $self->pg->db->select(
+				'journeys_str',
+				['sched_dep_ts'],
+				{
+					user_id => $self->current_user->{id},
+				},
+				{
+					limit    => 1,
+					order_by => {
+						-asc => 'real_dep_ts',
+					},
+				}
+			)->hash;
+
+			if ($res_h) {
+				return epoch_to_dt( $res_h->{sched_dep_ts} );
+			}
+			return undef;
+		}
+	);
+
+	$self->helper(
 		'get_user_travels' => sub {
 			my ( $self, %opt ) = @_;
 
@@ -1171,12 +1167,12 @@ sub startup {
 					}
 					$ref->{messages} = [ reverse @parsed_messages ];
 					$ref->{sched_duration}
-					  = $ref->{sched_arrival}
+					  = $ref->{sched_arrival}->epoch
 					  ? $ref->{sched_arrival}->epoch
 					  - $ref->{sched_departure}->epoch
 					  : undef;
 					$ref->{rt_duration}
-					  = $ref->{rt_arrival}
+					  = $ref->{rt_arrival}->epoch
 					  ? $ref->{rt_arrival}->epoch - $ref->{rt_departure}->epoch
 					  : undef;
 					my ( $km, $skip )

@@ -17,4 +17,4 @@
 	</div>
 </div>
 
-%= include '_history_trains', journeys => stash('journeys');
+%= include '_history_trains', date_format => '%d.%m.%Y', journeys => stash('journeys');

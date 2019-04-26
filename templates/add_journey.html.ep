@@ -1,4 +1,18 @@
 <h1>Zugfahrt eingeben</h1>
+% if (not get_oldest_journey_ts()) {
+	<div class="row">
+		<div class="col s12">
+			<div class="card yellow lighten-4">
+				<div class="card-content">
+					<span class="card-title">Hinweis</span>
+					<p>travelynx ist darauf ausgelegt, über die Hauptseite in
+						Echtzeit in Züge ein- und auszuchecken. Die manuelle
+						Eingabe von Zugfahrten ist nur als Notlösung vorgesehen.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+% }
 % if ($error) {
 	<div class="row">
 		<div class="col s12">
@@ -23,37 +37,49 @@
 %= form_for '/journey/add' => (method => 'POST') => begin
 	%= csrf_field
 	<div class="row">
-		<div class="input-field col s12">
+		<div class="input-field col s12 m6 l6">
 			%= text_field 'train', id => 'train', class => 'validate', required => undef, pattern => '[0-9a-zA-Z]+ +[0-9a-zA-Z]* *[0-9]+'
 			<label for="train">Zug (Typ Linie Nummer)</label>
+		</div>
+		<div class="input-field col s12 m6 l6">
+			<label>
+				%= check_box cancelled => 1
+				<span>Fahrt ist ausgefallen</span>
+			</label>
 		</div>
 	</div>
 	<div class="row">
 		<div class="input-field col s12">
 			%= text_field 'dep_station', id => 'dep_station', class => 'autocomplete validate', required => undef
-			<label for="dep_station">Startbahnhof (Name oder DS100)</label>
+			<label for="dep_station">Start (Name oder DS100)</label>
 		</div>
 		<div class="input-field col s12">
 			%= text_field 'sched_departure', id => 'sched_departure', class => 'validate', required => undef, pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
 			<label for="sched_departure">Geplante Abfahrt</label>
 		</div>
 		<div class="input-field col s12">
-			%= text_field 'rt_departure', id => 'rt_departure', class => 'validate', pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
-			<label for="rt_departure">Tatsächliche Abfahrt (optional)</label>
+			%= text_field 'rt_departure', id => 'rt_departure', class => 'validate', required => undef, pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
+			<label for="rt_departure">Tatsächliche Abfahrt</label>
 		</div>
 	</div>
 	<div class="row">
 		<div class="input-field col s12">
 			%= text_field 'arr_station', id => 'arr_station', class => 'autocomplete validate', required => undef
-			<label for="arr_station">Zielbahnhof (Name oder DS100)</label>
+			<label for="arr_station">Ziel (Name oder DS100)</label>
 		</div>
 		<div class="input-field col s12">
 			%= text_field 'sched_arrival', id => 'sched_arrival', class => 'validate', required => undef, pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
 			<label for="sched_arrival">Geplante Ankunft</label>
 		</div>
 		<div class="input-field col s12">
-			%= text_field 'rt_arrival', id => 'rt_arrival', class => 'validate', pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
-			<label for="rt_arrival">Tatsächliche Ankunft (optional)</label>
+			%= text_field 'rt_arrival', id => 'rt_arrival', class => 'validate', required => undef, pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
+			<label for="rt_arrival">Tatsächliche Ankunft</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			%= text_field 'comment'
+			<label for="comment">Kommentar</label>
 		</div>
 	</div>
 	<div class="row">
