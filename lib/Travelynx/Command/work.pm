@@ -44,8 +44,18 @@ sub run {
 
 				$db->update(
 					'in_transit',
-					{ real_departure => $train->departure },
-					{ user_id        => $uid }
+					{
+						real_departure => $train->departure,
+						route          => join( '|', $train->route ),
+						messages       => join(
+							'|',
+							map {
+								( $_->[0] ? $_->[0]->epoch : q{} ) . ':'
+								  . $_->[1]
+							} $train->messages
+						)
+					},
+					{ user_id => $uid }
 				);
 			}
 		};
@@ -78,6 +88,14 @@ sub run {
 					{
 						sched_arrival => $train->sched_arrival,
 						real_arrival  => $train->arrival,
+						route         => join( '|', $train->route ),
+						messages      => join(
+							'|',
+							map {
+								( $_->[0] ? $_->[0]->epoch : q{} ) . ':'
+								  . $_->[1]
+							} $train->messages
+						)
 					},
 					{ user_id => $uid }
 				);
