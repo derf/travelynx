@@ -23,6 +23,7 @@ function tvly_update() {
 		tvly_reg_handlers();
 		setTimeout(tvly_update, 15000);
 	}).fail(function() {
+		$('.sync-failed-marker').css('display', 'block');
 		setTimeout(tvly_update, 15000);
 	});
 }

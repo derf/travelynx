@@ -1,5 +1,6 @@
 <div class="card green darken-4 autorefresh">
 	<div class="card-content white-text">
+		<i class="material-icons small right sync-failed-marker" style="display: none;">sync_problem</i>
 		<span class="card-title">Eingecheckt</span>
 		<p>
 			In <b><%= $journey->{train_type} %> <%= $journey->{train_no} %></b>
