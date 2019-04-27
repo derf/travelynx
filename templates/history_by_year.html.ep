@@ -1,6 +1,4 @@
-% my $since = get_oldest_journey_ts();
-% my $now = DateTime->now(time_zone => 'Europe/Berlin');
-%= include '_history_years', current => $year, since => $since, now => $now;
+%= include '_history_years', current => $year;
 
 <h1>Jahresrückblick <%= $year %></h1>
 

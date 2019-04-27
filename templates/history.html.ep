@@ -22,12 +22,8 @@
 </div>
 
 <h2>Nach Jahr</h2>
-% my $since = get_oldest_journey_ts();
-% my $now = DateTime->now(time_zone => 'Europe/Berlin');
-% if ($since) {
-	%= include '_history_years', current => '', since => $since->clone, now => $now;
-% }
-% else {
+%= include '_history_years', current => '';
+% if(0) {
 	<div class="row">
 		<div class="col s12">
 			Noch keine Fahrten.
@@ -36,10 +32,8 @@
 % }
 
 <h2>Nach Monat</h2>
-% if ($since) {
-	%= include '_history_months', current => '', since => $since->clone, now => $now;
-% }
-% else {
+%= include '_history_months', current => '';
+% if(0) {
 	<div class="row">
 		<div class="col s12">
 			Noch keine Fahrten.

@@ -1069,6 +1069,47 @@ sub startup {
 	);
 
 	$self->helper(
+		'history_years' => sub {
+			my ( $self, $uid ) = @_;
+			$uid //= $self->current_user->{id},
+
+			  my $res = $self->pg->db->select(
+				'journeys',
+				'distinct extract(year from real_departure) as year',
+				{ user_id  => $uid },
+				{ order_by => { -asc => 'year' } }
+			  );
+
+			my @ret;
+			for my $row ( $res->hashes->each ) {
+				push( @ret, [ $row->{year}, $row->{year} ] );
+			}
+			return @ret;
+		}
+	);
+
+	$self->helper(
+		'history_months' => sub {
+			my ( $self, $uid ) = @_;
+			$uid //= $self->current_user->{id},
+
+			  my $res = $self->pg->db->select(
+				'journeys',
+				"distinct to_char(real_departure, 'YYYY.MM') as yearmonth",
+				{ user_id  => $uid },
+				{ order_by => { -asc => 'yearmonth' } }
+			  );
+
+			my @ret;
+			for my $row ( $res->hashes->each ) {
+				my ( $year, $month ) = split( qr{[.]}, $row->{yearmonth} );
+				push( @ret, [ "${year}/${month}", "${month}.${year}" ] );
+			}
+			return @ret;
+		}
+	);
+
+	$self->helper(
 		'get_oldest_journey_ts' => sub {
 			my ($self) = @_;
 

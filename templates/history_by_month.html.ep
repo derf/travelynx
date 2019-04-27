@@ -1,6 +1,4 @@
-% my $since = get_oldest_journey_ts();
-% my $now = DateTime->now(time_zone => 'Europe/Berlin');
-%= include '_history_months', current => "${year}/${month}", since => $since, now => $now;
+%= include '_history_months', current => "${year}/${month}";
 
 <h1><%= stash('month_name') %> <%= stash('year') %></h1>
 
