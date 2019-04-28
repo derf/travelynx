@@ -1445,8 +1445,9 @@ sub startup {
 			my $interchange_real = 0;
 			my $num_trains       = 0;
 			my $num_journeys     = 0;
+			my @inconsistencies;
 
-			my $next_departure = 0;
+			my $next_departure = epoch_to_dt(0);
 
 			for my $journey (@journeys) {
 				$num_trains++;
@@ -1472,18 +1473,27 @@ sub startup {
 
 				# Note that journeys are sorted from recent to older entries
 				if (    $journey->{rt_arrival}
-					and $next_departure
-					and $next_departure - $journey->{rt_arrival}->epoch
+					and $next_departure->epoch
+					and $next_departure->epoch - $journey->{rt_arrival}->epoch
 					< ( 60 * 60 ) )
 				{
-					$interchange_real
-					  += ( $next_departure - $journey->{rt_arrival}->epoch )
-					  / 60;
+					if ( $next_departure->epoch - $journey->{rt_arrival}->epoch
+						< 0 )
+					{
+						push( @inconsistencies,
+							$next_departure->strftime('%d.%m.%Y %H:%M') );
+					}
+					else {
+						$interchange_real
+						  += (  $next_departure->epoch
+							  - $journey->{rt_arrival}->epoch )
+						  / 60;
+					}
 				}
 				else {
 					$num_journeys++;
 				}
-				$next_departure = $journey->{rt_departure}->epoch;
+				$next_departure = $journey->{rt_departure};
 			}
 			return {
 				km_route             => $km_route,
@@ -1495,6 +1505,7 @@ sub startup {
 				min_interchange_real => $interchange_real,
 				delay_dep            => $delay_dep,
 				delay_arr            => $delay_arr,
+				inconsistencies      => \@inconsistencies,
 			};
 		}
 	);

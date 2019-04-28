@@ -330,6 +330,19 @@ my @migrations = (
 		}
 		$db->update( 'schema_version', { version => 4 } );
 	},
+
+	# v4 -> v5
+	# Handle inconsistent data (overlapping journeys) in statistics. Introduces
+	# the "inconsistencies" stats key -> rebuild all stats.
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				truncate journey_stats;
+				update schema_version set version = 5;
+			}
+		);
+	},
 );
 
 sub setup_db {

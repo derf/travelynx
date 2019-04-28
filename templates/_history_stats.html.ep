@@ -1,3 +1,26 @@
+% if (@{$stats->{inconsistencies}}) {
+	<div class="row">
+		<div class="col s12">
+			<div class="card red darken-4">
+				<div class="card-content white-text">
+					<i class="material-icons small right">warning</i>
+					<span class="card-title">Inkonsistente Reisedaten</span>
+					<p>
+						Die folgenden Abfahrtszeiten liegen vor der Ankunftszeit der
+						vorherigen Zugfahrt und wurden bei der Wartezeitberechnung
+						ignoriert.
+						<ul>
+							% for my $date (@{$stats->{inconsistencies}}) {
+								<li><%= $date %></li>
+							% }
+						</ul>
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+% }
+
 <div class="row">
 	<div class="col s12">
 		<table class="striped">
