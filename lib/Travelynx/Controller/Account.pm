@@ -278,6 +278,160 @@ sub change_password {
 	$self->sendmail->custom( $email, 'travelynx: Passwort geändert', $body );
 }
 
+sub request_password_reset {
+	my ($self) = @_;
+
+	if ( $self->param('action') and $self->param('action') eq 'initiate' ) {
+		if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
+			$self->render( 'recover_password', invalid => 'csrf' );
+			return;
+		}
+
+		my $name  = $self->param('user');
+		my $email = $self->param('email');
+
+		my $uid = $self->get_uid_by_name_and_mail( $name, $email );
+
+		if ( not $uid ) {
+			$self->render( 'recover_password', invalid => 'credentials' );
+			return;
+		}
+
+		my $token = make_token();
+		my $db    = $self->pg->db;
+		my $tx    = $db->begin;
+
+		my $error = $self->mark_for_password_reset( $db, $uid, $token );
+
+		if ($error) {
+			$self->render( 'recover_password', invalid => $error );
+			return;
+		}
+
+		my $ip   = $self->req->headers->header('X-Forwarded-For');
+		my $ua   = $self->req->headers->user_agent;
+		my $date = DateTime->now( time_zone => 'Europe/Berlin' )
+		  ->strftime('%d.%m.%Y %H:%M:%S %z');
+
+		# In case Mojolicious is not running behind a reverse proxy
+		$ip
+		  //= sprintf( '%s:%s', $self->tx->remote_address,
+			$self->tx->remote_port );
+		my $recover_url = $self->url_for('recover')->to_abs->scheme('https');
+		my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
+
+		my $body = "Hallo ${name},\n\n";
+		$body .= "Unter ${recover_url}/${uid}/${token}\n";
+		$body
+		  .= "kannst du ein neues Passwort für deinen travelynx-Account vergeben.\n\n";
+		$body
+		  .= "Du erhältst diese Mail, da mit deinem Accountnamen und deiner Mail-Adresse\n";
+		$body
+		  .= "ein Passwort-Reset angefordert wurde. Falls diese Anfrage nicht von dir\n";
+		$body .= "ausging, kannst du sie ignorieren.\n\n";
+		$body .= "Daten zur Anfrage:\n";
+		$body .= " * Datum: ${date}\n";
+		$body .= " * Client: ${ip}\n";
+		$body .= " * UserAgent: ${ua}\n\n\n";
+		$body .= "Impressum: ${imprint_url}\n";
+
+		my $success
+		  = $self->sendmail->custom( $email, 'travelynx: Neues Passwort',
+			$body );
+
+		if ($success) {
+			$tx->commit;
+			$self->render( 'recover_password', success => 1 );
+		}
+		else {
+			$self->render( 'recover_password', invalid => 'sendmail' );
+		}
+	}
+	elsif ( $self->param('action')
+		and $self->param('action') eq 'set_password' )
+	{
+		my $id        = $self->param('id');
+		my $token     = $self->param('token');
+		my $password  = $self->param('newpw');
+		my $password2 = $self->param('newpw2');
+
+		if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
+			$self->render( 'set_password', invalid => 'csrf' );
+			return;
+		}
+		if ( not $self->verify_password_token( $id, $token ) ) {
+			$self->render( 'recover_password', invalid => 'token' );
+			return;
+		}
+		if ( $password ne $password2 ) {
+			$self->render( 'set_password', invalid => 'password_notequal' );
+			return;
+		}
+
+		if ( length($password) < 8 ) {
+			$self->render( 'set_password', invalid => 'password_short' );
+			return;
+		}
+
+		my $pw_hash = hash_password($password);
+		$self->set_user_password( $id, $pw_hash );
+
+		my $account = $self->get_user_data($id);
+
+		if ( not $self->authenticate( $account->{name}, $password ) ) {
+			$self->render( 'set_password',
+				invalid => 'Authentication failure – WTF?' );
+		}
+
+		$self->redirect_to('account');
+
+		$self->remove_password_token( $id, $token );
+
+		my $user  = $account->{name};
+		my $email = $account->{email};
+		my $ip    = $self->req->headers->header('X-Forwarded-For');
+		my $ua    = $self->req->headers->user_agent;
+		my $date  = DateTime->now( time_zone => 'Europe/Berlin' )
+		  ->strftime('%d.%m.%Y %H:%M:%S %z');
+
+		# In case Mojolicious is not running behind a reverse proxy
+		$ip
+		  //= sprintf( '%s:%s', $self->tx->remote_address,
+			$self->tx->remote_port );
+		my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
+
+		my $body = "Hallo ${user},\n\n";
+		$body
+		  .= "Das Passwort deines travelynx-Accounts wurde soeben über die";
+		$body .= " 'Passwort vergessen'-Funktion geändert.\n\n";
+		$body .= "Daten zur Änderung:\n";
+		$body .= " * Datum: ${date}\n";
+		$body .= " * Client: ${ip}\n";
+		$body .= " * UserAgent: ${ua}\n\n\n";
+		$body .= "Impressum: ${imprint_url}\n";
+
+		$self->sendmail->custom( $email, 'travelynx: Passwort geändert',
+			$body );
+	}
+	else {
+		$self->render('recover_password');
+	}
+}
+
+sub recover_password {
+	my ($self) = @_;
+
+	my $id    = $self->stash('id');
+	my $token = $self->stash('token');
+
+	if ( $self->verify_password_token( $id, $token ) ) {
+		$self->render('set_password');
+	}
+	else {
+		$self->render( 'recover_password', invalid => 'token' );
+	}
+}
+
 sub account {
 	my ($self) = @_;
 

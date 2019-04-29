@@ -732,6 +732,88 @@ sub startup {
 		}
 	);
 
+	$self->helper(
+		'get_uid_by_name_and_mail' => sub {
+			my ( $self, $name, $email ) = @_;
+
+			my $res = $self->pg->db->select(
+				'users',
+				['id'],
+				{
+					name   => $name,
+					email  => $email,
+					status => 1
+				}
+			);
+
+			if ( my $user = $res->hash ) {
+				return $user->{id};
+			}
+			return;
+		}
+	);
+
+	$self->helper(
+		'mark_for_password_reset' => sub {
+			my ( $self, $db, $uid, $token ) = @_;
+
+			my $res = $db->select(
+				'pending_passwords',
+				'count(*) as count',
+				{ user_id => $uid }
+			);
+			if ( $res->hash->{count} ) {
+				return 'in progress';
+			}
+
+			$db->insert(
+				'pending_passwords',
+				{
+					user_id => $uid,
+					token   => $token,
+					requested_at =>
+					  DateTime->now( time_zone => 'Europe/Berlin' )
+				}
+			);
+
+			return undef;
+		}
+	);
+
+	$self->helper(
+		'verify_password_token' => sub {
+			my ( $self, $uid, $token ) = @_;
+
+			my $res = $self->pg->db->select(
+				'pending_passwords',
+				'count(*) as count',
+				{
+					user_id => $uid,
+					token   => $token
+				}
+			);
+
+			if ( $res->hash->{count} ) {
+				return 1;
+			}
+			return;
+		}
+	);
+
+	$self->helper(
+		'remove_password_token' => sub {
+			my ( $self, $uid, $token ) = @_;
+
+			$self->pg->db->delete(
+				'pending_passwords',
+				{
+					user_id => $uid,
+					token   => $token
+				}
+			);
+		}
+	);
+
 	# This helper should only be called directly when also providing a user ID.
 	# If you don't have one, use current_user() instead (get_user_data will
 	# delegate to it anyways).
@@ -1530,6 +1612,8 @@ sub startup {
 	$r->get('/api/v0/:user_action/:token')->to('api#get_v0');
 	$r->get('/api/v1/:user_action/:token')->to('api#get_v1');
 	$r->get('/login')->to('account#login_form');
+	$r->get('/recover')->to('account#request_password_reset');
+	$r->get('/recover/:id/:token')->to('account#recover_password');
 	$r->get('/register')->to('account#registration_form');
 	$r->get('/reg/:id/:token')->to('account#verify');
 	$r->post('/action')->to('traveling#log_action');
@@ -1537,6 +1621,7 @@ sub startup {
 	$r->post('/list_departures')->to('traveling#redirect_to_station');
 	$r->post('/login')->to('account#do_login');
 	$r->post('/register')->to('account#register');
+	$r->post('/recover')->to('account#request_password_reset');
 
 	my $authed_r = $r->under(
 		sub {

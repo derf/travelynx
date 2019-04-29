@@ -62,6 +62,13 @@ sub run {
 		printf( "Pruned unverified user %d\n", $user->{id} );
 	}
 
+	my $res = $db->delete( 'pending_passwords',
+		{ requested_at => { '<', $verification_deadline } } );
+
+	if ( my $rows = $res->rows ) {
+		printf( "Pruned %d pending password reset(s)\n", $rows );
+	}
+
 	my $to_delete = $db->select( 'users', ['id'],
 		{ deletion_requested => { '<', $deletion_deadline } } );
 	my @uids_to_delete = $to_delete->arrays->map( sub { shift->[0] } )->each;

@@ -159,5 +159,45 @@ $t->post_ok(
 );
 $t->status_is(302)->header_is( location => '/' );
 
+$csrf_token = $t->ua->get('/account')->res->dom->at('input[name=csrf_token]')
+  ->attr('value');
+$t->post_ok(
+	'/logout' => form => {
+		csrf_token => $csrf_token,
+	}
+);
+$t->status_is(302)->header_is( location => '/login' );
+
+$csrf_token = $t->ua->get('/recover')->res->dom->at('input[name=csrf_token]')
+  ->attr('value');
+$t->post_ok(
+	'/recover' => form => {
+		csrf_token => $csrf_token,
+		action     => 'initiate',
+		user       => 'someone',
+		email      => 'foo@example.org',
+	}
+);
+$t->status_is(200)->content_like(qr{wird durchgeführt});
+
+$res = $t->app->pg->db->select( 'pending_passwords', ['token'],
+	{ user_id => $uid } );
+$token = $res->hash->{token};
+
+$t->get_ok("/recover/${uid}/${token}")->status_is(200)
+  ->content_like(qr{Neues Passwort eintragen});
+
+$t->post_ok(
+	'/recover' => form => {
+		csrf_token => $csrf_token,
+		action     => 'set_password',
+		id         => $uid,
+		token      => $token,
+		newpw      => 'foofoofoo2',
+		newpw2     => 'foofoofoo2',
+	}
+);
+$t->status_is(302)->header_is( location => '/account' );
+
 $t->app->pg->db->query('drop schema travelynx_test_02 cascade');
 done_testing();

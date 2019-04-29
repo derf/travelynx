@@ -102,4 +102,15 @@
 		<div class="col s3 m3 l3">
 		</div>
 	</div>
+	<div class="row" style="margin-top: 2em;">
+		<div class="col s3 m3 l3">
+		</div>
+		<div class="col s6 m6 l6 center-align">
+			<a href="/recover">
+				Passwort vergessen
+			</a>
+		</div>
+		<div class="col s3 m3 l3">
+		</div>
+	</div>
 %= end

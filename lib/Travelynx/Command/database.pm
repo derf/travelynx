@@ -376,6 +376,23 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v6 -> v7
+	# Add password_reset table to store data about pending password resets
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				create table pending_passwords (
+					user_id integer not null references users (id) primary key,
+					token varchar(80) not null,
+					requested_at timestamptz not null
+				);
+				comment on table pending_passwords is 'Password reset tokens';
+				update schema_version set version = 7;
+			}
+		);
+	},
 );
 
 sub setup_db {
