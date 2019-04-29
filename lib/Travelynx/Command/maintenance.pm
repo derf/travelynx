@@ -88,7 +88,9 @@ sub run {
 		my $stats_res    = $db->delete( 'journey_stats', { user_id => $uid } );
 		my $journeys_res = $db->delete( 'journeys',      { user_id => $uid } );
 		my $transit_res  = $db->delete( 'in_transit',    { user_id => $uid } );
-		my $user_res     = $db->delete( 'users',         { id      => $uid } );
+		my $password_res
+		  = $db->delete( 'pending_passwords', { user_id => $uid } );
+		my $user_res = $db->delete( 'users', { id => $uid } );
 
 		printf( "    %d tokens, %d monthly stats, %d journeys\n",
 			$tokens_res->rows, $stats_res->rows, $journeys_res->rows );
