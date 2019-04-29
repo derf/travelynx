@@ -343,6 +343,39 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v5 -> v6
+	# Add documentation
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				comment on table in_transit is 'Users who are currently checked into a train';
+				comment on view in_transit_str is 'in_transit with station IDs resolved to name/ds100';
+				comment on table journey_stats is 'Cache for yearly and monthly statistics in JSON format';
+				comment on table journeys is 'Past train trips (i.e. the user has already checked out)';
+				comment on view journeys_str is 'journeys with station IDs resolved to name/ds100';
+				comment on table pending_mails is 'Blacklist for mail addresses used in an unsuccessful registration attempt. Helps ensure that travelynx does not spam individual mails with registration attempts.';
+				comment on table stations is 'Map of station IDs to name and DS100 code';
+				comment on table tokens is 'User API tokens';
+				comment on column in_transit.route is 'Format: station1|station2|station3|...';
+				comment on column in_transit.messages is 'Format: epoch:message1|epoch:message2|...';
+				comment on column in_transit_str.route is 'Format: station1|station2|station3|...';
+				comment on column in_transit_str.messages is 'Format: epoch:message1|epoch:message2|...';
+				comment on column journeys.edited is 'Bit mask indicating which part has been entered manually. 0x0001 = sched departure, 0x0002 = real departure, 0x0100 = sched arrival, 0x0200 = real arrival';
+				comment on column journeys.route is 'Format: station1|station2|station3|...';
+				comment on column journeys.messages is 'Format: epoch:message1|epoch:message2|...';
+				comment on column journeys_str.edited is 'Bit mask indicating which part has been entered manually. 0x0001 = sched departure, 0x0002 = real departure, 0x0100 = sched arrival, 0x0200 = real arrival';
+				comment on column journeys_str.route is 'Format: station1|station2|station3|...';
+				comment on column journeys_str.messages is 'Format: epoch:message1|epoch:message2|...';
+				comment on column users.status is 'Bit mask: 0x01 = verified';
+				comment on column users.public_level is 'Bit mask indicating public account parts. 0x01 = current status (checkin from/to or last checkout at)';
+				comment on column users.token is 'Used for e-mail verification';
+				comment on column users.deletion_requested is 'Time at which account deletion was requested';
+				update schema_version set version = 6;
+			}
+		);
+	},
 );
 
 sub setup_db {
