@@ -10,13 +10,18 @@ sub homepage {
 	if ( $self->is_user_authenticated ) {
 		$self->render(
 			'landingpage',
+			version           => $self->app->config->{version} // 'UNKNOWN',
 			with_autocomplete => 1,
 			with_geolocation  => 1
 		);
 		$self->mark_seen( $self->current_user->{id} );
 	}
 	else {
-		$self->render( 'landingpage', intro => 1 );
+		$self->render(
+			'landingpage',
+			version => $self->app->config->{version} // 'UNKNOWN',
+			intro   => 1
+		);
 	}
 }
 
@@ -246,6 +251,7 @@ sub station {
 	if ( $status->{errstr} ) {
 		$self->render(
 			'landingpage',
+			version           => $self->app->config->{version} // 'UNKNOWN',
 			with_autocomplete => 1,
 			with_geolocation  => 1,
 			error             => $status->{errstr}
