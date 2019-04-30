@@ -21,33 +21,7 @@
 	</div>
 % }
 % if (my $invalid = stash('invalid')) {
-	<div class="row">
-		<div class="col s12">
-			<div class="card red darken-4">
-				<div class="card-content white-text">
-					% if ($invalid eq 'csrf') {
-						<span class="card-title">Ungültiger CSRF-Token</span>
-						<p>Sind Cookies aktiviert? Ansonsten könnte es sich um einen
-						Fall von <a
-						href="https://de.wikipedia.org/wiki/Cross-Site-Request-Forgery">CSRF</a>
-						handeln.</p>
-					% }
-					% elsif ($invalid eq 'credentials') {
-						<span class="card-title">Ungültige Logindaten</span>
-						<p>Falscher Account oder falsches Passwort.</p>
-					% }
-					% elsif ($invalid eq 'confirmation') {
-						<span class="card-title">Account nicht freigeschaltet</span>
-						<p>Bitte besuche zuerst den per Mail verschickten Bestätigungslink.</p>
-					% }
-					% else {
-						<span class="card-title">Unbekannter Fehler</span>
-						<p>„<%= $invalid %>“</p>
-					% }
-				</div>
-			</div>
-		</div>
-	</div>
+	%= include '_invalid_input', invalid => $invalid
 % }
 % if (my $from = stash('from')) {
 	<div class="row">

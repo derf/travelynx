@@ -190,7 +190,7 @@ sub delete {
 			)
 		  )
 		{
-			$self->render( 'account', invalid => 'password' );
+			$self->render( 'account', invalid => 'deletion password' );
 			return;
 		}
 		$self->flag_user_deletion( $self->current_user->{id} );
@@ -293,7 +293,8 @@ sub request_password_reset {
 		my $uid = $self->get_uid_by_name_and_mail( $name, $email );
 
 		if ( not $uid ) {
-			$self->render( 'recover_password', invalid => 'credentials' );
+			$self->render( 'recover_password',
+				invalid => 'recovery credentials' );
 			return;
 		}
 
@@ -360,7 +361,7 @@ sub request_password_reset {
 			return;
 		}
 		if ( not $self->verify_password_token( $id, $token ) ) {
-			$self->render( 'recover_password', invalid => 'token' );
+			$self->render( 'recover_password', invalid => 'recovery token' );
 			return;
 		}
 		if ( $password ne $password2 ) {
@@ -428,7 +429,7 @@ sub recover_password {
 		$self->render('set_password');
 	}
 	else {
-		$self->render( 'recover_password', invalid => 'token' );
+		$self->render( 'recover_password', invalid => 'recovery token' );
 	}
 }
 
