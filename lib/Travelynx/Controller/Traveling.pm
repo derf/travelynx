@@ -25,6 +25,44 @@ sub homepage {
 	}
 }
 
+sub user_status {
+	my ($self) = @_;
+
+	my $name = $self->stash('name');
+	my $user = $self->get_privacy_by_name($name);
+
+	if ( $user and ( $user->{public_level} & 0x02 ) ) {
+		my $status = $self->get_user_status( $user->{id} );
+		$self->render(
+			'user_status',
+			name    => $name,
+			journey => $status
+		);
+	}
+	else {
+		$self->render('not_found');
+	}
+}
+
+sub public_status_card {
+	my ($self) = @_;
+
+	my $name = $self->stash('name');
+	my $user = $self->get_privacy_by_name($name);
+
+	if ( $user and ( $user->{public_level} & 0x02 ) ) {
+		my $status = $self->get_user_status( $user->{id} );
+		$self->render(
+			'_public_status_card',
+			name    => $name,
+			journey => $status
+		);
+	}
+	else {
+		$self->render('not_found');
+	}
+}
+
 sub status_card {
 	my ($self) = @_;
 	my $status = $self->get_user_status;

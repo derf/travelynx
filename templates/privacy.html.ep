@@ -1,0 +1,42 @@
+<h1>Privatsphäre</h1>
+<div class="row">
+	<div class="col s12">
+		Hier kannst du auswählen, welche Aspekte deines Accounts bzw. deiner
+		Bahnfahrten öffentlich einsehbar sind. Öffentliche Daten sind
+		grundsätzlich für <i>alle</i> einsehbar, die die (leicht erratbare) URL
+		kennen.
+	</div>
+</div>
+<h2>Öffentliche Daten:</h2>
+%= form_for '/account/privacy' => (method => 'POST') => begin
+	%= csrf_field
+	<div class="row">
+		<div class="input-field col s12">
+			<label>
+				%= check_box public_status => 1
+				<span class="black-text">Aktueller Status</span>
+			</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s12">
+			Wenn aktiv, ist dein aktueller Status unter <a href="/status/<%= $name
+			%>">/status/<%= $name %></a> abrufbar. Wenn du eingecheckt bist,
+			werden dort Zug, Start- und Zielstation, Abfahrts- und Ankunftszeit
+			gezeigt; andernfalls lediglich der Zielbahnhof der letzten Reise.
+			Wann die letzte Reise beendet wurde, wird bewusst nicht angegeben.
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s3 m3 l3">
+		</div>
+		<div class="col s6 m6 l6 center-align">
+			<button class="btn waves-effect waves-light" type="submit" name="action" value="save">
+				Speichern
+				<i class="material-icons right">send</i>
+			</button>
+		</div>
+		<div class="col s3 m3 l3">
+		</div>
+	</div>
+%= end

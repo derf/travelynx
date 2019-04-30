@@ -775,6 +775,38 @@ sub startup {
 	);
 
 	$self->helper(
+		'get_privacy_by_name' => sub {
+			my ( $self, $name ) = @_;
+
+			my $res = $self->pg->db->select(
+				'users',
+				[ 'id', 'public_level' ],
+				{
+					name   => $name,
+					status => 1
+				}
+			);
+
+			if ( my $user = $res->hash ) {
+				return $user;
+			}
+			return;
+		}
+	);
+
+	$self->helper(
+		'set_privacy' => sub {
+			my ( $self, $uid, $public_level ) = @_;
+
+			$self->pg->db->update(
+				'users',
+				{ public_level => $public_level },
+				{ id           => $uid }
+			);
+		}
+	);
+
+	$self->helper(
 		'mark_for_password_reset' => sub {
 			my ( $self, $db, $uid, $token ) = @_;
 
@@ -1696,6 +1728,7 @@ sub startup {
 	$r->get('/recover/:id/:token')->to('account#recover_password');
 	$r->get('/register')->to('account#registration_form');
 	$r->get('/reg/:id/:token')->to('account#verify');
+	$r->get('/status/:name')->to('traveling#user_status');
 	$r->post('/action')->to('traveling#log_action');
 	$r->post('/geolocation')->to('traveling#geolocation');
 	$r->post('/list_departures')->to('traveling#redirect_to_station');
@@ -1715,6 +1748,7 @@ sub startup {
 	);
 
 	$authed_r->get('/account')->to('account#account');
+	$authed_r->get('/account/privacy')->to('account#privacy');
 	$authed_r->get('/ajax/status_card.html')->to('traveling#status_card');
 	$authed_r->get('/cancelled')->to('traveling#cancelled');
 	$authed_r->get('/change_password')->to('account#password_form');
@@ -1728,6 +1762,7 @@ sub startup {
 	$authed_r->get('/journey/:id')->to('traveling#journey_details');
 	$authed_r->get('/s/*station')->to('traveling#station');
 	$authed_r->get('/confirm_mail/:token')->to('account#confirm_mail');
+	$authed_r->post('/account/privacy')->to('account#privacy');
 	$authed_r->post('/journey/add')->to('traveling#add_journey_form');
 	$authed_r->post('/journey/edit')->to('traveling#edit_journey');
 	$authed_r->post('/change_password')->to('account#change_password');

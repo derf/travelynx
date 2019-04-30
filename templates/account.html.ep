@@ -37,6 +37,20 @@
 				<td><a href="/change_password"><i class="material-icons">edit</i> ändern</a></td>
 			</tr>
 			<tr>
+				<th scope="row">Privatsphäre</th>
+				<td>
+					% if ($acc->{is_public} == 0) {
+						Keine öffentlichen Daten
+					% }
+					% else {
+						Öffentliche Daten:
+					% }
+					% if ($acc->{is_public} & 0x02) {
+						Status
+					% }
+					<a href="/account/privacy"><i class="material-icons">edit</i> ändern</a></td>
+			</tr>
+			<tr>
 				<th scope="row">Registriert am</th>
 				<td><%= $acc->{registered_at}->strftime('%d.%m.%Y %H:%M') %></td>
 			</tr>

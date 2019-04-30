@@ -208,6 +208,28 @@ sub do_logout {
 	$self->redirect_to('/login');
 }
 
+sub privacy {
+	my ($self) = @_;
+
+	my $user         = $self->current_user;
+	my $public_level = $user->{is_public};
+
+	if ( $self->param('action') and $self->param('action') eq 'save' ) {
+		if ( $self->param('public_status') ) {
+			$public_level |= 0x02;
+		}
+		else {
+			$public_level &= ~0x02;
+		}
+		$self->set_privacy( $user->{id}, $public_level );
+	}
+	else {
+		$self->param( public_status => $public_level & 0x02 ? 1 : 0 );
+	}
+
+	$self->render( 'privacy', name => $user->{name} );
+}
+
 sub change_mail {
 	my ($self) = @_;
 
