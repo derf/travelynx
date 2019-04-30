@@ -728,17 +728,26 @@ sub startup {
 	);
 
 	$self->helper(
-		'get_user_token' => sub {
-			my ( $self, $uid ) = @_;
+		'verify_registration_token' => sub {
+			my ( $self, $uid, $token ) = @_;
 
-			my $res = $self->pg->db->select(
-				'users',
-				[ 'name', 'status', 'token' ],
-				{ id => $uid }
+			my $db = $self->pg->db;
+			my $tx = $db->begin;
+
+			my $res = $db->select(
+				'pending_registrations',
+				'count(*) as count',
+				{
+					user_id => $uid,
+					token   => $token
+				}
 			);
 
-			if ( my $ret = $res->array ) {
-				return @{$ret};
+			if ( $res->hash->{count} ) {
+				$db->update( 'users', { status => 1 }, { id => $uid } );
+				$db->delete( 'pending_registrations', { user_id => $uid } );
+				$tx->commit;
+				return 1;
 			}
 			return;
 		}
@@ -976,15 +985,23 @@ sub startup {
 					status        => 0,
 					public_level  => 0,
 					email         => $email,
-					token         => $token,
 					password      => $password,
 					registered_at => $now,
 					last_seen     => $now,
 				},
 				{ returning => 'id' }
 			);
+			my $uid = $res->hash->{id};
 
-			return $res->hash->{id};
+			$db->insert(
+				'pending_registrations',
+				{
+					user_id => $uid,
+					token   => $token
+				}
+			);
+
+			return $uid;
 		}
 	);
 

@@ -71,9 +71,11 @@ $t->post_ok(
 );
 $t->status_is(200)->content_like(qr{nicht freigeschaltet});
 
-my $res = $t->app->pg->db->select( 'users', [ 'id', 'token' ],
-	{ name => 'someone' } );
-my ( $uid, $token ) = @{ $res->hash }{qw{id token}};
+my $res = $t->app->pg->db->select( 'users', ['id'], { name => 'someone' } );
+my $uid = $res->hash->{id};
+$res = $t->app->pg->db->select( 'pending_registrations', ['token'],
+	{ user_id => $uid } );
+my $token = $res->hash->{token};
 
 # Successful verification
 $t->get_ok("/reg/${uid}/${token}");

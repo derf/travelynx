@@ -424,6 +424,38 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v9 -> v10
+	# Add pending_registrations table. The users.token column is no longer
+	# needed.
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				create table pending_registrations (
+					user_id integer not null references users (id) primary key,
+					token varchar(80) not null
+				);
+				comment on table pending_registrations is 'Verification tokens for newly registered accounts';
+				update schema_version set version = 10;
+			}
+		);
+		my $res = $db->select( 'users', [ 'id', 'token' ], { status => 0 } );
+		for my $user ( $res->hashes->each ) {
+			$db->insert(
+				'pending_registrations',
+				{
+					user_id => $user->{id},
+					token   => $user->{token}
+				}
+			);
+		}
+		$db->query(
+			qq{
+				alter table users drop column token;
+			}
+		);
+	},
 );
 
 sub setup_db {

@@ -159,20 +159,16 @@ sub verify {
 	my $id    = $self->stash('id');
 	my $token = $self->stash('token');
 
-	my @db_user = $self->get_user_token($id);
-
-	if ( not @db_user ) {
+	if ( not $id =~ m{ ^ \d+ $ }x ) {
 		$self->render( 'register', invalid => 'token' );
 		return;
 	}
 
-	my ( $db_name, $db_status, $db_token ) = @db_user;
-
-	if ( not $db_name or $token ne $db_token or $db_status != 0 ) {
+	if ( not $self->verify_registration_token( $id, $token ) ) {
 		$self->render( 'register', invalid => 'token' );
 		return;
 	}
-	$self->app->pg->db->update( 'users', { status => 1 }, { id => $id } );
+
 	$self->render( 'login', from => 'verification' );
 }
 

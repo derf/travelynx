@@ -59,7 +59,8 @@ sub run {
 				}
 			);
 		}
-		$db->delete( 'users', { id => $user->{id} } );
+		$db->delete( 'pending_registrations', { user_id => $user->{id} } );
+		$db->delete( 'users',                 { id      => $user->{id} } );
 		printf( "Pruned unverified user %d\n", $user->{id} );
 	}
 

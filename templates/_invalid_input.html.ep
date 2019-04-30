@@ -47,7 +47,7 @@
 				% }
 				% elsif ($invalid eq 'token') {
 					<span class="card-title">Ungültiger Token</span>
-					<p>Die Verifikation deiner Mail-Adresse ist fehlgeschlagen oder du hast den Token schon einmal verwendet.</p>
+					<p>Möglicherweise ist die Verifikation deiner Mail-Adresse fehlgeschlagen oder du hast den Token schon einmal verwendet.</p>
 				% }
 				% elsif ($invalid eq 'confirmation') {
 					<span class="card-title">Account nicht freigeschaltet</span>
