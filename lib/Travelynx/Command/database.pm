@@ -412,6 +412,18 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v8 -> v9
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				alter table users rename column last_login to last_seen;
+				drop table user_actions;
+				update schema_version set version = 9;
+			}
+		);
+	},
 );
 
 sub setup_db {

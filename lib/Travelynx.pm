@@ -578,6 +578,18 @@ sub startup {
 	);
 
 	$self->helper(
+		'mark_seen' => sub {
+			my ( $self, $uid ) = @_;
+
+			$self->pg->db->update(
+				'users',
+				{ last_seen => DateTime->now( time_zone => 'Europe/Berlin' ) },
+				{ id        => $uid }
+			);
+		}
+	);
+
+	$self->helper(
 		'update_journey_part' => sub {
 			my ( $self, $db, $journey_id, $key, $value ) = @_;
 			my $rows;
@@ -878,7 +890,7 @@ sub startup {
 				'users',
 				'id, name, status, public_level, email, '
 				  . 'extract(epoch from registered_at) as registered_at_ts, '
-				  . 'extract(epoch from last_login) as last_login_ts, '
+				  . 'extract(epoch from last_seen) as last_seen_ts, '
 				  . 'extract(epoch from deletion_requested) as deletion_requested_ts',
 				{ id => $uid }
 			)->hash;
@@ -895,7 +907,7 @@ sub startup {
 						time_zone => 'Europe/Berlin'
 					),
 					last_seen => DateTime->from_epoch(
-						epoch     => $user_data->{last_login_ts},
+						epoch     => $user_data->{last_seen_ts},
 						time_zone => 'Europe/Berlin'
 					),
 					deletion_requested => $user_data->{deletion_requested_ts}
@@ -967,7 +979,7 @@ sub startup {
 					token         => $token,
 					password      => $password,
 					registered_at => $now,
-					last_login    => $now,
+					last_seen     => $now,
 				},
 				{ returning => 'id' }
 			);

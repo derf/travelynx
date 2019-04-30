@@ -13,6 +13,7 @@ sub homepage {
 			with_autocomplete => 1,
 			with_geolocation  => 1
 		);
+		$self->mark_seen( $self->current_user->{id} );
 	}
 	else {
 		$self->render( 'landingpage', intro => 1 );
@@ -272,6 +273,7 @@ sub station {
 			title   => "travelynx: $status->{station_name}",
 		);
 	}
+	$self->mark_seen( $self->current_user->{id} );
 }
 
 sub redirect_to_station {

@@ -38,6 +38,7 @@ sub do_login {
 	else {
 		if ( $self->authenticate( $user, $password ) ) {
 			$self->redirect_to( $self->req->param('redirect_to') // '/' );
+			$self->mark_seen( $self->current_user->{id} );
 		}
 		else {
 			my $data = $self->get_user_password($user);
@@ -535,6 +536,7 @@ sub account {
 	my ($self) = @_;
 
 	$self->render('account');
+	$self->mark_seen( $self->current_user->{id} );
 }
 
 sub json_export {

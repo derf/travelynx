@@ -13,6 +13,7 @@ sub run {
 	my $now = DateTime->now( time_zone => 'Europe/Berlin' );
 	my $verification_deadline = $now->clone->subtract( hours => 48 );
 	my $deletion_deadline     = $now->clone->subtract( hours => 72 );
+	my $old_deadline          = $now->clone->subtract( years => 1 );
 
 	my $db = $self->app->pg->db;
 	my $tx = $db->begin;
@@ -79,6 +80,12 @@ sub run {
 	my $to_delete = $db->select( 'users', ['id'],
 		{ deletion_requested => { '<', $deletion_deadline } } );
 	my @uids_to_delete = $to_delete->arrays->map( sub { shift->[0] } )->each;
+
+	$to_delete
+	  = $db->select( 'users', ['id'], { last_seen => { '<', $old_deadline } } );
+
+	push( @uids_to_delete,
+		$to_delete->arrays->map( sub { shift->[0] } )->each );
 
 	if ( @uids_to_delete > 10 ) {
 		printf STDERR (
