@@ -121,10 +121,4 @@
 	</div>
 % }
 
-<div class="row" style="margin-top: 5em;">
-	<div class="col s12 center-align grey-text">
-		<a href="impressum">Impressum und Datenschutz</a>
-		<span style="margin-left: 0.5em; margin-right: 0.5em;">–</span>
-		<a href="https://finalrewind.org/projects/travelynx">travelynx</a> v<%= stash('version') // '???' %>
-	</div>
-</div>
+%= include '_footer', version => stash('version')
