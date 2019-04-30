@@ -21,6 +21,7 @@ sub run {
 	my $db = $self->app->pg->db;
 
 	my $now = DateTime->now( time_zone => 'Europe/Berlin' );
+	my $active = $now->clone->subtract( months => 1 );
 
 	my $checkin_window_query
 	  = qq{select count(*) as count from journeys where checkin_time > to_timestamp(?);};
@@ -28,6 +29,17 @@ sub run {
 	query_to_munin( 'reg_user_count',
 		$db->select( 'users', 'count(*) as count', { status => 1 } )
 		  ->hash->{count} );
+	query_to_munin(
+		'active_user_count',
+		$db->select(
+			'users',
+			'count(*) as count',
+			{
+				status    => 1,
+				last_seen => { '>', $active }
+			}
+		)->hash->{count}
+	);
 	query_to_munin(
 		'checkins_24h',
 		$db->query( $checkin_window_query,
