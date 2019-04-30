@@ -211,6 +211,88 @@ sub do_logout {
 	$self->redirect_to('/login');
 }
 
+sub change_mail {
+	my ($self) = @_;
+
+	my $action   = $self->req->param('action');
+	my $password = $self->req->param('password');
+	my $email    = $self->req->param('email');
+
+	if ( $action and $action eq 'update_mail' ) {
+		if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
+			$self->render(
+				'change_mail',
+				invalid => 'csrf',
+			);
+			return;
+		}
+
+		if ( not length($email) ) {
+			$self->render( 'change_mail', invalid => 'mail_empty' );
+			return;
+		}
+
+		if (
+			not $self->authenticate(
+				$self->current_user->{name},
+				$self->param('password')
+			)
+		  )
+		{
+			$self->render( 'change_mail', invalid => 'password' );
+			return;
+		}
+
+		my $token = make_token();
+		my $name  = $self->current_user->{name};
+		my $db    = $self->pg->db;
+		my $tx    = $db->begin;
+
+		$self->mark_for_mail_change( $db, $self->current_user->{id},
+			$email, $token );
+
+		my $ip   = $self->req->headers->header('X-Forwarded-For');
+		my $ua   = $self->req->headers->user_agent;
+		my $date = DateTime->now( time_zone => 'Europe/Berlin' )
+		  ->strftime('%d.%m.%Y %H:%M:%S %z');
+
+		# In case Mojolicious is not running behind a reverse proxy
+		$ip
+		  //= sprintf( '%s:%s', $self->tx->remote_address,
+			$self->tx->remote_port );
+		my $confirm_url
+		  = $self->url_for('confirm_mail')->to_abs->scheme('https');
+		my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
+
+		my $body = "Hallo ${name},\n\n";
+		$body .= "Bitte bestätige unter <${confirm_url}/${token}>,\n";
+		$body .= "dass du mit dieser Adresse E-Mail empfangen kannst.\n\n";
+		$body
+		  .= "Du erhältst diese Mail, da eine Änderung der deinem travelynx-Account\n";
+		$body .= "zugeordneten Mail-Adresse beantragt wurde.\n\n";
+		$body .= "Daten zur Anfrage:\n";
+		$body .= " * Datum: ${date}\n";
+		$body .= " * Client: ${ip}\n";
+		$body .= " * UserAgent: ${ua}\n\n\n";
+		$body .= "Impressum: ${imprint_url}\n";
+
+		my $success
+		  = $self->sendmail->custom( $email,
+			'travelynx: Mail-Adresse bestätigen', $body );
+
+		if ($success) {
+			$tx->commit;
+			$self->render( 'change_mail', success => 1 );
+		}
+		else {
+			$self->render( 'change_mail', invalid => 'sendmail' );
+		}
+	}
+	else {
+		$self->render('change_mail');
+	}
+}
+
 sub password_form {
 	my ($self) = @_;
 
@@ -252,6 +334,7 @@ sub change_password {
 	my $pw_hash = hash_password($password);
 	$self->set_user_password( $self->current_user->{id}, $pw_hash );
 
+	$self->flash( success => 'password' );
 	$self->redirect_to('account');
 
 	my $user  = $self->current_user->{name};
@@ -361,7 +444,7 @@ sub request_password_reset {
 			return;
 		}
 		if ( not $self->verify_password_token( $id, $token ) ) {
-			$self->render( 'recover_password', invalid => 'recovery token' );
+			$self->render( 'recover_password', invalid => 'change token' );
 			return;
 		}
 		if ( $password ne $password2 ) {
@@ -384,6 +467,7 @@ sub request_password_reset {
 				invalid => 'Authentication failure – WTF?' );
 		}
 
+		$self->flash( success => 'password' );
 		$self->redirect_to('account');
 
 		$self->remove_password_token( $id, $token );
@@ -430,6 +514,20 @@ sub recover_password {
 	}
 	else {
 		$self->render( 'recover_password', invalid => 'recovery token' );
+	}
+}
+
+sub confirm_mail {
+	my ($self) = @_;
+	my $id     = $self->current_user->{id};
+	my $token  = $self->stash('token');
+
+	if ( $self->change_mail_with_token( $id, $token ) ) {
+		$self->flash( success => 'mail' );
+		$self->redirect_to('account');
+	}
+	else {
+		$self->render( 'change_mail', invalid => 'change token' );
 	}
 }
 

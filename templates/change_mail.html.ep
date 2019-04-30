@@ -1,0 +1,49 @@
+% if (my $invalid = stash('invalid')) {
+	%= include '_invalid_input', invalid => $invalid
+% }
+
+% if (stash('success')) {
+	<div class="row">
+		<div class="col s12">
+			<div class="card green darken-4">
+				<div class="card-content white-text">
+					<span class="card-title">Mail-Änderung wird durchgeführt</span>
+					<p>
+						Ein für zwei Tage gültiger Bestätigungs-Link wurde an die
+						angegebene Mail-Adresse verschickt. Sobald du ihn aufgerufen
+						hast, wird die neue Adresse in deinem Account eingetragen.
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+% }
+
+<h1>Mail ändern</h1>
+%= form_for '/change_mail' => (method => 'POST') => begin
+	%= csrf_field
+	<div class="row">
+		<div class="input-field col s12">
+			<i class="material-icons prefix">lock</i>
+			%= password_field 'password', id => 'password', class => 'validate', required => undef, autocomplete => 'current-password'
+			<label for="password">Aktuelles Passwort</label>
+		</div>
+		<div class="input-field col s12">
+			<i class="material-icons prefix">email</i>
+			%= email_field 'email', id => 'email', class => 'validate', required => undef, maxlength => 250
+			<label for="email">Neue Mail-Adresse</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s3 m3 l3">
+		</div>
+		<div class="col s6 m6 l6 center-align">
+			<button class="btn waves-effect waves-light" type="submit" name="action" value="update_mail">
+				Ändern
+				<i class="material-icons right">send</i>
+			</button>
+		</div>
+		<div class="col s3 m3 l3">
+		</div>
+	</div>
+%= end

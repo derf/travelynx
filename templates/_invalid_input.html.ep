@@ -69,9 +69,9 @@
 					<span class="card-title">Passwort-Reset wird durchgeführt</span>
 					<p>Es wurde bereits ein Reset-Link verschickt.</p>
 				% }
-				% elsif ($invalid eq 'recovery token') {
+				% elsif ($invalid eq 'change token') {
 					<span class="card-title">Ungültiger Token</span>
-					<p>Der Reset-Token ist ungültig oder abgelaufen. Neuen beantragen?</p>
+					<p>Der Token ist ungültig oder abgelaufen. Neuen beantragen?</p>
 				% }
 				% elsif ($invalid eq 'deletion password') {
 					<span class="card-title">Ungültiges Passwort</span>

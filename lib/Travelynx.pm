@@ -801,6 +801,57 @@ sub startup {
 	);
 
 	$self->helper(
+		'mark_for_mail_change' => sub {
+			my ( $self, $db, $uid, $email, $token ) = @_;
+
+			$db->insert(
+				'pending_mails',
+				{
+					user_id => $uid,
+					email   => $email,
+					token   => $token,
+					requested_at =>
+					  DateTime->now( time_zone => 'Europe/Berlin' )
+				},
+				{
+					on_conflict => \
+'(user_id) do update set email = EXCLUDED.email, token = EXCLUDED.token, requested_at = EXCLUDED.requested_at'
+				},
+			);
+		}
+	);
+
+	$self->helper(
+		'change_mail_with_token' => sub {
+			my ( $self, $uid, $token ) = @_;
+
+			my $db = $self->pg->db;
+			my $tx = $db->begin;
+
+			my $res_h = $db->select(
+				'pending_mails',
+				['email'],
+				{
+					user_id => $uid,
+					token   => $token
+				}
+			)->hash;
+
+			if ($res_h) {
+				$db->update(
+					'users',
+					{ email => $res_h->{email} },
+					{ id    => $uid }
+				);
+				$db->delete( 'pending_mails', { user_id => $uid } );
+				$tx->commit;
+				return 1;
+			}
+			return;
+		}
+	);
+
+	$self->helper(
 		'remove_password_token' => sub {
 			my ( $self, $uid, $token ) = @_;
 
@@ -1004,7 +1055,7 @@ sub startup {
 			}
 
 			$count = $self->pg->db->select(
-				'pending_mails',
+				'mail_blacklist',
 				'count(*) as count',
 				{
 					email     => $mail,
@@ -1638,6 +1689,7 @@ sub startup {
 	$authed_r->get('/ajax/status_card.html')->to('traveling#status_card');
 	$authed_r->get('/cancelled')->to('traveling#cancelled');
 	$authed_r->get('/change_password')->to('account#password_form');
+	$authed_r->get('/change_mail')->to('account#change_mail');
 	$authed_r->get('/export.json')->to('account#json_export');
 	$authed_r->get('/history.json')->to('traveling#json_history');
 	$authed_r->get('/history')->to('traveling#history');
@@ -1646,9 +1698,11 @@ sub startup {
 	$authed_r->get('/journey/add')->to('traveling#add_journey_form');
 	$authed_r->get('/journey/:id')->to('traveling#journey_details');
 	$authed_r->get('/s/*station')->to('traveling#station');
+	$authed_r->get('/confirm_mail/:token')->to('account#confirm_mail');
 	$authed_r->post('/journey/add')->to('traveling#add_journey_form');
 	$authed_r->post('/journey/edit')->to('traveling#edit_journey');
 	$authed_r->post('/change_password')->to('account#change_password');
+	$authed_r->post('/change_mail')->to('account#change_mail');
 	$authed_r->post('/delete')->to('account#delete');
 	$authed_r->post('/logout')->to('account#do_logout');
 	$authed_r->post('/set_token')->to('api#set_token');

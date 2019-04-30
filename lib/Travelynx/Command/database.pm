@@ -378,7 +378,7 @@ my @migrations = (
 	},
 
 	# v6 -> v7
-	# Add password_reset table to store data about pending password resets
+	# Add pending_passwords table to store data about pending password resets
 	sub {
 		my ($db) = @_;
 		$db->query(
@@ -390,6 +390,25 @@ my @migrations = (
 				);
 				comment on table pending_passwords is 'Password reset tokens';
 				update schema_version set version = 7;
+			}
+		);
+	},
+
+	# v7 -> v8
+	# Add pending_mails table to store data about pending mail changes
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				alter table pending_mails rename to mail_blacklist;
+				create table pending_mails (
+					user_id integer not null references users (id) primary key,
+					email varchar(256) not null,
+					token varchar(80) not null,
+					requested_at timestamptz not null
+				);
+				comment on table pending_mails is 'Verification tokens for mail address changes';
+				update schema_version set version = 8;
 			}
 		);
 	},

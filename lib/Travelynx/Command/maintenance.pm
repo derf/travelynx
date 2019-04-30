@@ -34,13 +34,13 @@ sub run {
 		);
 
 		my $pending
-		  = $db->select( 'pending_mails', ['num_tries'], { email => $mail } );
+		  = $db->select( 'mail_blacklist', ['num_tries'], { email => $mail } );
 		my $pending_h = $pending->hash;
 
 		if ($pending_h) {
 			my $num_tries = $pending_h->{num_tries} + 1;
 			$db->update(
-				'pending_mails',
+				'mail_blacklist',
 				{
 					num_tries => $num_tries,
 					last_try  => $reg_date
@@ -50,7 +50,7 @@ sub run {
 		}
 		else {
 			$db->insert(
-				'pending_mails',
+				'mail_blacklist',
 				{
 					email     => $mail,
 					num_tries => 1,
@@ -67,6 +67,13 @@ sub run {
 
 	if ( my $rows = $res->rows ) {
 		printf( "Pruned %d pending password reset(s)\n", $rows );
+	}
+
+	$res = $db->delete( 'pending_mails',
+		{ requested_at => { '<', $verification_deadline } } );
+
+	if ( my $rows = $res->rows ) {
+		printf( "Pruned %d pending mail change(s)\n", $rows );
 	}
 
 	my $to_delete = $db->select( 'users', ['id'],
