@@ -107,9 +107,6 @@ $(document).ready(function() {
 	if ($('.statuscol .autorefresh').length) {
 		setTimeout(tvly_update, 20000);
 	}
-});
-$(document).ready(function() {
-	tvly_reg_handlers();
 	if ($('.publicstatuscol .autorefresh').length) {
 		setTimeout(tvly_update_public, 20000);
 	}
