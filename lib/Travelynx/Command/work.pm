@@ -20,10 +20,10 @@ sub run {
 		$db->select( 'in_transit_str', '*', { cancelled => 0 } )->hashes->each )
 	{
 
-		my $uid   = $entry->{user_id};
-		my $dep   = $entry->{dep_ds100};
-		my $arr   = $entry->{arr_ds100};
-		my $train = $entry->{train_id};
+		my $uid      = $entry->{user_id};
+		my $dep      = $entry->{dep_ds100};
+		my $arr      = $entry->{arr_ds100};
+		my $train_id = $entry->{train_id};
 
 		$self->app->log->debug("Processing $uid");
 
@@ -36,10 +36,10 @@ sub run {
 				}
 
 				my ($train)
-				  = first { $_->train_id eq $train } @{ $status->{results} };
+				  = first { $_->train_id eq $train_id } @{ $status->{results} };
 
 				if ( not $train ) {
-					die("could not find train $train at $dep\n");
+					die("could not find train $train_id at $dep\n");
 				}
 
 				$db->update(
@@ -77,10 +77,19 @@ sub run {
 				}
 
 				my ($train)
-				  = first { $_->train_id eq $train } @{ $status->{results} };
+				  = first { $_->train_id eq $train_id } @{ $status->{results} };
 
 				if ( not $train ) {
-					die("could not find train $train at $arr\n");
+					if ( $entry->{real_arr_ts} ) {
+						die(
+"could not find train $train_id at $arr -- did it disappear?\n"
+						);
+					}
+					else {
+                     # If we haven't seen the train yet, its arrival is probably
+                     # too far in the future. This is not critical.
+						return;
+					}
 				}
 
 				$db->update(
