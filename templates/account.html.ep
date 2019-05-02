@@ -37,17 +37,14 @@
 				<td><a href="/change_password"><i class="material-icons">edit</i></a></td>
 			</tr>
 			<tr>
-				<th scope="row">Privatsphäre</th>
+				<th scope="row">Öffentliche Daten</th>
 				<td>
 					<a href="/account/privacy"><i class="material-icons">edit</i></a>
 					% if ($acc->{is_public} == 0) {
-						Keine öffentlichen Daten
-					% }
-					% else {
-						Öffentliche Daten:
+						Keine
 					% }
 					% if ($acc->{is_public} & 0x02) {
-						Status
+						Aktueller Status
 					% }
 				</td>
 			</tr>

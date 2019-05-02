@@ -1,37 +1,11 @@
 % if ($journey->{checked_in}) {
-	<div class="card green darken-4">
-		<div class="card-content white-text">
+	<div class="card white autorefresh">
+		<div class="card-content">
+			<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 			<span class="card-title"><%= $name %> ist unterwegs</span>
 			<p>
-				In <b><%= $journey->{train_type} %> <%= $journey->{train_no} %></b>
-				% if ($journey->{arr_name}) {
-					von <b><%= $journey->{dep_name} %></b> nach <b><%= $journey->{arr_name} %></b>.
-				% }
-				% else {
-					ab <b><%= $journey->{dep_name} %></b>.
-				% }
-			</p>
-			<p>
-				<b><%= $journey->{real_departure}->strftime('%H:%M') %></b>
-				% if ($journey->{real_departure}->epoch != $journey->{sched_departure}->epoch) {
-					(<%= sprintf('%+d', ($journey->{real_departure}->epoch - $journey->{sched_departure}->epoch)/60) %>)
-				% }
-				→
-				% if ($journey->{real_arrival}->epoch) {
-					<b><%= $journey->{real_arrival}->strftime('%H:%M') %></b>
-					% if ($journey->{real_arrival}->epoch != $journey->{sched_arrival}->epoch) {
-						(<%= sprintf('%+d', ($journey->{real_arrival}->epoch - $journey->{sched_arrival}->epoch)/60) %>)
-					% }
-				% }
-				% elsif ($journey->{arr_name}) {
-					noch nicht bekannt
-				% }
-				% else {
-					unbekannt
-				% }
-			</p>
-			<p>
-				<div class="center">
+				<div class="center-align">
+					<b><%= $journey->{train_type} %> <%= $journey->{train_no} %></b><br/>
 					% if ($journey->{departure_countdown} > 120) {
 						Abfahrt in <%= sprintf('%.f', $journey->{departure_countdown} / 60) %> Minuten
 					% }
@@ -57,8 +31,36 @@
 						Ankunft in mehr als zwei Stunden
 					% }
 				</div>
-				<div class="progress green darken-3" style="height: 1ex;">
-					<div class="determinate white" style="width: <%= sprintf('%.2f', 100 * ($journey->{journey_completion} // 0)); %>%;"></div>
+				<div class="progress grey lighten-3" style="height: 1ex;">
+					<div class="determinate blue" style="width: <%= sprintf('%.2f', 100 * ($journey->{journey_completion} // 0)); %>%;"></div>
+				</div>
+			</p>
+			<p>
+				<div style="float: left;">
+					<b><%= $journey->{dep_name} %></b><br/>
+					<b><%= $journey->{real_departure}->strftime('%H:%M') %></b>
+					% if ($journey->{real_departure}->epoch != $journey->{sched_departure}->epoch) {
+						(<%= sprintf('%+d', ($journey->{real_departure}->epoch - $journey->{sched_departure}->epoch)/60) %>)
+					% }
+				</div>
+				<div style="float: right;">
+					% if ($journey->{arr_name}) {
+						<b><%= $journey->{arr_name} %></b><br/>
+					% }
+					% else {
+						Fahrt ins Blaue<br/>
+					% }
+					% if ($journey->{real_arrival}->epoch) {
+						<b><%= $journey->{real_arrival}->strftime('%H:%M') %></b>
+						% if ($journey->{real_arrival}->epoch != $journey->{sched_arrival}->epoch) {
+							(<%= sprintf('%+d', ($journey->{real_arrival}->epoch - $journey->{sched_arrival}->epoch)/60) %>)
+						% }
+					% }
+					% elsif ($journey->{arr_name}) {
+						noch nicht bekannt
+					% }
+				</div>
+				<div style="clear: both;">
 				</div>
 			</p>
 			% if (@{$journey->{messages} // []} > 0 and $journey->{messages}[0]) {
@@ -76,8 +78,9 @@
 	</div>
 % }
 % else {
-	<div class="card grey darken-4">
+	<div class="card grey darken-4 autorefresh">
 		<div class="card-content white-text">
+			<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 			<span class="card-title"><%= $name %> ist gerade nicht eingecheckt</span>
 			<p>
 				Zuletzt gesehen in <%= $journey->{arr_name} %>.

@@ -1729,6 +1729,7 @@ sub startup {
 	$r->get('/register')->to('account#registration_form');
 	$r->get('/reg/:id/:token')->to('account#verify');
 	$r->get('/status/:name')->to('traveling#user_status');
+	$r->get('/ajax/status/:name')->to('traveling#public_status_card');
 	$r->post('/action')->to('traveling#log_action');
 	$r->post('/geolocation')->to('traveling#geolocation');
 	$r->post('/list_departures')->to('traveling#redirect_to_station');

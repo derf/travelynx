@@ -21,10 +21,23 @@ function tvly_update() {
 	$.get('/ajax/status_card.html', function(data) {
 		$('.statuscol').html(data);
 		tvly_reg_handlers();
-		setTimeout(tvly_update, 15000);
+		setTimeout(tvly_update, 20000);
 	}).fail(function() {
 		$('.sync-failed-marker').css('display', 'block');
-		setTimeout(tvly_update, 15000);
+		setTimeout(tvly_update, 20000);
+	});
+}
+function tvly_update_public() {
+	var user_name;
+	$('.publicstatuscol').each(function() {
+		user_name = $(this).data('user');
+	});
+	$.get('/ajax/status/' + user_name + '.html', function(data) {
+		$('.publicstatuscol').html(data);
+		setTimeout(tvly_update_public, 20000);
+	}).fail(function() {
+		$('.sync-failed-marker').css('display', 'block');
+		setTimeout(tvly_update_public, 20000);
 	});
 }
 function tvly_reg_handlers() {
@@ -92,6 +105,12 @@ function tvly_reg_handlers() {
 $(document).ready(function() {
 	tvly_reg_handlers();
 	if ($('.statuscol .autorefresh').length) {
-		setTimeout(tvly_update, 15000);
+		setTimeout(tvly_update, 20000);
+	}
+});
+$(document).ready(function() {
+	tvly_reg_handlers();
+	if ($('.publicstatuscol .autorefresh').length) {
+		setTimeout(tvly_update_public, 20000);
 	}
 });

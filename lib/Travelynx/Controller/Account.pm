@@ -222,12 +222,12 @@ sub privacy {
 			$public_level &= ~0x02;
 		}
 		$self->set_privacy( $user->{id}, $public_level );
+		$self->redirect_to('account');
 	}
 	else {
 		$self->param( public_status => $public_level & 0x02 ? 1 : 0 );
+		$self->render( 'privacy', name => $user->{name} );
 	}
-
-	$self->render( 'privacy', name => $user->{name} );
 }
 
 sub change_mail {
