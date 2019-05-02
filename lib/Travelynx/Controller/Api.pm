@@ -8,6 +8,12 @@ sub make_token {
 	return create_uuid_as_string(UUID_V4);
 }
 
+sub documentation {
+	my ($self) = @_;
+
+	$self->render('api_documentation');
+}
+
 sub get_v0 {
 	my ($self) = @_;
 

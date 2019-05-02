@@ -1,0 +1,85 @@
+% my $api_root = $self->url_for('/api/v1')->to_abs->scheme('https');
+% my $token = {};
+% my $uid;
+% if (is_user_authenticated()) {
+	% $uid = current_user()->{id};
+	% $token = get_api_token();
+% }
+
+<h1>API</h1>
+
+<div class="row">
+	<div class="col s12">
+		Die folgenden API-Endpunkte werden aktuell unterstützt.
+	</div>
+</div>
+
+<h2>Status</h2>
+<div class="row">
+	<div class="col s12">
+		<p style="font-family: Monospace;">
+			% if ($token->{status}) {
+				curl <%= $api_root %>/status/<%= $uid %>-<%= $token->{status} // 'TOKEN' %>
+			% }
+			% else {
+				curl <%= $api_root %>/status/TOKEN
+			% }
+		</p>
+		<p>
+		Beispiel / Layout:
+		</p>
+		<p style="font-family: Monospace;">
+		{<br/>
+			"deprecated" : true / false, (falls true: Diese API-Version wird irgendwann abgeschaltet, bitte auf eine neue umsteigen)<br/>
+			"checkedIn" : true / false,<br/>
+			"fromStation" : { (letzter Checkin)<br/>
+				"name" : "Essen Hbf",<br/>
+				"ds100" : "EE",<br/>
+				"uic" : 8000098,<br/>
+				"latitude" : 51.451355,<br/>
+				"longitude" : 7.014793,<br/>
+				"scheduledTime": 1556083680,<br/>
+				"realTime": 1556083680,<br/>
+			},<br/>
+			"fromStation" : { (zugehöriger Checkout. Wenn noch nicht eingetragen, sind alle Felder null)<br/>
+				"name" : "Essen Stadtwald",<br/>
+				"ds100" : "EESA",<br/>
+				"uic" : 8001896,<br/>
+				"latitude" : 51.422853,<br/>
+				"longitude" : 7.023296,<br/>
+				"scheduledTime": 1556083980, (ggf. null)<br/>
+				"realTime": 1556083980, (ggf. null)<br/>
+			},<br/>
+			"train" : {<br/>
+			"type" : "S", (aktueller / letzter Zugtyp)<br/>
+			"line" : "6", (Linie als String, nicht immer numerisch, ggf. null)<br/>
+			"no" : "30634", (Zugnummer als String)<br/>
+			"id" : "7512500863736016593", (IRIS-spezifische Zug-ID)<br/>
+			},<br/>
+			"actionTime" : 1234567, (UNIX-Timestamp des letzten Checkin/Checkout)<br/>
+		}
+		</p>
+		<p>
+			Im Fehlerfall: <span style="font-family: Monospace;">{ "error" : "Begründung" }</span>
+		</p>
+	</div>
+</div>
+<!--
+<h3>History</h3>
+<div class="row">
+	<div class="col s12">
+		<p>
+			Coming soon.
+		</p>
+	</div>
+</div>
+
+<h3>Travel</h3>
+<div class="row">
+	<div class="col s12">
+		<p>
+			Ein- und Auschecken per API. Coming soon.
+		</p>
+	</div>
+</div>
+-->

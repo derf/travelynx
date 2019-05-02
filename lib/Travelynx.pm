@@ -1719,6 +1719,7 @@ sub startup {
 
 	$r->get('/')->to('traveling#homepage');
 	$r->get('/about')->to('static#about');
+	$r->get('/api')->to('api#documentation');
 	$r->get('/impressum')->to('static#imprint');
 	$r->get('/imprint')->to('static#imprint');
 	$r->get('/api/v0/:user_action/:token')->to('api#get_v0');
