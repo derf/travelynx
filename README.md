@@ -102,15 +102,15 @@ For the sake of this manual, we will assume your travelynx instance is running
 on `travelynx.de`
 
 travelynx journey logging is based on checkin and checkout actions: You check
-into a train when boarding it, and check out again when leaving it. Real-time
-data is saved on both occasions, providing an accurate overview of both
+into a train when boarding it, select a destination, and are automatically
+checked out when you arrive. Real-time data is saved on both occasions and
+continuously updated while in transit, providing an accurate overview of both
 scheduled and actual journey times.
 
 ## Checking in
 
-You can check into a train up to 10 minutes before its scheduled departure and
-up to 3 hours after its actual departure (including delays). I recommend
-doing so when it arrives at the station or shortly after boarding.
+You can check into a train up to 30 minutes before its scheduled departure and
+up to two hours after its actual departure (including delays).
 
 First, you need to select the station you want to check in from.
 Navigate to `travelynx.de` or click/tap on the travelynx text in the navigation
@@ -118,30 +118,20 @@ bar. You will see a list of the five stations closest to your current location
 (as reported by your browser). Select the station you're at or enter its
 name or DS100 code manually.
 
-Now, as soon as you select a train, you will be checked in and travelynx
-will switch to the journey / checkout view.
+As soon as you select a train, you will be checked in and travelynx will switch
+to the journey / checkout view. If you already now where you're headed, you
+should click/tap on the destination station in the station list now. You can
+change the destination by selecting a new one any time.
 
 ## Checking out
 
-You can check out of a train up to 10 minutes before its scheduled arrival and
-up to 3 hours after its actual arrival. This ensures that accurate real-time
-data for your arrival is available.  I recommend checking out when arriving at
-your destination or shortly after having left the train.
-
-Once checked in, `travelynx.de` will show a list of all upcoming stops. Select
-one to check out there. You can also check out at a specific station by
-navigating to "travelynx.de/s/*station name*" and selecting "Hier auschecken".
-
-If you forgot to check out in time, or are departing the train at a station
-which is not part of its documented route (and also not part of its documented
-route deviations), or are encountering issues with travelynx' real-time data
-fetcher, the checkout action will fail with an error message along the lines
-of "no real-time data available" or "train not found".
-
-If you use the checkout link again, travelynx will perform a force checkout: it
-will log that you have left the train at the specified station, but omit
-arrival time, delay, and other real-time data. At the moment, this data cannot
-be specified manually.
+You are automatically checked out a few minutes after arrival at your
+destination. If the train has already arrived when you select a destination and
+its arrival was less than two hours ago, you are checked out immediately.  If
+it's more than two hours, it will not be included in the scheduled and
+real-time data fetched by travelynx. In this case, you have to check out
+without arrival data using the link at the bottom of the checkin menu's station
+list.
 
 Testing
 ---
@@ -154,4 +144,5 @@ not affected.
 Nevertheless, bugs may happen. Do NOT run tests on your production database.
 Please use a separate development database instead.
 
-Run the tests by executing `prove`.
+Run the tests by executing `prove`. Use `prove -v` for debug output and
+`DBI_TRACE=SQL prove -v` to monitor SQL queries.
