@@ -30,15 +30,16 @@
 			</tr>
 			<tr>
 				<th scope="row">Mail</th>
-				<td><%= $acc->{email} %><a href="/change_mail" style="margin-left: 1em;"><i class="material-icons">edit</i> ändern</a></td>
+				<td><a href="/change_mail"><i class="material-icons">edit</i></a><%= $acc->{email} %></td>
 			</tr>
 			<tr>
 				<th scope="row">Passwort</th>
-				<td><a href="/change_password"><i class="material-icons">edit</i> ändern</a></td>
+				<td><a href="/change_password"><i class="material-icons">edit</i></a></td>
 			</tr>
 			<tr>
 				<th scope="row">Privatsphäre</th>
 				<td>
+					<a href="/account/privacy"><i class="material-icons">edit</i></a>
 					% if ($acc->{is_public} == 0) {
 						Keine öffentlichen Daten
 					% }
@@ -48,7 +49,7 @@
 					% if ($acc->{is_public} & 0x02) {
 						Status
 					% }
-					<a href="/account/privacy"><i class="material-icons">edit</i> ändern</a></td>
+				</td>
 			</tr>
 			<tr>
 				<th scope="row">Registriert am</th>
