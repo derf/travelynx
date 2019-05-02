@@ -159,7 +159,7 @@ sub verify {
 	my $id    = $self->stash('id');
 	my $token = $self->stash('token');
 
-	if ( not $id =~ m{ ^ \d+ $ }x ) {
+	if ( not $id =~ m{ ^ \d+ $ }x or $id > 2147483647 ) {
 		$self->render( 'register', invalid => 'token' );
 		return;
 	}
@@ -527,6 +527,11 @@ sub recover_password {
 
 	my $id    = $self->stash('id');
 	my $token = $self->stash('token');
+
+	if ( not $id =~ m{ ^ \d+ $ }x or $id > 2147483647 ) {
+		$self->render( 'recover_password', invalid => 'recovery token' );
+		return;
+	}
 
 	if ( $self->verify_password_token( $id, $token ) ) {
 		$self->render('set_password');

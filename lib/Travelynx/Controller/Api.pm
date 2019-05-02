@@ -122,6 +122,16 @@ sub get_v1 {
 	}
 	my $uid = $+{id};
 	$api_token = $+{token};
+
+	if ( $uid > 2147483647 ) {
+		$self->render(
+			json => {
+				error => 'Malformed token',
+			},
+		);
+		return;
+	}
+
 	my $token = $self->get_api_token($uid);
 	if ( $api_token ne $token->{$api_action} ) {
 		$self->render(
