@@ -30,11 +30,11 @@
 			</tr>
 			<tr>
 				<th scope="row">Mail</th>
-				<td><a href="/change_mail"><i class="material-icons">edit</i></a><%= $acc->{email} %></td>
+				<td><a href="/account/mail"><i class="material-icons">edit</i></a><%= $acc->{email} %></td>
 			</tr>
 			<tr>
 				<th scope="row">Passwort</th>
-				<td><a href="/change_password"><i class="material-icons">edit</i></a></td>
+				<td><a href="/account/password"><i class="material-icons">edit</i></a></td>
 			</tr>
 			<tr>
 				<th scope="row">Öffentliche Daten</th>

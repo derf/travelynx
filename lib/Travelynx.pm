@@ -1754,8 +1754,8 @@ sub startup {
 	$authed_r->get('/account/privacy')->to('account#privacy');
 	$authed_r->get('/ajax/status_card.html')->to('traveling#status_card');
 	$authed_r->get('/cancelled')->to('traveling#cancelled');
-	$authed_r->get('/change_password')->to('account#password_form');
-	$authed_r->get('/change_mail')->to('account#change_mail');
+	$authed_r->get('/account/password')->to('account#password_form');
+	$authed_r->get('/account/mail')->to('account#change_mail');
 	$authed_r->get('/export.json')->to('account#json_export');
 	$authed_r->get('/history.json')->to('traveling#json_history');
 	$authed_r->get('/history')->to('traveling#history');
@@ -1768,8 +1768,8 @@ sub startup {
 	$authed_r->post('/account/privacy')->to('account#privacy');
 	$authed_r->post('/journey/add')->to('traveling#add_journey_form');
 	$authed_r->post('/journey/edit')->to('traveling#edit_journey');
-	$authed_r->post('/change_password')->to('account#change_password');
-	$authed_r->post('/change_mail')->to('account#change_mail');
+	$authed_r->post('/account/password')->to('account#change_password');
+	$authed_r->post('/account/mail')->to('account#change_mail');
 	$authed_r->post('/delete')->to('account#delete');
 	$authed_r->post('/logout')->to('account#do_logout');
 	$authed_r->post('/set_token')->to('api#set_token');
