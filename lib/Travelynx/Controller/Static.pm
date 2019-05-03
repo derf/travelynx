@@ -23,4 +23,10 @@ sub imprint {
 	$self->render('imprint');
 }
 
+sub offline {
+	my ($self) = @_;
+
+	$self->render('offline');
+}
+
 1;

@@ -1723,6 +1723,7 @@ sub startup {
 	$r->get('/changelog')->to('static#changelog');
 	$r->get('/impressum')->to('static#imprint');
 	$r->get('/imprint')->to('static#imprint');
+	$r->get('/offline')->to('static#offline');
 	$r->get('/api/v0/:user_action/:token')->to('api#get_v0');
 	$r->get('/api/v1/:user_action/:token')->to('api#get_v1');
 	$r->get('/login')->to('account#login_form');
