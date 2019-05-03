@@ -128,11 +128,11 @@ $t->get_ok('/account');
 $t->status_is(200)->content_unlike(qr{wird gelöscht});
 
 $csrf_token
-  = $t->ua->get('/change_password')->res->dom->at('input[name=csrf_token]')
+  = $t->ua->get('/account/password')->res->dom->at('input[name=csrf_token]')
   ->attr('value');
 
 $t->post_ok(
-	'/change_password' => form => {
+	'/account/password' => form => {
 		csrf_token => $csrf_token,
 		oldpw      => 'foofoofoo',
 		newpw      => 'barbarbar',

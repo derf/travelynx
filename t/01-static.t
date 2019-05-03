@@ -27,7 +27,7 @@ $t->get_ok('/about')->status_is(200);
 
 # Protected sites should redirect to login form
 
-for my $protected (qw(/account /change_password /history /s/EE)) {
+for my $protected (qw(/account /account/password /history /s/EE)) {
 	$t->get_ok($protected)->text_like( 'button' => qr{Anmelden} );
 }
 
