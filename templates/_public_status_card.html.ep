@@ -43,7 +43,7 @@
 						(<%= sprintf('%+d', ($journey->{real_departure}->epoch - $journey->{sched_departure}->epoch)/60) %>)
 					% }
 				</div>
-				<div style="float: right;">
+				<div style="float: right; text-align: right;">
 					% if ($journey->{arr_name}) {
 						<b><%= $journey->{arr_name} %></b><br/>
 					% }
