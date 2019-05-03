@@ -25,6 +25,4 @@
 	</div>
 </div>
 
-% if (-e 'templates/imprint.html.ep') {
-%= include 'imprint'
-% }
+%= include '_footer', version => stash('version')
