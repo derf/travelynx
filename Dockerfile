@@ -2,28 +2,16 @@ FROM debian:stretch-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 
+COPY cpanfile /app/cpanfile
+WORKDIR /app
+
 RUN apt-get update && apt-get install --no-install-recommends -y \
 	cpanminus \
 	build-essential \
 	libpq-dev \
 	git \
-	ssmtp \
-	&& cpanm -in --no-man-pages \
-	Cache::File \
-	Crypt::Eksblowfish \
-	DateTime \
-	DateTime::Format::Strptime \
-	DBI \
-	DBD::Pg \
-	Email::Sender \
-	Geo::Distance \
-	Geo::Distance::XS \
-	Mojolicious \
-	Mojolicious::Plugin::Authentication \
-	Travel::Status::DE::IRIS \
-	UUID::Tiny \
-	JSON \
-	Mojo::Pg \
+	cron \
+	&& cpanm -in --no-man-pages --installdeps . \
 	&& rm -rf ~/.cpanm \
 	&& apt-get purge -y \
 	build-essential \
@@ -31,6 +19,5 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 	&& apt-get autoremove -y
 
 COPY . /app
-WORKDIR /app
 
 CMD ["/app/docker-run.sh"]
