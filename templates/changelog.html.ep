@@ -1,0 +1,30 @@
+<h1>Changelog</h1>
+
+<div class="row">
+	<div class="col s12 m1 l1">
+		1.1
+	</div>
+	<div class="col s12 m11 l11">
+		<ul>
+			<li>Öffentlicher Status unter „/status/<i>name</i>“ (opt-in, muss unter <a href="/account/privacy">account/privacy</a> aktiviert werden)</li>
+		</ul>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
+		1.0
+	</div>
+	<div class="col s12 m11 l11">
+		<ul>
+			<li>Stationswahl per Geokoordinaten</li>
+			<li>Manueller Checkin und automatischer Checkout</li>
+			<li>History und Statistiken</li>
+			<li>API zur Statusabfrage</li>
+		</ul>
+	</div>
+</div>
+
+% if (-e 'templates/imprint.html.ep') {
+%= include 'imprint'
+% }

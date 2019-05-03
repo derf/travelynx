@@ -10,6 +10,13 @@ sub about {
 		version => $self->app->config->{version} // 'UNKNOWN' );
 }
 
+sub changelog {
+	my ($self) = @_;
+
+	$self->render( 'changelog',
+		version => $self->app->config->{version} // 'UNKNOWN' );
+}
+
 sub imprint {
 	my ($self) = @_;
 
