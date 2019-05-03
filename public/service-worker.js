@@ -1,12 +1,12 @@
-const CACHE_NAME = 'static-cache-v10';
+const CACHE_NAME = 'static-cache-v11';
 const FILES_TO_CACHE = [
   '/offline.html',
-  '/static/v10/css/materialize.min.css',
-  '/static/v10/css/material-icons.css',
-  '/static/v10/css/local.css',
-  '/static/v10/js/jquery-2.2.4.min.js',
-  '/static/v10/js/materialize.min.js',
-  '/static/v10/js/travelynx-actions.min.js',
+  '/static/v11/css/materialize.min.css',
+  '/static/v11/css/material-icons.css',
+  '/static/v11/css/local.css',
+  '/static/v11/js/jquery-2.2.4.min.js',
+  '/static/v11/js/materialize.min.js',
+  '/static/v11/js/travelynx-actions.min.js',
 ];
 
 self.addEventListener('install', (evt) => {
