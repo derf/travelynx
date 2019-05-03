@@ -1473,11 +1473,11 @@ sub startup {
 				my $is_after = 0;
 				for my $station (@route) {
 
-					if ( $station eq $in_transit->{dep_name} ) {
-						$is_after = 1;
-					}
 					if ($is_after) {
 						push( @route_after, $station );
+					}
+					if ( $station eq $in_transit->{dep_name} ) {
+						$is_after = 1;
 					}
 				}
 
