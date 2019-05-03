@@ -1,4 +1,4 @@
-<div class="card autorefresh green lighten-5">
+<div class="card autorefresh blue-grey lighten-5">
 	<div class="card-content">
 		<i class="material-icons small right sync-failed-marker green-text darken-2" style="display: none;">sync_problem</i>
 		<span class="card-title">Eingecheckt in <%= $journey->{train_type} %> <%= $journey->{train_no} %></span>
@@ -29,8 +29,8 @@
 					Ankunft in mehr als zwei Stunden
 				% }
 			</div>
-			<div class="progress green lighten-4" style="height: 1ex;">
-				<div class="determinate green darken-3" style="width: <%= sprintf('%.2f', 100 * ($journey->{journey_completion} // 0)); %>%;"></div>
+			<div class="progress purple lighten-4" style="height: 1ex;">
+				<div class="determinate purple darken-3" style="width: <%= sprintf('%.2f', 100 * ($journey->{journey_completion} // 0)); %>%;"></div>
 			</div>
 		</p>
 		% if ($journey->{arr_name}) {
