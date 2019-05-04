@@ -9,7 +9,7 @@
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<meta name="apple-mobile-web-app-title" content="Weather PWA">
-	% my $av = 'v11'; # asset version
+	% my $av = 'v12'; # asset version
 	<link rel="apple-touch-icon" href="/static/<%= $av %>/icons/icon-152x152.png">
 	<link rel="manifest" href="/static/<%= $av %>/manifest.json">
 	%= stylesheet "/static/${av}/css/materialize.min.css"
