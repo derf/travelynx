@@ -15,7 +15,7 @@
 	%= stylesheet "/static/${av}/css/materialize.min.css"
 	%= stylesheet "/static/${av}/css/material-icons.css"
 	%= stylesheet "/static/${av}/css/local.css"
-	%= javascript "/static/${av}/js/jquery-2.2.4.min.js"
+	%= javascript "/static/${av}/js/jquery-3.4.1.min.js"
 	%= javascript "/static/${av}/js/materialize.min.js"
 	%= javascript "/static/${av}/js/travelynx-actions.min.js"
 	% if (stash('with_geolocation')) {
