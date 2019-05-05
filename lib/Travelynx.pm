@@ -347,6 +347,7 @@ sub startup {
 							"Checkin($uid): INSERT failed: $@");
 						return ( undef, 'INSERT failed: ' . $@ );
 					}
+					$self->run_hook( $self->current_user->{id}, 'checkin' );
 					return ( $train, undef );
 				}
 			}
@@ -366,6 +367,7 @@ sub startup {
 					$self->app->log->error("Undo($uid, $journey_id): $@");
 					return "Undo($journey_id): $@";
 				}
+				$self->run_hook( $uid, 'undo' );
 				return undef;
 			}
 			if ( $journey_id !~ m{ ^ \d+ $ }x ) {
@@ -421,6 +423,7 @@ sub startup {
 				$self->app->log->error("Undo($uid, $journey_id): $@");
 				return "Undo($journey_id): $@";
 			}
+			$self->run_hook( $uid, 'undo' );
 			return undef;
 		}
 	);
@@ -572,6 +575,7 @@ sub startup {
 
 			if ( $has_arrived or $force ) {
 				return ( 0, undef );
+				$self->run_hook( $uid, 'checkout' );
 			}
 			return ( 1, undef );
 		}
@@ -981,6 +985,113 @@ sub startup {
 			}
 
 			return $token;
+		}
+	);
+
+	$self->helper(
+		'get_webhook' => sub {
+			my ( $self, $uid ) = @_;
+			$uid //= $self->current_user->{id};
+
+			my $res_h
+			  = $self->pg->db->select( 'webhooks_str', '*',
+				{ user_id => $uid } )->hash;
+
+			$res_h->{latest_run} = epoch_to_dt( $res_h->{latest_run_ts} );
+
+			return $res_h;
+		}
+	);
+
+	$self->helper(
+		'set_webhook' => sub {
+			my ( $self, %opt ) = @_;
+
+			$opt{uid} //= $self->current_user->{id};
+
+			my $res = $self->pg->db->insert(
+				'webhooks',
+				{
+					user_id => $opt{uid},
+					enabled => $opt{enabled},
+					url     => $opt{url},
+					token   => $opt{token}
+				},
+				{
+					on_conflict => \
+'(user_id) do update set enabled = EXCLUDED.enabled, url = EXCLUDED.url, token = EXCLUDED.token, errored = null, latest_run = null, output = null'
+				}
+			);
+		}
+	);
+
+	$self->helper(
+		'mark_hook_status' => sub {
+			my ( $self, $uid, $url, $success, $text ) = @_;
+
+			if ( length($text) > 1024 ) {
+				$text = "(output too long)";
+			}
+
+			$self->pg->db->update(
+				'webhooks',
+				{
+					errored    => !$success,
+					latest_run => DateTime->now( time_zone => 'Europe/Berlin' ),
+					output     => $text,
+				},
+				{
+					user_id => $uid,
+					url     => $url
+				}
+			);
+		}
+	);
+
+	$self->helper(
+		'run_hook' => sub {
+			my ( $self, $uid, $reason ) = @_;
+
+			my $hook = $self->get_webhook($uid);
+
+			if ( not $hook->{enabled} or not $hook->{url} =~ m{^ https?:// }x )
+			{
+				return;
+			}
+
+			my $status    = { todo => 1 };
+			my $header    = {};
+			my $hook_body = {
+				reason => $reason,
+				status => $status,
+			};
+
+			if ( $hook->{token} ) {
+				$hook->{token} =~ tr{\r\n}{}d;
+				$header->{Authorization} = "Bearer $hook->{token}";
+			}
+
+			my $ua = $self->ua;
+			$ua->request_timeout(10);
+
+			$ua->post_p( $hook->{url} => $header => json => $hook_body )->then(
+				sub {
+					my ($tx) = @_;
+					if ( my $err = $tx->error ) {
+						$self->mark_hook_status( $uid, $hook->{url}, 0,
+							"HTTP $err->{code} $err->{message}" );
+					}
+					else {
+						$self->mark_hook_status( $uid, $hook->{url}, 1,
+							$tx->result->body );
+					}
+				}
+			)->catch(
+				sub {
+					my ($err) = @_;
+					$self->mark_hook_status( $uid, $hook->{url}, 0, $err );
+				}
+			)->wait;
 		}
 	);
 
@@ -1753,6 +1864,7 @@ sub startup {
 
 	$authed_r->get('/account')->to('account#account');
 	$authed_r->get('/account/privacy')->to('account#privacy');
+	$authed_r->get('/account/hooks')->to('account#webhook');
 	$authed_r->get('/ajax/status_card.html')->to('traveling#status_card');
 	$authed_r->get('/cancelled')->to('traveling#cancelled');
 	$authed_r->get('/account/password')->to('account#password_form');
@@ -1767,6 +1879,7 @@ sub startup {
 	$authed_r->get('/s/*station')->to('traveling#station');
 	$authed_r->get('/confirm_mail/:token')->to('account#confirm_mail');
 	$authed_r->post('/account/privacy')->to('account#privacy');
+	$authed_r->post('/account/hooks')->to('account#webhook');
 	$authed_r->post('/journey/add')->to('traveling#add_journey_form');
 	$authed_r->post('/journey/edit')->to('traveling#edit_journey');
 	$authed_r->post('/account/password')->to('account#change_password');

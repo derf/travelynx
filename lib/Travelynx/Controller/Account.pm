@@ -230,6 +230,31 @@ sub privacy {
 	}
 }
 
+sub webhook {
+	my ($self) = @_;
+
+	my $hook = $self->get_webhook;
+
+	if ( $self->param('action') and $self->param('action') eq 'save' ) {
+		$hook->{url}     = $self->param('url');
+		$hook->{token}   = $self->param('token');
+		$hook->{enabled} = $self->param('enabled') // 0;
+		$self->set_webhook(
+			url     => $hook->{url},
+			token   => $hook->{token},
+			enabled => $hook->{enabled}
+		);
+		$hook = $self->get_webhook;
+	}
+	else {
+		$self->param( url     => $hook->{url} );
+		$self->param( token   => $hook->{token} );
+		$self->param( enabled => $hook->{enabled} );
+	}
+
+	$self->render( 'webhooks', hook => $hook );
+}
+
 sub change_mail {
 	my ($self) = @_;
 

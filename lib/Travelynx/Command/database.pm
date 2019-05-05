@@ -456,6 +456,31 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v10 -> v11
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				create table webhooks (
+					user_id integer not null references users (id) primary key,
+					enabled boolean not null,
+					url varchar(1000) not null,
+					token varchar(250),
+					errored boolean,
+					latest_run timestamptz,
+					output text
+				);
+				comment on table webhooks is 'URLs and bearer tokens for push events';
+				create view webhooks_str as select
+					user_id, enabled, url, token, errored, output,
+					extract(epoch from latest_run) as latest_run_ts
+					from webhooks
+				;
+				update schema_version set version = 11;
+			}
+		);
+	},
 );
 
 sub setup_db {
