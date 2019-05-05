@@ -56,9 +56,11 @@ $(document).ready(function() {
 		}
 	};
 
-	if (navigator.geolocation) {
-		navigator.geolocation.getCurrentPosition(processLocation, processError);
-	} else {
-		showError('Standortanfragen werden von diesem Browser nicht unterstützt', '', null);
+	if ($('div.geolocation').length) {
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(processLocation, processError);
+		} else {
+			showError('Standortanfragen werden von diesem Browser nicht unterstützt', '', null);
+		}
 	}
 });
