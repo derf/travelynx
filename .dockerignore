@@ -1,0 +1,5 @@
+Dockerfile
+.dockerignore
+.gitignore
+README.md
+travelynx.conf
