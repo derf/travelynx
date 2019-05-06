@@ -8,14 +8,9 @@
 <div class="row">
 	<div class="col s12">
 		<p>
-			Die im Web Hook konfigurierte URL wird bei jedem Checkin und Checkout
-			des ausgewählten Zuges aufgerufen. Falls ein Token eingetragen
-			ist, wird er als Bearer Token verwendet.
-		</p>
-		<p>
-			Events werden als JSON POST übertragen. Das JSON-Dokument besteht aus
-			zwei Feldern: „reason“ gibt den Grund des API-Aufrufs an (checkin,
-			checkout, undo), „status“ den <a href="/api">aktuellen Status</a>.
+			Die im Web Hook konfigurierte URL wird bei Änderungen des aktuellen
+			Reisestatus (z.B. Checkin oder Ankunft am Ziel) aufgerufen.  Falls ein
+			Token eingetragen ist, wird er als Bearer Token verwendet.
 		</p>
 	</div>
 	%= form_for '/account/hooks' => (method => 'POST') => begin
@@ -28,7 +23,7 @@
 		</div>
 		<div class="input-field col s12">
 			<i class="material-icons prefix">link</i>
-			%= text_field 'url', id => 'url', class => 'validate', maxlength => 1000
+			%= text_field 'url', id => 'url', class => 'validate', pattern => 'https?://.+', maxlength => 1000
 			<label for="url">URL</label>
 		</div>
 		<div class="input-field col s12">
@@ -38,7 +33,7 @@
 		</div>
 		<div class="col s12">
 			% if ($hook->{latest_run}->epoch) {
-				Zuletzt ausgeführt: <%= $hook->{latest_run} %><br/>
+				Zuletzt ausgeführt <%= $hook->{latest_run}->strftime('am %d.%m.%Y um %H:%M:%S') %><br/>
 				% if ($hook->{errored}) {
 					<i class="material-icons left">error</i>
 					Status: <%= $hook->{output} %>
@@ -59,4 +54,24 @@
 			</button>
 		</div>
 	%= end
+	<div class="col s12">
+		<p>Events werden als JSON POST mit folgender Payload übertragen.</p>
+		<p style="font-family: Monospace;">
+			{<br/>
+			"reason" : "Grund für den Webhook-Aufruf",<br/>
+			"status" : { <a href="/api">Aktueller Nutzerstatus</a> }<br/>
+			}<br/>
+		</p>
+		<p>
+			Gültige Werte für reason sind derzeit:
+			<ul>
+				<li><b>ping</b> (nach jeder gespeicherten Änderung in diesem Formular)</li>
+				<li><b>checkin</b> (in einen Zug eingecheckt – Zielstation ist noch nicht bekannt)</li>
+				<li><b>update</b> (eingecheckt und Ziel gewählt oder geändert)</li>
+				<li><b>checkout</b> (aus einem Zug ausgecheckt)</li>
+				<li><b>undo</b> (checkin oder checkout wurde rückgängig gemacht)</li>
+			</ul>
+			Falls der Zug das Ziel bei der Zielwahl schon erreicht hat, wird ohne
+			<b>update</b> direkt ein <b>checkout</b> abgeschickt.
+		</p>
 </div>

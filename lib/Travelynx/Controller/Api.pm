@@ -142,70 +142,7 @@ sub get_v1 {
 		return;
 	}
 	if ( $api_action eq 'status' ) {
-		my $status = $self->get_user_status($uid);
-
-		my $ret = {
-			deprecated => \0,
-			checkedIn  => (
-				     $status->{checked_in}
-				  or $status->{cancelled}
-			) ? \1 : \0,
-			fromStation => {
-				ds100         => $status->{dep_ds100},
-				name          => $status->{dep_name},
-				uic           => undef,
-				longitude     => undef,
-				latitude      => undef,
-				scheduledTime => $status->{sched_departure}->epoch || undef,
-				realTime      => $status->{real_departure}->epoch || undef,
-			},
-			toStation => {
-				ds100         => $status->{arr_ds100},
-				name          => $status->{arr_name},
-				uic           => undef,
-				longitude     => undef,
-				latitude      => undef,
-				scheduledTime => $status->{sched_arrival}->epoch || undef,
-				realTime      => $status->{real_arrival}->epoch || undef,
-			},
-			train => {
-				type => $status->{train_type},
-				line => $status->{train_line},
-				no   => $status->{train_no},
-				id   => $status->{train_id},
-			},
-			actionTime => $status->{timestamp}->epoch,
-		};
-
-		if ( $status->{dep_ds100} ) {
-			my @station_descriptions
-			  = Travel::Status::DE::IRIS::Stations::get_station(
-				$status->{dep_ds100} );
-			if ( @station_descriptions == 1 ) {
-				(
-					undef, undef,
-					$ret->{fromStation}{uic},
-					$ret->{fromStation}{longitude},
-					$ret->{fromStation}{latitude}
-				) = @{ $station_descriptions[0] };
-			}
-		}
-
-		if ( $status->{arr_ds100} ) {
-			my @station_descriptions
-			  = Travel::Status::DE::IRIS::Stations::get_station(
-				$status->{arr_ds100} );
-			if ( @station_descriptions == 1 ) {
-				(
-					undef, undef,
-					$ret->{toStation}{uic},
-					$ret->{toStation}{longitude},
-					$ret->{toStation}{latitude}
-				) = @{ $station_descriptions[0] };
-			}
-		}
-
-		$self->render( json => $ret );
+		$self->render( json => $self->get_user_status_json_v1($uid) );
 	}
 	else {
 		$self->render(

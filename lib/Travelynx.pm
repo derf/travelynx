@@ -574,9 +574,10 @@ sub startup {
 			}
 
 			if ( $has_arrived or $force ) {
-				return ( 0, undef );
 				$self->run_hook( $uid, 'checkout' );
+				return ( 0, undef );
 			}
+			$self->run_hook( $uid, 'update' );
 			return ( 1, undef );
 		}
 	);
@@ -1009,6 +1010,10 @@ sub startup {
 
 			$opt{uid} //= $self->current_user->{id};
 
+			if ( $opt{token} ) {
+				$opt{token} =~ tr{\r\n}{}d;
+			}
+
 			my $res = $self->pg->db->insert(
 				'webhooks',
 				{
@@ -1029,8 +1034,8 @@ sub startup {
 		'mark_hook_status' => sub {
 			my ( $self, $uid, $url, $success, $text ) = @_;
 
-			if ( length($text) > 1024 ) {
-				$text = "(output too long)";
+			if ( length($text) > 1000 ) {
+				$text = substr( $text, 0, 1000 ) . '…';
 			}
 
 			$self->pg->db->update(
@@ -1059,7 +1064,7 @@ sub startup {
 				return;
 			}
 
-			my $status    = { todo => 1 };
+			my $status    = $self->get_user_status_json_v1($uid);
 			my $header    = {};
 			my $hook_body = {
 				reason => $reason,
@@ -1067,7 +1072,6 @@ sub startup {
 			};
 
 			if ( $hook->{token} ) {
-				$hook->{token} =~ tr{\r\n}{}d;
 				$header->{Authorization} = "Bearer $hook->{token}";
 			}
 
@@ -1696,6 +1700,76 @@ sub startup {
 				timestamp       => epoch_to_dt(0),
 				timestamp_delta => $now->epoch,
 			};
+		}
+	);
+
+	$self->helper(
+		'get_user_status_json_v1' => sub {
+			my ( $self, $uid ) = @_;
+			my $status = $self->get_user_status($uid);
+
+			my $ret = {
+				deprecated => \0,
+				checkedIn  => (
+					     $status->{checked_in}
+					  or $status->{cancelled}
+				) ? \1 : \0,
+				fromStation => {
+					ds100         => $status->{dep_ds100},
+					name          => $status->{dep_name},
+					uic           => undef,
+					longitude     => undef,
+					latitude      => undef,
+					scheduledTime => $status->{sched_departure}->epoch || undef,
+					realTime      => $status->{real_departure}->epoch || undef,
+				},
+				toStation => {
+					ds100         => $status->{arr_ds100},
+					name          => $status->{arr_name},
+					uic           => undef,
+					longitude     => undef,
+					latitude      => undef,
+					scheduledTime => $status->{sched_arrival}->epoch || undef,
+					realTime      => $status->{real_arrival}->epoch || undef,
+				},
+				train => {
+					type => $status->{train_type},
+					line => $status->{train_line},
+					no   => $status->{train_no},
+					id   => $status->{train_id},
+				},
+				actionTime => $status->{timestamp}->epoch,
+			};
+
+			if ( $status->{dep_ds100} ) {
+				my @station_descriptions
+				  = Travel::Status::DE::IRIS::Stations::get_station(
+					$status->{dep_ds100} );
+				if ( @station_descriptions == 1 ) {
+					(
+						undef, undef,
+						$ret->{fromStation}{uic},
+						$ret->{fromStation}{longitude},
+						$ret->{fromStation}{latitude}
+					) = @{ $station_descriptions[0] };
+				}
+			}
+
+			if ( $status->{arr_ds100} ) {
+				my @station_descriptions
+				  = Travel::Status::DE::IRIS::Stations::get_station(
+					$status->{arr_ds100} );
+				if ( @station_descriptions == 1 ) {
+					(
+						undef, undef,
+						$ret->{toStation}{uic},
+						$ret->{toStation}{longitude},
+						$ret->{toStation}{latitude}
+					) = @{ $station_descriptions[0] };
+				}
+			}
+
+			return $ret;
 		}
 	);
 

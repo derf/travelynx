@@ -244,6 +244,7 @@ sub webhook {
 			token   => $hook->{token},
 			enabled => $hook->{enabled}
 		);
+		$self->run_hook( $self->current_user->{id}, 'ping' );
 		$hook = $self->get_webhook;
 	}
 	else {
