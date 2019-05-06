@@ -27,33 +27,35 @@
 </head>
 <body>
 
-<nav class="deep-purple">
-	<div class="nav-wrapper container">
-		<a href="/" class="brand-logo left">travelynx</a>
-		<ul id="nav-mobile" class="right">
-			<li class="loading">
-				<div class="preloader-wrapper small" style="margin-top: 0.5em; margin-bottom: -1em;">
-					<div class="spinner-layer spinner-blue-only">
-						<div class="circle-clipper left">
-							<div class="circle"></div>
-						</div><div class="gap-patch">
-							<div class="circle"></div>
-						</div><div class="circle-clipper right">
-							<div class="circle"></div>
+<div class="navbar-fixed">
+	<nav class="deep-purple">
+		<div class="nav-wrapper container">
+			<a href="/" class="brand-logo left">travelynx</a>
+			<ul id="nav-mobile" class="right">
+				<li class="loading">
+					<div class="preloader-wrapper small" style="margin-top: 0.5em; margin-bottom: -1em;">
+						<div class="spinner-layer spinner-blue-only">
+							<div class="circle-clipper left">
+								<div class="circle"></div>
+							</div><div class="gap-patch">
+								<div class="circle"></div>
+							</div><div class="circle-clipper right">
+								<div class="circle"></div>
+							</div>
 						</div>
 					</div>
-				</div>
-			</li>
-			% if (is_user_authenticated()) {
-				<li class="<%= navbar_class('/history') %>"><a href='/history' title="History"><i class="material-icons">history</i></a></li>
-				<li class="<%= navbar_class('/account') %>"><a href="/account" title="Account"><i class="material-icons">account_circle</i></a></li>
-			% }
-			% else {
-				<li class="<%= navbar_class('/about') %>"><a href='/about' title="About"><i class="material-icons">info_outline</i></a></li>
-			% }
-		</ul>
-	</div>
-</nav>
+				</li>
+				% if (is_user_authenticated()) {
+					<li class="<%= navbar_class('/history') %>"><a href='/history' title="History"><i class="material-icons">history</i></a></li>
+					<li class="<%= navbar_class('/account') %>"><a href="/account" title="Account"><i class="material-icons">account_circle</i></a></li>
+				% }
+				% else {
+					<li class="<%= navbar_class('/about') %>"><a href='/about' title="About"><i class="material-icons">info_outline</i></a></li>
+				% }
+			</ul>
+		</div>
+	</nav>
+</div>
 
 % if (app->mode eq 'development') {
 <div class="container">
