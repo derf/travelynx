@@ -110,4 +110,7 @@ $(document).ready(function() {
 	if ($('.publicstatuscol .autorefresh').length) {
 		setTimeout(tvly_update_public, 20000);
 	}
+	$(window).on('beforeunload', function () {
+		$('nav .preloader-wrapper').addClass('active');
+	});
 });
