@@ -24,7 +24,7 @@ function tvly_update() {
 		setTimeout(tvly_update, 20000);
 	}).fail(function() {
 		$('.sync-failed-marker').css('display', 'block');
-		setTimeout(tvly_update, 20000);
+		setTimeout(tvly_update, 5000);
 	});
 }
 function tvly_update_public() {
@@ -37,7 +37,7 @@ function tvly_update_public() {
 		setTimeout(tvly_update_public, 20000);
 	}).fail(function() {
 		$('.sync-failed-marker').css('display', 'block');
-		setTimeout(tvly_update_public, 20000);
+		setTimeout(tvly_update_public, 5000);
 	});
 }
 function tvly_reg_handlers() {
