@@ -1638,8 +1638,11 @@ sub startup {
 					  = $ret->{real_arrival}->epoch - $now->epoch;
 					$ret->{journey_duration} = $ret->{real_arrival}->epoch
 					  - $ret->{real_departure}->epoch;
-					$ret->{journey_completion} = 1 - (
-						$ret->{arrival_countdown} / $ret->{journey_duration} );
+					$ret->{journey_completion}
+					  = $ret->{journey_duration}
+					  ? 1
+					  - ( $ret->{arrival_countdown} / $ret->{journey_duration} )
+					  : 1;
 					if ( $ret->{journey_completion} > 1 ) {
 						$ret->{journey_completion} = 1;
 					}
