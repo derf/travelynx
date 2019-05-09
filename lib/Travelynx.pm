@@ -193,7 +193,11 @@ sub startup {
 					lookbehind     => 20,
 					datetime => DateTime->now( time_zone => 'Europe/Berlin' )
 					  ->subtract( minutes => $lookbehind ),
-					lookahead => $lookbehind + $lookahead,
+					lookahead   => $lookbehind + $lookahead,
+					lwp_options => {
+						timeout => 10,
+						agent   => 'travelynx/' . $self->app->config->{version},
+					},
 				);
 				return {
 					results       => [ $status->results ],
