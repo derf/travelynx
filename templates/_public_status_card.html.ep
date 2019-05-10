@@ -4,10 +4,10 @@
 			<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 			<span class="card-title"><%= $name %> ist unterwegs</span>
 			<p>
+				<div class="center-align"><b><%= $journey->{train_type} %> <%= $journey->{train_no} %></b></div>
 				<div class="center-align countdown"
 					data-duration="<%= $journey->{journey_duration} // 0 %>"
 					data-arrival="<%= $journey->{real_arrival}->epoch %>">
-					<b><%= $journey->{train_type} %> <%= $journey->{train_no} %></b><br/>
 					% if ($journey->{departure_countdown} > 120) {
 						Abfahrt in <%= sprintf('%.f', $journey->{departure_countdown} / 60) %> Minuten
 					% }
