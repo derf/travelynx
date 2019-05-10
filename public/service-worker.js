@@ -1,14 +1,14 @@
-const CACHE_NAME = 'static-cache-v16';
+const CACHE_NAME = 'static-cache-v17';
 const FILES_TO_CACHE = [
   '/offline.html',
-  '/static/v16/css/materialize.min.css',
-  '/static/v16/css/material-icons.css',
-  '/static/v16/css/local.css',
-  '/static/v16/js/jquery-3.4.1.min.js',
-  '/static/v16/js/materialize.min.js',
-  '/static/v16/js/travelynx-actions.min.js',
-  '/static/v16/js/autocomplete.min.js',
-  '/static/v16/js/geolocation.min.js',
+  '/static/v17/css/materialize.min.css',
+  '/static/v17/css/material-icons.css',
+  '/static/v17/css/local.css',
+  '/static/v17/js/jquery-3.4.1.min.js',
+  '/static/v17/js/materialize.min.js',
+  '/static/v17/js/travelynx-actions.min.js',
+  '/static/v17/js/autocomplete.min.js',
+  '/static/v17/js/geolocation.min.js',
 ];
 
 self.addEventListener('install', (evt) => {

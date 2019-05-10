@@ -3,7 +3,9 @@
 		<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 		<span class="card-title">Eingecheckt in <%= $journey->{train_type} %> <%= $journey->{train_no} %></span>
 		<p>
-			<div class="center countdown">
+			<div class="center-align countdown"
+				data-duration="<%= $journey->{journey_duration} // 0 %>"
+				data-arrival="<%= $journey->{real_arrival}->epoch %>">
 				% if ($journey->{departure_countdown} > 120) {
 					Abfahrt in <%= sprintf('%.f', $journey->{departure_countdown} / 60) %> Minuten
 				% }
