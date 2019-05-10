@@ -1,0 +1,27 @@
+<div class="row">
+	<div class="col s12">
+		<div class="card red darken-4">
+			<div class="card-content white-text">
+				<span class="card-title">500 Internal Server Error</span>
+				<p>Das hätte nicht passieren sollen.</p>
+			</div>
+			<div class="card-action">
+				<a href="https://github.com/derf/travelynx/issues" class="waves-effect waves-light btn-flat white-text">
+					<i class="material-icons left">bug_report</i>Bug melden
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col s12">
+		<p>Angaben für einen Bug-Report:</p>
+		<p style="font-family: monospace;">
+			Timestamp:
+			%= DateTime->now(time_zone => 'Europe/Berlin')->strftime("%d/%b/%Y:%H:%M:%S %z")
+			<br/><br/>
+			Message:
+			%= (split(qr{\n}, $exception->message))[0]
+		</p>
+	</div>
+</div>
