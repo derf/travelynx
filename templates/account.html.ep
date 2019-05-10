@@ -59,7 +59,7 @@
 				<th scope="row">Web Hook</th>
 				<td>
 					<a href="/account/hooks"><i class="material-icons">edit</i></a>
-					% if ($hook->{enabled} == 0) {
+					% if (not $hook->{enabled}) {
 						<span style="color: #999999;">Nicht eingerichtet</span>
 					% }
 					% elsif ($hook->{latest_run}->epoch == 0) {
