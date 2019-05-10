@@ -2,12 +2,24 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		1.2
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left">add</i> <a href="/account/hooks">Web Hooks</a>
+				an eine konfigurierbare URL bei Checkin und Checkout.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		1.1
 	</div>
 	<div class="col s12 m11 l11">
-		<ul>
-			<li>Öffentlicher Status unter „/status/<i>name</i>“ (opt-in, muss unter <a href="/account/privacy">account/privacy</a> aktiviert werden)</li>
-		</ul>
+		<p>
+			<i class="material-icons left">add</i> Öffentlicher Status unter „/status/<i>name</i>“ (opt-in, muss unter <a href="/account/privacy">account/privacy</a> aktiviert werden)
+		</p>
 	</div>
 </div>
 
