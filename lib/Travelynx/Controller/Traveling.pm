@@ -360,7 +360,10 @@ sub yearly_history {
 	my @journeys;
 	my $stats;
 
-	if ( not $year =~ m{ ^ [0-9]{4} $ }x ) {
+	# DateTime is very slow when looking far into the future due to DST changes
+	# -> Limit time range to avoid accidental DoS.
+	if ( not( $year =~ m{ ^ [0-9]{4} $ }x and $year > 1990 and $year < 2100 ) )
+	{
 		@journeys = $self->get_user_travels;
 	}
 	else {
@@ -409,7 +412,14 @@ sub monthly_history {
 		qw(Januar Februar März April Mai Juni Juli August September Oktober November Dezember)
 	  );
 
-	if ( not( $year =~ m{ ^ [0-9]{4} $ }x and $month =~ m{ ^ [0-9]{1,2} $ }x ) )
+	if (
+		not(    $year =~ m{ ^ [0-9]{4} $ }x
+			and $year > 1990
+			and $year < 2100
+			and $month =~ m{ ^ [0-9]{1,2} $ }x
+			and $month > 0
+			and $month < 13 )
+	  )
 	{
 		@journeys = $self->get_user_travels;
 	}
