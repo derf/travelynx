@@ -8,10 +8,16 @@
 			<div class="card green darken-4">
 				<div class="card-content white-text">
 					% if ($success eq 'mail') {
-						<span class="card-title">Mail-Adresse erfolgreich geändert</span>
+						<span class="card-title">Mail-Adresse geändert</span>
 					% }
 					% elsif ($success eq 'password') {
-						<span class="card-title">Passwort erfolgreich geändert</span>
+						<span class="card-title">Passwort geändert</span>
+					% }
+					% elsif ($success eq 'privacy') {
+						<span class="card-title">Einstellungen zu öffentliche Account-Daten geändert</span>
+					% }
+					% elsif ($success eq 'webhook') {
+						<span class="card-title">Web Hook aktualisiert</span>
 					% }
 				</div>
 			</div>
@@ -21,6 +27,7 @@
 
 <h1>Account</h1>
 % my $acc = current_user();
+% my $hook = get_webhook();
 <div class="row">
 	<div class="col s12">
 		<table class="striped">
@@ -41,10 +48,28 @@
 				<td>
 					<a href="/account/privacy"><i class="material-icons">edit</i></a>
 					% if ($acc->{is_public} == 0) {
-						Keine
+						<span style="color: #999999;">Keine</span>
 					% }
 					% if ($acc->{is_public} & 0x02) {
 						Aktueller Status
+					% }
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">Web Hook</th>
+				<td>
+					<a href="/account/hooks"><i class="material-icons">edit</i></a>
+					% if ($hook->{enabled} == 0) {
+						<span style="color: #999999;">Nicht eingerichtet</span>
+					% }
+					% elsif ($hook->{latest_run}->epoch == 0) {
+						Aktiv, noch nicht ausgeführt
+					% }
+					% elsif ($hook->{errored}) {
+						Aktiv, fehlerhaft <i class="material-icons">error</i>
+					% }
+					% else {
+						Aktiv
 					% }
 				</td>
 			</tr>

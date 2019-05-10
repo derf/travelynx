@@ -222,6 +222,8 @@ sub privacy {
 			$public_level &= ~0x02;
 		}
 		$self->set_privacy( $user->{id}, $public_level );
+
+		$self->flash( success => 'privacy' );
 		$self->redirect_to('account');
 	}
 	else {
@@ -244,8 +246,9 @@ sub webhook {
 			token   => $hook->{token},
 			enabled => $hook->{enabled}
 		);
+		$self->flash( success => 'webhook' );
+		$self->redirect_to('account');
 		$self->run_hook( $self->current_user->{id}, 'ping' );
-		$hook = $self->get_webhook;
 	}
 	else {
 		$self->param( url     => $hook->{url} );

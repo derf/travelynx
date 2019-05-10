@@ -1045,7 +1045,7 @@ sub startup {
 			$self->pg->db->update(
 				'webhooks',
 				{
-					errored    => !$success,
+					errored    => $success ? 0 : 1,
 					latest_run => DateTime->now( time_zone => 'Europe/Berlin' ),
 					output     => $text,
 				},
