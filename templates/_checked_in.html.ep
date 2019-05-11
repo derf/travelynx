@@ -74,8 +74,8 @@
 		% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} <= 0) {
 			<p>
 				Der automatische Checkout erfolgt in wenigen Minuten. Zum Umsteigen:
-				Aktuelle Station in der Liste auswählen. Zum Weiterfahren: Neues
-				Ziel wählen.
+				Aktuelle Station erneut in der Liste auswählen. Zum Weiterfahren im
+				selben Zug: Neues Ziel wählen.
 			</p>
 		% }
 		% elsif ($journey->{arr_name}) {
