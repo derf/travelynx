@@ -8,9 +8,15 @@
 	<meta name="theme-color" content="#673ab7">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
-	<meta name="apple-mobile-web-app-title" content="Weather PWA">
-	% my $av = 'v17'; # asset version
-	<link rel="apple-touch-icon" href="/static/<%= $av %>/icons/icon-152x152.png">
+	<meta name="apple-mobile-web-app-title" content="Travelynx">
+	% my $av = 'v18'; # asset version
+	<link rel="icon" type="image/png" href="/static/<%= $av %>/icons/icon-16x16.png" sizes="16x16">
+	<link rel="icon" type="image/png" href="/static/<%= $av %>/icons/icon-32x32.png" sizes="32x32">
+	<link rel="icon" type="image/png" href="/static/<%= $av %>/icons/icon-96x96.png" sizes="96x96">
+	<link rel="apple-touch-icon" href="/static/<%= $av %>/icons/icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/static/<%= $av %>/icons/icon-180x180.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="/static/<%= $av %>/icons/icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="167x167" href="/static/<%= $av %>/icons/icon-167x167.png">
 	<link rel="manifest" href="/static/<%= $av %>/manifest.json">
 	%= stylesheet "/static/${av}/css/materialize.min.css"
 	%= stylesheet "/static/${av}/css/material-icons.css"
