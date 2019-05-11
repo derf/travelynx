@@ -1309,7 +1309,7 @@ sub startup {
 				return {};
 			}
 
-			my $uid   = $self->current_user->{id};
+			my $uid   = $opt{uid} // $self->current_user->{id};
 			my $year  = $opt{year} // 0;
 			my $month = $opt{month} // 0;
 
@@ -1360,6 +1360,7 @@ sub startup {
 			}
 
 			my @journeys = $self->get_user_travels(
+				uid       => $uid,
 				cancelled => $opt{cancelled} ? 1 : 0,
 				verbose   => 1,
 				after     => $interval_start,
@@ -1839,10 +1840,12 @@ sub startup {
 				$num_trains++;
 				$km_route   += $journey->{km_route};
 				$km_beeline += $journey->{km_beeline};
-				if ( $journey->{sched_duration} > 0 ) {
+				if (    $journey->{sched_duration}
+					and $journey->{sched_duration} > 0 )
+				{
 					$min_travel_sched += $journey->{sched_duration} / 60;
 				}
-				if ( $journey->{rt_duration} > 0 ) {
+				if ( $journey->{rt_duration} and $journey->{rt_duration} > 0 ) {
 					$min_travel_real += $journey->{rt_duration} / 60;
 				}
 				if ( $journey->{sched_departure} and $journey->{rt_departure} )
