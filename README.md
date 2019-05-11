@@ -24,6 +24,21 @@ Dependencies
  * UUID::Tiny
  * JSON
 
+You can use carton or cpanminus to install dependencies locally. Run either
+
+```
+carton install
+```
+
+or
+
+```
+cpanm --installdeps .
+```
+
+and then set `PERL5LIB` before executing any travelynx commands. You may
+also be able to use `carton exec` to do this for you, though this is untested.
+
 Recommended
 ---
 
