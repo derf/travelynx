@@ -1,9 +1,9 @@
 $(document).ready(function() {
-	var prePlaceholder = $('p.geolocationhint');
-	var placeholder = $('div.geolocation div.progress');
+	function getPlaceholder() {
+		return $('div.geolocation div.progress');
+	}
 	var showError = function(header, message, code) {
-		prePlaceholder.remove();
-		placeholder.remove();
+		getPlaceholder().remove();
 		var errnode = $(document.createElement('div'));
 		errnode.attr('class', 'error');
 		errnode.text(message);
@@ -36,7 +36,7 @@ $(document).ready(function() {
 
 				resultBody.append('<tr><td><a href="/s/' + ds100 + '">' + name + '</a></td></tr>');
 			});
-			placeholder.replaceWith(resultTable);
+			getPlaceholder().replaceWith(resultTable);
 		}
 	};
 
@@ -56,9 +56,26 @@ $(document).ready(function() {
 		}
 	};
 
-	if ($('div.geolocation').length) {
+	var geoLocationButton = $('div.geolocation > button');
+	var getGeoLocation = function() {
+		geoLocationButton.replaceWith($('<p class="geolocationhint">Stationen in der Umgebung:</p><div class="progress"><div class="indeterminate"></div></div>'));
+		navigator.geolocation.getCurrentPosition(processLocation, processError);
+	}
+
+	if (geoLocationButton.length) {
 		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(processLocation, processError);
+			if (navigator.permissions) {
+				navigator.permissions.query({ name:'geolocation' }).then(function(value) {
+					if (value.state === 'prompt') {
+						geoLocationButton.on('click', getGeoLocation);
+					} else {
+						// User either rejected or granted permission. User wont get prompted and we can show stations/error
+						getGeoLocation();
+					}
+				});
+			} else {
+				geoLocationButton.on('click', getGeoLocation);
+			}
 		} else {
 			showError('Standortanfragen werden von diesem Browser nicht unterstützt', '', null);
 		}
