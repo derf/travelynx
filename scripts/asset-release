@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -ex
+
+current="$(ls -d public/static/v* | tail -n 1 | grep -o '..$')"
+prev=$((current - 1))
+next=$((current + 1))
+
+git mv public/static/v${prev} public/static/v${next}
+
+sed -i "s!/v${current}/!/v${next}/!g" \
+	public/service-worker.js public/static/manifest.json \
+	public/static/css/material-icons.css
+
+sed -i "s!static-cache-v${current}!static-cache-v${next}!" public/service-worker.js
+
+sed -i "s!av = 'v${current}'!av = 'v${next}'!" templates/layouts/default.html.ep
