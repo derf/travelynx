@@ -86,16 +86,16 @@
 			</p>
 			<p>
 				Die Idee dazu kommt von <a
-				href="https://traewelling.de/">Träwelling</a>, hier gibt es aber
-				keine Twitter-Anbindung und keine öffentlichen Leaderboards.
+				href="https://traewelling.de/">Träwelling</a>.
 			</p>
 			<p>
 				Features:
 				<ul>
 					<li>Protokoll von Fahrplan- und Echtzeitdaten an Start- und
 						Zielbahnhof</li>
-					<li><a href="/api">API</a> zum automatisierten Auslesen des aktuellen Status</li>
+					<li>Web-Hooks und <a href="/api">API</a> zum automatisierten Auslesen des aktuellen Status</li>
 					<li>Statistiken über Reisezeiten und Verspätungen</li>
+					<li>Optional: Öffentlich sichtbarer Reisestatus</li>
 				</ul>
 			</p>
 			<p>
