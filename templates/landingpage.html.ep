@@ -51,9 +51,8 @@
 					<div class="card-content white-text">
 						<span class="card-title">Hallo, <%= current_user()->{name} %>!</span>
 						<p>Du bist gerade nicht eingecheckt.</p>
-						<p class="geolocationhint">Stationen in der Umgebung:</p>
 						<div class="geolocation">
-							<div class="progress"><div class="indeterminate"></div></div>
+							<button class="btn waves-effect waves-light btn-flat white">Stationen in der Umgebung abfragen</button>
 						</div>
 						%= form_for 'list_departures' => begin
 							<div class="input-field">
