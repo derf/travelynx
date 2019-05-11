@@ -24,7 +24,10 @@ Dependencies
  * UUID::Tiny
  * JSON
 
-You can use carton or cpanminus to install dependencies locally. Run either
+If perl modules are not packaged for your distribution, you can use carton or
+cpanminus to install them locally. In this case, you need to have development
+headers for libxml and libpq (postgresql) on your system.  In the project root
+directory (where `cpanfile` resides), run either
 
 ```
 carton install
@@ -36,8 +39,8 @@ or
 cpanm --installdeps .
 ```
 
-and then set `PERL5LIB` before executing any travelynx commands. You may
-also be able to use `carton exec` to do this for you, though this is untested.
+and then set `PERL5LIB` before executing any travelynx commands or wrap them
+with `carton exec`, e.g. `carton exec hypnotoad index.pl`
 
 Recommended
 ---
