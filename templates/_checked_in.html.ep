@@ -114,7 +114,7 @@
 		% if ($journey->{arr_name}) {
 			% my $attrib = 'im';
 			% if ($journey->{train_type} =~ m{ ^ (?: S | RB ) $ }x) {
-				$attrib = 'in der';
+				% $attrib = 'in der';
 			% }
 			<a class="action-share blue-text right"
 				data-text="Ich bin gerade <%= $attrib %> <%= $journey->{train_type} %> <%= $journey->{train_no} %> nach <%= $journey->{arr_name} %> #NowTräwelling #dbl"
