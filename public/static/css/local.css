@@ -2,7 +2,8 @@
 .action-checkout,
 .action-undo,
 .action-cancelled-from,
-.action-cancelled-to {
+.action-cancelled-to,
+.action-share {
 	cursor: pointer;
 }
 

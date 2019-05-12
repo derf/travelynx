@@ -138,6 +138,20 @@ function tvly_reg_handlers() {
 			tvly_run(link, req);
 		}
 	});
+	$('.action-share').click(function() {
+		if (navigator.share) {
+			shareObj = {
+				text: $(this).data('text')
+			};
+			if ($(this).data('url')) {
+				shareObj['url'] = $(this).data('url');
+			}
+			navigator.share(shareObj);
+		}
+	});
+	if ($('.action-share').length && !navigator.share) {
+		$('.action-share').css('display', 'none');
+	}
 }
 $(document).ready(function() {
 	tvly_reg_handlers();
