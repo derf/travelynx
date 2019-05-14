@@ -246,9 +246,18 @@ sub webhook {
 			token   => $hook->{token},
 			enabled => $hook->{enabled}
 		);
-		$self->flash( success => 'webhook' );
-		$self->redirect_to('account');
-		$self->run_hook( $self->current_user->{id}, 'ping' );
+		$self->run_hook(
+			$self->current_user->{id},
+			'ping',
+			sub {
+				$self->render(
+					'webhooks',
+					hook     => $self->get_webhook,
+					new_hook => 1
+				);
+			}
+		);
+		return;
 	}
 	else {
 		$self->param( url     => $hook->{url} );

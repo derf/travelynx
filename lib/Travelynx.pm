@@ -1059,12 +1059,15 @@ sub startup {
 
 	$self->helper(
 		'run_hook' => sub {
-			my ( $self, $uid, $reason ) = @_;
+			my ( $self, $uid, $reason, $callback ) = @_;
 
 			my $hook = $self->get_webhook($uid);
 
 			if ( not $hook->{enabled} or not $hook->{url} =~ m{^ https?:// }x )
 			{
+				if ($callback) {
+					&$callback();
+				}
 				return;
 			}
 
@@ -1080,7 +1083,12 @@ sub startup {
 			}
 
 			my $ua = $self->ua;
-			$ua->request_timeout(10);
+			if ($callback) {
+				$ua->request_timeout(4);
+			}
+			else {
+				$ua->request_timeout(10);
+			}
 
 			$ua->post_p( $hook->{url} => $header => json => $hook_body )->then(
 				sub {
@@ -1093,11 +1101,17 @@ sub startup {
 						$self->mark_hook_status( $uid, $hook->{url}, 1,
 							$tx->result->body );
 					}
+					if ($callback) {
+						&$callback();
+					}
 				}
 			)->catch(
 				sub {
 					my ($err) = @_;
 					$self->mark_hook_status( $uid, $hook->{url}, 0, $err );
+					if ($callback) {
+						&$callback();
+					}
 				}
 			)->wait;
 		}
