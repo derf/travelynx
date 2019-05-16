@@ -119,7 +119,7 @@
 						<button class="btn waves-effect waves-light" type="submit" name="action" value="generate">
 							Generieren
 						</button>
-						<button class="btn waves-effect waves-light red" type="submit" name="action" value="delete">
+						<button class="btn waves-effect waves-light caution-color" type="submit" name="action" value="delete">
 							Löschen
 						</button>
 					%= end
@@ -213,7 +213,7 @@
 			</div>
 			<div class="input-field col s12 m12 l4 center-align">
 				%= csrf_field
-				<button class="btn waves-effect waves-light red" type="submit" name="action" value="delete">
+				<button class="btn waves-effect waves-light caution-color" type="submit" name="action" value="delete">
 					Account löschen
 				</button>
 			</div>

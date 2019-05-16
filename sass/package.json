@@ -1,0 +1,32 @@
+{
+  "name": "travelynx",
+  "version": "1.0.0",
+  "description": "travelynx - Railway Travel Logger",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/derf/travelynx.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/derf/travelynx/issues"
+  },
+  "homepage": "https://github.com/derf/travelynx#readme",
+  "devDependencies": {
+    "css-loader": "^2.1.1",
+    "cssnano": "^4.1.10",
+    "materialize-css": "^1.0.0-rc.2",
+    "mini-css-extract-plugin": "^0.6.0",
+    "node-sass": "^4.12.0",
+    "postcss": "^7.0.16",
+    "postcss-loader": "^3.0.0",
+    "postcss-preset-env": "^6.6.0",
+    "postcss-scss": "^2.0.0",
+    "sass-loader": "^7.1.0",
+    "webpack": "^4.31.0",
+    "webpack-cli": "^3.3.2"
+  }
+}

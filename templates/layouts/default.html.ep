@@ -18,7 +18,23 @@
 	<link rel="apple-touch-icon" sizes="152x152" href="/static/<%= $av %>/icons/icon-152x152.png">
 	<link rel="apple-touch-icon" sizes="167x167" href="/static/<%= $av %>/icons/icon-167x167.png">
 	<link rel="manifest" href="/static/<%= $av %>/manifest.json">
-	%= stylesheet "/static/${av}/css/materialize.min.css"
+	<script>
+			function addStyleSheet(path) {
+				var st = document.createElement('link');
+				st.href = path;
+				st.rel = 'stylesheet';
+				document.head.appendChild(st);
+		}
+
+		if (window.matchMedia('(prefers-color-scheme: dark').matches) {
+				addStyleSheet("/static/<%= $av %>/css/dark.min.css");
+		} else {
+				addStyleSheet("/static/<%= $av %>/css/light.min.css");
+		}
+	</script>
+	<noscript>
+	%= stylesheet "/static/${av}/css/light.min.css"
+	</noscript>
 	%= stylesheet "/static/${av}/css/material-icons.css"
 	%= stylesheet "/static/${av}/css/local.css"
 	%= javascript "/static/${av}/js/jquery-3.4.1.min.js"
@@ -66,7 +82,7 @@
 % if (app->mode eq 'development') {
 <div class="container">
 	<div class="row">
-		<div class="col s12 red darken-4 white-text">
+		<div class="col s12 caution-color white-text">
 			Development Mode – Datenbank: <%= app->config->{db}->{database} %>
 			@ <%= app->config->{db}->{host} %>
 		</div>

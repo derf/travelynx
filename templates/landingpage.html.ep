@@ -2,7 +2,7 @@
 	% if (stash('error')) {
 		<div class="row">
 			<div class="col s12">
-				<div class="card red darken-4">
+				<div class="card caution-color">
 					<div class="card-content white-text">
 						<span class="card-title">Backend-Fehler</span>
 						<p><%= stash('error') %></p>
@@ -18,7 +18,7 @@
 				%= include '_checked_in', journey => $status;
 			% }
 			% elsif ($status->{cancelled}) {
-				<div class="card yellow lighten-4">
+				<div class="card info-color">
 					<div class="card-content">
 						<span class="card-title">Zugausfall dokumentieren</span>
 						<p>Prinzipiell wärest du nun eingecheckt in
@@ -47,20 +47,20 @@
 				</div>
 			% }
 			% else {
-				<div class="card grey darken-4">
-					<div class="card-content white-text">
+				<div class="card">
+					<div class="card-content">
 						<span class="card-title">Hallo, <%= current_user()->{name} %>!</span>
 						<p>Du bist gerade nicht eingecheckt.</p>
 						<div class="geolocation">
-							<button class="btn waves-effect waves-light btn-flat white">Stationen in der Umgebung abfragen</button>
+							<button class="btn waves-effect waves-light btn-flat">Stationen in der Umgebung abfragen</button>
 						</div>
 						%= form_for 'list_departures' => begin
 							<div class="input-field">
-								%= text_field 'station', id => 'station', class => 'autocomplete white-text', required => undef
+								%= text_field 'station', id => 'station', class => 'autocomplete contrast-color-text', required => undef
 								<label for="station">Manuelle Eingabe (Name oder DS100)</label>
 							</div>
 							<div class="center-align">
-								<button class="btn waves-effect waves-light btn-flat white" type="submit" name="action" value="departures">
+								<button class="btn waves-effect waves-light btn-flat" type="submit" name="action" value="departures">
 									<i class="material-icons left">send</i>
 									Abfahrten
 								</button>

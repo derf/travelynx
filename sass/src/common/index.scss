@@ -1,0 +1,18 @@
+$customColors: (
+  'caution': $error-color,
+  'info': $info-color,
+  'contrast': $off-black,
+);
+
+@each $name, $color in $customColors {
+  .#{$name}-color {
+    background-color: $color;
+  }
+  .#{$name}-color-text {
+    color: $color;
+  }
+}
+
+html {
+  background-color: $bg-color;
+}
