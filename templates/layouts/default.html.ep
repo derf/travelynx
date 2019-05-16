@@ -18,12 +18,15 @@
 	<link rel="apple-touch-icon" sizes="152x152" href="/static/<%= $av %>/icons/icon-152x152.png">
 	<link rel="apple-touch-icon" sizes="167x167" href="/static/<%= $av %>/icons/icon-167x167.png">
 	<link rel="manifest" href="/static/<%= $av %>/manifest.json">
+	%= stylesheet "/static/${av}/css/light.min.css", id => 'theme'
 	<script>
 			function addStyleSheet(name, id) {
 				var path = '/static/<%=$av%>/css/' + name + '.css';
 				var old = document.getElementById(id);
 				if (old) {
-					old.href = path;
+					if (old.href != path) {
+						old.href = path;
+					}
 				} else {
 					var st = document.createElement('link');
 					st.id = id;
@@ -48,9 +51,6 @@ function toggleTheme() {
     addStyleSheet(currentTheme, 'theme');
 }
 	</script>
-	<noscript>
-	%= stylesheet "/static/${av}/css/light.min.css"
-	</noscript>
 	%= stylesheet "/static/${av}/css/material-icons.css"
 	%= stylesheet "/static/${av}/css/local.css"
 	%= javascript "/static/${av}/js/jquery-3.4.1.min.js"
