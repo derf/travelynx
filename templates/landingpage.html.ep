@@ -23,7 +23,7 @@
 						<span class="card-title">Zugausfall dokumentieren</span>
 						<p>Prinzipiell wärest du nun eingecheckt in
 							<%= $status->{train_type} %> <%= $status->{train_no} %>
-							ab <%= $status->{station_name} %>, doch dieser Zug fällt aus.
+							ab <%= $status->{dep_name} %>, doch dieser Zug fällt aus.
 							</p>
 						<p>Falls du den Zugausfall z.B. für ein Fahrgastrechteformular
 							dokumentieren möchtest, wähle bitte jetzt deine geplante
