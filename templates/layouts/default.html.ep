@@ -19,19 +19,21 @@
 	<link rel="apple-touch-icon" sizes="167x167" href="/static/<%= $av %>/icons/icon-167x167.png">
 	<link rel="manifest" href="/static/<%= $av %>/manifest.json">
 	<script>
-			function addStyleSheet(path) {
-				var st = document.createElement('link');
-				st.href = path;
-				st.rel = 'stylesheet';
-				document.head.appendChild(st);
-		}
-
-		if (window.matchMedia('(prefers-color-scheme: dark').matches) {
-				addStyleSheet("/static/<%= $av %>/css/dark.min.css");
-		} else {
-				addStyleSheet("/static/<%= $av %>/css/light.min.css");
+			function addStyleSheet(name, id) {
+				var path = '/static/<%=$av%>/css/' + name + '.css';
+				var old = document.getElementById(id);
+				if (old) {
+					old.href = path;
+				} else {
+					var st = document.createElement('link');
+					st.id = id;
+					st.href = "/static/<%=$av%>/css/" + name + '.css';
+					st.rel = 'stylesheet';
+					document.head.appendChild(st);
+				}
 		}
 	</script>
+	%= javascript "/static/${av}/js/theme.min.js"
 	<noscript>
 	%= stylesheet "/static/${av}/css/light.min.css"
 	</noscript>
@@ -66,6 +68,9 @@
 							</div>
 						</div>
 					</div>
+				</li>
+				<li class="waves-effect waves-light">
+					<a onClick="javascript:toggleTheme()"><i class="material-icons">invert_colors</i></a>
 				</li>
 				% if (is_user_authenticated()) {
 					<li class="<%= navbar_class('/history') %>"><a href='/history' title="History"><i class="material-icons">history</i></a></li>
