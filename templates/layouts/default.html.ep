@@ -38,7 +38,7 @@
 };
 var currentTheme = localStorage.getItem('theme');
 if (!otherTheme.hasOwnProperty(currentTheme)) {
-    currentTheme = window.matchMedia('(prefers-color-scheme: dark').matches ? 'dark.min' : 'light.min';
+    currentTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark.min' : 'light.min';
 }
 addStyleSheet(currentTheme, 'theme');
 
