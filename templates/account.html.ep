@@ -5,7 +5,7 @@
 % if (my $success = flash('success')) {
 	<div class="row">
 		<div class="col s12">
-			<div class="card green darken-4">
+			<div class="card success-color">
 				<div class="card-content white-text">
 					% if ($success eq 'mail') {
 						<span class="card-title">Mail-Adresse geändert</span>

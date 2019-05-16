@@ -2,3 +2,10 @@
 @import 'variables.scss';
 @import '../../node_modules/materialize-css/sass/materialize.scss';
 @import '../common/index.scss';
+
+.progress.travel-progress {
+  background-color: color('purple', 'lighten-4');
+  & > .determinate {
+    background-color: color('purple', 'darken-3');
+  }
+}

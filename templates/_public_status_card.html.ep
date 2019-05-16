@@ -1,5 +1,5 @@
 % if ($journey->{checked_in}) {
-	<div class="card white autorefresh">
+	<div class="card autorefresh">
 		<div class="card-content">
 			<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 			<span class="card-title"><%= $name %> ist unterwegs</span>
@@ -80,8 +80,8 @@
 	</div>
 % }
 % else {
-	<div class="card grey darken-4 autorefresh">
-		<div class="card-content white-text">
+	<div class="card autorefresh">
+		<div class="card-content">
 			<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 			<span class="card-title"><%= $name %> ist gerade nicht eingecheckt</span>
 			<p>

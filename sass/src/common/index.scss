@@ -2,6 +2,7 @@ $customColors: (
   'caution': $error-color,
   'info': $info-color,
   'contrast': $off-black,
+  'success': $success-color,
 );
 
 @each $name, $color in $customColors {
@@ -15,4 +16,16 @@ $customColors: (
 
 html {
   background-color: $bg-color;
+}
+
+a.unmarked {
+  color: $off-black;
+}
+
+.pagination {
+  li {
+    a {
+      color: $off-black;
+    }
+  }
 }

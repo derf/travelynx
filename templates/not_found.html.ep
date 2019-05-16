@@ -1,6 +1,6 @@
 <div class="row">
 	<div class="col s12">
-		<div class="card red darken-4">
+		<div class="card caution-color">
 			<div class="card-content white-text">
 				<span class="card-title">404 Not Found</span>
 				<p>Diese Seite gibt es hier nicht.</p>

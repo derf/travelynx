@@ -3,6 +3,13 @@
 @import '../../node_modules/materialize-css/sass/materialize.scss';
 @import '../common/index.scss';
 
+.progress.travel-progress {
+  background-color: color('purple', 'lighten-1');
+  & > .determinate {
+    background-color: color('purple', 'darken-1');
+  }
+}
+
 html {
   background-color: $bg-color;
 }

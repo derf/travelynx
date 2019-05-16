@@ -32,8 +32,22 @@
 					document.head.appendChild(st);
 				}
 		}
+		var otherTheme = {
+    'dark.min': 'light.min',
+    'light.min': 'dark.min',
+};
+var currentTheme = localStorage.getItem('theme');
+if (!otherTheme.hasOwnProperty(currentTheme)) {
+    currentTheme = window.matchMedia('(prefers-color-scheme: dark').matches ? 'dark.min' : 'light.min';
+}
+addStyleSheet(currentTheme, 'theme');
+
+function toggleTheme() {
+    currentTheme = otherTheme[currentTheme] || 'light.min';
+    localStorage.setItem('theme', currentTheme);
+    addStyleSheet(currentTheme, 'theme');
+}
 	</script>
-	%= javascript "/static/${av}/js/theme.min.js"
 	<noscript>
 	%= stylesheet "/static/${av}/css/light.min.css"
 	</noscript>

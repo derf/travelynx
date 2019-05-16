@@ -2,6 +2,6 @@
 
 set -x
 
-for file in autocomplete geolocation travelynx-actions theme; do
+for file in autocomplete geolocation travelynx-actions; do
 	uglifyjs public/static/js/${file}.js -c -m > public/static/js/${file}.min.js
 done

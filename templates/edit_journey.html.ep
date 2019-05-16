@@ -2,7 +2,7 @@
 % if ($error and $error eq 'notfound') {
 	<div class="row">
 		<div class="col s12">
-			<div class="card red darken-4">
+			<div class="card caution-color">
 				<div class="card-content white-text">
 					<span class="card-title">Fehler</span>
 					<p>Zugfahrt nicht gefunden.</p>
@@ -15,7 +15,7 @@
 	% if ($error) {
 		<div class="row">
 			<div class="col s12">
-				<div class="card red darken-4">
+				<div class="card caution-color">
 					<div class="card-content white-text">
 						<span class="card-title">Ungültige Eingabe</span>
 						<p><%= $error %></p>
