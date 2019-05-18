@@ -4,7 +4,12 @@
 			<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 			<span class="card-title"><%= $name %> ist unterwegs</span>
 			<p>
-				<div class="center-align"><b><%= $journey->{train_type} %> <%= $journey->{train_no} %></b></div>
+				% if ($journey->{train_line}) {
+					<div class="center-align"><b><%= $journey->{train_type} %> <%= $journey->{train_line} %></b> <%= $journey->{train_no} %></div>
+				% }
+				% else {
+					<div class="center-align"><b><%= $journey->{train_type} %> <%= $journey->{train_no} %></b></div>
+				% }
 				<div class="center-align countdown"
 					data-duration="<%= $journey->{journey_duration} // 0 %>"
 					data-arrival="<%= $journey->{real_arrival}->epoch %>">
@@ -27,6 +32,9 @@
 						% }
 						% else {
 							Ziel erreicht
+						% }
+						% if ($journey->{arrival_countdown} < (60 * 15)) {
+							<br/>auf Gleis <%= $journey->{arr_platform} %>
 						% }
 					% }
 					% elsif ($journey->{arr_name}) {

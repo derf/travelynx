@@ -8,12 +8,15 @@
 				data-arrival="<%= $journey->{real_arrival}->epoch %>">
 				% if ($journey->{departure_countdown} > 120) {
 					Abfahrt in <%= sprintf('%.f', $journey->{departure_countdown} / 60) %> Minuten
+					<br/>von Gleis <%= $journey->{dep_platform} %>
 				% }
 				% elsif ($journey->{departure_countdown} > 60) {
 					Abfahrt in einer Minute
+					<br/>von Gleis <%= $journey->{dep_platform} %>
 				% }
 				% elsif ($journey->{departure_countdown} > 0) {
 					Abfahrt in weniger als einer Minute
+					<br/>von Gleis <%= $journey->{dep_platform} %>
 				% }
 				% elsif (defined $journey->{arrival_countdown}) {
 					% if ($journey->{arrival_countdown} > 60) {
@@ -25,6 +28,9 @@
 					% }
 					% else {
 						Ziel erreicht
+					% }
+					% if ($journey->{arrival_countdown} < (60 * 15)) {
+						<br/>auf Gleis <%= $journey->{arr_platform} %>
 					% }
 				% }
 				% elsif ($journey->{arr_name}) {
@@ -75,7 +81,7 @@
 			<p>
 				Der automatische Checkout erfolgt in wenigen Minuten. Zum Umsteigen:
 				Aktuelle Station erneut in der Liste auswählen. Zum Weiterfahren im
-				selben Zug: Neues Ziel wählen.
+				aktuellen Zug: Neues Ziel wählen.
 			</p>
 		% }
 		% elsif ($journey->{arr_name}) {

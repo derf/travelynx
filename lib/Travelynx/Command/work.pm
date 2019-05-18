@@ -45,6 +45,7 @@ sub run {
 				$db->update(
 					'in_transit',
 					{
+						dep_platform   => $train->platform,
 						real_departure => $train->departure,
 						route          => join( '|', $train->route ),
 						messages       => join(
@@ -95,6 +96,7 @@ sub run {
 				$db->update(
 					'in_transit',
 					{
+						arr_platform  => $train->platform,
 						sched_arrival => $train->sched_arrival,
 						real_arrival  => $train->arrival,
 						route         => join( '|', $train->route ),

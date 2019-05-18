@@ -345,6 +345,7 @@ sub startup {
 								),
 								checkin_time =>
 								  DateTime->now( time_zone => 'Europe/Berlin' ),
+								dep_platform    => $train->platform,
 								train_type      => $train->type,
 								train_line      => $train->line_no,
 								train_no        => $train->train_no,
@@ -526,6 +527,7 @@ sub startup {
 					'in_transit',
 					{
 						checkout_time => undef,
+						arr_platform  => undef,
 						sched_arrival => undef,
 						real_arrival  => undef,
 					},
@@ -549,6 +551,7 @@ sub startup {
 						'in_transit',
 						{
 							checkout_time => $now,
+							arr_platform  => $train->platform,
 							sched_arrival => $train->sched_arrival,
 							real_arrival  => $train->arrival,
 							cancelled => $train->arrival_is_cancelled ? 1 : 0,
@@ -1650,10 +1653,12 @@ sub startup {
 					real_departure => epoch_to_dt( $in_transit->{real_dep_ts} ),
 					dep_ds100      => $in_transit->{dep_ds100},
 					dep_name       => $in_transit->{dep_name},
+					dep_platform   => $in_transit->{dep_platform},
 					sched_arrival => epoch_to_dt( $in_transit->{sched_arr_ts} ),
 					real_arrival  => epoch_to_dt( $in_transit->{real_arr_ts} ),
 					arr_ds100     => $in_transit->{arr_ds100},
 					arr_name      => $in_transit->{arr_name},
+					arr_platform  => $in_transit->{arr_platform},
 					route_after   => \@route_after,
 					messages      => $in_transit->{messages}
 					? [ split( qr{[|]}, $in_transit->{messages} ) ]
@@ -1725,10 +1730,12 @@ sub startup {
 					real_departure  => epoch_to_dt( $latest->{real_dep_ts} ),
 					dep_ds100       => $latest->{dep_ds100},
 					dep_name        => $latest->{dep_name},
+					dep_platform    => $latest->{dep_platform},
 					sched_arrival   => epoch_to_dt( $latest->{sched_arr_ts} ),
 					real_arrival    => epoch_to_dt( $latest->{real_arr_ts} ),
 					arr_ds100       => $latest->{arr_ds100},
 					arr_name        => $latest->{arr_name},
+					arr_platform    => $latest->{arr_platform},
 				};
 			}
 
