@@ -33,8 +33,8 @@
 						Ankunft in mehr als zwei Stunden
 					% }
 				</div>
-				<div class="progress grey lighten-3" style="height: 1ex;">
-					<div class="determinate blue" style="width: <%= sprintf('%.2f', 100 * ($journey->{journey_completion} // 0)); %>%;"></div>
+				<div class="progress" style="height: 1ex;">
+					<div class="determinate" style="width: <%= sprintf('%.2f', 100 * ($journey->{journey_completion} // 0)); %>%;"></div>
 				</div>
 			</p>
 			<p>

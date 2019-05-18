@@ -9,7 +9,7 @@
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<meta name="apple-mobile-web-app-title" content="Travelynx">
-	% my $av = 'v22'; # asset version
+	% my $av = 'v23'; # asset version
 	<link rel="icon" type="image/png" href="/static/<%= $av %>/icons/icon-16x16.png" sizes="16x16">
 	<link rel="icon" type="image/png" href="/static/<%= $av %>/icons/icon-32x32.png" sizes="32x32">
 	<link rel="icon" type="image/png" href="/static/<%= $av %>/icons/icon-96x96.png" sizes="96x96">
