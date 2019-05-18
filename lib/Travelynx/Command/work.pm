@@ -125,6 +125,17 @@ sub run {
 
 		eval { }
 	}
+
+	# Computing yearly stats may take a while, but we've got all time in the
+	# world here. This means users won't have to wait when loading their
+	# own by-year journey log.
+	for my $user ( $db->select( 'users', 'id', { status => 1 } )->hashes->each )
+	{
+		$self->app->get_journey_stats(
+			uid  => $user->{id},
+			year => $now->year
+		);
+	}
 }
 
 1;
