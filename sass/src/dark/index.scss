@@ -13,3 +13,8 @@
 html {
   background-color: $bg-color;
 }
+
+input[type=text],
+input[type=password] {
+	color: $off-black;
+}
