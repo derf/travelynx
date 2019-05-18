@@ -10,9 +10,7 @@ sub homepage {
 	if ( $self->is_user_authenticated ) {
 		$self->render(
 			'landingpage',
-
-			#version           => $self->app->config->{version} // 'UNKNOWN',
-			version           => join( '|||', @{ $self->req->cookies } ),
+			version           => $self->app->config->{version} // 'UNKNOWN',
 			with_autocomplete => 1,
 			with_geolocation  => 1
 		);
