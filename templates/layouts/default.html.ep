@@ -18,38 +18,36 @@
 	<link rel="apple-touch-icon" sizes="152x152" href="/static/<%= $av %>/icons/icon-152x152.png">
 	<link rel="apple-touch-icon" sizes="167x167" href="/static/<%= $av %>/icons/icon-167x167.png">
 	<link rel="manifest" href="/static/<%= $av %>/manifest.json">
-	%= stylesheet "/static/${av}/css/light.min.css", id => 'theme'
+	% if (session('theme') and session('theme') eq 'dark') {
+		%= stylesheet "/static/${av}/css/dark.min.css", id => 'theme'
+	% }
+	% else {
+		%= stylesheet "/static/${av}/css/light.min.css", id => 'theme'
+	% }
 	<script>
-			function addStyleSheet(name, id) {
-				var path = '/static/<%=$av%>/css/' + name + '.css';
-				var old = document.getElementById(id);
-				if (old) {
-					if (old.href != path) {
-						old.href = path;
-					}
-				} else {
-					var st = document.createElement('link');
-					st.id = id;
-					st.href = "/static/<%=$av%>/css/" + name + '.css';
-					st.rel = 'stylesheet';
-					document.head.appendChild(st);
-				}
+		function addStyleSheet(name, id) {
+			var path = '/static/<%=$av%>/css/' + name + '.min.css';
+			var old = document.getElementById(id);
+			if (old && (old.href != path)) {
+				old.href = path;
+				document.cookie = 'theme=' + name;
+			}
 		}
 		var otherTheme = {
-    'dark.min': 'light.min',
-    'light.min': 'dark.min',
-};
-var currentTheme = localStorage.getItem('theme');
-if (!otherTheme.hasOwnProperty(currentTheme)) {
-    currentTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark.min' : 'light.min';
-}
-addStyleSheet(currentTheme, 'theme');
+			'dark': 'light',
+			'light': 'dark',
+		};
+		var currentTheme = localStorage.getItem('theme');
+		if (!otherTheme.hasOwnProperty(currentTheme)) {
+			currentTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+		}
+		addStyleSheet(currentTheme, 'theme');
 
-function toggleTheme() {
-    currentTheme = otherTheme[currentTheme] || 'light.min';
-    localStorage.setItem('theme', currentTheme);
-    addStyleSheet(currentTheme, 'theme');
-}
+		function toggleTheme() {
+			currentTheme = otherTheme[currentTheme] || 'light';
+			localStorage.setItem('theme', currentTheme);
+			addStyleSheet(currentTheme, 'theme');
+		}
 	</script>
 	%= stylesheet "/static/${av}/css/material-icons.css"
 	%= stylesheet "/static/${av}/css/local.css"
