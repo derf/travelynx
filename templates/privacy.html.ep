@@ -14,7 +14,7 @@
 		<div class="input-field col s12">
 			<label>
 				%= check_box public_status => 1
-				<span class="black-text">Aktueller Status</span>
+				<span>Aktueller Status</span>
 			</label>
 		</div>
 	</div>

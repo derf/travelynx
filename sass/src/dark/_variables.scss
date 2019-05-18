@@ -1,0 +1,18 @@
+$bg-color: #101010 !default;
+$info-color: color('blue-grey', 'darken-4');
+
+$off-black: color('shades', 'white');
+
+$primary-color: color('materialize-red', 'darken-2');
+$secondary-color: color('cyan', 'darken-2');
+$link-color: color('light-blue', 'darken-1');
+$collection-link-color: color('cyan', 'darken-4');
+$success-color: color('green', 'darken-2');
+$error-color: color('red', 'darken-2');
+$input-border-color: $off-black;
+$radio-empty-color: $off-black !default;
+
+$table-striped-color: color('grey', 'darken-4');
+$button-flat-color: $off-black;
+$card-bg-color: color('grey', 'darken-4');
+$card-link-color: $link-color;
