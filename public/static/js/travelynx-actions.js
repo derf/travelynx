@@ -84,6 +84,7 @@ function tvly_reg_handlers() {
 			action: 'checkin',
 			station: link.data('station'),
 			train: link.data('train'),
+			dest: link.data('dest'),
 		};
 		tvly_run(link, req);
 	});

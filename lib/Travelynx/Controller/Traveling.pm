@@ -145,6 +145,7 @@ sub log_action {
 
 		my ( $train, $error )
 		  = $self->checkin( $params->{station}, $params->{train} );
+		my $destination = $params->{dest};
 
 		if ($error) {
 			$self->render(
@@ -154,11 +155,24 @@ sub log_action {
 				},
 			);
 		}
-		else {
+		elsif ( not $destination ) {
 			$self->render(
 				json => {
 					success     => 1,
 					redirect_to => '/',
+				},
+			);
+		}
+		else {
+			# Silently ignore errors -- if they are permanent, the user will see
+			# them when selecting the destination manually.
+			my ( $still_checked_in, undef )
+			  = $self->checkout( $destination, 0 );
+			my $station_link = '/s/' . $destination;
+			$self->render(
+				json => {
+					success     => 1,
+					redirect_to => $still_checked_in ? '/' : $station_link,
 				},
 			);
 		}

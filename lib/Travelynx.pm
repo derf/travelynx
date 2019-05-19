@@ -176,6 +176,12 @@ sub startup {
 	);
 
 	$self->helper(
+		'now' => sub {
+			return DateTime->now( time_zone => 'Europe/Berlin' );
+		}
+	);
+
+	$self->helper(
 		'numify_skipped_stations' => sub {
 			my ( $self, $count ) = @_;
 
@@ -1489,7 +1495,7 @@ sub startup {
 			my $uid       = $opt{uid} // $self->current_user->{id};
 			my $threshold = $opt{threshold}
 			  // DateTime->now( time_zone => 'Europe/Berlin' )
-			  ->subtract( weeks => 60 );
+			  ->subtract( weeks => 6 );
 			my $db = $opt{db} // $self->pg->db;
 
 			my $journey = $db->select( 'in_transit', ['checkout_station_id'],
@@ -1504,7 +1510,7 @@ sub startup {
 					},
 					{
 						limit    => 1,
-						order_by => { -desc => 'real_dep_ts' }
+						order_by => { -desc => 'real_departure' }
 					}
 				)->hash;
 			}
@@ -1547,11 +1553,14 @@ sub startup {
 			}
 
 			my @destinations = $self->get_connection_targets(%opt);
-			my $stationboard
-			  = $self->get_departures( $status->{arr_ds100}, 0, 60 );
-
 			@destinations = grep { $_ ne $status->{dep_name} } @destinations;
 
+			if ( not @destinations ) {
+				return;
+			}
+
+			my $stationboard
+			  = $self->get_departures( $status->{arr_ds100}, 0, 60 );
 			if ( $stationboard->{errstr} ) {
 				return;
 			}

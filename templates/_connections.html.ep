@@ -1,0 +1,60 @@
+<span class="card-title" style="margin-top: 2ex;">Verbindungen</span>
+% if ($checkin_from) {
+	<p>Zug auswählen zum Einchecken mit Zielwahl.</p>
+% }
+<div class="hide-on-med-and-up"><table><tbody>
+	% for my $res (@{$connections}) {
+		% my ($train, $via) = @{$res};
+		<tr>
+			<td>
+				% if ($checkin_from) {
+					<a class="action-checkin" data-station="<%= $checkin_from %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>"><%= $train->line %></a>
+				% }
+				% else {
+					%= $train->line
+				% }
+			</td>
+			<td>
+				% if ($checkin_from) {
+					<a class="action-checkin" data-station="<%= $checkin_from %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>"><%= $via %></a>
+				% }
+				% else {
+					%= $via
+				% }
+			</td>
+			<td><%= $train->departure->strftime('%H:%M') %>
+				% if ($train->departure_delay) {
+					%= sprintf('(%+d)', $train->departure_delay)
+				% }
+				<br/>Gleis <%= $train->platform %></td>
+		</tr>
+	% }
+</tbody></table></div>
+<div class="hide-on-small-only"><table><tbody>
+	% for my $res (@{$connections}) {
+		% my ($train, $via) = @{$res};
+		<tr>
+			<td>
+				% if ($checkin_from) {
+					<a class="action-checkin" data-station="<%= $checkin_from %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>"><%= $train->line %></a>
+				% }
+				% else {
+					%= $train->line
+				% }
+			</td>
+			<td>
+				% if ($checkin_from) {
+					<a class="action-checkin" data-station="<%= $checkin_from %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>"><%= $via %></a>
+				% }
+				% else {
+					%= $via
+				% }
+			</td>
+			<td><%= $train->departure->strftime('%H:%M') %>
+				% if ($train->departure_delay) {
+					%= sprintf('(%+d)', $train->departure_delay)
+				% }
+			</td><td>Gleis <%= $train->platform %></td>
+		</tr>
+	% }
+</tbody></table></div>
