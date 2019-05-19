@@ -77,8 +77,41 @@
 				</ul>
 			</p>
 		% }
+		% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} < (20*60)) {
+			% if (my @connections = get_connecting_trains()) {
+				<span class="card-title" style="margin-top: 2ex;">Verbindungen</span>
+				<div class="hide-on-med-and-up"><table><tbody>
+				% for my $res (@connections) {
+					% my ($train, $via) = @{$res};
+					<tr>
+						<td><%= $train->line %></td>
+						<td><%= $via %></td>
+						<td><%= $train->departure->strftime('%H:%M') %>
+							% if ($train->departure_delay) {
+								%= sprintf('(%+d)', $train->departure_delay)
+							% }
+							<br/>Gleis <%= $train->platform %></td>
+					</tr>
+				% }
+				</tbody></table></div>
+				<div class="hide-on-small-only"><table><tbody>
+				% for my $res (@connections) {
+					% my ($train, $via) = @{$res};
+					<tr>
+						<td><%= $train->line %></td>
+						<td><%= $via %></td>
+						<td><%= $train->departure->strftime('%H:%M') %>
+							% if ($train->departure_delay) {
+								%= sprintf('(%+d)', $train->departure_delay)
+							% }
+						</td><td>Gleis <%= $train->platform %></td>
+					</tr>
+				% }
+				</tbody></table></div>
+			% }
+		% }
 		% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} <= 0) {
-			<p>
+			<p style="margin-top: 2ex;">
 				Der automatische Checkout erfolgt in wenigen Minuten. Zum Umsteigen:
 				Aktuelle Station erneut in der Liste auswählen. Zum Weiterfahren im
 				aktuellen Zug: Neues Ziel wählen.

@@ -1483,6 +1483,117 @@ sub startup {
 	);
 
 	$self->helper(
+		'get_connection_targets' => sub {
+			my ( $self, %opt ) = @_;
+
+			my $uid       = $opt{uid} // $self->current_user->{id};
+			my $threshold = $opt{threshold}
+			  // DateTime->now( time_zone => 'Europe/Berlin' )
+			  ->subtract( weeks => 60 );
+			my $db = $opt{db} // $self->pg->db;
+
+			my $journey = $db->select( 'in_transit', ['checkout_station_id'],
+				{ user_id => $uid } )->hash;
+			if ( not $journey ) {
+				$journey = $db->select(
+					'journeys',
+					['checkout_station_id'],
+					{
+						user_id   => $uid,
+						cancelled => 0
+					},
+					{
+						limit    => 1,
+						order_by => { -desc => 'real_dep_ts' }
+					}
+				)->hash;
+			}
+
+			if ( not $journey ) {
+				return;
+			}
+
+			my $res = $db->query(
+				qq{
+					select
+					count(stations.name) as count,
+					stations.name as dest
+					from journeys
+					left outer join stations on checkout_station_id = stations.id
+					where user_id = ?
+					and checkin_station_id = ?
+					and real_departure > ?
+					group by stations.name
+					order by count desc;
+				},
+				$uid,
+				$journey->{checkout_station_id},
+				$threshold
+			);
+			my @destinations = $res->hashes->grep( sub { shift->{count} > 2 } )
+			  ->map( sub { shift->{dest} } )->each;
+			return @destinations;
+		}
+	);
+
+	$self->helper(
+		'get_connecting_trains' => sub {
+			my ( $self, %opt ) = @_;
+
+			my $status = $self->get_user_status;
+
+			if ( not $status->{arr_ds100} ) {
+				return;
+			}
+
+			my @destinations = $self->get_connection_targets(%opt);
+			my $stationboard
+			  = $self->get_departures( $status->{arr_ds100}, 0, 60 );
+
+			@destinations = grep { $_ ne $status->{dep_name} } @destinations;
+
+			if ( $stationboard->{errstr} ) {
+				return;
+			}
+			my @results;
+			my %via_count = map { $_ => 0 } @destinations;
+			for my $train ( @{ $stationboard->{results} } ) {
+				if ( not $train->departure ) {
+					next;
+				}
+				if ( $train->departure->epoch < $status->{real_arrival}->epoch )
+				{
+					next;
+				}
+				if ( $train->train_id eq $status->{train_id} ) {
+					next;
+				}
+				my @via = ( $train->route_post, $train->route_end );
+				for my $dest (@destinations) {
+					if ( $via_count{$dest} < 3
+						and List::Util::any { $_ eq $dest } @via )
+					{
+						push( @results, [ $train, $dest ] );
+						$via_count{$dest}++;
+						next;
+					}
+				}
+			}
+
+			@results = map { $_->[0] }
+			  sort { $a->[1] <=> $b->[1] }
+			  map {
+				[
+					$_,
+					$_->[0]->departure->epoch // $_->[0]->sched_departur->epoch
+				]
+			  } @results;
+
+			return @results;
+		}
+	);
+
+	$self->helper(
 		'get_user_travels' => sub {
 			my ( $self, %opt ) = @_;
 
