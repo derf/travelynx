@@ -535,6 +535,17 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v12 -> v13
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				alter table users add column use_history smallint default 255;
+				update schema_version set version = 13;
+			}
+		);
+	},
 );
 
 sub setup_db {

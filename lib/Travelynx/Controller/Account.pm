@@ -232,6 +232,38 @@ sub privacy {
 	}
 }
 
+sub insight {
+	my ($self) = @_;
+
+	my $user        = $self->current_user;
+	my $use_history = $self->account_use_history( $user->{id} );
+
+	if ( $self->param('action') and $self->param('action') eq 'save' ) {
+		if ( $self->param('on_departure') ) {
+			$use_history |= 0x01;
+		}
+		else {
+			$use_history &= ~0x01;
+		}
+
+		if ( $self->param('on_arrival') ) {
+			$use_history |= 0x02;
+		}
+		else {
+			$use_history &= ~0x02;
+		}
+
+		$self->account_use_history( $user->{id}, $use_history );
+		$self->flash( success => 'use_history' );
+		$self->redirect_to('account');
+	}
+
+	$self->param( on_departure => $use_history & 0x01 ? 1 : 0 );
+	$self->param( on_arrival   => $use_history & 0x02 ? 1 : 0 );
+	$self->render('use_history');
+
+}
+
 sub webhook {
 	my ($self) = @_;
 

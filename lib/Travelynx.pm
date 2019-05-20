@@ -317,7 +317,7 @@ sub startup {
 		'checkin' => sub {
 			my ( $self, $station, $train_id ) = @_;
 
-			my $status = $self->get_departures( $station, 140, 30 );
+			my $status = $self->get_departures( $station, 140, 40 );
 			if ( $status->{errstr} ) {
 				return ( undef, $status->{errstr} );
 			}
@@ -751,6 +751,10 @@ sub startup {
 			if ($res_h) {
 				$res->finish;
 				return $res_h->{id};
+			}
+
+			if ( $opt{readonly} ) {
+				return;
 			}
 
 			$self->pg->db->insert(
@@ -1495,14 +1499,11 @@ sub startup {
 	);
 
 	$self->helper(
-		'get_connection_targets' => sub {
+		'get_latest_dest_id' => sub {
 			my ( $self, %opt ) = @_;
 
-			my $uid       = $opt{uid} // $self->current_user->{id};
-			my $threshold = $opt{threshold}
-			  // DateTime->now( time_zone => 'Europe/Berlin' )
-			  ->subtract( weeks => 6 );
-			my $db = $opt{db} // $self->pg->db;
+			my $uid = $opt{uid} // $self->current_user->{id};
+			my $db  = $opt{db} // $self->pg->db;
 
 			my $journey = $db->select( 'in_transit', ['checkout_station_id'],
 				{ user_id => $uid } )->hash;
@@ -1525,6 +1526,37 @@ sub startup {
 				return;
 			}
 
+			return $journey->{checkout_station_id};
+		}
+	);
+
+	$self->helper(
+		'get_connection_targets' => sub {
+			my ( $self, %opt ) = @_;
+
+			my $uid = $opt{uid} //= $self->current_user->{id};
+			my $threshold = $opt{threshold}
+			  // DateTime->now( time_zone => 'Europe/Berlin' )
+			  ->subtract( weeks => 6 );
+			my $db = $opt{db} //= $self->pg->db;
+			my $min_count = $opt{min_count} // 3;
+
+			my $dest_id;
+
+			if ( $opt{ds100} ) {
+				$dest_id = $self->get_station_id(
+					ds100    => $opt{ds100},
+					readonly => 1
+				);
+			}
+			else {
+				$dest_id = $self->get_latest_dest_id(%opt);
+			}
+
+			if ( not $dest_id ) {
+				return;
+			}
+
 			my $res = $db->query(
 				qq{
 					select
@@ -1539,11 +1571,12 @@ sub startup {
 					order by count desc;
 				},
 				$uid,
-				$journey->{checkout_station_id},
+				$dest_id,
 				$threshold
 			);
-			my @destinations = $res->hashes->grep( sub { shift->{count} > 2 } )
-			  ->map( sub { shift->{dest} } )->each;
+			my @destinations
+			  = $res->hashes->grep( sub { shift->{count} >= $min_count } )
+			  ->map( sub                { shift->{dest} } )->each;
 			return @destinations;
 		}
 	);
@@ -1552,21 +1585,41 @@ sub startup {
 		'get_connecting_trains' => sub {
 			my ( $self, %opt ) = @_;
 
-			my $status = $self->get_user_status;
+			my $uid = $opt{uid} //= $self->current_user->{id};
+			my $use_history = $self->account_use_history($uid);
 
-			if ( not $status->{arr_ds100} ) {
+			my ( $ds100, $exclude_via, $exclude_train_id, $exclude_before );
+
+			if ( $opt{ds100} ) {
+				if ( $use_history & 0x01 ) {
+					$ds100 = $opt{ds100};
+				}
+			}
+			else {
+				if ( $use_history & 0x02 ) {
+					my $status = $self->get_user_status;
+					$ds100            = $status->{arr_ds100};
+					$exclude_via      = $status->{dep_name};
+					$exclude_train_id = $status->{train_id};
+					$exclude_before   = $status->{real_arrival}->epoch;
+				}
+			}
+
+			if ( not $ds100 ) {
 				return;
 			}
 
 			my @destinations = $self->get_connection_targets(%opt);
-			@destinations = grep { $_ ne $status->{dep_name} } @destinations;
+
+			if ($exclude_via) {
+				@destinations = grep { $_ ne $exclude_via } @destinations;
+			}
 
 			if ( not @destinations ) {
 				return;
 			}
 
-			my $stationboard
-			  = $self->get_departures( $status->{arr_ds100}, 0, 60 );
+			my $stationboard = $self->get_departures( $ds100, 0, 40 );
 			if ( $stationboard->{errstr} ) {
 				return;
 			}
@@ -1576,16 +1629,19 @@ sub startup {
 				if ( not $train->departure ) {
 					next;
 				}
-				if ( $train->departure->epoch < $status->{real_arrival}->epoch )
+				if (    $exclude_before
+					and $train->departure->epoch < $exclude_before )
 				{
 					next;
 				}
-				if ( $train->train_id eq $status->{train_id} ) {
+				if (    $exclude_train_id
+					and $train->train_id eq $exclude_train_id )
+				{
 					next;
 				}
 				my @via = ( $train->route_post, $train->route_end );
 				for my $dest (@destinations) {
-					if ( $via_count{$dest} < 3
+					if ( $via_count{$dest} < 2
 						and List::Util::any { $_ eq $dest } @via )
 					{
 						push( @results, [ $train, $dest ] );
@@ -1605,6 +1661,24 @@ sub startup {
 			  } @results;
 
 			return @results;
+		}
+	);
+
+	$self->helper(
+		'account_use_history' => sub {
+			my ( $self, $uid, $value ) = @_;
+
+			if ($value) {
+				$self->pg->db->update(
+					'users',
+					{ use_history => $value },
+					{ id          => $uid }
+				);
+			}
+			else {
+				return $self->pg->db->select( 'users', ['use_history'],
+					{ id => $uid } )->hash->{use_history};
+			}
 		}
 	);
 
@@ -2113,6 +2187,7 @@ sub startup {
 	$authed_r->get('/account')->to('account#account');
 	$authed_r->get('/account/privacy')->to('account#privacy');
 	$authed_r->get('/account/hooks')->to('account#webhook');
+	$authed_r->get('/account/insight')->to('account#insight');
 	$authed_r->get('/ajax/status_card.html')->to('traveling#status_card');
 	$authed_r->get('/cancelled')->to('traveling#cancelled');
 	$authed_r->get('/account/password')->to('account#password_form');
@@ -2128,6 +2203,7 @@ sub startup {
 	$authed_r->get('/confirm_mail/:token')->to('account#confirm_mail');
 	$authed_r->post('/account/privacy')->to('account#privacy');
 	$authed_r->post('/account/hooks')->to('account#webhook');
+	$authed_r->post('/account/insight')->to('account#insight');
 	$authed_r->post('/journey/add')->to('traveling#add_journey_form');
 	$authed_r->post('/journey/edit')->to('traveling#edit_journey');
 	$authed_r->post('/account/password')->to('account#change_password');

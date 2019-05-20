@@ -1,0 +1,62 @@
+<h1>Bevorzugte Verbindungen</h1>
+<div class="row">
+	<div class="col s12">
+		<p>
+			Travelynx kann anhand deiner vergangenen Fahrten Verbindungen zum
+			Einchecken vorschlagen. Fährst zu z.B regelmäßig von Dortmund Hbf
+			nach Essen Hbf, werden dir in Dortmund bevorzugt Züge angezeigt, die über
+			Essen fahren.  Bei Auswahl dieser wird nicht nur in den Zug eingecheckt,
+			sondern auch direkt Essen Hbf als Ziel eingetragen.
+		<p/>
+<!--		<p>
+			Falls du das nicht nützlich findest oder nicht möchtest, dass deine
+			regelmäßigen (Anschluss-)Züge auf deinem Bildschirm sichtbar sind,
+			kannst du dieses Feature hier
+			ausschalten.
+		</p> -->
+	</div>
+</div>
+<h2>Vorschläge aktiv für:</h2>
+%= form_for '/account/insight' => (method => 'POST') => begin
+	%= csrf_field
+	<div class="row">
+		<div class="input-field col s12">
+			<label>
+				%= check_box on_departure => 1
+				<span>Abfahrtstafel</span>
+			</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s12">
+			Zeige häufige Fahrten im Abfahrtsmonitor.
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			<label>
+				%= check_box on_arrival => 1
+				<span>Reisestatus</span>
+			</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s12">
+			Zeige Anschlussmöglichkeiten kurz vor Ankunft am Ziel der aktuellen
+			Reise. Sobald es erreicht wurde, ist über diese Liste auch ein Checkin
+			ohne Umweg über die Abfahrtstafel möglich.
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s3 m3 l3">
+		</div>
+		<div class="col s6 m6 l6 center-align">
+			<button class="btn waves-effect waves-light" type="submit" name="action" value="save">
+				Speichern
+				<i class="material-icons right">send</i>
+			</button>
+		</div>
+		<div class="col s3 m3 l3">
+		</div>
+	</div>
+%= end

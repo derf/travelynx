@@ -16,6 +16,9 @@
 					% elsif ($success eq 'privacy') {
 						<span class="card-title">Einstellungen zu öffentliche Account-Daten geändert</span>
 					% }
+					% elsif ($success eq 'use_history') {
+						<span class="card-title">Einstellungen zu vorgeschlagenen Verbindungen geändert</span>
+					% }
 					% elsif ($success eq 'webhook') {
 						<span class="card-title">Web Hook aktualisiert</span>
 					% }
@@ -28,6 +31,7 @@
 <h1>Account</h1>
 % my $acc = current_user();
 % my $hook = get_webhook();
+% my $use_history = account_use_history($acc->{id});
 <div class="row">
 	<div class="col s12">
 		<table class="striped">
@@ -42,6 +46,18 @@
 			<tr>
 				<th scope="row">Passwort</th>
 				<td><a href="/account/password"><i class="material-icons">edit</i></a></td>
+			</tr>
+			<tr>
+				<th scope="row">Verbindungen</th>
+				<td>
+					<a href="/account/insight"><i class="material-icons">edit</i></a>
+					% if ($use_history & 0x03) {
+						Vorschläge aktiv
+					% }
+					% else {
+						<span style="color: #999999;">Vorschläge deaktiviert</span>
+					% }
+				</td>
 			</tr>
 			<tr>
 				<th scope="row">Öffentliche Daten</th>

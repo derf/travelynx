@@ -79,6 +79,10 @@
 		% }
 		% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} < (20*60)) {
 			% if (my @connections = get_connecting_trains()) {
+				<span class="card-title" style="margin-top: 2ex;">Verbindungen</span>
+				% if ($journey->{arrival_countdown} < 0) {
+					<p>Zug auswählen zum Einchecken mit Zielwahl.</p>
+				% }
 				%= include '_connections', connections => \@connections, checkin_from => $journey->{arrival_countdown} < 0 ? $journey->{arr_ds100} : undef;
 			% }
 		% }

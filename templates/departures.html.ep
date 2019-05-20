@@ -1,7 +1,13 @@
 <div class="row">
-	<div class="col s12">
-		% my $status = $self->get_user_status;
-		% if ($status->{checked_in}) {
+	<div class="col s12 center-align"><b>
+		%= $station
+	</b></div>
+</div>
+% my $status = $self->get_user_status;
+% my $have_connections = 0;
+% if ($status->{checked_in}) {
+	<div class="row">
+		<div class="col s12">
 			<div class="card">
 				<div class="card-content">
 					<span class="card-title">Aktuell eingecheckt</span>
@@ -14,31 +20,40 @@
 					</a>
 				</div>
 			</div>
-		% }
-		% elsif ($status->{timestamp_delta} < 180) {
-			%= include '_checked_out', journey => $status;
-		% }
+		</div>
 	</div>
-</div>
+% }
+% elsif ($status->{timestamp_delta} < 180) {
+	<div class="row">
+		<div class="col s12">
+			%= include '_checked_out', journey => $status;
+		</div>
+	</div>
+% }
+% elsif (not param('train') and my @connections = get_connecting_trains(ds100 => $ds100)) {
+	% $have_connections = 1;
+	<div class="row">
+		<div class="col s12">
+			<p>Häufig genutzte Verbindungen – Zug auswählen zum Einchecken mit Zielwahl</p>
+			%= include '_connections', connections => \@connections, checkin_from => $ds100;
+		</div>
+	</div>
+% }
 <div class="row">
 	<div class="col s12">
-		%= $station
-		% if (@{$results}) {
-			– Zug auswählen zum Einchecken.
-		% }
-		% else {
-			– Keine Abfahrten gefunden. Ein Checkin ist frühestens 30 Minuten vor
-			und maximal 120 Minuten nach Abfahrt möglich.
-		% }
-		<br/>
+		<p>
+			% if ($have_connections) {
+				Alle Abfahrten –
+			% }
+			% if (@{$results}) {
+				Zug auswählen zum Einchecken.
+			% }
+			% else {
+				Keine Abfahrten gefunden. Ein Checkin ist frühestens 30 Minuten vor
+				und maximal 120 Minuten nach Abfahrt möglich.
+			% }
+		</p>
 		<table class="striped">
-			<thead>
-				<tr>
-					<th>Zug</th>
-					<th></th>
-					<th>Abfahrt</th>
-				</tr>
-			</thead>
 			<tbody>
 				% for my $result (@{$results}) {
 					% my $td_class = '';
