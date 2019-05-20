@@ -332,8 +332,14 @@ sub startup {
 					my $user = $self->get_user_status;
 					if ( $user->{checked_in} or $user->{cancelled} ) {
 
-                # If a user is already checked in, we assume that they forgot to
-                # check out and do it for them.
+						if (    $user->{train_id} eq $train_id
+							and $user->{dep_ds100} eq $status->{station_ds100} )
+						{
+							# checking in twice is harmless
+							return ( $train, undef );
+						}
+
+						# Otherwise, someone forgot to check out first
 						$self->checkout( $station, 1 );
 					}
 
