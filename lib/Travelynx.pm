@@ -1537,7 +1537,7 @@ sub startup {
 			my $uid = $opt{uid} //= $self->current_user->{id};
 			my $threshold = $opt{threshold}
 			  // DateTime->now( time_zone => 'Europe/Berlin' )
-			  ->subtract( weeks => 6 );
+			  ->subtract( months => 4 );
 			my $db = $opt{db} //= $self->pg->db;
 			my $min_count = $opt{min_count} // 3;
 
