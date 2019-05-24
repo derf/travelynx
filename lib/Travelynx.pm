@@ -548,6 +548,7 @@ sub startup {
 			}
 
 			if ( not( defined $train or $force ) ) {
+				$self->run_hook( $uid, 'update' );
 				return ( 1, undef );
 			}
 
