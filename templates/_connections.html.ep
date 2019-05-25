@@ -22,7 +22,7 @@
 				% if ($train->departure_delay) {
 					%= sprintf('(%+d)', $train->departure_delay)
 				% }
-				<br/>Gleis <%= $train->platform %></td>
+				<br/>Gleis <%= $train->platform || '?' %></td>
 		</tr>
 	% }
 </tbody></table></div>
@@ -50,7 +50,7 @@
 				% if ($train->departure_delay) {
 					%= sprintf('(%+d)', $train->departure_delay)
 				% }
-			</td><td>Gleis <%= $train->platform %></td>
+			</td><td>Gleis <%= $train->platform || '?' %></td>
 		</tr>
 	% }
 </tbody></table></div>

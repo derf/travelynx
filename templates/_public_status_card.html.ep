@@ -33,7 +33,7 @@
 						% else {
 							Ziel erreicht
 						% }
-						% if ($journey->{arrival_countdown} < (60 * 15)) {
+						% if ($journey->{arrival_countdown} < (60 * 15) and $journey->{arr_platform}) {
 							<br/>auf Gleis <%= $journey->{arr_platform} %>
 						% }
 					% }

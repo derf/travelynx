@@ -8,15 +8,12 @@
 				data-arrival="<%= $journey->{real_arrival}->epoch %>">
 				% if ($journey->{departure_countdown} > 120) {
 					Abfahrt in <%= sprintf('%.f', $journey->{departure_countdown} / 60) %> Minuten
-					<br/>von Gleis <%= $journey->{dep_platform} %>
 				% }
 				% elsif ($journey->{departure_countdown} > 60) {
 					Abfahrt in einer Minute
-					<br/>von Gleis <%= $journey->{dep_platform} %>
 				% }
 				% elsif ($journey->{departure_countdown} > 0) {
 					Abfahrt in weniger als einer Minute
-					<br/>von Gleis <%= $journey->{dep_platform} %>
 				% }
 				% elsif (defined $journey->{arrival_countdown}) {
 					% if ($journey->{arrival_countdown} > 60) {
@@ -29,12 +26,15 @@
 					% else {
 						Ziel erreicht
 					% }
-					% if ($journey->{arrival_countdown} < (60 * 15)) {
+					% if ($journey->{arrival_countdown} < (60 * 15) and $journey->{arr_platform}) {
 						<br/>auf Gleis <%= $journey->{arr_platform} %>
 					% }
 				% }
 				% elsif ($journey->{arr_name}) {
 					Ankunft in mehr als zwei Stunden
+				% }
+				% if ($journey->{departure_countdown} > 0 and $journey->{dep_platform}) {
+					<br/>von Gleis <%= $journey->{dep_platform} %>
 				% }
 			</div>
 			<div class="progress" style="height: 1ex;">
