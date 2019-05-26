@@ -103,11 +103,11 @@
 			<tbody>
 				% my $is_after = 0;
 				% for my $station (@{$journey->{route_after}}) {
-					% if ($journey->{arr_name} and $station eq $journey->{arr_name}) {
-						<tr><td><b><a class="action-checkout" data-station="<%= $station %>"><%= $station %></a></b></td></tr>
+					% if ($journey->{arr_name} and $station->[0] eq $journey->{arr_name}) {
+						<tr><td><b><a class="action-checkout" data-station="<%= $station->[0] %>"><%= $station->[0] %></a></b></td></tr>
 					% }
 					% else {
-						<tr><td><a class="action-checkout" data-station="<%= $station %>"><%= $station %></a></td></tr>
+						<tr><td><a class="action-checkout" data-station="<%= $station->[0] %>"><%= $station->[0] %></a></td></tr>
 					% }
 				% }
 			</tbody>

@@ -14,7 +14,7 @@
 			<tbody>
 				% my $is_after = 0;
 				% for my $station (@{$journey->{route_after}}) {
-					<tr><td><a class="action-cancelled-to" data-station="<%= $station %>"><%= $station %></a></td></tr>
+					<tr><td><a class="action-cancelled-to" data-station="<%= $station->[0] %>"><%= $station->[0] %></a></td></tr>
 				% }
 			</tbody>
 		</table>

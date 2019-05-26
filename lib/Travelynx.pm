@@ -289,11 +289,23 @@ sub startup {
 				checkout_time => $now,
 				edited        => 0x3fff,
 				cancelled     => $opt{cancelled} ? 1 : 0,
-				route         => $dep_station->[1] . '|' . $arr_station->[1],
+				route         => JSON->new->encode(
+					[
+						[
+							$dep_station->[1], undef,
+							$opt{sched_departure}->epoch,
+						],
+						[
+							$arr_station->[1], $opt{sched_arrival}->epoch,
+							undef
+						]
+					]
+				),
 			};
 
 			if ( $opt{comment} ) {
-				$entry->{messages} = '0:' . $opt{comment};
+				$entry->{messages}
+				  = JSON->new->encode( [ [ 0, $opt{comment} ] ] );
 			}
 
 			my $journey_id = undef;
@@ -344,6 +356,7 @@ sub startup {
 					}
 
 					eval {
+						my $json = JSON->new;
 						$self->pg->db->insert(
 							'in_transit',
 							{
@@ -364,13 +377,14 @@ sub startup {
 								train_id        => $train->train_id,
 								sched_departure => $train->sched_departure,
 								real_departure  => $train->departure,
-								route           => join( '|', $train->route ),
-								messages        => join(
-									'|',
-									map {
-										( $_->[0] ? $_->[0]->epoch : q{} ) . ':'
-										  . $_->[1]
-									} $train->messages
+								route           => $json->encode(
+									[ map { [$_] } $train->route ]
+								),
+								messages => $json->encode(
+									[
+										map { [ $_->[0]->epoch, $_->[1] ] }
+										  $train->messages
+									]
 								)
 							}
 						);
@@ -560,6 +574,7 @@ sub startup {
 
 				if ( defined $train ) {
 					$has_arrived = $train->arrival->epoch < $now->epoch ? 1 : 0;
+					my $json = JSON->new;
 					$db->update(
 						'in_transit',
 						{
@@ -568,14 +583,14 @@ sub startup {
 							sched_arrival => $train->sched_arrival,
 							real_arrival  => $train->arrival,
 							cancelled => $train->arrival_is_cancelled ? 1 : 0,
-							route     => join( '|', $train->route ),
-							messages  => join(
-								'|',
-								map {
-									( $_->[0] ? $_->[0]->epoch : q{} ) . ':'
-									  . $_->[1]
-								} $train->messages
-							),
+							route =>
+							  $json->encode( [ map { [$_] } $train->route ] ),
+							messages => $json->encode(
+								[
+									map { [ $_->[0]->epoch, $_->[1] ] }
+									  $train->messages
+								]
+							)
 						},
 						{ user_id => $uid }
 					);
@@ -1725,7 +1740,7 @@ sub startup {
 
 			my $res = $db->select( 'journeys_str', '*', \%where, \%order );
 
-			for my $entry ( $res->hashes->each ) {
+			for my $entry ( $res->expand->hashes->each ) {
 
 				my $ref = {
 					id              => $entry->{journey_id},
@@ -1740,20 +1755,16 @@ sub startup {
 					checkout        => epoch_to_dt( $entry->{checkout_ts} ),
 					sched_arrival   => epoch_to_dt( $entry->{sched_arr_ts} ),
 					rt_arrival      => epoch_to_dt( $entry->{real_arr_ts} ),
-					messages        => $entry->{messages}
-					? [ split( qr{[|]}, $entry->{messages} ) ]
-					: undef,
-					route => $entry->{route}
-					? [ split( qr{[|]}, $entry->{route} ) ]
-					: undef,
-					edited => $entry->{edited},
+					messages        => $entry->{messages},
+					route           => $entry->{route},
+					edited          => $entry->{edited},
 				};
 
 				if ( $opt{verbose} ) {
 					$ref->{cancelled} = $entry->{cancelled};
 					my @parsed_messages;
 					for my $message ( @{ $ref->{messages} // [] } ) {
-						my ( $ts, $msg ) = split( qr{:}, $message );
+						my ( $ts, $msg ) = @{$message};
 						push( @parsed_messages, [ epoch_to_dt($ts), $msg ] );
 					}
 					$ref->{messages} = [ reverse @parsed_messages ];
@@ -1774,7 +1785,7 @@ sub startup {
 					( $km, $skip )
 					  = $self->get_travel_distance( $ref->{from_name},
 						$ref->{to_name},
-						[ $ref->{from_name}, $ref->{to_name} ] );
+						[ [ $ref->{from_name} ], [ $ref->{to_name} ] ] );
 					$ref->{km_beeline}   = $km;
 					$ref->{skip_beeline} = $skip;
 					my $kmh_divisor
@@ -1819,11 +1830,12 @@ sub startup {
 			my $now = DateTime->now( time_zone => 'Europe/Berlin' );
 
 			my $in_transit
-			  = $db->select( 'in_transit_str', '*', { user_id => $uid } )->hash;
+			  = $db->select( 'in_transit_str', '*', { user_id => $uid } )
+			  ->expand->hash;
 
 			if ($in_transit) {
 
-				my @route = split( qr{[|]}, $in_transit->{route} // q{} );
+				my @route = @{ $in_transit->{route} // [] };
 				my @route_after;
 				my $is_after = 0;
 				for my $station (@route) {
@@ -1831,7 +1843,7 @@ sub startup {
 					if ($is_after) {
 						push( @route_after, $station );
 					}
-					if ( $station eq $in_transit->{dep_name} ) {
+					if ( $station->[0] eq $in_transit->{dep_name} ) {
 						$is_after = 1;
 					}
 				}
@@ -1861,14 +1873,12 @@ sub startup {
 					arr_name      => $in_transit->{arr_name},
 					arr_platform  => $in_transit->{arr_platform},
 					route_after   => \@route_after,
-					messages      => $in_transit->{messages}
-					? [ split( qr{[|]}, $in_transit->{messages} ) ]
-					: undef,
+					messages      => $in_transit->{messages},
 				};
 
 				my @parsed_messages;
 				for my $message ( @{ $ret->{messages} // [] } ) {
-					my ( $ts, $msg ) = split( qr{:}, $message );
+					my ( $ts, $msg ) = @{$message};
 					push( @parsed_messages, [ epoch_to_dt($ts), $msg ] );
 				}
 				$ret->{messages} = [ reverse @parsed_messages ];
@@ -2027,7 +2037,8 @@ sub startup {
 			my $distance = 0;
 			my $skipped  = 0;
 			my $geo      = Geo::Distance->new();
-			my @route    = after_incl { $_ eq $from } @{$route_ref};
+			my @stations = map { $_->[0] } @{$route_ref};
+			my @route    = after_incl { $_ eq $from } @stations;
 			@route = before_incl { $_ eq $to } @route;
 
 			if ( @route < 2 ) {

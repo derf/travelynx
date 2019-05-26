@@ -2,6 +2,7 @@ package Travelynx::Command::work;
 use Mojo::Base 'Mojolicious::Command';
 
 use DateTime;
+use JSON;
 use List::Util qw(first);
 
 has description =>
@@ -13,6 +14,7 @@ sub run {
 	my ($self) = @_;
 
 	my $now = DateTime->now( time_zone => 'Europe/Berlin' );
+	my $json = JSON->new;
 
 	my $db = $self->app->pg->db;
 
@@ -47,14 +49,14 @@ sub run {
 					{
 						dep_platform   => $train->platform,
 						real_departure => $train->departure,
-						route          => join( '|', $train->route ),
-						messages       => join(
-							'|',
-							map {
-								( $_->[0] ? $_->[0]->epoch : q{} ) . ':'
-								  . $_->[1]
-							} $train->messages
-						)
+						route =>
+						  $json->encode( [ map { [$_] } $train->route ] ),
+						messages => $json->encode(
+							[
+								map { [ $_->[0]->epoch, $_->[1] ] }
+								  $train->messages
+							]
+						),
 					},
 					{ user_id => $uid }
 				);
@@ -99,14 +101,14 @@ sub run {
 						arr_platform  => $train->platform,
 						sched_arrival => $train->sched_arrival,
 						real_arrival  => $train->arrival,
-						route         => join( '|', $train->route ),
-						messages      => join(
-							'|',
-							map {
-								( $_->[0] ? $_->[0]->epoch : q{} ) . ':'
-								  . $_->[1]
-							} $train->messages
-						)
+						route =>
+						  $json->encode( [ map { [$_] } $train->route ] ),
+						messages => $json->encode(
+							[
+								map { [ $_->[0]->epoch, $_->[1] ] }
+								  $train->messages
+							]
+						),
 					},
 					{ user_id => $uid }
 				);

@@ -592,10 +592,6 @@ sub edit_journey {
 		}
 	}
 
-	if ( $journey->{route} ) {
-		$self->param( route => join( "\n", @{ $journey->{route} } ) );
-	}
-
 	$self->render(
 		'edit_journey',
 		error   => $error,

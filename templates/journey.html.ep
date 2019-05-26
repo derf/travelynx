@@ -148,20 +148,20 @@
 						% my $within = 0;
 						% my $at_startstop = 0;
 						% for my $station (@{$journey->{route}}) {
-							% if ($station eq $journey->{from_name}) {
+							% if ($station->[0] eq $journey->{from_name}) {
 								% $within = 1; $at_startstop = 1;
 							% }
-							% elsif ($station eq $journey->{to_name}) {
+							% elsif ($station->[0] eq $journey->{to_name}) {
 								% $within = 0; $at_startstop = 1;
 							% }
 							% else {
 								% $at_startstop = 0;
 							% }
 							% if ($at_startstop or $within) {
-								<%= $station %>
+								<%= $station->[0] %>
 							% }
 							% else {
-								<span style="color: #666666;"><%= $station %></span>
+								<span style="color: #666666;"><%= $station->[0] %></span>
 							% }
 							<br/>
 						% }

@@ -546,6 +546,119 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v13 -> v14
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				alter table journeys add column route_new jsonb,
+					add column messages_new jsonb;
+				alter table in_transit add column route_new jsonb,
+					add column messages_new jsonb;
+			}
+		);
+		my $res = $db->select( 'journeys', [ 'id', 'messages', 'route' ] );
+		my $json = JSON->new;
+
+		for my $journey ( $res->hashes->each ) {
+			my $id = $journey->{id};
+			my @messages;
+			for my $message ( split( qr{[|]}, $journey->{messages} // '' ) ) {
+				my ( $ts, $msg ) = split( qr{:}, $message );
+				push( @messages, [ $ts, $msg ] );
+			}
+			my @route = map { [$_] }
+			  split( qr{[|]}, $journey->{route} // '' );
+
+			$db->update(
+				'journeys',
+				{
+					messages_new => $json->encode( [@messages] ),
+					route_new    => $json->encode( [@route] ),
+				},
+				{ id => $id }
+			);
+		}
+
+		$res = $db->select( 'in_transit', [ 'user_id', 'messages', 'route' ] );
+		for my $journey ( $res->hashes->each ) {
+			my $id = $journey->{user_id};
+			my @messages;
+			for my $message ( split( qr{[|]}, $journey->{messages} // '' ) ) {
+				my ( $ts, $msg ) = split( qr{:}, $message );
+				push( @messages, [ $ts, $msg ] );
+			}
+			my @route = map { [$_] }
+			  split( qr{[|]}, $journey->{route} // '' );
+
+			$db->update(
+				'in_transit',
+				{
+					messages_new => $json->encode( [@messages] ),
+					route_new    => $json->encode( [@route] ),
+				},
+				{ user_id => $id }
+			);
+		}
+
+		$db->query(
+			qq{
+				drop view journeys_str;
+				alter table journeys drop column messages;
+				alter table journeys drop column route;
+				alter table journeys rename column messages_new to messages;
+				alter table journeys rename column route_new to route;
+
+				drop view in_transit_str;
+				alter table in_transit drop column messages;
+				alter table in_transit drop column route;
+				alter table in_transit rename column messages_new to messages;
+				alter table in_transit rename column route_new to route;
+
+				create view journeys_str as select
+					journeys.id as journey_id, user_id,
+					train_type, train_line, train_no, train_id,
+					extract(epoch from checkin_time) as checkin_ts,
+					extract(epoch from sched_departure) as sched_dep_ts,
+					extract(epoch from real_departure) as real_dep_ts,
+					dep_stations.ds100 as dep_ds100,
+					dep_stations.name as dep_name,
+					extract(epoch from checkout_time) as checkout_ts,
+					extract(epoch from sched_arrival) as sched_arr_ts,
+					extract(epoch from real_arrival) as real_arr_ts,
+					arr_stations.ds100 as arr_ds100,
+					arr_stations.name as arr_name,
+					cancelled, edited, route, messages,
+					dep_platform, arr_platform
+					from journeys
+					join stations as dep_stations on dep_stations.id = checkin_station_id
+					join stations as arr_stations on arr_stations.id = checkout_station_id
+					;
+				create view in_transit_str as select
+					user_id,
+					train_type, train_line, train_no, train_id,
+					extract(epoch from checkin_time) as checkin_ts,
+					extract(epoch from sched_departure) as sched_dep_ts,
+					extract(epoch from real_departure) as real_dep_ts,
+					dep_stations.ds100 as dep_ds100,
+					dep_stations.name as dep_name,
+					extract(epoch from checkout_time) as checkout_ts,
+					extract(epoch from sched_arrival) as sched_arr_ts,
+					extract(epoch from real_arrival) as real_arr_ts,
+					arr_stations.ds100 as arr_ds100,
+					arr_stations.name as arr_name,
+					cancelled, route, messages,
+					dep_platform, arr_platform
+					from in_transit
+					join stations as dep_stations on dep_stations.id = checkin_station_id
+					left join stations as arr_stations on arr_stations.id = checkout_station_id
+					;
+
+				update schema_version set version = 14;
+			}
+		);
+	},
 );
 
 sub setup_db {
