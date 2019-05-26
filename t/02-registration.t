@@ -201,5 +201,69 @@ $t->post_ok(
 );
 $t->status_is(302)->header_is( location => '/account' );
 
+$csrf_token
+  = $t->ua->get('/journey/add')->res->dom->at('input[name=csrf_token]')
+  ->attr('value');
+$t->post_ok(
+	'/journey/add' => form => {
+		csrf_token      => $csrf_token,
+		action          => 'save',
+		train           => 'RE 42 11238',
+		dep_station     => 'EMST',
+		sched_departure => '16.10.2018 17:36',
+		rt_departure    => '16.10.2018 17:36',
+		arr_station     => 'EG',
+		sched_arrival   => '16.10.2018 18:34',
+		rt_arrival      => '16.10.2018 18:34',
+	}
+);
+$t->status_is(302)->header_is( location => '/journey/1' );
+
+$t->get_ok('/journey/1')->status_is(200)->content_like(qr{M.nster\(Westf\)Hbf})
+  ->content_like(qr{Gelsenkirchen Hbf})->content_like(qr{RE 11238})
+  ->content_like(qr{Linie 42})->content_like(qr{17:36})
+  ->content_like(qr{18:34})->content_like(qr{ca[.] 62 km})
+  ->content_like(qr{Luftlinie: 62 km})->content_like(qr{64 km/h});
+
+$t->get_ok('/history/2018/10')->status_is(200)->content_like(qr{62 km})
+  ->content_like(qr{00:58 Stunden})->content_like(qr{00:00 Stunden})
+  ->content_like(qr{Bei Abfahrt: 00:00 Stunden})
+  ->content_like(qr{Bei Ankunft: 00:00 Stunden});
+
+$t->get_ok('/history/2018')->status_is(200)->content_like(qr{62 km})
+  ->content_like(qr{00:58 Stunden})->content_like(qr{00:00 Stunden})
+  ->content_like(qr{Bei Abfahrt: 00:00 Stunden})
+  ->content_like(qr{Bei Ankunft: 00:00 Stunden});
+
+$csrf_token
+  = $t->ua->get('/journey/add')->res->dom->at('input[name=csrf_token]')
+  ->attr('value');
+$t->post_ok(
+	'/journey/add' => form => {
+		csrf_token      => $csrf_token,
+		action          => 'save',
+		train           => 'RE 42 11238',
+		dep_station     => 'EMST',
+		sched_departure => '16.11.2018 17:36',
+		rt_departure    => '16.11.2018 17:45',
+		arr_station     => 'EG',
+		sched_arrival   => '16.11.2018 18:34',
+		rt_arrival      => '16.11.2018 19:00',
+	}
+);
+$t->status_is(302)->header_is( location => '/journey/2' );
+
+$t->get_ok('/history/2018/11')->status_is(200)->content_like(qr{62 km})
+  ->content_like(qr{01:15 Stunden})->content_like(qr{nach Fahrplan: 00:58})
+  ->content_like(qr{00:00 Stunden})
+  ->content_like(qr{Bei Abfahrt: 00:09 Stunden})
+  ->content_like(qr{Bei Ankunft: 00:26 Stunden});
+
+$t->get_ok('/history/2018')->status_is(200)->content_like(qr{124 km})
+  ->content_like(qr{02:13 Stunden})->content_like(qr{nach Fahrplan: 01:56})
+  ->content_like(qr{00:00 Stunden})
+  ->content_like(qr{Bei Abfahrt: 00:09 Stunden})
+  ->content_like(qr{Bei Ankunft: 00:26 Stunden});
+
 $t->app->pg->db->query('drop schema travelynx_test_02 cascade');
 done_testing();
