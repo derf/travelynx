@@ -29,6 +29,7 @@ sub user_status {
 	my ($self) = @_;
 
 	my $name = $self->stash('name');
+	my $ts   = $self->stash('ts');
 	my $user = $self->get_privacy_by_name($name);
 
 	if ( $user and ( $user->{public_level} & 0x02 ) ) {
@@ -41,7 +42,16 @@ sub user_status {
 			  ->to_abs->scheme('https'),
 		);
 
-		if ( $status->{checked_in} ) {
+		if (
+			$ts
+			and ( not $status->{checked_in}
+				or $status->{sched_departure}->epoch != $ts )
+		  )
+		{
+			$tw_data{title}       = "Bahnfahrt beendet";
+			$tw_data{description} = "${name} hat das Ziel erreicht";
+		}
+		elsif ( $status->{checked_in} ) {
 			$tw_data{title}       = "${name} ist unterwegs";
 			$tw_data{description} = sprintf(
 				'%s %s von %s nach %s',
@@ -53,7 +63,6 @@ sub user_status {
 			if ( $status->{real_arrival}->epoch ) {
 				$tw_data{description} .= $status->{real_arrival}
 				  ->strftime(' – Ankunft gegen %H:%M Uhr');
-
 			}
 		}
 		else {

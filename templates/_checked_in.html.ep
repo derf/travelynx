@@ -134,7 +134,7 @@
 			<a class="action-share blue-text right"
 				data-text="Ich bin gerade <%= $attrib %> <%= $journey->{train_type} %> <%= $journey->{train_no} %> nach <%= $journey->{arr_name} %> #NowTräwelling #dbl"
 				% if (current_user()->{is_public} & 0x02) {
-					data-url="<%= url_for('/status')->to_abs->scheme('https') %>/<%= current_user->{name} %>"
+					data-url="<%= url_for('/status')->to_abs->scheme('https') %>/<%= current_user->{name} %>/<%= $journey->{sched_departure}->epoch %>"
 				% }
 				>
 				<i class="material-icons left">share</i> Teilen
