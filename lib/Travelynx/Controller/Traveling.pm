@@ -33,10 +33,39 @@ sub user_status {
 
 	if ( $user and ( $user->{public_level} & 0x02 ) ) {
 		my $status = $self->get_user_status( $user->{id} );
+
+		my %tw_data = (
+			card  => 'summary',
+			site  => '@derfnull',
+			image => $self->url_for('/static/icons/icon-512x512.png')
+			  ->to_abs->scheme('https'),
+		);
+
+		if ( $status->{checked_in} ) {
+			$tw_data{title}       = "${name} ist unterwegs";
+			$tw_data{description} = sprintf(
+				'%s %s von %s nach %s',
+				$status->{train_type},
+				$status->{train_line} // $status->{train_no},
+				$status->{dep_name},
+				$status->{arr_name} // 'irgendwo'
+			);
+			if ( $status->{real_arrival}->epoch ) {
+				$tw_data{description} .= $status->{real_arrival}
+				  ->strftime(' – Ankunft gegen %H:%M Uhr');
+
+			}
+		}
+		else {
+			$tw_data{title}       = "${name} ist gerade nicht eingecheckt";
+			$tw_data{description} = "Letztes Fahrtziel: $status->{arr_name}";
+		}
+
 		$self->render(
 			'user_status',
 			name    => $name,
-			journey => $status
+			journey => $status,
+			twitter => \%tw_data,
 		);
 	}
 	else {
