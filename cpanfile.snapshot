@@ -1,72 +1,75 @@
 # carton snapshot format: version 1.0
 DISTRIBUTIONS
-  Alien-Build-1.69
-    pathname: P/PL/PLICEASE/Alien-Build-1.69.tar.gz
+  Alien-Build-1.74
+    pathname: P/PL/PLICEASE/Alien-Build-1.74.tar.gz
     provides:
-      Alien::Base 1.69
-      Alien::Base::PkgConfig 1.69
-      Alien::Base::Wrapper 1.69
-      Alien::Build 1.69
-      Alien::Build::CommandSequence 1.69
-      Alien::Build::Interpolate 1.69
-      Alien::Build::Interpolate::Default 1.69
-      Alien::Build::Interpolate::Helper 1.69
-      Alien::Build::MM 1.69
-      Alien::Build::Meta 1.69
-      Alien::Build::Plugin 1.69
-      Alien::Build::Plugin::Build::Autoconf 1.69
-      Alien::Build::Plugin::Build::CMake 1.69
-      Alien::Build::Plugin::Build::MSYS 1.69
-      Alien::Build::Plugin::Build::Make 1.69
-      Alien::Build::Plugin::Build::SearchDep 1.69
-      Alien::Build::Plugin::Core::Download 1.69
-      Alien::Build::Plugin::Core::FFI 1.69
-      Alien::Build::Plugin::Core::Gather 1.69
-      Alien::Build::Plugin::Core::Legacy 1.69
-      Alien::Build::Plugin::Core::Override 1.69
-      Alien::Build::Plugin::Core::Setup 1.69
-      Alien::Build::Plugin::Core::Tail 1.69
-      Alien::Build::Plugin::Decode::DirListing 1.69
-      Alien::Build::Plugin::Decode::DirListingFtpcopy 1.69
-      Alien::Build::Plugin::Decode::HTML 1.69
-      Alien::Build::Plugin::Download::Negotiate 1.69
-      Alien::Build::Plugin::Extract::ArchiveTar 1.69
-      Alien::Build::Plugin::Extract::ArchiveZip 1.69
-      Alien::Build::Plugin::Extract::CommandLine 1.69
-      Alien::Build::Plugin::Extract::Directory 1.69
-      Alien::Build::Plugin::Extract::Negotiate 1.69
-      Alien::Build::Plugin::Fetch::CurlCommand 1.69
-      Alien::Build::Plugin::Fetch::HTTPTiny 1.69
-      Alien::Build::Plugin::Fetch::LWP 1.69
-      Alien::Build::Plugin::Fetch::Local 1.69
-      Alien::Build::Plugin::Fetch::LocalDir 1.69
-      Alien::Build::Plugin::Fetch::NetFTP 1.69
-      Alien::Build::Plugin::Fetch::Wget 1.69
-      Alien::Build::Plugin::Gather::IsolateDynamic 1.69
-      Alien::Build::Plugin::PkgConfig::CommandLine 1.69
-      Alien::Build::Plugin::PkgConfig::LibPkgConf 1.69
-      Alien::Build::Plugin::PkgConfig::MakeStatic 1.69
-      Alien::Build::Plugin::PkgConfig::Negotiate 1.69
-      Alien::Build::Plugin::PkgConfig::PP 1.69
-      Alien::Build::Plugin::Prefer::BadVersion 1.69
-      Alien::Build::Plugin::Prefer::GoodVersion 1.69
-      Alien::Build::Plugin::Prefer::SortVersions 1.69
-      Alien::Build::Plugin::Probe::CBuilder 1.69
-      Alien::Build::Plugin::Probe::CommandLine 1.69
-      Alien::Build::Plugin::Test::Mock 1.69
-      Alien::Build::PluginMeta 1.69
-      Alien::Build::TempDir 1.69
-      Alien::Build::Util 1.69
-      Alien::Build::Version::Basic 1.69
-      Alien::Build::rc 1.69
-      Alien::Role 1.69
-      Test::Alien 1.69
-      Test::Alien::Build 1.69
-      Test::Alien::CanCompile 1.69
-      Test::Alien::CanPlatypus 1.69
-      Test::Alien::Run 1.69
-      Test::Alien::Synthetic 1.69
-      alienfile 1.69
+      Alien::Base 1.74
+      Alien::Base::PkgConfig 1.74
+      Alien::Base::Wrapper 1.74
+      Alien::Build 1.74
+      Alien::Build::CommandSequence 1.74
+      Alien::Build::Interpolate 1.74
+      Alien::Build::Interpolate::Default 1.74
+      Alien::Build::Interpolate::Helper 1.74
+      Alien::Build::MM 1.74
+      Alien::Build::Meta 1.74
+      Alien::Build::Plugin 1.74
+      Alien::Build::Plugin::Build::Autoconf 1.74
+      Alien::Build::Plugin::Build::CMake 1.74
+      Alien::Build::Plugin::Build::MSYS 1.74
+      Alien::Build::Plugin::Build::Make 1.74
+      Alien::Build::Plugin::Build::SearchDep 1.74
+      Alien::Build::Plugin::Core::CleanInstall 1.74
+      Alien::Build::Plugin::Core::Download 1.74
+      Alien::Build::Plugin::Core::FFI 1.74
+      Alien::Build::Plugin::Core::Gather 1.74
+      Alien::Build::Plugin::Core::Legacy 1.74
+      Alien::Build::Plugin::Core::Override 1.74
+      Alien::Build::Plugin::Core::Setup 1.74
+      Alien::Build::Plugin::Core::Tail 1.74
+      Alien::Build::Plugin::Decode::DirListing 1.74
+      Alien::Build::Plugin::Decode::DirListingFtpcopy 1.74
+      Alien::Build::Plugin::Decode::HTML 1.74
+      Alien::Build::Plugin::Decode::Mojo 1.74
+      Alien::Build::Plugin::Download::Negotiate 1.74
+      Alien::Build::Plugin::Extract::ArchiveTar 1.74
+      Alien::Build::Plugin::Extract::ArchiveZip 1.74
+      Alien::Build::Plugin::Extract::CommandLine 1.74
+      Alien::Build::Plugin::Extract::Directory 1.74
+      Alien::Build::Plugin::Extract::Negotiate 1.74
+      Alien::Build::Plugin::Fetch::CurlCommand 1.74
+      Alien::Build::Plugin::Fetch::HTTPTiny 1.74
+      Alien::Build::Plugin::Fetch::LWP 1.74
+      Alien::Build::Plugin::Fetch::Local 1.74
+      Alien::Build::Plugin::Fetch::LocalDir 1.74
+      Alien::Build::Plugin::Fetch::NetFTP 1.74
+      Alien::Build::Plugin::Fetch::Wget 1.74
+      Alien::Build::Plugin::Gather::IsolateDynamic 1.74
+      Alien::Build::Plugin::PkgConfig::CommandLine 1.74
+      Alien::Build::Plugin::PkgConfig::LibPkgConf 1.74
+      Alien::Build::Plugin::PkgConfig::MakeStatic 1.74
+      Alien::Build::Plugin::PkgConfig::Negotiate 1.74
+      Alien::Build::Plugin::PkgConfig::PP 1.74
+      Alien::Build::Plugin::Prefer::BadVersion 1.74
+      Alien::Build::Plugin::Prefer::GoodVersion 1.74
+      Alien::Build::Plugin::Prefer::SortVersions 1.74
+      Alien::Build::Plugin::Probe::CBuilder 1.74
+      Alien::Build::Plugin::Probe::CommandLine 1.74
+      Alien::Build::Plugin::Test::Mock 1.74
+      Alien::Build::PluginMeta 1.74
+      Alien::Build::TempDir 1.74
+      Alien::Build::Util 1.74
+      Alien::Build::Version::Basic 1.74
+      Alien::Build::rc 1.74
+      Alien::Role 1.74
+      MY 1.74
+      Test::Alien 1.74
+      Test::Alien::Build 1.74
+      Test::Alien::CanCompile 1.74
+      Test::Alien::CanPlatypus 1.74
+      Test::Alien::Run 1.74
+      Test::Alien::Synthetic 1.74
+      alienfile 1.74
     requirements:
       Capture::Tiny 0.17
       ExtUtils::CBuilder 0
@@ -81,10 +84,10 @@ DISTRIBUTIONS
       Test2::API 1.302015
       Text::ParseWords 3.26
       perl 5.008001
-  Alien-Libxml2-0.07
-    pathname: P/PL/PLICEASE/Alien-Libxml2-0.07.tar.gz
+  Alien-Libxml2-0.09
+    pathname: P/PL/PLICEASE/Alien-Libxml2-0.09.tar.gz
     provides:
-      Alien::Libxml2 0.07
+      Alien::Libxml2 0.09
     requirements:
       Alien::Base 0.73
       Alien::Build 1.60
@@ -918,11 +921,11 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       Sub::Exporter::Progressive 0.001011
       perl 5.006
-  Devel-StackTrace-2.03
-    pathname: D/DR/DROLSKY/Devel-StackTrace-2.03.tar.gz
+  Devel-StackTrace-2.04
+    pathname: D/DR/DROLSKY/Devel-StackTrace-2.04.tar.gz
     provides:
-      Devel::StackTrace 2.03
-      Devel::StackTrace::Frame 2.03
+      Devel::StackTrace 2.04
+      Devel::StackTrace::Frame 2.04
     requirements:
       ExtUtils::MakeMaker 0
       File::Spec 0
@@ -1615,8 +1618,8 @@ DISTRIBUTIONS
       Mojolicious 8.03
       SQL::Abstract 1.86
       perl 5.010001
-  Mojolicious-8.15
-    pathname: S/SR/SRI/Mojolicious-8.15.tar.gz
+  Mojolicious-8.17
+    pathname: S/SR/SRI/Mojolicious-8.17.tar.gz
     provides:
       Mojo undef
       Mojo::Asset undef
@@ -1686,7 +1689,7 @@ DISTRIBUTIONS
       Mojo::UserAgent::Transactor undef
       Mojo::Util undef
       Mojo::WebSocket undef
-      Mojolicious 8.15
+      Mojolicious 8.17
       Mojolicious::Command undef
       Mojolicious::Command::Author::cpanify undef
       Mojolicious::Command::Author::generate undef
@@ -1783,13 +1786,13 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       Module::Runtime 0.014
-  Net-HTTP-6.18
-    pathname: O/OA/OALDERS/Net-HTTP-6.18.tar.gz
+  Net-HTTP-6.19
+    pathname: O/OA/OALDERS/Net-HTTP-6.19.tar.gz
     provides:
-      Net::HTTP 6.18
-      Net::HTTP::Methods 6.18
-      Net::HTTP::NB 6.18
-      Net::HTTPS 6.18
+      Net::HTTP 6.19
+      Net::HTTP::Methods 6.19
+      Net::HTTP::NB 6.19
+      Net::HTTPS 6.19
     requirements:
       Carp 0
       Compress::Raw::Zlib 0
@@ -2176,12 +2179,12 @@ DISTRIBUTIONS
       Time::Zone 2.24
     requirements:
       ExtUtils::MakeMaker 0
-  Travel-Status-DE-IRIS-1.25
-    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.25.tar.gz
+  Travel-Status-DE-IRIS-1.26
+    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.26.tar.gz
     provides:
-      Travel::Status::DE::IRIS 1.25
-      Travel::Status::DE::IRIS::Result 1.25
-      Travel::Status::DE::IRIS::Stations 1.25
+      Travel::Status::DE::IRIS 1.26
+      Travel::Status::DE::IRIS::Result 1.26
+      Travel::Status::DE::IRIS::Stations 1.26
     requirements:
       Carp 0
       Class::Accessor 0
@@ -2346,45 +2349,45 @@ DISTRIBUTIONS
       Fcntl 0
       URI 1.10
       perl 5.008001
-  XML-LibXML-2.0200
-    pathname: S/SH/SHLOMIF/XML-LibXML-2.0200.tar.gz
+  XML-LibXML-2.0201
+    pathname: S/SH/SHLOMIF/XML-LibXML-2.0201.tar.gz
     provides:
-      XML::LibXML 2.0200
-      XML::LibXML::Attr 2.0200
-      XML::LibXML::AttributeHash 2.0200
-      XML::LibXML::Boolean 2.0200
-      XML::LibXML::CDATASection 2.0200
-      XML::LibXML::Comment 2.0200
-      XML::LibXML::Common 2.0200
-      XML::LibXML::Devel 2.0200
-      XML::LibXML::Document 2.0200
-      XML::LibXML::DocumentFragment 2.0200
-      XML::LibXML::Dtd 2.0200
-      XML::LibXML::Element 2.0200
-      XML::LibXML::ErrNo 2.0200
-      XML::LibXML::Error 2.0200
-      XML::LibXML::InputCallback 2.0200
-      XML::LibXML::Literal 2.0200
-      XML::LibXML::NamedNodeMap 2.0200
-      XML::LibXML::Namespace 2.0200
-      XML::LibXML::Node 2.0200
-      XML::LibXML::NodeList 2.0200
-      XML::LibXML::Number 2.0200
-      XML::LibXML::PI 2.0200
-      XML::LibXML::Pattern 2.0200
-      XML::LibXML::Reader 2.0200
-      XML::LibXML::RegExp 2.0200
-      XML::LibXML::RelaxNG 2.0200
-      XML::LibXML::SAX 2.0200
-      XML::LibXML::SAX::AttributeNode 2.0200
-      XML::LibXML::SAX::Builder 2.0200
-      XML::LibXML::SAX::Generator 2.0200
-      XML::LibXML::SAX::Parser 2.0200
-      XML::LibXML::Schema 2.0200
-      XML::LibXML::Text 2.0200
-      XML::LibXML::XPathContext 2.0200
-      XML::LibXML::XPathExpression 2.0200
-      XML::LibXML::_SAXParser 2.0200
+      XML::LibXML 2.0201
+      XML::LibXML::Attr 2.0201
+      XML::LibXML::AttributeHash 2.0201
+      XML::LibXML::Boolean 2.0201
+      XML::LibXML::CDATASection 2.0201
+      XML::LibXML::Comment 2.0201
+      XML::LibXML::Common 2.0201
+      XML::LibXML::Devel 2.0201
+      XML::LibXML::Document 2.0201
+      XML::LibXML::DocumentFragment 2.0201
+      XML::LibXML::Dtd 2.0201
+      XML::LibXML::Element 2.0201
+      XML::LibXML::ErrNo 2.0201
+      XML::LibXML::Error 2.0201
+      XML::LibXML::InputCallback 2.0201
+      XML::LibXML::Literal 2.0201
+      XML::LibXML::NamedNodeMap 2.0201
+      XML::LibXML::Namespace 2.0201
+      XML::LibXML::Node 2.0201
+      XML::LibXML::NodeList 2.0201
+      XML::LibXML::Number 2.0201
+      XML::LibXML::PI 2.0201
+      XML::LibXML::Pattern 2.0201
+      XML::LibXML::Reader 2.0201
+      XML::LibXML::RegExp 2.0201
+      XML::LibXML::RelaxNG 2.0201
+      XML::LibXML::SAX 2.0201
+      XML::LibXML::SAX::AttributeNode 2.0201
+      XML::LibXML::SAX::Builder 2.0201
+      XML::LibXML::SAX::Generator 2.0201
+      XML::LibXML::SAX::Parser 2.0201
+      XML::LibXML::Schema 2.0201
+      XML::LibXML::Text 2.0201
+      XML::LibXML::XPathContext 2.0201
+      XML::LibXML::XPathExpression 2.0201
+      XML::LibXML::_SAXParser 2.0201
     requirements:
       Alien::Libxml2 0
       Carp 0
@@ -2405,6 +2408,7 @@ DISTRIBUTIONS
       constant 0
       overload 0
       parent 0
+      perl 5.008001
       strict 0
       vars 0
       warnings 0
@@ -2447,10 +2451,10 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       perl 5.008
-  bareword-filehandles-0.006
-    pathname: I/IL/ILMARI/bareword-filehandles-0.006.tar.gz
+  bareword-filehandles-0.007
+    pathname: I/IL/ILMARI/bareword-filehandles-0.007.tar.gz
     provides:
-      bareword::filehandles 0.006
+      bareword::filehandles 0.007
     requirements:
       B::Hooks::OP::Check 0
       ExtUtils::Depends 0
