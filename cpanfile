@@ -12,3 +12,4 @@ requires 'Travel::Status::DE::IRIS';
 requires 'UUID::Tiny';
 requires 'JSON';
 requires 'JSON::XS';
+requires 'XML::LibXML';
