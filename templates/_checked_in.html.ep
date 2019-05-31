@@ -62,7 +62,55 @@
 						noch nicht bekannt
 					% }
 				</div>
+				<div class="center-align hide-on-small-only">
+					% for my $station (@{$journey->{route_after}}) {
+						% if ($station->[0] eq $journey->{arr_name}) {
+							% last;
+						% }
+						% if (($station->[1]{rt_arr_countdown} // 0) > 0) {
+							<%= $station->[0] %><br/><%= $station->[1]{rt_arr}->strftime('%H:%M') %>
+							% if ($station->[1]{sched_arr}->epoch != $station->[1]{rt_arr}->epoch) {
+								%= sprintf('(%+d)', ($station->[1]{rt_arr}->epoch - $station->[1]{sched_arr}->epoch ) / 60);
+							% }
+							% last;
+						% }
+						% if (($station->[1]{rt_dep_countdown} // 0) > 0) {
+							<%= $station->[0] %><br/>
+							<%= $station->[1]{rt_arr}->strftime('%H:%M') %> →
+							<%= $station->[1]{rt_dep}->strftime('%H:%M') %>
+							% if ($station->[1]{sched_dep}->epoch != $station->[1]{rt_dep}->epoch) {
+								%= sprintf('(%+d)', ($station->[1]{rt_dep}->epoch - $station->[1]{sched_dep}->epoch ) / 60);
+							% }
+							% last;
+						% }
+					% }
+				</div>
 				<div style="clear: both;">
+				</div>
+				<div class="hide-on-med-and-up" style="margin-top: 2ex;">
+					% for my $station (@{$journey->{route_after}}) {
+						% if ($station->[0] eq $journey->{arr_name}) {
+							% last;
+						% }
+						% if (($station->[1]{rt_arr_countdown} // 0) > 0) {
+							Nächster Halt:<br/>
+							<%= $station->[0] %><br/><%= $station->[1]{rt_arr}->strftime('%H:%M') %>
+							% if ($station->[1]{sched_arr}->epoch != $station->[1]{rt_arr}->epoch) {
+								%= sprintf('(%+d)', ($station->[1]{rt_arr}->epoch - $station->[1]{sched_arr}->epoch ) / 60);
+							% }
+							% last;
+						% }
+						% if (($station->[1]{rt_dep_countdown} // 0) > 0) {
+							Aktueller Halt:<br/>
+							<%= $station->[0] %><br/>
+							<%= $station->[1]{rt_arr}->strftime('%H:%M') %> →
+							<%= $station->[1]{rt_dep}->strftime('%H:%M') %>
+							% if ($station->[1]{sched_dep}->epoch != $station->[1]{rt_dep}->epoch) {
+								%= sprintf('(%+d)', ($station->[1]{rt_dep}->epoch - $station->[1]{sched_dep}->epoch ) / 60);
+							% }
+							% last;
+						% }
+					% }
 				</div>
 			</p>
 		% }

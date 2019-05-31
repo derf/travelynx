@@ -2,10 +2,12 @@ package Travelynx;
 use Mojo::Base 'Mojolicious';
 
 use Mojo::Pg;
+use Mojo::Promise;
 use Mojolicious::Plugin::Authentication;
 use Cache::File;
 use Crypt::Eksblowfish::Bcrypt qw(bcrypt en_base64);
 use DateTime;
+use DateTime::Format::Strptime;
 use Encode qw(decode encode);
 use Geo::Distance;
 use JSON;
@@ -14,6 +16,7 @@ use List::MoreUtils qw(after_incl before_incl);
 use Travel::Status::DE::IRIS;
 use Travel::Status::DE::IRIS::Stations;
 use Travelynx::Helper::Sendmail;
+use XML::LibXML;
 
 sub check_password {
 	my ( $password, $hash ) = @_;
@@ -395,6 +398,8 @@ sub startup {
 							"Checkin($uid): INSERT failed: $@");
 						return ( undef, 'INSERT failed: ' . $@ );
 					}
+					$self->add_route_timestamps( $self->current_user->{id},
+						$train );
 					$self->run_hook( $self->current_user->{id}, 'checkin' );
 					return ( $train, undef );
 				}
@@ -630,6 +635,7 @@ sub startup {
 				return ( 0, undef );
 			}
 			$self->run_hook( $uid, 'update' );
+			$self->add_route_timestamps( $self->current_user->{id}, $train );
 			return ( 1, undef );
 		}
 	);
@@ -1490,6 +1496,223 @@ sub startup {
 	);
 
 	$self->helper(
+		'get_hafas_json_p' => sub {
+			my ( $self, $url ) = @_;
+
+			my $cache   = $self->app->cache_iris_main;
+			my $promise = Mojo::Promise->new;
+
+			if ( my $content = $cache->thaw($url) ) {
+				$promise->resolve($content);
+				return $promise;
+			}
+
+			$self->ua->request_timeout(5)->get_p($url)->then(
+				sub {
+					my ($tx) = @_;
+					my $body = decode( 'ISO-8859-15', $tx->res->body );
+
+					$body =~ s{^TSLs[.]sls = }{};
+					$body =~ s{;$}{};
+					$body =~ s{&#x0028;}{(}g;
+					$body =~ s{&#x0029;}{)}g;
+					my $json = JSON->new->decode($body);
+					$cache->freeze( $url, $json );
+					$promise->resolve($json);
+				}
+			)->catch(
+				sub {
+					my ($err) = @_;
+					$self->app->log->warning("get($url): $err");
+					$promise->reject($err);
+				}
+			)->wait;
+			return $promise;
+		}
+	);
+
+	$self->helper(
+		'get_hafas_xml_p' => sub {
+			my ( $self, $url ) = @_;
+
+			my $cache   = $self->app->cache_iris_rt;
+			my $promise = Mojo::Promise->new;
+
+			if ( my $content = $cache->thaw($url) ) {
+				$promise->resolve($content);
+				return $promise;
+			}
+
+			$self->ua->request_timeout(5)->get_p($url)->then(
+				sub {
+					my ($tx) = @_;
+					my $body = decode( 'ISO-8859-15', $tx->res->body );
+					my $tree;
+
+					my $traininfo = {
+						station => {},
+					};
+
+					# <SDay text="... &gt; ..."> is invalid HTML, but present in
+					# regardless. As it is the last tag, we just throw it away.
+					$body =~ s{<SDay .*}{</Journey>}s;
+					eval { $tree = XML::LibXML->load_xml( string => $body ) };
+					if ($@) {
+						$self->app->log->warning("load_xml($url): $@");
+						$cache->freeze( $url, $traininfo );
+						$promise->resolve($traininfo);
+						return;
+					}
+
+					for my $station ( $tree->findnodes('/Journey/St') ) {
+						my $name   = $station->getAttribute('name');
+						my $adelay = $station->getAttribute('adelay');
+						my $ddelay = $station->getAttribute('ddelay');
+						$traininfo->{station}{$name} = {
+							adelay => $adelay,
+							ddelay => $ddelay,
+						};
+					}
+
+					$cache->freeze( $url, $traininfo );
+					$promise->resolve($traininfo);
+				}
+			)->catch(
+				sub {
+					my ($err) = @_;
+					$self->app->log->warning("get($url): $err");
+					$promise->reject($err);
+				}
+			)->wait;
+			return $promise;
+		}
+	);
+
+	$self->helper(
+		'add_route_timestamps' => sub {
+			my ( $self, $uid, $train ) = @_;
+
+			$uid //= $self->current_user->{id};
+
+			my $db = $self->pg->db;
+
+			my $journey
+			  = $db->select( 'in_transit', ['route'], { user_id => $uid } )
+			  ->expand->hash;
+
+			if ( not $journey ) {
+				return;
+			}
+
+			my $route = $journey->{route};
+
+			my $base
+			  = 'https://reiseauskunft.bahn.de/bin/trainsearch.exe/dn?L=vs_json.vs_hap&start=yes&rt=1';
+			my $date_yy   = $train->start->strftime('%d.%m.%y');
+			my $date_yyyy = $train->start->strftime('%d.%m.%Y');
+			my $train_no  = $train->type . ' ' . $train->train_no;
+
+			$self->app->log->debug("add_route_timestamps");
+
+			my ( $trainlink, $route_data );
+
+			$self->get_hafas_json_p(
+				"${base}&date=${date_yy}&trainname=${train_no}")->then(
+				sub {
+					my ($trainsearch) = @_;
+
+					# Fallback: Take first result
+					$trainlink = $trainsearch->{suggestions}[0]{trainLink};
+
+					# Try finding a result for the current date
+					for
+					  my $suggestion ( @{ $trainsearch->{suggestions} // [] } )
+					{
+
+       # Drunken API, sail with care. Both date formats are used interchangeably
+						if (   $suggestion->{depDate} eq $date_yy
+							or $suggestion->{depDate} eq $date_yyyy )
+						{
+							$trainlink = $suggestion->{trainLink};
+							last;
+						}
+					}
+
+					if ( not $trainlink ) {
+						$self->app->log->debug("trainlink not found");
+						return Mojo::Promise->reject("trainlink not found");
+					}
+					my $base2
+					  = 'https://reiseauskunft.bahn.de/bin/traininfo.exe/dn';
+					return $self->get_hafas_json_p(
+"${base2}/${trainlink}?rt=1&date=${date_yy}&L=vs_json.vs_hap"
+					);
+				}
+			)->then(
+				sub {
+					my ($traininfo) = @_;
+
+					if ( not $traininfo or $traininfo->{error} ) {
+						$self->app->log->debug("traininfo error");
+						return Mojo::Promise->reject("traininfo error");
+					}
+					my $routeinfo
+					  = $traininfo->{suggestions}[0]{locations};
+
+					my $strp = DateTime::Format::Strptime->new(
+						pattern   => '%d.%m.%y %H:%M',
+						time_zone => 'Europe/Berlin',
+					);
+
+					$route_data = {};
+
+					for my $station ( @{$routeinfo} ) {
+						my $arr
+						  = $strp->parse_datetime(
+							$station->{arrDate} . ' ' . $station->{arrTime} );
+						my $dep
+						  = $strp->parse_datetime(
+							$station->{depDate} . ' ' . $station->{depTime} );
+						$route_data->{ $station->{name} } = {
+							sched_arr => $arr ? $arr->epoch : 0,
+							sched_dep => $dep ? $dep->epoch : 0,
+						};
+					}
+
+					my $base2
+					  = 'https://reiseauskunft.bahn.de/bin/traininfo.exe/dn';
+					return $self->get_hafas_xml_p(
+						"${base2}/${trainlink}?rt=1&date=${date_yy}&L=vs_java3"
+					);
+				}
+			)->then(
+				sub {
+					my ($traininfo2) = @_;
+
+					for my $station ( keys %{$route_data} ) {
+						for my $key (
+							keys %{ $traininfo2->{station}{$station} // {} } )
+						{
+							$route_data->{$station}{$key}
+							  = $traininfo2->{station}{$station}{$key};
+						}
+					}
+
+					for my $station ( @{$route} ) {
+						$station->[1]
+						  = $route_data->{ $station->[0] };
+					}
+					$db->update(
+						'in_transit',
+						{ route   => JSON->new->encode($route) },
+						{ user_id => $uid }
+					);
+				}
+			)->wait;
+		}
+	);
+
+	$self->helper(
 		'get_oldest_journey_ts' => sub {
 			my ($self) = @_;
 
@@ -1826,8 +2049,9 @@ sub startup {
 
 			$uid //= $self->current_user->{id};
 
-			my $db = $self->pg->db;
-			my $now = DateTime->now( time_zone => 'Europe/Berlin' );
+			my $db    = $self->pg->db;
+			my $now   = DateTime->now( time_zone => 'Europe/Berlin' );
+			my $epoch = $now->epoch;
 
 			my $in_transit
 			  = $db->select( 'in_transit_str', '*', { user_id => $uid } )
@@ -1883,12 +2107,45 @@ sub startup {
 				}
 				$ret->{messages} = [ reverse @parsed_messages ];
 
+				for my $station (@route_after) {
+					if ( @{$station} > 1 ) {
+						my $times = $station->[1];
+						if ( $times->{sched_arr} ) {
+							$times->{sched_arr}
+							  = epoch_to_dt( $times->{sched_arr} );
+							$times->{rt_arr} = $times->{sched_arr}->clone;
+							if (    $times->{adelay}
+								and $times->{adelay} =~ m{^\d+$} )
+							{
+								$times->{rt_arr}
+								  ->add( minutes => $times->{adelay} );
+							}
+							$times->{rt_arr_countdown}
+							  = $times->{rt_arr}->epoch - $epoch;
+						}
+						if ( $times->{sched_dep} ) {
+							$times->{sched_dep}
+							  = epoch_to_dt( $times->{sched_dep} );
+							$times->{rt_dep} = $times->{sched_dep}->clone;
+							if (    $times->{ddelay}
+								and $times->{ddelay} =~ m{^\d+$} )
+							{
+								$times->{rt_dep}
+								  ->add( minutes => $times->{ddelay} );
+							}
+							$times->{rt_dep_countdown}
+							  = $times->{rt_dep}->epoch - $epoch;
+						}
+					}
+				}
+
 				$ret->{departure_countdown}
 				  = $ret->{real_departure}->epoch - $now->epoch;
 				if ( $in_transit->{real_arr_ts} ) {
 					$ret->{arrival_countdown}
 					  = $ret->{real_arrival}->epoch - $now->epoch;
-					$ret->{journey_duration} = $ret->{real_arrival}->epoch
+					$ret->{journey_duration}
+					  = $ret->{real_arrival}->epoch
 					  - $ret->{real_departure}->epoch;
 					$ret->{journey_completion}
 					  = $ret->{journey_duration}
@@ -2116,7 +2373,8 @@ sub startup {
 					and $next_departure->epoch - $journey->{rt_arrival}->epoch
 					< ( 60 * 60 ) )
 				{
-					if ( $next_departure->epoch - $journey->{rt_arrival}->epoch
+					if (
+						$next_departure->epoch - $journey->{rt_arrival}->epoch
 						< 0 )
 					{
 						push( @inconsistencies,

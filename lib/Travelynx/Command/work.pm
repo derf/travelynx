@@ -60,6 +60,7 @@ sub run {
 					},
 					{ user_id => $uid }
 				);
+				$self->app->add_route_timestamps( $uid, $train );
 			}
 		};
 		if ($@) {
@@ -112,6 +113,7 @@ sub run {
 					},
 					{ user_id => $uid }
 				);
+				$self->app->add_route_timestamps( $uid, $train );
 			}
 			elsif ( $entry->{real_arr_ts} ) {
 				$self->app->log->debug("  - checking out");
