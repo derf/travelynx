@@ -10,7 +10,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 	build-essential \
 	libpq-dev \
 	git \
-	cron \
 	&& cpanm -in --no-man-pages --installdeps . \
 	&& rm -rf ~/.cpanm \
 	&& apt-get purge -y \
