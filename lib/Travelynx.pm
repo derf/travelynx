@@ -568,7 +568,6 @@ sub startup {
 			}
 
 			if ( not( defined $train or $force ) ) {
-				$self->run_hook( $uid, 'update' );
 
 				# Arrival time via IRIS is unknown, try falling back to HAFAS
 				if ( my $station_data
@@ -594,6 +593,7 @@ sub startup {
 						);
 					}
 				}
+				$self->run_hook( $uid, 'update' );
 				return ( 1, undef );
 			}
 
