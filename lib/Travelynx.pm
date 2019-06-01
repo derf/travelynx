@@ -530,7 +530,8 @@ sub startup {
 
 			my $now = DateTime->now( time_zone => 'Europe/Berlin' );
 			my $journey
-			  = $db->select( 'in_transit', '*', { user_id => $uid } )->hash;
+			  = $db->select( 'in_transit', '*', { user_id => $uid } )
+			  ->expand->hash;
 			my ($train)
 			  = first { $_->train_id eq $train_id } @{ $status->{results} };
 
@@ -568,6 +569,31 @@ sub startup {
 
 			if ( not( defined $train or $force ) ) {
 				$self->run_hook( $uid, 'update' );
+
+				# Arrival time via IRIS is unknown, try falling back to HAFAS
+				if ( my $station_data
+					= first { $_->[0] eq $station } @{ $journey->{route} } )
+				{
+					$station_data = $station_data->[1];
+					if ( $station_data->{sched_arr} ) {
+						my $sched_arr
+						  = epoch_to_dt( $station_data->{sched_arr} );
+						my $rt_arr = $sched_arr->clone;
+						if (    $station_data->{adelay}
+							and $station_data->{adelay} =~ m{^\d+$} )
+						{
+							$rt_arr->add( minutes => $station_data->{adelay} );
+						}
+						$db->update(
+							'in_transit',
+							{
+								sched_arrival => $sched_arr,
+								real_arrival  => $rt_arr
+							},
+							{ user_id => $uid }
+						);
+					}
+				}
 				return ( 1, undef );
 			}
 
