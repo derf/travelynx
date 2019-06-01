@@ -94,6 +94,21 @@ sub startup {
 	);
 	$self->sessions->default_expiration( 60 * 60 * 24 * 180 );
 
+	# Starting with v8.11, Mojolicious sends SameSite=Lax Cookies by default.
+	# In theory, "The default lax value provides a reasonable balance between
+	# security and usability for websites that want to maintain user's logged-in
+	# session after the user arrives from an external link". In practice,
+	# Safari (both iOS and macOS) does not send a SameSite=lax cookie when
+	# following a link from an external site. So, marudor.de providing a
+	# checkin link to travelynx.de/s/whatever does not work because the user
+	# is not logged in due to Safari not sending the cookie.
+	#
+	# This looks a lot like a Safari bug, but we can't do anything about it. So
+	# we don't set the SameSite flag at all for now.
+	#
+	# --derf, 2019-05-01
+	$self->sessions->samesite(undef);
+
 	$self->defaults( layout => 'default' );
 
 	$self->hook(
