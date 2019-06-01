@@ -84,16 +84,10 @@ sub run {
 				  = first { $_->train_id eq $train_id } @{ $status->{results} };
 
 				if ( not $train ) {
-					if ( $entry->{real_arr_ts} ) {
-						die(
-"could not find train $train_id at $arr -- did it disappear?\n"
-						);
-					}
-					else {
-                     # If we haven't seen the train yet, its arrival is probably
-                     # too far in the future. This is not critical.
-						return;
-					}
+
+					# If we haven't seen the train yet, its arrival is probably
+					# too far in the future. This is not critical.
+					return;
 				}
 
 				$db->update(
