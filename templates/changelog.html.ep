@@ -2,6 +2,22 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		1.7
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left">add</i> Ankunft am nächtsten
+			Unterwegshalt im Reisestatus.
+		</p>
+		<p>
+			<i class="material-icons left">star</i> Die Ankunftszeit am Ziel ist
+			jetzt auch bei langen Fahrten sofort bekannt.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		1.6
 	</div>
 	<div class="col s12 m11 l11">
