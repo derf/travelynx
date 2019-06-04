@@ -114,13 +114,21 @@
 				</div>
 			</p>
 		% }
-		% if (@{$journey->{messages} // []} > 0 and $journey->{messages}[0]) {
+		% if (@{$journey->{messages} // []} or @{$journey->{extra_data}{him_msg} // []} or @{$journey->{extra_data}{qos_msg} // []}) {
 			<p style="margin-bottom: 2ex;">
 				<ul>
 					% for my $message (reverse @{$journey->{messages} // []}) {
 						% if ($journey->{sched_departure}->epoch - $message->[0]->epoch < 1800) {
 							<li> <i class="material-icons tiny">warning</i> <%= $message->[0]->strftime('%H:%M') %>: <%= $message->[1] %></li>
 						% }
+					% }
+					% if ($journey->{departure_countdown} > 0) {
+						% for my $message (@{$journey->{extra_data}{qos_msg} // []}) {
+							<li> <i class="material-icons tiny">info</i> <%= $message->[0]->strftime('%H:%M') %>: <%= $message->[1] %></li>
+						% }
+					% }
+					% for my $message (@{$journey->{extra_data}{him_msg} // []}) {
+						<li> <i class="material-icons tiny">info</i> <%= $message->{header} %> <%= $message->{lead} %></li>
 					% }
 				</ul>
 			</p>

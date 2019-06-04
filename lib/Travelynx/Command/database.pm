@@ -659,6 +659,36 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v14 -> v15
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				alter table in_transit add column data jsonb;
+				create or replace view in_transit_str as select
+					user_id,
+					train_type, train_line, train_no, train_id,
+					extract(epoch from checkin_time) as checkin_ts,
+					extract(epoch from sched_departure) as sched_dep_ts,
+					extract(epoch from real_departure) as real_dep_ts,
+					dep_stations.ds100 as dep_ds100,
+					dep_stations.name as dep_name,
+					extract(epoch from checkout_time) as checkout_ts,
+					extract(epoch from sched_arrival) as sched_arr_ts,
+					extract(epoch from real_arrival) as real_arr_ts,
+					arr_stations.ds100 as arr_ds100,
+					arr_stations.name as arr_name,
+					cancelled, route, messages,
+					dep_platform, arr_platform, data
+					from in_transit
+					join stations as dep_stations on dep_stations.id = checkin_station_id
+					left join stations as arr_stations on arr_stations.id = checkout_station_id
+					;
+				update schema_version set version = 15;
+			}
+		);
+	},
 );
 
 sub setup_db {

@@ -646,6 +646,7 @@ sub startup {
 				  = $db->select( 'in_transit', '*', { user_id => $uid } )->hash;
 
 				if ( $has_arrived or $force ) {
+					delete $journey->{data};
 					$journey->{edited}        = 0;
 					$journey->{checkout_time} = $now;
 					$db->insert( 'journeys', $journey );
@@ -1591,12 +1592,13 @@ sub startup {
 					my $tree;
 
 					my $traininfo = {
-						station => {},
+						station  => {},
+						messages => [],
 					};
 
 					# <SDay text="... &gt; ..."> is invalid HTML, but present in
 					# regardless. As it is the last tag, we just throw it away.
-					$body =~ s{<SDay .*}{</Journey>}s;
+					$body =~ s{<SDay [^>]*/>}{}s;
 					eval { $tree = XML::LibXML->load_xml( string => $body ) };
 					if ($@) {
 						$self->app->log->warning("load_xml($url): $@");
@@ -1613,6 +1615,21 @@ sub startup {
 							adelay => $adelay,
 							ddelay => $ddelay,
 						};
+					}
+
+					for my $message ( $tree->findnodes('/Journey/HIMMessage') )
+					{
+						my $header  = $message->getAttribute('header');
+						my $lead    = $message->getAttribute('lead');
+						my $display = $message->getAttribute('display');
+						push(
+							@{ $traininfo->{messages} },
+							{
+								header  => $header,
+								lead    => $lead,
+								display => $display
+							}
+						);
 					}
 
 					$cache->freeze( $url, $traininfo );
@@ -1654,6 +1671,14 @@ sub startup {
 			my $train_no  = $train->type . ' ' . $train->train_no;
 
 			$self->app->log->debug("add_route_timestamps");
+
+			my $extra_data = {
+				delay_msg => [
+					map { [ $_->[0]->epoch, $_->[1] ] } $train->delay_messages
+				],
+				qos_msg =>
+				  [ map { [ $_->[0]->epoch, $_->[1] ] } $train->qos_messages ],
+			};
 
 			my ( $trainlink, $route_data );
 
@@ -1743,9 +1768,15 @@ sub startup {
 						$station->[1]
 						  = $route_data->{ $station->[0] };
 					}
+
+					$extra_data->{him_msg} = $traininfo2->{messages};
+
 					$db->update(
 						'in_transit',
-						{ route   => JSON->new->encode($route) },
+						{
+							route => JSON->new->encode($route),
+							data  => JSON->new->encode($extra_data)
+						},
 						{ user_id => $uid }
 					);
 				}
@@ -2139,6 +2170,7 @@ sub startup {
 					arr_platform  => $in_transit->{arr_platform},
 					route_after   => \@route_after,
 					messages      => $in_transit->{messages},
+					extra_data    => $in_transit->{data},
 				};
 
 				my @parsed_messages;
@@ -2147,6 +2179,13 @@ sub startup {
 					push( @parsed_messages, [ epoch_to_dt($ts), $msg ] );
 				}
 				$ret->{messages} = [ reverse @parsed_messages ];
+
+				@parsed_messages = ();
+				for my $message ( @{ $ret->{extra_data}{qos_msg} // [] } ) {
+					my ( $ts, $msg ) = @{$message};
+					push( @parsed_messages, [ epoch_to_dt($ts), $msg ] );
+				}
+				$ret->{extra_data}{qos_msg} = [@parsed_messages];
 
 				for my $station (@route_after) {
 					if ( @{$station} > 1 ) {
