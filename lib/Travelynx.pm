@@ -1934,6 +1934,10 @@ sub startup {
 			if ( $stationboard->{errstr} ) {
 				return;
 			}
+			@{ $stationboard->{results} } = map { $_->[0] }
+			  sort { $a->[1] <=> $b->[1] }
+			  map { [ $_, $_->departure ? $_->departure->epoch : 0 ] }
+			  @{ $stationboard->{results} };
 			my @results;
 			my %via_count = map { $_ => 0 } @destinations;
 			for my $train ( @{ $stationboard->{results} } ) {
@@ -1967,7 +1971,7 @@ sub startup {
 			  map {
 				[
 					$_,
-					$_->[0]->departure->epoch // $_->[0]->sched_departur->epoch
+					$_->[0]->departure->epoch // $_->[0]->sched_departure->epoch
 				]
 			  } @results;
 
