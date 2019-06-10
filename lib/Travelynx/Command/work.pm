@@ -13,7 +13,7 @@ has usage => sub { shift->extract_usage };
 sub run {
 	my ($self) = @_;
 
-	my $now = DateTime->now( time_zone => 'Europe/Berlin' );
+	my $now  = DateTime->now( time_zone => 'Europe/Berlin' );
 	my $json = JSON->new;
 
 	my $db = $self->app->pg->db;
@@ -29,8 +29,14 @@ sub run {
 
 		$self->app->log->debug("Processing $uid");
 
+		# Note: IRIS data is not always updated in real-time. Both departure and
+		# arrival delays may take several minutes to appear, especially in case
+		# of large-scale disturbances. We work around this by continuing to
+		# update departure data for up to 15 minutes after departure and
+		# delaying automatic checkout by at least 10 minutes.
+
 		eval {
-			if ( $now->epoch - $entry->{real_dep_ts} < 300 ) {
+			if ( $now->epoch - $entry->{real_dep_ts} < 900 ) {
 				$self->app->log->debug("  - updating departure");
 				my $status = $self->app->get_departures( $dep, 30, 30 );
 				if ( $status->{errstr} ) {
@@ -71,7 +77,7 @@ sub run {
 			if (
 				$entry->{arr_name}
 				and ( not $entry->{real_arr_ts}
-					or $now->epoch - $entry->{real_arr_ts} < 60 )
+					or $now->epoch - $entry->{real_arr_ts} < 600 )
 			  )
 			{
 				$self->app->log->debug("  - updating arrival");

@@ -144,9 +144,9 @@
 		% }
 		% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} <= 0) {
 			<p style="margin-top: 2ex;">
-				Der automatische Checkout erfolgt in wenigen Minuten. Zum Umsteigen:
-				Aktuelle Station erneut in der Liste auswählen. Zum Weiterfahren im
-				aktuellen Zug: Neues Ziel wählen.
+				Der automatische Checkout erfolgt erst zehn Minuten nach der
+				Ankunft, um verzögerte IRIS-Updates zu berücksichtigen. Du kannst
+				bereits jetzt in einen neuen Zug einchecken.
 			</p>
 		% }
 		% elsif ($journey->{arr_name}) {
