@@ -144,9 +144,10 @@
 		% }
 		% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} <= 0) {
 			<p style="margin-top: 2ex;">
-				Der automatische Checkout erfolgt erst zehn Minuten nach der
-				Ankunft, um verzögerte IRIS-Updates zu berücksichtigen. Du kannst
-				bereits jetzt in einen neuen Zug einchecken.
+				Der automatische Checkout erfolgt wegen gelegentlich veralteter
+				IRIS-Daten erst etwa zehn Minuten nach der Ankunft. <a
+				class="action-checkout"
+				data-station="<%= $journey->{arr_name}%>">Jetzt auschecken</a>.
 			</p>
 		% }
 		% elsif ($journey->{arr_name}) {
