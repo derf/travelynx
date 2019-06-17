@@ -414,7 +414,7 @@ sub startup {
 						return ( undef, 'INSERT failed: ' . $@ );
 					}
 					$self->add_route_timestamps( $self->current_user->{id},
-						$train );
+						$train, 1 );
 					$self->run_hook( $self->current_user->{id}, 'checkin' );
 					return ( $train, undef );
 				}
@@ -530,7 +530,7 @@ sub startup {
 		'checkout' => sub {
 			my ( $self, $station, $force, $uid ) = @_;
 
-			my $db = $self->pg->db;
+			my $db     = $self->pg->db;
 			my $status = $self->get_departures( $station, 120, 120 );
 			$uid //= $self->current_user->{id};
 			my $user     = $self->get_user_status($uid);
@@ -677,7 +677,7 @@ sub startup {
 				return ( 0, undef );
 			}
 			$self->run_hook( $uid, 'update' );
-			$self->add_route_timestamps( $self->current_user->{id}, $train );
+			$self->add_route_timestamps( $self->current_user->{id}, $train, 0 );
 			return ( 1, undef );
 		}
 	);
@@ -1423,8 +1423,8 @@ sub startup {
 				return {};
 			}
 
-			my $uid   = $opt{uid} // $self->current_user->{id};
-			my $year  = $opt{year} // 0;
+			my $uid   = $opt{uid}   // $self->current_user->{id};
+			my $year  = $opt{year}  // 0;
 			my $month = $opt{month} // 0;
 
 			# Assumption: If the stats cache contains an entry it is up-to-date.
@@ -1534,6 +1534,40 @@ sub startup {
 				push( @ret, [ "${year}/${month}", "${month}.${year}" ] );
 			}
 			return @ret;
+		}
+	);
+
+	$self->helper(
+		'get_wagonorder_p' => sub {
+			my ( $self, $ts, $train_no ) = @_;
+			my $api_ts = $ts->strftime('%Y%m%d%H%M');
+			my $url
+			  = "https://www.apps-bahn.de/wr/wagenreihung/1.0/${train_no}/${api_ts}";
+
+			my $cache   = $self->app->cache_iris_main;
+			my $promise = Mojo::Promise->new;
+
+			if ( my $content = $cache->thaw($url) ) {
+				$promise->resolve($content);
+				return $promise;
+			}
+
+			$self->ua->request_timeout(5)->get_p($url)->then(
+				sub {
+					my ($tx) = @_;
+					my $body = decode( 'utf-8', $tx->res->body );
+
+					my $json = JSON->new->decode($body);
+					$cache->freeze( $url, $json );
+					$promise->resolve($json);
+				}
+			)->catch(
+				sub {
+					my ($err) = @_;
+					$promise->reject($err);
+				}
+			)->wait;
+			return $promise;
 		}
 	);
 
@@ -1648,7 +1682,7 @@ sub startup {
 
 	$self->helper(
 		'add_route_timestamps' => sub {
-			my ( $self, $uid, $train ) = @_;
+			my ( $self, $uid, $train, $is_departure ) = @_;
 
 			$uid //= $self->current_user->{id};
 
@@ -1771,12 +1805,42 @@ sub startup {
 
 					$extra_data->{him_msg} = $traininfo2->{messages};
 
-					$db->update(
+					my $res = $db->select( 'in_transit', ['data'],
+						{ user_id => $uid } );
+					my $res_h = $res->expand->hash;
+					if (    $res_h
+						and $res_h->{data}
+						and $res_h->{data}{wagonorder} )
+					{
+						$extra_data->{wagonorder} = $res_h->{data}{wagonorder};
+					}
+
+					return $db->update_p(
 						'in_transit',
 						{
 							route => JSON->new->encode($route),
 							data  => JSON->new->encode($extra_data)
 						},
+						{ user_id => $uid }
+					);
+				}
+			)->then(
+				sub {
+					if ($is_departure) {
+						return $self->get_wagonorder_p( $train->sched_departure,
+							$train->train_no );
+					}
+					return Mojo::Promise->reject;
+				}
+			)->then(
+				sub {
+					my ($wagonorder) = @_;
+
+					$extra_data->{wagonorder} = $wagonorder;
+
+					$db->update(
+						'in_transit',
+						{ data    => JSON->new->encode($extra_data) },
 						{ user_id => $uid }
 					);
 				}
@@ -1814,7 +1878,7 @@ sub startup {
 			my ( $self, %opt ) = @_;
 
 			my $uid = $opt{uid} // $self->current_user->{id};
-			my $db  = $opt{db} // $self->pg->db;
+			my $db  = $opt{db}  // $self->pg->db;
 
 			my $journey = $db->select( 'in_transit', ['checkout_station_id'],
 				{ user_id => $uid } )->hash;
@@ -1845,11 +1909,11 @@ sub startup {
 		'get_connection_targets' => sub {
 			my ( $self, %opt ) = @_;
 
-			my $uid = $opt{uid} //= $self->current_user->{id};
+			my $uid       = $opt{uid} //= $self->current_user->{id};
 			my $threshold = $opt{threshold}
 			  // DateTime->now( time_zone => 'Europe/Berlin' )
 			  ->subtract( months => 4 );
-			my $db = $opt{db} //= $self->pg->db;
+			my $db        = $opt{db} //= $self->pg->db;
 			my $min_count = $opt{min_count} // 3;
 
 			my $dest_id;
@@ -1896,7 +1960,7 @@ sub startup {
 		'get_connecting_trains' => sub {
 			my ( $self, %opt ) = @_;
 
-			my $uid = $opt{uid} //= $self->current_user->{id};
+			my $uid         = $opt{uid} //= $self->current_user->{id};
 			my $use_history = $self->account_use_history($uid);
 
 			my ( $ds100, $exclude_via, $exclude_train_id, $exclude_before );
