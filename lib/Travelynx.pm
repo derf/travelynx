@@ -1805,15 +1805,15 @@ sub startup {
 
 					$extra_data->{him_msg} = $traininfo2->{messages};
 
-					my $res = $db->select( 'in_transit', ['data'],
-						{ user_id => $uid } );
-					my $res_h = $res->expand->hash;
-					if (    $res_h
-						and $res_h->{data}
-						and $res_h->{data}{wagonorder} )
-					{
-						$extra_data->{wagonorder} = $res_h->{data}{wagonorder};
-					}
+					#my $res = $db->select( 'in_transit', ['data'],
+					#	{ user_id => $uid } );
+					#my $res_h = $res->expand->hash;
+					#if (    $res_h
+					#	and $res_h->{data}
+					#	and $res_h->{data}{wagonorder} )
+					#{
+					#	$extra_data->{wagonorder} = $res_h->{data}{wagonorder};
+					#}
 
 					return $db->update_p(
 						'in_transit',
@@ -1824,26 +1824,27 @@ sub startup {
 						{ user_id => $uid }
 					);
 				}
-			)->then(
-				sub {
-					if ($is_departure) {
-						return $self->get_wagonorder_p( $train->sched_departure,
-							$train->train_no );
-					}
-					return Mojo::Promise->reject;
-				}
-			)->then(
-				sub {
-					my ($wagonorder) = @_;
 
-					$extra_data->{wagonorder} = $wagonorder;
+				  #)->then(
+				  #	sub {
+				  #		if ($is_departure) {
+				  #			return $self->get_wagonorder_p( $train->sched_departure,
+				  #				$train->train_no );
+				  #		}
+				  #		return Mojo::Promise->reject;
+				  #	}
+				  #)->then(
+				  #	sub {
+				  #		my ($wagonorder) = @_;
 
-					$db->update(
-						'in_transit',
-						{ data    => JSON->new->encode($extra_data) },
-						{ user_id => $uid }
-					);
-				}
+				  #		$extra_data->{wagonorder} = $wagonorder;
+
+				  #		$db->update(
+				  #			'in_transit',
+				  #			{ data    => JSON->new->encode($extra_data) },
+				  #			{ user_id => $uid }
+				  #		);
+				  #	}
 			)->wait;
 		}
 	);
