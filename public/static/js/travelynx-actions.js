@@ -148,9 +148,11 @@ function tvly_reg_handlers() {
 				shareObj['url'] = $(this).data('url');
 			}
 			navigator.share(shareObj);
+		} else if ($(this).data('url')) {
+			location.href = $(this).data('url');
 		}
 	});
-	if ($('.action-share').length && !navigator.share) {
+	if ($('.action-share').length && !navigator.share && !$('.action-share').data('url')) {
 		$('.action-share').css('display', 'none');
 	}
 }
