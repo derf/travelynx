@@ -27,7 +27,15 @@
 						Ziel erreicht
 					% }
 					% if ($journey->{arrival_countdown} < (60 * 15) and $journey->{arr_platform}) {
-						<br/>auf Gleis <%= $journey->{arr_platform} %>
+						% if ($journey->{arr_direction} and $journey->{arr_direction} eq 'r') {
+							<br/>Gleis <%= $journey->{arr_platform} %> ▶
+						% }
+						% elsif ($journey->{arr_direction} and $journey->{arr_direction} eq 'l') {
+							<br/>◀ Gleis <%= $journey->{arr_platform} %>
+						% }
+						% else {
+							<br/>auf Gleis <%= $journey->{arr_platform} %>
+						% }
 					% }
 				% }
 				% elsif ($journey->{arr_name}) {

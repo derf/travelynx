@@ -1538,6 +1538,39 @@ sub startup {
 	);
 
 	$self->helper(
+		'get_dbdb_station_p' => sub {
+			my ( $self, $ds100 ) = @_;
+
+			my $url = "https://lib.finalrewind.org/dbdb/s/${ds100}.json";
+
+			my $cache   = $self->app->cache_iris_main;
+			my $promise = Mojo::Promise->new;
+
+			if ( my $content = $cache->thaw($url) ) {
+				$promise->resolve($content);
+				return $promise;
+			}
+
+			$self->ua->request_timeout(5)->get_p($url)->then(
+				sub {
+					my ($tx) = @_;
+					my $body = decode( 'utf-8', $tx->res->body );
+
+					my $json = JSON->new->decode($body);
+					$cache->freeze( $url, $json );
+					$promise->resolve($json);
+				}
+			)->catch(
+				sub {
+					my ($err) = @_;
+					$promise->reject($err);
+				}
+			)->wait;
+			return $promise;
+		}
+	);
+
+	$self->helper(
 		'get_wagonorder_p' => sub {
 			my ( $self, $ts, $train_no ) = @_;
 			my $api_ts = $ts->strftime('%Y%m%d%H%M');
@@ -1688,13 +1721,17 @@ sub startup {
 
 			my $db = $self->pg->db;
 
-			my $journey
-			  = $db->select( 'in_transit', ['route'], { user_id => $uid } )
-			  ->expand->hash;
+			my $journey = $db->select(
+				'in_transit_str',
+				[ 'arr_ds100', 'route' ],
+				{ user_id => $uid }
+			)->expand->hash;
 
 			if ( not $journey ) {
 				return;
 			}
+
+			my ($platform) = ( ( $train->platform // 0 ) =~ m{(\d+)} );
 
 			my $route = $journey->{route};
 
@@ -1705,14 +1742,6 @@ sub startup {
 			my $train_no  = $train->type . ' ' . $train->train_no;
 
 			$self->app->log->debug("add_route_timestamps");
-
-			my $extra_data = {
-				delay_msg => [
-					map { [ $_->[0]->epoch, $_->[1] ] } $train->delay_messages
-				],
-				qos_msg =>
-				  [ map { [ $_->[0]->epoch, $_->[1] ] } $train->qos_messages ],
-			};
 
 			my ( $trainlink, $route_data );
 
@@ -1803,49 +1832,76 @@ sub startup {
 						  = $route_data->{ $station->[0] };
 					}
 
-					$extra_data->{him_msg} = $traininfo2->{messages};
+					my $res = $db->select( 'in_transit', ['data'],
+						{ user_id => $uid } );
+					my $res_h = $res->expand->hash;
+					my $data  = $res_h->{data} // {};
 
-					#my $res = $db->select( 'in_transit', ['data'],
-					#	{ user_id => $uid } );
-					#my $res_h = $res->expand->hash;
-					#if (    $res_h
-					#	and $res_h->{data}
-					#	and $res_h->{data}{wagonorder} )
-					#{
-					#	$extra_data->{wagonorder} = $res_h->{data}{wagonorder};
-					#}
+					$data->{delay_msg} = [ map { [ $_->[0]->epoch, $_->[1] ] }
+						  $train->delay_messages ];
+					$data->{qos_msg} = [ map { [ $_->[0]->epoch, $_->[1] ] }
+						  $train->qos_messages ];
 
-					return $db->update_p(
+					$data->{him_msg} = $traininfo2->{messages};
+
+					$db->update(
 						'in_transit',
 						{
 							route => JSON->new->encode($route),
-							data  => JSON->new->encode($extra_data)
+							data  => JSON->new->encode($data)
 						},
 						{ user_id => $uid }
 					);
 				}
-
-				  #)->then(
-				  #	sub {
-				  #		if ($is_departure) {
-				  #			return $self->get_wagonorder_p( $train->sched_departure,
-				  #				$train->train_no );
-				  #		}
-				  #		return Mojo::Promise->reject;
-				  #	}
-				  #)->then(
-				  #	sub {
-				  #		my ($wagonorder) = @_;
-
-				  #		$extra_data->{wagonorder} = $wagonorder;
-
-				  #		$db->update(
-				  #			'in_transit',
-				  #			{ data    => JSON->new->encode($extra_data) },
-				  #			{ user_id => $uid }
-				  #		);
-				  #	}
 			)->wait;
+
+			if ( $train->type =~ m{[EI]C} and $train->sched_departure ) {
+				$self->get_wagonorder_p( $train->sched_departure,
+					$train->train_no )->then(
+					sub {
+						my ($wagonorder) = @_;
+
+						my $res = $db->select( 'in_transit', ['data'],
+							{ user_id => $uid } );
+						my $res_h = $res->expand->hash;
+						my $data  = $res_h->{data} // {};
+
+						if ($is_departure) {
+							$data->{wagonorder_dep} = $wagonorder;
+						}
+						else {
+							$data->{wagonorder_arr} = $wagonorder;
+						}
+
+						$db->update(
+							'in_transit',
+							{ data    => JSON->new->encode($data) },
+							{ user_id => $uid }
+						);
+					}
+				)->wait;
+			}
+
+			if ( $journey->{arr_ds100} and not $is_departure ) {
+				$self->get_dbdb_station_p( $journey->{arr_ds100} )->then(
+					sub {
+						my ($station_info) = @_;
+
+						my $res = $db->select( 'in_transit', ['data'],
+							{ user_id => $uid } );
+						my $res_h = $res->expand->hash;
+						my $data  = $res_h->{data} // {};
+
+						$data->{stationinfo_arr} = $station_info;
+
+						$db->update(
+							'in_transit',
+							{ data    => JSON->new->encode($data) },
+							{ user_id => $uid }
+						);
+					}
+				)->wait;
+			}
 		}
 	);
 
@@ -2307,6 +2363,20 @@ sub startup {
 					elsif ( $ret->{journey_completion} < 0 ) {
 						$ret->{journey_completion} = 0;
 					}
+
+					my ($arr_platform_number)
+					  = ( ( $ret->{arr_platform} // 0 ) =~ m{(\d+)} );
+					if ( $arr_platform_number
+						and exists $in_transit->{data}{stationinfo_arr}
+						{$arr_platform_number} )
+					{
+						my $platform_info = $in_transit->{data}{stationinfo_arr}
+						  {$arr_platform_number};
+						if ( $platform_info->{kopfgleis} ) {
+							$ret->{arr_direction} = $platform_info->{direction};
+						}
+					}
+
 				}
 				else {
 					$ret->{arrival_countdown}  = undef;
