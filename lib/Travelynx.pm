@@ -2259,9 +2259,15 @@ sub startup {
 
 				my @route = @{ $in_transit->{route} // [] };
 				my @route_after;
+				my $stop_before_dest;
 				my $is_after = 0;
 				for my $station (@route) {
 
+					if (    $in_transit->{arr_name}
+						and $station->[0] eq $in_transit->{arr_name} )
+					{
+						$stop_before_dest = $route_after[-1][0];
+					}
 					if ($is_after) {
 						push( @route_after, $station );
 					}
@@ -2375,6 +2381,14 @@ sub startup {
 						  {$arr_platform_number};
 						if ( $platform_info->{kopfgleis} ) {
 							$ret->{arr_direction} = $platform_info->{direction};
+						}
+						elsif ( $stop_before_dest
+							and exists $platform_info->{direction_from}
+							{$stop_before_dest} )
+						{
+							$ret->{arr_direction}
+							  = $platform_info->{direction_from}
+							  {$stop_before_dest};
 						}
 						elsif ( $in_transit->{data}{wagonorder_arr} ) {
 							my $wr;
