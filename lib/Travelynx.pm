@@ -13,6 +13,7 @@ use Geo::Distance;
 use JSON;
 use List::Util qw(first);
 use List::MoreUtils qw(after_incl before_incl);
+use Travel::Status::DE::DBWagenreihung;
 use Travel::Status::DE::IRIS;
 use Travel::Status::DE::IRIS::Stations;
 use Travelynx::Helper::Sendmail;
@@ -2374,6 +2375,38 @@ sub startup {
 						  {$arr_platform_number};
 						if ( $platform_info->{kopfgleis} ) {
 							$ret->{arr_direction} = $platform_info->{direction};
+						}
+						elsif ( $in_transit->{data}{wagonorder_arr} ) {
+							my $wr;
+							eval {
+								$wr
+								  = Travel::Status::DE::DBWagenreihung->new(
+									from_json =>
+									  $in_transit->{data}{wagonorder_arr} );
+							};
+							if (    $wr
+								and $wr->sections
+								and defined $wr->direction )
+							{
+								my $section_0 = ( $wr->sections )[0];
+								my $direction = $wr->direction;
+								if ( $section_0 eq 'A' and $direction == 0 ) {
+									$ret->{arr_direction}
+									  = $platform_info->{direction};
+								}
+								elsif ( $section_0 ne 'A'
+									and $direction == 100 )
+								{
+									$ret->{arr_direction}
+									  = $platform_info->{direction};
+								}
+								else {
+									$ret->{arr_direction}
+									  = $platform_info->{direction} eq 'r'
+									  ? 'l'
+									  : 'r';
+								}
+							}
 						}
 					}
 
