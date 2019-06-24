@@ -46,6 +46,7 @@
 				% }
 				% if (my $wr = $journey->{wagonorder}) {
 					<br/>
+					<a href="https://beta.marudor.de/<%= $journey->{dep_name} %>?selectedDetail=<%= $journey->{train_id} %>">
 					%= $wr->direction == 100 ? '→' : '←';
 					% for my $wagon ($wr->wagons) {
 						% if (not ($wagon->is_locomotive or $wagon->is_powercar)) {
@@ -53,6 +54,7 @@
 						% }
 					% }
 					%= $wr->direction == 100 ? '→' : '←';
+					</a>
 				% }
 			</div>
 			<div class="progress" style="height: 1ex;">
