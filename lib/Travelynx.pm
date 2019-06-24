@@ -2264,6 +2264,7 @@ sub startup {
 				for my $station (@route) {
 
 					if (    $in_transit->{arr_name}
+						and @route_after
 						and $station->[0] eq $in_transit->{arr_name} )
 					{
 						$stop_before_dest = $route_after[-1][0];
@@ -2353,6 +2354,25 @@ sub startup {
 
 				$ret->{departure_countdown}
 				  = $ret->{real_departure}->epoch - $now->epoch;
+
+				if (    $ret->{departure_countdown} > 0
+					and $in_transit->{data}{wagonorder_dep} )
+				{
+					my $wr;
+					eval {
+						$wr
+						  = Travel::Status::DE::DBWagenreihung->new(
+							from_json => $in_transit->{data}{wagonorder_dep} );
+					};
+					if (    $wr
+						and $wr->sections
+						and $wr->wagons
+						and defined $wr->direction )
+					{
+						$ret->{wagonorder} = $wr;
+					}
+				}
+
 				if ( $in_transit->{real_arr_ts} ) {
 					$ret->{arrival_countdown}
 					  = $ret->{real_arrival}->epoch - $now->epoch;

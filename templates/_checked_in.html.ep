@@ -44,6 +44,16 @@
 				% if ($journey->{departure_countdown} > 0 and $journey->{dep_platform}) {
 					<br/>von Gleis <%= $journey->{dep_platform} %>
 				% }
+				% if (my $wr = $journey->{wagonorder}) {
+					<br/>
+					%= $wr->direction == 100 ? '→' : '←';
+					% for my $wagon ($wr->wagons) {
+						% if (not ($wagon->is_locomotive or $wagon->is_powercar)) {
+							%= $wagon->number || $wagon->type
+						% }
+					% }
+					%= $wr->direction == 100 ? '→' : '←';
+				% }
 			</div>
 			<div class="progress" style="height: 1ex;">
 				<div class="determinate" style="width: <%= sprintf('%.2f', 100 * ($journey->{journey_completion} // 0)); %>%;"></div>

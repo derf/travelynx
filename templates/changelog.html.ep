@@ -9,6 +9,11 @@
 			<i class="material-icons left">add</i> Angabe der Ausstiegsseite für
 			einzelne Züge und Zielbahnhöfe.
 		</p>
+		<p>
+			<i class="material-icons left">add</i> Angabe der Wagenreihung vor der
+			Abfahrt. Derzeit sind Wagenreihungen nur für Fernverkehrszüge
+			verfügbar.
+		</p>
 	</div>
 </div>
 
