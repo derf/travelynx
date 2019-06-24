@@ -8,6 +8,7 @@ requires 'Geo::Distance::XS';
 requires 'Mojolicious';
 requires 'Mojolicious::Plugin::Authentication';
 requires 'Mojo::Pg';
+requires 'Travel::Status::DE::DBWagenreihung';
 requires 'Travel::Status::DE::IRIS';
 requires 'UUID::Tiny';
 requires 'JSON';
