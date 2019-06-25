@@ -2424,11 +2424,13 @@ sub startup {
 							{
 								my $section_0 = ( $wr->sections )[0];
 								my $direction = $wr->direction;
-								if ( $section_0 eq 'A' and $direction == 0 ) {
+								if (    $section_0->name eq 'A'
+									and $direction == 0 )
+								{
 									$ret->{arr_direction}
 									  = $platform_info->{direction};
 								}
-								elsif ( $section_0 ne 'A'
+								elsif ( $section_0->name ne 'A'
 									and $direction == 100 )
 								{
 									$ret->{arr_direction}
