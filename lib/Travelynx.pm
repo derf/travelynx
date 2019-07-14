@@ -1763,8 +1763,16 @@ sub startup {
 						if (   $suggestion->{depDate} eq $date_yy
 							or $suggestion->{depDate} eq $date_yyyy )
 						{
-							$trainlink = $suggestion->{trainLink};
-							last;
+            # Train numbers are not unique, e.g. IC 149 refers both to the
+            # InterCity service Amsterdam -> Berlin and to the InterCity service
+            # Koebenhavns Lufthavn st -> Aarhus.  One workaround is making
+            # requests with the stationFilter=80 parameter.  Checking the origin
+            # station seems to be the more generic solution, so we do that
+            # instead.
+							if ( $suggestion->{dep} eq $train->origin ) {
+								$trainlink = $suggestion->{trainLink};
+								last;
+							}
 						}
 					}
 
