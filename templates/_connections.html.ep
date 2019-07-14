@@ -4,7 +4,7 @@
 		<tr>
 			<td>
 				% if ($checkin_from) {
-					<a class="action-checkin" data-station="<%= $checkin_from %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>"><%= $train->line %></a>
+					<a class="action-checkin" data-station="<%= $train->station_uic %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>"><%= $train->line %></a>
 				% }
 				% else {
 					%= $train->line
@@ -12,7 +12,7 @@
 			</td>
 			<td>
 				% if ($checkin_from) {
-					<a class="action-checkin" data-station="<%= $checkin_from %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>"><%= $via %></a>
+					<a class="action-checkin" data-station="<%= $train->station_uic %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>"><%= $via %></a>
 				% }
 				% else {
 					%= $via
@@ -38,7 +38,7 @@
 		<tr>
 			<td class="<%= $td_class %>">
 				% if ($checkin_from) {
-					<a class="<%= $link_class %>" data-station="<%= $checkin_from %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>"><%= $train->line %></a>
+					<a class="<%= $link_class %>" data-station="<%= $train->station_uic %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>"><%= $train->line %></a>
 				% }
 				% else {
 					%= $train->line
@@ -46,7 +46,7 @@
 			</td>
 			<td class="<%= $td_class %>">
 				% if ($checkin_from) {
-					<a class="<%= $link_class %>" data-station="<%= $checkin_from %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>"><%= $via %></a>
+					<a class="<%= $link_class %>" data-station="<%= $train->station_uic %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>"><%= $via %></a>
 				% }
 				% else {
 					%= $via

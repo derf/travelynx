@@ -338,7 +338,7 @@ sub station {
 	my $station = $self->stash('station');
 	my $train   = $self->param('train');
 
-	my $status = $self->get_departures( $station, 120, 30 );
+	my $status = $self->get_departures( $station, 120, 30, 1 );
 
 	if ( $status->{errstr} ) {
 		$self->render(

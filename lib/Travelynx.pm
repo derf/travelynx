@@ -218,10 +218,11 @@ sub startup {
 
 	$self->helper(
 		'get_departures' => sub {
-			my ( $self, $station, $lookbehind, $lookahead ) = @_;
+			my ( $self, $station, $lookbehind, $lookahead, $with_related ) = @_;
 
-			$lookbehind //= 180;
-			$lookahead  //= 30;
+			$lookbehind   //= 180;
+			$lookahead    //= 30;
+			$with_related //= 0;
 
 			my @station_matches
 			  = Travel::Status::DE::IRIS::Stations::get_station($station);
@@ -240,6 +241,7 @@ sub startup {
 						timeout => 10,
 						agent   => 'travelynx/' . $self->app->config->{version},
 					},
+					with_related => $with_related,
 				);
 				return {
 					results       => [ $status->results ],
@@ -348,7 +350,7 @@ sub startup {
 		'checkin' => sub {
 			my ( $self, $station, $train_id ) = @_;
 
-			my $status = $self->get_departures( $station, 140, 40 );
+			my $status = $self->get_departures( $station, 140, 40, 0 );
 			if ( $status->{errstr} ) {
 				return ( undef, $status->{errstr} );
 			}
@@ -532,7 +534,7 @@ sub startup {
 			my ( $self, $station, $force, $uid ) = @_;
 
 			my $db     = $self->pg->db;
-			my $status = $self->get_departures( $station, 120, 120 );
+			my $status = $self->get_departures( $station, 120, 120, 0 );
 			$uid //= $self->current_user->{id};
 			my $user     = $self->get_user_status($uid);
 			my $train_id = $user->{train_id};
@@ -2060,7 +2062,7 @@ sub startup {
 				return;
 			}
 
-			my $stationboard = $self->get_departures( $ds100, 0, 40 );
+			my $stationboard = $self->get_departures( $ds100, 0, 40, 1 );
 			if ( $stationboard->{errstr} ) {
 				return;
 			}
