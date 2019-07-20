@@ -1485,15 +1485,33 @@ sub startup {
 			);
 			my $stats = $self->compute_journey_stats(@journeys);
 
-			$self->pg->db->insert(
-				'journey_stats',
+			eval {
+				$self->pg->db->insert(
+					'journey_stats',
+					{
+						user_id => $uid,
+						year    => $year,
+						month   => $month,
+						data    => JSON->new->encode($stats),
+					}
+				);
+			};
+			if ( my $err = $@ ) {
+				if ( $err =~ m{duplicate key value violates unique constraint} )
 				{
-					user_id => $uid,
-					year    => $year,
-					month   => $month,
-					data    => JSON->new->encode($stats),
+                 # When a user opens the same history page several times in
+                 # short succession, there is a race condition where several
+                 # Mojolicious workers execute this helper, notice that there is
+                 # no up-to-date history, compute it, and insert it using the
+                 # statement above. This will lead to a uniqueness violation
+                 # in each successive insert. However, this is harmless, and
+                 # thus ignored.
 				}
-			);
+				else {
+					# Otherwise we probably have a problem.
+					die($@);
+				}
+			}
 
 			return $stats;
 		}
