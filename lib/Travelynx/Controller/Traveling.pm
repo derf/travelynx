@@ -3,6 +3,7 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use DateTime;
 use DateTime::Format::Strptime;
+use List::UtilsBy qw(uniq_by);
 use Travel::Status::DE::IRIS::Stations;
 
 sub homepage {
@@ -137,10 +138,11 @@ sub geolocation {
 				distance => $_->[1],
 			}
 		} Travel::Status::DE::IRIS::Stations::get_station_by_location( $lon,
-			$lat, 5 );
+			$lat, 10 );
+		@candidates = uniq_by { $_->{name} } @candidates;
 		$self->render(
 			json => {
-				candidates => [@candidates],
+				candidates => [ @candidates[ 0 .. 4 ] ],
 			}
 		);
 	}

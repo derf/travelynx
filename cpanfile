@@ -5,6 +5,7 @@ requires 'DateTime::Format::Strptime';
 requires 'Email::Sender';
 requires 'Geo::Distance';
 requires 'Geo::Distance::XS';
+requires 'List::UtilsBy';
 requires 'Mojolicious';
 requires 'Mojolicious::Plugin::Authentication';
 requires 'Mojo::Pg';
