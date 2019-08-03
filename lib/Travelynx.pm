@@ -2270,6 +2270,51 @@ sub startup {
 	);
 
 	$self->helper(
+		'stationinfo_to_direction' => sub {
+			my ( $self, $platform_info, $wagonorder, $prev_stop ) = @_;
+			if ( $platform_info->{kopfgleis} ) {
+				return $platform_info->{direction};
+			}
+			elsif ( $prev_stop
+				and exists $platform_info->{direction_from}{$prev_stop} )
+			{
+				return $platform_info->{direction_from}{$prev_stop};
+			}
+			elsif ($wagonorder) {
+				my $wr;
+				eval {
+					$wr
+					  = Travel::Status::DE::DBWagenreihung->new(
+						from_json => $wagonorder );
+				};
+				if (    $wr
+					and $wr->sections
+					and defined $wr->direction )
+				{
+					my $section_0 = ( $wr->sections )[0];
+					my $direction = $wr->direction;
+					if (    $section_0->name eq 'A'
+						and $direction == 0 )
+					{
+						return $platform_info->{direction};
+					}
+					elsif ( $section_0->name ne 'A'
+						and $direction == 100 )
+					{
+						return $platform_info->{direction};
+					}
+					elsif ( $platform_info->{direction} ) {
+						return $platform_info->{direction} eq 'r'
+						  ? 'l'
+						  : 'r';
+					}
+					return;
+				}
+			}
+		}
+	);
+
+	$self->helper(
 		'get_user_status' => sub {
 			my ( $self, $uid ) = @_;
 
@@ -2425,53 +2470,13 @@ sub startup {
 						and exists $in_transit->{data}{stationinfo_arr}
 						{$arr_platform_number} )
 					{
-						my $platform_info = $in_transit->{data}{stationinfo_arr}
-						  {$arr_platform_number};
-						if ( $platform_info->{kopfgleis} ) {
-							$ret->{arr_direction} = $platform_info->{direction};
-						}
-						elsif ( $stop_before_dest
-							and exists $platform_info->{direction_from}
-							{$stop_before_dest} )
-						{
-							$ret->{arr_direction}
-							  = $platform_info->{direction_from}
-							  {$stop_before_dest};
-						}
-						elsif ( $in_transit->{data}{wagonorder_arr} ) {
-							my $wr;
-							eval {
-								$wr
-								  = Travel::Status::DE::DBWagenreihung->new(
-									from_json =>
-									  $in_transit->{data}{wagonorder_arr} );
-							};
-							if (    $wr
-								and $wr->sections
-								and defined $wr->direction )
-							{
-								my $section_0 = ( $wr->sections )[0];
-								my $direction = $wr->direction;
-								if (    $section_0->name eq 'A'
-									and $direction == 0 )
-								{
-									$ret->{arr_direction}
-									  = $platform_info->{direction};
-								}
-								elsif ( $section_0->name ne 'A'
-									and $direction == 100 )
-								{
-									$ret->{arr_direction}
-									  = $platform_info->{direction};
-								}
-								else {
-									$ret->{arr_direction}
-									  = $platform_info->{direction} eq 'r'
-									  ? 'l'
-									  : 'r';
-								}
-							}
-						}
+						$ret->{arr_direction}
+						  = $self->stationinfo_to_direction(
+							$in_transit->{data}{stationinfo_arr}
+							  {$arr_platform_number},
+							$in_transit->{data}{wagonorder_arr},
+							$stop_before_dest
+						  );
 					}
 
 				}
