@@ -1744,7 +1744,7 @@ sub startup {
 
 			my $journey = $db->select(
 				'in_transit_str',
-				[ 'arr_ds100', 'route' ],
+				[ 'arr_ds100', 'dep_ds100', 'route' ],
 				{ user_id => $uid }
 			)->expand->hash;
 
@@ -1901,6 +1901,27 @@ sub startup {
 						else {
 							$data->{wagonorder_arr} = $wagonorder;
 						}
+
+						$db->update(
+							'in_transit',
+							{ data    => JSON->new->encode($data) },
+							{ user_id => $uid }
+						);
+					}
+				)->wait;
+			}
+
+			if ($is_departure) {
+				$self->get_dbdb_station_p( $journey->{dep_ds100} )->then(
+					sub {
+						my ($station_info) = @_;
+
+						my $res = $db->select( 'in_transit', ['data'],
+							{ user_id => $uid } );
+						my $res_h = $res->expand->hash;
+						my $data  = $res_h->{data} // {};
+
+						$data->{stationinfo_dep} = $station_info;
 
 						$db->update(
 							'in_transit',
@@ -2271,14 +2292,25 @@ sub startup {
 
 	$self->helper(
 		'stationinfo_to_direction' => sub {
-			my ( $self, $platform_info, $wagonorder, $prev_stop ) = @_;
+			my ( $self, $platform_info, $wagonorder, $prev_stop, $next_stop )
+			  = @_;
 			if ( $platform_info->{kopfgleis} ) {
+				if ($next_stop) {
+					return $platform_info->{direction} eq 'r' ? 'l' : 'r';
+				}
 				return $platform_info->{direction};
 			}
 			elsif ( $prev_stop
 				and exists $platform_info->{direction_from}{$prev_stop} )
 			{
 				return $platform_info->{direction_from}{$prev_stop};
+			}
+			elsif ( $next_stop
+				and exists $platform_info->{direction_from}{$next_stop} )
+			{
+				return $platform_info->{direction_from}{$next_stop} eq 'r'
+				  ? 'l'
+				  : 'r';
 			}
 			elsif ($wagonorder) {
 				my $wr;
@@ -2349,6 +2381,7 @@ sub startup {
 						$is_after = 1;
 					}
 				}
+				my $stop_after_dep = $route_after[0][0];
 
 				my $ts = $in_transit->{checkout_ts}
 				  // $in_transit->{checkin_ts};
@@ -2464,6 +2497,22 @@ sub startup {
 						$ret->{journey_completion} = 0;
 					}
 
+					my ($dep_platform_number)
+					  = ( ( $ret->{dep_platform} // 0 ) =~ m{(\d+)} );
+					if ( $dep_platform_number
+						and exists $in_transit->{data}{stationinfo_dep}
+						{$dep_platform_number} )
+					{
+						$ret->{dep_direction}
+						  = $self->stationinfo_to_direction(
+							$in_transit->{data}{stationinfo_dep}
+							  {$dep_platform_number},
+							$in_transit->{data}{wagonorder_dep},
+							undef,
+							$stop_after_dep
+						  );
+					}
+
 					my ($arr_platform_number)
 					  = ( ( $ret->{arr_platform} // 0 ) =~ m{(\d+)} );
 					if ( $arr_platform_number
@@ -2475,7 +2524,8 @@ sub startup {
 							$in_transit->{data}{stationinfo_arr}
 							  {$arr_platform_number},
 							$in_transit->{data}{wagonorder_arr},
-							$stop_before_dest
+							$stop_before_dest,
+							undef
 						  );
 					}
 

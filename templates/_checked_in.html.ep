@@ -42,7 +42,15 @@
 					Ankunft in mehr als zwei Stunden
 				% }
 				% if ($journey->{departure_countdown} > 0 and $journey->{dep_platform}) {
-					<br/>von Gleis <%= $journey->{dep_platform} %>
+					% if ($journey->{dep_direction} and $journey->{dep_direction} eq 'r') {
+						<br/>Gleis <%= $journey->{dep_platform} %> ▶
+					% }
+					% elsif ($journey->{dep_direction} and $journey->{dep_direction} eq 'l') {
+						<br/>◀ Gleis <%= $journey->{dep_platform} %>
+					% }
+					% else {
+						<br/>von Gleis <%= $journey->{dep_platform} %>
+					% }
 				% }
 				% if (my $wr = $journey->{wagonorder}) {
 					<br/>
