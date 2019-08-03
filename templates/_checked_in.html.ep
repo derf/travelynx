@@ -54,14 +54,22 @@
 				% }
 				% if (my $wr = $journey->{wagonorder}) {
 					<br/>
+					% my @wagons = $wr->wagons;
+					% my $direction = $wr->direction == 100 ? '→' : '←';
+					% if ($journey->{dep_direction}) {
+						% $direction = $journey->{dep_direction} eq 'l' ? '◀' : '▶';
+						% if (($journey->{dep_direction} eq 'l' ? 0 : 100) != $wr->direction) {
+							% @wagons = reverse @wagons;
+						% }
+					% }
 					<a href="https://marudor.de/<%= $journey->{dep_name} %>?selectedDetail=<%= $journey->{train_id} %>">
-					%= $wr->direction == 100 ? '→' : '←';
-					% for my $wagon ($wr->wagons) {
+					%= $direction
+					% for my $wagon (@wagons) {
 						% if (not ($wagon->is_locomotive or $wagon->is_powercar)) {
 							%= $wagon->number || $wagon->type
 						% }
 					% }
-					%= $wr->direction == 100 ? '→' : '←';
+					%= $direction
 					</a>
 				% }
 			</div>
