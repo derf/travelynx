@@ -2364,6 +2364,7 @@ sub startup {
 
 				my @route = @{ $in_transit->{route} // [] };
 				my @route_after;
+				my $dep_info;
 				my $stop_before_dest;
 				my $is_after = 0;
 				for my $station (@route) {
@@ -2379,6 +2380,11 @@ sub startup {
 					}
 					if ( $station->[0] eq $in_transit->{dep_name} ) {
 						$is_after = 1;
+						$self->app->log->debug("is_after");
+						if ( @{$station} > 1 ) {
+							$self->app->log->debug("set dep_info");
+							$dep_info = $station->[1];
+						}
 					}
 				}
 				my $stop_after_dep = $route_after[0][0];
@@ -2388,14 +2394,15 @@ sub startup {
 				my $action_time = epoch_to_dt($ts);
 
 				my $ret = {
-					checked_in      => !$in_transit->{cancelled},
-					cancelled       => $in_transit->{cancelled},
-					timestamp       => $action_time,
-					timestamp_delta => $now->epoch - $action_time->epoch,
-					train_type      => $in_transit->{train_type},
-					train_line      => $in_transit->{train_line},
-					train_no        => $in_transit->{train_no},
-					train_id        => $in_transit->{train_id},
+					checked_in         => !$in_transit->{cancelled},
+					cancelled          => $in_transit->{cancelled},
+					timestamp          => $action_time,
+					timestamp_delta    => $now->epoch - $action_time->epoch,
+					train_type         => $in_transit->{train_type},
+					train_line         => $in_transit->{train_line},
+					train_no           => $in_transit->{train_no},
+					train_id           => $in_transit->{train_id},
+					boarding_countdown => -1,
 					sched_departure =>
 					  epoch_to_dt( $in_transit->{sched_dep_ts} ),
 					real_departure => epoch_to_dt( $in_transit->{real_dep_ts} ),
@@ -2425,6 +2432,22 @@ sub startup {
 					push( @parsed_messages, [ epoch_to_dt($ts), $msg ] );
 				}
 				$ret->{extra_data}{qos_msg} = [@parsed_messages];
+
+				if ( $dep_info and $dep_info->{sched_arr} ) {
+					$self->app->log->debug(
+						"dep_info has sched_arr. set countdown.");
+					$dep_info->{sched_arr}
+					  = epoch_to_dt( $dep_info->{sched_arr} );
+					$dep_info->{rt_arr} = $dep_info->{sched_arr}->clone;
+					if (    $dep_info->{adelay}
+						and $dep_info->{adelay} =~ m{^\d+$} )
+					{
+						$dep_info->{rt_arr}
+						  ->add( minutes => $dep_info->{adelay} );
+					}
+					$dep_info->{rt_arr_countdown} = $ret->{boarding_countdown}
+					  = $dep_info->{rt_arr}->epoch - $epoch;
+				}
 
 				for my $station (@route_after) {
 					if ( @{$station} > 1 ) {

@@ -6,6 +6,15 @@
 			<div class="center-align countdown"
 				data-duration="<%= $journey->{journey_duration} // 0 %>"
 				data-arrival="<%= $journey->{real_arrival}->epoch %>">
+				% if ($journey->{boarding_countdown} > 120) {
+					Einfahrt in <%= sprintf('%.f', $journey->{boarding_countdown} / 60) %> Minuten<br/>
+				% }
+				% elsif ($journey->{boarding_countdown} > 60) {
+					Einfahrt in einer Minute<br/>
+				% }
+				% elsif ($journey->{boarding_countdown} > 0) {
+					Zug fährt ein<br/>
+				% }
 				% if ($journey->{departure_countdown} > 120) {
 					Abfahrt in <%= sprintf('%.f', $journey->{departure_countdown} / 60) %> Minuten
 				% }
