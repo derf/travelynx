@@ -558,7 +558,7 @@ my @migrations = (
 					add column messages_new jsonb;
 			}
 		);
-		my $res = $db->select( 'journeys', [ 'id', 'messages', 'route' ] );
+		my $res  = $db->select( 'journeys', [ 'id', 'messages', 'route' ] );
 		my $json = JSON->new;
 
 		for my $journey ( $res->hashes->each ) {
@@ -686,6 +686,22 @@ my @migrations = (
 					left join stations as arr_stations on arr_stations.id = checkout_station_id
 					;
 				update schema_version set version = 15;
+			}
+		);
+	},
+
+	# v15 -> v16
+	# Beeline distance calculation now also works when departure or arrival
+	# station do not have geo-coordinates (by resorting to the first/last
+	# station in the route which does have geo-coordinates). Previously,
+	# beeline distances were reported as zero in this case. Clear caches
+	# to recalculate total distances per year / month.
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				truncate journey_stats;
+				update schema_version set version = 16;
 			}
 		);
 	},

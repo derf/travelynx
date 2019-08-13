@@ -2247,16 +2247,12 @@ sub startup {
 					  = $ref->{rt_arrival}->epoch
 					  ? $ref->{rt_arrival}->epoch - $ref->{rt_departure}->epoch
 					  : undef;
-					my ( $km, $skip )
+					my ( $km_route, $km_beeline, $skip )
 					  = $self->get_travel_distance( $ref->{from_name},
 						$ref->{to_name}, $ref->{route} );
-					$ref->{km_route}   = $km;
-					$ref->{skip_route} = $skip;
-					( $km, $skip )
-					  = $self->get_travel_distance( $ref->{from_name},
-						$ref->{to_name},
-						[ [ $ref->{from_name} ], [ $ref->{to_name} ] ] );
-					$ref->{km_beeline}   = $km;
+					$ref->{km_route}     = $km_route;
+					$ref->{skip_route}   = $skip;
+					$ref->{km_beeline}   = $km_beeline;
 					$ref->{skip_beeline} = $skip;
 					my $kmh_divisor
 					  = ( $ref->{rt_duration} // $ref->{sched_duration}
@@ -2685,28 +2681,44 @@ sub startup {
 		'get_travel_distance' => sub {
 			my ( $self, $from, $to, $route_ref ) = @_;
 
-			my $distance = 0;
-			my $skipped  = 0;
-			my $geo      = Geo::Distance->new();
-			my @stations = map { $_->[0] } @{$route_ref};
-			my @route    = after_incl { $_ eq $from } @stations;
+			my $distance_intermediate = 0;
+			my $distance_beeline      = 0;
+			my $skipped               = 0;
+			my $geo                   = Geo::Distance->new();
+			my @stations              = map { $_->[0] } @{$route_ref};
+			my @route                 = after_incl { $_ eq $from } @stations;
 			@route = before_incl { $_ eq $to } @route;
 
 			if ( @route < 2 ) {
 
 				# I AM ERROR
-				return 0;
+				return ( 0, 0 );
 			}
 
 			my $prev_station = get_station( shift @route );
 			if ( not $prev_station ) {
-				return 0;
+				return ( 0, 0 );
 			}
+
+           # Geo-coordinates for stations outside Germany are not available
+           # at the moment. When calculating distance with intermediate stops,
+           # these are simply left out (as if they were not part of the route).
+           # For beeline distance calculation, we use the route's first and last
+           # station with known geo-coordinates.
+			my $from_station_beeline;
+			my $to_station_beeline;
 
 			for my $station_name (@route) {
 				if ( my $station = get_station($station_name) ) {
+					if ( not $from_station_beeline and $#{$prev_station} >= 4 )
+					{
+						$from_station_beeline = $prev_station;
+					}
+					if ( $#{$station} >= 4 ) {
+						$to_station_beeline = $station;
+					}
 					if ( $#{$prev_station} >= 4 and $#{$station} >= 4 ) {
-						$distance
+						$distance_intermediate
 						  += $geo->distance( 'kilometer', $prev_station->[3],
 							$prev_station->[4], $station->[3], $station->[4] );
 					}
@@ -2717,7 +2729,15 @@ sub startup {
 				}
 			}
 
-			return ( $distance, $skipped );
+			if ( $from_station_beeline and $to_station_beeline ) {
+				$distance_beeline = $geo->distance(
+					'kilometer',                $from_station_beeline->[3],
+					$from_station_beeline->[4], $to_station_beeline->[3],
+					$to_station_beeline->[4]
+				);
+			}
+
+			return ( $distance_intermediate, $distance_beeline, $skipped );
 		}
 	);
 
