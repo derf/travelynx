@@ -121,13 +121,11 @@
 						% }
 					</td>
 				</tr>
-				% if ($journey->{edited} == 0x3fff) {
+				% if ($journey->{comment}) {
 					<tr>
 						<th scope="row">Kommentar</th>
 						<td>
-							% for my $message (@{$journey->{messages} // []}) {
-								<%= $message->[1] %><br/>
-							% }
+							<%= $journey->{comment} %>
 						</td>
 					</tr>
 				% }

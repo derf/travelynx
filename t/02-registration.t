@@ -215,6 +215,7 @@ $t->post_ok(
 		arr_station     => 'EG',
 		sched_arrival   => '16.10.2018 18:34',
 		rt_arrival      => '16.10.2018 18:34',
+		comment         => 'Passierschein A38',
 	}
 );
 $t->status_is(302)->header_is( location => '/journey/1' );
@@ -223,7 +224,8 @@ $t->get_ok('/journey/1')->status_is(200)->content_like(qr{M.nster\(Westf\)Hbf})
   ->content_like(qr{Gelsenkirchen Hbf})->content_like(qr{RE 11238})
   ->content_like(qr{Linie 42})->content_like(qr{..:36})
   ->content_like(qr{..:34})->content_like(qr{ca[.] 62 km})
-  ->content_like(qr{Luftlinie: 62 km})->content_like(qr{64 km/h});
+  ->content_like(qr{Luftlinie: 62 km})->content_like(qr{64 km/h})
+  ->content_like(qr{Passierschein A38});
 
 $t->get_ok('/history/2018/10')->status_is(200)->content_like(qr{62 km})
   ->content_like(qr{00:58 Stunden})->content_like(qr{00:00 Stunden})

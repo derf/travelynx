@@ -325,8 +325,8 @@ sub startup {
 			};
 
 			if ( $opt{comment} ) {
-				$entry->{messages}
-				  = JSON->new->encode( [ [ 0, $opt{comment} ] ] );
+				$entry->{user_data}
+				  = JSON->new->encode( { comment => $opt{comment} } );
 			}
 
 			my $journey_id = undef;
@@ -2228,6 +2228,9 @@ sub startup {
 					messages        => $entry->{messages},
 					route           => $entry->{route},
 					edited          => $entry->{edited},
+					comment         => $entry->{user_data}
+					? $entry->{user_data}{comment}
+					: undef,
 				};
 
 				if ( $opt{verbose} ) {
