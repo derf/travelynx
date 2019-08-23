@@ -75,6 +75,12 @@
 							%= text_field 'rt_arrival', id => 'real_arrival', class => 'validate', pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
 						</td>
 					</tr>
+					<tr>
+						<th scope="row">Kommentar</th>
+						<td>
+							%= text_field 'comment'
+						</td>
+					</tr>
 				</table>
 			</div>
 		</div>

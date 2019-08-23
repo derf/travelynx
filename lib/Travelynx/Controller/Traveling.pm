@@ -608,6 +608,20 @@ sub edit_journey {
 				}
 			}
 		}
+		for my $key (qw(comment)) {
+			if (
+				defined $self->param($key)
+				and ( not $journey->{user_data}
+					or $journey->{user_data}{$key} ne $self->param($key) )
+			  )
+			{
+				$error = $self->update_journey_part( $db, $journey->{id}, $key,
+					$self->param($key) );
+				if ($error) {
+					last;
+				}
+			}
+		}
 
 		if ( not $error ) {
 			$journey = $self->get_journey(
@@ -629,6 +643,11 @@ sub edit_journey {
 		if ( $journey->{$key} and $journey->{$key}->epoch ) {
 			$self->param(
 				$key => $journey->{$key}->strftime('%d.%m.%Y %H:%M') );
+		}
+	}
+	for my $key (qw(comment)) {
+		if ( $journey->{user_data} and $journey->{user_data}{$key} ) {
+			$self->param( $key => $journey->{user_data}{$key} );
 		}
 	}
 

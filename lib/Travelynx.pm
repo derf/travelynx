@@ -761,6 +761,19 @@ sub startup {
 						}
 					)->rows;
 				}
+				elsif ( $key eq 'comment' ) {
+					$journey->{user_data}{comment} = $value;
+					$rows = $db->update(
+						'journeys',
+						{
+							user_data =>
+							  JSON->new->encode( $journey->{user_data} ),
+						},
+						{
+							id => $journey_id,
+						}
+					)->rows;
+				}
 				else {
 					die("Invalid key $key\n");
 				}
@@ -2228,9 +2241,7 @@ sub startup {
 					messages        => $entry->{messages},
 					route           => $entry->{route},
 					edited          => $entry->{edited},
-					comment         => $entry->{user_data}
-					? $entry->{user_data}{comment}
-					: undef,
+					user_data       => $entry->{user_data},
 				};
 
 				if ( $opt{verbose} ) {

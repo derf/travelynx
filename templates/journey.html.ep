@@ -121,15 +121,7 @@
 						% }
 					</td>
 				</tr>
-				% if ($journey->{comment}) {
-					<tr>
-						<th scope="row">Kommentar</th>
-						<td>
-							<%= $journey->{comment} %>
-						</td>
-					</tr>
-				% }
-				% else {
+				% if ($journey->{messages} and @{$journey->{messages}}) {
 					<tr>
 						<th scope="row">Meldungen</th>
 						<td>
@@ -137,6 +129,14 @@
 								% my ($ts, $msg) = @{$message};
 								<%= $ts->strftime('%d.%m.%Y %H:%M') %> : <%= $msg %><br/>
 							% }
+						</td>
+					</tr>
+				% }
+				% if ($journey->{user_data} and $journey->{user_data}{comment}) {
+					<tr>
+						<th scope="row">Kommentar</th>
+						<td>
+							<%= $journey->{user_data}{comment} %>
 						</td>
 					</tr>
 				% }
