@@ -1,246 +1,264 @@
-<div class="card autorefresh">
-	<div class="card-content">
-		<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
-		<span class="card-title">Eingecheckt in <%= $journey->{train_type} %> <%= $journey->{train_no} %></span>
-		<p>
-			<div class="center-align countdown"
-				data-duration="<%= $journey->{journey_duration} // 0 %>"
-				data-arrival="<%= $journey->{real_arrival}->epoch %>">
-				% if ($journey->{boarding_countdown} > 120) {
-					Einfahrt in <%= sprintf('%.f', $journey->{boarding_countdown} / 60) %> Minuten<br/>
-				% }
-				% elsif ($journey->{boarding_countdown} > 60) {
-					Einfahrt in einer Minute<br/>
-				% }
-				% elsif ($journey->{boarding_countdown} > 0) {
-					Zug fährt ein<br/>
-				% }
-				% if ($journey->{departure_countdown} > 120) {
-					Abfahrt in <%= sprintf('%.f', $journey->{departure_countdown} / 60) %> Minuten
-				% }
-				% elsif ($journey->{departure_countdown} > 60) {
-					Abfahrt in einer Minute
-				% }
-				% elsif ($journey->{departure_countdown} > 0) {
-					Abfahrt in weniger als einer Minute
-				% }
-				% elsif (defined $journey->{arrival_countdown}) {
-					% if ($journey->{arrival_countdown} > 60) {
-						Ankunft in <%= sprintf('%.f', $journey->{arrival_countdown} / 60) %>
-						Minute<%= sprintf('%.f', $journey->{arrival_countdown} / 60) == 1 ? '' : 'n' %>
+<div class="autorefresh">
+	<div class="card">
+		<div class="card-content">
+			<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
+			<span class="card-title">Eingecheckt in <%= $journey->{train_type} %> <%= $journey->{train_no} %></span>
+			<p>
+				<div class="center-align countdown"
+					data-duration="<%= $journey->{journey_duration} // 0 %>"
+					data-arrival="<%= $journey->{real_arrival}->epoch %>">
+					% if ($journey->{boarding_countdown} > 120) {
+						Einfahrt in <%= sprintf('%.f', $journey->{boarding_countdown} / 60) %> Minuten<br/>
 					% }
-					% elsif ($journey->{arrival_countdown} > 0) {
-						Ankunft in weniger als einer Minute
+					% elsif ($journey->{boarding_countdown} > 60) {
+						Einfahrt in einer Minute<br/>
 					% }
-					% else {
-						Ziel erreicht
+					% elsif ($journey->{boarding_countdown} > 0) {
+						Zug fährt ein<br/>
 					% }
-					% if ($journey->{arrival_countdown} < (60 * 15) and $journey->{arr_platform}) {
-						% if ($journey->{arr_direction} and $journey->{arr_direction} eq 'r') {
-							<br/>Gleis <%= $journey->{arr_platform} %> ▶
+					% if ($journey->{departure_countdown} > 120) {
+						Abfahrt in <%= sprintf('%.f', $journey->{departure_countdown} / 60) %> Minuten
+					% }
+					% elsif ($journey->{departure_countdown} > 60) {
+						Abfahrt in einer Minute
+					% }
+					% elsif ($journey->{departure_countdown} > 0) {
+						Abfahrt in weniger als einer Minute
+					% }
+					% elsif (defined $journey->{arrival_countdown}) {
+						% if ($journey->{arrival_countdown} > 60) {
+							Ankunft in <%= sprintf('%.f', $journey->{arrival_countdown} / 60) %>
+							Minute<%= sprintf('%.f', $journey->{arrival_countdown} / 60) == 1 ? '' : 'n' %>
 						% }
-						% elsif ($journey->{arr_direction} and $journey->{arr_direction} eq 'l') {
-							<br/>◀ Gleis <%= $journey->{arr_platform} %>
+						% elsif ($journey->{arrival_countdown} > 0) {
+							Ankunft in weniger als einer Minute
 						% }
 						% else {
-							<br/>auf Gleis <%= $journey->{arr_platform} %>
+							Ziel erreicht
+						% }
+						% if ($journey->{arrival_countdown} < (60 * 15) and $journey->{arr_platform}) {
+							% if ($journey->{arr_direction} and $journey->{arr_direction} eq 'r') {
+								<br/>Gleis <%= $journey->{arr_platform} %> ▶
+							% }
+							% elsif ($journey->{arr_direction} and $journey->{arr_direction} eq 'l') {
+								<br/>◀ Gleis <%= $journey->{arr_platform} %>
+							% }
+							% else {
+								<br/>auf Gleis <%= $journey->{arr_platform} %>
+							% }
 						% }
 					% }
-				% }
-				% elsif ($journey->{arr_name}) {
-					Ankunft in mehr als zwei Stunden
-				% }
-				% if ($journey->{departure_countdown} > 0 and $journey->{dep_platform}) {
-					% if ($journey->{dep_direction} and $journey->{dep_direction} eq 'r') {
-						<br/>Gleis <%= $journey->{dep_platform} %> ▶
+					% elsif ($journey->{arr_name}) {
+						Ankunft in mehr als zwei Stunden
 					% }
-					% elsif ($journey->{dep_direction} and $journey->{dep_direction} eq 'l') {
-						<br/>◀ Gleis <%= $journey->{dep_platform} %>
-					% }
-					% else {
-						<br/>von Gleis <%= $journey->{dep_platform} %>
-					% }
-				% }
-				% if (my $wr = $journey->{wagonorder}) {
-					<br/>
-					% my @wagons = $wr->wagons;
-					% my $direction = $wr->direction == 100 ? '→' : '←';
-					% if ($journey->{dep_direction}) {
-						% $direction = $journey->{dep_direction} eq 'l' ? '◀' : '▶';
-						% if (($journey->{dep_direction} eq 'l' ? 0 : 100) != $wr->direction) {
-							% @wagons = reverse @wagons;
+					% if ($journey->{departure_countdown} > 0 and $journey->{dep_platform}) {
+						% if ($journey->{dep_direction} and $journey->{dep_direction} eq 'r') {
+							<br/>Gleis <%= $journey->{dep_platform} %> ▶
+						% }
+						% elsif ($journey->{dep_direction} and $journey->{dep_direction} eq 'l') {
+							<br/>◀ Gleis <%= $journey->{dep_platform} %>
+						% }
+						% else {
+							<br/>von Gleis <%= $journey->{dep_platform} %>
 						% }
 					% }
-					<a href="https://marudor.de/<%= $journey->{dep_name} %>?selectedDetail=<%= $journey->{train_id} %>">
-					%= $direction
-					% for my $wagon (@wagons) {
-						% if (not ($wagon->is_locomotive or $wagon->is_powercar)) {
-							%= $wagon->number || $wagon->type
+					% if (my $wr = $journey->{wagonorder}) {
+						<br/>
+						% my @wagons = $wr->wagons;
+						% my $direction = $wr->direction == 100 ? '→' : '←';
+						% if ($journey->{dep_direction}) {
+							% $direction = $journey->{dep_direction} eq 'l' ? '◀' : '▶';
+							% if (($journey->{dep_direction} eq 'l' ? 0 : 100) != $wr->direction) {
+								% @wagons = reverse @wagons;
+							% }
 						% }
-					% }
-					%= $direction
-					</a>
-				% }
-			</div>
-			<div class="progress" style="height: 1ex;">
-				<div class="determinate" style="width: <%= sprintf('%.2f', 100 * ($journey->{journey_completion} // 0)); %>%;"></div>
-			</div>
-		</p>
-		% if ($journey->{arr_name}) {
-			<p>
-				<div style="float: left;">
-					<b><%= $journey->{dep_name} %></b><br/>
-					<b><%= $journey->{real_departure}->strftime('%H:%M') %></b>
-					% if ($journey->{real_departure}->epoch != $journey->{sched_departure}->epoch) {
-						(<%= sprintf('%+d', ($journey->{real_departure}->epoch - $journey->{sched_departure}->epoch)/60) %>)
+						<a href="https://marudor.de/<%= $journey->{dep_name} %>?selectedDetail=<%= $journey->{train_id} %>">
+						%= $direction
+						% for my $wagon (@wagons) {
+							% if (not ($wagon->is_locomotive or $wagon->is_powercar)) {
+								%= $wagon->number || $wagon->type
+							% }
+						% }
+						%= $direction
+						</a>
 					% }
 				</div>
-				<div style="float: right; text-align: right;">
-					<b><%= $journey->{arr_name} %></b><br/>
-					% if ($journey->{real_arrival}->epoch) {
-						<b><%= $journey->{real_arrival}->strftime('%H:%M') %></b>
-						% if ($journey->{real_arrival}->epoch != $journey->{sched_arrival}->epoch) {
-							(<%= sprintf('%+d', ($journey->{real_arrival}->epoch - $journey->{sched_arrival}->epoch)/60) %>)
-						% }
-					% }
-					% else {
-						noch nicht bekannt
-					% }
-				</div>
-				<div class="center-align hide-on-small-only">
-					% for my $station (@{$journey->{route_after}}) {
-						% if ($station->[0] eq $journey->{arr_name}) {
-							% last;
-						% }
-						% if (($station->[1]{rt_arr_countdown} // 0) > 0) {
-							<%= $station->[0] %><br/><%= $station->[1]{rt_arr}->strftime('%H:%M') %>
-							% if ($station->[1]{sched_arr}->epoch != $station->[1]{rt_arr}->epoch) {
-								%= sprintf('(%+d)', ($station->[1]{rt_arr}->epoch - $station->[1]{sched_arr}->epoch ) / 60);
-							% }
-							% last;
-						% }
-						% if (($station->[1]{rt_dep_countdown} // 0) > 0) {
-							<%= $station->[0] %><br/>
-							<%= $station->[1]{rt_arr}->strftime('%H:%M') %> →
-							<%= $station->[1]{rt_dep}->strftime('%H:%M') %>
-							% if ($station->[1]{sched_dep}->epoch != $station->[1]{rt_dep}->epoch) {
-								%= sprintf('(%+d)', ($station->[1]{rt_dep}->epoch - $station->[1]{sched_dep}->epoch ) / 60);
-							% }
-							% last;
-						% }
-					% }
-				</div>
-				<div style="clear: both;">
-				</div>
-				<div class="hide-on-med-and-up" style="margin-top: 2ex;">
-					% for my $station (@{$journey->{route_after}}) {
-						% if ($station->[0] eq $journey->{arr_name}) {
-							% last;
-						% }
-						% if (($station->[1]{rt_arr_countdown} // 0) > 0) {
-							Nächster Halt:<br/>
-							<%= $station->[0] %><br/><%= $station->[1]{rt_arr}->strftime('%H:%M') %>
-							% if ($station->[1]{sched_arr}->epoch != $station->[1]{rt_arr}->epoch) {
-								%= sprintf('(%+d)', ($station->[1]{rt_arr}->epoch - $station->[1]{sched_arr}->epoch ) / 60);
-							% }
-							% last;
-						% }
-						% if (($station->[1]{rt_dep_countdown} // 0) > 0) {
-							Aktueller Halt:<br/>
-							<%= $station->[0] %><br/>
-							<%= $station->[1]{rt_arr}->strftime('%H:%M') %> →
-							<%= $station->[1]{rt_dep}->strftime('%H:%M') %>
-							% if ($station->[1]{sched_dep}->epoch != $station->[1]{rt_dep}->epoch) {
-								%= sprintf('(%+d)', ($station->[1]{rt_dep}->epoch - $station->[1]{sched_dep}->epoch ) / 60);
-							% }
-							% last;
-						% }
-					% }
+				<div class="progress" style="height: 1ex;">
+					<div class="determinate" style="width: <%= sprintf('%.2f', 100 * ($journey->{journey_completion} // 0)); %>%;"></div>
 				</div>
 			</p>
-		% }
-		% if (@{$journey->{messages} // []} or @{$journey->{extra_data}{him_msg} // []} or @{$journey->{extra_data}{qos_msg} // []}) {
-			<p style="margin-bottom: 2ex;">
-				<ul>
-					% for my $message (reverse @{$journey->{messages} // []}) {
-						% if ($journey->{sched_departure}->epoch - $message->[0]->epoch < 1800) {
-							<li> <i class="material-icons tiny">warning</i> <%= $message->[0]->strftime('%H:%M') %>: <%= $message->[1] %></li>
+			% if ($journey->{arr_name}) {
+				<p>
+					<div style="float: left;">
+						<b><%= $journey->{dep_name} %></b><br/>
+						<b><%= $journey->{real_departure}->strftime('%H:%M') %></b>
+						% if ($journey->{real_departure}->epoch != $journey->{sched_departure}->epoch) {
+							(<%= sprintf('%+d', ($journey->{real_departure}->epoch - $journey->{sched_departure}->epoch)/60) %>)
 						% }
-					% }
-					% if ($journey->{departure_countdown} > 0) {
-						% for my $message (@{$journey->{extra_data}{qos_msg} // []}) {
-							<li> <i class="material-icons tiny">info</i> <%= $message->[0]->strftime('%H:%M') %>: <%= $message->[1] %></li>
+					</div>
+					<div style="float: right; text-align: right;">
+						<b><%= $journey->{arr_name} %></b><br/>
+						% if ($journey->{real_arrival}->epoch) {
+							<b><%= $journey->{real_arrival}->strftime('%H:%M') %></b>
+							% if ($journey->{real_arrival}->epoch != $journey->{sched_arrival}->epoch) {
+								(<%= sprintf('%+d', ($journey->{real_arrival}->epoch - $journey->{sched_arrival}->epoch)/60) %>)
+							% }
 						% }
-					% }
-					% for my $message (@{$journey->{extra_data}{him_msg} // []}) {
-						<li> <i class="material-icons tiny">info</i> <%= $message->{header} %> <%= $message->{lead} %></li>
-					% }
-				</ul>
-			</p>
-		% }
-		% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} < (20*60)) {
-			% if (my @connections = get_connecting_trains()) {
-				<span class="card-title" style="margin-top: 2ex;">Verbindungen</span>
-				% if ($journey->{arrival_countdown} < 0) {
-					<p>Zug auswählen zum Einchecken mit Zielwahl.</p>
-				% }
-				%= include '_connections', connections => \@connections, checkin_from => $journey->{arrival_countdown} < 0 ? $journey->{arr_ds100} : undef;
+						% else {
+							noch nicht bekannt
+						% }
+					</div>
+					<div class="center-align hide-on-small-only">
+						% for my $station (@{$journey->{route_after}}) {
+							% if ($station->[0] eq $journey->{arr_name}) {
+								% last;
+							% }
+							% if (($station->[1]{rt_arr_countdown} // 0) > 0) {
+								<%= $station->[0] %><br/><%= $station->[1]{rt_arr}->strftime('%H:%M') %>
+								% if ($station->[1]{sched_arr}->epoch != $station->[1]{rt_arr}->epoch) {
+									%= sprintf('(%+d)', ($station->[1]{rt_arr}->epoch - $station->[1]{sched_arr}->epoch ) / 60);
+								% }
+								% last;
+							% }
+							% if (($station->[1]{rt_dep_countdown} // 0) > 0) {
+								<%= $station->[0] %><br/>
+								<%= $station->[1]{rt_arr}->strftime('%H:%M') %> →
+								<%= $station->[1]{rt_dep}->strftime('%H:%M') %>
+								% if ($station->[1]{sched_dep}->epoch != $station->[1]{rt_dep}->epoch) {
+									%= sprintf('(%+d)', ($station->[1]{rt_dep}->epoch - $station->[1]{sched_dep}->epoch ) / 60);
+								% }
+								% last;
+							% }
+						% }
+					</div>
+					<div style="clear: both;">
+					</div>
+					<div class="hide-on-med-and-up" style="margin-top: 2ex;">
+						% for my $station (@{$journey->{route_after}}) {
+							% if ($station->[0] eq $journey->{arr_name}) {
+								% last;
+							% }
+							% if (($station->[1]{rt_arr_countdown} // 0) > 0) {
+								Nächster Halt:<br/>
+								<%= $station->[0] %><br/><%= $station->[1]{rt_arr}->strftime('%H:%M') %>
+								% if ($station->[1]{sched_arr}->epoch != $station->[1]{rt_arr}->epoch) {
+									%= sprintf('(%+d)', ($station->[1]{rt_arr}->epoch - $station->[1]{sched_arr}->epoch ) / 60);
+								% }
+								% last;
+							% }
+							% if (($station->[1]{rt_dep_countdown} // 0) > 0) {
+								Aktueller Halt:<br/>
+								<%= $station->[0] %><br/>
+								<%= $station->[1]{rt_arr}->strftime('%H:%M') %> →
+								<%= $station->[1]{rt_dep}->strftime('%H:%M') %>
+								% if ($station->[1]{sched_dep}->epoch != $station->[1]{rt_dep}->epoch) {
+									%= sprintf('(%+d)', ($station->[1]{rt_dep}->epoch - $station->[1]{sched_dep}->epoch ) / 60);
+								% }
+								% last;
+							% }
+						% }
+					</div>
+				</p>
 			% }
-		% }
-		% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} <= 0) {
-			<p style="margin-top: 2ex;">
-				Der automatische Checkout erfolgt wegen gelegentlich veralteter
-				IRIS-Daten erst etwa zehn Minuten nach der Ankunft. <a
-				class="action-checkout"
-				data-station="<%= $journey->{arr_name}%>">Jetzt auschecken</a>.
-			</p>
-		% }
-		% elsif ($journey->{arr_name}) {
-			<p style="margin-top: 2em;">Ziel ändern?</p>
-		% }
-		% else {
-			<p>Ziel wählen:</p>
-		% }
-		<table>
-			<tbody>
-				% my $is_after = 0;
-				% for my $station (@{$journey->{route_after}}) {
-					% if ($journey->{arr_name} and $station->[0] eq $journey->{arr_name}) {
-						<tr><td><b><a class="action-checkout" data-station="<%= $station->[0] %>"><%= $station->[0] %></a></b></td></tr>
-					% }
-					% else {
-						<tr><td><a class="action-checkout" data-station="<%= $station->[0] %>"><%= $station->[0] %></a></td></tr>
-					% }
-				% }
-			</tbody>
-		</table>
-		% if ($journey->{arr_name}) {
-			<p>
-				Falls das Backend ausgefallen ist oder der Zug aus anderen
-				Gründen verloren ging: <a class="action-checkout"
-				data-force="1" data-station="<%= $journey->{arr_name}
-				%>">Ohne Echtzeitdaten in <%= $journey->{arr_name} %>
-				auschecken</a>.
-			</p>
-		% }
-	</div>
-	<div class="card-action">
-		<a class="action-undo blue-text" data-id="in_transit">
-			<i class="material-icons left">undo</i> Rückgängig
-		</a>
-		% if ($journey->{arr_name}) {
-			% my $attrib = 'im';
-			% if ($journey->{train_type} =~ m{ ^ (?: S | RB ) $ }x) {
-				% $attrib = 'in der';
+			% if (@{$journey->{messages} // []} or @{$journey->{extra_data}{him_msg} // []} or @{$journey->{extra_data}{qos_msg} // []}) {
+				<p style="margin-bottom: 2ex;">
+					<ul>
+						% for my $message (reverse @{$journey->{messages} // []}) {
+							% if ($journey->{sched_departure}->epoch - $message->[0]->epoch < 1800) {
+								<li> <i class="material-icons tiny">warning</i> <%= $message->[0]->strftime('%H:%M') %>: <%= $message->[1] %></li>
+							% }
+						% }
+						% if ($journey->{departure_countdown} > 0) {
+							% for my $message (@{$journey->{extra_data}{qos_msg} // []}) {
+								<li> <i class="material-icons tiny">info</i> <%= $message->[0]->strftime('%H:%M') %>: <%= $message->[1] %></li>
+							% }
+						% }
+						% for my $message (@{$journey->{extra_data}{him_msg} // []}) {
+							<li> <i class="material-icons tiny">info</i> <%= $message->{header} %> <%= $message->{lead} %></li>
+						% }
+					</ul>
+				</p>
 			% }
-			<a class="action-share blue-text right"
-				data-text="Ich bin gerade <%= $attrib %> <%= $journey->{train_type} %> <%= $journey->{train_no} %> nach <%= $journey->{arr_name} %> #NowTräwelling #dbl"
-				% if (current_user()->{is_public} & 0x02) {
-					data-url="<%= url_for('/status')->to_abs->scheme('https') %>/<%= current_user->{name} %>/<%= $journey->{sched_departure}->epoch %>"
+			% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} < (20*60)) {
+				% if (my @connections = get_connecting_trains()) {
+					<span class="card-title" style="margin-top: 2ex;">Verbindungen</span>
+					% if ($journey->{arrival_countdown} < 0) {
+						<p>Zug auswählen zum Einchecken mit Zielwahl.</p>
+					% }
+					%= include '_connections', connections => \@connections, checkin_from => $journey->{arrival_countdown} < 0 ? $journey->{arr_ds100} : undef;
 				% }
-				>
-				<i class="material-icons left">share</i> Teilen
+			% }
+			% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} <= 0) {
+				<p style="margin-top: 2ex;">
+					Der automatische Checkout erfolgt wegen gelegentlich veralteter
+					IRIS-Daten erst etwa zehn Minuten nach der Ankunft. <a
+					class="action-checkout"
+					data-station="<%= $journey->{arr_name}%>">Jetzt auschecken</a>.
+				</p>
+			% }
+			% elsif (not $journey->{arr_name}) {
+				<p>Ziel wählen:</p>
+				<table>
+					<tbody>
+						% my $is_after = 0;
+						% for my $station (@{$journey->{route_after}}) {
+							% if ($journey->{arr_name} and $station->[0] eq $journey->{arr_name}) {
+								<tr><td><b><a class="action-checkout" data-station="<%= $station->[0] %>"><%= $station->[0] %></a></b></td></tr>
+							% }
+							% else {
+								<tr><td><a class="action-checkout" data-station="<%= $station->[0] %>"><%= $station->[0] %></a></td></tr>
+							% }
+						% }
+					</tbody>
+				</table>
+			% }
+		</div>
+		<div class="card-action">
+			<a class="action-undo blue-text" data-id="in_transit">
+				<i class="material-icons left">undo</i> Rückgängig
 			</a>
-		% }
+			% if ($journey->{arr_name}) {
+				% my $attrib = 'im';
+				% if ($journey->{train_type} =~ m{ ^ (?: S | RB ) $ }x) {
+					% $attrib = 'in der';
+				% }
+				<a class="action-share blue-text right"
+					data-text="Ich bin gerade <%= $attrib %> <%= $journey->{train_type} %> <%= $journey->{train_no} %> nach <%= $journey->{arr_name} %> #NowTräwelling #dbl"
+					% if (current_user()->{is_public} & 0x02) {
+						data-url="<%= url_for('/status')->to_abs->scheme('https') %>/<%= current_user->{name} %>/<%= $journey->{sched_departure}->epoch %>"
+					% }
+					>
+					<i class="material-icons left">share</i> Teilen
+				</a>
+			% }
+		</div>
 	</div>
+	% if ($journey->{arr_name}) {
+		<div class="card" style="margin-top: 3em;">
+			<div class="card-content">
+				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
+				<span class="card-title">Ziel ändern?</span>
+				<table>
+					<tbody>
+						% my $is_after = 0;
+						% for my $station (@{$journey->{route_after}}) {
+							% if ($journey->{arr_name} and $station->[0] eq $journey->{arr_name}) {
+								<tr><td><b><a class="action-checkout" data-station="<%= $station->[0] %>"><%= $station->[0] %></a></b></td></tr>
+							% }
+							% else {
+								<tr><td><a class="action-checkout" data-station="<%= $station->[0] %>"><%= $station->[0] %></a></td></tr>
+							% }
+						% }
+					</tbody>
+				</table>
+				<p>
+					Falls das Backend ausgefallen ist oder der Zug aus anderen
+					Gründen verloren ging: <a class="action-checkout"
+					data-force="1" data-station="<%= $journey->{arr_name}
+					%>">Ohne Echtzeitdaten in <%= $journey->{arr_name} %>
+					auschecken</a>.
+				</p>
+			</div>
+		</div>
+	% }
 </div>
