@@ -191,9 +191,7 @@
 			% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} <= 0) {
 				<p style="margin-top: 2ex;">
 					Der automatische Checkout erfolgt wegen gelegentlich veralteter
-					IRIS-Daten erst etwa zehn Minuten nach der Ankunft. <a
-					class="action-checkout"
-					data-station="<%= $journey->{arr_name}%>">Jetzt auschecken</a>.
+					IRIS-Daten erst etwa zehn Minuten nach der Ankunft.
 				</p>
 			% }
 			% elsif (not $journey->{arr_name}) {
@@ -217,7 +215,15 @@
 			<a class="action-undo blue-text" data-id="in_transit">
 				<i class="material-icons left">undo</i> Rückgängig
 			</a>
-			% if ($journey->{arr_name}) {
+			% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} <= 0) {
+				<a
+					class="action-checkout right"
+					data-station="<%= $journey->{arr_name}%>">
+						<i class="material-icons left">done</i>
+						Jetzt auschecken
+					</a>
+			% }
+			% elsif ($journey->{arr_name}) {
 				% my $attrib = 'im';
 				% if ($journey->{train_type} =~ m{ ^ (?: S | RB ) $ }x) {
 					% $attrib = 'in der';
