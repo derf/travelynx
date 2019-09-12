@@ -31,6 +31,18 @@
 					∗ Daten wurden manuell eingetragen
 				</p>
 			% }
+			% if ($journey->{cancelled} or ($journey->{rt_arrival} and ($journey->{rt_arrival}->epoch - $journey->{sched_arrival}->epoch) >= 3600)) {
+				<div style="text-align: center; margin-bottom: 1em;">
+					%= form_for 'journeypassenger_rights' => begin
+						%= csrf_field
+						%= hidden_field id => $journey->{id}
+						<button class="btn waves-effect waves-light grey darken-3" type="submit" name="action" value="generate">
+							<i class="material-icons left">file_download</i>
+							Fahrgastrechte
+						</button>
+					%= end
+				</div>
+			% }
 			<table class="striped">
 				<tr>
 					<th scope="row">Zug</th>

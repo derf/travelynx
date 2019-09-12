@@ -1,4 +1,5 @@
 requires 'Cache';
+requires 'CAM::PDF';
 requires 'Crypt::Eksblowfish';
 requires 'DateTime';
 requires 'DateTime::Format::Strptime';
