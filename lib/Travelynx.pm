@@ -2906,7 +2906,7 @@ sub startup {
 	$authed_r->post('/account/insight')->to('account#insight');
 	$authed_r->post('/journey/add')->to('traveling#add_journey_form');
 	$authed_r->post('/journey/edit')->to('traveling#edit_journey');
-	$authed_r->post('/journey/passenger_rights')
+	$authed_r->post('/journey/passenger_rights/*filename')
 	  ->to('passengerrights#generate');
 	$authed_r->post('/account/password')->to('account#change_password');
 	$authed_r->post('/account/mail')->to('account#change_mail');
