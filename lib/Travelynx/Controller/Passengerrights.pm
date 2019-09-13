@@ -4,6 +4,82 @@ use Mojo::Base 'Mojolicious::Controller';
 use DateTime;
 use CAM::PDF;
 
+sub mark_if_missed_connection {
+	my ( $self, $journey, $next_journey ) = @_;
+
+	my $possible_delay
+	  = (   $next_journey->{rt_departure}->epoch
+		  - $journey->{sched_arrival}->epoch ) / 60;
+	my $wait_time
+	  = ( $next_journey->{rt_departure}->epoch - $journey->{rt_arrival}->epoch )
+	  / 60;
+	if (
+		$wait_time < 120
+		and ( $possible_delay >= 120
+			or ( $journey->{delay} < 60 and $possible_delay >= 60 ) )
+	  )
+	{
+		$journey->{connection_missed} = 1;
+		$journey->{connection}        = $next_journey;
+		$journey->{possible_delay}    = $possible_delay;
+		$journey->{wait_time}         = $wait_time;
+		return 1;
+	}
+	return 0;
+}
+
+sub list_candidates {
+	my ($self) = @_;
+
+	my $now         = DateTime->now( time_zone => 'Europe/Berlin' );
+	my $range_start = $now->clone->subtract( months => 12 );
+
+	my @journeys = $self->get_user_travels(
+		after  => $range_start,
+		before => $now
+	);
+	@journeys = grep { $_->{sched_arrival}->epoch and $_->{rt_arrival}->epoch }
+	  @journeys;
+
+	for my $i ( 0 .. $#journeys ) {
+		my $journey = $journeys[$i];
+
+		$journey->{delay}
+		  = ( $journey->{rt_arrival}->epoch - $journey->{sched_arrival}->epoch )
+		  / 60;
+
+		if ( $journey->{delay} < 3 or $journey->{delay} >= 120 ) {
+			next;
+		}
+		if ( $i > 0 ) {
+			$self->mark_if_missed_connection( $journey, $journeys[ $i - 1 ] );
+		}
+	}
+
+	@journeys = grep { $_->{delay} >= 60 or $_->{connection_missed} } @journeys;
+
+	push(
+		@journeys,
+		map { $_->{cancelled} = 1; $_ } $self->get_user_travels(
+			after     => $range_start,
+			before    => $now,
+			cancelled => 1
+		)
+	);
+
+	@journeys
+	  = sort { $b->{sched_departure}->epoch <=> $a->{sched_departure}->epoch }
+	  @journeys;
+
+	$self->respond_to(
+		json => { json => [@journeys] },
+		any  => {
+			template => 'passengerrights',
+			journeys => [@journeys]
+		}
+	);
+}
+
 sub generate {
 	my ($self) = @_;
 	my $journey_id = $self->param('id');
@@ -34,44 +110,128 @@ sub generate {
 		return;
 	}
 
+	$journey->{delay}
+	  = ( $journey->{rt_arrival}->epoch - $journey->{sched_arrival}->epoch )
+	  / 60;
+
+	if ( $journey->{delay} < 120 ) {
+		my @connections = $self->get_user_travels(
+			uid    => $uid,
+			after  => $journey->{rt_arrival},
+			before => $journey->{rt_arrival}->clone->add( hours => 2 )
+		);
+		if (@connections) {
+			$self->mark_if_missed_connection( $journey, $connections[-1] );
+		}
+	}
+
 	my $pdf = CAM::PDF->new('public/static/pdf/fahrgastrechteformular.pdf');
 
+	# from station
 	$pdf->fillFormFields( 'S1F4', $journey->{from_name} );
-	$pdf->fillFormFields( 'S1F7', $journey->{to_name} );
-	if ( not $journey->{cancelled} ) {
-		$pdf->fillFormFields( 'S1F13', $journey->{type} );
-		$pdf->fillFormFields( 'S1F14', $journey->{no} );
+
+	if ( $journey->{connection} ) {
+
+		# to station
+		$pdf->fillFormFields( 'S1F7', $journey->{connection}{to_name} );
+
+		# missed connection in:
+		$pdf->fillFormFields( 'S1F22', $journey->{to_name} );
+
+		# last change in:
+		$pdf->fillFormFields( 'S1F24', $journey->{to_name} );
 	}
+	else {
+		# to station
+		$pdf->fillFormFields( 'S1F7', $journey->{to_name} );
+	}
+
+	if ( not $journey->{cancelled} ) {
+
+		# arived with: TRAIN NO
+		if ( $journey->{connection} ) {
+			$pdf->fillFormFields( 'S1F13', $journey->{connection}{type} );
+			$pdf->fillFormFields( 'S1F14', $journey->{connection}{no} );
+		}
+		else {
+			$pdf->fillFormFields( 'S1F13', $journey->{type} );
+			$pdf->fillFormFields( 'S1F14', $journey->{no} );
+		}
+	}
+
+	# first delayed train: TRAIN NO
 	$pdf->fillFormFields( 'S1F17', $journey->{type} );
 	$pdf->fillFormFields( 'S1F18', $journey->{no} );
+
 	if ( $journey->{sched_departure}->epoch ) {
+
+		# journey YYMMDD
 		$pdf->fillFormFields( 'S1F1',
 			$journey->{sched_departure}->strftime('%d') );
 		$pdf->fillFormFields( 'S1F2',
 			$journey->{sched_departure}->strftime('%m') );
 		$pdf->fillFormFields( 'S1F3',
 			$journey->{sched_departure}->strftime('%y') );
+
+		# sched departure HHMM
 		$pdf->fillFormFields( 'S1F5',
 			$journey->{sched_departure}->strftime('%H') );
 		$pdf->fillFormFields( 'S1F6',
 			$journey->{sched_departure}->strftime('%M') );
+
+		# first delayed train: sched departure HHMM
 		$pdf->fillFormFields( 'S1F19',
 			$journey->{sched_departure}->strftime('%H') );
 		$pdf->fillFormFields( 'S1F20',
 			$journey->{sched_departure}->strftime('%M') );
 	}
 	if ( $journey->{sched_arrival}->epoch ) {
-		$pdf->fillFormFields( 'S1F8',
-			$journey->{sched_arrival}->strftime('%H') );
-		$pdf->fillFormFields( 'S1F9',
-			$journey->{sched_arrival}->strftime('%M') );
+
+		# sched arrival HHMM
+		if ( $journey->{connection} ) {
+
+			# TODO (needs plan data for non-journey trains)
+		}
+		else {
+			$pdf->fillFormFields( 'S1F8',
+				$journey->{sched_arrival}->strftime('%H') );
+			$pdf->fillFormFields( 'S1F9',
+				$journey->{sched_arrival}->strftime('%M') );
+		}
 	}
 	if ( $journey->{rt_arrival}->epoch and not $journey->{cancelled} ) {
-		$pdf->fillFormFields( 'S1F10', $journey->{rt_arrival}->strftime('%d') );
-		$pdf->fillFormFields( 'S1F11', $journey->{rt_arrival}->strftime('%m') );
-		$pdf->fillFormFields( 'S1F12', $journey->{rt_arrival}->strftime('%y') );
-		$pdf->fillFormFields( 'S1F15', $journey->{rt_arrival}->strftime('%H') );
-		$pdf->fillFormFields( 'S1F16', $journey->{rt_arrival}->strftime('%M') );
+
+		if ( $journey->{connection} ) {
+
+			# arrival YYMMDD
+			$pdf->fillFormFields( 'S1F10',
+				$journey->{connection}{rt_arrival}->strftime('%d') );
+			$pdf->fillFormFields( 'S1F11',
+				$journey->{connection}{rt_arrival}->strftime('%m') );
+			$pdf->fillFormFields( 'S1F12',
+				$journey->{connection}{rt_arrival}->strftime('%y') );
+
+			# arrival HHMM
+			$pdf->fillFormFields( 'S1F15',
+				$journey->{connection}{rt_arrival}->strftime('%H') );
+			$pdf->fillFormFields( 'S1F16',
+				$journey->{connection}{rt_arrival}->strftime('%M') );
+		}
+		else {
+			# arrival YYMMDD
+			$pdf->fillFormFields( 'S1F10',
+				$journey->{rt_arrival}->strftime('%d') );
+			$pdf->fillFormFields( 'S1F11',
+				$journey->{rt_arrival}->strftime('%m') );
+			$pdf->fillFormFields( 'S1F12',
+				$journey->{rt_arrival}->strftime('%y') );
+
+			# arrival HHMM
+			$pdf->fillFormFields( 'S1F15',
+				$journey->{rt_arrival}->strftime('%H') );
+			$pdf->fillFormFields( 'S1F16',
+				$journey->{rt_arrival}->strftime('%M') );
+		}
 	}
 
 	$self->res->headers->content_type('application/pdf');

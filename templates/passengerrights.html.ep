@@ -1,0 +1,69 @@
+<h1>Fahrgastrechte</h1>
+<div class="row">
+	<div class="col s12">
+		<p>
+			Gemäß der Fahrgastrechte im Eisenbahnverkehr besteht ab 60 Minuten
+			Verspätung am Ziel ein Entschädigungsanspruch gegenüber dem
+			Eisenbahnverkehrsunternehmen. Dieser kann mit dem
+			Fahrgastrechteformular geltend gemacht werden.
+		</p>
+		<p>
+			Die folgenden Zugfahrten sind wahrscheinliche Kandidaten dafür.
+			Details zur jeweiligen Zugfahrt sind bereits im Formular eingetragen.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12">
+		<table class="striped">
+			<thead>
+				<tr>
+					<th>Datum</th>
+					<th>Zug</th>
+					<th>Grund</th>
+					<th>Formular</th>
+				</tr>
+			</thead>
+			<tbody>
+				% for my $journey (@{$journeys}) {
+					% my $detail_link = '/journey/' . $journey->{id};
+					<tr>
+						<td><%= $journey->{sched_departure}->strftime('%d.%m.%Y') %></td>
+						<td><a href="<%= $detail_link %>">
+							<%= $journey->{type} %> <%= $journey->{line} // $journey->{no} %>
+							→ <%= $journey->{to_name} %>
+							% if ($journey->{connection}) {
+								<br/>
+								<%= $journey->{connection}{type} %> <%= $journey->{connection}{line} // $journey->{connection}{no} %>
+								→ <%= $journey->{connection}{to_name} %>
+							% }
+						</a></td>
+						<td>
+							% if ($journey->{cancelled}) {
+								Ausfall
+							% }
+							% else {
+								%= sprintf('%+d',  $journey->{delay})
+								% if ($journey->{connection}) {
+									<br/>
+									%= sprintf('Mit Anschluss: %+d?',  $journey->{possible_delay})
+								% }
+							% }
+						</td>
+						<td>
+							% my $form_target = sprintf('/journey/passenger_rights/FGR %s %s %s.pdf', $journey->{sched_departure}->ymd, $journey->{type}, $journey->{no});
+							%= form_for $form_target => (method => 'POST') => begin
+								%= csrf_field
+								%= hidden_field id => $journey->{id}
+								<button class="btn waves-effect waves-light grey darken-3" type="submit" name="action" value="generate">
+									<i class="material-icons">file_download</i>
+								</button>
+							%= end
+						</td>
+					</tr>
+				% }
+			</tbody>
+		</table>
+	</div>
+</div>
