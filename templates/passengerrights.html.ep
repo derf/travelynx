@@ -34,7 +34,8 @@
 							<%= $journey->{type} %> <%= $journey->{line} // $journey->{no} %>
 							→ <%= $journey->{to_name} %>
 							% if ($journey->{connection}) {
-								<br/>
+								% $detail_link = '/journey/' . $journey->{connection}{id};
+								</a><br/><a href="<%= $detail_link %>">
 								<%= $journey->{connection}{type} %> <%= $journey->{connection}{line} // $journey->{connection}{no} %>
 								→ <%= $journey->{connection}{to_name} %>
 							% }
@@ -47,7 +48,7 @@
 								%= sprintf('%+d',  $journey->{delay})
 								% if ($journey->{connection}) {
 									<br/>
-									%= sprintf('Mit Anschluss: %+d?',  $journey->{possible_delay})
+									%= sprintf('Anschluss? → %+d',  $journey->{possible_delay})
 								% }
 							% }
 						</td>
