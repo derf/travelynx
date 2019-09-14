@@ -13,8 +13,28 @@ sub mark_if_missed_connection {
 	my $wait_time
 	  = ( $next_journey->{rt_departure}->epoch - $journey->{rt_arrival}->epoch )
 	  / 60;
+
+
+	# Assumption: $next_journey is a missed connection (i.e., if $journey had
+	# been on time it would have been an earlier train)
+	# * the wait time between arrival and departure is less than 70 minutes
+	#   (up to 60 minutes to wait for the next train in an hourly connection
+	#    + up to 10 minutes transfer time between platforms)
+	# * the delay between scheduled arrival at the interchange station and
+	#   real departure of $next_journey (which is hopefully the same as the
+	#   total delay at the destination of $next_journey) is more than 120
+	#   minutes (-> 50% fare reduction) or it is more than 60 minutes and the
+	#   single-journey delay is less than 60 minutes (-> 25% fare reduction)
+	#   This ensures that $next_journey is only referenced if the missed
+	#   connection makes a difference from a passenger rights point of view --
+	#   if $journey itself is already 60 .. 119 minutes delayed and the
+	#   delay with the connection to $next_journey is also 60 .. 119 minutes,
+	#   including it is not worth the effort. Similarly, if $journey is already
+	#   ≥120 minutes delayed, looking for connections and more delay is
+	#   pointless.
+
 	if (
-		$wait_time < 120
+		$wait_time < 70
 		and ( $possible_delay >= 120
 			or ( $journey->{delay} < 60 and $possible_delay >= 60 ) )
 	  )
