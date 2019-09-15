@@ -44,12 +44,11 @@
 							% if ($journey->{cancelled}) {
 								Ausfall
 							% }
+							% elsif ($journey->{connection}) {
+								%= sprintf('%+d, ggf. Anschluss verpasst',  $journey->{delay})
+							% }
 							% else {
 								%= sprintf('%+d',  $journey->{delay})
-								% if ($journey->{connection}) {
-									<br/>
-									%= sprintf('Anschluss? → %+d',  $journey->{possible_delay})
-								% }
 							% }
 						</td>
 						<td>
