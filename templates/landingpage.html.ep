@@ -95,6 +95,7 @@
 						Zielbahnhof</li>
 					<li>Web-Hooks und <a href="/api">API</a> zum automatisierten Auslesen des aktuellen Status</li>
 					<li>Statistiken über Reisezeiten und Verspätungen</li>
+					<li>Unterstützung beim Ausfüllen von Fahrgastrechteformularen</li>
 					<li>Optional: Öffentlich sichtbarer Reisestatus</li>
 				</ul>
 			</p>
