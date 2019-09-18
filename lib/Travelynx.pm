@@ -585,9 +585,10 @@ sub startup {
 				);
 			}
 
-			if ( not( defined $train or $force ) ) {
+			if ( not defined $train ) {
 
-				# Arrival time via IRIS is unknown, try falling back to HAFAS
+               # Arrival time via IRIS is unknown, so the train probably has not
+               # arrived yet. Fall back to HAFAS.
 				if ( my $station_data
 					= first { $_->[0] eq $station } @{ $journey->{route} } )
 				{
@@ -611,8 +612,10 @@ sub startup {
 						);
 					}
 				}
-				$self->run_hook( $uid, 'update' );
-				return ( 1, undef );
+				if ( not $force ) {
+					$self->run_hook( $uid, 'update' );
+					return ( 1, undef );
+				}
 			}
 
 			my $has_arrived = 0;
