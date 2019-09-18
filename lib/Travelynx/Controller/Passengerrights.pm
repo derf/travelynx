@@ -75,6 +75,9 @@ sub mark_substitute_connection {
 		$journey->{has_substitute}  = 1;
 		$journey->{from_substitute} = $first_substitute;
 		$journey->{to_substitute}   = $last_substitute;
+		$journey->{substitute_delay}
+		  = (   $last_substitute->{rt_arrival}->epoch
+			  - $journey->{sched_arrival}->epoch ) / 60;
 	}
 }
 
@@ -177,7 +180,10 @@ sub generate {
 	  = ( $journey->{rt_arrival}->epoch - $journey->{sched_arrival}->epoch )
 	  / 60;
 
-	if ( $journey->{delay} < 120 ) {
+	if ( $journey->{cancelled} ) {
+		$self->mark_substitute_connection($journey);
+	}
+	elsif ( $journey->{delay} < 120 ) {
 		my @connections = $self->get_user_travels(
 			uid    => $uid,
 			after  => $journey->{rt_arrival},
@@ -209,7 +215,34 @@ sub generate {
 		$pdf->fillFormFields( 'S1F7', $journey->{to_name} );
 	}
 
-	if ( not $journey->{cancelled} ) {
+	if ( $journey->{has_substitute} ) {
+
+		# arived with: TRAIN NO
+		$pdf->fillFormFields( 'S1F13', $journey->{to_substitute}{type} );
+		$pdf->fillFormFields( 'S1F14', $journey->{to_substitute}{no} );
+
+		# arrival YYMMDD
+		$pdf->fillFormFields( 'S1F10',
+			$journey->{to_substitute}{rt_arrival}->strftime('%d') );
+		$pdf->fillFormFields( 'S1F11',
+			$journey->{to_substitute}{rt_arrival}->strftime('%m') );
+		$pdf->fillFormFields( 'S1F12',
+			$journey->{to_substitute}{rt_arrival}->strftime('%y') );
+
+		# arrival HHMM
+		$pdf->fillFormFields( 'S1F15',
+			$journey->{to_substitute}{rt_arrival}->strftime('%H') );
+		$pdf->fillFormFields( 'S1F16',
+			$journey->{to_substitute}{rt_arrival}->strftime('%M') );
+
+		if ( $journey->{from_substitute} != $journey->{to_substitute} ) {
+
+			# last change in:
+			$pdf->fillFormFields( 'S1F24',
+				$journey->{to_substitute}{from_name} );
+		}
+	}
+	elsif ( not $journey->{cancelled} ) {
 
 		# arived with: TRAIN NO
 		if ( $journey->{connection} ) {
