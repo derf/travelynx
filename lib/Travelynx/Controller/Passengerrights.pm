@@ -14,7 +14,6 @@ sub mark_if_missed_connection {
 	  = ( $next_journey->{rt_departure}->epoch - $journey->{rt_arrival}->epoch )
 	  / 60;
 
-
 	# Assumption: $next_journey is a missed connection (i.e., if $journey had
 	# been on time it would have been an earlier train)
 	# * the wait time between arrival and departure is less than 70 minutes
@@ -48,11 +47,42 @@ sub mark_if_missed_connection {
 	return 0;
 }
 
+sub mark_substitute_connection {
+	my ( $self, $journey ) = @_;
+
+	my @substitute_candidates = reverse $self->get_user_travels(
+		after  => $journey->{sched_departure}->clone->subtract( hours => 1 ),
+		before => $journey->{sched_departure}->clone->add( hours => 12 ),
+	);
+
+	my ( $first_substitute, $last_substitute );
+
+	for my $substitute_candidate (@substitute_candidates) {
+		if ( not $first_substitute
+			and $substitute_candidate->{from_name} eq $journey->{from_name} )
+		{
+			$first_substitute = $substitute_candidate;
+		}
+		if ( not $last_substitute
+			and $substitute_candidate->{to_name} eq $journey->{to_name} )
+		{
+			$last_substitute = $substitute_candidate;
+			last;
+		}
+	}
+
+	if ( $first_substitute and $last_substitute ) {
+		$journey->{has_substitute}  = 1;
+		$journey->{from_substitute} = $first_substitute;
+		$journey->{to_substitute}   = $last_substitute;
+	}
+}
+
 sub list_candidates {
 	my ($self) = @_;
 
 	my $now         = DateTime->now( time_zone => 'Europe/Berlin' );
-	my $range_start = $now->clone->subtract( months => 12 );
+	my $range_start = $now->clone->subtract( months => 6 );
 
 	my @journeys = $self->get_user_travels(
 		after  => $range_start,
@@ -78,14 +108,27 @@ sub list_candidates {
 
 	@journeys = grep { $_->{delay} >= 60 or $_->{connection_missed} } @journeys;
 
-	push(
-		@journeys,
-		map { $_->{cancelled} = 1; $_ } $self->get_user_travels(
-			after     => $range_start,
-			before    => $now,
-			cancelled => 1
-		)
+	my @cancelled = $self->get_user_travels(
+		after     => $range_start,
+		before    => $now,
+		cancelled => 1
 	);
+	for my $journey (@cancelled) {
+
+		if ( not $journey->{sched_arrival}->epoch ) {
+			next;
+		}
+
+		$journey->{cancelled} = 1;
+		$self->mark_substitute_connection($journey);
+
+		if ( not $journey->{has_substitute}
+			or $journey->{to_substitute}->{rt_arrival}->epoch
+			- $journey->{sched_arrival}->epoch >= 3600 )
+		{
+			push( @journeys, $journey );
+		}
+	}
 
 	@journeys
 	  = sort { $b->{sched_departure}->epoch <=> $a->{sched_departure}->epoch }
