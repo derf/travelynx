@@ -72,7 +72,7 @@
 								% @wagons = reverse @wagons;
 							% }
 						% }
-						<a href="https://marudor.de/<%= $journey->{dep_name} %>?selectedDetail=<%= $journey->{train_id} %>">
+						<a href="https://marudor.de/details/<%= $journey->{train_type} %>%20<%= $journey->{train_no} %>/<%= DateTime->now(time_zone => 'Europe/Berlin')->epoch %>000">
 						%= $direction
 						% for my $wagon (@wagons) {
 							% if (not ($wagon->is_locomotive or $wagon->is_powercar)) {
