@@ -399,7 +399,7 @@ sub startup {
 								sched_departure => $train->sched_departure,
 								real_departure  => $train->departure,
 								route           => $json->encode(
-									[ map { [$_] } $train->route ]
+									[ $self->route_diff($train) ]
 								),
 								messages => $json->encode(
 									[
@@ -636,7 +636,7 @@ sub startup {
 							real_arrival  => $train->arrival,
 							cancelled => $train->arrival_is_cancelled ? 1 : 0,
 							route =>
-							  $json->encode( [ map { [$_] } $train->route ] ),
+							  $json->encode( [ $self->route_diff($train) ] ),
 							messages => $json->encode(
 								[
 									map { [ $_->[0]->epoch, $_->[1] ] }
@@ -1571,6 +1571,55 @@ sub startup {
 				push( @ret, [ "${year}/${month}", "${month}.${year}" ] );
 			}
 			return @ret;
+		}
+	);
+
+	$self->helper(
+		'route_diff' => sub {
+			my ( $self, $train ) = @_;
+			my @json_route;
+			my @route       = $train->route;
+			my @sched_route = $train->sched_route;
+
+			say "real  is " . join( " - ", @route );
+			say "sched is " . join( " - ", @sched_route );
+
+			my $route_idx = 0;
+			my $sched_idx = 0;
+
+			while ( $route_idx <= $#route and $sched_idx <= $#sched_route ) {
+				if ( $route[$route_idx] eq $sched_route[$sched_idx] ) {
+					push( @json_route, [ $route[$route_idx], {}, undef ] );
+					$route_idx++;
+					$sched_idx++;
+				}
+
+				# this branch is inefficient, but won't be taken frequently
+				elsif ( not( grep { $_ eq $route[$route_idx] } @sched_route ) )
+				{
+					push( @json_route,
+						[ $route[$route_idx], {}, 'additional' ],
+					);
+					$route_idx++;
+				}
+				else {
+					push( @json_route,
+						[ $sched_route[$sched_idx], {}, 'cancelled' ],
+					);
+					$sched_idx++;
+				}
+			}
+			while ( $route_idx <= $#route ) {
+				push( @json_route, [ $route[$route_idx], {}, 'additional' ], );
+				$route_idx++;
+			}
+			while ( $sched_idx <= $#sched_route ) {
+				push( @json_route,
+					[ $sched_route[$sched_idx], {}, 'cancelled' ],
+				);
+				$sched_idx++;
+			}
+			return @json_route;
 		}
 	);
 
