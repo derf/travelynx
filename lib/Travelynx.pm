@@ -2527,7 +2527,7 @@ sub startup {
                    # each stop to be the same -> ensure that it is not converted
                    # to DateTime twice.
 						if ( $times->{sched_arr}
-							and ref( $times->{sched_arr} ) != 'DateTime' )
+							and ref( $times->{sched_arr} ) ne 'DateTime' )
 						{
 							$times->{sched_arr}
 							  = epoch_to_dt( $times->{sched_arr} );
@@ -2542,7 +2542,7 @@ sub startup {
 							  = $times->{rt_arr}->epoch - $epoch;
 						}
 						if ( $times->{sched_dep}
-							and ref( $times->{sched_dep} ) != 'DateTime' )
+							and ref( $times->{sched_dep} ) ne 'DateTime' )
 						{
 							$times->{sched_dep}
 							  = epoch_to_dt( $times->{sched_dep} );
