@@ -1875,6 +1875,11 @@ sub startup {
 				sub {
 					my ($traininfo) = @_;
 
+                  # FIXME when a station appears several times in a route
+                  # (e.g. Frankfurt Flughafen on some nightly connections), this
+                  # method chain sets the same timing reference on each stop,
+                  # causing murder and mayhem later on (e.g. in get_user_status)
+
 					if ( not $traininfo or $traininfo->{error} ) {
 						$self->app->log->debug("traininfo error");
 						return Mojo::Promise->reject("traininfo error");
@@ -2514,7 +2519,16 @@ sub startup {
 				for my $station (@route_after) {
 					if ( @{$station} > 1 ) {
 						my $times = $station->[1];
-						if ( $times->{sched_arr} ) {
+
+                   # TODO this is a workaround.
+                   # A station may be present several times in @route_after
+                   # (e.g. Frankfurt Flughafen at some nightly connections).
+                   # At the moment, there's a bug causing the time ref of
+                   # each stop to be the same -> ensure that it is not converted
+                   # to DateTime twice.
+						if ( $times->{sched_arr}
+							and ref( $times->{sched_arr} ) != 'DateTime' )
+						{
 							$times->{sched_arr}
 							  = epoch_to_dt( $times->{sched_arr} );
 							$times->{rt_arr} = $times->{sched_arr}->clone;
@@ -2527,7 +2541,9 @@ sub startup {
 							$times->{rt_arr_countdown}
 							  = $times->{rt_arr}->epoch - $epoch;
 						}
-						if ( $times->{sched_dep} ) {
+						if ( $times->{sched_dep}
+							and ref( $times->{sched_dep} ) != 'DateTime' )
+						{
 							$times->{sched_dep}
 							  = epoch_to_dt( $times->{sched_dep} );
 							$times->{rt_dep} = $times->{sched_dep}->clone;
