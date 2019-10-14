@@ -216,12 +216,13 @@
 			% }
 		</div>
 		<div class="card-action">
-			<a class="action-undo blue-text" data-id="in_transit">
+			<a class="action-undo blue-text" data-id="in_transit" style="margin-right: 0;">
 				<i class="material-icons left">undo</i> Rückgängig
 			</a>
 			% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} <= 0) {
 				<a
 					class="action-checkout right"
+					style="margin-right: 0;"
 					data-station="<%= $journey->{arr_name}%>">
 						<i class="material-icons left">done</i>
 						Jetzt auschecken
@@ -233,6 +234,7 @@
 					% $attrib = 'in der';
 				% }
 				<a class="action-share blue-text right"
+					style="margin-right: 0;"
 					data-text="Ich bin gerade <%= $attrib %> <%= $journey->{train_type} %> <%= $journey->{train_no} %> nach <%= $journey->{arr_name} %> #NowTräwelling #dbl"
 					% if (current_user()->{is_public} & 0x02) {
 						data-url="<%= url_for('/status')->to_abs->scheme('https') %>/<%= current_user->{name} %>/<%= $journey->{sched_departure}->epoch %>"
