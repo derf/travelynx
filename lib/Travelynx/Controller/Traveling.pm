@@ -140,11 +140,20 @@ sub geolocation {
 		} Travel::Status::DE::IRIS::Stations::get_station_by_location( $lon,
 			$lat, 10 );
 		@candidates = uniq_by { $_->{name} } @candidates;
-		$self->render(
-			json => {
-				candidates => [ @candidates[ 0 .. 4 ] ],
-			}
-		);
+		if ( @candidates > 5 ) {
+			$self->render(
+				json => {
+					candidates => [ @candidates[ 0 .. 4 ] ],
+				}
+			);
+		}
+		else {
+			$self->render(
+				json => {
+					candidates => [@candidates],
+				}
+			);
+		}
 	}
 }
 
