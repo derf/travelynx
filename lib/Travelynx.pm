@@ -251,6 +251,7 @@ sub startup {
 					),
 					station_name =>
 					  ( $status->station ? $status->station->{name} : 'undef' ),
+					related_stations => [ $status->related_stations ],
 				};
 			}
 			elsif ( @station_matches > 1 ) {

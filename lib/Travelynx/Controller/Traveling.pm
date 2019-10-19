@@ -367,10 +367,11 @@ sub station {
 
 		$self->render(
 			'departures',
-			ds100   => $status->{station_ds100},
-			results => \@results,
-			station => $status->{station_name},
-			title   => "travelynx: $status->{station_name}",
+			ds100            => $status->{station_ds100},
+			results          => \@results,
+			station          => $status->{station_name},
+			related_stations => $status->{related_stations},
+			title            => "travelynx: $status->{station_name}",
 		);
 	}
 	$self->mark_seen( $self->current_user->{id} );
