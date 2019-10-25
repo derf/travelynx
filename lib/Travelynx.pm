@@ -1582,9 +1582,6 @@ sub startup {
 			my @route       = $train->route;
 			my @sched_route = $train->sched_route;
 
-			say "real  is " . join( " - ", @route );
-			say "sched is " . join( " - ", @sched_route );
-
 			my $route_idx = 0;
 			my $sched_idx = 0;
 
