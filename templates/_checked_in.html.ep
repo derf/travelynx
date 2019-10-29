@@ -5,8 +5,10 @@
 			<span class="card-title">Eingecheckt in <%= $journey->{train_type} %> <%= $journey->{train_no} %></span>
 			<p>
 				<div class="center-align countdown"
-					data-duration="<%= $journey->{journey_duration} // 0 %>"
-					data-arrival="<%= $journey->{real_arrival}->epoch %>">
+					data-journey="<%= $journey->{real_departure}->epoch %>;<%= <%= $journey->{real_arrival}->epoch %>"
+					data-route="<%= journey_to_ajax_route($journey) %>"
+					data-dest="<%= $journey->{arr_name} %>"
+					>
 					% if ($journey->{boarding_countdown} > 120) {
 						Einfahrt in <%= sprintf('%.f', $journey->{boarding_countdown} / 60) %> Minuten<br/>
 					% }
@@ -108,7 +110,7 @@
 							noch nicht bekannt
 						% }
 					</div>
-					<div class="center-align hide-on-small-only">
+					<div class="center-align hide-on-small-only next-stop">
 						% for my $station (@{$journey->{route_after}}) {
 							% if ($station->[0] eq $journey->{arr_name}) {
 								% last;
@@ -133,7 +135,7 @@
 					</div>
 					<div style="clear: both;">
 					</div>
-					<div class="hide-on-med-and-up" style="margin-top: 2ex;">
+					<div class="hide-on-med-and-up next-stop" style="margin-top: 2ex;">
 						% for my $station (@{$journey->{route_after}}) {
 							% if ($station->[0] eq $journey->{arr_name}) {
 								% last;

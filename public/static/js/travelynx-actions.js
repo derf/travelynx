@@ -1,14 +1,40 @@
+var j_departure = 0;
 var j_duration = 0;
 var j_arrival = 0;
+var j_dest = '';
+var j_stops = [];
 function upd_journey_data() {
 	$('.countdown').each(function() {
-		j_duration = $(this).data('duration');
-		j_arrival = $(this).data('arrival');
+		var journey_data = $(this).data('journey');
+		if (journey_data) {
+			journey_data = journey_data.split(';');
+			j_departure = parseInt(journey_data[0]);
+			j_arrival = parseInt(journey_data[1]);
+			j_duration = j_arrival - j_departure;
+		}
+		var journey_dest = $(this).data('dest');
+		if (journey_dest) {
+			j_dest = journey_dest;
+		}
+		var stops = $(this).data('route');
+		if (stops) {
+			stops = stops.split('|');
+			j_stops = [];
+			for (var stop_id in stops) {
+				var stopdata = stops[stop_id].split(';');
+				for (var i = 1; i < 5; i++) {
+					stopdata[i] = parseInt(stopdata[i]);
+				}
+				j_stops.push(stopdata);
+			}
+		}
 	});
 }
 function upd_countdown() {
 	var now = Date.now() / 1000;
-	if (j_arrival > 0) {
+	if (j_departure > now) {
+			$('.countdown').text('Abfahrt in ' + Math.round((j_departure - now)/60) + ' Minuten');
+	} else if (j_arrival > 0) {
 		if (j_arrival > now) {
 			$('.countdown').text('Ankunft in ' + Math.round((j_arrival - now)/60) + ' Minuten');
 		} else {
@@ -16,6 +42,22 @@ function upd_countdown() {
 		}
 	}
 }
+function hhmm(epoch) {
+	var date = new Date(epoch * 1000);
+	var h = date.getHours();
+	var m = date.getMinutes();
+	return (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m);
+}
+function odelay(sched, rt) {
+	if (sched < rt) {
+		return ' (+' + ((rt - sched) / 60) + ')';
+	}
+	else if (sched == rt) {
+		return '';
+	}
+	return ' (' + ((rt - sched) / 60) + ')';
+}
+
 function tvly_run(link, req, err_callback) {
 	var error_icon = '<i class="material-icons">error</i>';
 	var progressbar = $('<div class="progress"><div class="indeterminate"></div></div>');
@@ -74,6 +116,26 @@ function tvly_journey_progress() {
 			progress = 1;
 		}
 		$('.progress .determinate').css('width', (progress * 100) + '%');
+
+		for (stop in j_stops) {
+			var stop_name = j_stops[stop][0];
+			var sched_arr = j_stops[stop][1];
+			var rt_arr = j_stops[stop][2];
+			var sched_dep = j_stops[stop][3];
+			var rt_dep = j_stops[stop][4];
+			if (stop_name == j_dest) {
+				$('.next-stop').html('');
+				break;
+			}
+			if ((rt_arr != 0) && (rt_arr - now > 0)) {
+				$('.next-stop').html(stop_name + '<br/>' + hhmm(rt_arr) + odelay(sched_arr, rt_arr));
+				break;
+			}
+			if ((rt_dep != 0) && (rt_dep - now > 0)) {
+				$('.next-stop').html(stop_name + '<br/>' + hhmm(rt_arr) + ' → ' + hhmm(rt_dep) + odelay(sched_dep, rt_dep));
+				break;
+			}
+		}
 		setTimeout(tvly_journey_progress, 5000);
 	}
 }

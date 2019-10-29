@@ -2406,6 +2406,36 @@ sub startup {
 	);
 
 	$self->helper(
+		'journey_to_ajax_route' => sub {
+			my ( $self, $journey ) = @_;
+
+			my @route;
+
+			for my $station ( @{ $journey->{route_after} } ) {
+				my $station_desc = $station->[0];
+				if ( $station->[1]{rt_arr} ) {
+					$station_desc .= $station->[1]{sched_arr}->strftime(';%s');
+					$station_desc .= $station->[1]{rt_arr}->strftime(';%s');
+					if ( $station->[1]{rt_dep} ) {
+						$station_desc
+						  .= $station->[1]{sched_dep}->strftime(';%s');
+						$station_desc .= $station->[1]{rt_dep}->strftime(';%s');
+					}
+					else {
+						$station_desc .= ';0;0';
+					}
+				}
+				else {
+					$station_desc .= ';0;0;0;0';
+				}
+				push( @route, $station_desc );
+			}
+
+			return join( '|', @route );
+		}
+	);
+
+	$self->helper(
 		'get_user_status' => sub {
 			my ( $self, $uid ) = @_;
 
