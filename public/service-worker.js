@@ -1,19 +1,19 @@
-const CACHE_NAME = 'static-cache-v27';
+const CACHE_NAME = 'static-cache-v28';
 const FILES_TO_CACHE = [
   '/favicon.ico',
   '/offline.html',
-  '/static/v27/css/light.min.css',
-  '/static/v27/css/dark.min.css',
-  '/static/v27/css/material-icons.css',
-  '/static/v27/css/local.css',
-  '/static/v27/fonts/MaterialIcons-Regular.woff2',
-  '/static/v27/fonts/MaterialIcons-Regular.woff',
-  '/static/v27/fonts/MaterialIcons-Regular.ttf',
-  '/static/v27/js/jquery-3.4.1.min.js',
-  '/static/v27/js/materialize.min.js',
-  '/static/v27/js/travelynx-actions.min.js',
-  '/static/v27/js/autocomplete.min.js',
-  '/static/v27/js/geolocation.min.js',
+  '/static/v28/css/light.min.css',
+  '/static/v28/css/dark.min.css',
+  '/static/v28/css/material-icons.css',
+  '/static/v28/css/local.css',
+  '/static/v28/fonts/MaterialIcons-Regular.woff2',
+  '/static/v28/fonts/MaterialIcons-Regular.woff',
+  '/static/v28/fonts/MaterialIcons-Regular.ttf',
+  '/static/v28/js/jquery-3.4.1.min.js',
+  '/static/v28/js/materialize.min.js',
+  '/static/v28/js/travelynx-actions.min.js',
+  '/static/v28/js/autocomplete.min.js',
+  '/static/v28/js/geolocation.min.js',
 ];
 
 self.addEventListener('install', (evt) => {
