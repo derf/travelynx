@@ -554,6 +554,21 @@ sub startup {
 			my ($train)
 			  = first { $_->train_id eq $train_id } @{ $status->{results} };
 
+          # When a checkout is triggered by a checkin, there is an edge case
+          # with related stations.
+          # Assume a user travels from A to B1, then from B2 to C. B1 and B2 are
+          # relatd stations (e.g. "Frankfurt Hbf" and "Frankfurt Hbf(tief)").
+          # Now, if they check in for the journey from B2 to C, and have not yet
+          # checked out of the previous train, $train is undef as B2 is not B1.
+          # Redo the request with with_related => 1 to avoid this case.
+          # While at it, we increase the lookahead to handle long journeys as
+          # well.
+			if ( not $train ) {
+				$status = $self->get_departures( $station, 120, 180, 1 );
+				($train)
+				  = first { $_->train_id eq $train_id } @{ $status->{results} };
+			}
+
 			# Store the intended checkout station regardless of this operation's
 			# success.
 			my $new_checkout_station_id = $self->get_station_id(
