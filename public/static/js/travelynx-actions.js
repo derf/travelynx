@@ -202,16 +202,27 @@ function tvly_reg_handlers() {
 		}
 	});
 	$('.action-share').click(function() {
+		var text = $(this).data('text');
 		if (navigator.share) {
 			shareObj = {
-				text: $(this).data('text')
+				text: text
 			};
 			if ($(this).data('url')) {
 				shareObj['url'] = $(this).data('url');
 			}
 			navigator.share(shareObj);
-		} else if ($(this).data('url')) {
-			location.href = $(this).data('url');
+		} else {
+			var el = document.createElement('textarea');
+			el.value = text;
+			el.setAttribute('readonly', '');
+			el.style.position = 'absolute';
+			el.style.left = '-9999px';
+			document.body.appendChild(el);
+			el.select();
+			el.setSelectionRange(0, 99999);
+			document.execCommand('copy');
+			document.body.removeChild(el);
+			M.toast({html: 'Text kopiert: „' + text + '“'});
 		}
 	});
 	if ($('.action-share').length && !navigator.share && !$('.action-share').data('url')) {
