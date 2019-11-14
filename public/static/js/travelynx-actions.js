@@ -203,16 +203,20 @@ function tvly_reg_handlers() {
 	});
 	$('.action-share').click(function() {
 		var text = $(this).data('text');
+		var url = $(this).data('url');
 		if (navigator.share) {
 			shareObj = {
 				text: text
 			};
-			if ($(this).data('url')) {
-				shareObj['url'] = $(this).data('url');
+			if (url) {
+				shareObj['url'] = url;
 			}
 			navigator.share(shareObj);
 		} else {
 			var el = document.createElement('textarea');
+			if (url) {
+				text += ' ' + url;
+			}
 			el.value = text;
 			el.setAttribute('readonly', '');
 			el.style.position = 'absolute';
@@ -225,9 +229,6 @@ function tvly_reg_handlers() {
 			M.toast({html: 'Text kopiert: „' + text + '“'});
 		}
 	});
-	if ($('.action-share').length && !navigator.share && !$('.action-share').data('url')) {
-		$('.action-share').css('display', 'none');
-	}
 }
 $(document).ready(function() {
 	tvly_reg_handlers();
