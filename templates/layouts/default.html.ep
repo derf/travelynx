@@ -52,6 +52,9 @@
 	</script>
 	%= stylesheet "/static/${av}/css/material-icons.css"
 	%= stylesheet "/static/${av}/css/local.css"
+	% if (stash('with_map')) {
+		%= stylesheet "/static/${av}/leaflet/leaflet.css"
+	% }
 	%= javascript "/static/${av}/js/jquery-3.4.1.min.js"
 	%= javascript "/static/${av}/js/materialize.min.js"
 	%= javascript "/static/${av}/js/travelynx-actions.min.js"
@@ -60,6 +63,9 @@
 	% }
 	% if (stash('with_autocomplete')) {
 		%= javascript "/static/${av}/js/autocomplete.min.js"
+	% }
+	% if (stash('with_map')) {
+		%= javascript "/static/${av}/leaflet/leaflet.js"
 	% }
 </head>
 <body>

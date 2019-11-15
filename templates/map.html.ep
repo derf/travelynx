@@ -1,0 +1,38 @@
+<div class="row">
+	<div class="col s12">
+		<div id="map" style="height: 500px;">
+		</div>
+	</div>
+</div>
+
+<script>
+var map = L.map('map').setView([51.306, 9.712], 6);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+var stations = [
+% for my $station ( @{stash('station_coordinates') // [] } ) {
+[<%= $station->[0] %>,<%= $station->[1] %>],
+% }
+];
+
+var routes = [
+% for my $pair ( @{stash('station_pairs') // [] } ) {
+[[<%= $pair->[0][0] %>,<%= $pair->[0][1] %>],[<%= $pair->[1][0] %>,<%= $pair->[1][1] %>]],
+% }
+];
+
+for (var station_id in stations) {
+	L.circle(stations[station_id], {
+		color: '#f03',
+		fillColor: '#f03',
+		fillOpacity: 0.5,
+		radius: 100
+	}).addTo(map);
+}
+
+L.polyline(routes, {color: '#f09', opacity: 0.5}).addTo(map);
+
+</script>

@@ -3000,6 +3000,7 @@ sub startup {
 	$authed_r->get('/export.json')->to('account#json_export');
 	$authed_r->get('/history.json')->to('traveling#json_history');
 	$authed_r->get('/history')->to('traveling#history');
+	$authed_r->get('/history/map')->to('traveling#map_history');
 	$authed_r->get('/history/:year')->to('traveling#yearly_history');
 	$authed_r->get('/history/:year/:month')->to('traveling#monthly_history');
 	$authed_r->get('/journey/add')->to('traveling#add_journey_form');
