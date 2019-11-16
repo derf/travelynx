@@ -416,13 +416,7 @@ sub history {
 sub map_history {
 	my ($self) = @_;
 
-	my %location;
-
-	for my $station ( Travel::Status::DE::IRIS::Stations::get_stations() ) {
-		if ( $station->[3] ) {
-			$location{ $station->[1] } = [ $station->[4], $station->[3] ];
-		}
-	}
+	my $location = $self->app->coordinates_by_station;
 
 # TODO create map-specific get_user_travels function returning EVA/DS100 station codes?
 	my @journeys = $self->get_user_travels;
@@ -430,8 +424,8 @@ sub map_history {
 	my @stations = uniq map { $_->{to_name} } @journeys;
 	push( @stations, uniq map { $_->{from_name} } @journeys );
 	@stations = uniq @stations;
-	my @station_coordinates
-	  = map { [ $location{$_}, $_ ] } grep { exists $location{$_} } @stations;
+	my @station_coordinates = map { [ $location->{$_}, $_ ] }
+	  grep { exists $location->{$_} } @stations;
 
 	my @uniq_by_route = uniq_by {
 		join( '|', map { $_->[0] } @{ $_->{route} } )
@@ -459,10 +453,11 @@ sub map_history {
 
 	@station_pairs = uniq_by { $_->[0] . '|' . $_->[1] } @station_pairs;
 	@station_pairs
-	  = grep { exists $location{ $_->[0] } and exists $location{ $_->[1] } }
+	  = grep { exists $location->{ $_->[0] } and exists $location->{ $_->[1] } }
 	  @station_pairs;
 	@station_pairs
-	  = map { [ $location{ $_->[0] }, $location{ $_->[1] } ] } @station_pairs;
+	  = map { [ $location->{ $_->[0] }, $location->{ $_->[1] } ] }
+	  @station_pairs;
 
 	my @routes;
 

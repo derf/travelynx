@@ -168,6 +168,21 @@ sub startup {
 		}
 	);
 
+	$self->attr(
+		coordinates_by_station => sub {
+			my %location;
+			for
+			  my $station ( Travel::Status::DE::IRIS::Stations::get_stations() )
+			{
+				if ( $station->[3] ) {
+					$location{ $station->[1] }
+					  = [ $station->[4], $station->[3] ];
+				}
+			}
+			return \%location;
+		}
+	);
+
 	$self->helper(
 		sendmail => sub {
 			state $sendmail = Travelynx::Helper::Sendmail->new(
