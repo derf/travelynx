@@ -437,7 +437,7 @@ sub map_history {
 		my $from_index = first_index { $_ eq $journey->{from_name} } @route;
 		my $to_index   = first_index { $_ eq $journey->{to_name} } @route;
 
-		if ( $from_index == -1 or $to_index == -1 ) {
+		if ( $from_index == -1 or $to_index == -1 or $journey->{edited} == 0x3fff ) {
 			next;
 		}
 
