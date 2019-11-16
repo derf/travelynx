@@ -14,7 +14,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 var stations = [
 % for my $station ( @{stash('station_coordinates') // [] } ) {
-[<%= $station->[0] %>,<%= $station->[1] %>],
+[[<%= $station->[0][0] %>,<%= $station->[0][1] %>],'<%= $station->[1] %>'],
 % }
 ];
 
@@ -25,14 +25,17 @@ var routes = [
 ];
 
 for (var station_id in stations) {
-	L.circle(stations[station_id], {
+	L.circle(stations[station_id][0], {
 		color: '#f03',
 		fillColor: '#f03',
 		fillOpacity: 0.5,
-		radius: 100
-	}).addTo(map);
+		radius: 250
+	}).bindPopup(stations[station_id][1]).addTo(map);
 }
 
-L.polyline(routes, {color: '#f09', opacity: 0.5}).addTo(map);
+var pl = L.polyline(routes, {color: '#f09', opacity: 0.5}).addTo(map);
+if (routes.length) {
+	map.fitBounds(pl.getBounds());
+}
 
 </script>

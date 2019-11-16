@@ -431,7 +431,7 @@ sub map_history {
 	push( @stations, uniq map { $_->{from_name} } @journeys );
 	@stations = uniq @stations;
 	my @station_coordinates
-	  = map { $location{$_} } grep { exists $location{$_} } @stations;
+	  = map { [ $location{$_}, $_ ] } grep { exists $location{$_} } @stations;
 
 	my @uniq_by_route = uniq_by {
 		join( '|', map { $_->[0] } @{ $_->{route} } )
