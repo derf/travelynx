@@ -5,6 +5,7 @@ use DateTime;
 use DateTime::Format::Strptime;
 use List::Util qw(uniq);
 use List::UtilsBy qw(uniq_by);
+use List::MoreUtils qw(first_index);
 use Travel::Status::DE::IRIS::Stations;
 
 sub homepage {
@@ -428,22 +429,35 @@ sub map_history {
 	  grep { exists $location->{$_} } @stations;
 
 	my @station_pairs;
+	my %seen;
 
 	for my $journey (@journeys) {
-		my @route        = map { $_->[0] } @{ $journey->{route} };
+
+		my @route      = map { $_->[0] } @{ $journey->{route} };
+		my $from_index = first_index { $_ eq $journey->{from_name} } @route;
+		my $to_index   = first_index { $_ eq $journey->{to_name} } @route;
+
+		if ( $from_index == -1 or $to_index == -1 ) {
+			next;
+		}
+
+		@route = @route[ $from_index .. $to_index ];
+
+		my $key = join( '|', @route );
+
+		if ( $seen{$key} ) {
+			next;
+		}
+
+		$seen{$key} = 1;
+
+		# direction does not matter at the moment
+		$seen{ join( '|', reverse @route ) } = 1;
+
 		my $prev_station = shift @route;
-		my $within       = 0;
 		for my $station (@route) {
-			if ( $prev_station eq $journey->{from_name} ) {
-				$within = 1;
-			}
-			if ($within) {
-				push( @station_pairs, [ $prev_station, $station ] );
-			}
+			push( @station_pairs, [ $prev_station, $station ] );
 			$prev_station = $station;
-			if ( $station eq $journey->{to_name} ) {
-				$within = 0;
-			}
 		}
 	}
 
