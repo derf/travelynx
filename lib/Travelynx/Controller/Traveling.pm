@@ -427,13 +427,9 @@ sub map_history {
 	my @station_coordinates = map { [ $location->{$_}, $_ ] }
 	  grep { exists $location->{$_} } @stations;
 
-	my @uniq_by_route = uniq_by {
-		join( '|', map { $_->[0] } @{ $_->{route} } )
-	}
-	@journeys;
 	my @station_pairs;
 
-	for my $journey (@uniq_by_route) {
+	for my $journey (@journeys) {
 		my @route        = map { $_->[0] } @{ $journey->{route} };
 		my $prev_station = shift @route;
 		my $within       = 0;
