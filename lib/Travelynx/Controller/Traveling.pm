@@ -422,6 +422,21 @@ sub map_history {
 # TODO create map-specific get_user_travels function returning EVA/DS100 station codes?
 	my @journeys = $self->get_user_travels;
 
+	if ( not @journeys ) {
+		$self->render(
+			template            => 'history_map',
+			with_map            => 1,
+			station_coordinates => [],
+			station_pairs       => [],
+			range_from          => 0,
+			range_to            => 0,
+		);
+		return;
+	}
+
+	my $first_departure = $journeys[-1]->{rt_departure};
+	my $last_departure  = $journeys[0]->{rt_departure};
+
 	my @stations = uniq map { $_->{to_name} } @journeys;
 	push( @stations, uniq map { $_->{from_name} } @journeys );
 	@stations = uniq @stations;
@@ -437,7 +452,10 @@ sub map_history {
 		my $from_index = first_index { $_ eq $journey->{from_name} } @route;
 		my $to_index   = first_index { $_ eq $journey->{to_name} } @route;
 
-		if ( $from_index == -1 or $to_index == -1 or $journey->{edited} == 0x3fff ) {
+		if (   $from_index == -1
+			or $to_index == -1
+			or $journey->{edited} == 0x3fff )
+		{
 			next;
 		}
 
@@ -475,7 +493,9 @@ sub map_history {
 		template            => 'history_map',
 		with_map            => 1,
 		station_coordinates => \@station_coordinates,
-		station_pairs       => \@station_pairs
+		station_pairs       => \@station_pairs,
+		range_from          => $first_departure,
+		range_to            => $last_departure,
 	);
 }
 
