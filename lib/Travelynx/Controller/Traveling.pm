@@ -462,7 +462,7 @@ sub map_history {
 	my @routes;
 
 	$self->render(
-		template            => 'map',
+		template            => 'history_map',
 		with_map            => 1,
 		station_coordinates => \@station_coordinates,
 		station_pairs       => \@station_pairs

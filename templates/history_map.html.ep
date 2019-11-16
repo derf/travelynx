@@ -1,0 +1,7 @@
+<div class="row">
+	<div class="col s12">
+		Karte aller bisherigen Zugfahrten:
+	</div>
+</div>
+
+%= include '_map', station_coordinates => $station_coordinates, station_pairs => $station_pairs

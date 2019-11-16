@@ -5,6 +5,13 @@
 	</div>
 </div>
 
+<div class="row">
+	<div class="col s12">
+		<span style="color: #f03;">●</span> Ein-/Ausstiegsstation<br/>
+		<span style="color: #f09;">—</span> Luftlinie zwischen Unterwegshalten
+	</div>
+</div>
+
 <script>
 var map = L.map('map').setView([51.306, 9.712], 6);
 
