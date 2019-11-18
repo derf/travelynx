@@ -267,5 +267,35 @@ $t->get_ok('/history/2018')->status_is(200)->content_like(qr{124 km})
   ->content_like(qr{Bei Abfahrt: 00:09 Stunden})
   ->content_like(qr{Bei Ankunft: 00:26 Stunden});
 
+$csrf_token
+  = $t->ua->get('/journey/add')->res->dom->at('input[name=csrf_token]')
+  ->attr('value');
+$t->post_ok(
+	'/journey/add' => form => {
+		csrf_token      => $csrf_token,
+		action          => 'save',
+		train           => 'ICE 1',
+		dep_station     => 'EE',
+		sched_departure => '17.11.2018 15:42',
+		rt_departure    => '',
+		arr_station     => 'BL',
+		sched_arrival   => '17.11.2018 19:42',
+		rt_arrival      => '',
+	}
+);
+$t->status_is(302)->header_is( location => '/journey/3' );
+
+$t->get_ok('/history/2018/11')->status_is(200)->content_like(qr{513 km})
+  ->content_like(qr{05:15 Stunden})->content_like(qr{nach Fahrplan: 04:58})
+  ->content_like(qr{00:00 Stunden})
+  ->content_like(qr{Bei Abfahrt: 00:09 Stunden})
+  ->content_like(qr{Bei Ankunft: 00:26 Stunden});
+
+$t->get_ok('/history/2018')->status_is(200)->content_like(qr{576 km})
+  ->content_like(qr{06:13 Stunden})->content_like(qr{nach Fahrplan: 05:56})
+  ->content_like(qr{00:00 Stunden})
+  ->content_like(qr{Bei Abfahrt: 00:09 Stunden})
+  ->content_like(qr{Bei Ankunft: 00:26 Stunden});
+
 $t->app->pg->db->query('drop schema travelynx_test_02 cascade');
 done_testing();

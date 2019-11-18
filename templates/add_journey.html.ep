@@ -58,8 +58,8 @@
 			<label for="sched_departure">Geplante Abfahrt</label>
 		</div>
 		<div class="input-field col s12">
-			%= text_field 'rt_departure', id => 'rt_departure', class => 'validate', required => undef, pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
-			<label for="rt_departure">Tatsächliche Abfahrt</label>
+			%= text_field 'rt_departure', id => 'rt_departure', class => 'validate', pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
+			<label for="rt_departure">Tatsächliche Abfahrt (wenn leer: pünktlich)</label>
 		</div>
 	</div>
 	<div class="row">
@@ -72,8 +72,8 @@
 			<label for="sched_arrival">Geplante Ankunft</label>
 		</div>
 		<div class="input-field col s12">
-			%= text_field 'rt_arrival', id => 'rt_arrival', class => 'validate', required => undef, pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
-			<label for="rt_arrival">Tatsächliche Ankunft</label>
+			%= text_field 'rt_arrival', id => 'rt_arrival', class => 'validate', pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
+			<label for="rt_arrival">Tatsächliche Ankunft (wenn leer: pünktlich)</label>
 		</div>
 	</div>
 	<div class="row">
