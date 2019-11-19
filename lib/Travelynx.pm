@@ -304,6 +304,39 @@ sub startup {
 				return ( undef, 'Unbekannter Zielbahnhof' );
 			}
 
+			my @route = ( [ $dep_station->[1], {}, undef ] );
+
+			if ( $opt{route} ) {
+				my @unknown_stations;
+				for my $station ( @{ $opt{route} } ) {
+					my $station_info = get_station($station);
+					if ( not $station_info ) {
+						push( @unknown_stations, $station );
+					}
+					push( @route, [ $station_info->[1], {}, undef ] );
+				}
+
+				if ( @unknown_stations == 1 ) {
+					return ( undef,
+						"Unbekannter Unterwegshalt: $unknown_stations[0]" );
+				}
+				elsif (@unknown_stations) {
+					return ( undef,
+						'Unbekannte Unterwegshalte: '
+						  . join( ', ', @unknown_stations ) );
+				}
+			}
+
+			push( @route, [ $arr_station->[1], {}, undef ] );
+
+			if ( $route[0][0] eq $route[1][0] ) {
+				shift(@route);
+			}
+
+			if ( $route[-2][0] eq $route[-1][0] ) {
+				pop(@route);
+			}
+
 			my $entry = {
 				user_id            => $uid,
 				train_type         => $opt{train_type},
@@ -326,18 +359,7 @@ sub startup {
 				checkout_time => $now,
 				edited        => 0x3fff,
 				cancelled     => $opt{cancelled} ? 1 : 0,
-				route         => JSON->new->encode(
-					[
-						[
-							$dep_station->[1], undef,
-							$opt{sched_departure}->epoch,
-						],
-						[
-							$arr_station->[1], $opt{sched_arrival}->epoch,
-							undef
-						]
-					]
-				),
+				route         => JSON->new->encode( \@route ),
 			};
 
 			if ( $opt{comment} ) {

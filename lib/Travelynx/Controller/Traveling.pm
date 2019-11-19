@@ -803,8 +803,12 @@ sub add_journey_form {
 		$opt{rt_departure} //= $opt{sched_departure};
 		$opt{rt_arrival}   //= $opt{sched_arrival};
 
-		for my $key (qw(dep_station arr_station cancelled comment)) {
+		for my $key (qw(dep_station arr_station route cancelled comment)) {
 			$opt{$key} = $self->param($key);
+		}
+
+		if ( $opt{route} ) {
+			$opt{route} = [ split( qr{\r?\n\r?}, $opt{route} ) ];
 		}
 
 		my $db = $self->pg->db;

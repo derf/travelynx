@@ -113,6 +113,9 @@
 						% else {
 							?
 						% }
+						% if ($journey->{edited} & 0x0010) {
+							∗
+						% }
 					</td>
 				</tr>
 				<tr>
@@ -173,6 +176,9 @@
 							% }
 							% else {
 								<span style="color: #666666;"><%= $station->[0] %></span>
+							% }
+							% if ($journey->{edited} & 0x0010) {
+								∗
 							% }
 							<br/>
 						% }
