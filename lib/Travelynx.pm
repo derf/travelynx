@@ -817,6 +817,19 @@ sub startup {
 						}
 					)->rows;
 				}
+				elsif ( $key eq 'route' ) {
+					my @new_route = map { [ $_, {}, undef ] } @{$value};
+					$rows = $db->update(
+						'journeys',
+						{
+							route  => JSON->new->encode( \@new_route ),
+							edited => $journey->{edited} | 0x0010,
+						},
+						{
+							id => $journey_id,
+						}
+					)->rows;
+				}
 				elsif ( $key eq 'comment' ) {
 					$journey->{user_data}{comment} = $value;
 					$rows = $db->update(
@@ -870,6 +883,23 @@ sub startup {
 				and $journey->{rt_duration} > 60 * 60 * 24 )
 			{
 				return 'Die Zugfahrt ist länger als 24 Stunden.';
+			}
+			if ( $journey->{kmh_route} > 500 or $journey->{kmh_beeline} > 500 )
+			{
+				return 'Zugfahrten mit über 500 km/h? Schön wär\'s.';
+			}
+			if ( $journey->{edited} & 0x0010 ) {
+				my @unknown_stations;
+				for my $station ( @{ $journey->{route} } ) {
+					my $station_info = get_station( $station->[0] );
+					if ( not $station_info ) {
+						push( @unknown_stations, $station->[0] );
+					}
+				}
+				if (@unknown_stations) {
+					return 'Unbekannte Stationen: '
+					  . join( ', ', @unknown_stations );
+				}
 			}
 
 			return undef;

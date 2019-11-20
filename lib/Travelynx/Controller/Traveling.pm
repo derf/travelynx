@@ -719,6 +719,16 @@ sub edit_journey {
 				}
 			}
 		}
+		if ( defined $self->param('route') ) {
+			my @route_old = map { $_->[0] } @{ $journey->{route} };
+			my @route_new = split( qr{\r?\n\r?}, $self->param('route') );
+			@route_new = grep { $_ ne '' } @route_new;
+			if ( join( '|', @route_old ) ne join( '|', @route_new ) ) {
+				$error
+				  = $self->update_journey_part( $db, $journey->{id}, 'route',
+					[@route_new] );
+			}
+		}
 
 		if ( not $error ) {
 			$journey = $self->get_journey(
@@ -742,6 +752,10 @@ sub edit_journey {
 				$key => $journey->{$key}->strftime('%d.%m.%Y %H:%M') );
 		}
 	}
+
+	$self->param(
+		route => join( "\n", map { $_->[0] } @{ $journey->{route} } ) );
+
 	for my $key (qw(comment)) {
 		if ( $journey->{user_data} and $journey->{user_data}{$key} ) {
 			$self->param( $key => $journey->{user_data}{$key} );

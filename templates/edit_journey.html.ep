@@ -76,6 +76,12 @@
 						</td>
 					</tr>
 					<tr>
+						<th scope="row">Route</th>
+						<td>
+							%= text_area 'route', id => 'route', class => 'materialize-textarea'
+						</td>
+					</tr>
+					<tr>
 						<th scope="row">Kommentar</th>
 						<td>
 							%= text_field 'comment'
