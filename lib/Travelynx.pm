@@ -284,6 +284,21 @@ sub startup {
 		}
 	);
 
+	$self->helper(
+		'grep_unknown_stations' => sub {
+			my ( $self, @stations ) = @_;
+
+			my @unknown_stations;
+			for my $station (@stations) {
+				my $station_info = get_station($station);
+				if ( not $station_info ) {
+					push( @unknown_stations, $station );
+				}
+			}
+			return @unknown_stations;
+		}
+	);
+
 	# Returns (journey id, error)
 	# Must be called during a transaction.
 	# Must perform a rollback on error.
@@ -699,6 +714,15 @@ sub startup {
 						},
 						{ user_id => $uid }
 					);
+					if ($has_arrived) {
+						my @unknown_stations
+						  = $self->grep_unknown_stations( $train->route );
+						if (@unknown_stations) {
+							$self->app->log->warn(
+								'Encountered unknown stations: '
+								  . join( ', ', @unknown_stations ) );
+						}
+					}
 				}
 
 				$journey
@@ -889,15 +913,11 @@ sub startup {
 				return 'Zugfahrten mit über 500 km/h? Schön wär\'s.';
 			}
 			if ( $journey->{edited} & 0x0010 ) {
-				my @unknown_stations;
-				for my $station ( @{ $journey->{route} } ) {
-					my $station_info = get_station( $station->[0] );
-					if ( not $station_info ) {
-						push( @unknown_stations, $station->[0] );
-					}
-				}
+				my @unknown_stations
+				  = $self->grep_unknown_stations( map { $_->[0] }
+					  @{ $journey->{route} } );
 				if (@unknown_stations) {
-					return 'Unbekannte Stationen: '
+					return 'Unbekannte Station(en): '
 					  . join( ', ', @unknown_stations );
 				}
 			}
