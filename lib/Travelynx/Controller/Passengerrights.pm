@@ -77,7 +77,7 @@ sub mark_substitute_connection {
 		$journey->{from_substitute} = $first_substitute;
 		$journey->{to_substitute}   = $last_substitute;
 		$journey->{substitute_delay}
-		  = ( $last_substitute->{rt_arr_ts} - $journey->{sched_ar_ts} ) / 60;
+		  = ( $last_substitute->{rt_arr_ts} - $journey->{sched_arr_ts} ) / 60;
 	}
 }
 
