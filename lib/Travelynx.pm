@@ -783,8 +783,9 @@ sub startup {
 			my $rows;
 
 			my $journey = $self->get_journey(
-				db         => $db,
-				journey_id => $journey_id,
+				db            => $db,
+				journey_id    => $journey_id,
+				with_datetime => 1,
 			);
 
 			eval {
@@ -1504,8 +1505,8 @@ sub startup {
 			# are really deleting the right journey and the user isn't just
 			# playing around with POST requests.
 			if (   $journey->{id} != $journey_id
-				or $journey->{checkin}->epoch != $checkin_epoch
-				or $journey->{checkout}->epoch != $checkout_epoch )
+				or $journey->{checkin_ts} != $checkin_epoch
+				or $journey->{checkout_ts} != $checkout_epoch )
 			{
 				return 'Invalid journey data';
 			}
@@ -1527,7 +1528,8 @@ sub startup {
 			}
 
 			if ( $rows == 1 ) {
-				$self->invalidate_stats_cache( $journey->{rt_departure} );
+				$self->invalidate_stats_cache(
+					epoch_to_dt( $journey->{rt_dep_ts} ) );
 				return undef;
 			}
 			return sprintf( 'Deleted %d rows, expected 1', $rows );
@@ -2377,23 +2379,33 @@ sub startup {
 			for my $entry ( $res->expand->hashes->each ) {
 
 				my $ref = {
-					id              => $entry->{journey_id},
-					type            => $entry->{train_type},
-					line            => $entry->{train_line},
-					no              => $entry->{train_no},
-					from_name       => $entry->{dep_name},
-					checkin         => epoch_to_dt( $entry->{checkin_ts} ),
-					sched_departure => epoch_to_dt( $entry->{sched_dep_ts} ),
-					rt_departure    => epoch_to_dt( $entry->{real_dep_ts} ),
-					to_name         => $entry->{arr_name},
-					checkout        => epoch_to_dt( $entry->{checkout_ts} ),
-					sched_arrival   => epoch_to_dt( $entry->{sched_arr_ts} ),
-					rt_arrival      => epoch_to_dt( $entry->{real_arr_ts} ),
-					messages        => $entry->{messages},
-					route           => $entry->{route},
-					edited          => $entry->{edited},
-					user_data       => $entry->{user_data},
+					id           => $entry->{journey_id},
+					type         => $entry->{train_type},
+					line         => $entry->{train_line},
+					no           => $entry->{train_no},
+					from_name    => $entry->{dep_name},
+					checkin_ts   => $entry->{checkin_ts},
+					sched_dep_ts => $entry->{sched_dep_ts},
+					rt_dep_ts    => $entry->{real_dep_ts},
+					to_name      => $entry->{arr_name},
+					checkout_ts  => $entry->{checkout_ts},
+					sched_arr_ts => $entry->{sched_arr_ts},
+					rt_arr_ts    => $entry->{real_arr_ts},
+					messages     => $entry->{messages},
+					route        => $entry->{route},
+					edited       => $entry->{edited},
+					user_data    => $entry->{user_data},
 				};
+
+				if ( $opt{with_datetime} ) {
+					$ref->{checkin} = epoch_to_dt( $ref->{checkin_ts} );
+					$ref->{sched_departure}
+					  = epoch_to_dt( $ref->{sched_dep_ts} );
+					$ref->{rt_departure}  = epoch_to_dt( $ref->{rt_dep_ts} );
+					$ref->{checkout}      = epoch_to_dt( $ref->{checkout_ts} );
+					$ref->{sched_arrival} = epoch_to_dt( $ref->{sched_arr_ts} );
+					$ref->{rt_arrival}    = epoch_to_dt( $ref->{rt_arr_ts} );
+				}
 
 				if ( $opt{verbose} ) {
 					$ref->{cancelled} = $entry->{cancelled};
@@ -2404,13 +2416,12 @@ sub startup {
 					}
 					$ref->{messages} = [ reverse @parsed_messages ];
 					$ref->{sched_duration}
-					  = $ref->{sched_arrival}->epoch
-					  ? $ref->{sched_arrival}->epoch
-					  - $ref->{sched_departure}->epoch
+					  = $ref->{sched_arr_ts}
+					  ? $ref->{sched_arr_ts} - $ref->{sched_dep_ts}
 					  : undef;
 					$ref->{rt_duration}
-					  = $ref->{rt_arrival}->epoch
-					  ? $ref->{rt_arrival}->epoch - $ref->{rt_departure}->epoch
+					  = $ref->{rt_arr_ts}
+					  ? $ref->{rt_arr_ts} - $ref->{rt_dep_ts}
 					  : undef;
 					my ( $km_route, $km_beeline, $skip )
 					  = $self->get_travel_distance( $ref->{from_name},
@@ -2960,7 +2971,7 @@ sub startup {
 			my $num_journeys     = 0;
 			my @inconsistencies;
 
-			my $next_departure = epoch_to_dt(0);
+			my $next_departure = 0;
 
 			for my $journey (@journeys) {
 				$num_trains++;
@@ -2974,42 +2985,36 @@ sub startup {
 				if ( $journey->{rt_duration} and $journey->{rt_duration} > 0 ) {
 					$min_travel_real += $journey->{rt_duration} / 60;
 				}
-				if ( $journey->{sched_departure} and $journey->{rt_departure} )
-				{
+				if ( $journey->{sched_dep_ts} and $journey->{rt_dep_ts} ) {
 					$delay_dep
-					  += (  $journey->{rt_departure}->epoch
-						  - $journey->{sched_departure}->epoch ) / 60;
+					  += ( $journey->{rt_dep_ts} - $journey->{sched_dep_ts} )
+					  / 60;
 				}
-				if ( $journey->{sched_arrival} and $journey->{rt_arrival} ) {
+				if ( $journey->{sched_arr_ts} and $journey->{rt_arr_ts} ) {
 					$delay_arr
-					  += (  $journey->{rt_arrival}->epoch
-						  - $journey->{sched_arrival}->epoch ) / 60;
+					  += ( $journey->{rt_arr_ts} - $journey->{sched_arr_ts} )
+					  / 60;
 				}
 
 				# Note that journeys are sorted from recent to older entries
-				if (    $journey->{rt_arrival}
-					and $next_departure->epoch
-					and $next_departure->epoch - $journey->{rt_arrival}->epoch
-					< ( 60 * 60 ) )
+				if (    $journey->{rt_arr_ts}
+					and $next_departure
+					and $next_departure - $journey->{rt_arr_ts} < ( 60 * 60 ) )
 				{
-					if (
-						$next_departure->epoch - $journey->{rt_arrival}->epoch
-						< 0 )
-					{
+					if ( $next_departure - $journey->{rt_arr_ts} < 0 ) {
 						push( @inconsistencies,
-							$next_departure->strftime('%d.%m.%Y %H:%M') );
+							epoch_to_dt($next_departure)
+							  ->strftime('%d.%m.%Y %H:%M') );
 					}
 					else {
 						$interchange_real
-						  += (  $next_departure->epoch
-							  - $journey->{rt_arrival}->epoch )
-						  / 60;
+						  += ( $next_departure - $journey->{rt_arr_ts} ) / 60;
 					}
 				}
 				else {
 					$num_journeys++;
 				}
-				$next_departure = $journey->{rt_departure};
+				$next_departure = $journey->{rt_dep_ts};
 			}
 			return {
 				km_route             => $km_route,

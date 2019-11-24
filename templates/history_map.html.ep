@@ -1,7 +1,7 @@
 <div class="row">
 	<div class="col s12">
 		% if (@{$station_coordinates}) {
-			Zugfahrten zwischen <%= $range_from->strftime('%d.%m.%Y') %> und <%= $range_to->strftime('%d.%m.%Y') %>
+			Alle bisherigen Zugfahrten
 		% }
 		% else {
 			Keine Zugfahrten gefunden.

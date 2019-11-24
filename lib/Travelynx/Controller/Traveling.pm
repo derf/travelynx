@@ -397,7 +397,10 @@ sub redirect_to_station {
 
 sub cancelled {
 	my ($self) = @_;
-	my @journeys = $self->get_user_travels( cancelled => 1 );
+	my @journeys = $self->get_user_travels(
+		cancelled     => 1,
+		with_datetime => 1
+	);
 
 	$self->respond_to(
 		json => { json => [@journeys] },
@@ -419,7 +422,6 @@ sub map_history {
 
 	my $location = $self->app->coordinates_by_station;
 
-# TODO create map-specific get_user_travels function returning EVA/DS100 station codes?
 	my @journeys = $self->get_user_travels;
 
 	if ( not @journeys ) {
@@ -428,8 +430,6 @@ sub map_history {
 			with_map            => 1,
 			station_coordinates => [],
 			station_pairs       => [],
-			range_from          => 0,
-			range_to            => 0,
 		);
 		return;
 	}
@@ -494,8 +494,6 @@ sub map_history {
 		with_map            => 1,
 		station_coordinates => \@station_coordinates,
 		station_pairs       => \@station_pairs,
-		range_from          => $first_departure,
-		range_to            => $last_departure,
 	);
 }
 
@@ -515,7 +513,7 @@ sub yearly_history {
 	# -> Limit time range to avoid accidental DoS.
 	if ( not( $year =~ m{ ^ [0-9]{4} $ }x and $year > 1990 and $year < 2100 ) )
 	{
-		@journeys = $self->get_user_travels;
+		@journeys = $self->get_user_travels( with_datetime => 1 );
 	}
 	else {
 		my $interval_start = DateTime->new(
@@ -529,8 +527,9 @@ sub yearly_history {
 		);
 		my $interval_end = $interval_start->clone->add( years => 1 );
 		@journeys = $self->get_user_travels(
-			after  => $interval_start,
-			before => $interval_end
+			after         => $interval_start,
+			before        => $interval_end,
+			with_datetime => 1
 		);
 		$stats = $self->get_journey_stats( year => $year );
 	}
@@ -572,7 +571,7 @@ sub monthly_history {
 			and $month < 13 )
 	  )
 	{
-		@journeys = $self->get_user_travels;
+		@journeys = $self->get_user_travels( with_datetime => 1 );
 	}
 	else {
 		my $interval_start = DateTime->new(
@@ -586,8 +585,9 @@ sub monthly_history {
 		);
 		my $interval_end = $interval_start->clone->add( months => 1 );
 		@journeys = $self->get_user_travels(
-			after  => $interval_start,
-			before => $interval_end
+			after         => $interval_start,
+			before        => $interval_end,
+			with_datetime => 1
 		);
 		$stats = $self->get_journey_stats(
 			year  => $year,
@@ -632,9 +632,10 @@ sub journey_details {
 	}
 
 	my $journey = $self->get_journey(
-		uid        => $uid,
-		journey_id => $journey_id,
-		verbose    => 1,
+		uid           => $uid,
+		journey_id    => $journey_id,
+		verbose       => 1,
+		with_datetime => 1,
 	);
 
 	if ($journey) {
@@ -669,8 +670,9 @@ sub edit_journey {
 	}
 
 	my $journey = $self->get_journey(
-		uid        => $uid,
-		journey_id => $journey_id
+		uid           => $uid,
+		journey_id    => $journey_id,
+		with_datetime => 1,
 	);
 
 	if ( not $journey ) {
@@ -732,10 +734,11 @@ sub edit_journey {
 
 		if ( not $error ) {
 			$journey = $self->get_journey(
-				uid        => $uid,
-				db         => $db,
-				journey_id => $journey_id,
-				verbose    => 1
+				uid           => $uid,
+				db            => $db,
+				journey_id    => $journey_id,
+				verbose       => 1,
+				with_datetime => 1,
 			);
 			$error = $self->journey_sanity_check($journey);
 		}

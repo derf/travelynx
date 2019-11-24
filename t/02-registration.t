@@ -237,6 +237,10 @@ $t->get_ok('/history/2018')->status_is(200)->content_like(qr{62 km})
   ->content_like(qr{Bei Abfahrt: 00:00 Stunden})
   ->content_like(qr{Bei Ankunft: 00:00 Stunden});
 
+$t->get_ok('/history/map')->status_is(200)
+  ->content_like(qr{\[\[51.956[^,]*,7.635[^]]*\],'M.nster\(Westf\)Hbf'\],})
+  ->content_like(qr{\[\[51.504[^,]*,7.102[^]]*\],'Gelsenkirchen Hbf'\]});
+
 $csrf_token
   = $t->ua->get('/journey/add')->res->dom->at('input[name=csrf_token]')
   ->attr('value');
