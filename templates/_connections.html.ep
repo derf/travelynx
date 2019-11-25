@@ -1,28 +1,42 @@
 <div class="hide-on-med-and-up"><table class="striped"><tbody>
 	% for my $res (@{$connections}) {
 		% my ($train, $via) = @{$res};
+		% my $td_class = '';
+		% my $link_class = 'action-checkin';
+		% if ($train->is_cancelled) {
+			% $td_class = 'cancelled';
+			% $link_class = 'action-cancelled-from';
+		% }
 		<tr>
-			<td>
+			<td class="<%= $td_class %>">
 				% if ($checkin_from) {
-					<a class="action-checkin" data-station="<%= $train->station_uic %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>"><%= $train->line %></a>
+					<a class="<%= $link_class %>" data-station="<%= $train->station_uic %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>"><%= $train->line %></a>
 				% }
 				% else {
 					%= $train->line
 				% }
 			</td>
-			<td>
+			<td class="<%= $td_class %>">
 				% if ($checkin_from) {
-					<a class="action-checkin" data-station="<%= $train->station_uic %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>"><%= $via %></a>
+					<a class="<%= $link_class %>" data-station="<%= $train->station_uic %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>"><%= $via %></a>
 				% }
 				% else {
 					%= $via
 				% }
 			</td>
-			<td><%= $train->departure->strftime('%H:%M') %>
-				% if ($train->departure_delay) {
-					%= sprintf('(%+d)', $train->departure_delay)
+			<td>
+				% if ($train->departure_is_cancelled) {
+					%= $train->sched_departure->strftime('%H:%M')
+					⊖
 				% }
-				<br/>Gleis <%= $train->platform || '?' %></td>
+				% else {
+					%= $train->departure->strftime('%H:%M')
+					% if ($train->departure_delay) {
+						%= sprintf('(%+d)', $train->departure_delay)
+					% }
+					<br/>Gleis <%= $train->platform || '?' %>
+				% }
+			</td>
 		</tr>
 	% }
 </tbody></table></div>
@@ -52,11 +66,22 @@
 					%= $via
 				% }
 			</td>
-			<td><%= $train->departure->strftime('%H:%M') %>
-				% if ($train->departure_delay) {
-					%= sprintf('(%+d)', $train->departure_delay)
+			<td>
+				% if ($train->departure_is_cancelled) {
+					%= $train->sched_departure->strftime('%H:%M')
+					(fällt aus)
 				% }
-			</td><td>Gleis <%= $train->platform || '?' %></td>
+				% else {
+					%= $train->departure->strftime('%H:%M')
+					% if ($train->departure_delay) {
+						%= sprintf('(%+d)', $train->departure_delay)
+					% }
+				% }
+			</td><td>
+				% if (not $train->departure_is_cancelled) {
+					Gleis <%= $train->platform || '?' %>
+				% }
+			</td>
 		</tr>
 	% }
 </tbody></table></div>

@@ -2276,6 +2276,7 @@ sub startup {
 			  map { [ $_, $_->departure ? $_->departure->epoch : 0 ] }
 			  @{ $stationboard->{results} };
 			my @results;
+			my @cancellations;
 			my %via_count = map { $_ => 0 } @destinations;
 			for my $train ( @{ $stationboard->{results} } ) {
 				if ( not $train->departure ) {
@@ -2291,14 +2292,43 @@ sub startup {
 				{
 					next;
 				}
-				my @via = ( $train->route_post, $train->route_end );
-				for my $dest (@destinations) {
-					if ( $via_count{$dest} < 2
-						and List::Util::any { $_ eq $dest } @via )
-					{
-						push( @results, [ $train, $dest ] );
-						$via_count{$dest}++;
-						next;
+
+             # In general, this function is meant to return feasible
+             # connections. However, cancelled connections may also be of
+             # interest and are also useful for logging cancellations.
+             # To satisfy both demands with (hopefully) little confusion and
+             # UI clutter, this function returns two concatenated arrays:
+             # actual connections (ordered by actual departure time) followed
+             # by cancelled connections (ordered by scheduled departure time).
+             # This is easiest to achieve in two separate loops.
+             #
+             # Note that a cancelled train may still have a matching destination
+             # in its route_post, e.g. if it leaves out $ds100 due to
+             # unscheduled route changes but continues on schedule afterwards
+             # -- so it is only cancelled at $ds100, not on the remainder of
+             # the route. Also note that this specific case is not yet handled
+             # properly by the cancellation logic etc.
+
+				if ( $train->departure_is_cancelled ) {
+					my @via
+					  = ( $train->sched_route_post, $train->sched_route_end );
+					for my $dest (@destinations) {
+						if ( List::Util::any { $_ eq $dest } @via ) {
+							push( @cancellations, [ $train, $dest ] );
+							next;
+						}
+					}
+				}
+				else {
+					my @via = ( $train->route_post, $train->route_end );
+					for my $dest (@destinations) {
+						if ( $via_count{$dest} < 2
+							and List::Util::any { $_ eq $dest } @via )
+						{
+							push( @results, [ $train, $dest ] );
+							$via_count{$dest}++;
+							next;
+						}
 					}
 				}
 			}
@@ -2311,8 +2341,11 @@ sub startup {
 					$_->[0]->departure->epoch // $_->[0]->sched_departure->epoch
 				]
 			  } @results;
+			@cancellations = map { $_->[0] }
+			  sort { $a->[1] <=> $b->[1] }
+			  map { [ $_, $_->[0]->sched_departure->epoch ] } @cancellations;
 
-			return @results;
+			return ( @results, @cancellations );
 		}
 	);
 
