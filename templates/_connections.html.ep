@@ -69,7 +69,6 @@
 			<td>
 				% if ($train->departure_is_cancelled) {
 					%= $train->sched_departure->strftime('%H:%M')
-					(fällt aus)
 				% }
 				% else {
 					%= $train->departure->strftime('%H:%M')
@@ -80,6 +79,9 @@
 			</td><td>
 				% if (not $train->departure_is_cancelled) {
 					Gleis <%= $train->platform || '?' %>
+				% }
+				% else {
+					fällt aus
 				% }
 			</td>
 		</tr>
