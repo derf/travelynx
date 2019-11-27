@@ -3135,6 +3135,7 @@ sub startup {
 	$authed_r->post('/account/privacy')->to('account#privacy');
 	$authed_r->post('/account/hooks')->to('account#webhook');
 	$authed_r->post('/account/insight')->to('account#insight');
+	$authed_r->post('/history/map')->to('traveling#map_history');
 	$authed_r->post('/journey/add')->to('traveling#add_journey_form');
 	$authed_r->post('/journey/edit')->to('traveling#edit_journey');
 	$authed_r->post('/journey/passenger_rights/*filename')

@@ -434,6 +434,8 @@ sub map_history {
 		return;
 	}
 
+	my $include_manual = $self->param('include_manual') ? 1 : 0;
+
 	my $first_departure = $journeys[-1]->{rt_departure};
 	my $last_departure  = $journeys[0]->{rt_departure};
 
@@ -453,8 +455,24 @@ sub map_history {
 		my $to_index   = first_index { $_ eq $journey->{to_name} } @route;
 
 		if (   $from_index == -1
-			or $to_index == -1
-			or $journey->{edited} == 0x3fff )
+			or $to_index == -1 )
+		{
+			next;
+		}
+
+		# Manual journey entries are only included if one of the following
+		# conditions is satisfied:
+		# * their route has more than two elements (-> probably more than just
+		#   start and stop station), or
+		# * $include_manual is true (-> user wants to see incomplete routes)
+		# This avoids messing up the map in case an A -> B connection has been
+		# tracked both with a regular checkin (-> detailed route shown on map)
+		# and entered manually (-> beeline also shown on map, typically
+		# significantly differs from detailed route) -- unless the user
+		# sets include_manual, of course.
+		if (    $journey->{edited} & 0x0010
+			and @route <= 2
+			and not $include_manual )
 		{
 			next;
 		}

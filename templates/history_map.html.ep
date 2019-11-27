@@ -10,11 +10,22 @@
 </div>
 
 %= include '_map', station_coordinates => $station_coordinates, station_pairs => $station_pairs
-%
-<div class="row">
-	<div class="col s12">
-		Bei Zugfahrten mit inkonsistenten Reisedaten und manuellen Einträgen
-		werden derzeit nur Start- und Zielbahnhof ohne Luftlinie dazwischen
-		angezeigt.
+
+%= form_for '/history/map' => (method => 'POST') => begin
+	%= csrf_field
+	<div class="row">
+		<div class="input-field col s12">
+			<label>
+				%= check_box include_manual => 1
+				<span>Manuelle Einträge ohne Unterwegshalte mitberücksichtigen</span>
+			</label>
+		</div>
 	</div>
-</div>
+	<div class="row">
+		<div class="col s12 center-align">
+			<button class="btn wave-effect waves-light" type="submit" name="action" value="go">
+				Anzeigen
+			</button>
+		</div>
+	</div>
+%= end
