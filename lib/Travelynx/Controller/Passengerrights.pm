@@ -127,9 +127,9 @@ sub list_candidates {
 		$journey->{cancelled} = 1;
 		$self->mark_substitute_connection($journey);
 
-		if ( not $journey->{has_substitute}
-			or $journey->{to_substitute}->{rt_arr_ts} - $journey->{sched_arr_ts}
-			>= 3600 )
+		if (    $journey->{has_substitute}
+			and $journey->{to_substitute}->{rt_arr_ts}
+			- $journey->{sched_arr_ts} >= 3600 )
 		{
 			push( @journeys, $journey );
 		}
