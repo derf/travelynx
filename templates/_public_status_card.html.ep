@@ -3,6 +3,9 @@
 		<div class="card-content">
 			<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 			<span class="card-title"><%= $name %> ist unterwegs</span>
+			% if ($public_level & 0x04 and $journey->{comment}) {
+				<p>„<%= $journey->{comment} %>“</p>
+			% }
 			<p>
 				% if ($journey->{train_line}) {
 					<div class="center-align"><b><%= $journey->{train_type} %> <%= $journey->{train_line} %></b> <%= $journey->{train_no} %></div>

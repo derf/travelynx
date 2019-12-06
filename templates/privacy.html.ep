@@ -28,6 +28,22 @@
 		</div>
 	</div>
 	<div class="row">
+		<div class="input-field col s12">
+			<label>
+				%= check_box public_comment => 1
+				<span>Checkin-Kommentar</span>
+			</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s12">
+			Wenn aktiv, wird in deinem aktuellen Status auch der optionale
+			Freitext-Kommentar der Zugfahrt gezeigt. Wenn du gerade nicht
+			eingecheckt bist oder dein aktueller Status nicht öffentlich ist,
+			hat dieses Feld keine Auswirkungen.
+		</div>
+	</div>
+	<div class="row">
 		<div class="col s3 m3 l3">
 		</div>
 		<div class="col s6 m6 l6 center-align">

@@ -4,7 +4,7 @@
 			<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 			<span class="card-title">Eingecheckt in <%= $journey->{train_type} %> <%= $journey->{train_no} %></span>
 			% if ($journey->{comment}) {
-				<p><%= $journey->{comment} %>.</p>
+				<p><%= $journey->{comment} %></p>
 			% }
 			<p>
 				<div class="center-align countdown"

@@ -65,7 +65,7 @@ sub register {
 	my $password2 = $self->req->param('password2');
 	my $ip        = $self->req->headers->header('X-Forwarded-For');
 	my $ua        = $self->req->headers->user_agent;
-	my $date = DateTime->now( time_zone => 'Europe/Berlin' )
+	my $date      = DateTime->now( time_zone => 'Europe/Berlin' )
 	  ->strftime('%d.%m.%Y %H:%M:%S %z');
 
 	# In case Mojolicious is not running behind a reverse proxy
@@ -221,13 +221,20 @@ sub privacy {
 		else {
 			$public_level &= ~0x02;
 		}
+		if ( $self->param('public_comment') ) {
+			$public_level |= 0x04;
+		}
+		else {
+			$public_level &= ~0x04;
+		}
 		$self->set_privacy( $user->{id}, $public_level );
 
 		$self->flash( success => 'privacy' );
 		$self->redirect_to('account');
 	}
 	else {
-		$self->param( public_status => $public_level & 0x02 ? 1 : 0 );
+		$self->param( public_status  => $public_level & 0x02 ? 1 : 0 );
+		$self->param( public_comment => $public_level & 0x04 ? 1 : 0 );
 		$self->render( 'privacy', name => $user->{name} );
 	}
 }
@@ -640,7 +647,7 @@ sub json_export {
 
 	$self->render(
 		json => {
-			account    => $db->select( 'users', '*', { id => $uid } )->hash,
+			account => $db->select( 'users', '*', { id => $uid } )->hash,
 			in_transit => [
 				$db->select( 'in_transit_str', '*', { user_id => $uid } )
 				  ->hashes->each

@@ -75,9 +75,10 @@ sub user_status {
 
 		$self->render(
 			'user_status',
-			name    => $name,
-			journey => $status,
-			twitter => \%tw_data,
+			name         => $name,
+			public_level => $user->{public_level},
+			journey      => $status,
+			twitter      => \%tw_data,
 		);
 	}
 	else {
@@ -97,8 +98,9 @@ sub public_status_card {
 		my $status = $self->get_user_status( $user->{id} );
 		$self->render(
 			'_public_status_card',
-			name    => $name,
-			journey => $status
+			name         => $name,
+			public_level => $user->{public_level},
+			journey      => $status
 		);
 	}
 	else {
