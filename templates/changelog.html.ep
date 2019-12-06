@@ -2,6 +2,21 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		1.11
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left">add</i> Optionale Kommentare für
+			Zugfahrten. Der Eintrag zur aktuellen Zugfahrt kann im öffentlichen
+			Nutzerstatus angezeigt werden, wenn die entsprechende Option in
+			den <a href="/account/privacy">Privatsphäre-Einstellungen</a>
+			aktiv ist.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		1.10
 	</div>
 	<div class="col s12 m11 l11">
