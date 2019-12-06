@@ -673,6 +673,51 @@ sub journey_details {
 
 }
 
+sub comment_form {
+	my ($self) = @_;
+	my $dep_ts = $self->param('dep_ts');
+	my $status = $self->get_user_status;
+
+	if ( not $status->{checked_in} ) {
+		$self->render(
+			'edit_comment',
+			error   => 'notfound',
+			journey => {}
+		);
+	}
+	elsif ( not $dep_ts ) {
+		$self->param( dep_ts  => $status->{sched_departure}->epoch );
+		$self->param( comment => $status->{comment} );
+		$self->render(
+			'edit_comment',
+			error   => undef,
+			journey => $status
+		);
+	}
+	elsif ( $self->validation->csrf_protect->has_error('csrf_token') ) {
+		$self->render(
+			'edit_comment',
+			error   => undef,
+			journey => $status
+		);
+	}
+	elsif ( $dep_ts != $status->{sched_departure}->epoch ) {
+
+		# TODO find and update appropriate past journey (if it exists)
+		$self->param( comment => $status->{comment} );
+		$self->render(
+			'edit_comment',
+			error   => undef,
+			journey => $status
+		);
+	}
+	else {
+		$self->app->log->debug("set comment");
+		$self->update_in_transit_comment( $self->param('comment') );
+		$self->redirect_to('/');
+	}
+}
+
 sub edit_journey {
 	my ($self)     = @_;
 	my $journey_id = $self->param('journey_id');

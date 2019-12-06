@@ -778,6 +778,25 @@ sub startup {
 	);
 
 	$self->helper(
+		'update_in_transit_comment' => sub {
+			my ( $self, $comment ) = @_;
+			my $uid = $self->current_user->{id};
+
+			my $status = $self->pg->db->select( 'in_transit', ['user_data'],
+				{ user_id => $uid } )->expand->hash;
+			if ( not $status ) {
+				return;
+			}
+			$status->{user_data}{comment} = $comment;
+			$self->pg->db->update(
+				'in_transit',
+				{ user_data => JSON->new->encode( $status->{user_data} ) },
+				{ user_id   => $uid }
+			);
+		}
+	);
+
+	$self->helper(
 		'update_journey_part' => sub {
 			my ( $self, $db, $journey_id, $key, $value ) = @_;
 			my $rows;
@@ -2652,6 +2671,7 @@ sub startup {
 					route_after   => \@route_after,
 					messages      => $in_transit->{messages},
 					extra_data    => $in_transit->{data},
+					comment       => $in_transit->{user_data}{comment},
 				};
 
 				my @parsed_messages;
@@ -2818,7 +2838,7 @@ sub startup {
 					order_by => { -desc => 'journey_id' },
 					limit    => 1
 				}
-			)->hash;
+			)->expand->hash;
 
 			if ($latest) {
 				my $ts          = $latest->{checkout_ts};
@@ -2843,6 +2863,7 @@ sub startup {
 					arr_ds100       => $latest->{arr_ds100},
 					arr_name        => $latest->{arr_name},
 					arr_platform    => $latest->{arr_platform},
+					comment         => $latest->{user_data}{comment},
 				};
 			}
 
@@ -3129,6 +3150,7 @@ sub startup {
 	$authed_r->get('/history/:year')->to('traveling#yearly_history');
 	$authed_r->get('/history/:year/:month')->to('traveling#monthly_history');
 	$authed_r->get('/journey/add')->to('traveling#add_journey_form');
+	$authed_r->get('/journey/comment')->to('traveling#comment_form');
 	$authed_r->get('/journey/:id')->to('traveling#journey_details');
 	$authed_r->get('/s/*station')->to('traveling#station');
 	$authed_r->get('/confirm_mail/:token')->to('account#confirm_mail');
@@ -3137,6 +3159,7 @@ sub startup {
 	$authed_r->post('/account/insight')->to('account#insight');
 	$authed_r->post('/history/map')->to('traveling#map_history');
 	$authed_r->post('/journey/add')->to('traveling#add_journey_form');
+	$authed_r->post('/journey/comment')->to('traveling#comment_form');
 	$authed_r->post('/journey/edit')->to('traveling#edit_journey');
 	$authed_r->post('/journey/passenger_rights/*filename')
 	  ->to('passengerrights#generate');

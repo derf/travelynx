@@ -3,6 +3,9 @@
 		<div class="card-content">
 			<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 			<span class="card-title">Eingecheckt in <%= $journey->{train_type} %> <%= $journey->{train_no} %></span>
+			% if ($journey->{comment}) {
+				<p><%= $journey->{comment} %>.</p>
+			% }
 			<p>
 				<div class="center-align countdown"
 					data-journey="<%= $journey->{real_departure}->epoch %>;<%= <%= $journey->{real_arrival}->epoch %>"
@@ -216,9 +219,16 @@
 			% }
 		</div>
 		<div class="card-action">
-			<a class="action-undo blue-text" data-id="in_transit" style="margin-right: 0;">
-				<i class="material-icons left">undo</i> Rückgängig
-			</a>
+			% if ($journey->{arr_name}) {
+				<a style="margin-right: 0;" href="/journey/comment">
+					<i class="material-icons left">comment</i> Kommentar
+				</a>
+			% }
+			% else {
+				<a class="action-undo blue-text" data-id="in_transit" style="margin-right: 0;">
+					<i class="material-icons left">undo</i> Checkin Rückgängig
+				</a>
+			% }
 			% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} <= 0) {
 				<a
 					class="action-checkout right"
@@ -275,6 +285,11 @@
 					%>">Ohne Echtzeitdaten in <%= $journey->{arr_name} %>
 					auschecken</a>.
 				</p>
+			</div>
+			<div class="card-action">
+				<a class="action-undo blue-text" data-id="in_transit" style="margin-right: 0;">
+					<i class="material-icons left">undo</i> Checkin Rückgängig
+				</a>
 			</div>
 		</div>
 	% }
