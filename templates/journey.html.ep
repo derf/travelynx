@@ -15,11 +15,15 @@
 		<div class="col s12">
 			<p>
 				% if ($journey->{cancelled}) {
-					Ausgefallene Fahrt von
+					Ausgefallene Fahrt
 				% }
 				% else {
-					Fahrt von
+					Fahrt
 				% }
+				% if ($journey->{edited} & 0x0020) {
+					∗
+				% }
+				von
 				<b><%= $journey->{from_name} %></b>
 				nach
 				<b><%= $journey->{to_name} %></b>

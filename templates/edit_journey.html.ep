@@ -52,6 +52,15 @@
 						</td>
 					</tr>
 					<tr>
+						<th scope="row"></th>
+						<td>
+							<label>
+								%= check_box cancelled => 1
+								<span>Fahrt ist ausgefallen</span>
+							</label>
+						</td>
+					</tr>
+					<tr>
 						<th scope="row">Geplante Abfahrt</th>
 						<td>
 							%= text_field 'sched_departure', id => 'sched_departure', class => 'validate', required => undef, pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'

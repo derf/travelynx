@@ -752,6 +752,7 @@ sub edit_journey {
 	my $journey = $self->get_journey(
 		uid           => $uid,
 		journey_id    => $journey_id,
+		verbose       => 1,
 		with_datetime => 1,
 	);
 
@@ -811,6 +812,15 @@ sub edit_journey {
 					[@route_new] );
 			}
 		}
+		{
+			my $cancelled_old = $journey->{cancelled};
+			my $cancelled_new = $self->param('cancelled') // 0;
+			if ( $cancelled_old != $cancelled_new ) {
+				$error
+				  = $self->update_journey_part( $db, $journey->{id},
+					'cancelled', $cancelled_new );
+			}
+		}
 
 		if ( not $error ) {
 			$journey = $self->get_journey(
@@ -838,6 +848,8 @@ sub edit_journey {
 
 	$self->param(
 		route => join( "\n", map { $_->[0] } @{ $journey->{route} } ) );
+
+	$self->param( cancelled => $journey->{cancelled} );
 
 	for my $key (qw(comment)) {
 		if ( $journey->{user_data} and $journey->{user_data}{$key} ) {

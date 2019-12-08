@@ -184,6 +184,7 @@ sub startup {
 				sched_departure => 0x0001,
 				real_departure  => 0x0002,
 				route           => 0x0010,
+				is_cancelled    => 0x0020,
 				sched_arrival   => 0x0100,
 				real_arrival    => 0x0200,
 			};
@@ -890,6 +891,18 @@ sub startup {
 						{
 							route  => JSON->new->encode( \@new_route ),
 							edited => $journey->{edited} | 0x0010,
+						},
+						{
+							id => $journey_id,
+						}
+					)->rows;
+				}
+				elsif ( $key eq 'cancelled' ) {
+					$rows = $db->update(
+						'journeys',
+						{
+							cancelled => $value,
+							edited    => $journey->{edited} | 0x0020,
 						},
 						{
 							id => $journey_id,
