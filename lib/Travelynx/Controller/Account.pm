@@ -221,7 +221,10 @@ sub privacy {
 		else {
 			$public_level &= ~0x02;
 		}
-		if ( $self->param('public_comment') ) {
+
+		# public comment with non-public status does not make sense
+		if ( $self->param('public_comment') and $self->param('public_status') )
+		{
 			$public_level |= 0x04;
 		}
 		else {
