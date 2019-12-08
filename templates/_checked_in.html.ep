@@ -225,7 +225,7 @@
 				</a>
 			% }
 			% else {
-				<a class="action-undo blue-text" data-id="in_transit" style="margin-right: 0;">
+				<a class="action-undo blue-text" data-id="in_transit" data-checkints="<%= $journey->{timestamp}->epoch %>" style="margin-right: 0;">
 					<i class="material-icons left">undo</i> Checkin Rückgängig
 				</a>
 			% }
@@ -292,7 +292,7 @@
 				</p>
 			</div>
 			<div class="card-action">
-				<a class="action-undo blue-text" data-id="in_transit" style="margin-right: 0;">
+				<a class="action-undo blue-text" data-id="in_transit" data-checkints="<%= $journey->{timestamp}->epoch %>"  style="margin-right: 0;">
 					<i class="material-icons left">undo</i> Checkin Rückgängig
 				</a>
 			</div>

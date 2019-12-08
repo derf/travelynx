@@ -164,11 +164,19 @@ function tvly_reg_handlers() {
 	});
 	$('.action-undo').click(function() {
 		var link = $(this);
+		var now = Date.now() / 1000;
+		var checkints = parseInt(link.data('checkints'));
 		var req = {
 			action: 'undo',
 			undo_id: link.data('id'),
 		};
-		tvly_run(link, req);
+		var do_checkout = true;
+		if (now - checkints > 900) {
+			do_checkout = confirm("Checkin wirklich rückgängig machen? Er kann ggf. nicht wiederholt werden.");
+		}
+		if (do_checkout) {
+			tvly_run(link, req);
+		}
 	});
 	$('.action-cancelled-from').click(function() {
 		var link = $(this);
@@ -196,7 +204,7 @@ function tvly_reg_handlers() {
 			checkin: link.data('checkin'),
 			checkout: link.data('checkout'),
 		};
-		really_delete = confirm("Diese Zugfahrt wirklich löschen? Der Eintrag wird sofort aus der Datenbank entfernt und kann nicht wiederhergestellt werden.");
+		var really_delete = confirm("Diese Zugfahrt wirklich löschen? Der Eintrag wird sofort aus der Datenbank entfernt und kann nicht wiederhergestellt werden.");
 		if (really_delete) {
 			tvly_run(link, req);
 		}
