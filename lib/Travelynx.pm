@@ -169,6 +169,28 @@ sub startup {
 	);
 
 	$self->attr(
+		account_public_mask => sub {
+			return {
+				status_intern  => 0x01,
+				status_extern  => 0x02,
+				status_comment => 0x04,
+			};
+		}
+	);
+
+	$self->attr(
+		journey_edit_mask => sub {
+			return {
+				sched_departure => 0x0001,
+				real_departure  => 0x0002,
+				route           => 0x0010,
+				sched_arrival   => 0x0100,
+				real_arrival    => 0x0200,
+			};
+		}
+	);
+
+	$self->attr(
 		coordinates_by_station => sub {
 			my %location;
 			for
