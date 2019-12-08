@@ -14,7 +14,7 @@
 						<span class="card-title">Passwort geändert</span>
 					% }
 					% elsif ($success eq 'privacy') {
-						<span class="card-title">Einstellungen zu öffentliche Account-Daten geändert</span>
+						<span class="card-title">Einstellungen zu öffentlichen Account-Daten geändert</span>
 					% }
 					% elsif ($success eq 'use_history') {
 						<span class="card-title">Einstellungen zu vorgeschlagenen Verbindungen geändert</span>
