@@ -66,10 +66,13 @@
 					% if ($acc->{is_public} == 0) {
 						<span style="color: #999999;">Keine</span>
 					% }
-					% if ($acc->{is_public} & 0x02) {
+					% if ($acc->{is_public} & 0x01) {
+						Aktueller Status (nur für angemeldete Accounts)
+					% }
+					% elsif ($acc->{is_public} & 0x02) {
 						Aktueller Status
 					% }
-					% if (($acc->{is_public} & 0x06) == 0x06) {
+					% if ($acc->{is_public} & 0x04) {
 						mit Kommentar
 					% }
 				</td>

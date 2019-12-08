@@ -35,7 +35,13 @@ sub user_status {
 	my $ts   = $self->stash('ts');
 	my $user = $self->get_privacy_by_name($name);
 
-	if ( $user and ( $user->{public_level} & 0x02 ) ) {
+	if (
+		$user
+		and ( $user->{public_level} & 0x02
+			or
+			( $user->{public_level} & 0x01 and $self->is_user_authenticated ) )
+	  )
+	{
 		my $status = $self->get_user_status( $user->{id} );
 
 		my %tw_data = (
@@ -81,6 +87,9 @@ sub user_status {
 			twitter      => \%tw_data,
 		);
 	}
+	elsif ( $user->{public_level} & 0x01 ) {
+		$self->render( 'login', redirect_to => $self->req->url );
+	}
 	else {
 		$self->render('not_found');
 	}
@@ -94,7 +103,13 @@ sub public_status_card {
 
 	delete $self->stash->{layout};
 
-	if ( $user and ( $user->{public_level} & 0x02 ) ) {
+	if (
+		$user
+		and ( $user->{public_level} & 0x02
+			or
+			( $user->{public_level} & 0x01 and $self->is_user_authenticated ) )
+	  )
+	{
 		my $status = $self->get_user_status( $user->{id} );
 		$self->render(
 			'_public_status_card',

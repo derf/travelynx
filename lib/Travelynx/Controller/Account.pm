@@ -215,15 +215,21 @@ sub privacy {
 	my $public_level = $user->{is_public};
 
 	if ( $self->param('action') and $self->param('action') eq 'save' ) {
-		if ( $self->param('public_status') ) {
+		if ( $self->param('status_level') eq 'intern' ) {
+			$public_level |= 0x01;
+			$public_level &= ~0x02;
+		}
+		elsif ( $self->param('status_level') eq 'extern' ) {
 			$public_level |= 0x02;
+			$public_level &= ~0x01;
 		}
 		else {
-			$public_level &= ~0x02;
+			$public_level &= ~0x03;
 		}
 
 		# public comment with non-public status does not make sense
-		if ( $self->param('public_comment') and $self->param('public_status') )
+		if (    $self->param('public_comment')
+			and $self->param('status_level') ne 'private' )
 		{
 			$public_level |= 0x04;
 		}
@@ -236,7 +242,11 @@ sub privacy {
 		$self->redirect_to('account');
 	}
 	else {
-		$self->param( public_status  => $public_level & 0x02 ? 1 : 0 );
+		$self->param(
+			  status_level => $public_level & 0x01 ? 'intern'
+			: $public_level & 0x02 ? 'extern'
+			:                        'private'
+		);
 		$self->param( public_comment => $public_level & 0x04 ? 1 : 0 );
 		$self->render( 'privacy', name => $user->{name} );
 	}

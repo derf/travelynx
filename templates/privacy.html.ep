@@ -7,31 +7,48 @@
 		kennen.
 	</div>
 </div>
-<h2>Öffentliche Daten:</h2>
 %= form_for '/account/privacy' => (method => 'POST') => begin
+<h2>Aktueller Status</h2>
 	%= csrf_field
 	<div class="row">
 		<div class="input-field col s12">
 			<label>
-				%= check_box public_status => 1
-				<span>Aktueller Status</span>
+				%= radio_button status_level => 'private'
+				<span>Nicht sichtbar</span>
+			</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			<label>
+				%= radio_button status_level => 'intern'
+				<span>Nur für angemeldete Accounts</span>
+			</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			<label>
+				%= radio_button status_level => 'extern'
+				<span>Öffentlich</span>
 			</label>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col s12">
-			Wenn aktiv, ist dein aktueller Status unter <a href="/status/<%= $name
-			%>">/status/<%= $name %></a> abrufbar. Wenn du eingecheckt bist,
-			werden dort Zug, Start- und Zielstation, Abfahrts- und Ankunftszeit
-			gezeigt; andernfalls lediglich der Zielbahnhof der letzten Reise.
-			Wann die letzte Reise beendet wurde, wird bewusst nicht angegeben.
+			Hier kannst du auswählen, ob dein aktueller Status unter <a
+			href="/status/<%= $name %>">/status/<%= $name %></a> abrufbar ist.
+			Wenn du eingecheckt bist, werden dort Zug, Start- und Zielstation,
+			Abfahrts- und Ankunftszeit gezeigt; andernfalls lediglich der
+			Zielbahnhof der letzten Reise.  Wann die letzte Reise beendet wurde,
+			wird bewusst nicht angegeben.
 		</div>
 	</div>
 	<div class="row">
 		<div class="input-field col s12">
 			<label>
 				%= check_box public_comment => 1
-				<span>Checkin-Kommentar</span>
+				<span>Mit Kommentar</span>
 			</label>
 		</div>
 	</div>
