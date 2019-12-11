@@ -1813,6 +1813,37 @@ sub startup {
 	);
 
 	$self->helper(
+		'has_wagonorder_p' => sub {
+			my ( $self, $ts, $train_no ) = @_;
+			my $api_ts = $ts->strftime('%Y%m%d%H%M');
+			my $url
+			  = "https://lib.finalrewind.org/dbdb/has_wagonorder/${train_no}/${api_ts}";
+			my $cache   = $self->app->cache_iris_main;
+			my $promise = Mojo::Promise->new;
+
+			if ( my $content = $cache->get($url) ) {
+				if ( $content eq 'n' ) {
+					$promise->reject;
+					return $promise;
+				}
+			}
+
+			$self->ua->request_timeout(5)->head_p($url)->then(
+				sub {
+					$cache->set( $url, 'y' );
+					$promise->resolve;
+				}
+			)->catch(
+				sub {
+					$cache->set( $url, 'n' );
+					$promise->reject;
+				}
+			)->wait;
+			return $promise;
+		}
+	);
+
+	$self->helper(
 		'get_wagonorder_p' => sub {
 			my ( $self, $ts, $train_no ) = @_;
 			my $api_ts = $ts->strftime('%Y%m%d%H%M');
@@ -2104,9 +2135,14 @@ sub startup {
 				}
 			)->wait;
 
-			if ( $train->type =~ m{[EI]C} and $train->sched_departure ) {
-				$self->get_wagonorder_p( $train->sched_departure,
+			if ( $train->sched_departure ) {
+				$self->has_wagonorder_p( $train->sched_departure,
 					$train->train_no )->then(
+					sub {
+						return $self->get_wagonorder_p( $train->sched_departure,
+							$train->train_no );
+					}
+				)->then(
 					sub {
 						my ($wagonorder) = @_;
 
