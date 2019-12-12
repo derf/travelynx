@@ -2146,23 +2146,56 @@ sub startup {
 					sub {
 						my ($wagonorder) = @_;
 
-						my $res = $db->select( 'in_transit', ['data'],
-							{ user_id => $uid } );
-						my $res_h = $res->expand->hash;
-						my $data  = $res_h->{data} // {};
+						my $res = $db->select(
+							'in_transit',
+							[ 'data', 'user_data' ],
+							{ user_id => $uid }
+						);
+						my $res_h     = $res->expand->hash;
+						my $data      = $res_h->{data} // {};
+						my $user_data = $res_h->{user_data} // {};
 
 						if ($is_departure) {
 							$data->{wagonorder_dep} = $wagonorder;
+							$user_data->{wagons}    = [];
+							for my $group (
+								@{
+									$wagonorder->{data}{istformation}
+									  {allFahrzeuggruppe} // []
+								}
+							  )
+							{
+								for
+								  my $wagon ( @{ $group->{allFahrzeug} // [] } )
+								{
+									push(
+										@{ $user_data->{wagons} },
+										{
+											id => $wagon->{fahrzeugnummer},
+											number =>
+											  $wagon->{wagenordnungsnummer},
+											type => $wagon->{fahrzeugtyp},
+										}
+									);
+								}
+							}
+							$db->update(
+								'in_transit',
+								{
+									data      => JSON->new->encode($data),
+									user_data => JSON->new->encode($user_data)
+								},
+								{ user_id => $uid }
+							);
 						}
 						else {
 							$data->{wagonorder_arr} = $wagonorder;
+							$db->update(
+								'in_transit',
+								{ data    => JSON->new->encode($data) },
+								{ user_id => $uid }
+							);
 						}
-
-						$db->update(
-							'in_transit',
-							{ data    => JSON->new->encode($data) },
-							{ user_id => $uid }
-						);
 					}
 				)->wait;
 			}
