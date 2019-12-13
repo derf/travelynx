@@ -2158,6 +2158,9 @@ sub startup {
 						if ($is_departure) {
 							$data->{wagonorder_dep} = $wagonorder;
 							$user_data->{wagons}    = [];
+							if ( exists $user_data->{wagongroups} ) {
+								$user_data->{wagongroups} = [];
+							}
 							for my $group (
 								@{
 									$wagonorder->{data}{istformation}
