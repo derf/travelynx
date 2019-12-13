@@ -2178,6 +2178,15 @@ sub startup {
 										}
 									);
 								}
+								if (    $group->{fahrzeuggruppebezeichnung}
+									and $group->{fahrzeuggruppebezeichnung}
+									=~ m{ ^ ICE }x )
+								{
+									push(
+										@{ $user_data->{wagongroups} },
+										$group->{fahrzeuggruppebezeichnung}
+									);
+								}
 							}
 							$db->update(
 								'in_transit',
