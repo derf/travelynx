@@ -159,12 +159,13 @@ sub startup {
 				status  => 1,
 				history => 2,
 				action  => 3,
+				import  => 4,
 			};
 		}
 	);
 	$self->attr(
 		token_types => sub {
-			return [qw(status history action)];
+			return [qw(status history action import)];
 		}
 	);
 
@@ -330,7 +331,7 @@ sub startup {
 			my ( $self, %opt ) = @_;
 
 			my $db          = $opt{db};
-			my $uid         = $self->current_user->{id};
+			my $uid         = $opt{uid} // $self->current_user->{id};
 			my $now         = DateTime->now( time_zone => 'Europe/Berlin' );
 			my $dep_station = get_station( $opt{dep_station} );
 			my $arr_station = get_station( $opt{arr_station} );
@@ -410,7 +411,7 @@ sub startup {
 				$journey_id
 				  = $db->insert( 'journeys', $entry, { returning => 'id' } )
 				  ->hash->{id};
-				$self->invalidate_stats_cache( $opt{rt_departure}, $db );
+				$self->invalidate_stats_cache( $opt{rt_departure}, $db, $uid );
 			};
 
 			if ($@) {
@@ -3232,6 +3233,7 @@ sub startup {
 	$r->get('/status/:name/:ts')->to('traveling#user_status');
 	$r->get('/ajax/status/:name')->to('traveling#public_status_card');
 	$r->get('/ajax/status/:name/:ts')->to('traveling#public_status_card');
+	$r->post('/api/v1/import')->to('api#import_v1');
 	$r->post('/action')->to('traveling#log_action');
 	$r->post('/geolocation')->to('traveling#geolocation');
 	$r->post('/list_departures')->to('traveling#redirect_to_station');

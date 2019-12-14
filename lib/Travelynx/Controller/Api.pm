@@ -1,11 +1,23 @@
 package Travelynx::Controller::Api;
 use Mojo::Base 'Mojolicious::Controller';
 
+use DateTime;
 use Travel::Status::DE::IRIS::Stations;
 use UUID::Tiny qw(:std);
 
 sub make_token {
 	return create_uuid_as_string(UUID_V4);
+}
+
+sub sanitize {
+	my ( $type, $value ) = @_;
+	if ( not defined $value ) {
+		return undef;
+	}
+	if ( $type eq '' ) {
+		return '' . $value;
+	}
+	return 0 + $value;
 }
 
 sub documentation {
@@ -71,9 +83,9 @@ sub get_v0 {
 					  or $status->{cancelled}
 				) ? \1 : \0,
 				station => {
-					ds100     => $status->{arr_ds100} // $status->{dep_ds100},
-					name      => $status->{arr_name} // $status->{dep_name},
-					uic       => $station_eva,
+					ds100 => $status->{arr_ds100} // $status->{dep_ds100},
+					name  => $status->{arr_name}  // $status->{dep_name},
+					uic   => $station_eva,
 					longitude => $station_lon,
 					latitude  => $station_lat,
 				},
@@ -149,6 +161,155 @@ sub get_v1 {
 			json => {
 				error => 'not implemented',
 			},
+		);
+	}
+}
+
+sub import_v1 {
+	my ($self) = @_;
+
+	my $payload   = $self->req->json;
+	my $api_token = $payload->{token} // '';
+
+	if ( $api_token !~ qr{ ^ (?<id> \d+ ) - (?<token> .* ) $ }x ) {
+		$self->render(
+			json => {
+				success => \0,
+				error   => 'Malformed JSON or malformed token',
+			},
+		);
+		return;
+	}
+	my $uid = $+{id};
+	$api_token = $+{token};
+
+	if ( $uid > 2147483647 ) {
+		$self->render(
+			json => {
+				success => \0,
+				error   => 'Malformed token',
+			},
+		);
+		return;
+	}
+
+	my $token = $self->get_api_token($uid);
+	if ( $api_token ne $token->{'import'} ) {
+		$self->render(
+			json => {
+				success => \0,
+				error   => 'Invalid token',
+			},
+		);
+		return;
+	}
+
+	if (   not exists $payload->{fromStation}
+		or not exists $payload->{toStation} )
+	{
+		$self->render(
+			json => {
+				success => \0,
+				error   => 'missing fromStation or toStation',
+			},
+		);
+		return;
+	}
+
+	my %opt;
+
+	eval {
+		%opt = (
+			uid         => $uid,
+			train_type  => sanitize( q{}, $payload->{train}{type} ),
+			train_no    => sanitize( q{}, $payload->{train}{no} ),
+			train_line  => sanitize( q{}, $payload->{train}{line} ),
+			cancelled   => $payload->{cancelled} ? 1 : 0,
+			dep_station => sanitize( q{}, $payload->{fromStation}{name} ),
+			arr_station => sanitize( q{}, $payload->{toStation}{name} ),
+			sched_departure =>
+			  sanitize( 0, $payload->{fromStation}{scheduledTime} ),
+			rt_departure => sanitize(
+				0,
+				$payload->{fromStation}{realTime}
+				  // $payload->{fromStation}{scheduledTime}
+			),
+			sched_arrival =>
+			  sanitize( 0, $payload->{toStation}{scheduledTime} ),
+			rt_arrival => sanitize(
+				0,
+				$payload->{toStation}{realTime}
+				  // $payload->{toStation}{scheduledTime}
+			),
+			comment => sanitize( q{}, $payload->{comment} ),
+		);
+
+		if ( $payload->{route} and ref( $payload->{route} ) eq 'ARRAY' ) {
+			$opt{route}
+			  = [ map { sanitize( q{}, $_ ) } @{ $payload->{route} } ];
+		}
+
+		for my $key (qw(sched_departure rt_departure sched_arrival rt_arrival))
+		{
+			$opt{$key} = DateTime->from_epoch(
+				time_zone => 'Europe/Berlin',
+				epoch     => $opt{$key}
+			);
+		}
+	};
+	if ($@) {
+		my ($first_line) = split( qr{\n}, $@ );
+		$self->render(
+			json => {
+				success => \0,
+				error   => $first_line
+			}
+		);
+		return;
+	}
+
+	my $db = $self->pg->db;
+	my $tx = $db->begin;
+
+	$opt{db} = $db;
+	my ( $journey_id, $error ) = $self->add_journey(%opt);
+	my $journey;
+
+	if ( not $error ) {
+		$journey = $self->get_journey(
+			uid        => $uid,
+			db         => $db,
+			journey_id => $journey_id,
+			verbose    => 1
+		);
+		$error = $self->journey_sanity_check($journey);
+	}
+
+	if ($error) {
+		$self->render(
+			json => {
+				success => \0,
+				error   => $error
+			}
+		);
+	}
+	elsif ( $payload->{dryRun} ) {
+		$self->render(
+			json => {
+				success => \1,
+				id      => $journey_id,
+				result  => $journey
+			}
+		);
+	}
+	else {
+		$tx->commit;
+		$self->render(
+			json => {
+				success => \1,
+				id      => $journey_id,
+				result  => $journey
+			}
 		);
 	}
 }

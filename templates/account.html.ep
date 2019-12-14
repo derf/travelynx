@@ -169,7 +169,7 @@
 						</button>
 					%= end
 				</td>
-			</tr>
+			</tr>-->
 			<tr>
 				<th scope="row">Travel</th>
 				<td>
@@ -192,7 +192,30 @@
 						</button>
 					%= end
 				</td>
-			</tr> -->
+			</tr>
+			<tr>
+				<th scope="row">Import</th>
+				<td>
+					% if ($token->{import}) {
+						%= $acc->{id} . '-' . $token->{import}
+					% }
+					% else {
+						—
+					% }
+				</td>
+				<td>
+					%= form_for 'set_token' => begin
+						%= csrf_field
+						%= hidden_field 'token' => 'import'
+						<button class="btn waves-effect waves-light" type="submit" name="action" value="generate">
+							Generieren
+						</button>
+						<button class="btn waves-effect waves-light red" type="submit" name="action" value="delete">
+							Löschen
+						</button>
+					%= end
+				</td>
+			</tr>
 		</table>
 	</div>
 </div>

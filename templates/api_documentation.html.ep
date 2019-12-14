@@ -41,7 +41,7 @@
 				"scheduledTime": 1556083680,<br/>
 				"realTime": 1556083680,<br/>
 			},<br/>
-			"fromStation" : { (zugehöriger Checkout. Wenn noch nicht eingetragen, sind alle Felder null)<br/>
+			"toStation" : { (zugehöriger Checkout. Wenn noch nicht eingetragen, sind alle Felder null)<br/>
 				"name" : "Essen Stadtwald",<br/>
 				"ds100" : "EESA",<br/>
 				"uic" : 8001896,<br/>
@@ -72,14 +72,64 @@
 			Coming soon.
 		</p>
 	</div>
-</div>
+</div>-->
 
-<h3>Travel</h3>
+<h3>Import</h3>
 <div class="row">
 	<div class="col s12">
 		<p>
-			Ein- und Auschecken per API. Coming soon.
+			Manueller Import vergangener Zugfahrten (eine Fahrt pro API-Aufruf).
+		</p>
+		<p style="font-family: Monospace;">
+			curl -X POST -H "Content-Type: application/json" -d '{"token":"<%= $uid %>-<%= $token->{status} // 'TOKEN' %>"}' <%= $api_root %>/import
+		</p>
+		<p>Payload (alle nicht als optional markierten Felder sind Pflicht):</p>
+		<p style="font-family: Monospace;">
+		{<br/>
+			"token" : "<%= $token->{import} // 'TOKEN' %>",<br/>
+			"dryRun" : True/False, (optional: wenn True, wird die Eingabe validiert, aber keine Zugfahrt angelegt)<br/>
+			"cancelled" : True/False, (Zugausfall?)<br/>
+			"train" : {<br/>
+			"type" : "S", (Zugtyp, z.B. ICE, RE, S)<br/>
+			"line" : "6", (Linie als String, bei Zügen ohne Linie wie IC/ICE u.ä. null)<br/>
+			"no" : "30634", (Zugnummer als String)<br/>
+			},<br/>
+			"fromStation" : { (Start / Checkin)<br/>
+			"name" : "Essen Hbf", (Name oder DS100)<br/>
+			"scheduledTime": 1556083680, (UNIX-Timestamp)<br/>
+			"realTime": 1556083680, (UNIX-Timestamp, optional, default == scheduledTime)<br/>
+			},<br/>
+			"toStation" : { (Ziel / Checkout)<br/>
+				"name" : "Essen Stadtwald", (Name oder DS100)<br/>
+				"scheduledTime": 1556083980, (UNIX-Timestamp)<br/>
+				"realTime": 1556083980, (UNIX-Timestamp, optional, default == scheduledTime)<br/>
+			},<br/>
+			"route" : [ (optionale Liste mit Unterwegshalten als Name oder DS100, darf keine Stationen vor Checkin oder nach Checkout beinhalten)<br/>
+				"Essen Hbf",<br/>
+				"Essen Süd",<br/>
+				"Essen Stadtwald"<br/>
+			],<br/>
+			"comment" : "Beliebiger Text" (optionaler Freitext-Kommentar)<br/>
+		}
+		</p>
+		<p>
+			Antwort bei Erfolg (der Inhalt von "result" ist von dryRun unabhängig):
+		</p>
+		<p style="font-family: Monospace;">
+		{<br/>
+			"success" : True,<br/>
+			"id" : 1234, (ID der eingetragenen Zugfahrt)<br/>
+			"result" : { ... } (Eingetragene Daten, Inhalt ist variabel)<br/>
+		}
+		</p>
+		<p>
+			Antwort bei Fehler:
+		</p>
+		<p style="font-family: Monospace;">
+		{<br/>
+			"success" : False,<br/>
+			"error" : "Begründung"<br/>
+		}
 		</p>
 	</div>
 </div>
--->
