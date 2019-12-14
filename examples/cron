@@ -1,0 +1,5 @@
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+PERL5LIB=/srv/www/travelynx/local/lib/perl5
+MAILTO=root
+
+*/3 * * * * travelynx timeout 5m perl /srv/www/travelynx/index.pl work -m production

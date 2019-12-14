@@ -11,23 +11,19 @@ Dependencies
 ---
 
  * perl >= 5.10
- * Cache::File (part of the Cache module)
- * Crypt::Eksblowfish
- * DateTime
- * DateTime::Format::Strptime
- * Email::Sender
- * Geo::Distance
- * Mojolicious
- * Mojolicious::Plugin::Authentication
- * Mojo::Pg
- * Travel::Status::DE::IRIS
- * UUID::Tiny
- * JSON
+ * carton or cpanminus
+ * build-essential
+ * libpq-dev
+ * git
 
-If perl modules are not packaged for your distribution, you can use carton or
-cpanminus to install them locally. In this case, you need to have development
-headers for libxml and libpq (postgresql) on your system.  In the project root
-directory (where `cpanfile` resides), run either
+Perl Dependencies
+---
+
+travelynx depends on a set of Perl modules which are documented in `cpanfile`.
+After installing the dependencies mentioned above, you can use carton or
+cpanminus to install Perl depenencies locally.
+
+In the project root directory (where `cpanfile` resides), run either
 
 ```
 carton install
@@ -39,29 +35,15 @@ or
 cpanm --installdeps .
 ```
 
-and then set `PERL5LIB` before executing any travelynx commands or wrap them
-with `carton exec`, e.g. `carton exec hypnotoad index.pl`
-
-Recommended
----
-
- * Geo::Distance::XS (speeds up statistics)
- * JSON::XS (speeds up API and statistics)
-
-Dependencies On Docker
----
-
- * cpanminus
- * build-essential
- * libpq-dev
- * git
- * ssmtp
+and set `PERL5LIB=.../local/lib/perl5` before executing any travelynx
+commands (see configs in the examples directory) or wrap them with `carton
+exec`, e.g. `carton exec hypnotoad index.pl`
 
 Setup
 ---
 
 First, you need to set up a PostgreSQL database so that travelynx can store
-user accounts and journeys. It must be at least version 9.4 and should use a
+user accounts and journeys. It must be at least version 9.4 and must use a
 UTF-8 locale. The following steps describe setup on a Debian 9 system, though
 setup on other distribution should be similar.
 
@@ -71,7 +53,7 @@ setup on other distribution should be similar.
 * Create the database: `sudo -u postgres createdb -O travelynx travelynx`
 * Copy `examples/travelynx.conf` to the application root directory
   (the one in which `index.pl` resides) and configure it
-* Initialize the database: `perl index.pl database migrate`
+* Initialize the database: `carton exec perl index.pl database migrate`
 
 Your server also needs to be able to send mail. Set up your MTA of choice and
 make sure that the sendmail binary can be used for outgoing mails. Mail
@@ -83,9 +65,13 @@ Finally, configure the web service:
   (see `examples/travelynx.service` for a systemd unit file)
 * Configure your web server to reverse-provy requests to the travelynx
   instance. See `examples/nginx-site` for an nginx config.
+* Install a `timeout 5m perl index.pl work -m production` cronjob. It is used
+  to update realtime data and perform automatic checkout and should run
+  every three minutes or so, see `examples/cron`.
 
 You can now start the travelynx service, navigate to the website and register
-your first account.
+your first account. There is no admin account, all management is performed
+via cron or (in non-standard cases) on the command line.
 
 Please open an issue on <https://github.com/derf/travelynx/issues> or send a
 mail to derf+travelynx@finalrewind.org if there is anything missing or
