@@ -1,5 +1,5 @@
 [Unit]
-Description=travelynx.finalrewind.org
+Description=Travelynx Railway Checkin Service
 After=network.target
 
 [Service]
@@ -7,15 +7,15 @@ Type=simple
 RemainAfterExit=yes
 PIDFile=/tmp/travelynx.pid
 
-ExecStart=/usr/bin/hypnotoad -f index.pl
-ExecStop=/usr/bin/hypnotoad -s index.pl
-ExecReload=/usr/bin/hypnotoad index.pl
+ExecStart=/srv/www/travelynx/local/bin/hypnotoad -f index.pl
+ExecStop=/srv/www/travelynx/local/bin/hypnotoad -s index.pl
+ExecReload=/srv/www/travelynx/local/bin/hypnotoad index.pl
 
 User=travelynx
 WorkingDirectory=/srv/www/travelynx
 
 Environment=LANG=en_US.UTF-8
-
+Environment=PERL5LIB=/srv/www/travelynx/local/lib/perl5
 
 [Install]
 WantedBy=multi-user.target
