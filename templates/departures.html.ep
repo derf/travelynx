@@ -58,12 +58,26 @@
 		</p>
 		<table class="striped">
 			<tbody>
+				% my $orientation_bar_shown = param('train');
+				% my $now_epoch = now()->epoch;
 				% for my $result (@{$results}) {
 					% my $td_class = '';
 					% my $link_class = 'action-checkin';
 					% if ($result->departure_is_cancelled) {
 						% $td_class = "cancelled";
 						% $link_class = 'action-cancelled-from';
+					% }
+					% if (not $orientation_bar_shown and $result->departure->epoch < $now_epoch) {
+						% $orientation_bar_shown = 1;
+						<tr>
+							<td>
+							</td>
+							<td>
+								— Anfragezeitpunkt —
+							</td>
+							<td>
+							</td>
+						</tr>
 					% }
 					<tr>
 						<td>
