@@ -260,6 +260,10 @@ sub travel_v1 {
 
 		my ( $train, $error )
 		  = $self->checkin( $from_station, $train_id, $uid );
+		if ( $payload->{comment} ) {
+			$self->update_in_transit_comment(
+				sanitize( q{}, $payload->{comment} ), $uid );
+		}
 		if ( $to_station and not $error ) {
 			( $train, $error ) = $self->checkout( $to_station, 0, $uid );
 		}
@@ -283,6 +287,11 @@ sub travel_v1 {
 	}
 	elsif ( $payload->{action} eq 'checkout' ) {
 		my $to_station = sanitize( q{}, $payload->{toStation} );
+
+		if ( $payload->{comment} ) {
+			$self->update_in_transit_comment(
+				sanitize( q{}, $payload->{comment} ), $uid );
+		}
 
 		my ( $train, $error )
 		  = $self->checkout( $to_station, $payload->{force} ? 1 : 0, $uid );

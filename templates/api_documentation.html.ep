@@ -85,7 +85,8 @@
 				"no" : "1234",<br/>
 			}<br/>
 			"fromStation" : "Essen Hbf", (DS100 oder EVA-Nummer sind ebenfalls möglich)<br/>
-			"toStation" : "Berlin Hbf" (optional, DS100 oder EVA-Nummer sind ebenfalls möglich)<br/>
+			"toStation" : "Berlin Hbf", (optional, DS100 oder EVA-Nummer sind ebenfalls möglich)<br/>
+			"comment" : "Beliebiger Text" (optional)<br/>
 		}
 		</p>
 		<p>Payload zur Wahl eines neuen Ziels, wenn bereits eingecheckt:</p>
@@ -94,7 +95,8 @@
 			"token" : "<%= $uid %>-<%= $token->{import} // 'TOKEN' %>",<br/>
 			"action" : "checkout",<br/>
 			"force" : True/False, (wenn True: Checkout jetzt durchführen und auftretende Fehler ignorieren. Kann zu Logeinträgen ohne Ankunftsdaten führen.)<br/>
-			"toStation" : "Berlin Hbf" (DS100 oder EVA-Nummer sind ebenfalls möglich)<br/>
+			"toStation" : "Berlin Hbf", (DS100 oder EVA-Nummer sind ebenfalls möglich)<br/>
+			"comment" : "Beliebiger Text" (optional)<br/>
 		}
 		</p>
 		<p>Payload zum Rückgängigmachen eines Checkins (nur während der Fahrt möglich):</p>

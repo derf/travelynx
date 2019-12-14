@@ -806,8 +806,8 @@ sub startup {
 
 	$self->helper(
 		'update_in_transit_comment' => sub {
-			my ( $self, $comment ) = @_;
-			my $uid = $self->current_user->{id};
+			my ( $self, $comment, $uid ) = @_;
+			$uid //= $self->current_user->{id};
 
 			my $status = $self->pg->db->select( 'in_transit', ['user_data'],
 				{ user_id => $uid } )->expand->hash;
