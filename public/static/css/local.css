@@ -11,6 +11,25 @@ td.cancelled {
 	text-decoration: line-through;
 }
 
+.wagons span {
+	margin-right: 0.5ex;
+	color: #808080;
+}
+
+.wagons .wagonclass {
+	font-weight: bold;
+	color: inherit;
+}
+
+.wagons .wagonnum {
+	margin-right: 0;
+	color: inherit;
+}
+
+.wagons .checksum:before {
+	content: "-";
+}
+
 h1 {
 	font-size: 2.92rem;
 	margin: 1.9466666667rem 0 1.168rem 0;

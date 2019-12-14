@@ -179,7 +179,7 @@
 								<%= $station->[0] %>
 							% }
 							% else {
-								<span style="color: #666666;"><%= $station->[0] %></span>
+								<span style="color: #808080;"><%= $station->[0] %></span>
 							% }
 							% if ($journey->{edited} & 0x0010) {
 								∗
@@ -191,12 +191,12 @@
 				% if ($journey->{user_data} and $journey->{user_data}{wagons}) {
 				<tr>
 					<th scope="row">Rollmaterial</th>
-					<td>
+					<td class="wagons">
 						% for my $wagongroup (@{$journey->{user_data}{wagongroups} // []}) {
-							Gruppe <%= $wagongroup %><br/>
+							Wagenverbund <%= $wagongroup %><br/>
 						% }
 						% for my $wagon (@{$journey->{user_data}{wagons}}) {
-							<span style="margin-right: 0.5ex;"><%= substr($wagon->{id}, 0, 2) %></span><span style="margin-right: 0.5ex;"><%= substr($wagon->{id}, 2, 2) %></span><span style="margin-right: 0.5ex;"><%= substr($wagon->{id}, 4, 1) %></span><span style="margin-right: 0.5ex; font-weight: bold;"><%= substr($wagon->{id}, 5, 3) %></span><span style="margin-right: 0.5ex;"><%= substr($wagon->{id}, 8, 3) %></span><span style="margin-right: 1em;"><%= substr($wagon->{id}, 11) %></span>
+							<span><%= substr($wagon->{id}, 0, 2) %></span><span><%= substr($wagon->{id}, 2, 2) %></span><span><%= substr($wagon->{id}, 4, 1) %></span><span class="wagonclass"><%= substr($wagon->{id}, 5, 3) %></span><span class="wagonnum"><%= substr($wagon->{id}, 8, 3) %></span><span class="checksum"><%= substr($wagon->{id}, 11) %></span>
 							%= $wagon->{type}
 							% if ($wagon->{number}) {
 								– Wagen <%= $wagon->{number} %>
