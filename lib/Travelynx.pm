@@ -11,7 +11,7 @@ use DateTime::Format::Strptime;
 use Encode qw(decode encode);
 use Geo::Distance;
 use JSON;
-use List::Util qw(first);
+use List::Util;
 use List::MoreUtils qw(after_incl before_incl);
 use Travel::Status::DE::DBWagenreihung;
 use Travel::Status::DE::IRIS;
@@ -158,14 +158,14 @@ sub startup {
 			return {
 				status  => 1,
 				history => 2,
-				action  => 3,
+				travel  => 3,
 				import  => 4,
 			};
 		}
 	);
 	$self->attr(
 		token_types => sub {
-			return [qw(status history action import)];
+			return [qw(status history travel import)];
 		}
 	);
 
@@ -425,21 +425,23 @@ sub startup {
 
 	$self->helper(
 		'checkin' => sub {
-			my ( $self, $station, $train_id ) = @_;
+			my ( $self, $station, $train_id, $uid ) = @_;
+
+			$uid //= $self->current_user->{id};
 
 			my $status = $self->get_departures( $station, 140, 40, 0 );
 			if ( $status->{errstr} ) {
 				return ( undef, $status->{errstr} );
 			}
 			else {
-				my ($train)
-				  = first { $_->train_id eq $train_id } @{ $status->{results} };
+				my ($train) = List::Util::first { $_->train_id eq $train_id }
+				@{ $status->{results} };
 				if ( not defined $train ) {
 					return ( undef, "Train ${train_id} not found" );
 				}
 				else {
 
-					my $user = $self->get_user_status;
+					my $user = $self->get_user_status($uid);
 					if ( $user->{checked_in} or $user->{cancelled} ) {
 
 						if (    $user->{train_id} eq $train_id
@@ -450,7 +452,7 @@ sub startup {
 						}
 
 						# Otherwise, someone forgot to check out first
-						$self->checkout( $station, 1 );
+						$self->checkout( $station, 1, $uid );
 					}
 
 					eval {
@@ -458,7 +460,7 @@ sub startup {
 						$self->pg->db->insert(
 							'in_transit',
 							{
-								user_id   => $self->current_user->{id},
+								user_id   => $uid,
 								cancelled => $train->departure_is_cancelled
 								? 1
 								: 0,
@@ -488,14 +490,12 @@ sub startup {
 						);
 					};
 					if ($@) {
-						my $uid = $self->current_user->{id};
 						$self->app->log->error(
 							"Checkin($uid): INSERT failed: $@");
 						return ( undef, 'INSERT failed: ' . $@ );
 					}
-					$self->add_route_timestamps( $self->current_user->{id},
-						$train, 1 );
-					$self->run_hook( $self->current_user->{id}, 'checkin' );
+					$self->add_route_timestamps( $uid, $train, 1 );
+					$self->run_hook( $uid, 'checkin' );
 					return ( $train, undef );
 				}
 			}
@@ -504,8 +504,8 @@ sub startup {
 
 	$self->helper(
 		'undo' => sub {
-			my ( $self, $journey_id ) = @_;
-			my $uid = $self->current_user->{id};
+			my ( $self, $journey_id, $uid ) = @_;
+			$uid //= $self->current_user->{id};
 
 			if ( $journey_id eq 'in_transit' ) {
 				eval {
@@ -627,8 +627,8 @@ sub startup {
 			my $journey
 			  = $db->select( 'in_transit', '*', { user_id => $uid } )
 			  ->expand->hash;
-			my ($train)
-			  = first { $_->train_id eq $train_id } @{ $status->{results} };
+			my ($train) = List::Util::first { $_->train_id eq $train_id }
+			@{ $status->{results} };
 
           # When a checkout is triggered by a checkin, there is an edge case
           # with related stations.
@@ -641,8 +641,8 @@ sub startup {
           # well.
 			if ( not $train ) {
 				$status = $self->get_departures( $station, 120, 180, 1 );
-				($train)
-				  = first { $_->train_id eq $train_id } @{ $status->{results} };
+				($train) = List::Util::first { $_->train_id eq $train_id }
+				@{ $status->{results} };
 			}
 
 			# Store the intended checkout station regardless of this operation's
@@ -681,8 +681,11 @@ sub startup {
 
                # Arrival time via IRIS is unknown, so the train probably has not
                # arrived yet. Fall back to HAFAS.
-				if ( my $station_data
-					= first { $_->[0] eq $station } @{ $journey->{route} } )
+				if (
+					my $station_data
+					= List::Util::first { $_->[0] eq $station }
+					@{ $journey->{route} }
+				  )
 				{
 					$station_data = $station_data->[1];
 					if ( $station_data->{sched_arr} ) {
@@ -784,7 +787,7 @@ sub startup {
 				return ( 0, undef );
 			}
 			$self->run_hook( $uid, 'update' );
-			$self->add_route_timestamps( $self->current_user->{id}, $train, 0 );
+			$self->add_route_timestamps( $uid, $train, 0 );
 			return ( 1, undef );
 		}
 	);
@@ -3234,6 +3237,7 @@ sub startup {
 	$r->get('/ajax/status/:name')->to('traveling#public_status_card');
 	$r->get('/ajax/status/:name/:ts')->to('traveling#public_status_card');
 	$r->post('/api/v1/import')->to('api#import_v1');
+	$r->post('/api/v1/travel')->to('api#travel_v1');
 	$r->post('/action')->to('traveling#log_action');
 	$r->post('/geolocation')->to('traveling#geolocation');
 	$r->post('/list_departures')->to('traveling#redirect_to_station');

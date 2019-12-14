@@ -2,6 +2,7 @@ package Travelynx::Controller::Api;
 use Mojo::Base 'Mojolicious::Controller';
 
 use DateTime;
+use List::Util;
 use Travel::Status::DE::IRIS::Stations;
 use UUID::Tiny qw(:std);
 
@@ -162,6 +163,166 @@ sub get_v1 {
 				error => 'not implemented',
 			},
 		);
+	}
+}
+
+sub travel_v1 {
+	my ($self) = @_;
+
+	my $payload   = $self->req->json;
+	my $api_token = $payload->{token} // '';
+
+	if ( $api_token !~ qr{ ^ (?<id> \d+ ) - (?<token> .* ) $ }x ) {
+		$self->render(
+			json => {
+				success => \0,
+				error   => 'Malformed JSON or malformed token',
+			},
+		);
+		return;
+	}
+	my $uid = $+{id};
+	$api_token = $+{token};
+
+	if ( $uid > 2147483647 ) {
+		$self->render(
+			json => {
+				success => \0,
+				error   => 'Malformed token',
+			},
+		);
+		return;
+	}
+
+	my $token = $self->get_api_token($uid);
+	if ( $api_token ne $token->{'travel'} ) {
+		$self->render(
+			json => {
+				success => \0,
+				error   => 'Invalid token',
+			},
+		);
+		return;
+	}
+
+	if ( not exists $payload->{action}
+		or $payload->{action} !~ m{^(checkin|checkout|undo)$} )
+	{
+		$self->render(
+			json => {
+				success => \0,
+				error   => 'Missing or invalid action',
+			},
+		);
+		return;
+	}
+
+	if ( $payload->{action} eq 'checkin' ) {
+		my $from_station = sanitize( q{}, $payload->{fromStation} );
+		my $to_station   = sanitize( q{}, $payload->{toStation} );
+		my $train_id;
+
+		if ( exists $payload->{train}{id} ) {
+			$train_id = sanitize( 0, $payload->{train}{id} );
+		}
+		else {
+			my $train_type = sanitize( q{}, $payload->{train}{type} );
+			my $train_no   = sanitize( q{}, $payload->{train}{no} );
+			my $status = $self->get_departures( $from_station, 140, 40, 0 );
+			if ( $status->{errstr} ) {
+				$self->render(
+					json => {
+						success => \0,
+						error   => 'Fehler am Abfahrtsbahnhof: '
+						  . $status->{errstr},
+						status => $self->get_user_status_json_v1($uid)
+					}
+				);
+				return;
+			}
+			my ($train) = List::Util::first {
+				$_->type eq $train_type and $_->train_no eq $train_no
+			}
+			@{ $status->{results} };
+			if ( not defined $train ) {
+				$self->render(
+					json => {
+						success => \0,
+						error   => 'Fehler am Abfahrtsbahnhof: '
+						  . $status->{errstr},
+						status => $self->get_user_status_json_v1($uid)
+					}
+				);
+				return;
+			}
+			$train_id = $train->train_id;
+		}
+
+		my ( $train, $error )
+		  = $self->checkin( $from_station, $train_id, $uid );
+		if ( $to_station and not $error ) {
+			( $train, $error ) = $self->checkout( $to_station, 0, $uid );
+		}
+		if ($error) {
+			$self->render(
+				json => {
+					success => \0,
+					error   => $error,
+					status  => $self->get_user_status_json_v1($uid)
+				}
+			);
+		}
+		else {
+			$self->render(
+				json => {
+					success => \1,
+					status  => $self->get_user_status_json_v1($uid)
+				}
+			);
+		}
+	}
+	elsif ( $payload->{action} eq 'checkout' ) {
+		my $to_station = sanitize( q{}, $payload->{toStation} );
+
+		my ( $train, $error )
+		  = $self->checkout( $to_station, $payload->{force} ? 1 : 0, $uid );
+		if ($error) {
+			$self->render(
+				json => {
+					success => \0,
+					error   => $error,
+					status  => $self->get_user_status_json_v1($uid)
+				}
+			);
+		}
+		else {
+			$self->render(
+				json => {
+					success => \1,
+					status  => $self->get_user_status_json_v1($uid)
+				}
+			);
+		}
+	}
+	elsif ( $payload->{action} eq 'undo' ) {
+		my $error = $self->undo( 'in_transit', $uid );
+		if ($error) {
+			$self->render(
+				json => {
+					success => \0,
+					error   => $error,
+					status  => $self->get_user_status_json_v1($uid)
+				}
+			);
+		}
+		else {
+			$self->render(
+				json => {
+					success => \1,
+					status  => $self->get_user_status_json_v1($uid)
+				}
+			);
+		}
 	}
 }
 

@@ -64,17 +64,69 @@
 		</p>
 	</div>
 </div>
-<!--
-<h3>History</h3>
+
+<h2>Travel</h2>
 <div class="row">
 	<div class="col s12">
 		<p>
-			Coming soon.
+			Checkin per API. Sobald eine Zielstation bekannt ist, erfolgt der
+			Checkout wie beim Webinterface automatisch zehn Minuten nach Ankunft.
+		</p>
+		<p style="font-family: Monospace;">
+			curl -X POST -H "Content-Type: application/json" -d '{"token":"<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>"}' <%= $api_root %>/travel
+		</p>
+		<p>Payload zum Einchecken, optional mit Zielwahl:</p>
+		<p style="font-family: Monospace;">
+		{<br/>
+			"token" : "<%= $uid %>-<%= $token->{import} // 'TOKEN' %>",<br/>
+			"action" : "checkin",<br/>
+			"train" : {<br/>
+				"type" : "ICE",<br/>
+				"no" : "1234",<br/>
+			}<br/>
+			"fromStation" : "Essen Hbf", (DS100 oder EVA-Nummer sind ebenfalls möglich)<br/>
+			"toStation" : "Berlin Hbf" (optional, DS100 oder EVA-Nummer sind ebenfalls möglich)<br/>
+		}
+		</p>
+		<p>Payload zur Wahl eines neuen Ziels, wenn bereits eingecheckt:</p>
+		<p style="font-family: Monospace;">
+		{<br/>
+			"token" : "<%= $uid %>-<%= $token->{import} // 'TOKEN' %>",<br/>
+			"action" : "checkout",<br/>
+			"force" : True/False, (wenn True: Checkout jetzt durchführen und auftretende Fehler ignorieren. Kann zu Logeinträgen ohne Ankunftsdaten führen.)<br/>
+			"toStation" : "Berlin Hbf" (DS100 oder EVA-Nummer sind ebenfalls möglich)<br/>
+		}
+		</p>
+		<p>Payload zum Rückgängigmachen eines Checkins (nur während der Fahrt möglich):</p>
+		<p style="font-family: Monospace;">
+		{<br/>
+			"token" : "<%= $uid %>-<%= $token->{import} // 'TOKEN' %>",<br/>
+			"action" : "undo"<br/>
+		}
+		</p>
+		<p>
+			Antwort bei Erfolg:
+		</p>
+		<p style="font-family: Monospace;">
+		{<br/>
+			"success" : True,<br/>
+			"status" : { aktueller Nutzerstatus gemäß Status-API }<br/>
+		}
+		</p>
+		<p>
+			Antwort bei Fehler:
+		</p>
+		<p style="font-family: Monospace;">
+		{<br/>
+			"success" : False,<br/>
+			"error" : "Begründung",<br/>
+			"status" : { aktueller Nutzerstatus gemäß Status-API }<br/>
+		}
 		</p>
 	</div>
-</div>-->
+</div>
 
-<h3>Import</h3>
+<h2>Import</h2>
 <div class="row">
 	<div class="col s12">
 		<p>
@@ -86,7 +138,7 @@
 		<p>Payload (alle nicht als optional markierten Felder sind Pflicht):</p>
 		<p style="font-family: Monospace;">
 		{<br/>
-			"token" : "<%= $token->{import} // 'TOKEN' %>",<br/>
+			"token" : "<%= $uid %>-<%= $token->{import} // 'TOKEN' %>",<br/>
 			"dryRun" : True/False, (optional: wenn True, wird die Eingabe validiert, aber keine Zugfahrt angelegt)<br/>
 			"cancelled" : True/False, (Zugausfall?)<br/>
 			"train" : {<br/>
