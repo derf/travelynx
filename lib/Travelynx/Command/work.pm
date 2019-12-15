@@ -3,7 +3,7 @@ use Mojo::Base 'Mojolicious::Command';
 
 use DateTime;
 use JSON;
-use List::Util qw(first);
+use List::Util;
 
 has description =>
   'Perform automatic checkout when users arrive at their destination';
@@ -27,8 +27,6 @@ sub run {
 		my $arr      = $entry->{arr_ds100};
 		my $train_id = $entry->{train_id};
 
-		$self->app->log->debug("Processing $uid");
-
 		# Note: IRIS data is not always updated in real-time. Both departure and
 		# arrival delays may take several minutes to appear, especially in case
 		# of large-scale disturbances. We work around this by continuing to
@@ -37,14 +35,13 @@ sub run {
 
 		eval {
 			if ( $now->epoch - $entry->{real_dep_ts} < 900 ) {
-				$self->app->log->debug("  - updating departure");
 				my $status = $self->app->get_departures( $dep, 30, 30 );
 				if ( $status->{errstr} ) {
 					die("get_departures($dep): $status->{errstr}\n");
 				}
 
-				my ($train)
-				  = first { $_->train_id eq $train_id } @{ $status->{results} };
+				my ($train) = List::Util::first { $_->train_id eq $train_id }
+				@{ $status->{results} };
 
 				if ( not $train ) {
 					die("could not find train $train_id at $dep\n");
@@ -80,14 +77,23 @@ sub run {
 					or $now->epoch - $entry->{real_arr_ts} < 600 )
 			  )
 			{
-				$self->app->log->debug("  - updating arrival");
 				my $status = $self->app->get_departures( $arr, 20, 220 );
 				if ( $status->{errstr} ) {
 					die("get_departures($arr): $status->{errstr}\n");
 				}
 
-				my ($train)
-				  = first { $_->train_id eq $train_id } @{ $status->{results} };
+				# Note that a train may pass the same station several times.
+				# Notable example: S41 / S42 ("Ringbahn") both starts and
+				# terminates at Berlin Südkreuz
+				my ($train) = List::Util::first {
+					$_->train_id eq $train_id
+					  and $_->sched_arrival
+					  and $_->sched_arrival->epoch > $entry->{sched_dep_ts}
+				}
+				@{ $status->{results} };
+
+				$train //= List::Util::first { $_->train_id eq $train_id }
+				@{ $status->{results} };
 
 				if ( not $train ) {
 
@@ -116,7 +122,6 @@ sub run {
 				$self->app->add_route_timestamps( $uid, $train, 0 );
 			}
 			elsif ( $entry->{real_arr_ts} ) {
-				$self->app->log->debug("  - checking out");
 				my ( undef, $error ) = $self->app->checkout( $arr, 1, $uid );
 				if ($error) {
 					die("${error}\n");

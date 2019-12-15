@@ -272,6 +272,7 @@ sub startup {
 					station        => $station,
 					main_cache     => $self->app->cache_iris_main,
 					realtime_cache => $self->app->cache_iris_rt,
+					keep_transfers => 1,
 					lookbehind     => 20,
 					datetime => DateTime->now( time_zone => 'Europe/Berlin' )
 					  ->subtract( minutes => $lookbehind ),
@@ -627,7 +628,18 @@ sub startup {
 			my $journey
 			  = $db->select( 'in_transit', '*', { user_id => $uid } )
 			  ->expand->hash;
-			my ($train) = List::Util::first { $_->train_id eq $train_id }
+
+			# Note that a train may pass the same station several times.
+			# Notable example: S41 / S42 ("Ringbahn") both starts and
+			# terminates at Berlin Südkreuz
+			my ($train) = List::Util::first {
+				$_->train_id eq $train_id
+				  and $_->sched_arrival
+				  and $_->sched_arrival->epoch > $user->{sched_departure}->epoch
+			}
+			@{ $status->{results} };
+
+			$train //= List::Util::first { $_->train_id eq $train_id }
 			@{ $status->{results} };
 
           # When a checkout is triggered by a checkin, there is an edge case
