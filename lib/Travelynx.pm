@@ -1838,7 +1838,11 @@ sub startup {
 			my $promise = Mojo::Promise->new;
 
 			if ( my $content = $cache->get($url) ) {
-				if ( $content eq 'n' ) {
+				if ( $content eq 'y' ) {
+					$promise->resolve;
+					return $promise;
+				}
+				elsif ( $content eq 'n' ) {
 					$promise->reject;
 					return $promise;
 				}
@@ -1846,8 +1850,15 @@ sub startup {
 
 			$self->ua->request_timeout(5)->head_p($url)->then(
 				sub {
-					$cache->set( $url, 'y' );
-					$promise->resolve;
+					my ($tx) = @_;
+					if ( $tx->result->is_success ) {
+						$cache->set( $url, 'y' );
+						$promise->resolve;
+					}
+					else {
+						$cache->set( $url, 'n' );
+						$promise->resolve;
+					}
 				}
 			)->catch(
 				sub {
