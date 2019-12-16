@@ -2041,8 +2041,6 @@ sub startup {
 			my $date_yyyy = $train->start->strftime('%d.%m.%Y');
 			my $train_no  = $train->type . ' ' . $train->train_no;
 
-			$self->app->log->debug("add_route_timestamps");
-
 			my ( $trainlink, $route_data );
 
 			$self->get_hafas_json_p(
@@ -2777,9 +2775,7 @@ sub startup {
 					}
 					if ( $station->[0] eq $in_transit->{dep_name} ) {
 						$is_after = 1;
-						$self->app->log->debug("is_after");
 						if ( @{$station} > 1 ) {
-							$self->app->log->debug("set dep_info");
 							$dep_info = $station->[1];
 						}
 					}
@@ -2832,8 +2828,6 @@ sub startup {
 				$ret->{extra_data}{qos_msg} = [@parsed_messages];
 
 				if ( $dep_info and $dep_info->{sched_arr} ) {
-					$self->app->log->debug(
-						"dep_info has sched_arr. set countdown.");
 					$dep_info->{sched_arr}
 					  = epoch_to_dt( $dep_info->{sched_arr} );
 					$dep_info->{rt_arr} = $dep_info->{sched_arr}->clone;
