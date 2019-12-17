@@ -169,14 +169,25 @@ sub get_v1 {
 sub travel_v1 {
 	my ($self) = @_;
 
-	my $payload   = $self->req->json;
+	my $payload = $self->req->json;
+
+	if ( not $payload or ref($payload) ne 'HASH' ) {
+		$self->render(
+			json => {
+				success => \0,
+				error   => 'Malformed JSON',
+			},
+		);
+		return;
+	}
+
 	my $api_token = $payload->{token} // '';
 
 	if ( $api_token !~ qr{ ^ (?<id> \d+ ) - (?<token> .* ) $ }x ) {
 		$self->render(
 			json => {
 				success => \0,
-				error   => 'Malformed JSON or malformed token',
+				error   => 'Malformed token',
 			},
 		);
 		return;
@@ -338,14 +349,25 @@ sub travel_v1 {
 sub import_v1 {
 	my ($self) = @_;
 
-	my $payload   = $self->req->json;
+	my $payload = $self->req->json;
+
+	if ( not $payload or ref($payload) ne 'HASH' ) {
+		$self->render(
+			json => {
+				success => \0,
+				error   => 'Malformed JSON',
+			},
+		);
+		return;
+	}
+
 	my $api_token = $payload->{token} // '';
 
 	if ( $api_token !~ qr{ ^ (?<id> \d+ ) - (?<token> .* ) $ }x ) {
 		$self->render(
 			json => {
 				success => \0,
-				error   => 'Malformed JSON or malformed token',
+				error   => 'Malformed token',
 			},
 		);
 		return;
