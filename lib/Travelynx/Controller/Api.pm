@@ -452,7 +452,8 @@ sub import_v1 {
 			journey_id => $journey_id,
 			verbose    => 1
 		);
-		$error = $self->journey_sanity_check($journey);
+		$error
+		  = $self->journey_sanity_check( $journey, $payload->{lax} ? 1 : 0 );
 	}
 
 	if ($error) {

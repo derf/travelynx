@@ -958,7 +958,7 @@ sub startup {
 
 	$self->helper(
 		'journey_sanity_check' => sub {
-			my ( $self, $journey ) = @_;
+			my ( $self, $journey, $lax ) = @_;
 
 			if ( $journey->{sched_duration} and $journey->{sched_duration} < 0 )
 			{
@@ -983,7 +983,12 @@ sub startup {
 			{
 				return 'Zugfahrten mit über 500 km/h? Schön wär\'s.';
 			}
-			if ( $journey->{edited} & 0x0010 ) {
+			if ( $journey->{route} and @{ $journey->{route} } > 99 ) {
+				my $stop_count = @{ $journey->{route} };
+				return
+"Die Zugfahrt hat $stop_count Unterwegshalte. Also ich weiß ja nicht so recht.";
+			}
+			if ( $journey->{edited} & 0x0010 and not $lax ) {
 				my @unknown_stations
 				  = $self->grep_unknown_stations( map { $_->[0] }
 					  @{ $journey->{route} } );

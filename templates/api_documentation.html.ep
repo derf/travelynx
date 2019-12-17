@@ -78,7 +78,7 @@
 		<p>Payload zum Einchecken, optional mit Zielwahl:</p>
 		<p style="font-family: Monospace;">
 		{<br/>
-			"token" : "<%= $uid %>-<%= $token->{import} // 'TOKEN' %>",<br/>
+			"token" : "<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>",<br/>
 			"action" : "checkin",<br/>
 			"train" : {<br/>
 				"type" : "ICE",<br/>
@@ -92,7 +92,7 @@
 		<p>Payload zur Wahl eines neuen Ziels, wenn bereits eingecheckt:</p>
 		<p style="font-family: Monospace;">
 		{<br/>
-			"token" : "<%= $uid %>-<%= $token->{import} // 'TOKEN' %>",<br/>
+			"token" : "<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>",<br/>
 			"action" : "checkout",<br/>
 			"force" : True/False, (wenn True: Checkout jetzt durchführen und auftretende Fehler ignorieren. Kann zu Logeinträgen ohne Ankunftsdaten führen.)<br/>
 			"toStation" : "Berlin Hbf", (DS100 oder EVA-Nummer sind ebenfalls möglich)<br/>
@@ -102,7 +102,7 @@
 		<p>Payload zum Rückgängigmachen eines Checkins (nur während der Fahrt möglich):</p>
 		<p style="font-family: Monospace;">
 		{<br/>
-			"token" : "<%= $uid %>-<%= $token->{import} // 'TOKEN' %>",<br/>
+			"token" : "<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>",<br/>
 			"action" : "undo"<br/>
 		}
 		</p>
@@ -135,13 +135,14 @@
 			Manueller Import vergangener Zugfahrten (eine Fahrt pro API-Aufruf).
 		</p>
 		<p style="font-family: Monospace;">
-			curl -X POST -H "Content-Type: application/json" -d '{"token":"<%= $uid %>-<%= $token->{status} // 'TOKEN' %>"}' <%= $api_root %>/import
+			curl -X POST -H "Content-Type: application/json" -d '{"token":"<%= $uid %>-<%= $token->{import} // 'TOKEN' %>"}' <%= $api_root %>/import
 		</p>
 		<p>Payload (alle nicht als optional markierten Felder sind Pflicht):</p>
 		<p style="font-family: Monospace;">
 		{<br/>
 			"token" : "<%= $uid %>-<%= $token->{import} // 'TOKEN' %>",<br/>
 			"dryRun" : True/False, (optional: wenn True, wird die Eingabe validiert, aber keine Zugfahrt angelegt)<br/>
+			"lax" : True/Fals, (optional: wenn True, werden unbekannte Unterwegshalte akzeptiert)<br/>
 			"cancelled" : True/False, (Zugausfall?)<br/>
 			"train" : {<br/>
 			"type" : "S", (Zugtyp, z.B. ICE, RE, S)<br/>
@@ -173,7 +174,7 @@
 		{<br/>
 			"success" : True,<br/>
 			"id" : 1234, (ID der eingetragenen Zugfahrt)<br/>
-			"result" : { ... } (Eingetragene Daten, Inhalt ist variabel)<br/>
+			"result" : { ... } (Eingetragene Daten, Datenformat nicht näher spezifiziert und beliebig variabel)<br/>
 		}
 		</p>
 		<p>
