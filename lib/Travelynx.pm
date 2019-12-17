@@ -350,20 +350,25 @@ sub startup {
 				my @unknown_stations;
 				for my $station ( @{ $opt{route} } ) {
 					my $station_info = get_station($station);
-					if ( not $station_info ) {
+					if ($station_info) {
+						push( @route, [ $station_info->[1], {}, undef ] );
+					}
+					else {
+						push( @route, [ $station, {}, undef ] );
 						push( @unknown_stations, $station );
 					}
-					push( @route, [ $station_info->[1], {}, undef ] );
 				}
 
-				if ( @unknown_stations == 1 ) {
-					return ( undef,
-						"Unbekannter Unterwegshalt: $unknown_stations[0]" );
-				}
-				elsif (@unknown_stations) {
-					return ( undef,
-						'Unbekannte Unterwegshalte: '
-						  . join( ', ', @unknown_stations ) );
+				if ( not $opt{lax} ) {
+					if ( @unknown_stations == 1 ) {
+						return ( undef,
+							"Unbekannter Unterwegshalt: $unknown_stations[0]" );
+					}
+					elsif (@unknown_stations) {
+						return ( undef,
+							'Unbekannte Unterwegshalte: '
+							  . join( ', ', @unknown_stations ) );
+					}
 				}
 			}
 

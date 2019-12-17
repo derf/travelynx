@@ -389,6 +389,21 @@ sub import_v1 {
 	my %opt;
 
 	eval {
+
+		if (   not $payload->{fromStation}{name}
+			or not $payload->{toStation}{name} )
+		{
+			die("Missing fromStation/toStation name\n");
+		}
+		if ( not $payload->{train}{type} or not $payload->{train}{no} ) {
+			die("Missing train data\n");
+		}
+		if (   not $payload->{fromStation}{scheduledTime}
+			or not $payload->{toStation}{scheduledTime} )
+		{
+			die("Missing fromStation/toStation scheduledTime\n");
+		}
+
 		%opt = (
 			uid         => $uid,
 			train_type  => sanitize( q{}, $payload->{train}{type} ),
@@ -412,6 +427,7 @@ sub import_v1 {
 				  // $payload->{toStation}{scheduledTime}
 			),
 			comment => sanitize( q{}, $payload->{comment} ),
+			lax     => $payload->{lax} ? 1 : 0,
 		);
 
 		if ( $payload->{route} and ref( $payload->{route} ) eq 'ARRAY' ) {
