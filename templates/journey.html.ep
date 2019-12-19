@@ -192,17 +192,7 @@
 				<tr>
 					<th scope="row">Rollmaterial</th>
 					<td class="wagons">
-						% for my $wagongroup (@{$journey->{user_data}{wagongroups} // []}) {
-							Wagenverbund <%= $wagongroup->{name} %> von <%= $wagongroup->{from} %> nach <%= $wagongroup->{to} %> als <%= $journey->{type} %> <%= $wagongroup->{no} %><br/>
-							% for my $wagon (@{$wagongroup->{wagons}}) {
-								<span><%= substr($wagon->{id}, 0, 2) %></span><span><%= substr($wagon->{id}, 2, 2) %></span><span><%= substr($wagon->{id}, 4, 1) %></span><span class="wagonclass"><%= substr($wagon->{id}, 5, 3) %></span><span class="wagonnum"><%= substr($wagon->{id}, 8, 3) %></span><span class="checksum"><%= substr($wagon->{id}, 11) %></span>
-								%= $wagon->{type}
-								% if ($wagon->{number}) {
-									– Wagen <%= $wagon->{number} %>
-								% }
-								<br/>
-							% }
-						% }
+						%= include '_wagons', wagongroups => $journey->{user_data}{wagongroups};
 					</td>
 				</tr>
 				% }
