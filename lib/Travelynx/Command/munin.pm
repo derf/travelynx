@@ -20,7 +20,7 @@ sub run {
 
 	my $db = $self->app->pg->db;
 
-	my $now = DateTime->now( time_zone => 'Europe/Berlin' );
+	my $now    = DateTime->now( time_zone => 'Europe/Berlin' );
 	my $active = $now->clone->subtract( months => 1 );
 
 	my $checkin_window_query
@@ -40,6 +40,8 @@ sub run {
 			}
 		)->hash->{count}
 	);
+	query_to_munin( 'checked_in',
+		$db->select( 'in_transit', 'count(*) as count' )->hash->{count} );
 	query_to_munin(
 		'checkins_24h',
 		$db->query( $checkin_window_query,
