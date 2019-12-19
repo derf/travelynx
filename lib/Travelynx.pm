@@ -2192,7 +2192,6 @@ sub startup {
 
 						if ($is_departure) {
 							$data->{wagonorder_dep} = $wagonorder;
-							$user_data->{wagons}    = [];
 							if ( exists $user_data->{wagongroups} ) {
 								$user_data->{wagongroups} = [];
 							}
@@ -2203,11 +2202,12 @@ sub startup {
 								}
 							  )
 							{
+								my @wagons;
 								for
 								  my $wagon ( @{ $group->{allFahrzeug} // [] } )
 								{
 									push(
-										@{ $user_data->{wagons} },
+										@wagons,
 										{
 											id => $wagon->{fahrzeugnummer},
 											number =>
@@ -2216,15 +2216,18 @@ sub startup {
 										}
 									);
 								}
-								if (    $group->{fahrzeuggruppebezeichnung}
-									and $group->{fahrzeuggruppebezeichnung}
-									=~ m{ ^ ICE }x )
-								{
-									push(
-										@{ $user_data->{wagongroups} },
-										$group->{fahrzeuggruppebezeichnung}
-									);
-								}
+								push(
+									@{ $user_data->{wagongroups} },
+									{
+										name =>
+										  $group->{fahrzeuggruppebezeichnung},
+										from =>
+										  $group->{startbetriebsstellename},
+										to => $group->{zielbetriebsstellename},
+										no => $group->{verkehrlichezugnummer},
+										wagons => [@wagons],
+									}
+								);
 							}
 							$db->update(
 								'in_transit',
