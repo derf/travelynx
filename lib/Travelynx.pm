@@ -569,7 +569,7 @@ sub startup {
 					);
 				}
 
-				$self->invalidate_stats_cache( $cache_ts, $db );
+				$self->invalidate_stats_cache( $cache_ts, $db, $uid );
 
 				$tx->commit;
 			};
