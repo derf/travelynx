@@ -281,7 +281,8 @@ sub travel_v1 {
 				$self->render(
 					json => {
 						success => \0,
-						error   => 'Fehler am Abfahrtsbahnhof: '
+						error =>
+						  'Error requesting departures from fromStation: '
 						  . $status->{errstr},
 						status => $self->get_user_status_json_v1($uid)
 					}
@@ -297,7 +298,7 @@ sub travel_v1 {
 					json => {
 						success    => \0,
 						deprecated => \0,
-						error      => 'Zug nicht gefunden',
+						error      => 'Train not found at fromStation',
 						status     => $self->get_user_status_json_v1($uid)
 					}
 				);
@@ -320,7 +321,7 @@ sub travel_v1 {
 				json => {
 					success    => \0,
 					deprecated => \0,
-					error      => $error,
+					error      => 'Checkin/Checkout error: ' . $error,
 					status     => $self->get_user_status_json_v1($uid)
 				}
 			);
@@ -362,7 +363,7 @@ sub travel_v1 {
 				json => {
 					success    => \0,
 					deprecated => \0,
-					error      => $error,
+					error      => 'Checkout error: ' . $error,
 					status     => $self->get_user_status_json_v1($uid)
 				}
 			);

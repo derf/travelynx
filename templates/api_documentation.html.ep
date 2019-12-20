@@ -73,12 +73,22 @@
 		<p>
 			Checkin per API. Sobald eine Zielstation bekannt ist, erfolgt der
 			Checkout wie beim Webinterface automatisch zehn Minuten nach Ankunft.
+			Bitte beachten: Es wird nicht überprüft, ob die angegebene Zielstation
+			in der vorgesehenen Route des Zugs vorkommt oder nicht.
+		</p>
+		<p>
 			Falls du zum Checkinzeitpunkt bereits in einen anderen Zug eingecheckt
 			bist, wirst du zunächst am gewählten Startbahnhof aus diesem ausgecheckt.
 			Der Checkout erfolgt unabhängig davon, ob der vorherige Zug an dieser
 			Station verkehrt oder nicht. Falls nach einem Checkin ohne Zielwahl
 			innerhalb von 48 Stunden kein Zielbahnhof nachgetragen wird, wird der
 			Checkin automatisch rückgängig gemacht.
+		</p>
+		<p>
+			Das Verhalten des Checkout-Endpunkts hängt vom Zeitpunkt ab. Wenn der
+			Zug den angegebenen Zielbahnhof bereits erreicht hat, wird dort
+			ausgecheckt. Andernfalls wird das Reiseziel aktualisiert und etwa zehn
+			Minuten nach Ankunft automatisch ausgecheckt.
 		</p>
 		<p style="font-family: Monospace;">
 			curl -X POST -H "Content-Type: application/json" -d '{"token":"<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>"}' <%= $api_root %>/travel
@@ -102,7 +112,7 @@
 		{<br/>
 			"token" : "<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>",<br/>
 			"action" : "checkout",<br/>
-			"force" : true/false, (wenn true: Checkout jetzt durchführen und auftretende Fehler ignorieren. Kann zu Logeinträgen ohne Ankunftsdaten führen.)<br/>
+			"force" : true/false, (wenn true: Checkout jetzt durchführen und auftretende Fehler ignorieren. Kann zu Logeinträgen ohne Ankunftszeit führen.)<br/>
 			"toStation" : "Berlin Hbf", (DS100 oder EVA-Nummer sind ebenfalls möglich)<br/>
 			"comment" : "Beliebiger Text" (optional, überschreibt vorherigen Kommentar)<br/>
 		}
