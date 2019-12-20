@@ -78,7 +78,7 @@
 			Der Checkout erfolgt unabhängig davon, ob der vorherige Zug an dieser
 			Station verkehrt oder nicht. Falls nach einem Checkin ohne Zielwahl
 			innerhalb von 48 Stunden kein Zielbahnhof nachgetragen wird, wird der
-			CHeckin automatisch rückgängig gemacht.
+			Checkin automatisch rückgängig gemacht.
 		</p>
 		<p style="font-family: Monospace;">
 			curl -X POST -H "Content-Type: application/json" -d '{"token":"<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>"}' <%= $api_root %>/travel
@@ -132,7 +132,7 @@
 			"success" : false,<br/>
 			"deprecated" : true / false, (falls true: Diese API-Version wird irgendwann abgeschaltet, bitte auf eine neue umsteigen)<br/>
 			"error" : "Begründung",<br/>
-			"status" : { aktueller Nutzerstatus gemäß Status-API }<br/>
+			"status" : { aktueller Nutzerstatus gemäß Status-API } (nur bei gültigem Token)<br/>
 		}
 		</p>
 	</div>

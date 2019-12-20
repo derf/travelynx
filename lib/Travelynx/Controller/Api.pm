@@ -221,7 +221,7 @@ sub travel_v1 {
 	}
 
 	my $token = $self->get_api_token($uid);
-	if ( $api_token ne $token->{'travel'} ) {
+	if ( not $token->{'travel'} or $api_token ne $token->{'travel'} ) {
 		$self->render(
 			json => {
 				success    => \0,
@@ -240,6 +240,7 @@ sub travel_v1 {
 				success    => \0,
 				deprecated => \0,
 				error      => 'Missing or invalid action',
+				status     => $self->get_user_status_json_v1($uid)
 			},
 		);
 		return;
@@ -249,6 +250,25 @@ sub travel_v1 {
 		my $from_station = sanitize( q{}, $payload->{fromStation} );
 		my $to_station   = sanitize( q{}, $payload->{toStation} );
 		my $train_id;
+
+		if (
+			not(
+				$from_station
+				and ( ( $payload->{train}{type} and $payload->{train}{no} )
+					or $payload->{train}{id} )
+			)
+		  )
+		{
+			$self->render(
+				json => {
+					success    => \0,
+					deprecated => \0,
+					error      => 'Missing fromStation or train data',
+					status     => $self->get_user_status_json_v1($uid)
+				},
+			);
+			return;
+		}
 
 		if ( exists $payload->{train}{id} ) {
 			$train_id = sanitize( 0, $payload->{train}{id} );
@@ -277,9 +297,8 @@ sub travel_v1 {
 					json => {
 						success    => \0,
 						deprecated => \0,
-						error      => 'Fehler am Abfahrtsbahnhof: '
-						  . $status->{errstr},
-						status => $self->get_user_status_json_v1($uid)
+						error      => 'Zug nicht gefunden',
+						status     => $self->get_user_status_json_v1($uid)
 					}
 				);
 				return;
@@ -318,6 +337,18 @@ sub travel_v1 {
 	}
 	elsif ( $payload->{action} eq 'checkout' ) {
 		my $to_station = sanitize( q{}, $payload->{toStation} );
+
+		if ( not $to_station ) {
+			$self->render(
+				json => {
+					success    => \0,
+					deprecated => \0,
+					error      => 'Missing toStation',
+					status     => $self->get_user_status_json_v1($uid)
+				},
+			);
+			return;
+		}
 
 		if ( $payload->{comment} ) {
 			$self->update_in_transit_comment(
