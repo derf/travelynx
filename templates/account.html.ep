@@ -174,8 +174,8 @@
 			<tr>
 				<th scope="row">Travel</th>
 				<td>
-					% if ($token->{action}) {
-						%= $acc->{id} . '-' . $token->{action}
+					% if ($token->{travel}) {
+						%= $acc->{id} . '-' . $token->{travel}
 					% }
 					% else {
 						—
