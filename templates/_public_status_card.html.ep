@@ -1,5 +1,6 @@
+<div class="autorefresh">
 % if ($journey->{checked_in}) {
-	<div class="card autorefresh">
+	<div class="card">
 		<div class="card-content">
 			<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 			<span class="card-title"><%= $name %> ist unterwegs</span>
@@ -7,11 +8,12 @@
 				<p>„<%= $journey->{comment} %>“</p>
 			% }
 			<p>
+				% my $url = 'https://marudor.de/details/' . $journey->{train_type} . ' ' . $journey->{train_no} . '/' . DateTime->now(time_zone => 'Europe/Berlin')->epoch . '000';
 				% if ($journey->{train_line}) {
-					<div class="center-align"><b><%= $journey->{train_type} %> <%= $journey->{train_line} %></b> <%= $journey->{train_no} %></div>
+					<div class="center-align"><a href="<%= $url %>"><b><%= $journey->{train_type} %> <%= $journey->{train_line} %></b> <%= $journey->{train_no} %></a></div>
 				% }
 				% else {
-					<div class="center-align"><b><%= $journey->{train_type} %> <%= $journey->{train_no} %></b></div>
+					<div class="center-align"><a href="<%= $url %>"><b><%= $journey->{train_type} %> <%= $journey->{train_no} %></b></a></div>
 				% }
 				<div class="center-align countdown"
 					data-duration="<%= $journey->{journey_duration} // 0 %>"
@@ -139,7 +141,7 @@
 	</div>
 % }
 % else {
-	<div class="card autorefresh">
+	<div class="card">
 		<div class="card-content">
 			<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 			<span class="card-title"><%= $name %> ist gerade nicht eingecheckt</span>
@@ -149,3 +151,4 @@
 		</div>
 	</div>
 % }
+</div>
