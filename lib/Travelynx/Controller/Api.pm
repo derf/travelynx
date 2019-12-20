@@ -174,8 +174,9 @@ sub travel_v1 {
 	if ( not $payload or ref($payload) ne 'HASH' ) {
 		$self->render(
 			json => {
-				success => \0,
-				error   => 'Malformed JSON',
+				success    => \0,
+				deprecated => \0,
+				error      => 'Malformed JSON',
 			},
 		);
 		return;
@@ -184,7 +185,8 @@ sub travel_v1 {
 	if ( $self->app->mode ne 'development' ) {
 		$self->render(
 			json => {
-				success => \0,
+				success    => \0,
+				deprecated => \0,
 				error =>
 'This feature is incomplete and only available in development mode',
 			},
@@ -197,8 +199,9 @@ sub travel_v1 {
 	if ( $api_token !~ qr{ ^ (?<id> \d+ ) - (?<token> .* ) $ }x ) {
 		$self->render(
 			json => {
-				success => \0,
-				error   => 'Malformed token',
+				success    => \0,
+				deprecated => \0,
+				error      => 'Malformed token',
 			},
 		);
 		return;
@@ -209,8 +212,9 @@ sub travel_v1 {
 	if ( $uid > 2147483647 ) {
 		$self->render(
 			json => {
-				success => \0,
-				error   => 'Malformed token',
+				success    => \0,
+				deprecated => \0,
+				error      => 'Malformed token',
 			},
 		);
 		return;
@@ -220,8 +224,9 @@ sub travel_v1 {
 	if ( $api_token ne $token->{'travel'} ) {
 		$self->render(
 			json => {
-				success => \0,
-				error   => 'Invalid token',
+				success    => \0,
+				deprecated => \0,
+				error      => 'Invalid token',
 			},
 		);
 		return;
@@ -232,8 +237,9 @@ sub travel_v1 {
 	{
 		$self->render(
 			json => {
-				success => \0,
-				error   => 'Missing or invalid action',
+				success    => \0,
+				deprecated => \0,
+				error      => 'Missing or invalid action',
 			},
 		);
 		return;
@@ -269,8 +275,9 @@ sub travel_v1 {
 			if ( not defined $train ) {
 				$self->render(
 					json => {
-						success => \0,
-						error   => 'Fehler am Abfahrtsbahnhof: '
+						success    => \0,
+						deprecated => \0,
+						error      => 'Fehler am Abfahrtsbahnhof: '
 						  . $status->{errstr},
 						status => $self->get_user_status_json_v1($uid)
 					}
@@ -292,17 +299,19 @@ sub travel_v1 {
 		if ($error) {
 			$self->render(
 				json => {
-					success => \0,
-					error   => $error,
-					status  => $self->get_user_status_json_v1($uid)
+					success    => \0,
+					deprecated => \0,
+					error      => $error,
+					status     => $self->get_user_status_json_v1($uid)
 				}
 			);
 		}
 		else {
 			$self->render(
 				json => {
-					success => \1,
-					status  => $self->get_user_status_json_v1($uid)
+					success    => \1,
+					deprecated => \0,
+					status     => $self->get_user_status_json_v1($uid)
 				}
 			);
 		}
@@ -320,17 +329,19 @@ sub travel_v1 {
 		if ($error) {
 			$self->render(
 				json => {
-					success => \0,
-					error   => $error,
-					status  => $self->get_user_status_json_v1($uid)
+					success    => \0,
+					deprecated => \0,
+					error      => $error,
+					status     => $self->get_user_status_json_v1($uid)
 				}
 			);
 		}
 		else {
 			$self->render(
 				json => {
-					success => \1,
-					status  => $self->get_user_status_json_v1($uid)
+					success    => \1,
+					deprecated => \0,
+					status     => $self->get_user_status_json_v1($uid)
 				}
 			);
 		}
@@ -340,17 +351,19 @@ sub travel_v1 {
 		if ($error) {
 			$self->render(
 				json => {
-					success => \0,
-					error   => $error,
-					status  => $self->get_user_status_json_v1($uid)
+					success    => \0,
+					deprecated => \0,
+					error      => $error,
+					status     => $self->get_user_status_json_v1($uid)
 				}
 			);
 		}
 		else {
 			$self->render(
 				json => {
-					success => \1,
-					status  => $self->get_user_status_json_v1($uid)
+					success    => \1,
+					deprecated => \0,
+					status     => $self->get_user_status_json_v1($uid)
 				}
 			);
 		}

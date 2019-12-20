@@ -73,6 +73,12 @@
 		<p>
 			Checkin per API. Sobald eine Zielstation bekannt ist, erfolgt der
 			Checkout wie beim Webinterface automatisch zehn Minuten nach Ankunft.
+			Falls du zum Checkinzeitpunkt bereits in einen anderen Zug eingecheckt
+			bist, wirst du zunächst am gewählten Startbahnhof aus diesem ausgecheckt.
+			Der Checkout erfolgt unabhängig davon, ob der vorherige Zug an dieser
+			Station verkehrt oder nicht. Falls nach einem Checkin ohne Zielwahl
+			innerhalb von 48 Stunden kein Zielbahnhof nachgetragen wird, wird der
+			CHeckin automatisch rückgängig gemacht.
 		</p>
 		<p style="font-family: Monospace;">
 			curl -X POST -H "Content-Type: application/json" -d '{"token":"<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>"}' <%= $api_root %>/travel
@@ -88,7 +94,7 @@
 			}<br/>
 			"fromStation" : "Essen Hbf", (DS100 oder EVA-Nummer sind ebenfalls möglich)<br/>
 			"toStation" : "Berlin Hbf", (optional, DS100 oder EVA-Nummer sind ebenfalls möglich)<br/>
-			"comment" : "Beliebiger Text" (optional)<br/>
+			"comment" : "Beliebiger Text" (optional, überschreibt vorherigen Kommentar)<br/>
 		}
 		</p>
 		<p>Payload zur Wahl eines neuen Ziels, wenn bereits eingecheckt:</p>
@@ -96,9 +102,9 @@
 		{<br/>
 			"token" : "<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>",<br/>
 			"action" : "checkout",<br/>
-			"force" : True/False, (wenn True: Checkout jetzt durchführen und auftretende Fehler ignorieren. Kann zu Logeinträgen ohne Ankunftsdaten führen.)<br/>
+			"force" : true/false, (wenn true: Checkout jetzt durchführen und auftretende Fehler ignorieren. Kann zu Logeinträgen ohne Ankunftsdaten führen.)<br/>
 			"toStation" : "Berlin Hbf", (DS100 oder EVA-Nummer sind ebenfalls möglich)<br/>
-			"comment" : "Beliebiger Text" (optional)<br/>
+			"comment" : "Beliebiger Text" (optional, überschreibt vorherigen Kommentar)<br/>
 		}
 		</p>
 		<p>Payload zum Rückgängigmachen eines Checkins (nur während der Fahrt möglich):</p>
@@ -113,7 +119,8 @@
 		</p>
 		<p style="font-family: Monospace;">
 		{<br/>
-			"success" : True,<br/>
+			"success" : true,<br/>
+			"deprecated" : true / false, (falls true: Diese API-Version wird irgendwann abgeschaltet, bitte auf eine neue umsteigen)<br/>
 			"status" : { aktueller Nutzerstatus gemäß Status-API }<br/>
 		}
 		</p>
@@ -122,7 +129,8 @@
 		</p>
 		<p style="font-family: Monospace;">
 		{<br/>
-			"success" : False,<br/>
+			"success" : false,<br/>
+			"deprecated" : true / false, (falls true: Diese API-Version wird irgendwann abgeschaltet, bitte auf eine neue umsteigen)<br/>
 			"error" : "Begründung",<br/>
 			"status" : { aktueller Nutzerstatus gemäß Status-API }<br/>
 		}
@@ -143,9 +151,9 @@
 		<p style="font-family: Monospace;">
 		{<br/>
 			"token" : "<%= $uid %>-<%= $token->{import} // 'TOKEN' %>",<br/>
-			"dryRun" : True/False, (optional: wenn True, wird die Eingabe validiert, aber keine Zugfahrt angelegt)<br/>
-			"lax" : True/Fals, (optional: wenn True, werden unbekannte Unterwegshalte akzeptiert)<br/>
-			"cancelled" : True/False, (Zugausfall?)<br/>
+			"dryRun" : true/false, (optional: wenn true, wird die Eingabe validiert, aber keine Zugfahrt angelegt)<br/>
+			"lax" : true/Fals, (optional: wenn true, werden unbekannte Unterwegshalte akzeptiert)<br/>
+			"cancelled" : true/false, (Zugausfall?)<br/>
 			"train" : {<br/>
 			"type" : "S", (Zugtyp, z.B. ICE, RE, S)<br/>
 			"line" : "6", (Linie als String, bei Zügen ohne Linie wie IC/ICE u.ä. null)<br/>
@@ -174,7 +182,7 @@
 		</p>
 		<p style="font-family: Monospace;">
 		{<br/>
-			"success" : True,<br/>
+			"success" : true,<br/>
 			"id" : 1234, (ID der eingetragenen Zugfahrt)<br/>
 			"result" : { ... } (Eingetragene Daten, Datenformat nicht näher spezifiziert und beliebig variabel)<br/>
 		}
@@ -184,7 +192,7 @@
 		</p>
 		<p style="font-family: Monospace;">
 		{<br/>
-			"success" : False,<br/>
+			"success" : false,<br/>
 			"error" : "Begründung"<br/>
 		}
 		</p>
