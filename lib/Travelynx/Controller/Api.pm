@@ -282,7 +282,7 @@ sub travel_v1 {
 
 		my ( $train, $error )
 		  = $self->checkin( $from_station, $train_id, $uid );
-		if ( $payload->{comment} ) {
+		if ( $payload->{comment} and not $error ) {
 			$self->update_in_transit_comment(
 				sanitize( q{}, $payload->{comment} ), $uid );
 		}
