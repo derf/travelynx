@@ -3,20 +3,28 @@ use Mojo::Base 'Mojolicious::Command';
 
 use DateTime;
 
-has description => 'Prune unverified users etc';
+has description => 'Prune unverified users, incomplete checkins etc';
 
 has usage => sub { shift->extract_usage };
 
 sub run {
 	my ( $self, $filename ) = @_;
 
-	my $now = DateTime->now( time_zone => 'Europe/Berlin' );
+	my $now                   = DateTime->now( time_zone => 'Europe/Berlin' );
+	my $checkin_deadline      = $now->clone->subtract( hours => 48 );
 	my $verification_deadline = $now->clone->subtract( hours => 48 );
 	my $deletion_deadline     = $now->clone->subtract( hours => 72 );
 	my $old_deadline          = $now->clone->subtract( years => 1 );
 
 	my $db = $self->app->pg->db;
 	my $tx = $db->begin;
+
+	my $res = $db->delete( 'in_transit',
+		{ checkin_time => { '<', $checkin_deadline } } );
+
+	if ( my $rows = $res->rows ) {
+		printf( "Removed %d incomplete checkins\n", $rows );
+	}
 
 	my $unverified = $db->select(
 		'users',
@@ -64,7 +72,7 @@ sub run {
 		printf( "Pruned unverified user %d\n", $user->{id} );
 	}
 
-	my $res = $db->delete( 'pending_passwords',
+	$res = $db->delete( 'pending_passwords',
 		{ requested_at => { '<', $verification_deadline } } );
 
 	if ( my $rows = $res->rows ) {
