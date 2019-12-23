@@ -23,8 +23,8 @@ sub run {
 	{
 
 		my $uid      = $entry->{user_id};
-		my $dep      = $entry->{dep_ds100};
-		my $arr      = $entry->{arr_ds100};
+		my $dep      = $entry->{dep_eva};
+		my $arr      = $entry->{arr_eva};
 		my $train_id = $entry->{train_id};
 
 		# Note: IRIS data is not always updated in real-time. Both departure and
@@ -72,7 +72,7 @@ sub run {
 
 		eval {
 			if (
-				$entry->{arr_name}
+				$arr
 				and ( not $entry->{real_arr_ts}
 					or $now->epoch - $entry->{real_arr_ts} < 600 )
 			  )

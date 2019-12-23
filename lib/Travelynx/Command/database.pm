@@ -2,6 +2,7 @@ package Travelynx::Command::database;
 use Mojo::Base 'Mojolicious::Command';
 
 use DateTime;
+use Travel::Status::DE::IRIS::Stations;
 
 has description => 'Initialize or upgrade database layout';
 
@@ -806,6 +807,137 @@ my @migrations = (
 					left join stations as arr_stations on arr_stations.id = checkout_station_id
 					;
 				update schema_version set version = 18;
+			}
+		);
+	},
+
+	# v18 -> v19
+	sub {
+		my ($db) = @_;
+		say
+'Transitioning from travelynx station ID to EVA IDs, this may take a while ...';
+		$db->query(
+			qq{
+				alter table in_transit drop constraint in_transit_checkin_station_id_fkey;
+				alter table in_transit drop constraint in_transit_checkout_station_id_fkey;
+				alter table journeys drop constraint journeys_checkin_station_id_fkey;
+				alter table journeys drop constraint journeys_checkout_station_id_fkey;
+			}
+		);
+		for my $journey ( $db->select( 'in_transit_str', '*' )->hashes->each ) {
+			my ($s_dep)
+			  = Travel::Status::DE::IRIS::Stations::get_station(
+				$journey->{dep_ds100} );
+			if ( $s_dep->[1] ne $journey->{dep_name} ) {
+				die(
+"$s_dep->[0] name mismatch: $s_dep->[1] vs. $journey->{dep_name}"
+				);
+			}
+			my $rows = $db->update(
+				'in_transit',
+				{ checkin_station_id => $s_dep->[2] },
+				{ user_id            => $journey->{user_id} }
+			)->rows;
+			if ( $rows != 1 ) {
+				die(
+"Update error at in_transit checkin_station_id UID $journey->{user_id}\n"
+				);
+			}
+			if ( $journey->{arr_ds100} ) {
+				my ($s_arr)
+				  = Travel::Status::DE::IRIS::Stations::get_station(
+					$journey->{arr_ds100} );
+				if ( $s_arr->[1] ne $journey->{arr_name} ) {
+					die(
+"$s_arr->[0] name mismatch: $s_arr->[1] vs. $journey->{arr_name}"
+					);
+				}
+				my $rows = $db->update(
+					'in_transit',
+					{ checkout_station_id => $s_arr->[2] },
+					{ user_id             => $journey->{user_id} }
+				)->rows;
+				if ( $rows != 1 ) {
+					die(
+"Update error at in_transit checkout_station_id UID $journey->{user_id}\n"
+					);
+				}
+			}
+		}
+		for my $journey ( $db->select( 'journeys_str', '*' )->hashes->each ) {
+			my ($s_dep)
+			  = Travel::Status::DE::IRIS::Stations::get_station(
+				$journey->{dep_ds100} );
+			my ($s_arr)
+			  = Travel::Status::DE::IRIS::Stations::get_station(
+				$journey->{arr_ds100} );
+			if ( $s_dep->[1] ne $journey->{dep_name} ) {
+				die(
+"$s_dep->[0] name mismatch: $s_dep->[1] vs. $journey->{dep_name}"
+				);
+			}
+			my $rows = $db->update(
+				'journeys',
+				{ checkin_station_id => $s_dep->[2] },
+				{ id                 => $journey->{journey_id} }
+			)->rows;
+			if ( $rows != 1 ) {
+				die(
+"While updating journeys#checkin_station_id for journey $journey->{id}: got $rows rows, expected 1\n"
+				);
+			}
+			if ( $s_arr->[1] ne $journey->{arr_name} ) {
+				die(
+"$s_arr->[0] name mismatch: $s_arr->[1] vs. $journey->{arr_name}"
+				);
+			}
+			$rows = $db->update(
+				'journeys',
+				{ checkout_station_id => $s_arr->[2] },
+				{ id                  => $journey->{journey_id} }
+			)->rows;
+			if ( $rows != 1 ) {
+				die(
+"While updating journeys#checkout_station_id for journey $journey->{id}: got $rows rows, expected 1\n"
+				);
+			}
+		}
+		$db->query(
+			qq{
+				drop view journeys_str;
+				drop view in_transit_str;
+				create view journeys_str as select
+					journeys.id as journey_id, user_id,
+					train_type, train_line, train_no, train_id,
+					extract(epoch from checkin_time) as checkin_ts,
+					extract(epoch from sched_departure) as sched_dep_ts,
+					extract(epoch from real_departure) as real_dep_ts,
+					checkin_station_id as dep_eva,
+					extract(epoch from checkout_time) as checkout_ts,
+					extract(epoch from sched_arrival) as sched_arr_ts,
+					extract(epoch from real_arrival) as real_arr_ts,
+					checkout_station_id as arr_eva,
+					cancelled, edited, route, messages, user_data,
+					dep_platform, arr_platform
+					from journeys
+					;
+				create or replace view in_transit_str as select
+					user_id,
+					train_type, train_line, train_no, train_id,
+					extract(epoch from checkin_time) as checkin_ts,
+					extract(epoch from sched_departure) as sched_dep_ts,
+					extract(epoch from real_departure) as real_dep_ts,
+					checkin_station_id as dep_eva,
+					extract(epoch from checkout_time) as checkout_ts,
+					extract(epoch from sched_arrival) as sched_arr_ts,
+					extract(epoch from real_arrival) as real_arr_ts,
+					checkout_station_id as arr_eva,
+					cancelled, route, messages, user_data,
+					dep_platform, arr_platform, data
+					from in_transit
+					;
+				drop table stations;
+				update schema_version set version = 19;
 			}
 		);
 	},

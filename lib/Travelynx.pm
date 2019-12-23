@@ -116,10 +116,10 @@ sub startup {
 		before_dispatch => sub {
 			my ($self) = @_;
 
-          # The "theme" cookie is set client-side if the theme we delivered was
-          # changed by dark mode detection or by using the theme switcher). It's
-          # not part of Mojolicious' session data (and can't be, due to
-          # signing and HTTPOnly), so we need to add it here.
+           # The "theme" cookie is set client-side if the theme we delivered was
+           # changed by dark mode detection or by using the theme switcher. It's
+           # not part of Mojolicious' session data (and can't be, due to
+           # signing and HTTPOnly), so we need to add it here.
 			for my $cookie ( @{ $self->req->cookies } ) {
 				if ( $cookie->name eq 'theme' ) {
 					$self->session( theme => $cookie->value );
@@ -207,6 +207,18 @@ sub startup {
 		}
 	);
 
+	$self->attr(
+		station_by_eva => sub {
+			my %map;
+			for
+			  my $station ( Travel::Status::DE::IRIS::Stations::get_stations() )
+			{
+				$map{ $station->[2] } = $station;
+			}
+			return \%map;
+		}
+	);
+
 	$self->helper(
 		sendmail => sub {
 			state $sendmail = Travelynx::Helper::Sendmail->new(
@@ -284,26 +296,28 @@ sub startup {
 					with_related => $with_related,
 				);
 				return {
-					results       => [ $status->results ],
-					errstr        => $status->errstr,
-					station_ds100 => (
-						$status->station ? $status->station->{ds100} : 'undef'
-					),
+					results => [ $status->results ],
+					errstr  => $status->errstr,
+					station_ds100 =>
+					  ( $status->station ? $status->station->{ds100} : undef ),
+					station_eva =>
+					  ( $status->station ? $status->station->{uic} : undef ),
 					station_name =>
-					  ( $status->station ? $status->station->{name} : 'undef' ),
+					  ( $status->station ? $status->station->{name} : undef ),
 					related_stations => [ $status->related_stations ],
 				};
 			}
 			elsif ( @station_matches > 1 ) {
 				return {
 					results => [],
-					errstr  => 'Ambiguous station name',
+					errstr  => 'Mehrdeutiger Stationsname. Mögliche Eingaben: '
+					  . join( q{, }, map { $_->[1] } @station_matches ),
 				};
 			}
 			else {
 				return {
 					results => [],
-					errstr  => 'Unknown station name',
+					errstr  => 'Unbekannte Station',
 				};
 			}
 		}
@@ -383,28 +397,22 @@ sub startup {
 			}
 
 			my $entry = {
-				user_id            => $uid,
-				train_type         => $opt{train_type},
-				train_line         => $opt{train_line},
-				train_no           => $opt{train_no},
-				train_id           => 'manual',
-				checkin_station_id => $self->get_station_id(
-					ds100 => $dep_station->[0],
-					name  => $dep_station->[1],
-				),
+				user_id             => $uid,
+				train_type          => $opt{train_type},
+				train_line          => $opt{train_line},
+				train_no            => $opt{train_no},
+				train_id            => 'manual',
+				checkin_station_id  => $dep_station->[2],
 				checkin_time        => $now,
 				sched_departure     => $opt{sched_departure},
 				real_departure      => $opt{rt_departure},
-				checkout_station_id => $self->get_station_id(
-					ds100 => $arr_station->[0],
-					name  => $arr_station->[1],
-				),
-				sched_arrival => $opt{sched_arrival},
-				real_arrival  => $opt{rt_arrival},
-				checkout_time => $now,
-				edited        => 0x3fff,
-				cancelled     => $opt{cancelled} ? 1 : 0,
-				route         => JSON->new->encode( \@route ),
+				checkout_station_id => $arr_station->[2],
+				sched_arrival       => $opt{sched_arrival},
+				real_arrival        => $opt{rt_arrival},
+				checkout_time       => $now,
+				edited              => 0x3fff,
+				cancelled           => $opt{cancelled} ? 1 : 0,
+				route               => JSON->new->encode( \@route ),
 			};
 
 			if ( $opt{comment} ) {
@@ -451,7 +459,7 @@ sub startup {
 					if ( $user->{checked_in} or $user->{cancelled} ) {
 
 						if (    $user->{train_id} eq $train_id
-							and $user->{dep_ds100} eq $status->{station_ds100} )
+							and $user->{dep_eva} eq $status->{station_eva} )
 						{
 							# checking in twice is harmless
 							return ( $train, undef );
@@ -470,10 +478,7 @@ sub startup {
 								cancelled => $train->departure_is_cancelled
 								? 1
 								: 0,
-								checkin_station_id => $self->get_station_id(
-									ds100 => $status->{station_ds100},
-									name  => $status->{station_name}
-								),
+								checkin_station_id => $status->{station_eva},
 								checkin_time =>
 								  DateTime->now( time_zone => 'Europe/Berlin' ),
 								dep_platform    => $train->platform,
@@ -647,6 +652,8 @@ sub startup {
 			$train //= List::Util::first { $_->train_id eq $train_id }
 			@{ $status->{results} };
 
+			my $new_checkout_station_id = $status->{station_eva};
+
           # When a checkout is triggered by a checkin, there is an edge case
           # with related stations.
           # Assume a user travels from A to B1, then from B2 to C. B1 and B2 are
@@ -660,14 +667,15 @@ sub startup {
 				$status = $self->get_departures( $station, 120, 180, 1 );
 				($train) = List::Util::first { $_->train_id eq $train_id }
 				@{ $status->{results} };
+				if (    $train
+					and $self->app->station_by_eva->{ $train->station_uic } )
+				{
+					$new_checkout_station_id = $train->station_uic;
+				}
 			}
 
 			# Store the intended checkout station regardless of this operation's
 			# success.
-			my $new_checkout_station_id = $self->get_station_id(
-				ds100 => $status->{station_ds100},
-				name  => $status->{station_name}
-			);
 			$db->update(
 				'in_transit',
 				{
@@ -698,6 +706,7 @@ sub startup {
 
                # Arrival time via IRIS is unknown, so the train probably has not
                # arrived yet. Fall back to HAFAS.
+               # TODO support cases where $station is EVA or DS100 code
 				if (
 					my $station_data
 					= List::Util::first { $_->[0] eq $station }
@@ -1009,38 +1018,6 @@ sub startup {
 			}
 
 			return undef;
-		}
-	);
-
-	$self->helper(
-		'get_station_id' => sub {
-			my ( $self, %opt ) = @_;
-
-			my $res = $self->pg->db->select( 'stations', ['id'],
-				{ ds100 => $opt{ds100} } );
-			my $res_h = $res->hash;
-
-			if ($res_h) {
-				$res->finish;
-				return $res_h->{id};
-			}
-
-			if ( $opt{readonly} ) {
-				return;
-			}
-
-			$self->pg->db->insert(
-				'stations',
-				{
-					ds100 => $opt{ds100},
-					name  => $opt{name},
-				}
-			);
-			$res = $self->pg->db->select( 'stations', ['id'],
-				{ ds100 => $opt{ds100} } );
-			my $id = $res->hash->{id};
-			$res->finish;
-			return $id;
 		}
 	);
 
@@ -1812,9 +1789,9 @@ sub startup {
 
 	$self->helper(
 		'get_dbdb_station_p' => sub {
-			my ( $self, $ds100 ) = @_;
+			my ( $self, $eva ) = @_;
 
-			my $url = "https://lib.finalrewind.org/dbdb/s/${ds100}.json";
+			my $url = "https://lib.finalrewind.org/dbdb/s/${eva}.json";
 
 			my $cache   = $self->app->cache_iris_main;
 			my $promise = Mojo::Promise->new;
@@ -2038,7 +2015,7 @@ sub startup {
 
 			my $journey = $db->select(
 				'in_transit_str',
-				[ 'arr_ds100', 'dep_ds100', 'route' ],
+				[ 'arr_eva', 'dep_eva', 'route' ],
 				{ user_id => $uid }
 			)->expand->hash;
 
@@ -2256,7 +2233,7 @@ sub startup {
 			}
 
 			if ($is_departure) {
-				$self->get_dbdb_station_p( $journey->{dep_ds100} )->then(
+				$self->get_dbdb_station_p( $journey->{dep_eva} )->then(
 					sub {
 						my ($station_info) = @_;
 
@@ -2276,8 +2253,8 @@ sub startup {
 				)->wait;
 			}
 
-			if ( $journey->{arr_ds100} and not $is_departure ) {
-				$self->get_dbdb_station_p( $journey->{arr_ds100} )->then(
+			if ( $journey->{arr_eva} and not $is_departure ) {
+				$self->get_dbdb_station_p( $journey->{arr_eva} )->then(
 					sub {
 						my ($station_info) = @_;
 
@@ -2367,17 +2344,7 @@ sub startup {
 			my $db        = $opt{db} //= $self->pg->db;
 			my $min_count = $opt{min_count} // 3;
 
-			my $dest_id;
-
-			if ( $opt{ds100} ) {
-				$dest_id = $self->get_station_id(
-					ds100    => $opt{ds100},
-					readonly => 1
-				);
-			}
-			else {
-				$dest_id = $self->get_latest_dest_id(%opt);
-			}
+			my $dest_id = $opt{eva} // $self->get_latest_dest_id(%opt);
 
 			if ( not $dest_id ) {
 				return;
@@ -2386,14 +2353,13 @@ sub startup {
 			my $res = $db->query(
 				qq{
 					select
-					count(stations.name) as count,
-					stations.name as dest
+					count(checkout_station_id) as count,
+					checkout_station_id as dest
 					from journeys
-					left outer join stations on checkout_station_id = stations.id
 					where user_id = ?
 					and checkin_station_id = ?
 					and real_departure > ?
-					group by stations.name
+					group by checkout_station_id
 					order by count desc;
 				},
 				$uid,
@@ -2403,6 +2369,10 @@ sub startup {
 			my @destinations
 			  = $res->hashes->grep( sub { shift->{count} >= $min_count } )
 			  ->map( sub                { shift->{dest} } )->each;
+			@destinations
+			  = grep { $self->app->station_by_eva->{$_} } @destinations;
+			@destinations
+			  = map { $self->app->station_by_eva->{$_}->[1] } @destinations;
 			return @destinations;
 		}
 	);
@@ -2414,24 +2384,24 @@ sub startup {
 			my $uid         = $opt{uid} //= $self->current_user->{id};
 			my $use_history = $self->account_use_history($uid);
 
-			my ( $ds100, $exclude_via, $exclude_train_id, $exclude_before );
+			my ( $eva, $exclude_via, $exclude_train_id, $exclude_before );
 
-			if ( $opt{ds100} ) {
+			if ( $opt{eva} ) {
 				if ( $use_history & 0x01 ) {
-					$ds100 = $opt{ds100};
+					$eva = $opt{eva};
 				}
 			}
 			else {
 				if ( $use_history & 0x02 ) {
 					my $status = $self->get_user_status;
-					$ds100            = $status->{arr_ds100};
+					$eva              = $status->{arr_eva};
 					$exclude_via      = $status->{dep_name};
 					$exclude_train_id = $status->{train_id};
 					$exclude_before   = $status->{real_arrival}->epoch;
 				}
 			}
 
-			if ( not $ds100 ) {
+			if ( not $eva ) {
 				return;
 			}
 
@@ -2445,7 +2415,7 @@ sub startup {
 				return;
 			}
 
-			my $stationboard = $self->get_departures( $ds100, 0, 40, 1 );
+			my $stationboard = $self->get_departures( $eva, 0, 40, 1 );
 			if ( $stationboard->{errstr} ) {
 				return;
 			}
@@ -2481,9 +2451,9 @@ sub startup {
              # This is easiest to achieve in two separate loops.
              #
              # Note that a cancelled train may still have a matching destination
-             # in its route_post, e.g. if it leaves out $ds100 due to
+             # in its route_post, e.g. if it leaves out $eva due to
              # unscheduled route changes but continues on schedule afterwards
-             # -- so it is only cancelled at $ds100, not on the remainder of
+             # -- so it is only cancelled at $eva, not on the remainder of
              # the route. Also note that this specific case is not yet handled
              # properly by the cancellation logic etc.
 
@@ -2594,11 +2564,11 @@ sub startup {
 					type         => $entry->{train_type},
 					line         => $entry->{train_line},
 					no           => $entry->{train_no},
-					from_name    => $entry->{dep_name},
+					from_eva     => $entry->{dep_eva},
 					checkin_ts   => $entry->{checkin_ts},
 					sched_dep_ts => $entry->{sched_dep_ts},
 					rt_dep_ts    => $entry->{real_dep_ts},
-					to_name      => $entry->{arr_name},
+					to_eva       => $entry->{arr_eva},
 					checkout_ts  => $entry->{checkout_ts},
 					sched_arr_ts => $entry->{sched_arr_ts},
 					rt_arr_ts    => $entry->{real_arr_ts},
@@ -2607,6 +2577,19 @@ sub startup {
 					edited       => $entry->{edited},
 					user_data    => $entry->{user_data},
 				};
+
+				if ( my $station
+					= $self->app->station_by_eva->{ $ref->{from_eva} } )
+				{
+					$ref->{from_ds100} = $station->[0];
+					$ref->{from_name}  = $station->[1];
+				}
+				if ( my $station
+					= $self->app->station_by_eva->{ $ref->{to_eva} } )
+				{
+					$ref->{to_ds100} = $station->[0];
+					$ref->{to_name}  = $station->[1];
+				}
 
 				if ( $opt{with_datetime} ) {
 					$ref->{checkin} = epoch_to_dt( $ref->{checkin_ts} );
@@ -2775,6 +2758,20 @@ sub startup {
 
 			if ($in_transit) {
 
+				if ( my $station
+					= $self->app->station_by_eva->{ $in_transit->{dep_eva} } )
+				{
+					$in_transit->{dep_ds100} = $station->[0];
+					$in_transit->{dep_name}  = $station->[1];
+				}
+				if ( $in_transit->{arr_eva}
+					and my $station
+					= $self->app->station_by_eva->{ $in_transit->{arr_eva} } )
+				{
+					$in_transit->{arr_ds100} = $station->[0];
+					$in_transit->{arr_name}  = $station->[1];
+				}
+
 				my @route = @{ $in_transit->{route} // [] };
 				my @route_after;
 				my $dep_info;
@@ -2791,14 +2788,16 @@ sub startup {
 					if ($is_after) {
 						push( @route_after, $station );
 					}
-					if ( $station->[0] eq $in_transit->{dep_name} ) {
+					if (    $in_transit->{dep_name}
+						and $station->[0] eq $in_transit->{dep_name} )
+					{
 						$is_after = 1;
 						if ( @{$station} > 1 ) {
 							$dep_info = $station->[1];
 						}
 					}
 				}
-				my $stop_after_dep = $route_after[0][0];
+				my $stop_after_dep = @route_after ? $route_after[0][0] : undef;
 
 				my $ts = $in_transit->{checkout_ts}
 				  // $in_transit->{checkin_ts};
@@ -2818,11 +2817,13 @@ sub startup {
 					  epoch_to_dt( $in_transit->{sched_dep_ts} ),
 					real_departure => epoch_to_dt( $in_transit->{real_dep_ts} ),
 					dep_ds100      => $in_transit->{dep_ds100},
+					dep_eva        => $in_transit->{dep_eva},
 					dep_name       => $in_transit->{dep_name},
 					dep_platform   => $in_transit->{dep_platform},
 					sched_arrival => epoch_to_dt( $in_transit->{sched_arr_ts} ),
 					real_arrival  => epoch_to_dt( $in_transit->{real_arr_ts} ),
 					arr_ds100     => $in_transit->{arr_ds100},
+					arr_eva       => $in_transit->{arr_eva},
 					arr_name      => $in_transit->{arr_name},
 					arr_platform  => $in_transit->{arr_platform},
 					route_after   => \@route_after,
@@ -2998,6 +2999,18 @@ sub startup {
 			if ($latest) {
 				my $ts          = $latest->{checkout_ts};
 				my $action_time = epoch_to_dt($ts);
+				if ( my $station
+					= $self->app->station_by_eva->{ $latest->{dep_eva} } )
+				{
+					$latest->{dep_ds100} = $station->[0];
+					$latest->{dep_name}  = $station->[1];
+				}
+				if ( my $station
+					= $self->app->station_by_eva->{ $latest->{arr_eva} } )
+				{
+					$latest->{arr_ds100} = $station->[0];
+					$latest->{arr_name}  = $station->[1];
+				}
 				return {
 					checked_in      => 0,
 					cancelled       => 0,
@@ -3011,11 +3024,13 @@ sub startup {
 					sched_departure => epoch_to_dt( $latest->{sched_dep_ts} ),
 					real_departure  => epoch_to_dt( $latest->{real_dep_ts} ),
 					dep_ds100       => $latest->{dep_ds100},
+					dep_eva         => $latest->{dep_eva},
 					dep_name        => $latest->{dep_name},
 					dep_platform    => $latest->{dep_platform},
 					sched_arrival   => epoch_to_dt( $latest->{sched_arr_ts} ),
 					real_arrival    => epoch_to_dt( $latest->{real_arr_ts} ),
 					arr_ds100       => $latest->{arr_ds100},
+					arr_eva         => $latest->{arr_eva},
 					arr_name        => $latest->{arr_name},
 					arr_platform    => $latest->{arr_platform},
 					comment         => $latest->{user_data}{comment},
@@ -3037,6 +3052,8 @@ sub startup {
 			my ( $self, $uid ) = @_;
 			my $status = $self->get_user_status($uid);
 
+			# TODO simplify lon/lat (can be returned from get_user_status)
+
 			my $ret = {
 				deprecated => \0,
 				checkedIn  => (
@@ -3046,7 +3063,7 @@ sub startup {
 				fromStation => {
 					ds100         => $status->{dep_ds100},
 					name          => $status->{dep_name},
-					uic           => undef,
+					uic           => $status->{dep_eva},
 					longitude     => undef,
 					latitude      => undef,
 					scheduledTime => $status->{sched_departure}->epoch || undef,
@@ -3055,7 +3072,7 @@ sub startup {
 				toStation => {
 					ds100         => $status->{arr_ds100},
 					name          => $status->{arr_name},
-					uic           => undef,
+					uic           => $status->{arr_eva},
 					longitude     => undef,
 					latitude      => undef,
 					scheduledTime => $status->{sched_arrival}->epoch || undef,
@@ -3070,14 +3087,13 @@ sub startup {
 				actionTime => $status->{timestamp}->epoch,
 			};
 
-			if ( $status->{dep_ds100} ) {
+			if ( $status->{dep_eva} ) {
 				my @station_descriptions
 				  = Travel::Status::DE::IRIS::Stations::get_station(
-					$status->{dep_ds100} );
+					$status->{dep_eva} );
 				if ( @station_descriptions == 1 ) {
 					(
-						undef, undef,
-						$ret->{fromStation}{uic},
+						undef, undef, undef,
 						$ret->{fromStation}{longitude},
 						$ret->{fromStation}{latitude}
 					) = @{ $station_descriptions[0] };
@@ -3090,8 +3106,7 @@ sub startup {
 					$status->{arr_ds100} );
 				if ( @station_descriptions == 1 ) {
 					(
-						undef, undef,
-						$ret->{toStation}{uic},
+						undef, undef, undef,
 						$ret->{toStation}{longitude},
 						$ret->{toStation}{latitude}
 					) = @{ $station_descriptions[0] };
@@ -3260,7 +3275,6 @@ sub startup {
 	$r->get('/impressum')->to('static#imprint');
 	$r->get('/imprint')->to('static#imprint');
 	$r->get('/offline')->to('static#offline');
-	$r->get('/api/v0/:user_action/:token')->to('api#get_v0');
 	$r->get('/api/v1/:user_action/:token')->to('api#get_v1');
 	$r->get('/login')->to('account#login_form');
 	$r->get('/recover')->to('account#request_password_reset');
