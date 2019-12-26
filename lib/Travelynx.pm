@@ -2397,7 +2397,9 @@ sub startup {
 					$eva              = $status->{arr_eva};
 					$exclude_via      = $status->{dep_name};
 					$exclude_train_id = $status->{train_id};
-					$exclude_before   = $status->{real_arrival}->epoch;
+					if ( $status->{real_arrival} ) {
+						$exclude_before = $status->{real_arrival}->epoch;
+					}
 				}
 			}
 
@@ -2431,6 +2433,7 @@ sub startup {
 					next;
 				}
 				if (    $exclude_before
+					and $train->departure
 					and $train->departure->epoch < $exclude_before )
 				{
 					next;
