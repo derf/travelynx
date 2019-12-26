@@ -395,7 +395,7 @@ sub station {
 
 		$self->render(
 			'departures',
-			ds100            => $status->{station_ds100},
+			eva              => $status->{station_eva},
 			results          => \@results,
 			station          => $status->{station_name},
 			related_stations => $status->{related_stations},

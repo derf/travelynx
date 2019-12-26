@@ -18,7 +18,7 @@
 						ab <%= $status->{dep_name} %></p>
 				</div>
 				<div class="card-action">
-					<a class="action-checkout" data-station="<%= $ds100 %>" data-force="1">
+					<a class="action-checkout" data-station="<%= $eva %>" data-force="1">
 						Hier auschecken
 					</a>
 				</div>
@@ -33,12 +33,12 @@
 		</div>
 	</div>
 % }
-% elsif (not param('train') and my @connections = get_connecting_trains(ds100 => $ds100)) {
+% elsif (not param('train') and my @connections = get_connecting_trains(eva => $eva)) {
 	% $have_connections = 1;
 	<div class="row">
 		<div class="col s12">
 			<p>Häufig genutzte Verbindungen – Zug auswählen zum Einchecken mit Zielwahl</p>
-			%= include '_connections', connections => \@connections, checkin_from => $ds100;
+			%= include '_connections', connections => \@connections, checkin_from => $eva;
 		</div>
 	</div>
 % }
