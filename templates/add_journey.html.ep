@@ -30,7 +30,7 @@
 		<ul>
 			<li>Eingabe des Zugs als „Zug Typ Nummer“ oder „Zug Nummer“, z.B.
 				„ICE 100“, „S 1 31133“ oder „ABR RE11 26720“</li>
-			<li>Wenn Zugnummer nicht bekannt, einen beliebigen Integer eintragen z.B. "S 5X 0"</li>	
+			<li>Wenn Zugnummer nicht bekannt: einen beliebigen Integer eintragen, z.B. "S 5X 0"</li>	
 			<li>Zeitangaben im Format DD.MM.YYYY HH:MM</li>
 		</ul>
 	</div>
