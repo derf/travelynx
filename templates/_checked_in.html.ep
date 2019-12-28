@@ -246,10 +246,10 @@
 				<a class="action-share blue-text right"
 					style="margin-right: 0;"
 					% if (current_user()->{is_public} & 0x04 and $journey->{comment}) {
-						data-text="<%= $journey->{comment} %> (@ <%= $journey->{train_type} %> <%= $journey->{train_no} %> → <%= $journey->{arr_name} %>) #NowTräwelling #dbl"
+						data-text="<%= $journey->{comment} %> (@ <%= $journey->{train_type} %> <%= $journey->{train_no} %> → <%= $journey->{arr_name} %>) #travelynx"
 					% }
 					% else {
-						data-text="Ich bin gerade <%= $attrib %> <%= $journey->{train_type} %> <%= $journey->{train_no} %> nach <%= $journey->{arr_name} %> #NowTräwelling #dbl"
+						data-text="Ich bin gerade <%= $attrib %> <%= $journey->{train_type} %> <%= $journey->{train_no} %> nach <%= $journey->{arr_name} %> #travelynx"
 					% }
 					% if (current_user()->{is_public} & 0x02) {
 						data-url="<%= url_for('/status')->to_abs->scheme('https') %>/<%= current_user->{name} %>/<%= $journey->{sched_departure}->epoch %>"
