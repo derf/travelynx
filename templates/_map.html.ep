@@ -31,18 +31,19 @@ var routes = [
 % }
 ];
 
+var pl = L.polyline(routes, {color: '#673ab7', opacity: 0.6}).addTo(map);
+if (routes.length) {
+	map.fitBounds(pl.getBounds());
+}
+
 for (var station_id in stations) {
 	L.circle(stations[station_id][0], {
 		color: '#f03',
+		opacity: 0.7,
 		fillColor: '#f03',
 		fillOpacity: 0.5,
 		radius: 250
 	}).bindPopup(stations[station_id][1]).addTo(map);
-}
-
-var pl = L.polyline(routes, {color: '#f09', opacity: 0.5}).addTo(map);
-if (routes.length) {
-	map.fitBounds(pl.getBounds());
 }
 
 </script>
