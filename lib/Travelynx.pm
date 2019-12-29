@@ -68,6 +68,8 @@ sub startup {
 		$self->secrets( $self->config->{secrets} );
 	}
 
+	chomp $self->app->config->{version};
+
 	$self->plugin(
 		authentication => {
 			autoload_user => 1,
