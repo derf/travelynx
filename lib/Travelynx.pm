@@ -1432,6 +1432,8 @@ sub startup {
 
 			if ( $hook->{token} ) {
 				$header->{Authorization} = "Bearer $hook->{token}";
+				$header->{'User-Agent'}
+				  = 'travelynx/' . $self->app->config->{version};
 			}
 
 			my $ua = $self->ua;
