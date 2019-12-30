@@ -185,6 +185,47 @@ sub travel_v1 {
 			return;
 		}
 
+		if (
+			@{
+				[
+					Travel::Status::DE::IRIS::Stations::get_station(
+						$from_station)
+				]
+			} != 1
+		  )
+		{
+			$self->render(
+				json => {
+					success    => \0,
+					deprecated => \0,
+					error      => 'fromStation is ambiguous',
+					status     => $self->get_user_status_json_v1($uid)
+				},
+			);
+			return;
+		}
+
+		if (
+			$to_station
+			and @{
+				[
+					Travel::Status::DE::IRIS::Stations::get_station(
+						$to_station)
+				]
+			} != 1
+		  )
+		{
+			$self->render(
+				json => {
+					success    => \0,
+					deprecated => \0,
+					error      => 'toStation is ambiguous',
+					status     => $self->get_user_status_json_v1($uid)
+				},
+			);
+			return;
+		}
+
 		if ( exists $payload->{train}{id} ) {
 			$train_id = sanitize( 0, $payload->{train}{id} );
 		}
