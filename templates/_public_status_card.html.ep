@@ -134,6 +134,9 @@
 								<li> <i class="material-icons tiny">warning</i> <%= $message->[0]->strftime('%H:%M') %>: <%= $message->[1] %></li>
 							% }
 						% }
+						% for my $message (@{$journey->{extra_data}{qos_msg} // []}) {
+							<li> <i class="material-icons tiny">info</i> <%= $message->[0]->strftime('%H:%M') %>: <%= $message->[1] %></li>
+						% }
 					</ul>
 				</p>
 			% }
