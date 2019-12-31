@@ -170,7 +170,6 @@
 					%= end
 				</td>
 			</tr>-->
-			% if (app->mode eq 'development') {
 			<tr>
 				<th scope="row">Travel</th>
 				<td>
@@ -194,6 +193,7 @@
 					%= end
 				</td>
 			</tr>
+			% if (app->mode eq 'development') {
 			<tr>
 				<th scope="row">Import</th>
 				<td>

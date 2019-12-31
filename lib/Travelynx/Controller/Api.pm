@@ -97,18 +97,6 @@ sub travel_v1 {
 		return;
 	}
 
-	if ( $self->app->mode ne 'development' ) {
-		$self->render(
-			json => {
-				success    => \0,
-				deprecated => \0,
-				error =>
-'This feature is incomplete and only available in development mode',
-			},
-		);
-		return;
-	}
-
 	my $api_token = $payload->{token} // '';
 
 	if ( $api_token !~ qr{ ^ (?<id> \d+ ) - (?<token> .* ) $ }x ) {
