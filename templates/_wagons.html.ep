@@ -1,5 +1,11 @@
 % for my $wagongroup (@{$wagongroups // []}) {
-	Wagenverbund <%= $wagongroup->{name} %> von <b><%= $wagongroup->{from} %></b> nach <b><%= $wagongroup->{to} %></b> als <b><%= $journey->{type} %> <%= $wagongroup->{no} %></b><br/>
+	Wagenverbund <%= $wagongroup->{name} %>
+	% my ($wagon_number) = ($wagongroup->{name} =~ m{ ^ ICE 0* (\d+) $ }x);
+	% if ($wagon_number and my $group_name = app->ice_name->{$wagon_number}) {
+		„<%= $group_name %>“
+	% }
+	als <b><%= $journey->{type} %> <%= $wagongroup->{no} %></b>
+	von <b><%= $wagongroup->{from} %></b> nach <b><%= $wagongroup->{to} %></b><br/>
 	% for my $wagon (@{$wagongroup->{wagons}}) {
 		% if (length($wagon->{id}) == 12) {
 			<span><%= substr($wagon->{id}, 0, 2) %></span><span><%= substr($wagon->{id}, 2, 2) %></span><span><%= substr($wagon->{id}, 4, 1) %></span><span class="wagonclass"><%= substr($wagon->{id}, 5, 3) %></span><span class="wagonnum"><%= substr($wagon->{id}, 8, 3) %></span><span class="checksum"><%= substr($wagon->{id}, 11) %></span>
