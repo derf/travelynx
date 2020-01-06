@@ -1,7 +1,6 @@
 package Travelynx;
 use Mojo::Base 'Mojolicious';
 
-use Mojo::JSON qw(decode_json);
 use Mojo::Pg;
 use Mojo::Promise;
 use Mojolicious::Plugin::Authentication;
@@ -280,7 +279,8 @@ sub startup {
 # via https://github.com/marudor/BahnhofsAbfahrten/blob/master/src/server/Reihung/ICENaming.ts
 	$self->attr(
 		ice_name => sub {
-			my $id_to_name = decode_json( read_file('share/ice_names.json') );
+			my $id_to_name = JSON->new->utf8->decode(
+				scalar read_file('share/ice_names.json') );
 			return $id_to_name;
 		}
 	);
