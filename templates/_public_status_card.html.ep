@@ -8,12 +8,11 @@
 				<p>„<%= $journey->{comment} %>“</p>
 			% }
 			<p>
-				% my $url = 'https://marudor.de/details/' . $journey->{train_type} . ' ' . $journey->{train_no} . '/' . DateTime->now(time_zone => 'Europe/Berlin')->epoch . '000';
 				% if ($journey->{train_line}) {
-					<div class="center-align"><a href="<%= $url %>"><b><%= $journey->{train_type} %> <%= $journey->{train_line} %></b> <%= $journey->{train_no} %></a></div>
+					<div class="center-align"><b><%= $journey->{train_type} %> <%= $journey->{train_line} %></b> <%= $journey->{train_no} %></div>
 				% }
 				% else {
-					<div class="center-align"><a href="<%= $url %>"><b><%= $journey->{train_type} %> <%= $journey->{train_no} %></b></a></div>
+					<div class="center-align"><b><%= $journey->{train_type} %> <%= $journey->{train_no} %></b></div>
 				% }
 				<div class="center-align countdown"
 					data-duration="<%= $journey->{journey_duration} // 0 %>"
@@ -139,6 +138,17 @@
 						% }
 					</ul>
 				</p>
+			% }
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s6 center-align">
+			% my $url = 'https://marudor.de/details/' . $journey->{train_type} . ' ' . $journey->{train_no} . '/' . DateTime->now(time_zone => 'Europe/Berlin')->epoch . '000';
+			<a href="<%= $url %>" class="waves-effect waves-light btn"><i class="material-icons left">timeline</i> Zuglauf</a>
+		</div>
+		<div class="col s6 center-align">
+			% if ($journey->{extra_data}{trip_id}) {
+				<a href="https://dbf.finalrewind.org/map/<%= $journey->{extra_data}{trip_id} %>/<%= $journey->{train_line} || 0 %>" class="waves-effect waves-light btn"><i class="material-icons left">map</i> Karte</a>
 			% }
 		</div>
 	</div>
