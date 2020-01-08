@@ -1917,6 +1917,67 @@ sub startup {
 	);
 
 	$self->helper(
+		'get_hafas_tripid_p' => sub {
+			my ( $self, $train ) = @_;
+
+			my $promise = Mojo::Promise->new;
+			my $cache   = $self->app->cache_iris_main;
+			my $eva     = $train->station_uic;
+
+			my $dep_ts = DateTime->now( time_zone => 'Europe/Berlin' );
+			my $url
+			  = "https://2.db.transport.rest/stations/${eva}/departures?duration=5&when=$dep_ts";
+
+			if ( $train->sched_departure ) {
+				$dep_ts = $train->sched_departure->epoch;
+				$url
+				  = "https://2.db.transport.rest/stations/${eva}/departures?duration=5&when=$dep_ts";
+			}
+			elsif ( $train->sched_arrival ) {
+				$dep_ts = $train->sched_arrival->epoch;
+				$url
+				  = "https://2.db.transport.rest/stations/${eva}/arrivals?duration=5&when=$dep_ts";
+			}
+
+			if ( my $content = $cache->get($url) ) {
+				$promise->resolve($content);
+				return $promise;
+			}
+
+			$self->ua->request_timeout(5)->get_p(
+				$url => {
+					'User-Agent' => 'travelynx/' . $self->app->config->{version}
+				}
+			)->then(
+				sub {
+					my ($tx) = @_;
+					my $body = decode( 'utf-8', $tx->res->body );
+					my $json = JSON->new->decode($body);
+
+					for my $result ( @{$json} ) {
+						if (    $result->{line}
+							and $result->{line}{fahrtNr} == $train->train_no )
+						{
+							my $trip_id = $result->{tripId};
+							$cache->set( $url, $trip_id );
+							$promise->resolve($trip_id);
+							return;
+						}
+					}
+					$promise->reject;
+				}
+			)->catch(
+				sub {
+					my ($err) = @_;
+					$promise->reject($err);
+				}
+			)->wait;
+
+			return $promise;
+		}
+	);
+
+	$self->helper(
 		'get_hafas_json_p' => sub {
 			my ( $self, $url ) = @_;
 
@@ -2035,12 +2096,33 @@ sub startup {
 
 			my $journey = $db->select(
 				'in_transit_str',
-				[ 'arr_eva', 'dep_eva', 'route' ],
+				[ 'arr_eva', 'dep_eva', 'route', 'data' ],
 				{ user_id => $uid }
 			)->expand->hash;
 
 			if ( not $journey ) {
 				return;
+			}
+
+			if ( not $journey->{data}{trip_id} ) {
+				$self->get_hafas_tripid_p($train)->then(
+					sub {
+						my ($trip_id) = @_;
+
+						my $res = $db->select( 'in_transit', ['data'],
+							{ user_id => $uid } );
+						my $res_h = $res->expand->hash;
+						my $data  = $res_h->{data} // {};
+
+						$data->{trip_id} = $trip_id;
+
+						$db->update(
+							'in_transit',
+							{ data    => JSON->new->encode($data) },
+							{ user_id => $uid }
+						);
+					}
+				)->wait;
 			}
 
 			my ($platform) = ( ( $train->platform // 0 ) =~ m{(\d+)} );
