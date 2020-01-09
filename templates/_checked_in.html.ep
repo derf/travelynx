@@ -163,7 +163,7 @@
 					</div>
 				</p>
 			% }
-			% if (@{$journey->{messages} // []} or @{$journey->{extra_data}{him_msg} // []} or @{$journey->{extra_data}{qos_msg} // []}) {
+			% if (@{$journey->{messages} // []} or @{$journey->{extra_data}{qos_msg} // []}) {
 				<p style="margin-bottom: 2ex;">
 					<ul>
 						% for my $message (reverse @{$journey->{messages} // []}) {
@@ -175,9 +175,6 @@
 							% for my $message (@{$journey->{extra_data}{qos_msg} // []}) {
 								<li> <i class="material-icons tiny">info</i> <%= $message->[0]->strftime('%H:%M') %>: <%= $message->[1] %></li>
 							% }
-						% }
-						% for my $message (@{$journey->{extra_data}{him_msg} // []}) {
-							<li> <i class="material-icons tiny">info</i> <%= $message->{header} %> <%= $message->{lead} %></li>
 						% }
 					</ul>
 				</p>
@@ -260,18 +257,28 @@
 			% }
 		</div>
 	</div>
-%#	<div class="row" style="margin-top: 2em;">
-%#		<div class="col s6 center-align">
-%#			% my $url = 'https://marudor.de/details/' . $journey->{train_type} . ' ' . $journey->{train_no} . '/' . DateTime->now(time_zone => 'Europe/Berlin')->epoch . '000';
-%#			<a href="<%= $url %>" class="waves-effect waves-light btn"><i class="material-icons left">timeline</i> Zuglauf</a>
-%#		</div>
-%#		<div class="col s6 center-align">
-%#			% if ($journey->{extra_data}{trip_id}) {
-%#				<a href="https://dbf.finalrewind.org/map/<%= $journey->{extra_data}{trip_id} %>/<%= $journey->{train_line} || 0 %>" class="waves-effect waves-light btn"><i class="material-icons left">map</i> Karte</a>
-%#			% }
-%#		</div>
-%#	</div>
 	% if ($journey->{arr_name}) {
+		<div class="card" style="margin-top: 3em;">
+			<div class="card-content">
+				<span class="card-title">Details</span>
+				% if (@{$journey->{extra_data}{him_msg} // []}) {
+					<p style="margin-bottom: 2ex;">
+						<ul>
+							% for my $message (@{$journey->{extra_data}{him_msg} // []}) {
+								<li> <i class="material-icons tiny">info</i> <%= $message->{header} %> <%= $message->{lead} %></li>
+							% }
+						</ul>
+					</p>
+				% }
+			</div>
+			<div class="card-action">
+				% my $url = 'https://marudor.de/details/' . $journey->{train_type} . ' ' . $journey->{train_no} . '/' . DateTime->now(time_zone => 'Europe/Berlin')->epoch . '000';
+				<a style="margin-right: 0;" href="<%= $url %>"><i class="material-icons left">timeline</i> Zuglauf</a>
+				% if ($journey->{extra_data}{trip_id}) {
+					<a class="right" style="margin-right: 0;" href="https://dbf.finalrewind.org/map/<%= $journey->{extra_data}{trip_id} %>/<%= $journey->{train_line} || 0 %>?from=<%= $journey->{dep_name} %>&amp;to=<%= $journey->{arr_name} %>&amp;dark=<%= (session('theme') and session('theme') eq 'dark') ? 1 : 0 %>"><i class="material-icons left">map</i> Karte</a>
+				% }
+			</div>
+		</div>
 		<div class="card" style="margin-top: 3em;">
 			<div class="card-content">
 				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
