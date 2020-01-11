@@ -9,6 +9,9 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 	cpanminus \
 	build-essential \
 	libpq-dev \
+	openssl \
+	libssl-dev \
+	libz-dev \
 	git \
 	&& cpanm -in --no-man-pages --installdeps . \
 	&& rm -rf ~/.cpanm \

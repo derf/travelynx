@@ -16,3 +16,4 @@ requires 'UUID::Tiny';
 requires 'JSON';
 requires 'JSON::XS';
 requires 'XML::LibXML';
+requires 'LWP::Protocol::https';

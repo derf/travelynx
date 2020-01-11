@@ -14,13 +14,13 @@ x-common-config: &common-config
   build: .
   networks:
     - backend
-  
+
 services:
   database:
     image: postgres:11
     networks:
       - backend
-    environment: 
+    environment:
       <<: *common-env
     volumes:
       - ./examples/docker/postgres-init.sh:/docker-entrypoint-initdb.d/init.sh
