@@ -2935,6 +2935,7 @@ sub startup {
 					messages      => $in_transit->{messages},
 					extra_data    => $in_transit->{data},
 					comment       => $in_transit->{user_data}{comment},
+					final_station => get_station((\@route_after)[-1][0]),
 				};
 
 				my @parsed_messages;

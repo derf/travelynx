@@ -77,7 +77,7 @@
 								% @wagons = reverse @wagons;
 							% }
 						% }
-						<a href="https://marudor.de/details/<%= $journey->{train_type} %>%20<%= $journey->{train_no} %>/<%= DateTime->now(time_zone => 'Europe/Berlin')->epoch %>000">
+						<a href="https://marudor.de/details/<%= $journey->{train_type} %>%20<%= $journey->{train_no} %>/<%= DateTime->now(time_zone => 'Europe/Berlin')->epoch %>000?station=<%= $journey->{final_station}[0] %>">
 						%= $direction
 						% for my $wagon (@wagons) {
 							% if (not ($wagon->is_locomotive or $wagon->is_powercar)) {
@@ -272,7 +272,7 @@
 				% }
 			</div>
 			<div class="card-action">
-				% my $url = 'https://marudor.de/details/' . $journey->{train_type} . ' ' . $journey->{train_no} . '/' . DateTime->now(time_zone => 'Europe/Berlin')->epoch . '000';
+				% my $url = 'https://marudor.de/details/' . $journey->{train_type} . ' ' . $journey->{train_no} . '/' . DateTime->now(time_zone => 'Europe/Berlin')->epoch . '000?station='.  $journey->{final_station}[0];
 				<a style="margin-right: 0;" href="<%= $url %>"><i class="material-icons left">timeline</i> Zuglauf</a>
 				% if ($journey->{extra_data}{trip_id}) {
 					<a class="right" style="margin-right: 0;" href="https://dbf.finalrewind.org/map/<%= $journey->{extra_data}{trip_id} %>/<%= $journey->{train_line} || 0 %>?from=<%= $journey->{dep_name} %>&amp;to=<%= $journey->{arr_name} %>&amp;dark=<%= (session('theme') and session('theme') eq 'dark') ? 1 : 0 %>"><i class="material-icons left">map</i> Karte</a>
