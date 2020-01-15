@@ -1623,7 +1623,7 @@ sub startup {
 			my ( $self, %opt ) = @_;
 
 			if ( $opt{cancelled} ) {
-				$self->app->log->warning(
+				$self->app->log->warn(
 'get_journey_stats called with illegal option cancelled => 1'
 				);
 				return {};
@@ -2005,7 +2005,7 @@ sub startup {
 			)->catch(
 				sub {
 					my ($err) = @_;
-					$self->app->log->warning("get($url): $err");
+					$self->app->log->warn("get($url): $err");
 					$promise->reject($err);
 				}
 			)->wait;
@@ -2041,7 +2041,7 @@ sub startup {
 					$body =~ s{<SDay [^>]*/>}{}s;
 					eval { $tree = XML::LibXML->load_xml( string => $body ) };
 					if ($@) {
-						$self->app->log->warning("load_xml($url): $@");
+						$self->app->log->warn("load_xml($url): $@");
 						$cache->freeze( $url, $traininfo );
 						$promise->resolve($traininfo);
 						return;
@@ -2078,7 +2078,7 @@ sub startup {
 			)->catch(
 				sub {
 					my ($err) = @_;
-					$self->app->log->warning("get($url): $err");
+					$self->app->log->warn("get($url): $err");
 					$promise->reject($err);
 				}
 			)->wait;
