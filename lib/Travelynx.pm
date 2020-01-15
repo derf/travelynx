@@ -2274,7 +2274,8 @@ sub startup {
 						my $data      = $res_h->{data} // {};
 						my $user_data = $res_h->{user_data} // {};
 
-						if ($is_departure) {
+						if ( $is_departure and not exists $wagonorder->{error} )
+						{
 							$data->{wagonorder_dep} = $wagonorder;
 							if ( exists $user_data->{wagongroups} ) {
 								$user_data->{wagongroups} = [];
@@ -2322,7 +2323,9 @@ sub startup {
 								{ user_id => $uid }
 							);
 						}
-						else {
+						elsif ( not $is_departure
+							and not exists $wagonorder->{error} )
+						{
 							$data->{wagonorder_arr} = $wagonorder;
 							$db->update(
 								'in_transit',
