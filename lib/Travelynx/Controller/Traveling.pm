@@ -660,6 +660,7 @@ sub journey_details {
 	if ( not( $journey_id and $journey_id =~ m{ ^ \d+ $ }x ) ) {
 		$self->render(
 			'journey',
+			status  => 404,
 			error   => 'notfound',
 			journey => {}
 		);
@@ -683,6 +684,7 @@ sub journey_details {
 	else {
 		$self->render(
 			'journey',
+			status  => 404,
 			error   => 'notfound',
 			journey => {}
 		);
@@ -743,6 +745,7 @@ sub edit_journey {
 	if ( not( $journey_id =~ m{ ^ \d+ $ }x ) ) {
 		$self->render(
 			'edit_journey',
+			status  => 404,
 			error   => 'notfound',
 			journey => {}
 		);
@@ -759,6 +762,7 @@ sub edit_journey {
 	if ( not $journey ) {
 		$self->render(
 			'edit_journey',
+			status  => 404,
 			error   => 'notfound',
 			journey => {}
 		);
