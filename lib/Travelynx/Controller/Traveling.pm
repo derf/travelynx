@@ -657,7 +657,7 @@ sub journey_details {
 
 	$self->param( journey_id => $journey_id );
 
-	if ( not($journey_id) ) {
+	if ( not( $journey_id and $journey_id =~ m{ ^ \d+ $ }x ) ) {
 		$self->render(
 			'journey',
 			error   => 'notfound',
