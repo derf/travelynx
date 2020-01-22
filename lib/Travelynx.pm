@@ -1869,7 +1869,7 @@ sub startup {
 					}
 					else {
 						$cache->set( $url, 'n' );
-						$promise->resolve;
+						$promise->reject;
 					}
 				}
 			)->catch(
