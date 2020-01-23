@@ -3193,7 +3193,33 @@ sub startup {
 					id   => $status->{train_id},
 				},
 				actionTime => $status->{timestamp}->epoch,
+				nextStops  => [],
 			};
+
+			for my $stop ( @{ $status->{route_after} // [] } ) {
+				if ( $status->{arr_name} and $stop->[0] eq $status->{arr_name} )
+				{
+					last;
+				}
+				push(
+					@{ $ret->{nextStops} },
+					{
+						name             => $stop->[0],
+						scheduledArrival => $stop->[1]{sched_arr}
+						? $stop->[1]{sched_arr}->epoch
+						: undef,
+						realArrival => $stop->[1]{rt_arr}
+						? $stop->[1]{rt_arr}->epoch
+						: undef,
+						scheduledDeparture => $stop->[1]{sched_dep}
+						? $stop->[1]{sched_dep}->epoch
+						: undef,
+						realDeparture => $stop->[1]{rt_dep}
+						? $stop->[1]{rt_dep}->epoch
+						: undef,
+					}
+				);
+			}
 
 			if ( $status->{dep_eva} ) {
 				my @station_descriptions
