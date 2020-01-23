@@ -47,6 +47,10 @@ sub run {
 					die("could not find train $train_id at $dep\n");
 				}
 
+				# selecting on user_id and train_no avoids a race condition when
+				# a user checks into a new train while we are fetching data for
+				# their previous journey. In this case, the new train would
+				# receive data from the previous journey.
 				$db->update(
 					'in_transit',
 					{
@@ -61,7 +65,10 @@ sub run {
 							]
 						),
 					},
-					{ user_id => $uid }
+					{
+						user_id  => $uid,
+						train_no => $train->train_no
+					}
 				);
 				$self->app->add_route_timestamps( $uid, $train, 1 );
 			}
@@ -102,6 +109,10 @@ sub run {
 					return;
 				}
 
+             # selecting on user_id, train_no and checkout_station_id avoids a
+             # race condition when a user checks into a new train or changes
+             # their destination station while we are fetching times based on no
+             # longer valid database entries.
 				$db->update(
 					'in_transit',
 					{
@@ -117,7 +128,11 @@ sub run {
 							]
 						),
 					},
-					{ user_id => $uid }
+					{
+						user_id             => $uid,
+						train_no            => $train->train_no,
+						checkout_station_id => $arr
+					}
 				);
 				$self->app->add_route_timestamps( $uid, $train, 0 );
 			}
