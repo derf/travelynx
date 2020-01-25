@@ -470,9 +470,23 @@ sub map_history {
 
 	for my $journey (@journeys) {
 
-		my @route      = map { $_->[0] } @{ $journey->{route} };
+		my @route = map { $_->[0] } @{ $journey->{route} };
+
 		my $from_index = first_index { $_ eq $journey->{from_name} } @route;
 		my $to_index   = first_index { $_ eq $journey->{to_name} } @route;
+
+		if ( $from_index == -1 ) {
+			my $rename = $self->app->renamed_station;
+			$from_index
+			  = first_index { ( $rename->{$_} // $_ ) eq $journey->{from_name} }
+			@route;
+		}
+		if ( $to_index == -1 ) {
+			my $rename = $self->app->renamed_station;
+			$to_index
+			  = first_index { ( $rename->{$_} // $_ ) eq $journey->{to_name} }
+			@route;
+		}
 
 		if (   $from_index == -1
 			or $to_index == -1 )

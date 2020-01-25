@@ -197,8 +197,7 @@ sub startup {
 
 	$self->attr(
 		coordinates_by_station => sub {
-			my $legacy_names = JSON->new->utf8->decode(
-				scalar read_file('share/old_station_names.json') );
+			my $legacy_names = $self->app->renamed_station;
 			my %location;
 			for
 			  my $station ( Travel::Status::DE::IRIS::Stations::get_stations() )
@@ -222,6 +221,14 @@ sub startup {
 			my $id_to_name = JSON->new->utf8->decode(
 				scalar read_file('share/ice_names.json') );
 			return $id_to_name;
+		}
+	);
+
+	$self->attr(
+		renamed_station => sub {
+			my $legacy_to_new = JSON->new->utf8->decode(
+				scalar read_file('share/old_station_names.json') );
+			return $legacy_to_new;
 		}
 	);
 
@@ -2710,6 +2717,12 @@ sub startup {
 				}
 
 				if ( $opt{verbose} ) {
+					my $rename = $self->app->renamed_station;
+					for my $stop ( @{ $ref->{route} } ) {
+						if ( $rename->{ $stop->[0] } ) {
+							$stop->[0] = $rename->{ $stop->[0] };
+						}
+					}
 					$ref->{cancelled} = $entry->{cancelled};
 					my @parsed_messages;
 					for my $message ( @{ $ref->{messages} // [] } ) {
