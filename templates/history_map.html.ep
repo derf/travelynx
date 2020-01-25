@@ -9,7 +9,7 @@
 	</div>
 </div>
 
-%= include '_map', station_coordinates => $station_coordinates, station_pairs => $station_pairs
+%= include '_map', station_coordinates => $station_coordinates, polyline_groups => $polyline_groups
 
 %= form_for '/history/map' => (method => 'POST') => begin
 	%= csrf_field

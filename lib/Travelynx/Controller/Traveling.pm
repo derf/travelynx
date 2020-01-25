@@ -446,7 +446,7 @@ sub map_history {
 			template            => 'history_map',
 			with_map            => 1,
 			station_coordinates => [],
-			station_pairs       => [],
+			polyline_groups     => [],
 		);
 		return;
 	}
@@ -528,7 +528,14 @@ sub map_history {
 		template            => 'history_map',
 		with_map            => 1,
 		station_coordinates => \@station_coordinates,
-		station_pairs       => \@station_pairs,
+		polyline_groups     => [
+			{
+				polylines  => \@station_pairs,
+				color      => '#673ab7',
+				opacity    => 0.6,
+				fit_bounds => 1,
+			}
+		]
 	);
 }
 
