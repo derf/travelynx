@@ -445,6 +445,7 @@ sub map_history {
 		$self->render(
 			template            => 'history_map',
 			with_map            => 1,
+			skipped_journeys    => [],
 			station_coordinates => [],
 			polyline_groups     => [],
 		);
@@ -465,6 +466,8 @@ sub map_history {
 	my @station_pairs;
 	my %seen;
 
+	my @skipped_journeys;
+
 	for my $journey (@journeys) {
 
 		my @route      = map { $_->[0] } @{ $journey->{route} };
@@ -474,6 +477,8 @@ sub map_history {
 		if (   $from_index == -1
 			or $to_index == -1 )
 		{
+			push( @skipped_journeys,
+				[ $journey, 'Start/Ziel nicht in Route gefunden' ] );
 			next;
 		}
 
@@ -491,6 +496,8 @@ sub map_history {
 			and @route <= 2
 			and not $include_manual )
 		{
+			push( @skipped_journeys,
+				[ $journey, 'Manueller Eintrag ohne Unterwegshalte' ] );
 			next;
 		}
 
@@ -527,6 +534,7 @@ sub map_history {
 	$self->render(
 		template            => 'history_map',
 		with_map            => 1,
+		skipped_journeys    => \@skipped_journeys,
 		station_coordinates => \@station_coordinates,
 		polyline_groups     => [
 			{
