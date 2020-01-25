@@ -7,6 +7,20 @@
 	cursor: pointer;
 }
 
+.brand-logo span {
+	transition: color 1s;
+}
+
+.brand-logo:hover .ca,
+.brand-logo:hover .ce {
+	color: #a8e3fa;
+}
+
+.brand-logo:hover .cb,
+.brand-logo:hover .cd {
+	color: #f5c4ce;
+}
+
 td.cancelled {
 	text-decoration: line-through;
 }

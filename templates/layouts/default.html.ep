@@ -73,7 +73,7 @@
 <div class="navbar-fixed">
 	<nav class="deep-purple">
 		<div class="nav-wrapper container">
-			<a href="/" class="brand-logo left">travelynx</a>
+			<a href="/" class="brand-logo left"><span class="ca">tr</span><span class="cb">av</span><span class="cc">e</span><span class="cd">ly</span><span class="ce">nx</span></a>
 			<ul id="nav-mobile" class="right">
 				<li class="loading">
 					<div class="preloader-wrapper small" style="margin-top: 0.5em; margin-bottom: -1em;">
