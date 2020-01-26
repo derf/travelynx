@@ -3205,8 +3205,8 @@ sub startup {
 					no   => $status->{train_no},
 					id   => $status->{train_id},
 				},
-				actionTime => $status->{timestamp}->epoch,
-				nextStops  => [],
+				actionTime        => $status->{timestamp}->epoch,
+				intermediateStops => [],
 			};
 
 			for my $stop ( @{ $status->{route_after} // [] } ) {
@@ -3215,7 +3215,7 @@ sub startup {
 					last;
 				}
 				push(
-					@{ $ret->{nextStops} },
+					@{ $ret->{intermediateStops} },
 					{
 						name             => $stop->[0],
 						scheduledArrival => $stop->[1]{sched_arr}

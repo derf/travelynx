@@ -39,7 +39,7 @@
 				"latitude" : 51.451355,<br/>
 				"longitude" : 7.014793,<br/>
 				"scheduledTime": 1556083680,<br/>
-				"realTime": 1556083680,<br/>
+				"realTime": 1556083680<br/>
 			},<br/>
 			"toStation" : { (zugehöriger Checkout. Wenn noch nicht eingetragen, sind alle Felder null)<br/>
 				"name" : "Essen Stadtwald",<br/>
@@ -48,8 +48,18 @@
 				"latitude" : 51.422853,<br/>
 				"longitude" : 7.023296,<br/>
 				"scheduledTime": 1556083980, (ggf. null)<br/>
-				"realTime": 1556083980, (ggf. null)<br/>
+				"realTime": 1556083980 (ggf. null)<br/>
 			},<br/>
+			"intermediateStops" : [ (Unterwegshalte zwischen fromStation und toStation) <br/>
+			{<br/>
+				"name" : "Essen Süd",<br/>
+				"scheduledArrival" : 1556083800, (ggf. null)<br/>
+				"realArrival" : 1556083800, (ggf. null, nach Ankunft identisch mit scheduledArrival)<br/>
+				"scheduledDeparture" : 1556083860, (ggf. null)<br/>
+				"realDeparture" : 1556083860 (ggf. null, nach Abfahrt identisch mit scheduledDeparture)<br/>
+			},<br/>
+			…<br/>
+			],<br/>
 			"train" : {<br/>
 			"type" : "S", (aktueller / letzter Zugtyp)<br/>
 			"line" : "6", (Linie als String, nicht immer numerisch, ggf. null)<br/>
