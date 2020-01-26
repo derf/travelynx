@@ -523,6 +523,7 @@ sub import_v1 {
 		);
 	}
 	else {
+		$self->invalidate_stats_cache( $opt{rt_departure}, $db, $uid );
 		$tx->commit;
 		$self->render(
 			json => {
