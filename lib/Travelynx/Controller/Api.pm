@@ -463,7 +463,7 @@ sub import_v1 {
 		if ( $payload->{intermediateStops}
 			and ref( $payload->{intermediateStops} ) eq 'ARRAY' )
 		{
-			$opt{intermediateStops}
+			$opt{route}
 			  = [ map { sanitize( q{}, $_ ) }
 				  @{ $payload->{intermediateStops} } ];
 		}
