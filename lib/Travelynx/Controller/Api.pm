@@ -18,7 +18,10 @@ sub sanitize {
 	if ( $type eq '' ) {
 		return '' . $value;
 	}
-	return 0 + $value;
+	if ( $value =~ m{ ^ [0-9.e]+ $ }x ) {
+		return 0 + $value;
+	}
+	return 0;
 }
 
 sub documentation {
@@ -457,9 +460,12 @@ sub import_v1 {
 			lax     => $payload->{lax} ? 1 : 0,
 		);
 
-		if ( $payload->{route} and ref( $payload->{route} ) eq 'ARRAY' ) {
-			$opt{route}
-			  = [ map { sanitize( q{}, $_ ) } @{ $payload->{route} } ];
+		if ( $payload->{intermediateStops}
+			and ref( $payload->{intermediateStops} ) eq 'ARRAY' )
+		{
+			$opt{intermediateStops}
+			  = [ map { sanitize( q{}, $_ ) }
+				  @{ $payload->{intermediateStops} } ];
 		}
 
 		for my $key (qw(sched_departure rt_departure sched_arrival rt_arrival))

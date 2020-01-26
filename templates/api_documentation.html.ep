@@ -189,10 +189,8 @@
 				"scheduledTime": 1556083980, (UNIX-Timestamp)<br/>
 				"realTime": 1556083980, (UNIX-Timestamp, optional, default == scheduledTime)<br/>
 			},<br/>
-			"route" : [ (optionale Liste mit Unterwegshalten als Name oder DS100, darf keine Stationen vor Checkin oder nach Checkout beinhalten)<br/>
-				"Essen Hbf",<br/>
+			"intermediateStops" : [ (optionale Liste mit Unterwegshalten als Name oder DS100, darf keine Stationen vor Checkin oder nach Checkout beinhalten)<br/>
 				"Essen Süd",<br/>
-				"Essen Stadtwald"<br/>
 			],<br/>
 			"comment" : "Beliebiger Text" (optionaler Freitext-Kommentar)<br/>
 		}
