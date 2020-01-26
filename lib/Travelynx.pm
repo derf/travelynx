@@ -2731,11 +2731,11 @@ sub startup {
 					}
 					$ref->{messages} = [ reverse @parsed_messages ];
 					$ref->{sched_duration}
-					  = $ref->{sched_arr_ts}
+					  = defined $ref->{sched_arr_ts}
 					  ? $ref->{sched_arr_ts} - $ref->{sched_dep_ts}
 					  : undef;
 					$ref->{rt_duration}
-					  = $ref->{rt_arr_ts}
+					  = defined $ref->{rt_arr_ts}
 					  ? $ref->{rt_arr_ts} - $ref->{rt_dep_ts}
 					  : undef;
 					my ( $km_route, $km_beeline, $skip )
