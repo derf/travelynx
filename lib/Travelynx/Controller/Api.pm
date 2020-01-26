@@ -354,19 +354,9 @@ sub import_v1 {
 	if ( not $payload or ref($payload) ne 'HASH' ) {
 		$self->render(
 			json => {
-				success => \0,
-				error   => 'Malformed JSON',
-			},
-		);
-		return;
-	}
-
-	if ( $self->app->mode ne 'development' ) {
-		$self->render(
-			json => {
-				success => \0,
-				error =>
-'This feature is incomplete and only available in development mode',
+				success    => \0,
+				deprecated => \0,
+				error      => 'Malformed JSON',
 			},
 		);
 		return;
@@ -377,8 +367,9 @@ sub import_v1 {
 	if ( $api_token !~ qr{ ^ (?<id> \d+ ) - (?<token> .* ) $ }x ) {
 		$self->render(
 			json => {
-				success => \0,
-				error   => 'Malformed token',
+				success    => \0,
+				deprecated => \0,
+				error      => 'Malformed token',
 			},
 		);
 		return;
@@ -389,19 +380,21 @@ sub import_v1 {
 	if ( $uid > 2147483647 ) {
 		$self->render(
 			json => {
-				success => \0,
-				error   => 'Malformed token',
+				success    => \0,
+				deprecated => \0,
+				error      => 'Malformed token',
 			},
 		);
 		return;
 	}
 
 	my $token = $self->get_api_token($uid);
-	if ( $api_token ne $token->{'import'} ) {
+	if ( not $token->{'import'} or $api_token ne $token->{'import'} ) {
 		$self->render(
 			json => {
-				success => \0,
-				error   => 'Invalid token',
+				success    => \0,
+				deprecated => \0,
+				error      => 'Invalid token',
 			},
 		);
 		return;
@@ -412,8 +405,9 @@ sub import_v1 {
 	{
 		$self->render(
 			json => {
-				success => \0,
-				error   => 'missing fromStation or toStation',
+				success    => \0,
+				deprecated => \0,
+				error      => 'missing fromStation or toStation',
 			},
 		);
 		return;
@@ -480,8 +474,9 @@ sub import_v1 {
 		my ($first_line) = split( qr{\n}, $@ );
 		$self->render(
 			json => {
-				success => \0,
-				error   => $first_line
+				success    => \0,
+				deprecated => \0,
+				error      => $first_line
 			}
 		);
 		return;
@@ -508,17 +503,19 @@ sub import_v1 {
 	if ($error) {
 		$self->render(
 			json => {
-				success => \0,
-				error   => $error
+				success    => \0,
+				deprecated => \0,
+				error      => $error
 			}
 		);
 	}
 	elsif ( $payload->{dryRun} ) {
 		$self->render(
 			json => {
-				success => \1,
-				id      => $journey_id,
-				result  => $journey
+				success    => \1,
+				deprecated => \0,
+				id         => $journey_id,
+				result     => $journey
 			}
 		);
 	}
@@ -527,9 +524,10 @@ sub import_v1 {
 		$tx->commit;
 		$self->render(
 			json => {
-				success => \1,
-				id      => $journey_id,
-				result  => $journey
+				success    => \1,
+				deprecated => \0,
+				id         => $journey_id,
+				result     => $journey
 			}
 		);
 	}
