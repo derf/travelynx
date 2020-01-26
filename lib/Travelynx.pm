@@ -383,6 +383,27 @@ sub startup {
 				return ( undef, 'Unbekannter Zielbahnhof' );
 			}
 
+			my $daily_journey_count = $db->select(
+				'journeys_str',
+				'count(*) as count',
+				{
+					user_id     => $uid,
+					real_dep_ts => {
+						-between => [
+							$opt{rt_departure}->clone->subtract( days => 1 )
+							  ->epoch,
+							$opt{rt_departure}->epoch
+						],
+					},
+				}
+			)->hash->{count};
+
+			if ( $daily_journey_count >= 100 ) {
+				return ( undef,
+"In den 24 Stunden vor der angegebenen Abfahrtszeit wurden ${daily_journey_count} weitere Fahrten angetreten. Das kann nicht stimmen."
+				);
+			}
+
 			my @route = ( [ $dep_station->[1], {}, undef ] );
 
 			if ( $opt{route} ) {
