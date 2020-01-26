@@ -10,7 +10,7 @@ supports german railways and trains which are exposed by the Deutsche Bahn
 Dependencies
 ---
 
- * perl >= 5.10
+ * perl >= 5.20
  * carton or cpanminus
  * build-essential
  * libpq-dev
