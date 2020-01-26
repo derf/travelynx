@@ -164,6 +164,15 @@
 		<p>
 			Manueller Import vergangener Zugfahrten (eine Fahrt pro API-Aufruf).
 		</p>
+		<p>
+			Bitte beachten: fromStation, toStation und intermediateStops werden
+			mit Fuzzy Matching eingelesen.  Falls ein unbekannter Stationsname
+			einer anderen, bekannten Station hinreichend ähnelt, kann dieser
+			dadurch ersetzt werden. Bei Unsicherheiten empfiehlt sich ein
+			<em>dryRun</em> und ein Vergleich der zurückgegebenen Stationsnamen
+			mit den eingegebenen. Komplett unbekannte Stationsnamen führen
+			standardmäßig zu einem Fehler (siehe <em>lax</em>)
+		</p>
 		<p style="font-family: Monospace;">
 			curl -X POST -H "Content-Type: application/json" -d '{"token":"<%= $uid %>-<%= $token->{import} // 'TOKEN' %>"}' <%= $api_root %>/import
 		</p>
@@ -172,7 +181,7 @@
 		{<br/>
 			"token" : "<%= $uid %>-<%= $token->{import} // 'TOKEN' %>",<br/>
 			"dryRun" : true/false, (optional: wenn true, wird die Eingabe validiert, aber keine Zugfahrt angelegt)<br/>
-			"lax" : true/Fals, (optional: wenn true, werden unbekannte Unterwegshalte akzeptiert)<br/>
+			"lax" : true/false, (optional: wenn true, werden unbekannte Unterwegshalte akzeptiert)<br/>
 			"cancelled" : true/false, (Zugausfall?)<br/>
 			"train" : {<br/>
 			"type" : "S", (Zugtyp, z.B. ICE, RE, S)<br/>
@@ -203,7 +212,8 @@
 			"success" : true,<br/>
 			"deprecated" : true / false, (falls true: Diese API-Version wird irgendwann abgeschaltet, bitte auf eine neue umsteigen)<br/>
 			"id" : 1234, (ID der eingetragenen Zugfahrt)<br/>
-			"result" : { ... } (Eingetragene Daten, Datenformat nicht näher spezifiziert und beliebig variabel)<br/>
+			"result" : { ... } (Eingetragene Daten. Das Datenformat kann sich
+			ohne Berücksichtigung der API-Version ändern)<br/>
 		}
 		</p>
 		<p>
