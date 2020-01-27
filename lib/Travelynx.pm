@@ -3208,8 +3208,12 @@ sub startup {
 					uic           => $status->{dep_eva},
 					longitude     => undef,
 					latitude      => undef,
-					scheduledTime => $status->{sched_departure}->epoch || undef,
-					realTime      => $status->{real_departure}->epoch || undef,
+					scheduledTime => $status->{sched_departure}
+					? $status->{sched_departure}->epoch
+					: undef,
+					realTime => $status->{real_departure}
+					? $status->{real_departure}->epoch
+					: undef,
 				},
 				toStation => {
 					ds100         => $status->{arr_ds100},
@@ -3217,8 +3221,12 @@ sub startup {
 					uic           => $status->{arr_eva},
 					longitude     => undef,
 					latitude      => undef,
-					scheduledTime => $status->{sched_arrival}->epoch || undef,
-					realTime      => $status->{real_arrival}->epoch || undef,
+					scheduledTime => $status->{sched_arrival}
+					? $status->{sched_arrival}->epoch
+					: undef,
+					realTime => $status->{real_arrival}
+					? $status->{real_arrival}->epoch
+					: undef,
 				},
 				train => {
 					type => $status->{train_type},
@@ -3226,7 +3234,9 @@ sub startup {
 					no   => $status->{train_no},
 					id   => $status->{train_id},
 				},
-				actionTime        => $status->{timestamp}->epoch,
+				actionTime => $status->{timestamp}
+				? $status->{timestamp}->epoch
+				: undef,
 				intermediateStops => [],
 			};
 

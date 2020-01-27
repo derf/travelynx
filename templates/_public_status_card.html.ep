@@ -155,7 +155,12 @@
 			<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 			<span class="card-title"><%= $name %> ist gerade nicht eingecheckt</span>
 			<p>
-				Zuletzt gesehen in <%= $journey->{arr_name} %>.
+				% if ($journey->{arr_name}) {
+					Zuletzt gesehen in <%= $journey->{arr_name} %>.
+				% }
+				% else {
+					Noch keine Zugfahrten geloggt.
+				% }
 			</p>
 		</div>
 	</div>
