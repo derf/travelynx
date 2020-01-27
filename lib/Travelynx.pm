@@ -1945,6 +1945,66 @@ sub startup {
 	);
 
 	$self->helper(
+		'get_hafas_polyline_p' => sub {
+			my ( $self, $train, $trip_id ) = @_;
+
+			my $line = $train->line // 0;
+			my $url
+			  = "https://2.db.transport.rest/trips/${trip_id}?lineName=${line}&polyline=true";
+			my $cache   = $self->app->cache_iris_main;
+			my $promise = Mojo::Promise->new;
+			my $version = $self->app->config->{version};
+
+			if ( my $content = $cache->thaw($url) ) {
+				$promise->resolve($content);
+				return $promise;
+			}
+
+			$self->ua->request_timeout(5)->get_p(
+				$url => {
+					'User-Agent' =>
+"travelynx/${version} +https://finalrewind.org/projects/travelynx"
+				}
+			)->then(
+				sub {
+					my ($tx) = @_;
+					my $body = decode( 'utf-8', $tx->res->body );
+					my $json = JSON->new->decode($body);
+					my @coordinate_list;
+
+					for my $feature ( @{ $json->{polyline}{features} } ) {
+						if ( exists $feature->{geometry}{coordinates} ) {
+							my $coord = $feature->{geometry}{coordinates};
+							if ( exists $feature->{properties}{type}
+								and $feature->{properties}{type} eq 'stop' )
+							{
+								push( @{$coord}, $feature->{properties}{id} );
+							}
+							push( @coordinate_list, $coord );
+						}
+					}
+
+					my $ret = {
+						name     => $json->{line}{name} // '?',
+						polyline => [@coordinate_list],
+						raw      => $json,
+					};
+
+					$cache->freeze( $url, $ret );
+					$promise->resolve($ret);
+				}
+			)->catch(
+				sub {
+					my ($err) = @_;
+					$promise->reject($err);
+				}
+			)->wait;
+
+			return $promise;
+		}
+	);
+
+	$self->helper(
 		'get_hafas_tripid_p' => sub {
 			my ( $self, $train ) = @_;
 
@@ -2133,6 +2193,7 @@ sub startup {
 			}
 
 			if ( not $journey->{data}{trip_id} ) {
+				my ( $origin_eva, $destination_eva, $polyline_str );
 				$self->get_hafas_tripid_p($train)->then(
 					sub {
 						my ($trip_id) = @_;
@@ -2149,6 +2210,65 @@ sub startup {
 							{ data    => JSON->new->encode($data) },
 							{ user_id => $uid }
 						);
+						return $self->get_hafas_polyline_p( $train, $trip_id );
+					}
+				)->then(
+					sub {
+						my ($ret) = @_;
+						my $polyline = $ret->{polyline};
+						$origin_eva      = 0 + $ret->{raw}{origin}{id};
+						$destination_eva = 0 + $ret->{raw}{destination}{id};
+
+						# work around Cache::File turning floats into strings
+						for my $coord ( @{$polyline} ) {
+							@{$coord} = map { 0 + $_ } @{$coord};
+						}
+
+						$polyline_str = JSON->new->encode($polyline);
+
+						return $db->select_p(
+							'polylines',
+							['id'],
+							{
+								origin_eva      => $origin_eva,
+								destination_eva => $destination_eva,
+								polyline        => $polyline_str
+							},
+							{ limit => 1 }
+						);
+					}
+				)->then(
+					sub {
+						my ($pl_res) = @_;
+						my $polyline_id;
+						if ( my $h = $pl_res->hash ) {
+							$polyline_id = $h->{id};
+						}
+						else {
+							eval {
+								$polyline_id = $db->insert(
+									'polylines',
+									{
+										origin_eva      => $origin_eva,
+										destination_eva => $destination_eva,
+										polyline        => $polyline_str
+									},
+									{ returning => 'id' }
+								)->hash->{id};
+							};
+							if ($@) {
+								$self->app->log->warn(
+									"add_route_timestamps: insert polyline: $@"
+								);
+							}
+						}
+						if ($polyline_id) {
+							$db->update(
+								'in_transit',
+								{ polyline_id => $polyline_id },
+								{ user_id     => $uid }
+							);
+						}
 					}
 				)->wait;
 			}

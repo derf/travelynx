@@ -941,6 +941,62 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v19 -> v20
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				create table polylines (
+					id serial not null primary key,
+					origin_eva integer not null,
+					destination_eva integer not null,
+					polyline jsonb not null
+				);
+				alter table journeys
+					add column polyline_id integer references polylines (id);
+				alter table in_transit
+					add column polyline_id integer references polylines (id);
+				drop view journeys_str;
+				drop view in_transit_str;
+				create view journeys_str as select
+					journeys.id as journey_id, user_id,
+					train_type, train_line, train_no, train_id,
+					extract(epoch from checkin_time) as checkin_ts,
+					extract(epoch from sched_departure) as sched_dep_ts,
+					extract(epoch from real_departure) as real_dep_ts,
+					checkin_station_id as dep_eva,
+					extract(epoch from checkout_time) as checkout_ts,
+					extract(epoch from sched_arrival) as sched_arr_ts,
+					extract(epoch from real_arrival) as real_arr_ts,
+					checkout_station_id as arr_eva,
+					polylines.polyline as polyline,
+					cancelled, edited, route, messages, user_data,
+					dep_platform, arr_platform
+					from journeys
+					left join polylines on polylines.id = polyline_id
+					;
+				create or replace view in_transit_str as select
+					user_id,
+					train_type, train_line, train_no, train_id,
+					extract(epoch from checkin_time) as checkin_ts,
+					extract(epoch from sched_departure) as sched_dep_ts,
+					extract(epoch from real_departure) as real_dep_ts,
+					checkin_station_id as dep_eva,
+					extract(epoch from checkout_time) as checkout_ts,
+					extract(epoch from sched_arrival) as sched_arr_ts,
+					extract(epoch from real_arrival) as real_arr_ts,
+					checkout_station_id as arr_eva,
+					polylines.polyline as polyline,
+					cancelled, route, messages, user_data,
+					dep_platform, arr_platform, data
+					from in_transit
+					left join polylines on polylines.id = polyline_id
+					;
+				update schema_version set version = 20;
+			}
+		);
+	},
 );
 
 sub setup_db {
