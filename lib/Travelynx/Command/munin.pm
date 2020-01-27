@@ -56,6 +56,8 @@ sub run {
 			$checkin_window_query, $now->subtract( days => 30 )->epoch
 		)->hash->{count}
 	);
+	query_to_munin( 'polylines',
+		$db->select( 'polylines', 'count(*) as count' )->hash->{count} );
 }
 
 1;
