@@ -156,8 +156,6 @@
 	</div>
 </div>
 
-% if (app->mode eq 'development') {
-
 <h2>Import</h2>
 <div class="row">
 	<div class="col s12">
@@ -228,5 +226,3 @@
 		</p>
 	</div>
 </div>
-
-% }

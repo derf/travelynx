@@ -193,7 +193,6 @@
 					%= end
 				</td>
 			</tr>
-			% if (app->mode eq 'development') {
 			<tr>
 				<th scope="row">Import</th>
 				<td>
@@ -217,7 +216,6 @@
 					%= end
 				</td>
 			</tr>
-			% }
 		</table>
 	</div>
 </div>

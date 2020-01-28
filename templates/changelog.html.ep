@@ -2,6 +2,22 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		1.14
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left">add</i> API-Endpunkt zum Import
+			nicht in travelynx getrackter Zugfahrten.
+		</p>
+		<p>
+			<i class="material-icons left">add</i> Status-API: Angabe der
+			Unterwegshalte zwischen Start und Ziel.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		1.13
 	</div>
 	<div class="col s12 m11 l11">
