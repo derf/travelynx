@@ -231,7 +231,7 @@
 			%= form_for '/journey/edit' => (method => 'POST') => begin
 				%= hidden_field 'journey_id' => param('journey_id')
 				<button class="btn waves-effect waves-light" type="submit" name="action" value="edit">
-					<i class="material-icons left">edit</i>
+					<i class="material-icons left" aria-hidden="true">edit</i>
 					Bearbeiten
 				</button>
 			%= end
@@ -242,7 +242,7 @@
 			%= form_for '/journey/edit' => (method => 'POST') => begin
 				%= hidden_field 'journey_id' => param('journey_id')
 				<button class="btn waves-effect waves-light" type="submit" name="action" value="edit">
-					<i class="material-icons left">edit</i>
+					<i class="material-icons left" aria-hidden="true">edit</i>
 					Bearbeiten
 				</button>
 			%= end
@@ -252,7 +252,7 @@
 					data-id="<%= $journey->{id} %>"
 					data-checkin="<%= $journey->{checkin}->epoch %>"
 					data-checkout="<%= $journey->{checkout}->epoch %>">
-				<i class="material-icons left">delete_forever</i>
+				<i class="material-icons left" aria-hidden="true">delete_forever</i>
 				Löschen
 			</a>
 		</div>

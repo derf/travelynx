@@ -218,12 +218,12 @@
 		<div class="card-action">
 			% if ($journey->{arr_name}) {
 				<a style="margin-right: 0;" href="/journey/comment">
-					<i class="material-icons left">comment</i> Kommentar
+					<i class="material-icons left" aria-hidden="true">comment</i> Kommentar
 				</a>
 			% }
 			% else {
 				<a class="action-undo blue-text" data-id="in_transit" data-checkints="<%= $journey->{timestamp}->epoch %>" style="margin-right: 0;">
-					<i class="material-icons left">undo</i> Checkin Rückgängig
+					<i class="material-icons left" aria-hidden="true">undo</i> Checkin Rückgängig
 				</a>
 			% }
 			% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} <= 0) {
@@ -252,7 +252,7 @@
 						data-url="<%= url_for('/status')->to_abs->scheme('https') %>/<%= current_user->{name} %>/<%= $journey->{sched_departure}->epoch %>"
 					% }
 					>
-					<i class="material-icons left">share</i> Teilen
+					<i class="material-icons left" aria-hidden="true">share</i> Teilen
 				</a>
 			% }
 		</div>
@@ -273,9 +273,9 @@
 			</div>
 			<div class="card-action">
 				% my $url = 'https://marudor.de/details/' . $journey->{train_type} . ' ' . $journey->{train_no} . '/' . DateTime->now(time_zone => 'Europe/Berlin')->epoch . '000';
-				<a style="margin-right: 0;" href="<%= $url %>"><i class="material-icons left">timeline</i> Zuglauf</a>
+				<a style="margin-right: 0;" href="<%= $url %>" aria-label="Zuglauf"><i class="material-icons left">timeline</i> Zuglauf</a>
 				% if ($journey->{extra_data}{trip_id}) {
-					<a class="right" style="margin-right: 0;" href="https://dbf.finalrewind.org/map/<%= $journey->{extra_data}{trip_id} %>/<%= $journey->{train_line} || 0 %>?from=<%= $journey->{dep_name} %>&amp;to=<%= $journey->{arr_name} %>&amp;dark=<%= (session('theme') and session('theme') eq 'dark') ? 1 : 0 %>"><i class="material-icons left">map</i> Karte</a>
+					<a class="right" style="margin-right: 0;" href="https://dbf.finalrewind.org/map/<%= $journey->{extra_data}{trip_id} %>/<%= $journey->{train_line} || 0 %>?from=<%= $journey->{dep_name} %>&amp;to=<%= $journey->{arr_name} %>&amp;dark=<%= (session('theme') and session('theme') eq 'dark') ? 1 : 0 %>"><i class="material-icons left" aria-hidden="true">map</i> Karte</a>
 				% }
 			</div>
 		</div>
@@ -311,7 +311,7 @@
 			</div>
 			<div class="card-action">
 				<a class="action-undo blue-text" data-id="in_transit" data-checkints="<%= $journey->{timestamp}->epoch %>"  style="margin-right: 0;">
-					<i class="material-icons left">undo</i> Checkin Rückgängig
+					<i class="material-icons left" aria-hidden="true">undo</i> Checkin Rückgängig
 				</a>
 			</div>
 		</div>

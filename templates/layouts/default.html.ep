@@ -89,14 +89,14 @@
 					</div>
 				</li>
 				<li class="waves-effect waves-light">
-					<a onClick="javascript:toggleTheme()"><i class="material-icons">invert_colors</i></a>
+					<a onClick="javascript:toggleTheme()"><i class="material-icons" aria-label="Farbschema invertieren">invert_colors</i></a>
 				</li>
 				% if (is_user_authenticated()) {
-					<li class="<%= navbar_class('/history') %>"><a href='/history' title="History"><i class="material-icons">history</i></a></li>
-					<li class="<%= navbar_class('/account') %>"><a href="/account" title="Account"><i class="material-icons">account_circle</i></a></li>
+					<li class="<%= navbar_class('/history') %>"><a href='/history' title="History"><i class="material-icons" aria-label="Vergangene Zugfahrten">history</i></a></li>
+					<li class="<%= navbar_class('/account') %>"><a href="/account" title="Account"><i class="material-icons" aria-label="Account">account_circle</i></a></li>
 				% }
 				% else {
-					<li class="<%= navbar_class('/about') %>"><a href='/about' title="About"><i class="material-icons">info_outline</i></a></li>
+					<li class="<%= navbar_class('/about') %>"><a href='/about' title="About"><i class="material-icons" aria-label="Über Travelynx">info_outline</i></a></li>
 				% }
 			</ul>
 		</div>

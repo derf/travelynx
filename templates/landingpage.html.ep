@@ -59,7 +59,7 @@
 							</div>
 							<div class="center-align">
 								<button class="btn waves-effect waves-light btn-flat" type="submit" name="action" value="departures">
-									<i class="material-icons left">send</i>
+									<i class="material-icons left" aria-hidden="true">send</i>
 									Abfahrten
 								</button>
 							</div>
