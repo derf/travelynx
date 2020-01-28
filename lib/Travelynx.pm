@@ -1025,14 +1025,17 @@ sub startup {
 		'journey_sanity_check' => sub {
 			my ( $self, $journey, $lax ) = @_;
 
-			if ( $journey->{sched_duration} and $journey->{sched_duration} < 0 )
+			if ( defined $journey->{sched_duration}
+				and $journey->{sched_duration} <= 0 )
 			{
 				return
-'Die geplante Dauer dieser Zugfahrt ist negativ. Zeitreisen werden aktuell nicht unterstützt.';
+'Die geplante Dauer dieser Zugfahrt ist ≤ 0. Teleportation und Zeitreisen werden aktuell nicht unterstützt.';
 			}
-			if ( $journey->{rt_duration} and $journey->{rt_duration} < 0 ) {
+			if ( defined $journey->{rt_duration}
+				and $journey->{rt_duration} <= 0 )
+			{
 				return
-'Die Dauer dieser Zugfahrt ist negativ. Zeitreisen werden aktuell nicht unterstützt.';
+'Die Dauer dieser Zugfahrt ist ≤ 0. Teleportation und Zeitreisen werden aktuell nicht unterstützt.';
 			}
 			if (    $journey->{sched_duration}
 				and $journey->{sched_duration} > 60 * 60 * 24 )
