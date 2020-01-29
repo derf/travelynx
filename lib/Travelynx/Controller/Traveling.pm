@@ -488,8 +488,7 @@ sub map_history {
 			next;
 		}
 
-		my $key
-		  = $from_eva . '!' . $to_eva . '!' . $from_index . '!' . $to_index;
+		my $key = $from_eva . '!' . $to_eva . '!' . ( $to_index - $from_index );
 
 		if ( $seen{$key} ) {
 			next;
@@ -498,7 +497,7 @@ sub map_history {
 		$seen{$key} = 1;
 
 		# direction does not matter at the moment
-		$key = $to_eva . '!' . $from_eva . '!' . $to_index . '!' . $from_index;
+		$key = $to_eva . '!' . $from_eva . '!' . ( $to_index - $from_index );
 		$seen{$key} = 1;
 
 		@polyline = @polyline[ $from_index .. $to_index ];
