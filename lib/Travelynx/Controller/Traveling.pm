@@ -3,7 +3,7 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use DateTime;
 use DateTime::Format::Strptime;
-use List::Util qw(uniq);
+use List::Util qw(uniq min max);
 use List::UtilsBy qw(uniq_by);
 use List::MoreUtils qw(first_index);
 use Travel::Status::DE::IRIS::Stations;
@@ -439,7 +439,9 @@ sub map_history {
 
 	my $location = $self->app->coordinates_by_station;
 
-	my @journeys = $self->get_user_travels;
+	my $with_polyline = $self->param('poly') ? 1 : 0;
+
+	my @journeys = $self->get_user_travels( with_polyline => $with_polyline );
 
 	if ( not @journeys ) {
 		$self->render(
@@ -464,11 +466,56 @@ sub map_history {
 	  grep { exists $location->{$_} } @stations;
 
 	my @station_pairs;
+	my @coord_pairs;
 	my %seen;
 
 	my @skipped_journeys;
 
-	for my $journey (@journeys) {
+	for my $journey ( grep { $_->{polyline} } @journeys ) {
+		my @polyline = @{ $journey->{polyline} };
+		my $from_eva = $journey->{from_eva};
+		my $to_eva   = $journey->{to_eva};
+
+		my $from_index
+		  = first_index { $_->[2] and $_->[2] == $from_eva } @polyline;
+		my $to_index = first_index { $_->[2] and $_->[2] == $to_eva } @polyline;
+
+		if (   $from_index == -1
+			or $to_index == -1 )
+		{
+			# Fall back to route
+			delete $journey->{polyline};
+			next;
+		}
+
+		my $key
+		  = $from_eva . '!' . $to_eva . '!' . $from_index . '!' . $to_index;
+
+		if ( $seen{$key} ) {
+			next;
+		}
+
+		$seen{$key} = 1;
+
+		# direction does not matter at the moment
+		$key = $to_eva . '!' . $from_eva . '!' . $to_index . '!' . $from_index;
+		$seen{$key} = 1;
+
+		@polyline = @polyline[ $from_index .. $to_index ];
+		my $prev_coord = shift @polyline;
+		for my $coord (@polyline) {
+			push(
+				@coord_pairs,
+				[
+					[ $prev_coord->[1], $prev_coord->[0] ],
+					[ $coord->[1],      $coord->[0] ]
+				]
+			);
+			$prev_coord = $coord;
+		}
+	}
+
+	for my $journey ( grep { not $_->{polyline} } @journeys ) {
 
 		my @route = map { $_->[0] } @{ $journey->{route} };
 
@@ -545,6 +592,13 @@ sub map_history {
 
 	my @routes;
 
+	my @lats = map { $_->[0][0] } @station_coordinates;
+	my @lons = map { $_->[0][1] } @station_coordinates;
+	my $min_lat = min @lats;
+	my $max_lat = max @lats;
+	my $min_lon = min @lons;
+	my $max_lon = max @lons;
+
 	$self->render(
 		template            => 'history_map',
 		with_map            => 1,
@@ -552,12 +606,17 @@ sub map_history {
 		station_coordinates => \@station_coordinates,
 		polyline_groups     => [
 			{
-				polylines  => \@station_pairs,
-				color      => '#673ab7',
-				opacity    => 0.6,
-				fit_bounds => 1,
+				polylines => \@station_pairs,
+				color     => '#673ab7',
+				opacity   => $with_polyline ? 0.4 : 0.6,
+			},
+			{
+				polylines => \@coord_pairs,
+				color     => '#673ab7',
+				opacity   => 0.9,
 			}
-		]
+		],
+		bounds => [ [ $min_lat, $min_lon ], [ $max_lat, $max_lon ] ],
 	);
 }
 

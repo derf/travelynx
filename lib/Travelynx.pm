@@ -2785,6 +2785,10 @@ sub startup {
 			# Otherwise, we grab a fresh one.
 			my $db = $opt{db} // $self->pg->db;
 
+			my @select
+			  = (
+				qw(journey_id train_type train_line train_no checkin_ts sched_dep_ts real_dep_ts dep_eva checkout_ts sched_arr_ts real_arr_ts arr_eva edited route messages user_data)
+			  );
 			my %where = (
 				user_id   => $uid,
 				cancelled => 0
@@ -2812,9 +2816,13 @@ sub startup {
 					-between => [ $opt{after}->epoch, $opt{before}->epoch, ] };
 			}
 
+			if ( $opt{with_polyline} ) {
+				push( @select, 'polyline' );
+			}
+
 			my @travels;
 
-			my $res = $db->select( 'journeys_str', '*', \%where, \%order );
+			my $res = $db->select( 'journeys_str', \@select, \%where, \%order );
 
 			for my $entry ( $res->expand->hashes->each ) {
 
@@ -2836,6 +2844,10 @@ sub startup {
 					edited       => $entry->{edited},
 					user_data    => $entry->{user_data},
 				};
+
+				if ( $opt{with_polyline} ) {
+					$ref->{polyline} = $entry->{polyline};
+				}
 
 				if ( my $station
 					= $self->app->station_by_eva->{ $ref->{from_eva} } )

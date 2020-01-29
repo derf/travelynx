@@ -41,6 +41,10 @@ var pl;
 	% }
 % }
 
+% if (my $b = stash('bounds')) {
+	map.fitBounds([[<%= $b->[0][0] %>,<%= $b->[0][1] %>],[<%= $b->[1][0] %>,<%= $b->[1][1] %>]]);
+% }
+
 for (var station_id in stations) {
 	L.circle(stations[station_id][0], {
 		color: '#f03',
