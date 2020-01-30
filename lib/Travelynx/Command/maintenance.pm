@@ -128,6 +128,50 @@ sub run {
 	}
 
 	$tx->commit;
+
+	# Add estimated polylines to journeys logged before 2020-01-28
+
+	$tx = $db->begin;
+
+	say 'Adding polylines to journeys logged before 2020-01-28';
+	my $no_polyline
+	  = $db->select( 'journeys', 'count(*) as count', { polyline_id => undef } )
+	  ->hash;
+	say "Checking $no_polyline->{count} journeys ...";
+
+	for my $journey (
+		$db->select( 'journeys', [ 'id', 'route' ], { polyline_id => undef } )
+		->hashes->each )
+	{
+		my $ref = $db->select(
+			'journeys',
+			[ 'id', 'polyline_id' ],
+			{
+				route       => $journey->{route},
+				polyline_id => { '!=', undef }
+			},
+			{ limit => 1 }
+		)->hash;
+		if ($ref) {
+			my $rows = $db->update(
+				'journeys',
+				{ polyline_id => $ref->{polyline_id} },
+				{ id          => $journey->{id} }
+			)->rows;
+			if ( $rows != 1 ) {
+				say STDERR
+"Database update returned $rows rows, expected 1. Rollback and abort.";
+				exit(1);
+			}
+		}
+	}
+
+	my $remaining
+	  = $db->select( 'journeys', 'count(*) as count', { polyline_id => undef } )
+	  ->hash;
+	say "Done! Remaining journeys without polyline: " . $remaining->{count};
+
+	$tx->commit;
 }
 
 1;
