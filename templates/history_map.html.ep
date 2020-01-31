@@ -11,8 +11,34 @@
 
 %= include '_map', station_coordinates => $station_coordinates, polyline_groups => $polyline_groups
 
-%= form_for '/history/map' => (method => 'POST') => begin
-	%= csrf_field
+%= form_for '/history/map' => begin
+	<p>
+		Detailgrad und Filter:
+	</p>
+	<div class="row">
+		<div class="input-field col s12">
+			<label>
+				%= radio_button route_type => 'polyline'
+				<span>Nur Zugfahrten mit bekanntem Streckenverlauf eintragen</span>
+			</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			<label>
+				%= radio_button route_type => 'polybee'
+				<span>Streckenverlauf wenn bekannt, sonst Luftlinie zwischen Unterweghalten</span>
+			</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			<label>
+				%= radio_button route_type => 'beeline'
+				<span>Immer Luftlinie zwischen Unterwegshalten zeigen</span>
+			</label>
+		</div>
+	</div>
 	<div class="row">
 		<div class="input-field col s12">
 			<label>
@@ -23,7 +49,7 @@
 	</div>
 	<div class="row">
 		<div class="col s12 center-align">
-			<button class="btn wave-effect waves-light" type="submit" name="action" value="go">
+			<button class="btn wave-effect waves-light" type="submit">
 				Anzeigen
 			</button>
 		</div>

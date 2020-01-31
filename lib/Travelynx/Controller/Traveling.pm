@@ -439,7 +439,12 @@ sub map_history {
 
 	my $location = $self->app->coordinates_by_station;
 
-	my $with_polyline = $self->param('poly') ? 1 : 0;
+	if ( not $self->param('route_type') ) {
+		$self->param( route_type => 'polybee' );
+	}
+
+	my $route_type    = $self->param('route_type');
+	my $with_polyline = $route_type eq 'beeline' ? 0 : 1;
 
 	my @journeys = $self->get_user_travels( with_polyline => $with_polyline );
 
@@ -470,8 +475,18 @@ sub map_history {
 	my %seen;
 
 	my @skipped_journeys;
+	my @polyline_journeys = grep { $_->{polyline} } @journeys;
+	my @beeline_journeys  = grep { not $_->{polyline} } @journeys;
 
-	for my $journey ( grep { $_->{polyline} } @journeys ) {
+	if ( $route_type eq 'polyline' ) {
+		@beeline_journeys = ();
+	}
+	elsif ( $route_type eq 'beeline' ) {
+		push( @beeline_journeys, @polyline_journeys );
+		@polyline_journeys = ();
+	}
+
+	for my $journey (@polyline_journeys) {
 		my @polyline = @{ $journey->{polyline} };
 		my $from_eva = $journey->{from_eva};
 		my $to_eva   = $journey->{to_eva};
@@ -514,7 +529,7 @@ sub map_history {
 		}
 	}
 
-	for my $journey ( grep { not $_->{polyline} } @journeys ) {
+	for my $journey (@beeline_journeys) {
 
 		my @route = map { $_->[0] } @{ $journey->{route} };
 
@@ -612,7 +627,7 @@ sub map_history {
 			{
 				polylines => \@coord_pairs,
 				color     => '#673ab7',
-				opacity   => 0.9,
+				opacity   => 0.8,
 			}
 		],
 		bounds => [ [ $min_lat, $min_lon ], [ $max_lat, $max_lon ] ],
