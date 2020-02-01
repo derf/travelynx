@@ -2790,7 +2790,7 @@ sub startup {
 
 			my @select
 			  = (
-				qw(journey_id train_type train_line train_no checkin_ts sched_dep_ts real_dep_ts dep_eva checkout_ts sched_arr_ts real_arr_ts arr_eva edited route messages user_data)
+				qw(journey_id train_type train_line train_no checkin_ts sched_dep_ts real_dep_ts dep_eva checkout_ts sched_arr_ts real_arr_ts arr_eva cancelled edited route messages user_data)
 			  );
 			my %where = (
 				user_id   => $uid,
