@@ -25,8 +25,14 @@
 				% }
 				von
 				<b><%= $journey->{from_name} %></b>
+				% if ($journey->{edited} & 0x0004) {
+					∗
+				% }
 				nach
 				<b><%= $journey->{to_name} %></b>
+				% if ($journey->{edited} & 0x0400) {
+					∗
+				% }
 				am
 				<b><%= $journey->{sched_departure}->strftime('%d.%m.%Y') %></b>
 			</p>

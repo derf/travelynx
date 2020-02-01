@@ -43,13 +43,22 @@ sub epoch_to_dt {
 }
 
 sub get_station {
-	my ($station_name) = @_;
+	my ( $station_name, $exact_match ) = @_;
 
 	my @candidates
 	  = Travel::Status::DE::IRIS::Stations::get_station($station_name);
 
 	if ( @candidates == 1 ) {
-		return $candidates[0];
+		if ( not $exact_match ) {
+			return $candidates[0];
+		}
+		if (   $candidates[0][0] eq $station_name
+			or $candidates[0][1] eq $station_name
+			or $candidates[0][2] eq $station_name )
+		{
+			return $candidates[0];
+		}
+		return undef;
 	}
 	return undef;
 }
@@ -187,10 +196,12 @@ sub startup {
 			return {
 				sched_departure => 0x0001,
 				real_departure  => 0x0002,
+				from_station    => 0x0004,
 				route           => 0x0010,
 				is_cancelled    => 0x0020,
 				sched_arrival   => 0x0100,
 				real_arrival    => 0x0200,
+				to_station      => 0x0400,
 			};
 		}
 	);
@@ -912,7 +923,39 @@ sub startup {
 			);
 
 			eval {
-				if ( $key eq 'sched_departure' ) {
+				if ( $key eq 'from_name' ) {
+					my $from_station = get_station( $value, 1 );
+					if ( not $from_station ) {
+						die("Unbekannter Startbahnhof\n");
+					}
+					$rows = $db->update(
+						'journeys',
+						{
+							checkin_station_id => $from_station->[2],
+							edited             => $journey->{edited} | 0x0004,
+						},
+						{
+							id => $journey_id,
+						}
+					)->rows;
+				}
+				elsif ( $key eq 'to_name' ) {
+					my $to_station = get_station( $value, 1 );
+					if ( not $to_station ) {
+						die("Unbekannter Zielbahnhof\n");
+					}
+					$rows = $db->update(
+						'journeys',
+						{
+							checkout_station_id => $to_station->[2],
+							edited              => $journey->{edited} | 0x0400,
+						},
+						{
+							id => $journey_id,
+						}
+					)->rows;
+				}
+				elsif ( $key eq 'sched_departure' ) {
 					$rows = $db->update(
 						'journeys',
 						{

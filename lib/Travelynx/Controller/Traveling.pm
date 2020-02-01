@@ -894,6 +894,17 @@ sub edit_journey {
 				}
 			}
 		}
+		for my $key (qw(from_name to_name)) {
+			if ( defined $self->param($key)
+				and $self->param($key) ne $journey->{$key} )
+			{
+				$error = $self->update_journey_part( $db, $journey->{id}, $key,
+					$self->param($key) );
+				if ($error) {
+					last;
+				}
+			}
+		}
 		for my $key (qw(comment)) {
 			if (
 				defined $self->param($key)
@@ -919,7 +930,7 @@ sub edit_journey {
 			}
 		}
 		{
-			my $cancelled_old = $journey->{cancelled};
+			my $cancelled_old = $journey->{cancelled}     // 0;
 			my $cancelled_new = $self->param('cancelled') // 0;
 			if ( $cancelled_old != $cancelled_new ) {
 				$error
@@ -955,7 +966,9 @@ sub edit_journey {
 	$self->param(
 		route => join( "\n", map { $_->[0] } @{ $journey->{route} } ) );
 
-	$self->param( cancelled => $journey->{cancelled} );
+	$self->param( cancelled => $journey->{cancelled} ? 1 : 0 );
+	$self->param( from_name => $journey->{from_name} );
+	$self->param( to_name   => $journey->{to_name} );
 
 	for my $key (qw(comment)) {
 		if ( $journey->{user_data} and $journey->{user_data}{$key} ) {
@@ -965,8 +978,9 @@ sub edit_journey {
 
 	$self->render(
 		'edit_journey',
-		error   => $error,
-		journey => $journey
+		with_autocomplete => 1,
+		error             => $error,
+		journey           => $journey
 	);
 }
 
