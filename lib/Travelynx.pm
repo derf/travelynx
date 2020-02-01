@@ -2302,8 +2302,11 @@ sub startup {
 					{
 
        # Drunken API, sail with care. Both date formats are used interchangeably
-						if (   $suggestion->{depDate} eq $date_yy
-							or $suggestion->{depDate} eq $date_yyyy )
+						if (
+							$suggestion->{depDate}
+							and (  $suggestion->{depDate} eq $date_yy
+								or $suggestion->{depDate} eq $date_yyyy )
+						  )
 						{
             # Train numbers are not unique, e.g. IC 149 refers both to the
             # InterCity service Amsterdam -> Berlin and to the InterCity service
