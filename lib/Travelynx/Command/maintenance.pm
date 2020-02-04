@@ -148,7 +148,8 @@ sub run {
 			[ 'id', 'polyline_id' ],
 			{
 				route       => $journey->{route},
-				polyline_id => { '!=', undef }
+				polyline_id => { '!=', undef },
+				edited      => 0,
 			},
 			{ limit => 1 }
 		)->hash;
