@@ -165,6 +165,35 @@ sub run {
 				exit(1);
 			}
 		}
+		else {
+			while ( my ( $old_name, $new_name )
+				= each %{ $self->app->renamed_station } )
+			{
+				$journey->{route} =~ s{"\Q$old_name\E"}{"$new_name"};
+			}
+			my $ref = $db->select(
+				'journeys',
+				[ 'id', 'polyline_id' ],
+				{
+					route       => $journey->{route},
+					polyline_id => { '!=', undef },
+					edited      => 0,
+				},
+				{ limit => 1 }
+			)->hash;
+			if ($ref) {
+				my $rows = $db->update(
+					'journeys',
+					{ polyline_id => $ref->{polyline_id} },
+					{ id          => $journey->{id} }
+				)->rows;
+				if ( $rows != 1 ) {
+					say STDERR
+"Database update returned $rows rows, expected 1. Rollback and abort.";
+					exit(1);
+				}
+			}
+		}
 	}
 
 	my $remaining
