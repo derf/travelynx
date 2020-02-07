@@ -3,6 +3,7 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use DateTime;
 use DateTime::Format::Strptime;
+use JSON;
 use List::Util qw(uniq min max);
 use List::UtilsBy qw(uniq_by);
 use List::MoreUtils qw(first_index);
@@ -459,6 +460,8 @@ sub map_history {
 		return;
 	}
 
+	my $json = JSON->new->utf8;
+
 	my $include_manual = $self->param('include_manual') ? 1 : 0;
 
 	my $first_departure = $journeys[-1]->{rt_departure};
@@ -471,7 +474,7 @@ sub map_history {
 	  grep { exists $location->{$_} } @stations;
 
 	my @station_pairs;
-	my @coord_pairs;
+	my @polylines;
 	my %seen;
 
 	my @skipped_journeys;
@@ -516,17 +519,11 @@ sub map_history {
 		$seen{$key} = 1;
 
 		@polyline = @polyline[ $from_index .. $to_index ];
-		my $prev_coord = shift @polyline;
+		my @polyline_coords;
 		for my $coord (@polyline) {
-			push(
-				@coord_pairs,
-				[
-					[ $prev_coord->[1], $prev_coord->[0] ],
-					[ $coord->[1],      $coord->[0] ]
-				]
-			);
-			$prev_coord = $coord;
+			push( @polyline_coords, [ $coord->[1], $coord->[0] ] );
 		}
+		push( @polylines, [@polyline_coords] );
 	}
 
 	for my $journey (@beeline_journeys) {
@@ -620,12 +617,12 @@ sub map_history {
 		station_coordinates => \@station_coordinates,
 		polyline_groups     => [
 			{
-				polylines => \@station_pairs,
+				polylines => $json->encode( \@station_pairs ),
 				color     => '#673ab7',
 				opacity   => $with_polyline ? 0.4 : 0.6,
 			},
 			{
-				polylines => \@coord_pairs,
+				polylines => $json->encode( \@polylines ),
 				color     => '#673ab7',
 				opacity   => 0.8,
 			}

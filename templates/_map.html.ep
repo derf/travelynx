@@ -28,11 +28,7 @@ var stations = [
 var routes = [];
 var pl;
 % for my $line_group ( @{ stash('polyline_groups') // [] } ) {
-	routes = [
-		% for my $pair ( @{$line_group->{polylines} // []} ) {
-			[[<%= $pair->[0][0] %>,<%= $pair->[0][1] %>],[<%= $pair->[1][0] %>,<%= $pair->[1][1] %>]],
-		% }
-	];
+	routes = [ <%= $line_group->{polylines} %> ];
 	pl = L.polyline(routes, {color: '<%= $line_group->{color} %>', opacity: <%= $line_group->{opacity} %>}).addTo(map);
 	% if ($line_group->{fit_bounds}) {
 		if (routes.length) {
