@@ -11,7 +11,7 @@ sub query_to_munin {
 	my ( $label, $value ) = @_;
 
 	if ( defined $value ) {
-		printf( "%s.value %d\n", $label, $value );
+		printf( "%s.value %f\n", $label, $value );
 	}
 }
 
@@ -58,6 +58,12 @@ sub run {
 	);
 	query_to_munin( 'polylines',
 		$db->select( 'polylines', 'count(*) as count' )->hash->{count} );
+	query_to_munin(
+		'polyline_ratio',
+		$db->query(
+'select (select count(polyline_id) from journeys)::float / (select count(*) from polylines) as ratio'
+		)->hash->{ratio}
+	);
 }
 
 1;
