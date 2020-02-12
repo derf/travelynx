@@ -2173,6 +2173,9 @@ sub startup {
 					# <SDay text="... &gt; ..."> is invalid HTML, but present in
 					# regardless. As it is the last tag, we just throw it away.
 					$body =~ s{<SDay [^>]*/>}{}s;
+
+					# More fixes for invalid XML
+					$body =~ s{P&R}{P&amp;R};
 					eval { $tree = XML::LibXML->load_xml( string => $body ) };
 					if ($@) {
 						$self->app->log->warn("load_xml($url): $@");
