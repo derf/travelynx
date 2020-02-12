@@ -134,7 +134,15 @@ sub run {
 						checkout_station_id => $arr
 					}
 				);
-				$self->app->add_route_timestamps( $uid, $train, 0 );
+				if ( $train->arrival_is_cancelled ) {
+
+                  # check out (adds a cancelled journey and resets journey state
+                  # to destination selection)
+					$self->app->checkout( $arr, 0, $uid );
+				}
+				else {
+					$self->app->add_route_timestamps( $uid, $train, 0 );
+				}
 			}
 			elsif ( $entry->{real_arr_ts} ) {
 				my ( undef, $error ) = $self->app->checkout( $arr, 1, $uid );

@@ -817,7 +817,6 @@ sub startup {
 							arr_platform  => $train->platform,
 							sched_arrival => $train->sched_arrival,
 							real_arrival  => $train->arrival,
-							cancelled => $train->arrival_is_cancelled ? 1 : 0,
 							route =>
 							  $json->encode( [ $self->route_diff($train) ] ),
 							messages => $json->encode(
@@ -860,6 +859,39 @@ sub startup {
 						);
 					}
 					$self->invalidate_stats_cache( $cache_ts, $db, $uid );
+				}
+				elsif ( defined $train and $train->arrival_is_cancelled ) {
+
+               # This branch is only taken if the deparure was not cancelled,
+               # i.e., if the train was supposed to go here but got
+               # redirected or cancelled on the way and not from the start on.
+               # If the departure itself was cancelled, the user route is
+               # cancelled_from action -> 'cancelled journey' panel on main page
+               # -> cancelled_to action -> force checkout (causing the
+               # previous branch to be taken due to $force)
+					$journey->{edited}        = 0;
+					$journey->{checkout_time} = $now;
+					$journey->{cancelled}     = 1;
+					delete $journey->{data};
+					$db->insert( 'journeys', $journey );
+
+					$journey
+					  = $db->select( 'in_transit', ['data'],
+						{ user_id => $uid } )->expand->hash;
+					$journey->{data}{cancelled_destination} = $train->station;
+
+					$db->update(
+						'in_transit',
+						{
+							checkout_station_id => undef,
+							checkout_time       => undef,
+							arr_platform        => undef,
+							sched_arrival       => undef,
+							real_arrival        => undef,
+							data => JSON->new->encode( $journey->{data} ),
+						},
+						{ user_id => $uid }
+					);
 				}
 
 				$tx->commit;

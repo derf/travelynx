@@ -163,6 +163,13 @@
 					</div>
 				</p>
 			% }
+			% if ($journey->{extra_data}{cancelled_destination}) {
+				<p style="margin-bottom: 2ex;">
+					Der Halt in <b><%= $journey->{extra_data}{cancelled_destination} %></b>
+					entfällt. Der Zugausfall wurde bereits vermerkt. Bitte wähle ein
+					neues Reiseziel.
+				</p>
+			% }
 			% if (@{$journey->{messages} // []} or @{$journey->{extra_data}{qos_msg} // []}) {
 				<p style="margin-bottom: 2ex;">
 					<ul>
