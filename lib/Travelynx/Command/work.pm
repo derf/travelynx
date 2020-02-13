@@ -136,9 +136,26 @@ sub run {
 				);
 				if ( $train->arrival_is_cancelled ) {
 
+					# depending on the amount of users in transit, some time may
+					# have passed between fetching $entry from the database and
+					# now. Ensure that the user is still checked into this train
+					# before calling checkout to mark the cancellation.
+					if (
+						$db->select(
+							'in_transit',
+							'count(*) as count',
+							{
+								user_id             => $uid,
+								train_no            => $train->train_no,
+								checkout_station_id => $arr
+							}
+						)->hash->{count}
+					  )
+					{
                   # check out (adds a cancelled journey and resets journey state
                   # to destination selection)
-					$self->app->checkout( $arr, 0, $uid );
+						$self->app->checkout( $arr, 0, $uid );
+					}
 				}
 				else {
 					$self->app->add_route_timestamps( $uid, $train, 0 );

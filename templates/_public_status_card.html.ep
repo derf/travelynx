@@ -125,6 +125,13 @@
 					% }
 				</div>
 			</p>
+			% if ($journey->{extra_data}{cancelled_destination}) {
+				<p style="margin-bottom: 2ex;">
+					<i class="material-icons tiny" aria-hidden="true">error</i>
+					Der Halt an der Zielstation <b><%=
+					$journey->{extra_data}{cancelled_destination} %></b> entfällt.
+				</p>
+			% }
 			% if (@{$journey->{messages} // []} > 0 and $journey->{messages}[0]) {
 				<p style="margin-bottom: 2ex;">
 					<ul>
