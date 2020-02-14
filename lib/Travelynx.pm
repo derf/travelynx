@@ -187,6 +187,9 @@ sub startup {
 				status_intern  => 0x01,
 				status_extern  => 0x02,
 				status_comment => 0x04,
+				history_intern => 0x10,
+				history_latest => 0x20,
+				history_full   => 0x40,
 			};
 		}
 	);

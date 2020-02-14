@@ -8,8 +8,8 @@
 	</div>
 </div>
 %= form_for '/account/privacy' => (method => 'POST') => begin
+%= csrf_field
 <h2>Aktueller Status</h2>
-	%= csrf_field
 	<div class="row">
 		<div class="input-field col s12">
 			<label>
@@ -58,6 +58,40 @@
 			Freitext-Kommentar der Zugfahrt gezeigt. Wenn du gerade nicht
 			eingecheckt bist oder dein aktueller Status nicht öffentlich ist,
 			hat dieses Feld keine Auswirkungen.
+		</div>
+	</div>
+<h2>Vergangene Zugfahrten</h2>
+	<div class="row">
+		<div class="input-field col s12">
+			<label>
+				%= radio_button history_level => 'private'
+				<span>Nicht sichtbar</span>
+			</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			<label>
+				%= radio_button history_level => 'intern'
+				<span>Nur für angemeldete Accounts</span>
+			</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			<label>
+				%= radio_button history_level => 'extern'
+				<span>Öffentlich</span>
+			</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s12">
+			Diese Einstellung bestimmt die Sichtbarkeit deiner letzten
+			zehn Zugfahrten mit allen dazu bekannten Details (Abfahrt, Ankunft,
+			Wagenreihung u.a.). Dies umfasst Angaben auf
+			<a href="/status/<%= $name %>">/status/<%= $name %></a> sowie
+			eine Liste deiner letzten Fahrten. Die Implementierung folgt noch...
 		</div>
 	</div>
 	<div class="row">

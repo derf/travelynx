@@ -163,7 +163,14 @@
 			<span class="card-title"><%= $name %> ist gerade nicht eingecheckt</span>
 			<p>
 				% if ($journey->{arr_name}) {
-					Zuletzt gesehen in <%= $journey->{arr_name} %>.
+					Zuletzt gesehen
+					% if ($public_level & 0x30 and $journey->{real_arrival}->epoch) {
+						%= $journey->{real_arrival}->strftime('am %d.%m.%Y')
+					% }
+					in <b><%= $journey->{arr_name} %></b>
+					% if ($public_level & 0x30 and $journey->{real_arrival}->epoch) {
+						%= $journey->{real_arrival}->strftime('(Ankunft um %H:%M Uhr)')
+					% }
 				% }
 				% else {
 					Noch keine Zugfahrten geloggt.

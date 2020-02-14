@@ -236,6 +236,19 @@ sub privacy {
 		else {
 			$public_level &= ~0x04;
 		}
+
+		if ( $self->param('history_level') eq 'intern' ) {
+			$public_level |= 0x10;
+			$public_level &= ~0x20;
+		}
+		elsif ( $self->param('history_level') eq 'extern' ) {
+			$public_level |= 0x20;
+			$public_level &= ~0x10;
+		}
+		else {
+			$public_level &= ~0x30;
+		}
+
 		$self->set_privacy( $user->{id}, $public_level );
 
 		$self->flash( success => 'privacy' );
@@ -248,6 +261,11 @@ sub privacy {
 			:                        'private'
 		);
 		$self->param( public_comment => $public_level & 0x04 ? 1 : 0 );
+		$self->param(
+			  history_level => $public_level & 0x10 ? 'intern'
+			: $public_level & 0x20 ? 'extern'
+			:                        'private'
+		);
 		$self->render( 'privacy', name => $user->{name} );
 	}
 }
