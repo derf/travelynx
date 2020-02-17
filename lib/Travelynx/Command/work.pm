@@ -70,7 +70,44 @@ sub run {
 						train_no => $train->train_no
 					}
 				);
-				$self->app->add_route_timestamps( $uid, $train, 1 );
+				if ( $train->departure_is_cancelled and $arr ) {
+
+					# depending on the amount of users in transit, some time may
+					# have passed between fetching $entry from the database and
+					# now. Ensure that the user is still checked into this train
+					# before calling checkout to mark the cancellation.
+					if (
+						$db->select(
+							'in_transit',
+							'count(*) as count',
+							{
+								user_id            => $uid,
+								train_no           => $train->train_no,
+								checkin_station_id => $dep
+							}
+						)->hash->{count}
+					  )
+					{
+						$db->update(
+							'in_transit',
+							{
+								cancelled => 1,
+							},
+							{
+								user_id            => $uid,
+								train_no           => $train->train_no,
+								checkin_station_id => $dep
+							}
+						);
+
+                  # check out (adds a cancelled journey and resets journey state
+                  # to checkin
+						$self->app->checkout( $arr, 1, $uid );
+					}
+				}
+				else {
+					$self->app->add_route_timestamps( $uid, $train, 1 );
+				}
 			}
 		};
 		if ($@) {

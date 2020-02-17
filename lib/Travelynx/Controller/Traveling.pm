@@ -133,6 +133,10 @@ sub status_card {
 	if ( $status->{checked_in} ) {
 		$self->render( '_checked_in', journey => $status );
 	}
+	elsif ( $status->{cancellation} ) {
+		$self->render( '_cancelled_departure',
+			journey => $status->{cancellation} );
+	}
 	else {
 		$self->render( '_checked_out', journey => $status );
 	}

@@ -2684,6 +2684,10 @@ sub startup {
 			my $db        = $opt{db} //= $self->pg->db;
 			my $min_count = $opt{min_count} // 3;
 
+			if ( $opt{destination_name} ) {
+				return ( $opt{destination_name} );
+			}
+
 			my $dest_id = $opt{eva} // $self->get_latest_dest_id(%opt);
 
 			if ( not $dest_id ) {
@@ -2728,6 +2732,9 @@ sub startup {
 
 			if ( $opt{eva} ) {
 				if ( $use_history & 0x01 ) {
+					$eva = $opt{eva};
+				}
+				elsif ( $opt{destination_name} ) {
 					$eva = $opt{eva};
 				}
 			}
@@ -3357,6 +3364,38 @@ sub startup {
 				}
 			)->expand->hash;
 
+			my $latest_cancellation = $db->select(
+				'journeys_str',
+				'*',
+				{
+					user_id => $uid,
+				},
+				{
+					order_by => { -desc => 'journey_id' },
+					limit    => 1
+				}
+			)->expand->hash;
+
+			if ( $latest_cancellation and $latest_cancellation->{cancelled} ) {
+				if ( my $station
+					= $self->app->station_by_eva
+					->{ $latest_cancellation->{dep_eva} } )
+				{
+					$latest_cancellation->{dep_ds100} = $station->[0];
+					$latest_cancellation->{dep_name}  = $station->[1];
+				}
+				if ( my $station
+					= $self->app->station_by_eva
+					->{ $latest_cancellation->{arr_eva} } )
+				{
+					$latest_cancellation->{arr_ds100} = $station->[0];
+					$latest_cancellation->{arr_name}  = $station->[1];
+				}
+			}
+			else {
+				$latest_cancellation = undef;
+			}
+
 			if ($latest) {
 				my $ts          = $latest->{checkout_ts};
 				my $action_time = epoch_to_dt($ts);
@@ -3375,6 +3414,7 @@ sub startup {
 				return {
 					checked_in      => 0,
 					cancelled       => 0,
+					cancellation    => $latest_cancellation,
 					journey_id      => $latest->{journey_id},
 					timestamp       => $action_time,
 					timestamp_delta => $now->epoch - $action_time->epoch,
@@ -3401,6 +3441,7 @@ sub startup {
 			return {
 				checked_in      => 0,
 				cancelled       => 0,
+				cancellation    => $latest_cancellation,
 				no_journeys_yet => 1,
 				timestamp       => epoch_to_dt(0),
 				timestamp_delta => $now->epoch,

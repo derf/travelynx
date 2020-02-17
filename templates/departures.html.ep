@@ -26,6 +26,13 @@
 		</div>
 	</div>
 % }
+% elsif ($status->{cancellation} and $station eq $status->{cancellation}{dep_name}) {
+	<div class="row">
+		<div class="col s12">
+			%= include '_cancelled_departure', journey => $status->{cancellation};
+		</div>
+	</div>
+% }
 % elsif ($status->{timestamp_delta} < 180) {
 	<div class="row">
 		<div class="col s12">
