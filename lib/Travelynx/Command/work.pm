@@ -81,9 +81,10 @@ sub run {
 							'in_transit',
 							'count(*) as count',
 							{
-								user_id            => $uid,
-								train_no           => $train->train_no,
-								checkin_station_id => $dep
+								user_id             => $uid,
+								train_no            => $train->train_no,
+								checkin_station_id  => $dep,
+								checkout_station_id => $arr,
 							}
 						)->hash->{count}
 					  )
@@ -94,9 +95,10 @@ sub run {
 								cancelled => 1,
 							},
 							{
-								user_id            => $uid,
-								train_no           => $train->train_no,
-								checkin_station_id => $dep
+								user_id             => $uid,
+								train_no            => $train->train_no,
+								checkin_station_id  => $dep,
+								checkout_station_id => $arr,
 							}
 						);
 
