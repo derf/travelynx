@@ -223,44 +223,46 @@
 			</table>
 		</div>
 	</div>
-	<div class="row hide-on-small-only">
-		<div class="col s12 m6 l6 center-align">
-			<a class="waves-effect waves-light red btn action-delete"
-					data-id="<%= $journey->{id} %>"
-					data-checkin="<%= $journey->{checkin}->epoch %>"
-					data-checkout="<%= $journey->{checkout}->epoch %>">
-				<i class="material-icons left">delete_forever</i>
-				Löschen
-			</a>
+	% if (not stash('readonly')) {
+		<div class="row hide-on-small-only">
+			<div class="col s12 m6 l6 center-align">
+				<a class="waves-effect waves-light red btn action-delete"
+						data-id="<%= $journey->{id} %>"
+						data-checkin="<%= $journey->{checkin}->epoch %>"
+						data-checkout="<%= $journey->{checkout}->epoch %>">
+					<i class="material-icons left">delete_forever</i>
+					Löschen
+				</a>
+			</div>
+			<div class="col s12 m6 l6 center-align">
+				%= form_for '/journey/edit' => (method => 'POST') => begin
+					%= hidden_field 'journey_id' => param('journey_id')
+					<button class="btn waves-effect waves-light" type="submit" name="action" value="edit">
+						<i class="material-icons left" aria-hidden="true">edit</i>
+						Bearbeiten
+					</button>
+				%= end
+			</div>
 		</div>
-		<div class="col s12 m6 l6 center-align">
-			%= form_for '/journey/edit' => (method => 'POST') => begin
-				%= hidden_field 'journey_id' => param('journey_id')
-				<button class="btn waves-effect waves-light" type="submit" name="action" value="edit">
-					<i class="material-icons left" aria-hidden="true">edit</i>
-					Bearbeiten
-				</button>
-			%= end
+		<div class="row hide-on-med-and-up">
+			<div class="col s12 m6 l6 center-align">
+				%= form_for '/journey/edit' => (method => 'POST') => begin
+					%= hidden_field 'journey_id' => param('journey_id')
+					<button class="btn waves-effect waves-light" type="submit" name="action" value="edit">
+						<i class="material-icons left" aria-hidden="true">edit</i>
+						Bearbeiten
+					</button>
+				%= end
+			</div>
+			<div class="col s12 m6 l6 center-align" style="margin-top: 1em;">
+				<a class="waves-effect waves-light red btn action-delete"
+						data-id="<%= $journey->{id} %>"
+						data-checkin="<%= $journey->{checkin}->epoch %>"
+						data-checkout="<%= $journey->{checkout}->epoch %>">
+					<i class="material-icons left" aria-hidden="true">delete_forever</i>
+					Löschen
+				</a>
+			</div>
 		</div>
-	</div>
-	<div class="row hide-on-med-and-up">
-		<div class="col s12 m6 l6 center-align">
-			%= form_for '/journey/edit' => (method => 'POST') => begin
-				%= hidden_field 'journey_id' => param('journey_id')
-				<button class="btn waves-effect waves-light" type="submit" name="action" value="edit">
-					<i class="material-icons left" aria-hidden="true">edit</i>
-					Bearbeiten
-				</button>
-			%= end
-		</div>
-		<div class="col s12 m6 l6 center-align" style="margin-top: 1em;">
-			<a class="waves-effect waves-light red btn action-delete"
-					data-id="<%= $journey->{id} %>"
-					data-checkin="<%= $journey->{checkin}->epoch %>"
-					data-checkout="<%= $journey->{checkout}->epoch %>">
-				<i class="material-icons left" aria-hidden="true">delete_forever</i>
-				Löschen
-			</a>
-		</div>
-	</div>
+	% }
 % }

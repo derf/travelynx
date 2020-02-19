@@ -41,7 +41,8 @@
 			Wenn du eingecheckt bist, werden dort Zug, Start- und Zielstation,
 			Abfahrts- und Ankunftszeit gezeigt; andernfalls lediglich der
 			Zielbahnhof der letzten Reise.  Wann die letzte Reise beendet wurde,
-			wird bewusst nicht angegeben.
+			wird nur angegeben, wenn deine vergangenen Zugfahrten sichtbar sind
+			(siehe unten).
 		</div>
 	</div>
 	<div class="row">
@@ -89,9 +90,12 @@
 		<div class="col s12">
 			Diese Einstellung bestimmt die Sichtbarkeit deiner letzten
 			zehn Zugfahrten mit allen dazu bekannten Details (Abfahrt, Ankunft,
-			Wagenreihung u.a.). Dies umfasst Angaben auf
-			<a href="/status/<%= $name %>">/status/<%= $name %></a> sowie
-			eine Liste deiner letzten Fahrten. Die Implementierung folgt noch...
+			Wagenreihung u.a.). Derzeit sind diese nur mit einem von dir
+			geteilten (oder korrekt erratenen) Link zu
+			<a href="/status/<%= $name %>">/status/<%= $name %>/ID</a> abrufbar.
+			In Zukunft kann eine auf deiner Statusseite eingebundene Liste
+			deiner letzten Zugfahrten folgen, deren Sichtbarkeit ebenfalls von
+			dieser Einstellung bestimmt wird.
 		</div>
 	</div>
 	<div class="row">

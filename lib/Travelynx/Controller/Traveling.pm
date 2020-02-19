@@ -33,53 +33,98 @@ sub user_status {
 	my ($self) = @_;
 
 	my $name = $self->stash('name');
-	my $ts   = $self->stash('ts');
+	my $ts   = $self->stash('ts') // 0;
 	my $user = $self->get_privacy_by_name($name);
 
+	if ( not $user or not $user->{public_level} & 0x03 ) {
+		$self->render('not_found');
+		return;
+	}
+
+	if ( $user->{public_level} & 0x01 and not $self->is_user_authenticated ) {
+		$self->render( 'login', redirect_to => $self->req->url );
+		return;
+	}
+
+	my $status = $self->get_user_status( $user->{id} );
+	my $journey;
+
 	if (
-		$user
-		and ( $user->{public_level} & 0x02
+		$ts
+		and ( not $status->{checked_in}
+			or $status->{sched_departure}->epoch != $ts )
+		and ( $user->{public_level} & 0x20
 			or
-			( $user->{public_level} & 0x01 and $self->is_user_authenticated ) )
+			( $user->{public_level} & 0x10 and $self->is_user_authenticated ) )
 	  )
 	{
-		my $status = $self->get_user_status( $user->{id} );
-
-		my %tw_data = (
-			card  => 'summary',
-			site  => '@derfnull',
-			image => $self->url_for('/static/icons/icon-512x512.png')
-			  ->to_abs->scheme('https'),
-		);
-
-		if (
-			$ts
-			and ( not $status->{checked_in}
-				or $status->{sched_departure}->epoch != $ts )
+		for my $candidate (
+			$self->get_user_travels(
+				uid           => $user->{id},
+				limit         => 10,
+				verbose       => 1,
+				with_datetime => 1
+			)
 		  )
 		{
-			$tw_data{title}       = "Bahnfahrt beendet";
-			$tw_data{description} = "${name} hat das Ziel erreicht";
-		}
-		elsif ( $status->{checked_in} ) {
-			$tw_data{title}       = "${name} ist unterwegs";
-			$tw_data{description} = sprintf(
-				'%s %s von %s nach %s',
-				$status->{train_type},
-				$status->{train_line} // $status->{train_no},
-				$status->{dep_name},
-				$status->{arr_name} // 'irgendwo'
-			);
-			if ( $status->{real_arrival}->epoch ) {
-				$tw_data{description} .= $status->{real_arrival}
-				  ->strftime(' – Ankunft gegen %H:%M Uhr');
+			if ( $candidate->{sched_departure}->epoch eq $ts ) {
+				$journey = $candidate;
 			}
 		}
-		else {
-			$tw_data{title}       = "${name} ist gerade nicht eingecheckt";
-			$tw_data{description} = "Letztes Fahrtziel: $status->{arr_name}";
-		}
+	}
 
+	my %tw_data = (
+		card  => 'summary',
+		site  => '@derfnull',
+		image => $self->url_for('/static/icons/icon-512x512.png')
+		  ->to_abs->scheme('https'),
+	);
+
+	if ($journey) {
+		$tw_data{title} = sprintf( 'Fahrt von %s nach %s',
+			$journey->{from_name}, $journey->{to_name} );
+		$tw_data{description}
+		  = $journey->{rt_arrival}->strftime('Ankunft am %d.%m.%Y um %H:%M');
+	}
+	elsif (
+		$ts
+		and ( not $status->{checked_in}
+			or $status->{sched_departure}->epoch != $ts )
+	  )
+	{
+		$tw_data{title}       = "Bahnfahrt beendet";
+		$tw_data{description} = "${name} hat das Ziel erreicht";
+	}
+	elsif ( $status->{checked_in} ) {
+		$tw_data{title}       = "${name} ist unterwegs";
+		$tw_data{description} = sprintf(
+			'%s %s von %s nach %s',
+			$status->{train_type}, $status->{train_line} // $status->{train_no},
+			$status->{dep_name}, $status->{arr_name} // 'irgendwo'
+		);
+		if ( $status->{real_arrival}->epoch ) {
+			$tw_data{description} .= $status->{real_arrival}
+			  ->strftime(' – Ankunft gegen %H:%M Uhr');
+		}
+	}
+	else {
+		$tw_data{title}       = "${name} ist gerade nicht eingecheckt";
+		$tw_data{description} = "Letztes Fahrtziel: $status->{arr_name}";
+	}
+
+	if ($journey) {
+		if ( not $user->{public_level} & 0x04 ) {
+			delete $journey->{user_data}{comment};
+		}
+		$self->render(
+			'journey',
+			error    => undef,
+			readonly => 1,
+			journey  => $journey,
+			twitter  => \%tw_data,
+		);
+	}
+	else {
 		$self->render(
 			'user_status',
 			name         => $name,
@@ -87,12 +132,6 @@ sub user_status {
 			journey      => $status,
 			twitter      => \%tw_data,
 		);
-	}
-	elsif ( $user->{public_level} & 0x01 ) {
-		$self->render( 'login', redirect_to => $self->req->url );
-	}
-	else {
-		$self->render('not_found');
 	}
 }
 

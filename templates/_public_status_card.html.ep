@@ -164,12 +164,13 @@
 			<p>
 				% if ($journey->{arr_name}) {
 					Zuletzt gesehen
-					% if ($public_level & 0x30 and $journey->{real_arrival}->epoch) {
+					% if ($journey->{real_arrival}->epoch and ($public_level & 0x20 or ($public_level & 0x10 and is_user_authenticated()))) {
 						%= $journey->{real_arrival}->strftime('am %d.%m.%Y')
-					% }
-					in <b><%= $journey->{arr_name} %></b>
-					% if ($public_level & 0x30 and $journey->{real_arrival}->epoch) {
+						in <b><%= $journey->{arr_name} %></b>
 						%= $journey->{real_arrival}->strftime('(Ankunft um %H:%M Uhr)')
+					% }
+					% else {
+						in <b><%= $journey->{arr_name} %></b>
 					% }
 				% }
 				% else {

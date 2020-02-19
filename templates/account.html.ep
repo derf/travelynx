@@ -75,6 +75,15 @@
 					% if ($acc->{is_public} & 0x04) {
 						mit Kommentar
 					% }
+					% if ($acc->{is_public} & 0x0f and $acc->{is_public} & 0xf0) {
+						<br/>
+					% }
+					% if ($acc->{is_public} & 0x10) {
+						Letzte zehn Fahrten (nur für angemeldete Accounts)
+					% }
+					% elsif ($acc->{is_public} & 0x20) {
+						Letzte zehn Fahrten
+					% }
 				</td>
 			</tr>
 			<tr>
