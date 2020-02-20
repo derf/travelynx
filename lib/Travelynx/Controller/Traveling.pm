@@ -60,15 +60,18 @@ sub user_status {
 	{
 		for my $candidate (
 			$self->get_user_travels(
-				uid           => $user->{id},
-				limit         => 10,
-				verbose       => 1,
-				with_datetime => 1
+				uid   => $user->{id},
+				limit => 10,
 			)
 		  )
 		{
-			if ( $candidate->{sched_departure}->epoch eq $ts ) {
-				$journey = $candidate;
+			if ( $candidate->{sched_dep_ts} eq $ts ) {
+				$journey = $self->get_journey(
+					uid           => $user->{id},
+					journey_id    => $candidate->{id},
+					verbose       => 1,
+					with_datetime => 1,
+				);
 			}
 		}
 	}
