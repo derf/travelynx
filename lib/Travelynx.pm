@@ -2985,11 +2985,10 @@ sub startup {
 					  = defined $ref->{rt_arr_ts}
 					  ? $ref->{rt_arr_ts} - $ref->{rt_dep_ts}
 					  : undef;
-					my ( $km_route, $km_beeline, $skip )
-					  = $self->get_travel_distance( $ref->{from_name},
-						$ref->{to_name}, $ref->{route} );
-					$ref->{km_route}     = $km_route;
-					$ref->{skip_route}   = $skip;
+					my ( $km_polyline, $km_route, $km_beeline, $skip )
+					  = $self->get_travel_distance($ref);
+					$ref->{km_route}     = $km_polyline || $km_route;
+					$ref->{skip_route}   = $km_polyline ? 0 : $skip;
 					$ref->{km_beeline}   = $km_beeline;
 					$ref->{skip_beeline} = $skip;
 					my $kmh_divisor
@@ -3557,8 +3556,16 @@ sub startup {
 
 	$self->helper(
 		'get_travel_distance' => sub {
-			my ( $self, $from, $to, $route_ref ) = @_;
+			my ( $self, $journey ) = @_;
 
+			my $from         = $journey->{from_name};
+			my $from_eva     = $journey->{from_eva};
+			my $to           = $journey->{to_name};
+			my $to_eva       = $journey->{to_eva};
+			my $route_ref    = $journey->{route};
+			my $polyline_ref = $journey->{polyline};
+
+			my $distance_polyline     = 0;
 			my $distance_intermediate = 0;
 			my $distance_beeline      = 0;
 			my $skipped               = 0;
@@ -3570,12 +3577,27 @@ sub startup {
 			if ( @route < 2 ) {
 
 				# I AM ERROR
-				return ( 0, 0 );
+				return ( 0, 0, 0 );
 			}
 
-			my $prev_station = get_station( shift @route );
+			my @polyline = after_incl { $_->[2] and $_->[2] == $from_eva }
+			@{ $polyline_ref // [] };
+			@polyline
+			  = before_incl { $_->[2] and $_->[2] == $to_eva } @polyline;
+
+			my $prev_station = shift @polyline;
+			for my $station (@polyline) {
+
+				#lonlatlonlat
+				$distance_polyline
+				  += $geo->distance( 'kilometer', $prev_station->[0],
+					$prev_station->[1], $station->[0], $station->[1] );
+				$prev_station = $station;
+			}
+
+			$prev_station = get_station( shift @route );
 			if ( not $prev_station ) {
-				return ( 0, 0 );
+				return ( $distance_polyline, 0, 0 );
 			}
 
            # Geo-coordinates for stations outside Germany are not available
@@ -3586,6 +3608,7 @@ sub startup {
 			my $from_station_beeline;
 			my $to_station_beeline;
 
+			# $#{$station} >= 4    iff    $station has geocoordinates
 			for my $station_name (@route) {
 				if ( my $station = get_station($station_name) ) {
 					if ( not $from_station_beeline and $#{$prev_station} >= 4 )
@@ -3615,7 +3638,8 @@ sub startup {
 				);
 			}
 
-			return ( $distance_intermediate, $distance_beeline, $skipped );
+			return ( $distance_polyline, $distance_intermediate,
+				$distance_beeline, $skipped );
 		}
 	);
 

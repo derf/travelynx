@@ -817,6 +817,7 @@ sub journey_details {
 		journey_id    => $journey_id,
 		verbose       => 1,
 		with_datetime => 1,
+		with_polyline => 1,
 	);
 
 	if ($journey) {
