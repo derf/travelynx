@@ -13,7 +13,8 @@ use File::Slurp qw(read_file);
 use Geo::Distance;
 use JSON;
 use List::Util;
-use List::MoreUtils qw(after_incl before_incl);
+use List::UtilsBy qw(uniq_by);
+use List::MoreUtils qw(after_incl before_incl first_index);
 use Travel::Status::DE::DBWagenreihung;
 use Travel::Status::DE::IRIS;
 use Travel::Status::DE::IRIS::Stations;
@@ -3551,6 +3552,206 @@ sub startup {
 			}
 
 			return $ret;
+		}
+	);
+
+	$self->helper(
+		'journeys_to_map_data' => sub {
+			my ( $self, %opt ) = @_;
+
+			my @journeys       = @{ $opt{journeys} // [] };
+			my $route_type     = $opt{route_type} // 'polybee';
+			my $include_manual = $opt{include_manual} ? 1 : 0;
+
+			my $location = $self->app->coordinates_by_station;
+
+			my $with_polyline = $route_type eq 'beeline' ? 0 : 1;
+
+			if ( not @journeys ) {
+				return {
+					skipped_journeys    => [],
+					station_coordinates => [],
+					polyline_groups     => [],
+				};
+			}
+
+			my $json = JSON->new->utf8;
+
+			my $first_departure = $journeys[-1]->{rt_departure};
+			my $last_departure  = $journeys[0]->{rt_departure};
+
+			my @stations = List::Util::uniq map { $_->{to_name} } @journeys;
+			push( @stations,
+				List::Util::uniq map { $_->{from_name} } @journeys );
+			@stations = List::Util::uniq @stations;
+			my @station_coordinates = map { [ $location->{$_}, $_ ] }
+			  grep { exists $location->{$_} } @stations;
+
+			my @station_pairs;
+			my @polylines;
+			my %seen;
+
+			my @skipped_journeys;
+			my @polyline_journeys = grep { $_->{polyline} } @journeys;
+			my @beeline_journeys  = grep { not $_->{polyline} } @journeys;
+
+			if ( $route_type eq 'polyline' ) {
+				@beeline_journeys = ();
+			}
+			elsif ( $route_type eq 'beeline' ) {
+				push( @beeline_journeys, @polyline_journeys );
+				@polyline_journeys = ();
+			}
+
+			for my $journey (@polyline_journeys) {
+				my @polyline = @{ $journey->{polyline} };
+				my $from_eva = $journey->{from_eva};
+				my $to_eva   = $journey->{to_eva};
+
+				my $from_index
+				  = first_index { $_->[2] and $_->[2] == $from_eva } @polyline;
+				my $to_index
+				  = first_index { $_->[2] and $_->[2] == $to_eva } @polyline;
+
+				if (   $from_index == -1
+					or $to_index == -1 )
+				{
+					# Fall back to route
+					delete $journey->{polyline};
+					next;
+				}
+
+				my $key
+				  = $from_eva . '!'
+				  . $to_eva . '!'
+				  . ( $to_index - $from_index );
+
+				if ( $seen{$key} ) {
+					next;
+				}
+
+				$seen{$key} = 1;
+
+				# direction does not matter at the moment
+				$key
+				  = $to_eva . '!'
+				  . $from_eva . '!'
+				  . ( $to_index - $from_index );
+				$seen{$key} = 1;
+
+				@polyline = @polyline[ $from_index .. $to_index ];
+				my @polyline_coords;
+				for my $coord (@polyline) {
+					push( @polyline_coords, [ $coord->[1], $coord->[0] ] );
+				}
+				push( @polylines, [@polyline_coords] );
+			}
+
+			for my $journey (@beeline_journeys) {
+
+				my @route = map { $_->[0] } @{ $journey->{route} };
+
+				my $from_index
+				  = first_index { $_ eq $journey->{from_name} } @route;
+				my $to_index = first_index { $_ eq $journey->{to_name} } @route;
+
+				if ( $from_index == -1 ) {
+					my $rename = $self->app->renamed_station;
+					$from_index = first_index {
+						( $rename->{$_} // $_ ) eq $journey->{from_name}
+					}
+					@route;
+				}
+				if ( $to_index == -1 ) {
+					my $rename = $self->app->renamed_station;
+					$to_index = first_index {
+						( $rename->{$_} // $_ ) eq $journey->{to_name}
+					}
+					@route;
+				}
+
+				if (   $from_index == -1
+					or $to_index == -1 )
+				{
+					push( @skipped_journeys,
+						[ $journey, 'Start/Ziel nicht in Route gefunden' ] );
+					next;
+				}
+
+          # Manual journey entries are only included if one of the following
+          # conditions is satisfied:
+          # * their route has more than two elements (-> probably more than just
+          #   start and stop station), or
+          # * $include_manual is true (-> user wants to see incomplete routes)
+          # This avoids messing up the map in case an A -> B connection has been
+          # tracked both with a regular checkin (-> detailed route shown on map)
+          # and entered manually (-> beeline also shown on map, typically
+          # significantly differs from detailed route) -- unless the user
+          # sets include_manual, of course.
+				if (    $journey->{edited} & 0x0010
+					and @route <= 2
+					and not $include_manual )
+				{
+					push( @skipped_journeys,
+						[ $journey, 'Manueller Eintrag ohne Unterwegshalte' ] );
+					next;
+				}
+
+				@route = @route[ $from_index .. $to_index ];
+
+				my $key = join( '|', @route );
+
+				if ( $seen{$key} ) {
+					next;
+				}
+
+				$seen{$key} = 1;
+
+				# direction does not matter at the moment
+				$seen{ join( '|', reverse @route ) } = 1;
+
+				my $prev_station = shift @route;
+				for my $station (@route) {
+					push( @station_pairs, [ $prev_station, $station ] );
+					$prev_station = $station;
+				}
+			}
+
+			@station_pairs = uniq_by { $_->[0] . '|' . $_->[1] } @station_pairs;
+			@station_pairs = grep {
+				      exists $location->{ $_->[0] }
+				  and exists $location->{ $_->[1] }
+			} @station_pairs;
+			@station_pairs
+			  = map { [ $location->{ $_->[0] }, $location->{ $_->[1] } ] }
+			  @station_pairs;
+
+			my @routes;
+
+			my @lats = map { $_->[0][0] } @station_coordinates;
+			my @lons = map { $_->[0][1] } @station_coordinates;
+			my $min_lat = List::Util::min @lats;
+			my $max_lat = List::Util::max @lats;
+			my $min_lon = List::Util::min @lons;
+			my $max_lon = List::Util::max @lons;
+
+			return {
+				skipped_journeys    => \@skipped_journeys,
+				station_coordinates => \@station_coordinates,
+				polyline_groups     => [
+					{
+						polylines => $json->encode( \@station_pairs ),
+						color     => '#673ab7',
+						opacity   => $with_polyline ? 0.4 : 0.6,
+					},
+					{
+						polylines => $json->encode( \@polylines ),
+						color     => '#673ab7',
+						opacity   => 0.8,
+					}
+				],
+				bounds => [ [ $min_lat, $min_lon ], [ $max_lat, $max_lon ] ],
+			};
 		}
 	);
 
