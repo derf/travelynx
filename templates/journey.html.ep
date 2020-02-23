@@ -166,6 +166,32 @@
 						</td>
 					</tr>
 				% }
+				% if ($journey->{user_data} and $journey->{user_data}{wagongroups} and not exists $journey->{user_data}{wagons}) {
+				<tr>
+					<th scope="row">Rollmaterial</th>
+					<td class="wagons">
+						%= include '_wagons', wagongroups => $journey->{user_data}{wagongroups};
+					</td>
+				</tr>
+				% }
+				% elsif ($journey->{user_data} and $journey->{user_data}{wagons}) {
+				<tr>
+					<th scope="row">Rollmaterial</th>
+					<td class="wagons">
+						% for my $wagongroup (@{$journey->{user_data}{wagongroups} // []}) {
+							Wagenverbund <%= $wagongroup %><br/>
+						% }
+						% for my $wagon (@{$journey->{user_data}{wagons}}) {
+							<span><%= substr($wagon->{id}, 0, 2) %></span><span><%= substr($wagon->{id}, 2, 2) %></span><span><%= substr($wagon->{id}, 4, 1) %></span><span class="wagonclass"><%= substr($wagon->{id}, 5, 3) %></span><span class="wagonnum"><%= substr($wagon->{id}, 8, 3) %></span><span class="checksum"><%= substr($wagon->{id}, 11) %></span>
+							%= $wagon->{type}
+							% if ($wagon->{number}) {
+								– Wagen <%= $wagon->{number} %>
+							% }
+							<br/>
+						% }
+					</td>
+				</tr>
+				% }
 				<tr>
 					<th scope="row">Route</th>
 					<td>
@@ -194,35 +220,12 @@
 						% }
 					</td>
 				</tr>
-				% if ($journey->{user_data} and $journey->{user_data}{wagongroups} and not exists $journey->{user_data}{wagons}) {
-				<tr>
-					<th scope="row">Rollmaterial</th>
-					<td class="wagons">
-						%= include '_wagons', wagongroups => $journey->{user_data}{wagongroups};
-					</td>
-				</tr>
-				% }
-				% elsif ($journey->{user_data} and $journey->{user_data}{wagons}) {
-				<tr>
-					<th scope="row">Rollmaterial</th>
-					<td class="wagons">
-						% for my $wagongroup (@{$journey->{user_data}{wagongroups} // []}) {
-							Wagenverbund <%= $wagongroup %><br/>
-						% }
-						% for my $wagon (@{$journey->{user_data}{wagons}}) {
-							<span><%= substr($wagon->{id}, 0, 2) %></span><span><%= substr($wagon->{id}, 2, 2) %></span><span><%= substr($wagon->{id}, 4, 1) %></span><span class="wagonclass"><%= substr($wagon->{id}, 5, 3) %></span><span class="wagonnum"><%= substr($wagon->{id}, 8, 3) %></span><span class="checksum"><%= substr($wagon->{id}, 11) %></span>
-							%= $wagon->{type}
-							% if ($wagon->{number}) {
-								– Wagen <%= $wagon->{number} %>
-							% }
-							<br/>
-						% }
-					</td>
-				</tr>
-				% }
 			</table>
 		</div>
 	</div>
+	% if (stash('polyline_groups')) {
+		%= include '_map', station_coordinates => stash('station_coordinates'), polyline_groups => stash('polyline_groups')
+	% }
 	% if (not stash('readonly')) {
 		<div class="row hide-on-small-only">
 			<div class="col s12 m6 l6 center-align">

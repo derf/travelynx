@@ -3726,16 +3726,7 @@ sub startup {
 			  = map { [ $location->{ $_->[0] }, $location->{ $_->[1] } ] }
 			  @station_pairs;
 
-			my @routes;
-
-			my @lats = map { $_->[0][0] } @station_coordinates;
-			my @lons = map { $_->[0][1] } @station_coordinates;
-			my $min_lat = List::Util::min @lats;
-			my $max_lat = List::Util::max @lats;
-			my $min_lon = List::Util::min @lons;
-			my $max_lon = List::Util::max @lons;
-
-			return {
+			my $ret = {
 				skipped_journeys    => \@skipped_journeys,
 				station_coordinates => \@station_coordinates,
 				polyline_groups     => [
@@ -3750,8 +3741,20 @@ sub startup {
 						opacity   => 0.8,
 					}
 				],
-				bounds => [ [ $min_lat, $min_lon ], [ $max_lat, $max_lon ] ],
 			};
+
+			if (@station_coordinates) {
+				my @lats = map { $_->[0][0] } @station_coordinates;
+				my @lons = map { $_->[0][1] } @station_coordinates;
+				my $min_lat = List::Util::min @lats;
+				my $max_lat = List::Util::max @lats;
+				my $min_lon = List::Util::min @lons;
+				my $max_lon = List::Util::max @lons;
+				$ret->{bounds}
+				  = [ [ $min_lat, $min_lon ], [ $max_lat, $max_lon ] ];
+			}
+
+			return $ret;
 		}
 	);
 

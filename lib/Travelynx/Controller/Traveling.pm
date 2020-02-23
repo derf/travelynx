@@ -119,12 +119,18 @@ sub user_status {
 		if ( not $user->{public_level} & 0x04 ) {
 			delete $journey->{user_data}{comment};
 		}
+		my $map_data = $self->journeys_to_map_data(
+			journeys       => [$journey],
+			include_manual => 1,
+		);
 		$self->render(
 			'journey',
 			error    => undef,
+			with_map => 1,
 			readonly => 1,
 			journey  => $journey,
 			twitter  => \%tw_data,
+			%{$map_data},
 		);
 	}
 	else {
@@ -665,10 +671,16 @@ sub journey_details {
 	);
 
 	if ($journey) {
+		my $map_data = $self->journeys_to_map_data(
+			journeys       => [$journey],
+			include_manual => 1,
+		);
 		$self->render(
 			'journey',
-			error   => undef,
-			journey => $journey,
+			error    => undef,
+			journey  => $journey,
+			with_map => 1,
+			%{$map_data},
 		);
 	}
 	else {
