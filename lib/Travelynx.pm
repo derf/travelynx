@@ -2077,10 +2077,19 @@ sub startup {
 
 					$cache->freeze( $url, $ret );
 
-					my $iris_stations  = join( '|', $train->route );
-					my $hafas_stations = join( '|', @station_list );
+                   # borders ("(Gr)" as in "Grenze") are only returned by HAFAS.
+                   # They are not stations.
+					my $iris_stations = join( '|', $train->route );
+					my $hafas_stations
+					  = join( '|', grep { $_ !~ m{\(Gr\)$} } @station_list );
 
-					if ( $iris_stations ne $hafas_stations ) {
+                 # Do not return polyline if it belongs to an entirely different
+                 # train. Trains with longer routes (e.g. due to train number
+                 # changes, which are handled by HAFAS but left out in IRIS)
+                 # are okay though.
+					if ( $iris_stations ne $hafas_stations
+						and index( $hafas_stations, $iris_stations ) == -1 )
+					{
 						$self->app->log->warn( 'Ignoring polyline for '
 							  . $train->line
 							  . ": IRIS route does not agree with HAFAS route: $iris_stations != $hafas_stations"
