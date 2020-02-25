@@ -2052,6 +2052,7 @@ sub startup {
 					my ($tx) = @_;
 					my $body = decode( 'utf-8', $tx->res->body );
 					my $json = JSON->new->decode($body);
+					my @station_list;
 					my @coordinate_list;
 
 					for my $feature ( @{ $json->{polyline}{features} } ) {
@@ -2061,6 +2062,8 @@ sub startup {
 								and $feature->{properties}{type} eq 'stop' )
 							{
 								push( @{$coord}, $feature->{properties}{id} );
+								push( @station_list,
+									$feature->{properties}{name} );
 							}
 							push( @coordinate_list, $coord );
 						}
@@ -2073,7 +2076,20 @@ sub startup {
 					};
 
 					$cache->freeze( $url, $ret );
-					$promise->resolve($ret);
+
+					my $iris_stations  = join( '|', $train->route );
+					my $hafas_stations = join( '|', @station_list );
+
+					if ( $iris_stations ne $hafas_stations ) {
+						$self->app->log->warn( 'Ignoring polyline for '
+							  . $train->line
+							  . ": IRIS route does not agree with HAFAS route: $iris_stations != $hafas_stations"
+						);
+						$promise->reject('polyline route mismatch');
+					}
+					else {
+						$promise->resolve($ret);
+					}
 				}
 			)->catch(
 				sub {
