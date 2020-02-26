@@ -71,6 +71,7 @@ sub user_status {
 					journey_id    => $candidate->{id},
 					verbose       => 1,
 					with_datetime => 1,
+					with_polyline => 1,
 				);
 			}
 		}
