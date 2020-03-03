@@ -23,6 +23,22 @@
 				% else {
 					%= $via
 				% }
+				<br/>
+				% if ($train->{message_id}{70} or $train->{message_id}{71}) {
+					<i class="material-icons" aria-label="Ohne WLAN">portable_wifi_off</i>
+				% }
+				% if (($train->{message_id}{73} or $train->{message_id}{74} or $train->{message_id}{75} or $train->{message_id}{76} or $train->{message_id}{80}) and not $train->{message_id}{84}) {
+					<i class="material-icons" aria-label="Abweichende Wagenreihung">transfer_within_a_station</i>
+				% }
+				% if ($train->{message_id}{83} or $train->{message_id}{93} or $train->{message_id}{95}) {
+					<i class="material-icons" aria-label="Eingeschränkte Barrierefreiheit">info_outline</i>
+				% }
+				% if ($train->{message_id}{82} or $train->{message_id}{85}) {
+					<i class="material-icons" aria-label="Fehlende Wagen">people</i>
+				% }
+				% if ($train->{message_id}{96} or $train->{message_id}{97}) {
+					<i class="material-icons" aria-label="Zug ist überbesetzt">warning</i>
+				% }
 			</td>
 			<td>
 				% if ($train->departure_is_cancelled) {
@@ -64,6 +80,21 @@
 				% }
 				% else {
 					%= $via
+				% }
+				% if ($train->{message_id}{70} or $train->{message_id}{71}) {
+					<i class="material-icons" aria-label="Ohne WLAN">portable_wifi_off</i>
+				% }
+				% if (($train->{message_id}{73} or $train->{message_id}{74} or $train->{message_id}{75} or $train->{message_id}{76} or $train->{message_id}{80}) and not $train->{message_id}{84}) {
+					<i class="material-icons" aria-label="Abweichende Wagenreihung">transfer_within_a_station</i>
+				% }
+				% if ($train->{message_id}{83} or $train->{message_id}{93} or $train->{message_id}{95}) {
+					<i class="material-icons" aria-label="Eingeschränkte Barrierefreiheit">info_outline</i>
+				% }
+				% if ($train->{message_id}{82} or $train->{message_id}{85}) {
+					<i class="material-icons" aria-label="Fehlende Wagen">people</i>
+				% }
+				% if ($train->{message_id}{96} or $train->{message_id}{97}) {
+					<i class="material-icons" aria-label="Zug ist überbesetzt">warning</i>
 				% }
 			</td>
 			<td>

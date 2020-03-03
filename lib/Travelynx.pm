@@ -2869,6 +2869,13 @@ sub startup {
 			  sort { $a->[1] <=> $b->[1] }
 			  map { [ $_, $_->[0]->sched_departure->epoch ] } @cancellations;
 
+			for my $result (@results) {
+				my $train = $result->[0];
+				my @message_ids
+				  = List::Util::uniq map { $_->[1] } $train->raw_messages;
+				$train->{message_id} = { map { $_ => 1 } @message_ids };
+			}
+
 			return ( @results, @cancellations );
 		}
 	);
