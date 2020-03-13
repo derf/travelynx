@@ -21,7 +21,7 @@ sub custom {
 	my $reg_mail = Email::Simple->create(
 		header => [
 			To             => $to,
-			From           => 'Travelynx <travelynx@finalrewind.org>',
+			From           => $self->{config}{from},
 			Subject        => $subject,
 			'Content-Type' => 'text/plain; charset=UTF-8',
 		],
