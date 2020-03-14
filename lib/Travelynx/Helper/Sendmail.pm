@@ -20,7 +20,7 @@ sub custom {
 
 	my $reg_mail = MIME::Entity->build(
 		To       => $to,
-		From     => $from,
+		From     => $self->{config}{from},
 		Subject  => encode( 'MIME-Header', $subject ),
 		Type     => 'text/plain',
 		Charset  => 'UTF-8',
