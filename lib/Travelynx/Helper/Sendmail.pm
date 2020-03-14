@@ -7,7 +7,7 @@ use 5.020;
 
 use Encode qw(encode);
 use Email::Sender::Simple qw(try_to_sendmail);
-use Email::Simple;
+use MIME::Entity;
 
 sub new {
 	my ( $class, %opt ) = @_;
@@ -18,14 +18,14 @@ sub new {
 sub custom {
 	my ( $self, $to, $subject, $body ) = @_;
 
-	my $reg_mail = Email::Simple->create(
-		header => [
-			To             => $to,
-			From           => $self->{config}{from},
-			Subject        => $subject,
-			'Content-Type' => 'text/plain; charset=UTF-8',
-		],
-		body => encode( 'utf-8', $body ),
+	my $reg_mail = MIME::Entity->build(
+		To       => $to,
+		From     => $from,
+		Subject  => encode( 'MIME-Header', $subject ),
+		Type     => 'text/plain',
+		Charset  => 'UTF-8',
+		Encoding => 'quoted-printable',
+		Data     => encode( 'utf-8', $body ),
 	);
 
 	if ( $self->{config}->{disabled} ) {
