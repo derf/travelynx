@@ -1,0 +1,50 @@
+name: Perl Tests
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  perl:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        perl-version:
+          - '5.20'
+          - 'latest'
+          - 'threaded'
+
+    container:
+      image: perl:${{ matrix.perl-version }}
+
+    services:
+      postgres:
+        image: postgres:11
+        env:
+          POSTGRES_USER: travelynx
+          POSTGRES_PASSWORD: whatever
+          POSTGRES_DB: travelynx_ci_test
+        ports:
+        - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: perl -V
+        run: perl -V
+      - name: Setup Repo
+        run: |
+          rm -f cpanfile.snapshot
+          cp .github/travelynx.conf travelynx.conf
+      - name: Install PostgreSQL Client Library
+        run: apt install libpq-dev
+      - name: Install Perl Dependencies
+        run: curl -sL https://git.io/cpm | perl - install -g --show-build-log-on-failure
+      - name: Run Tests
+        run: prove -l t
