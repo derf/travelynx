@@ -2703,7 +2703,7 @@ sub startup {
 		'get_connection_targets' => sub {
 			my ( $self, %opt ) = @_;
 
-			my $uid       = $opt{uid} //= $self->current_user->{id};
+			my $uid = $opt{uid} //= $self->current_user->{id};
 			my $threshold = $opt{threshold}
 			  // DateTime->now( time_zone => 'Europe/Berlin' )
 			  ->subtract( months => 4 );
@@ -2738,7 +2738,7 @@ sub startup {
 			);
 			my @destinations
 			  = $res->hashes->grep( sub { shift->{count} >= $min_count } )
-			  ->map( sub                { shift->{dest} } )->each;
+			  ->map( sub { shift->{dest} } )->each;
 			@destinations
 			  = grep { $self->app->station_by_eva->{$_} } @destinations;
 			@destinations
@@ -2755,6 +2755,7 @@ sub startup {
 			my $use_history = $self->account_use_history($uid);
 
 			my ( $eva, $exclude_via, $exclude_train_id, $exclude_before );
+			my $now = $self->now->epoch;
 
 			if ( $opt{eva} ) {
 				if ( $use_history & 0x01 ) {
@@ -2776,6 +2777,8 @@ sub startup {
 				}
 			}
 
+			$exclude_before //= $now - 300;
+
 			if ( not $eva ) {
 				return;
 			}
@@ -2790,13 +2793,13 @@ sub startup {
 				return;
 			}
 
-			my $stationboard = $self->get_departures( $eva, 0, 40, 1 );
+			my $stationboard = $self->get_departures( $eva, 10, 40, 1 );
 			if ( $stationboard->{errstr} ) {
 				return;
 			}
 			@{ $stationboard->{results} } = map { $_->[0] }
 			  sort { $a->[1] <=> $b->[1] }
-			  map { [ $_, $_->departure ? $_->departure->epoch : 0 ] }
+			  map  { [ $_, $_->departure ? $_->departure->epoch : 0 ] }
 			  @{ $stationboard->{results} };
 			my @results;
 			my @cancellations;
@@ -2850,7 +2853,13 @@ sub startup {
 							and List::Util::any { $_ eq $dest } @via )
 						{
 							push( @results, [ $train, $dest ] );
-							$via_count{$dest}++;
+
+                 # Show all past and up to two future departures per destination
+							if ( not $train->departure
+								or $train->departure->epoch >= $now )
+							{
+								$via_count{$dest}++;
+							}
 							next;
 						}
 					}
