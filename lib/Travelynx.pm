@@ -1790,11 +1790,12 @@ sub startup {
 			}
 
 			my @journeys = $self->get_user_travels(
-				uid       => $uid,
-				cancelled => $opt{cancelled} ? 1 : 0,
-				verbose   => 1,
-				after     => $interval_start,
-				before    => $interval_end
+				uid           => $uid,
+				cancelled     => $opt{cancelled} ? 1 : 0,
+				verbose       => 1,
+				with_polyline => 1,
+				after         => $interval_start,
+				before        => $interval_end
 			);
 			my $stats = $self->compute_journey_stats(@journeys);
 

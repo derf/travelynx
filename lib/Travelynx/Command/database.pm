@@ -997,6 +997,21 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v20 -> v21
+	# After introducing polyline support, journey distance calculation diverged:
+	# the detail view (individual train) used the polyline, whereas monthly and
+	# yearly statistics were still based on beeline between intermediate stops.
+	# Release 1.16.0 fixes this -> ensure all caches are rebuilt.
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				truncate journey_stats;
+				update schema_version set version = 21;
+			}
+		);
+	},
 );
 
 sub setup_db {
