@@ -143,6 +143,20 @@ sub run {
 		$db->select( 'journeys', [ 'id', 'route' ], { polyline_id => undef } )
 		->hashes->each )
 	{
+
+		# prior to v1.9.4, routes were stored as [["stop1"], ["stop2"], ...].
+		# Nowadays, the common format is [["stop1", {}, null], ...].
+		# entry[1] is non-empty only while checked in, entry[2] is non-null only
+		# if the stop is unscheduled or has been cancelled.
+		#
+		# Here, we pretened to use the new format, as we're looking for
+		# matching routes in more recent journeys.
+		#
+		# Note that journey->{route} is serialized JSON (i.e., a string).
+		# It is not deserialized for performance reasons.
+		$journey->{route}
+		  =~ s/ (?<! additional ) (?<! cancelled ) "] /", {}, null]/gx;
+
 		my $ref = $db->select(
 			'journeys',
 			[ 'id', 'polyline_id' ],
