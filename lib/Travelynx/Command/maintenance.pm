@@ -149,7 +149,7 @@ sub run {
 		# entry[1] is non-empty only while checked in, entry[2] is non-null only
 		# if the stop is unscheduled or has been cancelled.
 		#
-		# Here, we pretened to use the new format, as we're looking for
+		# Here, we pretend to use the new format, as we're looking for
 		# matching routes in more recent journeys.
 		#
 		# Note that journey->{route} is serialized JSON (i.e., a string).
