@@ -806,11 +806,10 @@ sub startup {
 
 				my $tx = $db->begin;
 
-				if ( defined $train ) {
-
-					if ( not $train->arrival ) {
-						die("Train has no arrival timestamp\n");
-					}
+				if ( defined $train and not $train->arrival and not $force ) {
+					die("Train has no arrival timestamp\n");
+				}
+				elsif ( defined $train and $train->arrival ) {
 
 					$has_arrived = $train->arrival->epoch < $now->epoch ? 1 : 0;
 					my $json = JSON->new;
