@@ -2135,27 +2135,15 @@ sub startup {
 				  = "https://2.db.transport.rest/stations/${eva}/arrivals?duration=5&when=$dep_ts";
 			}
 
-			if ( my $content = $cache->get($url) ) {
-				$promise->resolve($content);
-				return $promise;
-			}
-
-			$self->ua->request_timeout(5)->get_p(
-				$url => {
-					'User-Agent' => 'travelynx/' . $self->app->config->{version}
-				}
-			)->then(
+			$self->get_hafas_rest_p($url)->then(
 				sub {
-					my ($tx) = @_;
-					my $body = decode( 'utf-8', $tx->res->body );
-					my $json = JSON->new->decode($body);
+					my ($json) = @_;
 
 					for my $result ( @{$json} ) {
 						if (    $result->{line}
 							and $result->{line}{fahrtNr} == $train->train_no )
 						{
 							my $trip_id = $result->{tripId};
-							$cache->set( $url, $trip_id );
 							$promise->resolve($trip_id);
 							return;
 						}
@@ -2169,6 +2157,36 @@ sub startup {
 				}
 			)->wait;
 
+			return $promise;
+		}
+	);
+
+	$self->helper(
+		'get_hafas_rest_p' => sub {
+			my ( $self, $url ) = @_;
+
+			my $cache   = $self->app->cache_iris_main;
+			my $promise = Mojo::Promise->new;
+
+			if ( my $content = $cache->thaw($url) ) {
+				$promise->resolve($content);
+				return $promise;
+			}
+
+			$self->ua->request_timeout(5)->get_p($url)->then(
+				sub {
+					my ($tx) = @_;
+					my $json = JSON->new->decode( $tx->res->body );
+					$cache->freeze( $url, $json );
+					$promise->resolve($json);
+				}
+			)->catch(
+				sub {
+					my ($err) = @_;
+					$self->app->log->warn("get($url): $err");
+					$promise->reject($err);
+				}
+			)->wait;
 			return $promise;
 		}
 	);
