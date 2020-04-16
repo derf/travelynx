@@ -807,7 +807,8 @@ sub startup {
 				my $tx = $db->begin;
 
 				if ( defined $train and not $train->arrival and not $force ) {
-					die("Train has no arrival timestamp\n");
+					my $train_no = $train->train_no;
+					die("Train ${train_no} has no arrival timestamp\n");
 				}
 				elsif ( defined $train and $train->arrival ) {
 
