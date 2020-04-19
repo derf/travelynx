@@ -2,6 +2,24 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		1.16
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left" aria-label="Neues Feature">add</i>
+			Auswertung von Zugfahrten von/nach bestimmten Stationen
+			aufgeschlüsselt nach Jahr und Monat. Diese Daten können für die
+			Angaben zur Pendlerpauschale bei der Steuererklärung nützlich sein.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Neues Feature">add</i>
+			CSV-Export aller Fahrten.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		1.15
 	</div>
 	<div class="col s12 m11 l11">
