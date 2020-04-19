@@ -29,8 +29,12 @@
 
 <h2>Auswertungen</h2>
 <div class="row">
-	<div class="col s12 m12 l12 center-align">
-		<a href="/history/map" class="waves-effect waves-light btn"><i class="material-icons left">map</i> Fahrtenkarte</a>
+	<div class="col s12 m12 l5 center-align">
+		<a href="/history/map" class="waves-effect waves-light btn"><i class="material-icons left" aria-hidden="true">map</i> Fahrtenkarte</a>
+	</div>
+	<div class="col s12 m12 l2">&nbsp;</div>
+	<div class="col s12 m12 l5 center-align">
+		<a href="/history/commute" class="waves-effect waves-light btn"><i class="material-icons left" aria-hidden="true">search</i> nach Station</a>
 	</div>
 </div>
 
