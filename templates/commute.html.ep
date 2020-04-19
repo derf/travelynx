@@ -85,5 +85,5 @@
 
 % for my $i (0 .. $#{$months}) {
 	<h2><%= $months->[$i] %></h2>
-	%= include '_history_trains', date_format => '%d.%m.', journeys => $journeys_by_month->{$i+1} // []
+	%= include '_history_trains', date_format => '%a %d.%m.', journeys => $journeys_by_month->{$i+1} // []
 % }
