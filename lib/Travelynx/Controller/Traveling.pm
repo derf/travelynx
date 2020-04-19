@@ -5,7 +5,7 @@ use DateTime;
 use DateTime::Format::Strptime;
 use JSON;
 use List::Util qw(uniq min max);
-use List::UtilsBy qw(uniq_by);
+use List::UtilsBy qw(max_by uniq_by);
 use List::MoreUtils qw(first_index);
 use Travel::Status::DE::IRIS::Stations;
 
@@ -517,21 +517,26 @@ sub commute {
 	);
 	my $interval_end = $interval_start->clone->add( years => 1 );
 
-	if ( not $station ) {
-		my @top_station_ids = $self->get_top_destinations(
-			after  => $interval_start,
-			before => $interval_end,
-		);
-		if (@top_station_ids) {
-			$station = $top_station_ids[0][1];
-		}
-	}
-
 	my @journeys = $self->get_user_travels(
 		after         => $interval_start,
 		before        => $interval_end,
 		with_datetime => 1,
 	);
+
+	if ( not $station ) {
+		my %candidate_count;
+		for my $journey (@journeys) {
+			my $dep = $journey->{rt_departure};
+			my $arr = $journey->{rt_arrival};
+			if ( $arr->dow <= 5 and $arr->hour <= 12 ) {
+				$candidate_count{ $journey->{to_name} }++;
+			}
+			elsif ( $dep->dow <= 5 and $dep->hour > 12 ) {
+				$candidate_count{ $journey->{from_name} }++;
+			}
+		}
+		$station = max_by { $candidate_count{$_} } keys %candidate_count;
+	}
 
 	my %journeys_by_month;
 	my %count_by_month;

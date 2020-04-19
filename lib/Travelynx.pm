@@ -2720,40 +2720,6 @@ sub startup {
 	);
 
 	$self->helper(
-		'get_top_destinations' => sub {
-			my ( $self, %opt ) = @_;
-			my $uid = $opt{uid} //= $self->current_user->{id};
-			my $db  = $opt{db}  //= $self->pg->db;
-
-			my @stations;
-
-			my $res = $db->query(
-				qq{
-				select arr_eva, count(arr_eva) as count
-				from journeys_str
-				where user_id = ?
-				and real_dep_ts between ? and ?
-				group by arr_eva
-				order by count desc
-				limit 5
-			}, $uid, $opt{after}->epoch, $opt{before}->epoch
-			);
-
-			for my $dest ( $res->hashes->each ) {
-				$self->app->log->debug( $dest->{arr_eva} );
-				$self->app->log->debug( $dest->{count} );
-				if ( my $station
-					= $self->app->station_by_eva->{ $dest->{arr_eva} } )
-				{
-					push( @stations, $station );
-				}
-			}
-
-			return @stations;
-		}
-	);
-
-	$self->helper(
 		'get_connection_targets' => sub {
 			my ( $self, %opt ) = @_;
 
