@@ -50,7 +50,9 @@
 					% if ($train->departure_delay) {
 						%= sprintf('(%+d)', $train->departure_delay)
 					% }
-					<br/>Gleis <%= $train->platform || '?' %>
+					% if ($train->platform) {
+						<br/>Gleis <%= $train->platform %>
+					% }
 				% }
 			</td>
 		</tr>
@@ -108,10 +110,10 @@
 					% }
 				% }
 			</td><td>
-				% if (not $train->departure_is_cancelled) {
-					Gleis <%= $train->platform || '?' %>
+				% if ($train->platform and not $train->departure_is_cancelled) {
+					Gleis <%= $train->platform %>
 				% }
-				% else {
+				% elsif ($train->departure_is_cancelled) {
 					fällt aus
 				% }
 			</td>
