@@ -72,6 +72,7 @@ sub startup {
 
 	$self->defaults( layout => 'default' );
 
+	$self->types->type( csv  => 'text/csv; charset=utf-8' );
 	$self->types->type( json => 'application/json; charset=utf-8' );
 
 	$self->plugin('Config');
@@ -4043,6 +4044,7 @@ sub startup {
 	$authed_r->get('/account/mail')->to('account#change_mail');
 	$authed_r->get('/export.json')->to('account#json_export');
 	$authed_r->get('/history.json')->to('traveling#json_history');
+	$authed_r->get('/history.csv')->to('traveling#csv_history');
 	$authed_r->get('/history')->to('traveling#history');
 	$authed_r->get('/history/commute')->to('traveling#commute');
 	$authed_r->get('/history/map')->to('traveling#map_history');

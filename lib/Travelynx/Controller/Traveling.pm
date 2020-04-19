@@ -7,6 +7,7 @@ use JSON;
 use List::Util qw(uniq min max);
 use List::UtilsBy qw(max_by uniq_by);
 use List::MoreUtils qw(first_index);
+use Text::CSV;
 use Travel::Status::DE::IRIS::Stations;
 
 sub homepage {
@@ -642,6 +643,54 @@ sub json_history {
 	my ($self) = @_;
 
 	$self->render( json => [ $self->get_user_travels ] );
+}
+
+sub csv_history {
+	my ($self) = @_;
+
+	my $csv = Text::CSV->new( { eol => "\r\n" } );
+	my $buf = q{};
+
+	$csv->combine(
+		qw(Zugtyp Linie Nummer Start Ziel),
+		'Start (DS100)',
+		'Ziel (DS100)',
+		'Abfahrt (soll)',
+		'Abfahrt (ist)',
+		'Ankunft (soll)',
+		'Ankunft (ist)',
+		'Kommentar',
+		'ID'
+	);
+	$buf .= $csv->string;
+
+	for my $journey ( $self->get_user_travels( with_datetime => 1 ) ) {
+		if (
+			$csv->combine(
+				$journey->{type},
+				$journey->{line},
+				$journey->{no},
+				$journey->{from_name},
+				$journey->{to_name},
+				$journey->{from_ds100},
+				$journey->{to_ds100},
+				$journey->{sched_departure}->strftime('%Y-%m-%d %H:%M'),
+				$journey->{rt_departure}->strftime('%Y-%m-%d %H:%M'),
+				$journey->{sched_arrival}->strftime('%Y-%m-%d %H:%M'),
+				$journey->{rt_arrival}->strftime('%Y-%m-%d %H:%M'),
+				$journey->{user_data}{comment} // q{},
+				$journey->{id}
+			)
+		  )
+		{
+			$buf .= $csv->string;
+		}
+	}
+
+	$self->render(
+		text   => $buf,
+		format => 'csv'
+	);
 }
 
 sub yearly_history {

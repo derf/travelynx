@@ -41,22 +41,29 @@
 <h2>Ausfälle und Verspätungen</h2>
 <div class="row">
 	<div class="col s12 m12 l5 center-align">
-		<a href="/cancelled" class="waves-effect waves-light btn"><i class="material-icons left">cancel</i> Zugausfälle</a>
+		<a href="/cancelled" class="waves-effect waves-light btn"><i class="material-icons left" aria-hidden="true">cancel</i> Zugausfälle</a>
 	</div>
 	<div class="col s12 m12 l2">&nbsp;</div>
 	<div class="col s12 m12 l5 center-align">
-		<a href="/fgr" class="waves-effect waves-light btn"><i class="material-icons left">feedback</i> Fahrgastrechte</a>
+		<a href="/fgr" class="waves-effect waves-light btn"><i class="material-icons left" aria-hidden="true">feedback</i> Fahrgastrechte</a>
 	</div>
 </div>
 
 <h2>Rohdaten</h2>
 <div class="row">
 	<div class="col s12 m12 l5 center-align">
-		<a href="/history.json" class="waves-effect waves-light btn"><i class="material-icons left">cloud</i> JSON-Export</a>
+		<a href="/history.json" class="waves-effect waves-light btn"><i class="material-icons left" aria-hidden="true">cloud</i> JSON-Export</a>
 	</div>
 	<div class="col s12 m12 l2">&nbsp;</div>
 	<div class="col s12 m12 l5 center-align">
-		<a href="/journey/add" class="waves-effect waves-light btn"><i class="material-icons left">add</i> Neue Fahrt</a>
+		<a href="/history.csv" class="waves-effect waves-light btn"><i class="material-icons left" aria-hidden="true">list</i> CSV-Export</a>
+	</div>
+</div>
+<div class="row">
+	<div class="col s12 m12 l5 center-align">&nbsp;</div>
+	<div class="col s12 m12 l2">&nbsp;</div>
+	<div class="col s12 m12 l5 center-align">
+		<a href="/journey/add" class="waves-effect waves-light btn"><i class="material-icons left" aria-hidden="true">add</i> Neue Fahrt</a>
 	</div>
 </div>
 
