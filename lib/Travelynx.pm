@@ -2733,7 +2733,7 @@ sub startup {
 				where user_id = ?
 				and real_dep_ts between ? and ?
 				group by arr_eva
-				order by count
+				order by count desc
 				limit 5
 			}, $uid, $opt{after}->epoch, $opt{before}->epoch
 			);
