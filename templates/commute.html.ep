@@ -1,0 +1,89 @@
+<h1>Pendel-Statistiken</h1>
+
+<div class="row">
+	<div class="col s12">
+		<p>Diese Daten können zum Beispiel für die Angaben zur Pendlerpauschale
+			bei der Steuererklärung genutzt werden.</p>
+	</div>
+</div>
+
+%= form_for '/history/commute' => begin
+	<div class="row">
+		<div class="input-field col s12 m12 l12">
+			%= text_field 'year', id => 'year', class => 'validate', pattern => '[0-9][0-9][0-9][0-9]'
+			<label for="year">Jahr</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12 m12 l6">
+			<div>
+				<label>
+					%= radio_button filter_type => 'exact'
+					<span>Name der Station ist:</span>
+				</label>
+			</div>
+			<div>
+				<label>
+					%= radio_button filter_type => 'substring'
+					<span>Name der Station enthält:</span>
+				</label>
+			</div>
+			<div>
+				<label>
+					%= radio_button filter_type => 'regex'
+					<span>Name der Station erfüllt den regulären Ausdruck:</span>
+				</label>
+			</div>
+		</div>
+		<div class="input-field col s12 m12 l6">
+			%= text_field 'station', id => 'station', required => undef, class => 'autocomplete contrast-color-text'
+			<label for="station">Fahrtziel</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s12 m12 l12 center-align">
+			<button class="btn waves-effect waves-light" type="submit" name="action" value="show">
+				<i class="material-icons left" aria-hidden="true">send</i>
+				Anzeigen
+			</button>
+		</div>
+	</div>
+%= end
+
+<h2><%= param('year') %></h2>
+<div class="row">
+	<div class="col s12 m12 l12 center-align">
+		<p>
+			An <b><%= $total_journeys %></b> Tagen im Jahr wurde mindestens
+			eine Zugfahrt von oder zu
+			% if (param('filter_type') eq 'exact') {
+				der ausgewählten Station
+			% }
+			% else {
+				den ausgewählten Stationen
+			% }
+			eingetragen.
+		</p>
+		<table class="striped">
+			<thead>
+				<tr>
+					<th>Monat</th>
+					<th>Tage mit Fahrten</th>
+				</tr>
+			</thead>
+			<tbody>
+				% for my $i (0 .. $#{$months}) {
+					<tr>
+						<td><%= $months->[$i] %></td>
+						<td><%= scalar @{$journeys_by_month->{$i+1} // []} %></td>
+					</tr>
+				% }
+			</tbody>
+		</table>
+	</div>
+</div>
+
+% for my $i (0 .. $#{$months}) {
+	<h2><%= $months->[$i] %></h2>
+	%= include '_history_trains', date_format => '%d.%m.', journeys => $journeys_by_month->{$i+1} // []
+% }

@@ -104,7 +104,7 @@ sub user_status {
 		$tw_data{description} = sprintf(
 			'%s %s von %s nach %s',
 			$status->{train_type}, $status->{train_line} // $status->{train_no},
-			$status->{dep_name}, $status->{arr_name} // 'irgendwo'
+			$status->{dep_name},   $status->{arr_name}   // 'irgendwo'
 		);
 		if ( $status->{real_arrival}->epoch ) {
 			$tw_data{description} .= $status->{real_arrival}
@@ -439,7 +439,7 @@ sub station {
 
 		@results = map { $_->[0] }
 		  sort { $b->[1] <=> $a->[1] }
-		  map { [ $_, $_->departure->epoch // $_->sched_departure->epoch ] }
+		  map  { [ $_, $_->departure->epoch // $_->sched_departure->epoch ] }
 		  @results;
 
 		if ($train) {
@@ -486,6 +486,100 @@ sub history {
 	my ($self) = @_;
 
 	$self->render( template => 'history' );
+}
+
+sub commute {
+	my ($self) = @_;
+
+	my $year        = $self->param('year');
+	my $filter_type = $self->param('filter_type') || 'exact';
+	my $station     = $self->param('station');
+
+	# DateTime is very slow when looking far into the future due to DST changes
+	# -> Limit time range to avoid accidental DoS.
+	if (
+		not(    $year
+			and $year =~ m{ ^ [0-9]{4} $ }x
+			and $year > 1990
+			and $year < 2100 )
+	  )
+	{
+		$year = DateTime->now( time_zone => 'Europe/Berlin' )->year - 1;
+	}
+	my $interval_start = DateTime->new(
+		time_zone => 'Europe/Berlin',
+		year      => $year,
+		month     => 1,
+		day       => 1,
+		hour      => 0,
+		minute    => 0,
+		second    => 0,
+	);
+	my $interval_end = $interval_start->clone->add( years => 1 );
+
+	if ( not $station ) {
+		my @top_station_ids = $self->get_top_destinations(
+			after  => $interval_start,
+			before => $interval_end,
+		);
+		if (@top_station_ids) {
+			$station = $top_station_ids[0][1];
+		}
+	}
+
+	my @journeys = $self->get_user_travels(
+		after         => $interval_start,
+		before        => $interval_end,
+		with_datetime => 1,
+	);
+
+	my %journeys_by_month;
+	my $total = 0;
+
+	for my $journey ( reverse @journeys ) {
+		my $month = $journey->{rt_departure}->month;
+		if (
+			$filter_type eq 'exact'
+			and (  $journey->{to_name} eq $station
+				or $journey->{from_name} eq $station )
+		  )
+		{
+			push( @{ $journeys_by_month{$month} }, $journey );
+			$total++;
+		}
+		elsif (
+			$filter_type eq 'substring'
+			and (  $journey->{to_name} =~ m{\Q$station\E}
+				or $journey->{from_name} =~ m{\Q$station\E} )
+		  )
+		{
+			push( @{ $journeys_by_month{$month} }, $journey );
+			$total++;
+		}
+		elsif (
+			$filter_type eq 'regex'
+			and (  $journey->{to_name} =~ m{$station}
+				or $journey->{from_name} =~ m{$station} )
+		  )
+		{
+			push( @{ $journeys_by_month{$month} }, $journey );
+			$total++;
+		}
+	}
+
+	$self->param( year        => $year );
+	$self->param( filter_type => $filter_type );
+	$self->param( station     => $station );
+
+	$self->render(
+		template          => 'commute',
+		with_autocomplete => 1,
+		journeys_by_month => \%journeys_by_month,
+		total_journeys    => $total,
+		months            => [
+			qw(Januar Februar März April Mai Juni Juli August September Oktober November Dezember)
+		],
+	);
 }
 
 sub map_history {
