@@ -39,7 +39,8 @@ sub epoch_to_dt {
 
 	return DateTime->from_epoch(
 		epoch     => $epoch,
-		time_zone => 'Europe/Berlin'
+		time_zone => 'Europe/Berlin',
+		locale    => 'de-DE',
 	);
 }
 
