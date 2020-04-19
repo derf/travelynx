@@ -534,6 +534,14 @@ sub commute {
 			elsif ( $dep->dow <= 5 and $dep->hour > 12 ) {
 				$candidate_count{ $journey->{from_name} }++;
 			}
+			else {
+               # Avoid selecting an intermediate station for multi-leg commutes.
+               # Assumption: The intermediate station is also used for private
+               # travels -> penalize stations which are used on weekends or at
+               # unexpected times.
+				$candidate_count{ $journey->{from_name} }--;
+				$candidate_count{ $journey->{to_name} }--;
+			}
 		}
 		$station = max_by { $candidate_count{$_} } keys %candidate_count;
 	}
