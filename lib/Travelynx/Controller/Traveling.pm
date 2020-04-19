@@ -534,36 +534,38 @@ sub commute {
 	);
 
 	my %journeys_by_month;
+	my %count_by_month;
 	my $total = 0;
 
+	my $prev_doy = 0;
 	for my $journey ( reverse @journeys ) {
 		my $month = $journey->{rt_departure}->month;
 		if (
-			$filter_type eq 'exact'
-			and (  $journey->{to_name} eq $station
-				or $journey->{from_name} eq $station )
+			(
+				$filter_type eq 'exact' and ( $journey->{to_name} eq $station
+					or $journey->{from_name} eq $station )
+			)
+			or (
+				$filter_type eq 'substring'
+				and (  $journey->{to_name} =~ m{\Q$station\E}
+					or $journey->{from_name} =~ m{\Q$station\E} )
+			)
+			or (
+				$filter_type eq 'regex'
+				and (  $journey->{to_name} =~ m{$station}
+					or $journey->{from_name} =~ m{$station} )
+			)
 		  )
 		{
 			push( @{ $journeys_by_month{$month} }, $journey );
-			$total++;
-		}
-		elsif (
-			$filter_type eq 'substring'
-			and (  $journey->{to_name} =~ m{\Q$station\E}
-				or $journey->{from_name} =~ m{\Q$station\E} )
-		  )
-		{
-			push( @{ $journeys_by_month{$month} }, $journey );
-			$total++;
-		}
-		elsif (
-			$filter_type eq 'regex'
-			and (  $journey->{to_name} =~ m{$station}
-				or $journey->{from_name} =~ m{$station} )
-		  )
-		{
-			push( @{ $journeys_by_month{$month} }, $journey );
-			$total++;
+
+			my $doy = $journey->{rt_departure}->day_of_year;
+			if ( $doy != $prev_doy ) {
+				$count_by_month{$month}++;
+				$total++;
+			}
+
+			$prev_doy = $doy;
 		}
 	}
 
@@ -575,6 +577,7 @@ sub commute {
 		template          => 'commute',
 		with_autocomplete => 1,
 		journeys_by_month => \%journeys_by_month,
+		count_by_month    => \%count_by_month,
 		total_journeys    => $total,
 		months            => [
 			qw(Januar Februar März April Mai Juni Juli August September Oktober November Dezember)

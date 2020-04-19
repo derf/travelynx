@@ -75,7 +75,7 @@
 				% for my $i (0 .. $#{$months}) {
 					<tr>
 						<td><%= $months->[$i] %></td>
-						<td><%= scalar @{$journeys_by_month->{$i+1} // []} %></td>
+						<td><%= $count_by_month->{$i+1} // 0 %></td>
 					</tr>
 				% }
 			</tbody>
