@@ -19,7 +19,7 @@ paths:
     get:
       tags:
         - Status
-      summary: Retrieves a single status.
+      summary: Retrieves a user's status
       parameters:
         - in: path
           name: token
@@ -29,25 +29,39 @@ paths:
           description: Status Token
       responses:
         '200':
-          description: OK.
+          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/status'
+  '/travel':
+    post:
+      tags:
+        - Travel
+      summary: Check into or out of a train
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/checkinRequest'
+              - $ref: '#/components/schemas/checkoutRequest'
+              - $ref: '#/components/schemas/undoRequest'
+            examples:
+              checkin:
+                value: {"action": "checkin", "token": "FIXME"}
+              checkout:
+                value: {"action": "checkout", "token": "FIXME"}
+              undo:
+                value: {"action": "undo", "token": "FIXME"}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/travelResponse'
 components:
-  responses:
-    UnauthorizedError:
-      description: >-
-        Unauthorized. Will be returned by the server if no user was logged in or
-        wrong credentials were supplied.
-    NotFoundError:
-      description: >-
-        Not found The parameters in the request were valid, but the server did
-        not find a corresponding object.
-    ForbiddenError:
-      description: >-
-        Forbidden The logged in user is not permitted to perform this action.
-        (e.g. edit a status of another user.)
   schemas:
     token:
       type: string
@@ -77,6 +91,74 @@ components:
           type: number
           example: 1556083434
           description: checkin/checkout epoch
+    travelRequest:
+      type: object
+      discriminator:
+        propertyName: action
+        mapping:
+          checkin: checkinRequest
+          checkout: checkoutRequest
+          undo: undoRequest
+      properties:
+        token:
+          type: string
+        action:
+          type: string
+          enum: ['checkin', 'checkout', 'undo']
+      required:
+        - token
+        - action
+    checkinRequest:
+      allOf:
+      - $ref: '#/components/schemas/travelRequest'
+      - type: object
+        properties:
+          train:
+            type: object
+            properties:
+              type:
+                type: string
+                example: "ICE"
+              no:
+                type: string
+                example: "209"
+          fromStation:
+            $ref: '#/components/schemas/station'
+          toStation:
+            $ref: '#/components/schemas/station'
+          comment:
+            type: string
+        required: ['train', 'fromStation']
+    checkoutRequest:
+      allOf:
+        - $ref: '#/components/schemas/travelRequest'
+        - type: object
+          properties:
+            force:
+              type: boolean
+              description: "If true: perform checkout now. May lead to log entries without arrival time"
+              default: false
+            toStation:
+              $ref: '#/components/schemas/station'
+            comment:
+              type: string
+          required: ['toStation']
+    undoRequest:
+      allOf:
+      - $ref: '#/components/schemas/travelRequest'
+      - type: object
+    travelResponse:
+      type: object
+      properties:
+        deprecated:
+          type: boolean
+          example: false
+          description: if true, this API version is no longer supported and will be removed in the future
+        success:
+          type: boolean
+          example: true
+        status:
+          $ref: '#/components/schemas/status'
     departureStatus:
       type: object
       properties:
@@ -169,3 +251,14 @@ components:
           type: string
           example: "7512500863736016593"
           description: IRIS-specific train ID
+    station:
+      oneOf:
+      - type: string
+        description: Station Name
+        example: "Essen Hbf"
+      - type: string
+        description: DS100 Code
+        example: "EE"
+      - type: number
+        description: EVA number
+        example: 8000098
