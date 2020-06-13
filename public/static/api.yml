@@ -1,0 +1,171 @@
+openapi: 3.0.3
+info:
+  title: travelynx
+  version: 0.1.0
+  description: Travelynx API
+servers:
+  - url: 'https://travelynx.de/api/v1'
+  - url: 'https://travellynx.de/api/v1'
+  - url: 'https://travelynx.finalrewind.org/api/v1'
+tags:
+  - name: Status
+    description: 'Query check-in and journey status'
+  - name: Travel
+    description: 'Check into and out of trains'
+  - name: Import
+    description: 'Import a journey'
+paths:
+  '/status/{token}':
+    get:
+      tags:
+        - Status
+      summary: Retrieves a single status.
+      parameters:
+        - in: path
+          name: token
+          schema:
+            $ref: '#/components/schemas/token'
+          required: true
+          description: Status Token
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/status'
+components:
+  responses:
+    UnauthorizedError:
+      description: >-
+        Unauthorized. Will be returned by the server if no user was logged in or
+        wrong credentials were supplied.
+    NotFoundError:
+      description: >-
+        Not found The parameters in the request were valid, but the server did
+        not find a corresponding object.
+    ForbiddenError:
+      description: >-
+        Forbidden The logged in user is not permitted to perform this action.
+        (e.g. edit a status of another user.)
+  schemas:
+    token:
+      type: string
+      description: Status Token as configured on Travelynx User Panel
+    status:
+      type: object
+      properties:
+        deprecated:
+          type: boolean
+          example: false
+          description: if true, this API version is no longer supported and will be removed in the future
+        checkedIn:
+          type: boolean
+          example: true
+          description: Is the user currently checked into a train?
+        fromStation:
+          $ref: '#/components/schemas/departureStatus'
+        toStation:
+          $ref: '#/components/schemas/arrivalStatus'
+        intermediateStops:
+          type: array
+          items:
+            $ref: '#/components/schemas/intermediateStop'
+        train:
+          $ref: '#/components/schemas/train'
+        actionTime:
+          type: number
+          example: 1556083434
+          description: checkin/checkout epoch
+    departureStatus:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Essen Hbf"
+        ds100:
+          type: string
+          example: "EE"
+        uic:
+          type: number
+          example: 8000098
+        latitude:
+          type: number
+          example: 51.451355
+        longitude:
+          type: number
+          example: 7.014793
+        scheduledTime:
+          type: number
+          example: 1556083680
+        realtime:
+          type: number
+          example: 1556083680
+    arrivalStatus:
+      type: object
+      description: If journey destination is not yet known, all fields are null
+      nullable: true
+      properties:
+        name:
+          type: string
+          example: "Essen Stadtwald"
+        ds100:
+          type: string
+          example: "EESA"
+        uic:
+          type: number
+          example: 8001896
+        latitude:
+          type: number
+          example: 51.422853
+        longitude:
+          type: number
+          example: 7.023296
+        scheduledTime:
+          type: number
+          example: 1556083980
+          nullable: true
+          description: If arrival time is not yet known, this field is null
+        realtime:
+          type: number
+          example: 1556083980
+          nullable: true
+          description: If arrival time is not yet known, this field is null
+    intermediateStop:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Essen Süd"
+        scheduledArrival:
+          type: number
+          example: 1556083800
+          nullable: true
+        realArrival:
+          type: number
+          example: 1556083800
+          nullable: true
+        scheduledDeparture:
+          type: number
+          example: 1556083860
+          nullable: true
+        realDeparture:
+          type: number
+          example: 1556083860
+          nullable: true
+    train:
+      type: object
+      properties:
+        type:
+          type: string
+          example: "S"
+        line:
+          type: string
+          example: "6"
+        no:
+          type: string
+          example: "30634"
+        id:
+          type: string
+          example: "7512500863736016593"
+          description: IRIS-specific train ID
