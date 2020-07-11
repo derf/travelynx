@@ -96,4 +96,5 @@
 			Falls der Zug das Ziel bei der Zielwahl schon erreicht hat, wird ohne
 			<b>update</b> direkt ein <b>checkout</b> abgeschickt.
 		</p>
+	</div>
 </div>
