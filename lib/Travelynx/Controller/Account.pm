@@ -7,7 +7,7 @@ use UUID::Tiny qw(:std);
 sub hash_password {
 	my ($password) = @_;
 	my @salt_bytes = map { int( rand(255) ) + 1 } ( 1 .. 16 );
-	my $salt = en_base64( pack( 'C[16]', @salt_bytes ) );
+	my $salt       = en_base64( pack( 'C[16]', @salt_bytes ) );
 
 	return bcrypt( $password, '$2a$12$' . $salt );
 }
@@ -38,10 +38,10 @@ sub do_login {
 	else {
 		if ( $self->authenticate( $user, $password ) ) {
 			$self->redirect_to( $self->req->param('redirect_to') // '/' );
-			$self->mark_seen( $self->current_user->{id} );
+			$self->users->mark_seen( uid => $self->current_user->{id} );
 		}
 		else {
-			my $data = $self->get_user_password($user);
+			my $data = $self->users->get_login_data( name => $user );
 			if ( $data and $data->{status} == 0 ) {
 				$self->render( 'login', invalid => 'confirmation' );
 			}
@@ -95,12 +95,12 @@ sub register {
 		return;
 	}
 
-	if ( $self->check_if_user_name_exists($user) ) {
+	if ( $self->users->check_if_user_name_exists( name => $user ) ) {
 		$self->render( 'register', invalid => 'user_collision' );
 		return;
 	}
 
-	if ( $self->check_if_mail_is_blacklisted($email) ) {
+	if ( $self->users->check_if_mail_is_blacklisted( email => $email ) ) {
 		$self->render( 'register', invalid => 'mail_blacklisted' );
 		return;
 	}
@@ -115,11 +115,17 @@ sub register {
 		return;
 	}
 
-	my $token       = make_token();
-	my $pw_hash     = hash_password($password);
-	my $db          = $self->pg->db;
-	my $tx          = $db->begin;
-	my $user_id     = $self->add_user( $db, $user, $email, $token, $pw_hash );
+	my $token   = make_token();
+	my $pw_hash = hash_password($password);
+	my $db      = $self->pg->db;
+	my $tx      = $db->begin;
+	my $user_id = $self->users->add_user(
+		db            => $db,
+		name          => $user,
+		email         => $email,
+		token         => $token,
+		password_hash => $pw_hash
+	);
 	my $reg_url     = $self->url_for('reg')->to_abs->scheme('https');
 	my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
 
@@ -164,7 +170,13 @@ sub verify {
 		return;
 	}
 
-	if ( not $self->verify_registration_token( $id, $token ) ) {
+	if (
+		not $self->users->verify_registration_token(
+			uid   => $id,
+			token => $token
+		)
+	  )
+	{
 		$self->render( 'register', invalid => 'token' );
 		return;
 	}
@@ -190,10 +202,10 @@ sub delete {
 			$self->render( 'account', invalid => 'deletion password' );
 			return;
 		}
-		$self->flag_user_deletion( $self->current_user->{id} );
+		$self->users->flag_deletion( uid => $self->current_user->{id} );
 	}
 	else {
-		$self->unflag_user_deletion( $self->current_user->{id} );
+		$self->users->unflag_deletion( uid => $self->current_user->{id} );
 	}
 	$self->redirect_to('account');
 }
@@ -249,7 +261,10 @@ sub privacy {
 			$public_level &= ~0x30;
 		}
 
-		$self->set_privacy( $user->{id}, $public_level );
+		$self->users->set_privacy(
+			uid   => $user->{id},
+			level => $public_level
+		);
 
 		$self->flash( success => 'privacy' );
 		$self->redirect_to('account');
@@ -274,7 +289,7 @@ sub insight {
 	my ($self) = @_;
 
 	my $user        = $self->current_user;
-	my $use_history = $self->account_use_history( $user->{id} );
+	my $use_history = $self->users->use_history( uid => $user->{id} );
 
 	if ( $self->param('action') and $self->param('action') eq 'save' ) {
 		if ( $self->param('on_departure') ) {
@@ -291,7 +306,10 @@ sub insight {
 			$use_history &= ~0x02;
 		}
 
-		$self->account_use_history( $user->{id}, $use_history );
+		$self->users->use_history(
+			uid => $user->{id},
+			set => $use_history
+		);
 		$self->flash( success => 'use_history' );
 		$self->redirect_to('account');
 	}
@@ -375,8 +393,12 @@ sub change_mail {
 		my $db    = $self->pg->db;
 		my $tx    = $db->begin;
 
-		$self->mark_for_mail_change( $db, $self->current_user->{id},
-			$email, $token );
+		$self->users->mark_for_mail_change(
+			db    => $db,
+			uid   => $self->current_user->{id},
+			email => $email,
+			token => $token
+		);
 
 		my $ip   = $self->req->headers->header('X-Forwarded-For');
 		my $ua   = $self->req->headers->user_agent;
@@ -459,7 +481,10 @@ sub change_password {
 	}
 
 	my $pw_hash = hash_password($password);
-	$self->set_user_password( $self->current_user->{id}, $pw_hash );
+	$self->users->set_password_hash(
+		uid           => $self->current_user->{id},
+		password_hash => $pw_hash
+	);
 
 	$self->flash( success => 'password' );
 	$self->redirect_to('account');
@@ -500,7 +525,10 @@ sub request_password_reset {
 		my $name  = $self->param('user');
 		my $email = $self->param('email');
 
-		my $uid = $self->get_uid_by_name_and_mail( $name, $email );
+		my $uid = $self->users->get_uid_by_name_and_mail(
+			name  => $name,
+			email => $email
+		);
 
 		if ( not $uid ) {
 			$self->render( 'recover_password',
@@ -512,7 +540,11 @@ sub request_password_reset {
 		my $db    = $self->pg->db;
 		my $tx    = $db->begin;
 
-		my $error = $self->mark_for_password_reset( $db, $uid, $token );
+		my $error = $self->users->mark_for_password_reset(
+			db    => $db,
+			uid   => $uid,
+			token => $token
+		);
 
 		if ($error) {
 			$self->render( 'recover_password', invalid => $error );
@@ -570,7 +602,13 @@ sub request_password_reset {
 			$self->render( 'set_password', invalid => 'csrf' );
 			return;
 		}
-		if ( not $self->verify_password_token( $id, $token ) ) {
+		if (
+			not $self->users->verify_password_token(
+				uid   => $id,
+				token => $token
+			)
+		  )
+		{
 			$self->render( 'recover_password', invalid => 'change token' );
 			return;
 		}
@@ -585,7 +623,10 @@ sub request_password_reset {
 		}
 
 		my $pw_hash = hash_password($password);
-		$self->set_user_password( $id, $pw_hash );
+		$self->users->set_password_hash(
+			uid           => $id,
+			password_hash => $pw_hash
+		);
 
 		my $account = $self->get_user_data($id);
 
@@ -597,7 +638,10 @@ sub request_password_reset {
 		$self->flash( success => 'password' );
 		$self->redirect_to('account');
 
-		$self->remove_password_token( $id, $token );
+		$self->users->remove_password_token(
+			uid   => $id,
+			token => $token
+		);
 
 		my $user  = $account->{name};
 		my $email = $account->{email};
@@ -641,7 +685,13 @@ sub recover_password {
 		return;
 	}
 
-	if ( $self->verify_password_token( $id, $token ) ) {
+	if (
+		$self->users->verify_password_token(
+			uid   => $id,
+			token => $token
+		)
+	  )
+	{
 		$self->render('set_password');
 	}
 	else {
@@ -654,7 +704,13 @@ sub confirm_mail {
 	my $id     = $self->current_user->{id};
 	my $token  = $self->stash('token');
 
-	if ( $self->change_mail_with_token( $id, $token ) ) {
+	if (
+		$self->users->change_mail_with_token(
+			uid   => $id,
+			token => $token
+		)
+	  )
+	{
 		$self->flash( success => 'mail' );
 		$self->redirect_to('account');
 	}
@@ -667,7 +723,7 @@ sub account {
 	my ($self) = @_;
 
 	$self->render('account');
-	$self->mark_seen( $self->current_user->{id} );
+	$self->users->mark_seen( uid => $self->current_user->{id} );
 }
 
 sub json_export {
@@ -678,7 +734,7 @@ sub json_export {
 
 	$self->render(
 		json => {
-			account => $db->select( 'users', '*', { id => $uid } )->hash,
+			account    => $db->select( 'users', '*', { id => $uid } )->hash,
 			in_transit => [
 				$db->select( 'in_transit_str', '*', { user_id => $uid } )
 				  ->hashes->each

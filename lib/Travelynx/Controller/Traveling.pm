@@ -19,7 +19,7 @@ sub homepage {
 			with_autocomplete => 1,
 			with_geolocation  => 1
 		);
-		$self->mark_seen( $self->current_user->{id} );
+		$self->users->mark_seen( uid => $self->current_user->{id} );
 	}
 	else {
 		$self->render(
@@ -35,7 +35,7 @@ sub user_status {
 
 	my $name = $self->stash('name');
 	my $ts   = $self->stash('ts') // 0;
-	my $user = $self->get_privacy_by_name($name);
+	my $user = $self->users->get_privacy_by_name( name => $name );
 
 	if ( not $user or not $user->{public_level} & 0x03 ) {
 		$self->render('not_found');
@@ -150,7 +150,7 @@ sub public_status_card {
 	my ($self) = @_;
 
 	my $name = $self->stash('name');
-	my $user = $self->get_privacy_by_name($name);
+	my $user = $self->users->get_privacy_by_name( name => $name );
 
 	delete $self->stash->{layout};
 
@@ -457,7 +457,7 @@ sub station {
 			title            => "travelynx: $status->{station_name}",
 		);
 	}
-	$self->mark_seen( $self->current_user->{id} );
+	$self->users->mark_seen( uid => $self->current_user->{id} );
 }
 
 sub redirect_to_station {

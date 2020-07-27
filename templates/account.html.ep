@@ -31,7 +31,7 @@
 <h1>Account</h1>
 % my $acc = current_user();
 % my $hook = get_webhook();
-% my $use_history = account_use_history($acc->{id});
+% my $use_history = users->use_history(uid => $acc->{id});
 <div class="row">
 	<div class="col s12">
 		<table class="striped">
