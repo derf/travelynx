@@ -15,10 +15,9 @@ sub new {
 
 	my $version = $opt{version};
 
-	$opt{header} = {
-		'User-Agent' =>
-"travelynx/${version} +https://finalrewind.org/projects/travelynx"
-	};
+	$opt{header}
+	  = { 'User-Agent' =>
+		  "travelynx/${version} +https://finalrewind.org/projects/travelynx" };
 
 	return bless( \%opt, $class );
 }
@@ -28,7 +27,7 @@ sub get_polyline_p {
 
 	my $line = $train->line // 0;
 	my $url
-		= "https://2.db.transport.rest/trips/${trip_id}?lineName=${line}&polyline=true";
+	  = "https://2.db.transport.rest/trips/${trip_id}?lineName=${line}&polyline=true";
 	my $cache   = $self->{main_cache};
 	my $promise = Mojo::Promise->new;
 	my $version = $self->{version};
@@ -38,11 +37,17 @@ sub get_polyline_p {
 		return $promise;
 	}
 
-	$self->{user_agent}->request_timeout(5)->get_p(
-		$url => $self->{header}
-	)->then(
+	$self->{user_agent}->request_timeout(5)->get_p( $url => $self->{header} )
+	  ->then(
 		sub {
 			my ($tx) = @_;
+
+			if ( my $err = $tx->error ) {
+				$promise->reject(
+					"GET $url returned HTTP $err->{code} $err->{message}");
+				return;
+			}
+
 			my $body = decode( 'utf-8', $tx->res->body );
 			my $json = JSON->new->decode($body);
 			my @station_list;
@@ -54,9 +59,8 @@ sub get_polyline_p {
 					if ( exists $feature->{properties}{type}
 						and $feature->{properties}{type} eq 'stop' )
 					{
-						push( @{$coord}, $feature->{properties}{id} );
-						push( @station_list,
-							$feature->{properties}{name} );
+						push( @{$coord},     $feature->{properties}{id} );
+						push( @station_list, $feature->{properties}{name} );
 					}
 					push( @coordinate_list, $coord );
 				}
@@ -70,22 +74,22 @@ sub get_polyline_p {
 
 			$cache->freeze( $url, $ret );
 
-					# borders ("(Gr)" as in "Grenze") are only returned by HAFAS.
-					# They are not stations.
+			# borders ("(Gr)" as in "Grenze") are only returned by HAFAS.
+			# They are not stations.
 			my $iris_stations = join( '|', $train->route );
 			my $hafas_stations
-				= join( '|', grep { $_ !~ m{\(Gr\)$} } @station_list );
+			  = join( '|', grep { $_ !~ m{\(Gr\)$} } @station_list );
 
-				# Do not return polyline if it belongs to an entirely different
-				# train. Trains with longer routes (e.g. due to train number
-				# changes, which are handled by HAFAS but left out in IRIS)
-				# are okay though.
+			# Do not return polyline if it belongs to an entirely different
+			# train. Trains with longer routes (e.g. due to train number
+			# changes, which are handled by HAFAS but left out in IRIS)
+			# are okay though.
 			if ( $iris_stations ne $hafas_stations
 				and index( $hafas_stations, $iris_stations ) == -1 )
 			{
 				$self->{log}->warn( 'Ignoring polyline for '
-						. $train->line
-						. ": IRIS route does not agree with HAFAS route: $iris_stations != $hafas_stations"
+					  . $train->line
+					  . ": IRIS route does not agree with HAFAS route: $iris_stations != $hafas_stations"
 				);
 				$promise->reject('polyline route mismatch');
 			}
@@ -112,17 +116,17 @@ sub get_tripid_p {
 
 	my $dep_ts = DateTime->now( time_zone => 'Europe/Berlin' );
 	my $url
-		= "https://2.db.transport.rest/stations/${eva}/departures?duration=5&when=$dep_ts";
+	  = "https://2.db.transport.rest/stations/${eva}/departures?duration=5&when=$dep_ts";
 
 	if ( $train->sched_departure ) {
 		$dep_ts = $train->sched_departure->epoch;
 		$url
-			= "https://2.db.transport.rest/stations/${eva}/departures?duration=5&when=$dep_ts";
+		  = "https://2.db.transport.rest/stations/${eva}/departures?duration=5&when=$dep_ts";
 	}
 	elsif ( $train->sched_arrival ) {
 		$dep_ts = $train->sched_arrival->epoch;
 		$url
-			= "https://2.db.transport.rest/stations/${eva}/arrivals?duration=5&when=$dep_ts";
+		  = "https://2.db.transport.rest/stations/${eva}/arrivals?duration=5&when=$dep_ts";
 	}
 
 	$self->get_rest_p($url)->then(
@@ -161,9 +165,17 @@ sub get_rest_p {
 		return $promise;
 	}
 
-	$self->{user_agent}->request_timeout(5)->get_p($url => $self->{header})->then(
+	$self->{user_agent}->request_timeout(5)->get_p( $url => $self->{header} )
+	  ->then(
 		sub {
 			my ($tx) = @_;
+
+			if ( my $err = $tx->error ) {
+				$promise->reject(
+					"GET $url returned HTTP $err->{code} $err->{message}");
+				return;
+			}
+
 			my $json = JSON->new->decode( $tx->res->body );
 			$cache->freeze( $url, $json );
 			$promise->resolve($json);
@@ -189,9 +201,17 @@ sub get_json_p {
 		return $promise;
 	}
 
-	$self->{user_agent}->request_timeout(5)->get_p($url => $self->{header})->then(
+	$self->{user_agent}->request_timeout(5)->get_p( $url => $self->{header} )
+	  ->then(
 		sub {
 			my ($tx) = @_;
+
+			if ( my $err = $tx->error ) {
+				$promise->reject(
+					"GET $url returned HTTP $err->{code} $err->{message}");
+				return;
+			}
+
 			my $body = decode( 'ISO-8859-15', $tx->res->body );
 
 			$body =~ s{^TSLs[.]sls = }{};
@@ -223,9 +243,17 @@ sub get_xml_p {
 		return $promise;
 	}
 
-	$self->{user_agent}->request_timeout(5)->get_p($url => $self->{header})->then(
+	$self->{user_agent}->request_timeout(5)->get_p( $url => $self->{header} )
+	  ->then(
 		sub {
 			my ($tx) = @_;
+
+			if ( my $err = $tx->error ) {
+				$promise->reject(
+					"GET $url returned HTTP $err->{code} $err->{message}");
+				return;
+			}
+
 			my $body = decode( 'ISO-8859-15', $tx->res->body );
 			my $tree;
 
@@ -258,8 +286,7 @@ sub get_xml_p {
 				};
 			}
 
-			for my $message ( $tree->findnodes('/Journey/HIMMessage') )
-			{
+			for my $message ( $tree->findnodes('/Journey/HIMMessage') ) {
 				my $header  = $message->getAttribute('header');
 				my $lead    = $message->getAttribute('lead');
 				my $display = $message->getAttribute('display');
