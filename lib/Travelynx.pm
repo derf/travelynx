@@ -18,6 +18,7 @@ use List::MoreUtils qw(after_incl before_incl first_index);
 use Travel::Status::DE::DBWagenreihung;
 use Travel::Status::DE::IRIS;
 use Travel::Status::DE::IRIS::Stations;
+use Travelynx::Helper::HAFAS;
 use Travelynx::Helper::Sendmail;
 use Travelynx::Model::Users;
 use XML::LibXML;
@@ -264,18 +265,15 @@ sub startup {
 	);
 
 	$self->helper(
-		sendmail => sub {
-			state $sendmail = Travelynx::Helper::Sendmail->new(
-				config => ( $self->config->{mail} // {} ),
-				log    => $self->log
-			);
-		}
-	);
-
-	$self->helper(
-		users => sub {
+		hafas => sub {
 			my ($self) = @_;
-			state $users = Travelynx::Model::Users->new( pg => $self->pg );
+			state $hafas = Travelynx::Helper::HAFAS->new(
+				log            => $self->app->log,
+				main_cache     => $self->app->cache_iris_main,
+				realtime_cache => $self->app->cache_iris_rt,
+				user_agent     => $self->ua,
+				version        => $self->app->config->{version},
+			);
 		}
 	);
 
@@ -293,6 +291,22 @@ sub startup {
 			state $pg
 			  = Mojo::Pg->new("postgresql://${user}\@${host}:${port}/${dbname}")
 			  ->password($pw);
+		}
+	);
+
+	$self->helper(
+		sendmail => sub {
+			state $sendmail = Travelynx::Helper::Sendmail->new(
+				config => ( $self->config->{mail} // {} ),
+				log    => $self->log
+			);
+		}
+	);
+
+	$self->helper(
+		users => sub {
+			my ($self) = @_;
+			state $users = Travelynx::Model::Users->new( pg => $self->pg );
 		}
 	);
 
@@ -1564,16 +1578,20 @@ sub startup {
 			$self->ua->request_timeout(5)->get_p($url)->then(
 				sub {
 					my ($tx) = @_;
-					my $body = decode( 'utf-8', $tx->res->body );
 
-					my $json = JSON->new->decode($body);
+					if ( my $err = $tx->error ) {
+						return $promise->reject(
+							"HTTP $err->{code} $err->{message}");
+					}
+
+					my $json = $tx->result->json;
 					$cache->freeze( $url, $json );
-					$promise->resolve($json);
+					return $promise->resolve($json);
 				}
 			)->catch(
 				sub {
 					my ($err) = @_;
-					$promise->reject($err);
+					return $promise->reject($err);
 				}
 			)->wait;
 			return $promise;
@@ -1657,282 +1675,6 @@ sub startup {
 	);
 
 	$self->helper(
-		'get_hafas_polyline_p' => sub {
-			my ( $self, $train, $trip_id ) = @_;
-
-			my $line = $train->line // 0;
-			my $url
-			  = "https://2.db.transport.rest/trips/${trip_id}?lineName=${line}&polyline=true";
-			my $cache   = $self->app->cache_iris_main;
-			my $promise = Mojo::Promise->new;
-			my $version = $self->app->config->{version};
-
-			if ( my $content = $cache->thaw($url) ) {
-				$promise->resolve($content);
-				return $promise;
-			}
-
-			$self->ua->request_timeout(5)->get_p(
-				$url => {
-					'User-Agent' =>
-"travelynx/${version} +https://finalrewind.org/projects/travelynx"
-				}
-			)->then(
-				sub {
-					my ($tx) = @_;
-					my $body = decode( 'utf-8', $tx->res->body );
-					my $json = JSON->new->decode($body);
-					my @station_list;
-					my @coordinate_list;
-
-					for my $feature ( @{ $json->{polyline}{features} } ) {
-						if ( exists $feature->{geometry}{coordinates} ) {
-							my $coord = $feature->{geometry}{coordinates};
-							if ( exists $feature->{properties}{type}
-								and $feature->{properties}{type} eq 'stop' )
-							{
-								push( @{$coord}, $feature->{properties}{id} );
-								push( @station_list,
-									$feature->{properties}{name} );
-							}
-							push( @coordinate_list, $coord );
-						}
-					}
-
-					my $ret = {
-						name     => $json->{line}{name} // '?',
-						polyline => [@coordinate_list],
-						raw      => $json,
-					};
-
-					$cache->freeze( $url, $ret );
-
-                   # borders ("(Gr)" as in "Grenze") are only returned by HAFAS.
-                   # They are not stations.
-					my $iris_stations = join( '|', $train->route );
-					my $hafas_stations
-					  = join( '|', grep { $_ !~ m{\(Gr\)$} } @station_list );
-
-                 # Do not return polyline if it belongs to an entirely different
-                 # train. Trains with longer routes (e.g. due to train number
-                 # changes, which are handled by HAFAS but left out in IRIS)
-                 # are okay though.
-					if ( $iris_stations ne $hafas_stations
-						and index( $hafas_stations, $iris_stations ) == -1 )
-					{
-						$self->app->log->warn( 'Ignoring polyline for '
-							  . $train->line
-							  . ": IRIS route does not agree with HAFAS route: $iris_stations != $hafas_stations"
-						);
-						$promise->reject('polyline route mismatch');
-					}
-					else {
-						$promise->resolve($ret);
-					}
-				}
-			)->catch(
-				sub {
-					my ($err) = @_;
-					$promise->reject($err);
-				}
-			)->wait;
-
-			return $promise;
-		}
-	);
-
-	$self->helper(
-		'get_hafas_tripid_p' => sub {
-			my ( $self, $train ) = @_;
-
-			my $promise = Mojo::Promise->new;
-			my $cache   = $self->app->cache_iris_main;
-			my $eva     = $train->station_uic;
-
-			my $dep_ts = DateTime->now( time_zone => 'Europe/Berlin' );
-			my $url
-			  = "https://2.db.transport.rest/stations/${eva}/departures?duration=5&when=$dep_ts";
-
-			if ( $train->sched_departure ) {
-				$dep_ts = $train->sched_departure->epoch;
-				$url
-				  = "https://2.db.transport.rest/stations/${eva}/departures?duration=5&when=$dep_ts";
-			}
-			elsif ( $train->sched_arrival ) {
-				$dep_ts = $train->sched_arrival->epoch;
-				$url
-				  = "https://2.db.transport.rest/stations/${eva}/arrivals?duration=5&when=$dep_ts";
-			}
-
-			$self->get_hafas_rest_p($url)->then(
-				sub {
-					my ($json) = @_;
-
-					for my $result ( @{$json} ) {
-						if (    $result->{line}
-							and $result->{line}{fahrtNr} == $train->train_no )
-						{
-							my $trip_id = $result->{tripId};
-							$promise->resolve($trip_id);
-							return;
-						}
-					}
-					$promise->reject;
-				}
-			)->catch(
-				sub {
-					my ($err) = @_;
-					$promise->reject($err);
-				}
-			)->wait;
-
-			return $promise;
-		}
-	);
-
-	$self->helper(
-		'get_hafas_rest_p' => sub {
-			my ( $self, $url ) = @_;
-
-			my $cache   = $self->app->cache_iris_main;
-			my $promise = Mojo::Promise->new;
-
-			if ( my $content = $cache->thaw($url) ) {
-				$promise->resolve($content);
-				return $promise;
-			}
-
-			$self->ua->request_timeout(5)->get_p($url)->then(
-				sub {
-					my ($tx) = @_;
-					my $json = JSON->new->decode( $tx->res->body );
-					$cache->freeze( $url, $json );
-					$promise->resolve($json);
-				}
-			)->catch(
-				sub {
-					my ($err) = @_;
-					$self->app->log->warn("get($url): $err");
-					$promise->reject($err);
-				}
-			)->wait;
-			return $promise;
-		}
-	);
-
-	$self->helper(
-		'get_hafas_json_p' => sub {
-			my ( $self, $url ) = @_;
-
-			my $cache   = $self->app->cache_iris_main;
-			my $promise = Mojo::Promise->new;
-
-			if ( my $content = $cache->thaw($url) ) {
-				$promise->resolve($content);
-				return $promise;
-			}
-
-			$self->ua->request_timeout(5)->get_p($url)->then(
-				sub {
-					my ($tx) = @_;
-					my $body = decode( 'ISO-8859-15', $tx->res->body );
-
-					$body =~ s{^TSLs[.]sls = }{};
-					$body =~ s{;$}{};
-					$body =~ s{&#x0028;}{(}g;
-					$body =~ s{&#x0029;}{)}g;
-					my $json = JSON->new->decode($body);
-					$cache->freeze( $url, $json );
-					$promise->resolve($json);
-				}
-			)->catch(
-				sub {
-					my ($err) = @_;
-					$self->app->log->warn("get($url): $err");
-					$promise->reject($err);
-				}
-			)->wait;
-			return $promise;
-		}
-	);
-
-	$self->helper(
-		'get_hafas_xml_p' => sub {
-			my ( $self, $url ) = @_;
-
-			my $cache   = $self->app->cache_iris_rt;
-			my $promise = Mojo::Promise->new;
-
-			if ( my $content = $cache->thaw($url) ) {
-				$promise->resolve($content);
-				return $promise;
-			}
-
-			$self->ua->request_timeout(5)->get_p($url)->then(
-				sub {
-					my ($tx) = @_;
-					my $body = decode( 'ISO-8859-15', $tx->res->body );
-					my $tree;
-
-					my $traininfo = {
-						station  => {},
-						messages => [],
-					};
-
-					# <SDay text="... &gt; ..."> is invalid HTML, but present in
-					# regardless. As it is the last tag, we just throw it away.
-					$body =~ s{<SDay [^>]*/>}{}s;
-
-					# More fixes for invalid XML
-					$body =~ s{P&R}{P&amp;R};
-					eval { $tree = XML::LibXML->load_xml( string => $body ) };
-					if ($@) {
-						$self->app->log->warn("load_xml($url): $@");
-						$cache->freeze( $url, $traininfo );
-						$promise->resolve($traininfo);
-						return;
-					}
-
-					for my $station ( $tree->findnodes('/Journey/St') ) {
-						my $name   = $station->getAttribute('name');
-						my $adelay = $station->getAttribute('adelay');
-						my $ddelay = $station->getAttribute('ddelay');
-						$traininfo->{station}{$name} = {
-							adelay => $adelay,
-							ddelay => $ddelay,
-						};
-					}
-
-					for my $message ( $tree->findnodes('/Journey/HIMMessage') )
-					{
-						my $header  = $message->getAttribute('header');
-						my $lead    = $message->getAttribute('lead');
-						my $display = $message->getAttribute('display');
-						push(
-							@{ $traininfo->{messages} },
-							{
-								header  => $header,
-								lead    => $lead,
-								display => $display
-							}
-						);
-					}
-
-					$cache->freeze( $url, $traininfo );
-					$promise->resolve($traininfo);
-				}
-			)->catch(
-				sub {
-					my ($err) = @_;
-					$self->app->log->warn("get($url): $err");
-					$promise->reject($err);
-				}
-			)->wait;
-			return $promise;
-		}
-	);
-
-	$self->helper(
 		'add_route_timestamps' => sub {
 			my ( $self, $uid, $train, $is_departure ) = @_;
 
@@ -1952,7 +1694,7 @@ sub startup {
 
 			if ( not $journey->{data}{trip_id} ) {
 				my ( $origin_eva, $destination_eva, $polyline_str );
-				$self->get_hafas_tripid_p($train)->then(
+				$self->hafas->get_tripid_p($train)->then(
 					sub {
 						my ($trip_id) = @_;
 
@@ -1968,7 +1710,7 @@ sub startup {
 							{ data    => JSON->new->encode($data) },
 							{ user_id => $uid }
 						);
-						return $self->get_hafas_polyline_p( $train, $trip_id );
+						return $self->hafas->get_polyline_p( $train, $trip_id );
 					}
 				)->then(
 					sub {
@@ -2043,7 +1785,7 @@ sub startup {
 
 			my ( $trainlink, $route_data );
 
-			$self->get_hafas_json_p(
+			$self->hafas->get_json_p(
 				"${base}&date=${date_yy}&trainname=${train_no}")->then(
 				sub {
 					my ($trainsearch) = @_;
@@ -2082,7 +1824,7 @@ sub startup {
 					}
 					my $base2
 					  = 'https://reiseauskunft.bahn.de/bin/traininfo.exe/dn';
-					return $self->get_hafas_json_p(
+					return $self->hafas->get_json_p(
 "${base2}/${trainlink}?rt=1&date=${date_yy}&L=vs_json.vs_hap"
 					);
 				}
@@ -2118,7 +1860,7 @@ sub startup {
 
 					my $base2
 					  = 'https://reiseauskunft.bahn.de/bin/traininfo.exe/dn';
-					return $self->get_hafas_xml_p(
+					return $self->hafas->get_xml_p(
 						"${base2}/${trainlink}?rt=1&date=${date_yy}&L=vs_java3"
 					);
 				}
@@ -2400,7 +2142,7 @@ sub startup {
 			my ( $self, %opt ) = @_;
 
 			my $uid         = $opt{uid} //= $self->current_user->{id};
-			my $use_history = $self->account_use_history($uid);
+			my $use_history = $self->users->use_history( uid => $uid );
 
 			my ( $eva, $exclude_via, $exclude_train_id, $exclude_before );
 			my $now = $self->now->epoch;
