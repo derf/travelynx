@@ -423,7 +423,12 @@ sub station {
 	my $station = $self->stash('station');
 	my $train   = $self->param('train');
 
-	my $status = $self->get_departures( $station, 120, 30, 1 );
+	my $status = $self->iris->get_departures(
+		station      => $station,
+		lookbehind   => 120,
+		lookahead    => 30,
+		with_related => 1
+	);
 
 	if ( $status->{errstr} ) {
 		$self->render(

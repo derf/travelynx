@@ -19,6 +19,7 @@ use Travel::Status::DE::DBWagenreihung;
 use Travel::Status::DE::IRIS;
 use Travel::Status::DE::IRIS::Stations;
 use Travelynx::Helper::HAFAS;
+use Travelynx::Helper::IRIS;
 use Travelynx::Helper::Sendmail;
 use Travelynx::Model::Users;
 use XML::LibXML;
@@ -278,6 +279,18 @@ sub startup {
 	);
 
 	$self->helper(
+		iris => sub {
+			my ($self) = @_;
+			state $hafas = Travelynx::Helper::IRIS->new(
+				log            => $self->app->log,
+				main_cache     => $self->app->cache_iris_main,
+				realtime_cache => $self->app->cache_iris_rt,
+				version        => $self->app->config->{version},
+			);
+		}
+	);
+
+	$self->helper(
 		pg => sub {
 			my ($self) = @_;
 			my $config = $self->app->config;
@@ -329,62 +342,6 @@ sub startup {
 			}
 			return
 "${count} Stationen ohne Geookordinaten wurden nicht berücksichtigt.";
-		}
-	);
-
-	$self->helper(
-		'get_departures' => sub {
-			my ( $self, $station, $lookbehind, $lookahead, $with_related ) = @_;
-
-			$lookbehind   //= 180;
-			$lookahead    //= 30;
-			$with_related //= 0;
-
-			my @station_matches
-			  = Travel::Status::DE::IRIS::Stations::get_station($station);
-
-			if ( @station_matches == 1 ) {
-				$station = $station_matches[0][0];
-				my $status = Travel::Status::DE::IRIS->new(
-					station        => $station,
-					main_cache     => $self->app->cache_iris_main,
-					realtime_cache => $self->app->cache_iris_rt,
-					keep_transfers => 1,
-					lookbehind     => 20,
-					datetime => DateTime->now( time_zone => 'Europe/Berlin' )
-					  ->subtract( minutes => $lookbehind ),
-					lookahead   => $lookbehind + $lookahead,
-					lwp_options => {
-						timeout => 10,
-						agent   => 'travelynx/' . $self->app->config->{version},
-					},
-					with_related => $with_related,
-				);
-				return {
-					results => [ $status->results ],
-					errstr  => $status->errstr,
-					station_ds100 =>
-					  ( $status->station ? $status->station->{ds100} : undef ),
-					station_eva =>
-					  ( $status->station ? $status->station->{uic} : undef ),
-					station_name =>
-					  ( $status->station ? $status->station->{name} : undef ),
-					related_stations => [ $status->related_stations ],
-				};
-			}
-			elsif ( @station_matches > 1 ) {
-				return {
-					results => [],
-					errstr  => 'Mehrdeutiger Stationsname. Mögliche Eingaben: '
-					  . join( q{, }, map { $_->[1] } @station_matches ),
-				};
-			}
-			else {
-				return {
-					results => [],
-					errstr  => 'Unbekannte Station',
-				};
-			}
 		}
 	);
 
@@ -529,7 +486,11 @@ sub startup {
 
 			$uid //= $self->current_user->{id};
 
-			my $status = $self->get_departures( $station, 140, 40, 0 );
+			my $status = $self->iris->get_departures(
+				station    => $station,
+				lookbehind => 140,
+				lookahead  => 40
+			);
 			if ( $status->{errstr} ) {
 				return ( undef, $status->{errstr} );
 			}
@@ -708,7 +669,11 @@ sub startup {
 			my ( $self, $station, $force, $uid ) = @_;
 
 			my $db     = $self->pg->db;
-			my $status = $self->get_departures( $station, 120, 120, 0 );
+			my $status = $self->iris->get_departures(
+				station    => $station,
+				lookbehind => 120,
+				lookahead  => 120
+			);
 			$uid //= $self->current_user->{id};
 			my $user     = $self->get_user_status($uid);
 			my $train_id = $user->{train_id};
@@ -750,7 +715,12 @@ sub startup {
           # While at it, we increase the lookahead to handle long journeys as
           # well.
 			if ( not $train ) {
-				$status = $self->get_departures( $station, 120, 180, 1 );
+				$status = $self->iris->get_departures(
+					station      => $station,
+					lookbehind   => 120,
+					lookahead    => 180,
+					with_related => 1
+				);
 				($train) = List::Util::first { $_->train_id eq $train_id }
 				@{ $status->{results} };
 				if (    $train
@@ -2183,7 +2153,12 @@ sub startup {
 				return;
 			}
 
-			my $stationboard = $self->get_departures( $eva, 10, 40, 1 );
+			my $stationboard = $self->iris->get_departures(
+				station      => $eva,
+				lookbehind   => 10,
+				lookahead    => 40,
+				with_related => 1
+			);
 			if ( $stationboard->{errstr} ) {
 				return;
 			}

@@ -35,7 +35,11 @@ sub run {
 
 		eval {
 			if ( $now->epoch - $entry->{real_dep_ts} < 900 ) {
-				my $status = $self->app->get_departures( $dep, 30, 30 );
+				my $status = $self->app->iris->get_departures(
+					station    => $dep,
+					lookbehind => 30,
+					lookahead  => 30
+				);
 				if ( $status->{errstr} ) {
 					die("get_departures($dep): $status->{errstr}\n");
 				}
@@ -123,7 +127,11 @@ sub run {
 					or $now->epoch - $entry->{real_arr_ts} < 600 )
 			  )
 			{
-				my $status = $self->app->get_departures( $arr, 20, 220 );
+				my $status = $self->app->iris->get_departures(
+					station    => $arr,
+					lookbehind => 20,
+					lookahead  => 220
+				);
 				if ( $status->{errstr} ) {
 					die("get_departures($arr): $status->{errstr}\n");
 				}
