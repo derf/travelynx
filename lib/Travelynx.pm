@@ -16,7 +16,6 @@ use List::Util;
 use List::UtilsBy qw(uniq_by);
 use List::MoreUtils qw(after_incl before_incl first_index);
 use Travel::Status::DE::DBWagenreihung;
-use Travel::Status::DE::IRIS;
 use Travel::Status::DE::IRIS::Stations;
 use Travelynx::Helper::HAFAS;
 use Travelynx::Helper::IRIS;
