@@ -50,7 +50,8 @@ sub mark_if_missed_connection {
 sub mark_substitute_connection {
 	my ( $self, $journey ) = @_;
 
-	my @substitute_candidates = reverse $self->get_user_travels(
+	my @substitute_candidates = reverse $self->journeys->get(
+		uid    => $self->current_user->{id},
 		after  => $journey->{sched_departure}->clone->subtract( hours => 1 ),
 		before => $journey->{sched_departure}->clone->add( hours => 12 ),
 		with_datetime => 1,
@@ -87,7 +88,8 @@ sub list_candidates {
 	my $now         = DateTime->now( time_zone => 'Europe/Berlin' );
 	my $range_start = $now->clone->subtract( months => 6 );
 
-	my @journeys = $self->get_user_travels(
+	my @journeys = $self->journeys->get(
+		uid           => $self->current_user->{id},
 		after         => $range_start,
 		before        => $now,
 		with_datetime => 1,
@@ -112,7 +114,8 @@ sub list_candidates {
 
 	@journeys = grep { $_->{delay} >= 60 or $_->{connection_missed} } @journeys;
 
-	my @cancelled = $self->get_user_travels(
+	my @cancelled = $self->journeys->get(
+		uid           => $self->current_user->{id},
 		after         => $range_start,
 		before        => $now,
 		cancelled     => 1,
@@ -163,7 +166,7 @@ sub generate {
 		return;
 	}
 
-	my $journey = $self->get_journey(
+	my $journey = $self->journeys->get_single(
 		uid           => $uid,
 		journey_id    => $journey_id,
 		verbose       => 1,
@@ -187,7 +190,7 @@ sub generate {
 		$self->mark_substitute_connection($journey);
 	}
 	elsif ( $journey->{delay} < 120 ) {
-		my @connections = $self->get_user_travels(
+		my @connections = $self->journey->get(
 			uid           => $uid,
 			after         => $journey->{rt_arrival},
 			before        => $journey->{rt_arrival}->clone->add( hours => 2 ),

@@ -492,18 +492,18 @@ sub import_v1 {
 	my $tx = $db->begin;
 
 	$opt{db} = $db;
-	my ( $journey_id, $error ) = $self->add_journey(%opt);
+	my ( $journey_id, $error ) = $self->journeys->add(%opt);
 	my $journey;
 
 	if ( not $error ) {
-		$journey = $self->get_journey(
+		$journey = $self->journeys->get_single(
 			uid        => $uid,
 			db         => $db,
 			journey_id => $journey_id,
 			verbose    => 1
 		);
 		$error
-		  = $self->journey_sanity_check( $journey, $payload->{lax} ? 1 : 0 );
+		  = $self->journeys->sanity_check( $journey, $payload->{lax} ? 1 : 0 );
 	}
 
 	if ($error) {
@@ -526,7 +526,11 @@ sub import_v1 {
 		);
 	}
 	else {
-		$self->invalidate_stats_cache( $opt{rt_departure}, $db, $uid );
+		$self->journeys->invalidate_stats_cache(
+			ts  => $opt{rt_departure},
+			db  => $db,
+			uid => $uid
+		);
 		$tx->commit;
 		$self->render(
 			json => {

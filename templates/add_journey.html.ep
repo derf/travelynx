@@ -1,5 +1,5 @@
 <h1>Zugfahrt eingeben</h1>
-% if (not get_oldest_journey_ts()) {
+% if (not journeys->get_oldest_ts()) {
 	<div class="row">
 		<div class="col s12">
 			<div class="card info-color">

@@ -60,14 +60,14 @@ sub user_status {
 	  )
 	{
 		for my $candidate (
-			$self->get_user_travels(
+			$self->journeys->get(
 				uid   => $user->{id},
 				limit => 10,
 			)
 		  )
 		{
 			if ( $candidate->{sched_dep_ts} eq $ts ) {
-				$journey = $self->get_journey(
+				$journey = $self->journeys->get_single(
 					uid           => $user->{id},
 					journey_id    => $candidate->{id},
 					verbose       => 1,
@@ -389,8 +389,12 @@ sub log_action {
 		}
 	}
 	elsif ( $params->{action} eq 'delete' ) {
-		my $error = $self->delete_journey( $params->{id}, $params->{checkin},
-			$params->{checkout} );
+		my $error = $self->journeys->delete(
+			uid      => $self->current_user->{id},
+			id       => $params->{id},
+			checkin  => $params->{checkin},
+			checkout => $params->{checkout}
+		);
 		if ($error) {
 			$self->render(
 				json => {
@@ -474,7 +478,8 @@ sub redirect_to_station {
 
 sub cancelled {
 	my ($self) = @_;
-	my @journeys = $self->get_user_travels(
+	my @journeys = $self->journeys->get(
+		uid           => $self->current_user->{id},
 		cancelled     => 1,
 		with_datetime => 1
 	);
@@ -523,7 +528,8 @@ sub commute {
 	);
 	my $interval_end = $interval_start->clone->add( years => 1 );
 
-	my @journeys = $self->get_user_travels(
+	my @journeys = $self->journeys->get(
+		uid           => $self->current_user->{id},
 		after         => $interval_start,
 		before        => $interval_end,
 		with_datetime => 1,
@@ -616,7 +622,10 @@ sub map_history {
 	my $route_type    = $self->param('route_type');
 	my $with_polyline = $route_type eq 'beeline' ? 0 : 1;
 
-	my @journeys = $self->get_user_travels( with_polyline => $with_polyline );
+	my @journeys = $self->journeys->get(
+		uid           => $self->current_user->{id},
+		with_polyline => $with_polyline
+	);
 
 	if ( not @journeys ) {
 		$self->render(
@@ -647,7 +656,8 @@ sub map_history {
 sub json_history {
 	my ($self) = @_;
 
-	$self->render( json => [ $self->get_user_travels ] );
+	$self->render(
+		json => [ $self->journeys->get( uid => $self->current_user->{id} ) ] );
 }
 
 sub csv_history {
@@ -669,7 +679,13 @@ sub csv_history {
 	);
 	$buf .= $csv->string;
 
-	for my $journey ( $self->get_user_travels( with_datetime => 1 ) ) {
+	for my $journey (
+		$self->journeys->get(
+			uid           => $self->current_user->{id},
+			with_datetime => 1
+		)
+	  )
+	{
 		if (
 			$csv->combine(
 				$journey->{type},
@@ -708,7 +724,10 @@ sub yearly_history {
 	# -> Limit time range to avoid accidental DoS.
 	if ( not( $year =~ m{ ^ [0-9]{4} $ }x and $year > 1990 and $year < 2100 ) )
 	{
-		@journeys = $self->get_user_travels( with_datetime => 1 );
+		@journeys = $self->journeys->get(
+			uid           => $self->current_user->{id},
+			with_datetime => 1
+		);
 	}
 	else {
 		my $interval_start = DateTime->new(
@@ -721,7 +740,8 @@ sub yearly_history {
 			second    => 0,
 		);
 		my $interval_end = $interval_start->clone->add( years => 1 );
-		@journeys = $self->get_user_travels(
+		@journeys = $self->journeys->get(
+			uid           => $self->current_user->{id},
 			after         => $interval_start,
 			before        => $interval_end,
 			with_datetime => 1
@@ -766,7 +786,10 @@ sub monthly_history {
 			and $month < 13 )
 	  )
 	{
-		@journeys = $self->get_user_travels( with_datetime => 1 );
+		@journeys = $self->journeys->get(
+			uid           => $self->current_user->{id},
+			with_datetime => 1
+		);
 	}
 	else {
 		my $interval_start = DateTime->new(
@@ -779,7 +802,8 @@ sub monthly_history {
 			second    => 0,
 		);
 		my $interval_end = $interval_start->clone->add( months => 1 );
-		@journeys = $self->get_user_travels(
+		@journeys = $self->journeys->get(
+			uid           => $self->current_user->{id},
 			after         => $interval_start,
 			before        => $interval_end,
 			with_datetime => 1
@@ -827,7 +851,7 @@ sub journey_details {
 		return;
 	}
 
-	my $journey = $self->get_journey(
+	my $journey = $self->journeys->get_single(
 		uid           => $uid,
 		journey_id    => $journey_id,
 		verbose       => 1,
@@ -919,7 +943,7 @@ sub edit_journey {
 		return;
 	}
 
-	my $journey = $self->get_journey(
+	my $journey = $self->journeys->get_single(
 		uid           => $uid,
 		journey_id    => $journey_id,
 		verbose       => 1,
@@ -952,8 +976,12 @@ sub edit_journey {
 		{
 			my $datetime = $parser->parse_datetime( $self->param($key) );
 			if ( $datetime and $datetime->epoch ne $journey->{$key}->epoch ) {
-				$error = $self->update_journey_part( $db, $journey->{id},
-					$key, $datetime );
+				$error = $self->journeys->update(
+					uid  => $uid,
+					db   => $db,
+					id   => $journey->{id},
+					$key => $datetime
+				);
 				if ($error) {
 					last;
 				}
@@ -963,8 +991,12 @@ sub edit_journey {
 			if ( defined $self->param($key)
 				and $self->param($key) ne $journey->{$key} )
 			{
-				$error = $self->update_journey_part( $db, $journey->{id}, $key,
-					$self->param($key) );
+				$error = $self->journeys->update(
+					uid  => $uid,
+					db   => $db,
+					id   => $journey->{id},
+					$key => $self->param($key)
+				);
 				if ($error) {
 					last;
 				}
@@ -977,8 +1009,12 @@ sub edit_journey {
 					or $journey->{user_data}{$key} ne $self->param($key) )
 			  )
 			{
-				$error = $self->update_journey_part( $db, $journey->{id}, $key,
-					$self->param($key) );
+				$error = $self->journeys->update(
+					uid  => $uid,
+					db   => $db,
+					id   => $journey->{id},
+					$key => $self->param($key)
+				);
 				if ($error) {
 					last;
 				}
@@ -989,30 +1025,36 @@ sub edit_journey {
 			my @route_new = split( qr{\r?\n\r?}, $self->param('route') );
 			@route_new = grep { $_ ne '' } @route_new;
 			if ( join( '|', @route_old ) ne join( '|', @route_new ) ) {
-				$error
-				  = $self->update_journey_part( $db, $journey->{id}, 'route',
-					[@route_new] );
+				$error = $self->journeys->update(
+					uid   => $uid,
+					db    => $db,
+					id    => $journey->{id},
+					route => [@route_new]
+				);
 			}
 		}
 		{
 			my $cancelled_old = $journey->{cancelled}     // 0;
 			my $cancelled_new = $self->param('cancelled') // 0;
 			if ( $cancelled_old != $cancelled_new ) {
-				$error
-				  = $self->update_journey_part( $db, $journey->{id},
-					'cancelled', $cancelled_new );
+				$error = $self->journeys->update(
+					uid       => $uid,
+					db        => $db,
+					id        => $journey->{id},
+					cancelled => $cancelled_new
+				);
 			}
 		}
 
 		if ( not $error ) {
-			$journey = $self->get_journey(
+			$journey = $self->journeys->get_single(
 				uid           => $uid,
 				db            => $db,
 				journey_id    => $journey_id,
 				verbose       => 1,
 				with_datetime => 1,
 			);
-			$error = $self->journey_sanity_check($journey);
+			$error = $self->journeys->sanity_check($journey);
 		}
 		if ( not $error ) {
 			$tx->commit;
@@ -1108,18 +1150,19 @@ sub add_journey_form {
 		my $db = $self->pg->db;
 		my $tx = $db->begin;
 
-		$opt{db} = $db;
+		$opt{db}  = $db;
+		$opt{uid} = $self->current_user->{id};
 
-		my ( $journey_id, $error ) = $self->add_journey(%opt);
+		my ( $journey_id, $error ) = $self->journeys->add(%opt);
 
 		if ( not $error ) {
-			my $journey = $self->get_journey(
+			my $journey = $self->journeys->get_single(
 				uid        => $self->current_user->{id},
 				db         => $db,
 				journey_id => $journey_id,
 				verbose    => 1
 			);
-			$error = $self->journey_sanity_check($journey);
+			$error = $self->journeys->sanity_check($journey);
 		}
 
 		if ($error) {
