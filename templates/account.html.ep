@@ -67,7 +67,7 @@
 						<span style="color: #999999;">Keine</span>
 					% }
 					% if ($acc->{is_public} & 0x01) {
-						Aktueller Status (nur für angemeldete Accounts)
+						Aktueller Status (nur mit Anmeldung)
 					% }
 					% elsif ($acc->{is_public} & 0x02) {
 						Aktueller Status
@@ -79,10 +79,10 @@
 						<br/>
 					% }
 					% if ($acc->{is_public} & 0x10) {
-						Letzte zehn Fahrten (nur für angemeldete Accounts)
+						Vergangene Fahrten (nur mit Anmeldung)
 					% }
 					% elsif ($acc->{is_public} & 0x20) {
-						Letzte zehn Fahrten
+						Vergangene Fahrten
 					% }
 				</td>
 			</tr>

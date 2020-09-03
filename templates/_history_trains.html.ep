@@ -12,6 +12,9 @@
 			<tbody>
 				% for my $travel (@{$journeys}) {
 					% my $detail_link = '/journey/' . $travel->{id};
+					% if (my $prefix = stash('link_prefix')) {
+						% $detail_link = $prefix . $travel->{id};
+					% }
 					<tr>
 						<td><%= $travel->{sched_departure}->strftime($date_format) %></td>
 						<td><a href="<%= $detail_link %>"><%= $travel->{type} %> <%= $travel->{line} // $travel->{no} %></a></td>

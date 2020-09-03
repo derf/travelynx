@@ -14,6 +14,9 @@
 	<div class="row">
 		<div class="col s12">
 			<p>
+				% if (my $name = stash('username')) {
+					<b><a href="/p/<%= $name %>"><%= $name %></a></b>s
+				% }
 				% if ($journey->{cancelled}) {
 					Ausgefallene Fahrt
 				% }

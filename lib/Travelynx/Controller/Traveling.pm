@@ -146,6 +146,94 @@ sub user_status {
 	}
 }
 
+sub public_profile {
+	my ($self) = @_;
+
+	my $name = $self->stash('name');
+	my $user = $self->users->get_privacy_by_name( name => $name );
+
+	if (
+		$user
+		and ( $user->{public_level} & 0x22
+			or
+			( $user->{public_level} & 0x11 and $self->is_user_authenticated ) )
+	  )
+	{
+		my $status = $self->get_user_status( $user->{id} );
+		$self->render(
+			'profile',
+			name         => $name,
+			uid          => $user->{id},
+			public_level => $user->{public_level},
+			journey      => $status,
+			version      => $self->app->config->{version} // 'UNKNOWN',
+		);
+	}
+	else {
+		$self->render('not_found');
+	}
+}
+
+sub public_journey_details {
+	my ($self)     = @_;
+	my $name       = $self->stash('name');
+	my $journey_id = $self->stash('id');
+	my $user       = $self->users->get_privacy_by_name( name => $name );
+
+	$self->param( journey_id => $journey_id );
+
+	if ( not( $journey_id and $journey_id =~ m{ ^ \d+ $ }x ) ) {
+		$self->render(
+			'journey',
+			status  => 404,
+			error   => 'notfound',
+			journey => {}
+		);
+		return;
+	}
+
+	if (
+		$user
+		and ( $user->{public_level} & 0x20
+			or
+			( $user->{public_level} & 0x10 and $self->is_user_authenticated ) )
+	  )
+	{
+		my $journey = $self->journeys->get_single(
+			uid           => $user->{id},
+			journey_id    => $journey_id,
+			verbose       => 1,
+			with_datetime => 1,
+			with_polyline => 1,
+		);
+
+		if ($journey) {
+			my $map_data = $self->journeys_to_map_data(
+				journeys       => [$journey],
+				include_manual => 1,
+			);
+			if ( $journey->{user_data}{comment} ) {
+				delete $journey->{user_data}{comment};
+			}
+			$self->render(
+				'journey',
+				error    => undef,
+				journey  => $journey,
+				with_map => 1,
+				username => $name,
+				readonly => 1,
+				%{$map_data},
+			);
+		}
+		else {
+			$self->render( 'not_found', );
+		}
+	}
+	else {
+		$self->render('not_found');
+	}
+}
+
 sub public_status_card {
 	my ($self) = @_;
 

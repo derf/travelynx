@@ -22,7 +22,7 @@
 		<div class="input-field col s12">
 			<label>
 				%= radio_button status_level => 'intern'
-				<span>Nur für angemeldete Accounts</span>
+				<span>Nur mit Anmeldung</span>
 			</label>
 		</div>
 	</div>
@@ -37,7 +37,8 @@
 	<div class="row">
 		<div class="col s12">
 			Hier kannst du auswählen, ob dein aktueller Status unter <a
-			href="/status/<%= $name %>">/status/<%= $name %></a> abrufbar ist.
+			href="/status/<%= $name %>">/status/<%= $name %></a> sowie <a
+			href="/p/<%= $name %>">/p/<%= $name %></a> abrufbar ist.
 			Wenn du eingecheckt bist, werden dort Zug, Start- und Zielstation,
 			Abfahrts- und Ankunftszeit gezeigt; andernfalls lediglich der
 			Zielbahnhof der letzten Reise.  Wann die letzte Reise beendet wurde,
@@ -74,7 +75,7 @@
 		<div class="input-field col s12">
 			<label>
 				%= radio_button history_level => 'intern'
-				<span>Nur für angemeldete Accounts</span>
+				<span>Nur mit Anmeldung</span>
 			</label>
 		</div>
 	</div>
@@ -88,14 +89,13 @@
 	</div>
 	<div class="row">
 		<div class="col s12">
-			Diese Einstellung bestimmt die Sichtbarkeit deiner letzten
-			zehn Zugfahrten mit allen dazu bekannten Details (Abfahrt, Ankunft,
-			Wagenreihung u.a.). Derzeit sind diese nur mit einem von dir
-			geteilten (oder korrekt erratenen) Link zu
-			<a href="/status/<%= $name %>">/status/<%= $name %>/ID</a> abrufbar.
-			In Zukunft kann eine auf deiner Statusseite eingebundene Liste
-			deiner letzten Zugfahrten folgen, deren Sichtbarkeit ebenfalls von
-			dieser Einstellung bestimmt wird.
+			Diese Einstellung bestimmt die Sichtbarkeit deiner vergangenen
+			Zugfahrten mit allen dazu bekannten Details (Abfahrt, Ankunft,
+			Wagenreihung u.a.).  Die letzten zehn Fahrten werden unter <a
+			href="/p/<%= $name %>">/p/<%= $name %></a> aufgelistet und verlinkt,
+			ältere Fahrten sind jedoch weiterhin über /p/<%= $name %>/j/ID
+			zugänglich. Da die ID (mit Lücken) aufsteigend vergeben wird, sind
+			effektiv alle deiner vergangenen Fahrten öffentlich.
 		</div>
 	</div>
 	<div class="row">

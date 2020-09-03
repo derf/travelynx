@@ -2685,6 +2685,8 @@ sub startup {
 	$r->get('/status/:name/:ts')->to('traveling#user_status');
 	$r->get('/ajax/status/:name')->to('traveling#public_status_card');
 	$r->get('/ajax/status/:name/:ts')->to('traveling#public_status_card');
+	$r->get('/p/:name')->to('traveling#public_profile');
+	$r->get('/p/:name/j/:id')->to('traveling#public_journey_details');
 	$r->post('/api/v1/import')->to('api#import_v1');
 	$r->post('/api/v1/travel')->to('api#travel_v1');
 	$r->post('/action')->to('traveling#log_action');
