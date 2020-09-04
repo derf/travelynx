@@ -2,6 +2,22 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		1.17
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left" aria-label="Neues Feature">add</i>
+			Öffentliches Profil. Hier können auf Wunsch der aktuelle Status
+			sowie die letzten zehn Zugfahrten angezeigt werden. Diese sind
+			wahlweise gar nicht, nur mit Anmeldung oder öffentlich sichtbar.
+			Zugfahrten, die älter als vier Wochen sind, können komplett verborgen
+			werden.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		1.16
 	</div>
 	<div class="col s12 m11 l11">
