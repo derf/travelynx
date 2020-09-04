@@ -23,7 +23,7 @@
 			<h2>Letzte Fahrten von <%= $name %></h1>
 		</div>
 	</div>
-	%= include '_history_trains', date_format => '%d.%m.%Y', link_prefix => "/p/${name}/j/", journeys => [journeys->get(uid => $uid, limit => 10, with_datetime => 1)];
+	%= include '_history_trains', date_format => '%d.%m.%Y', link_prefix => "/p/${name}/j/", journeys => $journeys;
 % }
 
 %= include '_footer', version => stash('version')

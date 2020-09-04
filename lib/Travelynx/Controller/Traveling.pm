@@ -160,12 +160,32 @@ sub public_profile {
 	  )
 	{
 		my $status = $self->get_user_status( $user->{id} );
+		my @journeys;
+		if ( $user->{public_level} & 0x40 ) {
+			@journeys = $self->journeys->get(
+				uid           => $user->{id},
+				limit         => 10,
+				with_datetime => 1
+			);
+		}
+		else {
+			my $now       = DateTime->now( time_zone => 'Europe/Berlin' );
+			my $month_ago = $now->clone->subtract( weeks => 4 );
+			@journeys = $self->journeys->get(
+				uid           => $user->{id},
+				limit         => 10,
+				with_datetime => 1,
+				after         => $month_ago,
+				before        => $now
+			);
+		}
 		$self->render(
 			'profile',
 			name         => $name,
 			uid          => $user->{id},
 			public_level => $user->{public_level},
 			journey      => $status,
+			journeys     => [@journeys],
 			version      => $self->app->config->{version} // 'UNKNOWN',
 		);
 	}
@@ -207,12 +227,22 @@ sub public_journey_details {
 			with_polyline => 1,
 		);
 
+		if ( not( $user->{public_level} & 0x40 ) ) {
+			my $month_ago = DateTime->now( time_zone => 'Europe/Berlin' )
+			  ->subtract( weeks => 4 )->epoch;
+			if ( $journey and $journey->{rt_dep_ts} < $month_ago ) {
+				$journey = undef;
+			}
+		}
+
 		if ($journey) {
 			my $map_data = $self->journeys_to_map_data(
 				journeys       => [$journey],
 				include_manual => 1,
 			);
-			if ( $journey->{user_data}{comment} ) {
+			if ( $journey->{user_data}{comment}
+				and not $user->{public_level} & 0x04 )
+			{
 				delete $journey->{user_data}{comment};
 			}
 			$self->render(
@@ -226,7 +256,7 @@ sub public_journey_details {
 			);
 		}
 		else {
-			$self->render( 'not_found', );
+			$self->render('not_found');
 		}
 	}
 	else {

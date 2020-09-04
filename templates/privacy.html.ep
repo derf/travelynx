@@ -12,26 +12,22 @@
 <h2>Aktueller Status</h2>
 	<div class="row">
 		<div class="input-field col s12">
+			<div>
 			<label>
 				%= radio_button status_level => 'private'
 				<span>Nicht sichtbar</span>
 			</label>
-		</div>
-	</div>
-	<div class="row">
-		<div class="input-field col s12">
+			</div><div>
 			<label>
 				%= radio_button status_level => 'intern'
 				<span>Nur mit Anmeldung</span>
 			</label>
-		</div>
-	</div>
-	<div class="row">
-		<div class="input-field col s12">
+			</div><div>
 			<label>
 				%= radio_button status_level => 'extern'
 				<span>Öffentlich</span>
 			</label>
+			</div>
 		</div>
 	</div>
 	<div class="row">
@@ -39,63 +35,72 @@
 			Hier kannst du auswählen, ob dein aktueller Status unter <a
 			href="/status/<%= $name %>">/status/<%= $name %></a> sowie <a
 			href="/p/<%= $name %>">/p/<%= $name %></a> abrufbar ist.
-			Wenn du eingecheckt bist, werden dort Zug, Start- und Zielstation,
-			Abfahrts- und Ankunftszeit gezeigt; andernfalls lediglich der
+			Wenn du eingecheckt bist, werden dort Zug, Start- und Zielstation
+			sowie Abfahrts- und Ankunftszeit gezeigt, andernfalls lediglich der
 			Zielbahnhof der letzten Reise.  Wann die letzte Reise beendet wurde,
 			wird nur angegeben, wenn deine vergangenen Zugfahrten sichtbar sind
 			(siehe unten).
 		</div>
 	</div>
-	<div class="row">
-		<div class="input-field col s12">
-			<label>
-				%= check_box public_comment => 1
-				<span>Mit Kommentar</span>
-			</label>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col s12">
-			Wenn aktiv, wird in deinem aktuellen Status auch der optionale
-			Freitext-Kommentar der Zugfahrt gezeigt. Wenn du gerade nicht
-			eingecheckt bist oder dein aktueller Status nicht öffentlich ist,
-			hat dieses Feld keine Auswirkungen.
-		</div>
-	</div>
 <h2>Vergangene Zugfahrten</h2>
 	<div class="row">
-		<div class="input-field col s12">
+		<div class="input-field col s12 m6 l6">
+			<div>
 			<label>
 				%= radio_button history_level => 'private'
 				<span>Nicht sichtbar</span>
 			</label>
-		</div>
-	</div>
-	<div class="row">
-		<div class="input-field col s12">
+			</div><div>
 			<label>
 				%= radio_button history_level => 'intern'
 				<span>Nur mit Anmeldung</span>
 			</label>
-		</div>
-	</div>
-	<div class="row">
-		<div class="input-field col s12">
+			</div><div>
 			<label>
 				%= radio_button history_level => 'extern'
 				<span>Öffentlich</span>
 			</label>
+			</div>
+		</div>
+		<div class="input-field col s12 m6 l6">
+			<div>
+			<label>
+				%= radio_button history_age => 'month'
+				<span>Letzte vier Wochen</span>
+			</label>
+			</div><div>
+			<label>
+				%= radio_button history_age => 'infinite'
+				<span>Alle Fahrten</span>
+			</label>
+			</div>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col s12">
 			Diese Einstellung bestimmt die Sichtbarkeit deiner vergangenen
 			Zugfahrten mit allen dazu bekannten Details (Abfahrt, Ankunft,
-			Wagenreihung u.a.).  Die letzten zehn Fahrten werden unter <a
+			Wagenreihung u.a.).  Bis zu zehn deiner Fahrten werden unter <a
 			href="/p/<%= $name %>">/p/<%= $name %></a> aufgelistet und verlinkt,
-			ältere Fahrten sind jedoch weiterhin über /p/<%= $name %>/j/ID
-			zugänglich. Da die ID (mit Lücken) aufsteigend vergeben wird, sind
-			effektiv alle deiner vergangenen Fahrten öffentlich.
+			dort nicht eingetragene Fahrten sind jedoch weiterhin über /p/<%=
+			$name %>/j/ID zugänglich. Da die ID (mit Lücken) aufsteigend vergeben
+			wird, sind effektiv alle deiner vergangenen Fahrten (oder alle Fahrten
+			der letzten vier Wochen) öffentlich.
+		</div>
+	</div>
+<h2>Sonstiges</h2>
+	<div class="row">
+		<div class="input-field col s12">
+			<label>
+				%= check_box public_comment => 1
+				<span>Kommentare anzeigen</span>
+			</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s12">
+			Wenn aktiv, sind von dir eingetragene Freitext-Kommentare in deinem
+			aktuellen Status sowie bei deinen vergangenen Zugfahrten sichtbar.
 		</div>
 	</div>
 	<div class="row">

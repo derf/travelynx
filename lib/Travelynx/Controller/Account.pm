@@ -261,6 +261,13 @@ sub privacy {
 			$public_level &= ~0x30;
 		}
 
+		if ( $self->param('history_age') eq 'infinite' ) {
+			$public_level |= 0x40;
+		}
+		else {
+			$public_level &= ~0x40;
+		}
+
 		$self->users->set_privacy(
 			uid   => $user->{id},
 			level => $public_level
@@ -281,6 +288,8 @@ sub privacy {
 			: $public_level & 0x20 ? 'extern'
 			:                        'private'
 		);
+		$self->param(
+			history_age => $public_level & 0x40 ? 'infinite' : 'month' );
 		$self->render( 'privacy', name => $user->{name} );
 	}
 }

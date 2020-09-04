@@ -72,17 +72,23 @@
 					% elsif ($acc->{is_public} & 0x02) {
 						Aktueller Status
 					% }
-					% if ($acc->{is_public} & 0x04) {
-						mit Kommentar
-					% }
 					% if ($acc->{is_public} & 0x0f and $acc->{is_public} & 0xf0) {
 						<br/>
 					% }
-					% if ($acc->{is_public} & 0x10) {
-						Vergangene Fahrten (nur mit Anmeldung)
+					% if ($acc->{is_public} & 0x30) {
+						% if ($acc->{is_public} & 0x40) {
+							Vergangene Fahrten
+						% }
+						% else {
+							Fahrten der letzten vier Wochen
+						% }
+						% if ($acc->{is_public} & 0x10) {
+							(nur mit Anmeldung)
+						% }
 					% }
-					% elsif ($acc->{is_public} & 0x20) {
-						Vergangene Fahrten
+					% if ($acc->{is_public} & 0x04) {
+						<br/>
+						Kommentare
 					% }
 				</td>
 			</tr>
