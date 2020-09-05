@@ -223,7 +223,11 @@ sub travel_v1 {
 		else {
 			my $train_type = sanitize( q{}, $payload->{train}{type} );
 			my $train_no   = sanitize( q{}, $payload->{train}{no} );
-			my $status = $self->get_departures( $from_station, 140, 40, 0 );
+			my $status     = $self->iris->get_departures(
+				station    => $from_station,
+				lookbehind => 140,
+				lookahead  => 40
+			);
 			if ( $status->{errstr} ) {
 				$self->render(
 					json => {
