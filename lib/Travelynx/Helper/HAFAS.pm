@@ -17,7 +17,8 @@ sub new {
 
 	$opt{header}
 	  = { 'User-Agent' =>
-		  "travelynx/${version} +https://finalrewind.org/projects/travelynx" };
+"travelynx/${version} on $opt{root_url} +https://finalrewind.org/projects/travelynx"
+	  };
 
 	return bless( \%opt, $class );
 }

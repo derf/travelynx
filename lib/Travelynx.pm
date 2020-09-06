@@ -16,6 +16,7 @@ use List::UtilsBy qw(uniq_by);
 use List::MoreUtils qw(first_index);
 use Travel::Status::DE::DBWagenreihung;
 use Travel::Status::DE::IRIS::Stations;
+use Travelynx::Helper::DBDB;
 use Travelynx::Helper::HAFAS;
 use Travelynx::Helper::IRIS;
 use Travelynx::Helper::Sendmail;
@@ -271,6 +272,7 @@ sub startup {
 				log            => $self->app->log,
 				main_cache     => $self->app->cache_iris_main,
 				realtime_cache => $self->app->cache_iris_rt,
+				root_url       => $self->url_for('/')->to_abs,
 				user_agent     => $self->ua,
 				version        => $self->app->config->{version},
 			);
@@ -280,10 +282,11 @@ sub startup {
 	$self->helper(
 		iris => sub {
 			my ($self) = @_;
-			state $hafas = Travelynx::Helper::IRIS->new(
+			state $iris = Travelynx::Helper::IRIS->new(
 				log            => $self->app->log,
 				main_cache     => $self->app->cache_iris_main,
 				realtime_cache => $self->app->cache_iris_rt,
+				root_url       => $self->url_for('/')->to_abs,
 				version        => $self->app->config->{version},
 			);
 		}
@@ -331,6 +334,19 @@ sub startup {
 		users => sub {
 			my ($self) = @_;
 			state $users = Travelynx::Model::Users->new( pg => $self->pg );
+		}
+	);
+
+	$self->helper(
+		dbdb => sub {
+			my ($self) = @_;
+			state $dbdb = Travelynx::Helper::DBDB->new(
+				log        => $self->app->log,
+				cache      => $self->app->cache_iris_main,
+				root_url   => $self->url_for('/')->to_abs,
+				user_agent => $self->ua,
+				version    => $self->app->config->{version},
+			);
 		}
 	);
 
@@ -1150,119 +1166,6 @@ sub startup {
 	);
 
 	$self->helper(
-		'get_dbdb_station_p' => sub {
-			my ( $self, $eva ) = @_;
-
-			my $url = "https://lib.finalrewind.org/dbdb/s/${eva}.json";
-
-			my $cache   = $self->app->cache_iris_main;
-			my $promise = Mojo::Promise->new;
-
-			if ( my $content = $cache->thaw($url) ) {
-				$promise->resolve($content);
-				return $promise;
-			}
-
-			$self->ua->request_timeout(5)->get_p($url)->then(
-				sub {
-					my ($tx) = @_;
-
-					if ( my $err = $tx->error ) {
-						return $promise->reject(
-							"HTTP $err->{code} $err->{message}");
-					}
-
-					my $json = $tx->result->json;
-					$cache->freeze( $url, $json );
-					return $promise->resolve($json);
-				}
-			)->catch(
-				sub {
-					my ($err) = @_;
-					return $promise->reject($err);
-				}
-			)->wait;
-			return $promise;
-		}
-	);
-
-	$self->helper(
-		'has_wagonorder_p' => sub {
-			my ( $self, $ts, $train_no ) = @_;
-			my $api_ts = $ts->strftime('%Y%m%d%H%M');
-			my $url
-			  = "https://lib.finalrewind.org/dbdb/has_wagonorder/${train_no}/${api_ts}";
-			my $cache   = $self->app->cache_iris_main;
-			my $promise = Mojo::Promise->new;
-
-			if ( my $content = $cache->get($url) ) {
-				if ( $content eq 'y' ) {
-					$promise->resolve;
-					return $promise;
-				}
-				elsif ( $content eq 'n' ) {
-					$promise->reject;
-					return $promise;
-				}
-			}
-
-			$self->ua->request_timeout(5)->head_p($url)->then(
-				sub {
-					my ($tx) = @_;
-					if ( $tx->result->is_success ) {
-						$cache->set( $url, 'y' );
-						$promise->resolve;
-					}
-					else {
-						$cache->set( $url, 'n' );
-						$promise->reject;
-					}
-				}
-			)->catch(
-				sub {
-					$cache->set( $url, 'n' );
-					$promise->reject;
-				}
-			)->wait;
-			return $promise;
-		}
-	);
-
-	$self->helper(
-		'get_wagonorder_p' => sub {
-			my ( $self, $ts, $train_no ) = @_;
-			my $api_ts = $ts->strftime('%Y%m%d%H%M');
-			my $url
-			  = "https://www.apps-bahn.de/wr/wagenreihung/1.0/${train_no}/${api_ts}";
-
-			my $cache   = $self->app->cache_iris_main;
-			my $promise = Mojo::Promise->new;
-
-			if ( my $content = $cache->thaw($url) ) {
-				$promise->resolve($content);
-				return $promise;
-			}
-
-			$self->ua->request_timeout(5)->get_p($url)->then(
-				sub {
-					my ($tx) = @_;
-					my $body = decode( 'utf-8', $tx->res->body );
-
-					my $json = JSON->new->decode($body);
-					$cache->freeze( $url, $json );
-					$promise->resolve($json);
-				}
-			)->catch(
-				sub {
-					my ($err) = @_;
-					$promise->reject($err);
-				}
-			)->wait;
-			return $promise;
-		}
-	);
-
-	$self->helper(
 		'add_route_timestamps' => sub {
 			my ( $self, $uid, $train, $is_departure ) = @_;
 
@@ -1494,11 +1397,11 @@ sub startup {
 			)->wait;
 
 			if ( $train->sched_departure ) {
-				$self->has_wagonorder_p( $train->sched_departure,
+				$self->dbdb->has_wagonorder_p( $train->sched_departure,
 					$train->train_no )->then(
 					sub {
-						return $self->get_wagonorder_p( $train->sched_departure,
-							$train->train_no );
+						return $self->dbdb->get_wagonorder_p(
+							$train->sched_departure, $train->train_no );
 					}
 				)->then(
 					sub {
@@ -1577,7 +1480,7 @@ sub startup {
 			}
 
 			if ($is_departure) {
-				$self->get_dbdb_station_p( $journey->{dep_eva} )->then(
+				$self->dbdb->get_stationinfo_p( $journey->{dep_eva} )->then(
 					sub {
 						my ($station_info) = @_;
 
@@ -1598,7 +1501,7 @@ sub startup {
 			}
 
 			if ( $journey->{arr_eva} and not $is_departure ) {
-				$self->get_dbdb_station_p( $journey->{arr_eva} )->then(
+				$self->dbdb->get_stationinfo_p( $journey->{arr_eva} )->then(
 					sub {
 						my ($station_info) = @_;
 
