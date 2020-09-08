@@ -190,7 +190,7 @@ sub generate {
 		$self->mark_substitute_connection($journey);
 	}
 	elsif ( $journey->{delay} < 120 ) {
-		my @connections = $self->journey->get(
+		my @connections = $self->journeys->get(
 			uid           => $uid,
 			after         => $journey->{rt_arrival},
 			before        => $journey->{rt_arrival}->clone->add( hours => 2 ),
