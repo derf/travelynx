@@ -34,8 +34,7 @@ sub get_polyline_p {
 	my $version = $self->{version};
 
 	if ( my $content = $cache->thaw($url) ) {
-		$promise->resolve($content);
-		return $promise;
+		return $promise->resolve($content);
 	}
 
 	$self->{user_agent}->request_timeout(5)->get_p( $url => $self->{header} )
@@ -97,11 +96,13 @@ sub get_polyline_p {
 			else {
 				$promise->resolve($ret);
 			}
+			return;
 		}
 	)->catch(
 		sub {
 			my ($err) = @_;
 			$promise->reject($err);
+			return;
 		}
 	)->wait;
 
@@ -144,11 +145,13 @@ sub get_tripid_p {
 				}
 			}
 			$promise->reject;
+			return;
 		}
 	)->catch(
 		sub {
 			my ($err) = @_;
 			$promise->reject($err);
+			return;
 		}
 	)->wait;
 
@@ -162,8 +165,7 @@ sub get_rest_p {
 	my $promise = Mojo::Promise->new;
 
 	if ( my $content = $cache->thaw($url) ) {
-		$promise->resolve($content);
-		return $promise;
+		return $promise->resolve($content);
 	}
 
 	$self->{user_agent}->request_timeout(5)->get_p( $url => $self->{header} )
@@ -180,12 +182,14 @@ sub get_rest_p {
 			my $json = JSON->new->decode( $tx->res->body );
 			$cache->freeze( $url, $json );
 			$promise->resolve($json);
+			return;
 		}
 	)->catch(
 		sub {
 			my ($err) = @_;
 			$self->{log}->warn("get($url): $err");
 			$promise->reject($err);
+			return;
 		}
 	)->wait;
 	return $promise;
@@ -198,8 +202,7 @@ sub get_json_p {
 	my $promise = Mojo::Promise->new;
 
 	if ( my $content = $cache->thaw($url) ) {
-		$promise->resolve($content);
-		return $promise;
+		return $promise->resolve($content);
 	}
 
 	$self->{user_agent}->request_timeout(5)->get_p( $url => $self->{header} )
@@ -222,12 +225,14 @@ sub get_json_p {
 			my $json = JSON->new->decode($body);
 			$cache->freeze( $url, $json );
 			$promise->resolve($json);
+			return;
 		}
 	)->catch(
 		sub {
 			my ($err) = @_;
 			$self->{log}->warn("get($url): $err");
 			$promise->reject($err);
+			return;
 		}
 	)->wait;
 	return $promise;
@@ -240,8 +245,7 @@ sub get_xml_p {
 	my $promise = Mojo::Promise->new;
 
 	if ( my $content = $cache->thaw($url) ) {
-		$promise->resolve($content);
-		return $promise;
+		return $promise->resolve($content);
 	}
 
 	$self->{user_agent}->request_timeout(5)->get_p( $url => $self->{header} )
@@ -303,12 +307,14 @@ sub get_xml_p {
 
 			$cache->freeze( $url, $traininfo );
 			$promise->resolve($traininfo);
+			return;
 		}
 	)->catch(
 		sub {
 			my ($err) = @_;
 			$self->{log}->warn("get($url): $err");
 			$promise->reject($err);
+			return;
 		}
 	)->wait;
 	return $promise;

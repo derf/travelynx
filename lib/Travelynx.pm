@@ -1260,6 +1260,13 @@ sub startup {
 								{ user_id     => $uid }
 							);
 						}
+						return;
+					}
+				)->catch(
+					sub {
+						my ($err) = @_;
+						$self->app->log->warn("add_route_timestamps: $err");
+						return;
 					}
 				)->wait;
 			}
@@ -1394,6 +1401,11 @@ sub startup {
 						{ user_id => $uid }
 					);
 				}
+			)->catch(
+				sub {
+					my ($err) = @_;
+					$self->app->log->warn("add_route_timestamps: $err");
+				}
 			)->wait;
 
 			if ( $train->sched_departure ) {
@@ -1476,6 +1488,11 @@ sub startup {
 							);
 						}
 					}
+				)->catch(
+					sub {
+						# no wagonorder? no problem.
+						return;
+					}
 				)->wait;
 			}
 
@@ -1497,6 +1514,11 @@ sub startup {
 							{ user_id => $uid }
 						);
 					}
+				)->catch(
+					sub {
+						# no stationinfo? no problem.
+						return;
+					}
 				)->wait;
 			}
 
@@ -1517,6 +1539,11 @@ sub startup {
 							{ data    => JSON->new->encode($data) },
 							{ user_id => $uid }
 						);
+					}
+				)->catch(
+					sub {
+						# no stationinfo? no problem.
+						return;
 					}
 				)->wait;
 			}

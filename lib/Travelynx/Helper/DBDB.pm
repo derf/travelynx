@@ -32,12 +32,10 @@ sub has_wagonorder_p {
 
 	if ( my $content = $cache->get($url) ) {
 		if ( $content eq 'y' ) {
-			$promise->resolve;
-			return $promise;
+			return $promise->resolve;
 		}
 		elsif ( $content eq 'n' ) {
-			$promise->reject;
-			return $promise;
+			return $promise->reject;
 		}
 	}
 
@@ -53,11 +51,13 @@ sub has_wagonorder_p {
 				$cache->set( $url, 'n' );
 				$promise->reject;
 			}
+			return;
 		}
 	)->catch(
 		sub {
 			$cache->set( $url, 'n' );
 			$promise->reject;
+			return;
 		}
 	)->wait;
 	return $promise;
@@ -86,11 +86,13 @@ sub get_wagonorder_p {
 			my $json = JSON->new->decode($body);
 			$cache->freeze( $url, $json );
 			$promise->resolve($json);
+			return;
 		}
 	)->catch(
 		sub {
 			my ($err) = @_;
 			$promise->reject($err);
+			return;
 		}
 	)->wait;
 	return $promise;
@@ -105,8 +107,7 @@ sub get_stationinfo_p {
 	my $promise = Mojo::Promise->new;
 
 	if ( my $content = $cache->thaw($url) ) {
-		$promise->resolve($content);
-		return $promise;
+		return $promise->resolve($content);
 	}
 
 	$self->{user_agent}->request_timeout(5)->get_p( $url => $self->{header} )
@@ -115,17 +116,20 @@ sub get_stationinfo_p {
 			my ($tx) = @_;
 
 			if ( my $err = $tx->error ) {
-				return $promise->reject("HTTP $err->{code} $err->{message}");
+				$promise->reject("HTTP $err->{code} $err->{message}");
+				return;
 			}
 
 			my $json = $tx->result->json;
 			$cache->freeze( $url, $json );
-			return $promise->resolve($json);
+			$promise->resolve($json);
+			return;
 		}
 	)->catch(
 		sub {
 			my ($err) = @_;
-			return $promise->reject($err);
+			$promise->reject($err);
+			return;
 		}
 	)->wait;
 	return $promise;
