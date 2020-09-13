@@ -6,15 +6,32 @@ COPY cpanfile /app/cpanfile
 WORKDIR /app
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
+	ca-certificates \
 	cpanminus \
-	build-essential \
-	libpq-dev \
+	gcc \
 	git \
+	libc6-dev \
+	libdb5.3 \
+	libdb5.3-dev \
+	libpq-dev \
+	libssl1.1 \
+	libssl-dev \
+	libxml2 \
+	libxml2-dev \
+	make \
+	zlib1g-dev \
 	&& cpanm -in --no-man-pages --installdeps . \
 	&& rm -rf ~/.cpanm \
 	&& apt-get purge -y \
-	build-essential \
 	cpanminus \
+	curl \
+	gcc \
+	libc6-dev \
+	libdb5.3-dev \
+	libssl-dev \
+	libxml2-dev \
+	make \
+	zlib1g-dev \
 	&& apt-get autoremove -y
 
 COPY . /app
