@@ -962,6 +962,7 @@ sub startup {
 					if ($callback) {
 						&$callback();
 					}
+					return;
 				}
 			)->catch(
 				sub {
@@ -970,6 +971,7 @@ sub startup {
 					if ($callback) {
 						&$callback();
 					}
+					return;
 				}
 			)->wait;
 		}
@@ -1400,11 +1402,13 @@ sub startup {
 						},
 						{ user_id => $uid }
 					);
+					return;
 				}
 			)->catch(
 				sub {
 					my ($err) = @_;
 					$self->app->log->warn("add_route_timestamps: $err");
+					return;
 				}
 			)->wait;
 
@@ -1487,6 +1491,7 @@ sub startup {
 								{ user_id => $uid }
 							);
 						}
+						return;
 					}
 				)->catch(
 					sub {
@@ -1513,6 +1518,7 @@ sub startup {
 							{ data    => JSON->new->encode($data) },
 							{ user_id => $uid }
 						);
+						return;
 					}
 				)->catch(
 					sub {
@@ -1539,6 +1545,7 @@ sub startup {
 							{ data    => JSON->new->encode($data) },
 							{ user_id => $uid }
 						);
+						return;
 					}
 				)->catch(
 					sub {
