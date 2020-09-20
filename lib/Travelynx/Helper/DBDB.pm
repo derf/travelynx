@@ -116,6 +116,7 @@ sub get_stationinfo_p {
 			my ($tx) = @_;
 
 			if ( my $err = $tx->error ) {
+				$cache->freeze( $url, {} );
 				$promise->reject("HTTP $err->{code} $err->{message}");
 				return;
 			}
@@ -128,6 +129,7 @@ sub get_stationinfo_p {
 	)->catch(
 		sub {
 			my ($err) = @_;
+			$cache->freeze( $url, {} );
 			$promise->reject($err);
 			return;
 		}
