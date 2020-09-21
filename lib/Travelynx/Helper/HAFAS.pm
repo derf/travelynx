@@ -44,7 +44,8 @@ sub get_polyline_p {
 
 			if ( my $err = $tx->error ) {
 				$promise->reject(
-					"GET $url returned HTTP $err->{code} $err->{message}");
+"hafas->get_polyline_p($url) returned HTTP $err->{code} $err->{message}"
+				);
 				return;
 			}
 
@@ -91,7 +92,8 @@ sub get_polyline_p {
 					  . $train->line
 					  . ": IRIS route does not agree with HAFAS route: $iris_stations != $hafas_stations"
 				);
-				$promise->reject('polyline route mismatch');
+				$promise->reject(
+					"hafas->get_polyline_p($url): polyline route mismatch");
 			}
 			else {
 				$promise->resolve($ret);
@@ -101,7 +103,7 @@ sub get_polyline_p {
 	)->catch(
 		sub {
 			my ($err) = @_;
-			$promise->reject($err);
+			$promise->reject("hafas->get_polyline_p($url): $err");
 			return;
 		}
 	)->wait;
@@ -144,7 +146,9 @@ sub get_tripid_p {
 					return;
 				}
 			}
-			$promise->reject;
+			$promise->reject( 'hafas->get_tripid_p: train '
+				  . $train->train_no
+				  . ' not found' );
 			return;
 		}
 	)->catch(
@@ -175,7 +179,8 @@ sub get_rest_p {
 
 			if ( my $err = $tx->error ) {
 				$promise->reject(
-					"GET $url returned HTTP $err->{code} $err->{message}");
+"hafas->get_rest_p($url) returned HTTP $err->{code} $err->{message}"
+				);
 				return;
 			}
 
@@ -187,8 +192,8 @@ sub get_rest_p {
 	)->catch(
 		sub {
 			my ($err) = @_;
-			$self->{log}->warn("get($url): $err");
-			$promise->reject($err);
+			$self->{log}->warn("hafas->get_rest_p($url): $err");
+			$promise->reject("hafas->get_rest_p($url): $err");
 			return;
 		}
 	)->wait;
@@ -212,7 +217,8 @@ sub get_json_p {
 
 			if ( my $err = $tx->error ) {
 				$promise->reject(
-					"GET $url returned HTTP $err->{code} $err->{message}");
+"hafas->get_json_p($url) returned HTTP $err->{code} $err->{message}"
+				);
 				return;
 			}
 
@@ -230,8 +236,8 @@ sub get_json_p {
 	)->catch(
 		sub {
 			my ($err) = @_;
-			$self->{log}->warn("get($url): $err");
-			$promise->reject($err);
+			$self->{log}->warn("hafas->get_json_p($url): $err");
+			$promise->reject("hafas->get_json_p($url): $err");
 			return;
 		}
 	)->wait;
@@ -255,7 +261,8 @@ sub get_xml_p {
 
 			if ( my $err = $tx->error ) {
 				$promise->reject(
-					"GET $url returned HTTP $err->{code} $err->{message}");
+"hafas->get_xml_p($url) returned HTTP $err->{code} $err->{message}"
+				);
 				return;
 			}
 
@@ -312,8 +319,8 @@ sub get_xml_p {
 	)->catch(
 		sub {
 			my ($err) = @_;
-			$self->{log}->warn("get($url): $err");
-			$promise->reject($err);
+			$self->{log}->warn("hafas->get_xml_p($url): $err");
+			$promise->reject("hafas->get_xml_p($url): $err");
 			return;
 		}
 	)->wait;
