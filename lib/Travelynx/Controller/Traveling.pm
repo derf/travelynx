@@ -84,12 +84,19 @@ sub user_status {
 		image => $self->url_for('/static/icons/icon-512x512.png')
 		  ->to_abs->scheme('https'),
 	);
+	my %og_data = (
+		type      => 'article',
+		image     => $tw_data{image},
+		url       => $self->url_for("/status/${name}")->to_abs->scheme('https'),
+		site_name => 'travelynx',
+	);
 
 	if ($journey) {
-		$tw_data{title} = sprintf( 'Fahrt von %s nach %s',
+		$og_data{title} = $tw_data{title} = sprintf( 'Fahrt von %s nach %s',
 			$journey->{from_name}, $journey->{to_name} );
-		$tw_data{description}
+		$og_data{description} = $tw_data{description}
 		  = $journey->{rt_arrival}->strftime('Ankunft am %d.%m.%Y um %H:%M');
+		$og_data{url} .= "/${ts}";
 	}
 	elsif (
 		$ts
@@ -97,12 +104,14 @@ sub user_status {
 			or $status->{sched_departure}->epoch != $ts )
 	  )
 	{
-		$tw_data{title}       = "Bahnfahrt beendet";
-		$tw_data{description} = "${name} hat das Ziel erreicht";
+		$og_data{title}       = $tw_data{title} = "Bahnfahrt beendet";
+		$og_data{description} = $tw_data{description}
+		  = "${name} hat das Ziel erreicht";
 	}
 	elsif ( $status->{checked_in} ) {
-		$tw_data{title}       = "${name} ist unterwegs";
-		$tw_data{description} = sprintf(
+		$og_data{url} .= '/' . $status->{sched_departure}->epoch;
+		$og_data{title}       = $tw_data{title}       = "${name} ist unterwegs";
+		$og_data{description} = $tw_data{description} = sprintf(
 			'%s %s von %s nach %s',
 			$status->{train_type}, $status->{train_line} // $status->{train_no},
 			$status->{dep_name},   $status->{arr_name}   // 'irgendwo'
@@ -110,11 +119,15 @@ sub user_status {
 		if ( $status->{real_arrival}->epoch ) {
 			$tw_data{description} .= $status->{real_arrival}
 			  ->strftime(' – Ankunft gegen %H:%M Uhr');
+			$og_data{description} .= $status->{real_arrival}
+			  ->strftime(' – Ankunft gegen %H:%M Uhr');
 		}
 	}
 	else {
-		$tw_data{title}       = "${name} ist gerade nicht eingecheckt";
-		$tw_data{description} = "Letztes Fahrtziel: $status->{arr_name}";
+		$og_data{title} = $tw_data{title}
+		  = "${name} ist gerade nicht eingecheckt";
+		$og_data{description} = $tw_data{description}
+		  = "Letztes Fahrtziel: $status->{arr_name}";
 	}
 
 	if ($journey) {
@@ -127,11 +140,12 @@ sub user_status {
 		);
 		$self->render(
 			'journey',
-			error    => undef,
-			with_map => 1,
-			readonly => 1,
-			journey  => $journey,
-			twitter  => \%tw_data,
+			error     => undef,
+			with_map  => 1,
+			readonly  => 1,
+			journey   => $journey,
+			twitter   => \%tw_data,
+			opengraph => \%og_data,
 			%{$map_data},
 		);
 	}
@@ -142,6 +156,7 @@ sub user_status {
 			public_level => $user->{public_level},
 			journey      => $status,
 			twitter      => \%tw_data,
+			opengraph    => \%og_data,
 		);
 	}
 }
@@ -236,21 +251,29 @@ sub public_journey_details {
 		}
 
 		if ($journey) {
+			my $title = sprintf( 'Fahrt von %s nach %s am %s',
+				$journey->{from_name}, $journey->{to_name},
+				$journey->{rt_arrival}->strftime('%d.%m.%Y') );
+			my $description = sprintf( 'Ankunft mit %s %s %s',
+				$journey->{type}, $journey->{no},
+				$journey->{rt_arrival}->strftime('um %H:%M') );
 			my %tw_data = (
 				card  => 'summary',
 				site  => '@derfnull',
 				image => $self->url_for('/static/icons/icon-512x512.png')
 				  ->to_abs->scheme('https'),
+				title       => $title,
+				description => $description,
+			);
+			my %og_data = (
+				type        => 'article',
+				image       => $tw_data{image},
+				url         => $self->url_for->to_abs,
+				site_name   => 'travelynx',
+				title       => $title,
+				description => $description,
 			);
 
-			if ($journey) {
-				$tw_data{title} = sprintf( 'Fahrt von %s nach %s am %s',
-					$journey->{from_name}, $journey->{to_name},
-					$journey->{rt_arrival}->strftime('%d.%m.%Y') );
-				$tw_data{description} = sprintf( 'Ankunft mit %s %s %s',
-					$journey->{type}, $journey->{no},
-					$journey->{rt_arrival}->strftime('um %H:%M') );
-			}
 			my $map_data = $self->journeys_to_map_data(
 				journeys       => [$journey],
 				include_manual => 1,
@@ -262,12 +285,13 @@ sub public_journey_details {
 			}
 			$self->render(
 				'journey',
-				error    => undef,
-				journey  => $journey,
-				with_map => 1,
-				username => $name,
-				readonly => 1,
-				twitter  => \%tw_data,
+				error     => undef,
+				journey   => $journey,
+				with_map  => 1,
+				username  => $name,
+				readonly  => 1,
+				twitter   => \%tw_data,
+				opengraph => \%og_data,
 				%{$map_data},
 			);
 		}
