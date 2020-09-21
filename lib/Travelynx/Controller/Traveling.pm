@@ -236,6 +236,21 @@ sub public_journey_details {
 		}
 
 		if ($journey) {
+			my %tw_data = (
+				card  => 'summary',
+				site  => '@derfnull',
+				image => $self->url_for('/static/icons/icon-512x512.png')
+				  ->to_abs->scheme('https'),
+			);
+
+			if ($journey) {
+				$tw_data{title} = sprintf( 'Fahrt von %s nach %s am %s',
+					$journey->{from_name}, $journey->{to_name},
+					$journey->{rt_arrival}->strftime('%d.%m.%Y') );
+				$tw_data{description} = sprintf( 'Ankunft mit %s %s %s',
+					$journey->{type}, $journey->{no},
+					$journey->{rt_arrival}->strftime('um %H:%M') );
+			}
 			my $map_data = $self->journeys_to_map_data(
 				journeys       => [$journey],
 				include_manual => 1,
@@ -252,6 +267,7 @@ sub public_journey_details {
 				with_map => 1,
 				username => $name,
 				readonly => 1,
+				twitter  => \%tw_data,
 				%{$map_data},
 			);
 		}
