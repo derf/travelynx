@@ -20,7 +20,9 @@ use Travelynx::Helper::DBDB;
 use Travelynx::Helper::HAFAS;
 use Travelynx::Helper::IRIS;
 use Travelynx::Helper::Sendmail;
+use Travelynx::Helper::Traewelling;
 use Travelynx::Model::Journeys;
+use Travelynx::Model::Traewelling;
 use Travelynx::Model::Users;
 use XML::LibXML;
 
@@ -293,6 +295,26 @@ sub startup {
 	);
 
 	$self->helper(
+		traewelling => sub {
+			my ($self) = @_;
+			state $trwl = Travelynx::Model::Traewelling->new( pg => $self->pg );
+		}
+	);
+
+	$self->helper(
+		traewelling_api => sub {
+			my ($self) = @_;
+			state $trwl_api = Travelynx::Helper::Traewelling->new(
+				log        => $self->app->log,
+				model      => $self->traewelling,
+				root_url   => $self->url_for('/')->to_abs,
+				user_agent => $self->ua,
+				version    => $self->app->config->{version},
+			);
+		}
+	);
+
+	$self->helper(
 		journeys => sub {
 			my ($self) = @_;
 			state $journeys = Travelynx::Model::Journeys->new(
@@ -389,9 +411,12 @@ sub startup {
 
 	$self->helper(
 		'checkin' => sub {
-			my ( $self, $station, $train_id, $uid ) = @_;
+			my ( $self, %opt ) = @_;
 
-			$uid //= $self->current_user->{id};
+			my $station  = $opt{station};
+			my $train_id = $opt{train_id};
+			my $uid      = $opt{uid} // $self->current_user->{id};
+			my $db       = $opt{db} // $self->pg->db;
 
 			my $status = $self->iris->get_departures(
 				station    => $station,
@@ -409,7 +434,7 @@ sub startup {
 				}
 				else {
 
-					my $user = $self->get_user_status($uid);
+					my $user = $self->get_user_status( $uid, $db );
 					if ( $user->{checked_in} or $user->{cancelled} ) {
 
 						if (    $user->{train_id} eq $train_id
@@ -420,12 +445,17 @@ sub startup {
 						}
 
 						# Otherwise, someone forgot to check out first
-						$self->checkout( $station, 1, $uid );
+						$self->checkout(
+							station => $station,
+							force   => 1,
+							uid     => $uid,
+							db      => $db
+						);
 					}
 
 					eval {
 						my $json = JSON->new;
-						$self->pg->db->insert(
+						$db->insert(
 							'in_transit',
 							{
 								user_id   => $uid,
@@ -459,8 +489,12 @@ sub startup {
 							"Checkin($uid): INSERT failed: $@");
 						return ( undef, 'INSERT failed: ' . $@ );
 					}
-					$self->add_route_timestamps( $uid, $train, 1 );
-					$self->run_hook( $uid, 'checkin' );
+					if ( not $opt{in_transaction} ) {
+
+						# mustn't be called during a transaction
+						$self->add_route_timestamps( $uid, $train, 1 );
+						$self->run_hook( $uid, 'checkin' );
+					}
 					return ( $train, undef );
 				}
 			}
@@ -547,16 +581,19 @@ sub startup {
 
 	$self->helper(
 		'checkout' => sub {
-			my ( $self, $station, $force, $uid ) = @_;
+			my ( $self, %opt ) = @_;
 
-			my $db     = $self->pg->db;
-			my $status = $self->iris->get_departures(
+			my $station = $opt{station};
+			my $force   = $opt{force};
+			my $uid     = $opt{uid};
+			my $db      = $opt{db} // $self->pg->db;
+			my $status  = $self->iris->get_departures(
 				station    => $station,
 				lookbehind => 120,
 				lookahead  => 120
 			);
 			$uid //= $self->current_user->{id};
-			my $user     = $self->get_user_status($uid);
+			my $user     = $self->get_user_status( $uid, $db );
 			my $train_id = $user->{train_id};
 
 			if ( not $user->{checked_in} and not $user->{cancelled} ) {
@@ -671,7 +708,11 @@ sub startup {
 					}
 				}
 				if ( not $force ) {
-					$self->run_hook( $uid, 'update' );
+
+					# mustn't be called during a transaction
+					if ( not $opt{in_transaction} ) {
+						$self->run_hook( $uid, 'update' );
+					}
 					return ( 1, undef );
 				}
 			}
@@ -680,7 +721,10 @@ sub startup {
 
 			eval {
 
-				my $tx = $db->begin;
+				my $tx;
+				if ( not $opt{in_transaction} ) {
+					$tx = $db->begin;
+				}
 
 				if ( defined $train and not $train->arrival and not $force ) {
 					my $train_no = $train->train_no;
@@ -778,7 +822,9 @@ sub startup {
 					);
 				}
 
-				$tx->commit;
+				if ( not $opt{in_transaction} ) {
+					$tx->commit;
+				}
 			};
 
 			if ($@) {
@@ -787,27 +833,33 @@ sub startup {
 			}
 
 			if ( $has_arrived or $force ) {
-				$self->run_hook( $uid, 'checkout' );
+				if ( not $opt{in_transaction} ) {
+					$self->run_hook( $uid, 'checkout' );
+				}
 				return ( 0, undef );
 			}
-			$self->run_hook( $uid, 'update' );
-			$self->add_route_timestamps( $uid, $train, 0 );
+			if ( not $opt{in_transaction} ) {
+				$self->run_hook( $uid, 'update' );
+				$self->add_route_timestamps( $uid, $train, 0 );
+			}
 			return ( 1, undef );
 		}
 	);
 
 	$self->helper(
 		'update_in_transit_comment' => sub {
-			my ( $self, $comment, $uid ) = @_;
+			my ( $self, $comment, $uid, $db ) = @_;
 			$uid //= $self->current_user->{id};
+			$db  //= $self->pg->db;
 
-			my $status = $self->pg->db->select( 'in_transit', ['user_data'],
-				{ user_id => $uid } )->expand->hash;
+			my $status
+			  = $db->select( 'in_transit', ['user_data'], { user_id => $uid } )
+			  ->expand->hash;
 			if ( not $status ) {
 				return;
 			}
 			$status->{user_data}{comment} = $comment;
-			$self->pg->db->update(
+			$db->update(
 				'in_transit',
 				{ user_data => JSON->new->encode( $status->{user_data} ) },
 				{ user_id   => $uid }
@@ -1872,11 +1924,11 @@ sub startup {
 
 	$self->helper(
 		'get_user_status' => sub {
-			my ( $self, $uid ) = @_;
+			my ( $self, $uid, $db ) = @_;
 
 			$uid //= $self->current_user->{id};
+			$db  //= $self->pg->db;
 
-			my $db    = $self->pg->db;
 			my $now   = DateTime->now( time_zone => 'Europe/Berlin' );
 			my $epoch = $now->epoch;
 
@@ -2316,6 +2368,157 @@ sub startup {
 	);
 
 	$self->helper(
+		'traewelling_to_travelynx' => sub {
+			my ( $self, %opt ) = @_;
+			my $traewelling = $opt{traewelling};
+			my $user_data   = $opt{user_data};
+			my $uid         = $user_data->{user_id};
+
+			if ( not $traewelling->{checkin}
+				or $self->now->epoch - $traewelling->{checkin}->epoch > 900 )
+			{
+				$self->log->debug("... not checked in");
+				return;
+			}
+			if (    $traewelling->{status_id}
+				and $user_data->{data}{latest_pull_status_id}
+				and $traewelling->{status_id}
+				== $user_data->{data}{latest_pull_status_id} )
+			{
+				$self->log->debug("... already handled");
+				return;
+			}
+			$self->log->debug("... checked in");
+			my $user_status = $self->get_user_status($uid);
+			if ( $user_status->{checked_in} ) {
+				$self->log->debug(
+					"... also checked in via travelynx. aborting.");
+				return;
+			}
+
+			if ( $traewelling->{category}
+				!~ m{^ (?: nationalExpress | regional | suburban ) $ }x )
+			{
+				$self->log->debug("... status is not a train");
+				$self->traewelling->log(
+					uid => $uid,
+					message =>
+"$traewelling->{line} nach $traewelling->{arr_name} ist keine Zugfahrt",
+					status_id => $traewelling->{status_id},
+				);
+				$self->traewelling->set_latest_pull_status_id(
+					uid       => $uid,
+					status_id => $traewelling->{status_id}
+				);
+				return;
+			}
+
+			my $dep = $self->iris->get_departures(
+				station    => $traewelling->{dep_eva},
+				lookbehind => 60,
+				lookahead  => 40
+			);
+			if ( $dep->{errstr} ) {
+				$self->traewelling->log(
+					uid => $uid,
+					message =>
+"Fehler bei $traewelling->{line} nach $traewelling->{arr_name}: $dep->{errstr}",
+					status_id => $traewelling->{status_id},
+					is_error  => 1,
+				);
+				return;
+			}
+			my ( $train_ref, $train_id );
+			for my $train ( @{ $dep->{results} } ) {
+				if ( $train->line ne $traewelling->{line} ) {
+					next;
+				}
+				if ( not $train->sched_departure
+					or $train->sched_departure->epoch
+					!= $traewelling->{dep_dt}->epoch )
+				{
+					next;
+				}
+				if (
+					not List::Util::first { $_ eq $traewelling->{arr_name} }
+					$train->route_post
+				  )
+				{
+					next;
+				}
+				$train_id  = $train->train_id;
+				$train_ref = $train;
+				last;
+			}
+			if ($train_id) {
+				$self->log->debug("... found train: $train_id");
+
+				my $db = $self->pg->db;
+				my $tx = $db->begin;
+
+				my ( undef, $err ) = $self->checkin(
+					station        => $traewelling->{dep_eva},
+					train_id       => $train_id,
+					uid            => $uid,
+					in_transaction => 1,
+					db             => $db
+				);
+
+				if ( not $err ) {
+					( undef, $err ) = $self->checkout(
+						station        => $traewelling->{arr_eva},
+						train_id       => 0,
+						uid            => $uid,
+						in_transaction => 1,
+						db             => $db
+					);
+					if ( not $err ) {
+						$self->log->debug("... success!");
+						if ( $traewelling->{message} ) {
+							$self->update_in_transit_comment(
+								$traewelling->{message},
+								$uid, $db );
+						}
+						$self->traewelling->log(
+							uid => $uid,
+							db  => $db,
+							message =>
+"Eingecheckt in $traewelling->{line} nach $traewelling->{arr_name}",
+							status_id => $traewelling->{status_id},
+						);
+						$self->traewelling->set_latest_pull_status_id(
+							uid       => $uid,
+							status_id => $traewelling->{status_id},
+							db        => $db
+						);
+
+						$tx->commit;
+					}
+				}
+				if ($err) {
+					$self->log->debug("... error: $err");
+					$self->traewelling->log(
+						uid => $uid,
+						message =>
+"Fehler bei $traewelling->{line} nach $traewelling->{arr_name}: $err",
+						status_id => $traewelling->{status_id},
+						is_error  => 1
+					);
+				}
+			}
+			else {
+				$self->traewelling->log(
+					uid => $uid,
+					message =>
+"$traewelling->{line} nach $traewelling->{arr_name} nicht gefunden",
+					status_id => $traewelling->{status_id},
+					is_error  => 1
+				);
+			}
+		}
+	);
+
+	$self->helper(
 		'journeys_to_map_data' => sub {
 			my ( $self, %opt ) = @_;
 
@@ -2647,6 +2850,7 @@ sub startup {
 	$authed_r->get('/account')->to('account#account');
 	$authed_r->get('/account/privacy')->to('account#privacy');
 	$authed_r->get('/account/hooks')->to('account#webhook');
+	$authed_r->get('/account/traewelling')->to('traewelling#settings');
 	$authed_r->get('/account/insight')->to('account#insight');
 	$authed_r->get('/ajax/status_card.html')->to('traveling#status_card');
 	$authed_r->get('/cancelled')->to('traveling#cancelled');
@@ -2668,6 +2872,7 @@ sub startup {
 	$authed_r->get('/confirm_mail/:token')->to('account#confirm_mail');
 	$authed_r->post('/account/privacy')->to('account#privacy');
 	$authed_r->post('/account/hooks')->to('account#webhook');
+	$authed_r->post('/account/traewelling')->to('traewelling#settings');
 	$authed_r->post('/account/insight')->to('account#insight');
 	$authed_r->post('/journey/add')->to('traveling#add_journey_form');
 	$authed_r->post('/journey/comment')->to('traveling#comment_form');

@@ -1012,6 +1012,32 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v21 -> v22
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				create table traewelling (
+					user_id integer not null references users (id) primary key,
+					email varchar(256) not null,
+					push_sync boolean not null,
+					pull_sync boolean not null,
+					errored boolean,
+					token text,
+					data jsonb,
+					latest_run timestamptz
+				);
+				comment on table traewelling is 'Token and Status for Traewelling';
+				create view traewelling_str as select
+					user_id, email, push_sync, pull_sync, errored, token, data,
+					extract(epoch from latest_run) as latest_run_ts
+					from traewelling
+				;
+				update schema_version set version = 22;
+			}
+		);
+	},
 );
 
 sub setup_db {

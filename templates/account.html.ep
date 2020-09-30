@@ -16,6 +16,9 @@
 					% elsif ($success eq 'privacy') {
 						<span class="card-title">Einstellungen zu öffentlichen Account-Daten geändert</span>
 					% }
+					% elsif ($success eq 'traewelling') {
+						<span class="card-title">Traewelling-Verknüpfung aktualisiert</span>
+					% }
 					% elsif ($success eq 'use_history') {
 						<span class="card-title">Einstellungen zu vorgeschlagenen Verbindungen geändert</span>
 					% }
@@ -31,6 +34,7 @@
 <h1>Account</h1>
 % my $acc = current_user();
 % my $hook = get_webhook();
+% my $traewelling = traewelling->get($acc->{id});
 % my $use_history = users->use_history(uid => $acc->{id});
 <div class="row">
 	<div class="col s12">
@@ -107,6 +111,24 @@
 					% }
 					% else {
 						Aktiv
+					% }
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">Traewelling</th>
+				<td>
+					<a href="/account/traewelling"><i class="material-icons">edit</i></a>
+					% if (not ($traewelling->{token})) {
+						<span style="color: #999999;">Nicht verknüpft</span>
+					% }
+					% elsif ($traewelling->{errored}) {
+						Fehlerhaft <i class="material-icons">error</i>
+					% }
+					% elsif (not ($traewelling->{push_sync} or $traewelling->{pull_sync})) {
+						<span style="color: #999999;">Verknüpft mit <%= $traewelling->{data}{user_name} // $traewelling->{email} %>, Synchronisierung inaktiv</span>
+					% }
+					% else {
+						Verknüpft mit <%= $traewelling->{data}{user_name} // $traewelling->{email} %>
 					% }
 				</td>
 			</tr>

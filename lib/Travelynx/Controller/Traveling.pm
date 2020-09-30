@@ -424,8 +424,10 @@ sub log_action {
 
 	if ( $params->{action} eq 'checkin' ) {
 
-		my ( $train, $error )
-		  = $self->checkin( $params->{station}, $params->{train} );
+		my ( $train, $error ) = $self->checkin(
+			station  => $params->{station},
+			train_id => $params->{train}
+		);
 		my $destination = $params->{dest};
 
 		if ($error) {
@@ -447,8 +449,10 @@ sub log_action {
 		else {
 			# Silently ignore errors -- if they are permanent, the user will see
 			# them when selecting the destination manually.
-			my ( $still_checked_in, undef )
-			  = $self->checkout( $destination, 0 );
+			my ( $still_checked_in, undef ) = $self->checkout(
+				station => $destination,
+				force   => 0
+			);
 			my $station_link = '/s/' . $destination;
 			$self->render(
 				json => {
@@ -459,8 +463,10 @@ sub log_action {
 		}
 	}
 	elsif ( $params->{action} eq 'checkout' ) {
-		my ( $still_checked_in, $error )
-		  = $self->checkout( $params->{station}, $params->{force} );
+		my ( $still_checked_in, $error ) = $self->checkout(
+			station => $params->{station},
+			force   => $params->{force}
+		);
 		my $station_link = '/s/' . $params->{station};
 
 		if ($error) {
@@ -505,8 +511,10 @@ sub log_action {
 		}
 	}
 	elsif ( $params->{action} eq 'cancelled_from' ) {
-		my ( undef, $error )
-		  = $self->checkin( $params->{station}, $params->{train} );
+		my ( undef, $error ) = $self->checkin(
+			station  => $params->{station},
+			train_id => $params->{train}
+		);
 
 		if ($error) {
 			$self->render(
@@ -526,8 +534,10 @@ sub log_action {
 		}
 	}
 	elsif ( $params->{action} eq 'cancelled_to' ) {
-		my ( undef, $error )
-		  = $self->checkout( $params->{station}, 1 );
+		my ( undef, $error ) = $self->checkout(
+			station => $params->{station},
+			force   => 1
+		);
 
 		if ($error) {
 			$self->render(

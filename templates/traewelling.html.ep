@@ -1,0 +1,220 @@
+% if (my $invalid = stash('invalid')) {
+	%= include '_invalid_input', invalid => $invalid
+% }
+
+<h1>Träwelling</h1>
+
+<div class="row">
+	<div class="col s12">
+		<div class="card purple">
+			<div class="card-content white-text">
+				<span class="card-title">Beta-Feature</span>
+				<p>Die Verbindung von Checkinservices bietet viele Möglichkeiten für interessante Fehlerbilder.
+					Falls etwas nicht klappt, bitte mit möglichst detaillierten Angaben zum Hergang einen Bug melden.</p>
+				<p>
+					Bekannte Probleme: Hooks werden bei einem Checkin via Träwelling nicht ausgelöst.
+				</p>
+			</div>
+			<div class="card-action">
+				<a href="https://github.com/derf/travelynx/issues" class="waves-effect waves-light btn-flat white-text">
+					<i class="material-icons left">bug_report</i>Bug melden
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+% if (stash('new_traewelling')) {
+	<div class="row">
+		<div class="col s12">
+			% if ($traewelling->{token}) {
+				<div class="card success-color">
+					<div class="card-content white-text">
+						<span class="card-title">Träwelling verknüpft</span>
+						% my $user = $traewelling->{data}{user_name} // $traewelling->{email};
+						<p>Dein travelynx-Account hat nun ein Jahr lang Zugriff auf 
+							den Träwelling-Account <b>@<%= $user %></b>.</p>
+					</div>
+				</div>
+			% }
+			% elsif (my $login_err = stash('login_error')) {
+				<div class="card caution-color">
+					<div class="card-content white-text">
+						<span class="card-title">Login-Fehler</span>
+						<p>Der Login bei Träwelling ist fehlgeschlagen: <%= $login_err %></p>
+					</div>
+				</div>
+			% }
+			% elsif (my $logout_err = stash('logout_error')) {
+				<div class="card caution-color">
+					<div class="card-content white-text">
+						<span class="card-title">Logout-Fehler</span>
+						<p>Der Logout bei Träwelling ist fehlgeschlagen: <%= $logout_err %>.
+							Dein Login-Token bei travelynx wurde dennoch gelöscht, so
+							dass nun kein Zugriff von travelynx auf Träwelling mehr
+							möglich ist. In den <a
+							href="https://traewelling.de/settings">Träwelling-Einstellungen</a>
+							kannst du ihn vollständig löschen.</p>
+					</div>
+				</div>
+			% }
+		</div>
+	</div>
+% }
+
+% if (not $traewelling->{token}) {
+	<div class="row">
+		<div class="col s12">
+			<p>
+				Hier hast du die Möglichkeit, deinen travelynx-Account mit einem
+				Account bei <a href="https://traewelling.de">Träwelling</a> zu
+				verknüpfen. Dies erlaubt die automatische Übernahme von Checkins
+				zwischen den beiden Diensten. Träwelling-Checkins in
+				Nahverkehrsmittel und Züge außerhalb des deutschen Schienennetzes
+				werden nicht unterstützt und ignoriert.
+			</p>
+			<p>
+				Mit E-Mail und Passwort wird ein Login über die Träwelling-API
+				durchgeführt. Die E-Mail und das dabei generierte Token werden
+				von travelynx gespeichert. Das Passwort wird ausschließlich für
+				den Login verwendet und nicht gespeichert. Der Login kann jederzeit
+				sowohl auf dieser Seite als auch über die <a
+				href="https://traewelling.de/settings">Träwelling-Einstellungen</a>
+				widerrufen werden. Nach einem Jahr läuft er automatisch ab.
+			</p>
+		</div>
+	</div>
+	<div class="row">
+		%= form_for '/account/traewelling' => (method => 'POST') => begin
+			%= csrf_field
+			<div class="input-field col s12">
+				<i class="material-icons prefix">account_circle</i>
+				%= text_field 'email', id => 'email', class => 'validate', required => undef, maxlength => 250
+				<label for="email">E-Mail</label>
+			</div>
+			<div class="input-field col s12">
+				<i class="material-icons prefix">lock</i>
+				%= password_field 'password', id => 'password', class => 'validate', required => undef
+				<label for="password">Passwort</label>
+			</div>
+			<div class="col s12 center-align">
+				<button class="btn waves-effect waves-light" type="submit" name="action" value="login">
+					Verknüpfen
+					<i class="material-icons right">send</i>
+				</button>
+			</div>
+		%= end
+	</div>
+% }
+% else {
+	<div class="row">
+		<div class="col s12">
+			<p>
+				Dieser travelynx-Account ist mit dem Träwelling-Account
+				% if (my $user = $traewelling->{data}{user_name}) {
+					<a href="https://traewelling.de/profile/<%= $user %>"><%= $user %></a>
+				% }
+				% else {
+					%= $traewelling->{email}
+				% }
+				verknüpft.
+			</p>
+		</div>
+	</div>
+	%= form_for '/account/traewelling' => (method => 'POST') => begin
+		<div class="row">
+			%= csrf_field
+			<div class="input-field col s12">
+				<div>
+					<label>
+						%= radio_button sync_source => 'none'
+						<span>Keine Synchronisierung</span>
+					</label>
+				</div>
+			</div>
+			<div class="input-field col s12">
+				<div>
+					<label>
+						%= radio_button sync_source => 'travelynx', disabled => undef
+						<span>Checkin-Synchronisierung travelynx → Träwelling</span>
+					</label>
+				</div>
+				<p>Die Synchronisierung erfolgt spätestens drei Minuten nach der
+					Zielwahl.  Träwelling-Checkins können von travelynx noch nicht
+					rückgängig gemacht werden.</p>
+			</div>
+			<div class="input-field col s12">
+				<div>
+					<label>
+						%= radio_button sync_source => 'traewelling'
+						<span>Checkin-Synchronisierung Träwelling → travelynx</span>
+					</label>
+				</div>
+				<p>Alle drei Minuten wird dein Status auf Träwelling abgefragt.
+					Falls du gerade in einen Zug eingecheckt bist, wird dieser von
+					travelynx übernommen.  Träwelling-Checkins in Nahverkehrsmittel
+					und Züge außerhalb des deutschen Schienennetzes werden nicht
+					unterstützt.</p>
+			</div>
+		</div>
+		<div class="row hide-on-small-only">
+			<div class="col s12 m6 l6 center-align">
+				<button class="btn waves-effect waves-light red" type="submit" name="action" value="logout">
+					Abmelden
+					<i class="material-icons right" aria-hidden="true">sync_disabled</i>
+				</button>
+			</div>
+			<div class="col s12 m6 l6 center-align">
+				<button class="btn waves-effect waves-light" type="submit" name="action" value="config">
+					Speichern
+					<i class="material-icons right" aria-hidden="true">send</i>
+				</button>
+			</div>
+		</div>
+		<div class="row hide-on-med-and-up">
+			<div class="col s12 m6 l6 center-align">
+				<button class="btn waves-effect waves-light" type="submit" name="action" value="config">
+					Speichern
+					<i class="material-icons right" aria-hidden="true">send</i>
+				</button>
+			</div>
+			<div class="col s12 m6 l6 center-align" style="margin-top: 1em;">
+				<button class="btn waves-effect waves-light red" type="submit" name="action" value="logout">
+					Abmelden
+					<i class="material-icons right" aria-hidden="true">sync_disabled</i>
+				</button>
+			</div>
+		</div>
+	%= end
+	<h2>Status</h2>
+	<div class="row">
+		<div class="col s12"">
+			% if ($traewelling->{latest_run}->epoch) {
+				Letzter Kontakt mit Träwelling <%= $traewelling->{latest_run}->strftime('am %d.%m.%Y um %H:%M:%S') %><br/>
+				% if ($traewelling->{errored}) {
+					<i class="material-icons left">error</i>
+					Fehler: <%= $traewelling->{data}{error} %>
+				% }
+			% }
+			% else {
+				Bisher wurde noch keine Synchronisierung durchgeführt.
+			% }
+		</div>
+	</div>
+	<h2>Log</h2>
+	<div class="row">
+		<div class="col s12"">
+			<ul>
+				% for my $log_entry (@{$traewelling->{data}{log} // []}) {
+					<li>
+						<%= $log_entry->[0]->strftime('%d.%m.%Y %H:%M:%S') %> –
+						% if ($log_entry->[2]) {
+							Träwelling <a href="https://traewelling.de/status/<%= $log_entry->[2] %>">#<%= $log_entry->[2] %></a> –
+						% }
+						%= $log_entry->[1]
+					</li>
+				% }
+			</ul>
+		</div>
+	</div>
+% }

@@ -258,14 +258,21 @@ sub travel_v1 {
 			$train_id = $train->train_id;
 		}
 
-		my ( $train, $error )
-		  = $self->checkin( $from_station, $train_id, $uid );
+		my ( $train, $error ) = $self->checkin(
+			station  => $from_station,
+			train_id => $train_id,
+			uid      => $uid
+		);
 		if ( $payload->{comment} and not $error ) {
 			$self->update_in_transit_comment(
 				sanitize( q{}, $payload->{comment} ), $uid );
 		}
 		if ( $to_station and not $error ) {
-			( $train, $error ) = $self->checkout( $to_station, 0, $uid );
+			( $train, $error ) = $self->checkout(
+				station => $to_station,
+				force   => 0,
+				uid     => $uid
+			);
 		}
 		if ($error) {
 			$self->render(
@@ -307,8 +314,11 @@ sub travel_v1 {
 				sanitize( q{}, $payload->{comment} ), $uid );
 		}
 
-		my ( $train, $error )
-		  = $self->checkout( $to_station, $payload->{force} ? 1 : 0, $uid );
+		my ( $train, $error ) = $self->checkout(
+			station => $to_station,
+			force   => $payload->{force} ? 1 : 0,
+			uid     => $uid
+		);
 		if ($error) {
 			$self->render(
 				json => {
