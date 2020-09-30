@@ -114,8 +114,9 @@
 					% }
 				</td>
 			</tr>
+			% if ($traewelling->{token}) {
 			<tr>
-				<th scope="row">Traewelling</th>
+				<th scope="row">Träwelling</th>
 				<td>
 					<a href="/account/traewelling"><i class="material-icons">edit</i></a>
 					% if (not ($traewelling->{token})) {
@@ -124,14 +125,18 @@
 					% elsif ($traewelling->{errored}) {
 						Fehlerhaft <i class="material-icons">error</i>
 					% }
-					% elsif (not ($traewelling->{push_sync} or $traewelling->{pull_sync})) {
-						<span style="color: #999999;">Verknüpft mit <%= $traewelling->{data}{user_name} // $traewelling->{email} %>, Synchronisierung inaktiv</span>
-					% }
 					% else {
 						Verknüpft mit <%= $traewelling->{data}{user_name} // $traewelling->{email} %>
+						% if ($traewelling->{pull_sync}) {
+							– Checkins in Träwelling werden von travelynx übernommen
+						% }
+						% elsif ($traewelling->{push_sync}) {
+							– Checkins in travelynx werden zu Träwelling weitergereicht
+						% }
 					% }
 				</td>
 			</tr>
+			% }
 			<tr>
 				<th scope="row">Registriert am</th>
 				<td><%= $acc->{registered_at}->strftime('%d.%m.%Y %H:%M') %></td>

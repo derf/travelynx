@@ -190,14 +190,14 @@
 	<div class="row">
 		<div class="col s12"">
 			% if ($traewelling->{latest_run}->epoch) {
-				Letzter Kontakt mit Träwelling <%= $traewelling->{latest_run}->strftime('am %d.%m.%Y um %H:%M:%S') %><br/>
+				Letzter Checkin <%= $traewelling->{latest_run}->strftime('am %d.%m.%Y um %H:%M:%S') %><br/>
 				% if ($traewelling->{errored}) {
 					<i class="material-icons left">error</i>
 					Fehler: <%= $traewelling->{data}{error} %>
 				% }
 			% }
 			% else {
-				Bisher wurde noch keine Synchronisierung durchgeführt.
+				Bisher wurde noch kein Checkin übernommen.
 			% }
 		</div>
 	</div>
