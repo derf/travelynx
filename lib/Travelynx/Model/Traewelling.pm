@@ -146,16 +146,16 @@ sub set_latest_pull_status_id {
 	);
 }
 
-sub set_latest_push_status_id {
+sub set_latest_push_ts {
 	my ( $self, %opt ) = @_;
-	my $uid       = $opt{uid};
-	my $status_id = $opt{status_id};
-	my $db        = $opt{db} // $self->{pg}->db;
+	my $uid = $opt{uid};
+	my $ts  = $opt{ts};
+	my $db  = $opt{db} // $self->{pg}->db;
 
 	my $res_h
 	  = $db->select( 'traewelling', 'data', { user_id => $uid } )->expand->hash;
 
-	$res_h->{data}{latest_push_status_id} = $status_id;
+	$res_h->{data}{latest_push_ts} = $ts;
 
 	$db->update(
 		'traewelling',
@@ -181,12 +181,24 @@ sub set_sync {
 	);
 }
 
-sub get_push_accounts {
+sub get_pushable_accounts {
 	my ($self) = @_;
-	my $res = $self->{pg}->db->select(
-		'traewelling',
-		[ 'user_id', 'token', 'data' ],
-		{ push_sync => 1 }
+	my $now    = $self->now->epoch;
+	my $res    = $self->{pg}->db->query(
+		qq{select t.user_id as uid, t.token as token, t.data as data,
+			i.checkin_station_id as dep_eva, i.checkout_station_id as arr_eva,
+			i.data as journey_data, i.train_type as train_type,
+			i.train_line as train_line, i.train_no as train_no,
+			extract(epoch from i.checkin_time) as checkin_ts
+			from traewelling as t
+			join in_transit as i on t.user_id = i.user_id
+			where t.push_sync = True
+			and i.checkout_station_id is not null
+			and i.cancelled = False
+			and (extract(epoch from i.sched_departure) > ?
+				or extract(epoch from i.real_departure) > ?)
+			and extract(epoch from i.sched_departure) < ?
+		}, $now - 300, $now - 300, $now + 600
 	);
 	return $res->expand->hashes->each;
 }

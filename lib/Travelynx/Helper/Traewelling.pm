@@ -267,66 +267,72 @@ sub logout_p {
 }
 
 sub checkin {
-	my ( $self, $uid ) = @_;
-	if ( my $token = $self->get_traewelling_push_token($uid) ) {
-		my $user = $self->get_user_status;
+	my ( $self, %opt ) = @_;
 
-# TODO delete previous traewelling status if the train's destination has been changed
-# TODO delete traewelling status when undoing a travelynx checkin
-		if ( $user->{checked_in} and $user->{extra_data}{trip_id} ) {
-			my $traewelling = $self->{model}->get($uid);
-			if ( $traewelling->{data}{trip_id} eq $user->{extra_data}{trip_id} )
-			{
+	my $header = {
+		'User-Agent'    => $self->{header}{'User-Agent'},
+		'Authorization' => "Bearer $opt{token}",
+	};
+
+	my $request = {
+		tripID      => $opt{trip_id},
+		start       => q{} . $opt{dep_eva},
+		destination => q{} . $opt{arr_eva},
+	};
+	my $trip_req = sprintf(
+		"tripID=%s&lineName=%s%%20%s&start=%s",
+		$opt{trip_id}, $opt{train_type}, $opt{train_line} // $opt{train_no},
+		$opt{dep_eva}
+	);
+
+	$self->{user_agent}->request_timeout(20)
+	  ->get_p(
+		"https://traewelling.de/api/v0/trains/trip?$trip_req" => $header )
+	  ->then(
+		sub {
+			return $self->{user_agent}->request_timeout(20)
+			  ->post_p( "https://traewelling.de/api/v0/trains/checkin" =>
+				  $header => json => $request );
+		}
+	)->then(
+		sub {
+			my ($tx) = @_;
+			if ( my $err = $tx->error ) {
+				my $err_msg = "HTTP $err->{code} $err->{message}";
+				$self->{log}->debug("... error: $err_msg");
+				$self->{model}->log(
+					uid => $opt{uid},
+					message =>
+					  "Fehler bei $opt{train_type} $opt{train_no}: $err_msg",
+					is_error => 1
+				);
 				return;
 			}
-			my $header = {
-				'User-Agent'    => 'travelynx/' . $self->{version},
-				'Authorization' => "Bearer $token",
-			};
-
-			my $request = {
-				tripID      => $user->{extra_data}{trip_id},
-				start       => q{} . $user->{dep_eva},
-				destination => q{} . $user->{arr_eva},
-			};
-			my $trip_req = sprintf(
-				"tripID=%s&lineName=%s%%20%s&start=%s",
-				$user->{extra_data}{trip_id}, $user->{train_type},
-				$user->{train_line} // $user->{train_no}, $user->{dep_eva}
+			$self->{log}->debug("... success!");
+			$self->{model}->log(
+				uid       => $opt{uid},
+				message   => "Eingecheckt in $opt{train_type} $opt{train_no}",
+				status_id => $tx->res->json->{statusId}
 			);
-			$self->{user_agent}->request_timeout(20)
-			  ->get_p(
-				"https://traewelling.de/api/v0/trains/trip?$trip_req" =>
-				  $header )->then(
-				sub {
-					return $self->{user_agent}->request_timeout(20)
-					  ->post_p(
-						"https://traewelling.de/api/v0/trains/checkin" =>
-						  $header => json => $request );
-				}
-			)->then(
-				sub {
-					my ($tx) = @_;
-					if ( my $err = $tx->error ) {
-						my $err_msg = "HTTP $err->{code} $err->{message}";
-						$self->mark_trwl_checkin_error( $uid, $user, $err_msg );
-					}
-					else {
-  # TODO check for traewelling error ("error" key in response)
-  # TODO store ID of resulting status (request /user/{name} and store status ID)
-						$self->mark_trwl_checkin_success( $uid, $user );
+			$self->{model}->set_latest_push_ts(
+				uid => $opt{uid},
+				ts  => $opt{checkin_ts}
+			);
 
-                      # mark success: checked into (trip_id, start, destination)
-					}
-				}
-			)->catch(
-				sub {
-					my ($err) = @_;
-					$self->mark_trwl_checkin_error( $uid, $user, $err );
-				}
-			)->wait;
+			# TODO store status_id in in_transit object so that it can be shown
+			# on the user status page
 		}
-	}
+	)->catch(
+		sub {
+			my ($err) = @_;
+			$self->{log}->debug("... error: $err");
+			$self->{model}->log(
+				uid      => $opt{uid},
+				message  => "Fehler bei $opt{train_type} $opt{train_no}: $err",
+				is_error => 1
+			);
+		}
+	)->wait;
 }
 
 1;

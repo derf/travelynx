@@ -259,6 +259,26 @@ sub run {
 		)->wait;
 	}
 
+	for my $candidate ( $self->app->traewelling->get_pushable_accounts ) {
+		$self->app->log->debug(
+			"Pushing to Traewelling for UID $candidate->{uid}");
+		my $trip_id = $candidate->{journey_data}{trip_id};
+		if ( not $trip_id ) {
+			$self->app->log->debug("... trip_id is missing");
+
+			# TODO log traewelling error
+			return;
+		}
+		if (    $candidate->{data}{latest_push_ts}
+			and $candidate->{data}{latest_push_ts} == $candidate->{checkin_ts} )
+		{
+			$self->app->log->debug("... already handled");
+			return;
+		}
+		$self->app->traewelling_api->checkin( %{$candidate},
+			trip_id => $trip_id );
+	}
+
 	# Computing yearly stats may take a while, but we've got all time in the
 	# world here. This means users won't have to wait when loading their
 	# own by-year journey log.

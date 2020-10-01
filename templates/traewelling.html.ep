@@ -135,7 +135,7 @@
 			<div class="input-field col s12">
 				<div>
 					<label>
-						%= radio_button sync_source => 'travelynx', disabled => undef
+						%= radio_button sync_source => 'travelynx'
 						<span>Checkin-Synchronisierung travelynx → Träwelling</span>
 					</label>
 				</div>
