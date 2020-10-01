@@ -183,8 +183,7 @@ sub set_sync {
 
 sub get_pushable_accounts {
 	my ($self) = @_;
-	my $now    = $self->now->epoch;
-	my $res    = $self->{pg}->db->query(
+	my $res = $self->{pg}->db->query(
 		qq{select t.user_id as uid, t.token as token, t.data as data,
 			i.checkin_station_id as dep_eva, i.checkout_station_id as arr_eva,
 			i.data as journey_data, i.train_type as train_type,
@@ -195,10 +194,7 @@ sub get_pushable_accounts {
 			where t.push_sync = True
 			and i.checkout_station_id is not null
 			and i.cancelled = False
-			and (extract(epoch from i.sched_departure) > ?
-				or extract(epoch from i.real_departure) > ?)
-			and extract(epoch from i.sched_departure) < ?
-		}, $now - 300, $now - 300, $now + 600
+		}
 	);
 	return $res->expand->hashes->each;
 }

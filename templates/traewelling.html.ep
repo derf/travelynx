@@ -141,7 +141,8 @@
 				</div>
 				<p>Die Synchronisierung erfolgt spätestens drei Minuten nach der
 					Zielwahl.  Träwelling-Checkins können von travelynx noch nicht
-					rückgängig gemacht werden.</p>
+					rückgängig gemacht werden. Eine nachträgliche Änderung der
+					Zielstation wird nicht übernommen.</p>
 			</div>
 			<div class="input-field col s12">
 				<div>
