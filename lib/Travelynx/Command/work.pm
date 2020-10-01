@@ -268,7 +268,7 @@ sub run {
 			$self->app->traewelling->log(
 				uid => $candidate->{uid},
 				message =>
-"Fehler bei $opt{train_type} $opt{train_no}: Keine trip_id vorhanden",
+"Fehler bei $candidate->{train_type} $candidate->{train_no}: Keine trip_id vorhanden",
 				is_error => 1
 			);
 			return;
