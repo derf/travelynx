@@ -285,6 +285,7 @@ sub checkin {
 		$opt{dep_eva}
 	);
 
+	# Work around https://github.com/Traewelling/traewelling/issues/72
 	$self->{user_agent}->request_timeout(20)
 	  ->get_p(
 		"https://traewelling.de/api/v0/trains/trip?$trip_req" => $header )

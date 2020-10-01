@@ -265,8 +265,12 @@ sub run {
 		my $trip_id = $candidate->{journey_data}{trip_id};
 		if ( not $trip_id ) {
 			$self->app->log->debug("... trip_id is missing");
-
-			# TODO log traewelling error
+			$self->app->traewelling->log(
+				uid => $candidate->{uid},
+				message =>
+"Fehler bei $opt{train_type} $opt{train_no}: Keine trip_id vorhanden",
+				is_error => 1
+			);
 			return;
 		}
 		if (    $candidate->{data}{latest_push_ts}
