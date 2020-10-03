@@ -185,6 +185,7 @@ sub get_pushable_accounts {
 	my ($self) = @_;
 	my $res = $self->{pg}->db->query(
 		qq{select t.user_id as uid, t.token as token, t.data as data,
+			i.user_data as user_data,
 			i.checkin_station_id as dep_eva, i.checkout_station_id as arr_eva,
 			i.data as journey_data, i.train_type as train_type,
 			i.train_line as train_line, i.train_no as train_no,

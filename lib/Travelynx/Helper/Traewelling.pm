@@ -285,6 +285,10 @@ sub checkin {
 		$opt{dep_eva}
 	);
 
+	if ( $opt{user_data}{comment} ) {
+		$request->{body} = $opt{user_data}{comment};
+	}
+
 	# Work around https://github.com/Traewelling/traewelling/issues/72
 	$self->{user_agent}->request_timeout(20)
 	  ->get_p(
