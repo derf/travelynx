@@ -314,6 +314,10 @@ sub checkin {
 				return;
 			}
 			$self->{log}->debug("... success!");
+
+			# As of 2020-10-04, traewelling.de checkins do not yet return
+			# "statusId". The patch is present on the develop branch and waiting
+			# for a merge into master.
 			$self->{model}->log(
 				uid       => $opt{uid},
 				message   => "Eingecheckt in $opt{train_type} $opt{train_no}",
