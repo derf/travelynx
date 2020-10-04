@@ -47,18 +47,29 @@ sub get_status_p {
 			}
 			else {
 				if ( my $status = $tx->result->json->{statuses}{data}[0] ) {
-					my $strp = DateTime::Format::Strptime->new(
+					my $strp1 = DateTime::Format::Strptime->new(
 						pattern   => '%Y-%m-%dT%H:%M:%S.000000Z',
 						time_zone => 'UTC',
+					);
+					my $strp2 = DateTime::Format::Strptime->new(
+						pattern   => '%Y-%m-%d %H:%M:%S',
+						time_zone => 'Europe/Berlin',
 					);
 					my $status_id = $status->{id};
 					my $message   = $status->{body};
 					my $checkin_at
-					  = $strp->parse_datetime( $status->{created_at} );
+					  = $strp1->parse_datetime( $status->{created_at} )
+					  // $strp2->parse_datetime( $status->{created_at} );
 
-					my $dep_dt = $strp->parse_datetime(
+					my $dep_dt
+					  = $strp1->parse_datetime(
+						$status->{train_checkin}{departure} )
+					  // $strp2->parse_datetime(
 						$status->{train_checkin}{departure} );
-					my $arr_dt = $strp->parse_datetime(
+					my $arr_dt
+					  = $strp1->parse_datetime(
+						$status->{train_checkin}{arrival} )
+					  // $strp2->parse_datetime(
 						$status->{train_checkin}{arrival} );
 
 					my $dep_eva
