@@ -76,7 +76,9 @@ sub settings {
 		$self->traewelling->set_sync(
 			uid       => $uid,
 			push_sync => $self->param('sync_source') eq 'travelynx' ? 1 : 0,
-			pull_sync => $self->param('sync_source') eq 'traewelling' ? 1 : 0
+			pull_sync => $self->param('sync_source') eq 'traewelling' ? 1 : 0,
+			toot      => $self->param('toot') ? 1 : 0,
+			tweet     => $self->param('tweet') ? 1 : 0,
 		);
 		$self->flash( success => 'traewelling' );
 		$self->redirect_to('account');
@@ -93,6 +95,12 @@ sub settings {
 	}
 	else {
 		$self->param( sync_source => 'none' );
+	}
+	if ( $traewelling->{data}{toot} ) {
+		$self->param( toot => 1 );
+	}
+	if ( $traewelling->{data}{tweet} ) {
+		$self->param( tweet => 1 );
 	}
 
 	$self->render(

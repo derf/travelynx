@@ -286,6 +286,8 @@ sub checkin {
 		tripID      => $opt{trip_id},
 		start       => q{} . $opt{dep_eva},
 		destination => q{} . $opt{arr_eva},
+		toot        => $opt{data}{toot} ? \1 : \0,
+		tweet       => $opt{data}{tweet} ? \1 : \0,
 	};
 	my $trip_req = sprintf(
 		"tripID=%s&lineName=%s%%20%s&start=%s",
@@ -321,7 +323,7 @@ sub checkin {
 				);
 				return;
 			}
-			$self->{log}->debug("... success!");
+			$self->{log}->debug( "... success! " . $tx->res->body );
 
 			# As of 2020-10-04, traewelling.de checkins do not yet return
 			# "statusId". The patch is present on the develop branch and waiting

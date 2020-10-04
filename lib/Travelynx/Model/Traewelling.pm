@@ -182,15 +182,21 @@ sub set_latest_push_ts {
 sub set_sync {
 	my ( $self, %opt ) = @_;
 
-	my $uid       = $opt{uid};
-	my $push_sync = $opt{push_sync};
-	my $pull_sync = $opt{pull_sync};
+	my $uid = $opt{uid};
+	my $db  = $opt{db} // $self->{pg}->db;
 
-	$self->{pg}->db->update(
+	my $res_h
+	  = $db->select( 'traewelling', 'data', { user_id => $uid } )->expand->hash;
+
+	$res_h->{data}{toot}  = $opt{toot};
+	$res_h->{data}{tweet} = $opt{tweet};
+
+	$db->update(
 		'traewelling',
 		{
-			push_sync => $push_sync,
-			pull_sync => $pull_sync
+			push_sync => $opt{push_sync},
+			pull_sync => $opt{pull_sync},
+			data      => JSON->new->encode( $res_h->{data} ),
 		},
 		{ user_id => $uid }
 	);
