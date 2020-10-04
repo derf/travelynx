@@ -2397,13 +2397,15 @@ sub startup {
 			}
 
 			if ( $traewelling->{category}
-				!~ m{^ (?: nationalExpress | regional | suburban ) $ }x )
+				!~ m{^ (?: national | nationalExpress | regional | suburban ) $ }x
+			  )
 			{
-				$self->log->debug("... status is not a train");
+				$self->log->debug(
+					"... status is not a train, but $traewelling->{category}");
 				$self->traewelling->log(
 					uid => $uid,
 					message =>
-"$traewelling->{line} nach $traewelling->{arr_name} ist keine Zugfahrt",
+"$traewelling->{line} nach $traewelling->{arr_name}  ist keine Zugfahrt (HAFAS-Kategorie '$traewelling->{category}')",
 					status_id => $traewelling->{status_id},
 				);
 				$self->traewelling->set_latest_pull_status_id(
