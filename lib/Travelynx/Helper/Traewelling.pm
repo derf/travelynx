@@ -13,10 +13,11 @@ sub new {
 
 	my $version = $opt{version};
 
-	$opt{header}
-	  = { 'User-Agent' =>
-"travelynx/${version} on $opt{root_url} +https://finalrewind.org/projects/travelynx"
-	  };
+	$opt{header} = {
+		'User-Agent' =>
+"travelynx/${version} on $opt{root_url} +https://finalrewind.org/projects/travelynx",
+		'Accept' => 'application/json',
+	};
 
 	return bless( \%opt, $class );
 }
@@ -30,6 +31,7 @@ sub get_status_p {
 
 	my $header = {
 		'User-Agent'    => $self->{header}{'User-Agent'},
+		'Accept'        => 'application/json',
 		'Authorization' => "Bearer $token",
 	};
 
@@ -119,6 +121,7 @@ sub get_user_p {
 
 	my $header = {
 		'User-Agent'    => $self->{header}{'User-Agent'},
+		'Accept'        => 'application/json',
 		'Authorization' => "Bearer $token",
 	};
 	my $promise = Mojo::Promise->new;
@@ -173,8 +176,9 @@ sub login_p {
 	my $token;
 
 	$ua->post_p(
-		"https://traewelling.de/api/v0/auth/login" => $self->{header} =>
-		  json                                     => $request )->then(
+		"https://traewelling.de/api/v0/auth/login" => $self->{header},
+		json                                       => $request
+	)->then(
 		sub {
 			my ($tx) = @_;
 			if ( my $err = $tx->error ) {
@@ -240,6 +244,7 @@ sub logout_p {
 
 	my $header = {
 		'User-Agent'    => $self->{header}{'User-Agent'},
+		'Accept'        => 'application/json',
 		'Authorization' => "Bearer $token",
 	};
 	my $request = {};
@@ -279,6 +284,7 @@ sub checkin {
 
 	my $header = {
 		'User-Agent'    => $self->{header}{'User-Agent'},
+		'Accept'        => 'application/json',
 		'Authorization' => "Bearer $opt{token}",
 	};
 
@@ -314,19 +320,6 @@ sub checkin {
 			my ($tx) = @_;
 			if ( my $err = $tx->error ) {
 				my $err_msg = "HTTP $err->{code} $err->{message}";
-				$self->{log}->debug("... error: $err_msg");
-				$self->{model}->log(
-					uid => $opt{uid},
-					message =>
-					  "Fehler bei $opt{train_type} $opt{train_no}: $err_msg",
-					is_error => 1
-				);
-				return;
-			}
-
-			# Work around https://github.com/Traewelling/traewelling/issues/128
-			if ( $tx->res->code == 302 ) {
-				my $err_msg = "Der Login-Token wurde nicht akzeptiert";
 				$self->{log}->debug("... error: $err_msg");
 				$self->{model}->log(
 					uid => $opt{uid},
