@@ -323,6 +323,19 @@ sub checkin {
 				);
 				return;
 			}
+
+			# Work around https://github.com/Traewelling/traewelling/issues/128
+			if ( $tx->res->code == 302 ) {
+				my $err_msg = "Der Login-Token wurde nicht akzeptiert";
+				$self->{log}->debug("... error: $err_msg");
+				$self->{model}->log(
+					uid => $opt{uid},
+					message =>
+					  "Fehler bei $opt{train_type} $opt{train_no}: $err_msg",
+					is_error => 1
+				);
+				return;
+			}
 			$self->{log}->debug( "... success! " . $tx->res->body );
 
 			# As of 2020-10-04, traewelling.de checkins do not yet return
