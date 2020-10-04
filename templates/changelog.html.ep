@@ -2,6 +2,21 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		1.18
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left" aria-label="Neues Feature">add</i>
+			Autmatische Checkin-Synchronisierung mit
+			<a href="https://traewelling.de">Träwelling</a>. Checkins können
+			entweder von Träwelling zu travelynx oder von travelynx zu Träwelling
+			übernommen werden. Das Feature läuft vorerst als Public Beta.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		1.17
 	</div>
 	<div class="col s12 m11 l11">

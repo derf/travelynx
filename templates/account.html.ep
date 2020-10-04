@@ -107,14 +107,13 @@
 						Aktiv, noch nicht ausgeführt
 					% }
 					% elsif ($hook->{errored}) {
-						Aktiv, fehlerhaft <i class="material-icons">error</i>
+						Aktiv, fehlerhaft <i class="material-icons" aria-hidden="true">error</i>
 					% }
 					% else {
 						Aktiv
 					% }
 				</td>
 			</tr>
-			% if ($traewelling->{token}) {
 			<tr>
 				<th scope="row">Träwelling</th>
 				<td>
@@ -142,7 +141,6 @@
 					% }
 				</td>
 			</tr>
-			% }
 			<tr>
 				<th scope="row">Registriert am</th>
 				<td><%= $acc->{registered_at}->strftime('%d.%m.%Y %H:%M') %></td>

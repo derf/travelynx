@@ -150,8 +150,8 @@
 		</div>
 	</div>
 	%= form_for '/account/traewelling' => (method => 'POST') => begin
+		%= csrf_field
 		<div class="row">
-			%= csrf_field
 			<div class="input-field col s12">
 				<div>
 					<label>
@@ -167,10 +167,25 @@
 						<span>Checkin-Synchronisierung travelynx → Träwelling</span>
 					</label>
 				</div>
+				<div>
+					<label>
+						%= check_box toot => 1
+						<span>… Checkin auf Mastodon veröffentlichen</span>
+					</label>
+				</div>
+				<div>
+					<label>
+						%= check_box tweet => 1
+						<span>… Checkin auf Twitter veröffentlichen</span>
+					</label>
+				</div>
 				<p>Die Synchronisierung erfolgt spätestens drei Minuten nach der
 					Zielwahl.  Träwelling-Checkins können von travelynx noch nicht
 					rückgängig gemacht werden. Eine nachträgliche Änderung der
-					Zielstation wird nicht übernommen.</p>
+					Zielstation wird nicht übernommen. Mastodon und Twitter beziehen
+					sich auf die in den <a
+					href="https://traewelling.de/settings">Träwelling-Einstellungen</a>
+					verknüpften Accounts.</p>
 			</div>
 			<div class="input-field col s12">
 				<div>

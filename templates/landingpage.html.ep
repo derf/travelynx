@@ -94,7 +94,8 @@
 					<li>Web-Hooks und <a href="/api">API</a> zum automatisierten Einchecken und Auslesen des aktuellen Status</li>
 					<li>Statistiken über Reisezeiten und Verspätungen</li>
 					<li>Unterstützung beim Ausfüllen von Fahrgastrechteformularen</li>
-					<li>Optional: Öffentlich sichtbarer Reisestatus</li>
+					<li>Optional: Öffentliches Profil und Reisestatus</li>
+					<li>Optional: Verknüpfung mit Träwelling</li>
 				</ul>
 			</p>
 			<p>
