@@ -2397,8 +2397,7 @@ sub startup {
 			}
 
 			if ( $traewelling->{category}
-				!~ m{^ (?: national | nationalExpress | regional | suburban ) $ }x
-			  )
+				!~ m{^ (?: national .* | regional .* | suburban ) $ }x )
 			{
 				$self->log->debug(
 					"... status is not a train, but $traewelling->{category}");
