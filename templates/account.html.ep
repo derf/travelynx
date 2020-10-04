@@ -17,7 +17,7 @@
 						<span class="card-title">Einstellungen zu öffentlichen Account-Daten geändert</span>
 					% }
 					% elsif ($success eq 'traewelling') {
-						<span class="card-title">Traewelling-Verknüpfung aktualisiert</span>
+						<span class="card-title">Träwelling-Verknüpfung aktualisiert</span>
 					% }
 					% elsif ($success eq 'use_history') {
 						<span class="card-title">Einstellungen zu vorgeschlagenen Verbindungen geändert</span>
@@ -123,11 +123,17 @@
 						<span style="color: #999999;">Nicht verknüpft</span>
 					% }
 					% elsif ($traewelling->{errored}) {
-						Fehlerhaft <i class="material-icons">error</i>
+						Fehlerhaft <i class="material-icons" aria-hidden="true">error</i>
 					% }
 					% else {
 						Verknüpft mit <%= $traewelling->{data}{user_name} // $traewelling->{email} %>
-						% if ($traewelling->{pull_sync}) {
+						% if ($traewelling->{expired}) {
+							– Login-Token abgelaufen <i class="material-icons" aria-hidden="true">error</i>
+						% }
+						% elsif ($traewelling->{expiring}) {
+							– Login-Token läuft bald ab <i class="material-icons" aria-hidden="true">warning</i>
+						% }
+						% elsif ($traewelling->{pull_sync}) {
 							– Checkins in Träwelling werden von travelynx übernommen
 						% }
 						% elsif ($traewelling->{push_sync}) {

@@ -37,24 +37,29 @@ sub link {
 	my $log = [ [ $self->now->epoch, "Erfolgreich angemeldet" ] ];
 
 	my $data = {
+		log     => $log,
+		expires => $opt{expires}->epoch,
+	};
+
+	my $user_entry = {
 		user_id   => $opt{uid},
 		email     => $opt{email},
 		push_sync => 0,
 		pull_sync => 0,
 		token     => $opt{token},
-		data      => JSON->new->encode( { log => $log } ),
+		data      => JSON->new->encode($data),
 	};
 
 	$self->{pg}->db->insert(
 		'traewelling',
-		$data,
+		$user_entry,
 		{
 			on_conflict => \
 '(user_id) do update set email = EXCLUDED.email, token = EXCLUDED.token, push_sync = false, pull_sync = false, data = null, errored = false, latest_run = null'
 		}
 	);
 
-	return $data;
+	return $user_entry;
 }
 
 sub set_user {
@@ -95,6 +100,16 @@ sub get {
 	$res_h->{latest_run} = epoch_to_dt( $res_h->{latest_run_ts} );
 	for my $log_entry ( @{ $res_h->{data}{log} // [] } ) {
 		$log_entry->[0] = epoch_to_dt( $log_entry->[0] );
+	}
+	$res_h->{expires_on} = epoch_to_dt( $res_h->{data}{expires} );
+
+	my $expires_in = ( $res_h->{data}{expires} // 0 ) - $self->now->epoch;
+
+	if ( $expires_in < 0 ) {
+		$res_h->{expired} = 1;
+	}
+	elsif ( $expires_in < 14 * 24 * 3600 ) {
+		$res_h->{expiring} = 1;
 	}
 
 	return $res_h;

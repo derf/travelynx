@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use 5.020;
 
+use DateTime;
+use DateTime::Format::Strptime;
 use Mojo::Promise;
 
 sub new {
@@ -182,10 +184,16 @@ sub login_p {
 			}
 			else {
 				$token = $tx->result->json->{token};
+
+               # As of 2020-10-04, Traewelling tokens expire one year after they
+               # are generated
+				my $expiry_dt = DateTime->now( time_zone => 'Europe/Berlin' )
+				  ->add( years => 1 );
 				$self->{model}->link(
-					uid   => $uid,
-					email => $email,
-					token => $token
+					uid     => $uid,
+					email   => $email,
+					token   => $token,
+					expires => $expiry_dt
 				);
 				return $self->get_user_p( $uid, $token );
 			}

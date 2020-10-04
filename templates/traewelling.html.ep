@@ -117,7 +117,7 @@
 				% else {
 					%= $traewelling->{email}
 				% }
-				verknüpft.
+				verknüpft. Der Login-Token läuft <%= $traewelling->{expires_on}->strftime('am %d.%m.%Y um %H:%M Uhr') %> ab.
 			</p>
 		</div>
 	</div>
