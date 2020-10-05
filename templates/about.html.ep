@@ -14,7 +14,7 @@
 
 <div class="row">
 	<div class="col s12 m12 l4 center-align" style="margin-top: 1em;">
-		<a href="https://twitter.com/derfnull" class="waves-effect waves-light btn"><i class="material-icons left">message</i>Kontakt</a>
+		<a href="https://finalrewind.org/me/" class="waves-effect waves-light btn"><i class="material-icons left">message</i>Kontakt</a>
 	</div>
 	<div class="col s12 m12 l4 center-align" style="margin-top: 1em;">
 		<a href="https://github.com/derf/travelynx/issues" class="waves-effect waves-light btn"><i class="material-icons left">bug_report</i>Bugs?</a>
