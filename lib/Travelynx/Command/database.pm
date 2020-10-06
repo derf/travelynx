@@ -1038,6 +1038,20 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v22 -> v23
+	# 1.18.1 fixes handling of negative cumulative arrival/departure delays
+	# and introduces additional statistics entries with pre-formatted duration
+	# strings while at it. Old cache entries lack those.
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				truncate journey_stats;
+				update schema_version set version = 23;
+			}
+		);
+	},
 );
 
 sub setup_db {

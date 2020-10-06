@@ -39,17 +39,17 @@
 			</tr>
 			<tr>
 				<th scope="row">Fahrtzeit</th>
-				<td><%= sprintf('%02d:%02d', $stats->{min_travel_real} / 60, $stats->{min_travel_real} % 60) %> Stunden
-					(nach Fahrplan: <%= sprintf('%02d:%02d', $stats->{min_travel_sched} / 60, $stats->{min_travel_sched} % 60) %>)<td>
+				<td><%= $stats->{min_travel_real_strf} %> Stunden
+					(nach Fahrplan: <%= $stats->{min_travel_sched_strf} %>)<td>
 			</tr>
 			<tr>
 				<th scope="row">Wartezeit (nur Umstiege)</th>
-				<td><%= sprintf('%02d:%02d', $stats->{min_interchange_real} / 60, $stats->{min_interchange_real} % 60) %> Stunden
+				<td><%= $stats->{min_interchange_real_strf} %> Stunden
 			</tr>
 			<tr>
 				<th scope="row">Kumulierte Verspätung</th>
-				<td>Bei Abfahrt: <%= sprintf('%02d:%02d', $stats->{delay_dep} / 60, $stats->{delay_dep} % 60) %> Stunden<br/>
-					Bei Ankunft: <%= sprintf('%02d:%02d', $stats->{delay_arr} / 60, $stats->{delay_arr} % 60) %> Stunden</td>
+				<td>Bei Abfahrt: <%= $stats->{delay_dep_strf} %> Stunden<br/>
+					Bei Ankunft: <%= $stats->{delay_arr_strf} %> Stunden</td>
 			</tr>
 		</table>
 	</div>

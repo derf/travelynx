@@ -2781,7 +2781,7 @@ sub startup {
 				}
 				$next_departure = $journey->{rt_dep_ts};
 			}
-			return {
+			my $ret = {
 				km_route             => $km_route,
 				km_beeline           => $km_beeline,
 				num_trains           => $num_trains,
@@ -2793,6 +2793,21 @@ sub startup {
 				delay_arr            => $delay_arr,
 				inconsistencies      => \@inconsistencies,
 			};
+			for my $key (
+				qw(min_travel_sched min_travel_real min_interchange_real delay_dep delay_arr)
+			  )
+			{
+				my $strf_key = $key . '_strf';
+				my $value    = $ret->{$key};
+				$ret->{$strf_key} = q{};
+				if ( $ret->{$key} < 0 ) {
+					$ret->{$strf_key} .= '-';
+					$value *= -1;
+				}
+				$ret->{$strf_key}
+				  .= sprintf( '%02d:%02d', $value / 60, $value % 60 );
+			}
+			return $ret;
 		}
 	);
 
