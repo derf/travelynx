@@ -88,7 +88,7 @@ sub get_polyline_p {
 			if ( $iris_stations ne $hafas_stations
 				and index( $hafas_stations, $iris_stations ) == -1 )
 			{
-				$self->{log}->warn( 'Ignoring polyline for '
+				$self->{log}->info( 'Ignoring polyline for '
 					  . $train->line
 					  . ": IRIS route does not agree with HAFAS route: $iris_stations != $hafas_stations"
 				);
@@ -192,7 +192,7 @@ sub get_rest_p {
 	)->catch(
 		sub {
 			my ($err) = @_;
-			$self->{log}->warn("hafas->get_rest_p($url): $err");
+			$self->{log}->info("hafas->get_rest_p($url): $err");
 			$promise->reject("hafas->get_rest_p($url): $err");
 			return;
 		}
@@ -236,7 +236,7 @@ sub get_json_p {
 	)->catch(
 		sub {
 			my ($err) = @_;
-			$self->{log}->warn("hafas->get_json_p($url): $err");
+			$self->{log}->info("hafas->get_json_p($url): $err");
 			$promise->reject("hafas->get_json_p($url): $err");
 			return;
 		}
@@ -282,7 +282,7 @@ sub get_xml_p {
 			$body =~ s{P&R}{P&amp;R};
 			eval { $tree = XML::LibXML->load_xml( string => $body ) };
 			if ($@) {
-				$self->{log}->warn("load_xml($url): $@");
+				$self->{log}->info("load_xml($url): $@");
 				$cache->freeze( $url, $traininfo );
 				$promise->resolve($traininfo);
 				return;
@@ -319,7 +319,7 @@ sub get_xml_p {
 	)->catch(
 		sub {
 			my ($err) = @_;
-			$self->{log}->warn("hafas->get_xml_p($url): $err");
+			$self->{log}->info("hafas->get_xml_p($url): $err");
 			$promise->reject("hafas->get_xml_p($url): $err");
 			return;
 		}
