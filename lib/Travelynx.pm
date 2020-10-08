@@ -757,8 +757,15 @@ sub startup {
 						  = $self->grep_unknown_stations( $train->route );
 						if (@unknown_stations) {
 							$self->app->log->warn(
-								'Encountered unknown stations: '
-								  . join( ', ', @unknown_stations ) );
+								sprintf(
+'Route of %s %s (%s -> %s) contains unknown stations: %s',
+									$train->type,
+									$train->train_no,
+									$train->origin,
+									$train->destination,
+									join( ', ', @unknown_stations )
+								)
+							);
 						}
 					}
 				}
