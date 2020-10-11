@@ -1091,7 +1091,10 @@ sub comment_form {
 	}
 	else {
 		$self->app->log->debug("set comment");
-		$self->update_in_transit_comment( $self->param('comment') );
+		$self->in_transit->update_user_data(
+			uid       => $self->current_user->{id},
+			user_data => { comment => $self->param('comment') }
+		);
 		$self->redirect_to('/');
 	}
 }

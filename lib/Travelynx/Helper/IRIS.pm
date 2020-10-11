@@ -68,4 +68,41 @@ sub get_departures {
 	}
 }
 
+sub route_diff {
+	my ( $self, $train ) = @_;
+	my @json_route;
+	my @route       = $train->route;
+	my @sched_route = $train->sched_route;
+
+	my $route_idx = 0;
+	my $sched_idx = 0;
+
+	while ( $route_idx <= $#route and $sched_idx <= $#sched_route ) {
+		if ( $route[$route_idx] eq $sched_route[$sched_idx] ) {
+			push( @json_route, [ $route[$route_idx], {}, undef ] );
+			$route_idx++;
+			$sched_idx++;
+		}
+
+		# this branch is inefficient, but won't be taken frequently
+		elsif ( not( grep { $_ eq $route[$route_idx] } @sched_route ) ) {
+			push( @json_route, [ $route[$route_idx], {}, 'additional' ], );
+			$route_idx++;
+		}
+		else {
+			push( @json_route, [ $sched_route[$sched_idx], {}, 'cancelled' ], );
+			$sched_idx++;
+		}
+	}
+	while ( $route_idx <= $#route ) {
+		push( @json_route, [ $route[$route_idx], {}, 'additional' ], );
+		$route_idx++;
+	}
+	while ( $sched_idx <= $#sched_route ) {
+		push( @json_route, [ $sched_route[$sched_idx], {}, 'cancelled' ], );
+		$sched_idx++;
+	}
+	return @json_route;
+}
+
 1;

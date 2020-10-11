@@ -60,8 +60,9 @@ sub run {
 					{
 						dep_platform   => $train->platform,
 						real_departure => $train->departure,
-						route =>
-						  $json->encode( [ $self->app->route_diff($train) ] ),
+						route          => $json->encode(
+							[ $self->app->iris->route_diff($train) ]
+						),
 						messages => $json->encode(
 							[
 								map { [ $_->[0]->epoch, $_->[1] ] }
@@ -170,8 +171,9 @@ sub run {
 						arr_platform  => $train->platform,
 						sched_arrival => $train->sched_arrival,
 						real_arrival  => $train->arrival,
-						route =>
-						  $json->encode( [ $self->app->route_diff($train) ] ),
+						route         => $json->encode(
+							[ $self->app->iris->route_diff($train) ]
+						),
 						messages => $json->encode(
 							[
 								map { [ $_->[0]->epoch, $_->[1] ] }

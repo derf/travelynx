@@ -264,8 +264,10 @@ sub travel_v1 {
 			uid      => $uid
 		);
 		if ( $payload->{comment} and not $error ) {
-			$self->update_in_transit_comment(
-				sanitize( q{}, $payload->{comment} ), $uid );
+			$self->in_transit->update_user_data(
+				uid       => $uid,
+				user_data => { comment => sanitize( q{}, $payload->{comment} ) }
+			);
 		}
 		if ( $to_station and not $error ) {
 			( $train, $error ) = $self->checkout(
@@ -310,8 +312,10 @@ sub travel_v1 {
 		}
 
 		if ( $payload->{comment} ) {
-			$self->update_in_transit_comment(
-				sanitize( q{}, $payload->{comment} ), $uid );
+			$self->in_transit->update_user_data(
+				uid       => $uid,
+				user_data => { comment => sanitize( q{}, $payload->{comment} ) }
+			);
 		}
 
 		my ( $train, $error ) = $self->checkout(

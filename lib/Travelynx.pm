@@ -21,6 +21,7 @@ use Travelynx::Helper::HAFAS;
 use Travelynx::Helper::IRIS;
 use Travelynx::Helper::Sendmail;
 use Travelynx::Helper::Traewelling;
+use Travelynx::Model::InTransit;
 use Travelynx::Model::Journeys;
 use Travelynx::Model::Traewelling;
 use Travelynx::Model::Users;
@@ -315,6 +316,16 @@ sub startup {
 	);
 
 	$self->helper(
+		in_transit => sub {
+			my ($self) = @_;
+			state $in_transit = Travelynx::Model::InTransit->new(
+				log => $self->app->log,
+				pg  => $self->pg,
+			);
+		}
+	);
+
+	$self->helper(
 		journeys => sub {
 			my ($self) = @_;
 			state $journeys = Travelynx::Model::Journeys->new(
@@ -454,34 +465,12 @@ sub startup {
 					}
 
 					eval {
-						my $json = JSON->new;
-						$db->insert(
-							'in_transit',
-							{
-								user_id   => $uid,
-								cancelled => $train->departure_is_cancelled
-								? 1
-								: 0,
-								checkin_station_id => $status->{station_eva},
-								checkin_time =>
-								  DateTime->now( time_zone => 'Europe/Berlin' ),
-								dep_platform    => $train->platform,
-								train_type      => $train->type,
-								train_line      => $train->line_no,
-								train_no        => $train->train_no,
-								train_id        => $train->train_id,
-								sched_departure => $train->sched_departure,
-								real_departure  => $train->departure,
-								route           => $json->encode(
-									[ $self->route_diff($train) ]
-								),
-								messages => $json->encode(
-									[
-										map { [ $_->[0]->epoch, $_->[1] ] }
-										  $train->messages
-									]
-								)
-							}
+						$self->in_transit->add(
+							uid           => $uid,
+							db            => $db,
+							departure_eva => $status->{station_eva},
+							train         => $train,
+							route => [ $self->iris->route_diff($train) ],
 						);
 					};
 					if ($@) {
@@ -507,9 +496,7 @@ sub startup {
 			$uid //= $self->current_user->{id};
 
 			if ( $journey_id eq 'in_transit' ) {
-				eval {
-					$self->pg->db->delete( 'in_transit', { user_id => $uid } );
-				};
+				eval { $self->in_transit->delete( uid => $uid ); };
 				if ($@) {
 					$self->app->log->error("Undo($uid, $journey_id): $@");
 					return "Undo($journey_id): $@";
@@ -550,7 +537,10 @@ sub startup {
 				delete $journey->{edited};
 				delete $journey->{id};
 
-				$db->insert( 'in_transit', $journey );
+				$self->in_transit->add_from_journey(
+					db      => $db,
+					journey => $journey
+				);
 
 				my $cache_ts = DateTime->now( time_zone => 'Europe/Berlin' );
 				if ( $journey->{real_departure}
@@ -603,10 +593,11 @@ sub startup {
 				return ( 1, $status->{errstr} );
 			}
 
-			my $now = DateTime->now( time_zone => 'Europe/Berlin' );
-			my $journey
-			  = $db->select( 'in_transit', '*', { user_id => $uid } )
-			  ->expand->hash;
+			my $now     = DateTime->now( time_zone => 'Europe/Berlin' );
+			my $journey = $self->in_transit->get(
+				uid       => $uid,
+				with_data => 1
+			);
 
 			# Note that a train may pass the same station several times.
 			# Notable example: S41 / S42 ("Ringbahn") both starts and
@@ -650,12 +641,10 @@ sub startup {
 
 			# Store the intended checkout station regardless of this operation's
 			# success.
-			$db->update(
-				'in_transit',
-				{
-					checkout_station_id => $new_checkout_station_id,
-				},
-				{ user_id => $uid }
+			$self->in_transit->set_arrival_eva(
+				uid         => $uid,
+				db          => $db,
+				arrival_eva => $new_checkout_station_id
 			);
 
 			# If in_transit already contains arrival data for another estimated
@@ -664,15 +653,9 @@ sub startup {
 				and $journey->{checkout_station_id}
 				!= $new_checkout_station_id )
 			{
-				$db->update(
-					'in_transit',
-					{
-						checkout_time => undef,
-						arr_platform  => undef,
-						sched_arrival => undef,
-						real_arrival  => undef,
-					},
-					{ user_id => $uid }
+				$self->in_transit->unset_arrival_data(
+					uid => $uid,
+					db  => $db
 				);
 			}
 
@@ -697,13 +680,11 @@ sub startup {
 						{
 							$rt_arr->add( minutes => $station_data->{adelay} );
 						}
-						$db->update(
-							'in_transit',
-							{
-								sched_arrival => $sched_arr,
-								real_arrival  => $rt_arr
-							},
-							{ user_id => $uid }
+						$self->in_transit->set_arrival_times(
+							uid           => $uid,
+							db            => $db,
+							sched_arrival => $sched_arr,
+							rt_arrival    => $rt_arr
 						);
 					}
 				}
@@ -731,27 +712,14 @@ sub startup {
 					die("Train ${train_no} has no arrival timestamp\n");
 				}
 				elsif ( defined $train and $train->arrival ) {
+					$self->in_transit->set_arrival(
+						uid   => $uid,
+						db    => $db,
+						train => $train,
+						route => [ $self->iris->route_diff($train) ]
+					);
 
 					$has_arrived = $train->arrival->epoch < $now->epoch ? 1 : 0;
-					my $json = JSON->new;
-					$db->update(
-						'in_transit',
-						{
-							checkout_time => $now,
-							arr_platform  => $train->platform,
-							sched_arrival => $train->sched_arrival,
-							real_arrival  => $train->arrival,
-							route =>
-							  $json->encode( [ $self->route_diff($train) ] ),
-							messages => $json->encode(
-								[
-									map { [ $_->[0]->epoch, $_->[1] ] }
-									  $train->messages
-								]
-							)
-						},
-						{ user_id => $uid }
-					);
 					if ($has_arrived) {
 						my @unknown_stations
 						  = $self->grep_unknown_stations( $train->route );
@@ -770,15 +738,20 @@ sub startup {
 					}
 				}
 
-				$journey
-				  = $db->select( 'in_transit', '*', { user_id => $uid } )->hash;
+				$journey = $self->in_transit->get(
+					uid => $uid,
+					db  => $db
+				);
 
 				if ( $has_arrived or $force ) {
 					delete $journey->{data};
 					$journey->{edited}        = 0;
 					$journey->{checkout_time} = $now;
 					$db->insert( 'journeys', $journey );
-					$db->delete( 'in_transit', { user_id => $uid } );
+					$self->in_transit->delete(
+						uid => $uid,
+						db  => $db
+					);
 
 					my $cache_ts = $now->clone;
 					if ( $journey->{real_departure}
@@ -810,22 +783,10 @@ sub startup {
 					delete $journey->{data};
 					$db->insert( 'journeys', $journey );
 
-					$journey
-					  = $db->select( 'in_transit', ['data'],
-						{ user_id => $uid } )->expand->hash;
-					$journey->{data}{cancelled_destination} = $train->station;
-
-					$db->update(
-						'in_transit',
-						{
-							checkout_station_id => undef,
-							checkout_time       => undef,
-							arr_platform        => undef,
-							sched_arrival       => undef,
-							real_arrival        => undef,
-							data => JSON->new->encode( $journey->{data} ),
-						},
-						{ user_id => $uid }
+					$self->in_transit->set_cancelled_destination(
+						uid                   => $uid,
+						db                    => $db,
+						cancelled_destination => $train->station,
 					);
 				}
 
@@ -850,27 +811,6 @@ sub startup {
 				$self->add_route_timestamps( $uid, $train, 0 );
 			}
 			return ( 1, undef );
-		}
-	);
-
-	$self->helper(
-		'update_in_transit_comment' => sub {
-			my ( $self, $comment, $uid, $db ) = @_;
-			$uid //= $self->current_user->{id};
-			$db  //= $self->pg->db;
-
-			my $status
-			  = $db->select( 'in_transit', ['user_data'], { user_id => $uid } )
-			  ->expand->hash;
-			if ( not $status ) {
-				return;
-			}
-			$status->{user_data}{comment} = $comment;
-			$db->update(
-				'in_transit',
-				{ user_data => JSON->new->encode( $status->{user_data} ) },
-				{ user_id   => $uid }
-			);
 		}
 	);
 
@@ -1181,52 +1121,6 @@ sub startup {
 	);
 
 	$self->helper(
-		'route_diff' => sub {
-			my ( $self, $train ) = @_;
-			my @json_route;
-			my @route       = $train->route;
-			my @sched_route = $train->sched_route;
-
-			my $route_idx = 0;
-			my $sched_idx = 0;
-
-			while ( $route_idx <= $#route and $sched_idx <= $#sched_route ) {
-				if ( $route[$route_idx] eq $sched_route[$sched_idx] ) {
-					push( @json_route, [ $route[$route_idx], {}, undef ] );
-					$route_idx++;
-					$sched_idx++;
-				}
-
-				# this branch is inefficient, but won't be taken frequently
-				elsif ( not( grep { $_ eq $route[$route_idx] } @sched_route ) )
-				{
-					push( @json_route,
-						[ $route[$route_idx], {}, 'additional' ],
-					);
-					$route_idx++;
-				}
-				else {
-					push( @json_route,
-						[ $sched_route[$sched_idx], {}, 'cancelled' ],
-					);
-					$sched_idx++;
-				}
-			}
-			while ( $route_idx <= $#route ) {
-				push( @json_route, [ $route[$route_idx], {}, 'additional' ], );
-				$route_idx++;
-			}
-			while ( $sched_idx <= $#sched_route ) {
-				push( @json_route,
-					[ $sched_route[$sched_idx], {}, 'cancelled' ],
-				);
-				$sched_idx++;
-			}
-			return @json_route;
-		}
-	);
-
-	$self->helper(
 		'add_route_timestamps' => sub {
 			my ( $self, $uid, $train, $is_departure ) = @_;
 
@@ -1234,18 +1128,21 @@ sub startup {
 
 			my $db = $self->pg->db;
 
-			my $journey = $db->select(
-				'in_transit_str',
-				[ 'arr_eva', 'dep_eva', 'route', 'data' ],
-				{ user_id => $uid }
-			)->expand->hash;
+# TODO "with_timestamps" is misleading, there are more differences between in_transit and in_transit_str
+# Here it's only needed because of dep_eva / arr_eva names
+			my $journey = $self->in_transit->get(
+				db              => $db,
+				uid             => $uid,
+				with_data       => 1,
+				with_timestamps => 1
+			);
 
 			if ( not $journey ) {
 				return;
 			}
 
 			if ( $journey->{data}{trip_id}
-				and not $journey->{data}{polyline_id} )
+				and not $journey->{polyline} )
 			{
 				my ( $origin_eva, $destination_eva, $polyline_str );
 				$self->hafas->get_polyline_p( $train,
@@ -1297,10 +1194,10 @@ sub startup {
 							}
 						}
 						if ($polyline_id) {
-							$db->update(
-								'in_transit',
-								{ polyline_id => $polyline_id },
-								{ user_id     => $uid }
+							$self->in_transit->set_polyline_id(
+								uid         => $uid,
+								db          => $db,
+								polyline_id => $polyline_id
 							);
 						}
 						return;
@@ -1371,22 +1268,16 @@ sub startup {
                  # HAFAS is happy as long as the date part starts with a number.
                  # HAFAS-internal tripIDs use this format (withouth leading zero
                  # for day of month < 10) though, so let's stick with it.
-
-					my $res = $db->select( 'in_transit', ['data'],
-						{ user_id => $uid } );
-					my $res_h = $res->expand->hash;
-					my $data  = $res_h->{data} // {};
-
 					my $date_map = $date_yyyy;
 					$date_map =~ tr{.}{}d;
-					$data->{trip_id} = sprintf( '1|%d|%d|%d|%s',
+					my $trip_id = sprintf( '1|%d|%d|%d|%s',
 						$result->{id},   $result->{cycle},
 						$result->{pool}, $date_map );
 
-					$db->update(
-						'in_transit',
-						{ data    => JSON->new->encode($data) },
-						{ user_id => $uid }
+					$self->in_transit->update_data(
+						uid  => $uid,
+						db   => $db,
+						data => { trip_id => $trip_id }
 					);
 
 					my $base2
@@ -1449,25 +1340,19 @@ sub startup {
 						  = $route_data->{ $station->[0] };
 					}
 
-					my $res = $db->select( 'in_transit', ['data'],
-						{ user_id => $uid } );
-					my $res_h = $res->expand->hash;
-					my $data  = $res_h->{data} // {};
-
-					$data->{delay_msg} = [ map { [ $_->[0]->epoch, $_->[1] ] }
-						  $train->delay_messages ];
-					$data->{qos_msg} = [ map { [ $_->[0]->epoch, $_->[1] ] }
-						  $train->qos_messages ];
-
-					$data->{him_msg} = $traininfo2->{messages};
-
-					$db->update(
-						'in_transit',
-						{
-							route => JSON->new->encode($route),
-							data  => JSON->new->encode($data)
-						},
-						{ user_id => $uid }
+					$self->in_transit->set_route_data(
+						uid            => $uid,
+						db             => $db,
+						route          => $route,
+						delay_messages => [
+							map { [ $_->[0]->epoch, $_->[1] ] }
+							  $train->delay_messages
+						],
+						qos_messages => [
+							map { [ $_->[0]->epoch, $_->[1] ] }
+							  $train->qos_messages
+						],
+						him_messages => $traininfo2->{messages},
 					);
 					return;
 				}
@@ -1490,21 +1375,13 @@ sub startup {
 					sub {
 						my ($wagonorder) = @_;
 
-						my $res = $db->select(
-							'in_transit',
-							[ 'data', 'user_data' ],
-							{ user_id => $uid }
-						);
-						my $res_h     = $res->expand->hash;
-						my $data      = $res_h->{data} // {};
-						my $user_data = $res_h->{user_data} // {};
+						my $data      = {};
+						my $user_data = {};
 
 						if ( $is_departure and not exists $wagonorder->{error} )
 						{
-							$data->{wagonorder_dep} = $wagonorder;
-							if ( exists $user_data->{wagongroups} ) {
-								$user_data->{wagongroups} = [];
-							}
+							$data->{wagonorder_dep}   = $wagonorder;
+							$user_data->{wagongroups} = [];
 							for my $group (
 								@{
 									$wagonorder->{data}{istformation}
@@ -1539,23 +1416,25 @@ sub startup {
 									}
 								);
 							}
-							$db->update(
-								'in_transit',
-								{
-									data      => JSON->new->encode($data),
-									user_data => JSON->new->encode($user_data)
-								},
-								{ user_id => $uid }
+							$self->in_transit->update_data(
+								uid  => $uid,
+								db   => $db,
+								data => $data
+							);
+							$self->in_transit->update_user_data(
+								uid       => $uid,
+								db        => $db,
+								user_data => $user_data
 							);
 						}
 						elsif ( not $is_departure
 							and not exists $wagonorder->{error} )
 						{
 							$data->{wagonorder_arr} = $wagonorder;
-							$db->update(
-								'in_transit',
-								{ data    => JSON->new->encode($data) },
-								{ user_id => $uid }
+							$self->in_transit->update_data(
+								uid  => $uid,
+								db   => $db,
+								data => $data
 							);
 						}
 						return;
@@ -1572,18 +1451,12 @@ sub startup {
 				$self->dbdb->get_stationinfo_p( $journey->{dep_eva} )->then(
 					sub {
 						my ($station_info) = @_;
+						my $data = { stationinfo_dep => $station_info };
 
-						my $res = $db->select( 'in_transit', ['data'],
-							{ user_id => $uid } );
-						my $res_h = $res->expand->hash;
-						my $data  = $res_h->{data} // {};
-
-						$data->{stationinfo_dep} = $station_info;
-
-						$db->update(
-							'in_transit',
-							{ data    => JSON->new->encode($data) },
-							{ user_id => $uid }
+						$self->in_transit->update_data(
+							uid  => $uid,
+							db   => $db,
+							data => $data
 						);
 						return;
 					}
@@ -1599,18 +1472,12 @@ sub startup {
 				$self->dbdb->get_stationinfo_p( $journey->{arr_eva} )->then(
 					sub {
 						my ($station_info) = @_;
+						my $data = { stationinfo_arr => $station_info };
 
-						my $res = $db->select( 'in_transit', ['data'],
-							{ user_id => $uid } );
-						my $res_h = $res->expand->hash;
-						my $data  = $res_h->{data} // {};
-
-						$data->{stationinfo_arr} = $station_info;
-
-						$db->update(
-							'in_transit',
-							{ data    => JSON->new->encode($data) },
-							{ user_id => $uid }
+						$self->in_transit->update_data(
+							uid  => $uid,
+							db   => $db,
+							data => $data
 						);
 						return;
 					}
@@ -1631,22 +1498,28 @@ sub startup {
 			my $uid = $opt{uid} // $self->current_user->{id};
 			my $db  = $opt{db}  // $self->pg->db;
 
-			my $journey = $db->select( 'in_transit', ['checkout_station_id'],
-				{ user_id => $uid } )->hash;
-			if ( not $journey ) {
-				$journey = $db->select(
-					'journeys',
-					['checkout_station_id'],
-					{
-						user_id   => $uid,
-						cancelled => 0
-					},
-					{
-						limit    => 1,
-						order_by => { -desc => 'real_departure' }
-					}
-				)->hash;
+			if (
+				my $id = $self->in_transit->get_checkout_station_id(
+					uid => $uid,
+					db  => $db
+				)
+			  )
+			{
+				return $id;
 			}
+
+			my $journey = $db->select(
+				'journeys',
+				['checkout_station_id'],
+				{
+					user_id   => $uid,
+					cancelled => 0
+				},
+				{
+					limit    => 1,
+					order_by => { -desc => 'real_departure' }
+				}
+			)->hash;
 
 			if ( not $journey ) {
 				return;
@@ -1947,9 +1820,12 @@ sub startup {
 			my $now   = DateTime->now( time_zone => 'Europe/Berlin' );
 			my $epoch = $now->epoch;
 
-			my $in_transit
-			  = $db->select( 'in_transit_str', '*', { user_id => $uid } )
-			  ->expand->hash;
+			my $in_transit = $self->in_transit->get(
+				uid             => $uid,
+				db              => $db,
+				with_data       => 1,
+				with_timestamps => 1
+			);
 
 			if ($in_transit) {
 
@@ -2491,9 +2367,12 @@ sub startup {
 					if ( not $err ) {
 						$self->log->debug("... success!");
 						if ( $traewelling->{message} ) {
-							$self->update_in_transit_comment(
-								$traewelling->{message},
-								$uid, $db );
+							$self->in_transit->update_user_data(
+								uid => $uid,
+								db  => $db,
+								user_data =>
+								  { comment => $traewelling->{message} }
+							);
 						}
 						$self->traewelling->log(
 							uid => $uid,
