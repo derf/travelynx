@@ -512,20 +512,10 @@ sub startup {
 				my $db = $self->pg->db;
 				my $tx = $db->begin;
 
-				my $journey = $db->select(
-					'journeys',
-					'*',
-					{
-						user_id => $uid,
-						id      => $journey_id
-					}
-				)->hash;
-				$db->delete(
-					'journeys',
-					{
-						user_id => $uid,
-						id      => $journey_id
-					}
+				my $journey = $self->journeys->pop(
+					uid        => $uid,
+					db         => $db,
+					journey_id => $journey_id
 				);
 
 				if ( $journey->{edited} ) {
@@ -744,10 +734,10 @@ sub startup {
 				);
 
 				if ( $has_arrived or $force ) {
-					delete $journey->{data};
-					$journey->{edited}        = 0;
-					$journey->{checkout_time} = $now;
-					$db->insert( 'journeys', $journey );
+					$self->journeys->add_from_in_transit(
+						db      => $db,
+						journey => $journey
+					);
 					$self->in_transit->delete(
 						uid => $uid,
 						db  => $db
@@ -777,12 +767,11 @@ sub startup {
                # cancelled_from action -> 'cancelled journey' panel on main page
                # -> cancelled_to action -> force checkout (causing the
                # previous branch to be taken due to $force)
-					$journey->{edited}        = 0;
-					$journey->{checkout_time} = $now;
-					$journey->{cancelled}     = 1;
-					delete $journey->{data};
-					$db->insert( 'journeys', $journey );
-
+					$journey->{cancelled} = 1;
+					$self->journeys->add_from_in_transit(
+						db      => $db,
+						journey => $journey
+					);
 					$self->in_transit->set_cancelled_destination(
 						uid                   => $uid,
 						db                    => $db,
@@ -1076,47 +1065,6 @@ sub startup {
 			}
 
 			return $stats;
-		}
-	);
-
-	$self->helper(
-		'history_years' => sub {
-			my ( $self, $uid ) = @_;
-			$uid //= $self->current_user->{id},
-
-			  my $res = $self->pg->db->select(
-				'journeys',
-				'distinct extract(year from real_departure) as year',
-				{ user_id  => $uid },
-				{ order_by => { -asc => 'year' } }
-			  );
-
-			my @ret;
-			for my $row ( $res->hashes->each ) {
-				push( @ret, [ $row->{year}, $row->{year} ] );
-			}
-			return @ret;
-		}
-	);
-
-	$self->helper(
-		'history_months' => sub {
-			my ( $self, $uid ) = @_;
-			$uid //= $self->current_user->{id},
-
-			  my $res = $self->pg->db->select(
-				'journeys',
-				"distinct to_char(real_departure, 'YYYY.MM') as yearmonth",
-				{ user_id  => $uid },
-				{ order_by => { -asc => 'yearmonth' } }
-			  );
-
-			my @ret;
-			for my $row ( $res->hashes->each ) {
-				my ( $year, $month ) = split( qr{[.]}, $row->{yearmonth} );
-				push( @ret, [ "${year}/${month}", "${month}.${year}" ] );
-			}
-			return @ret;
 		}
 	);
 
@@ -1508,24 +1456,10 @@ sub startup {
 				return $id;
 			}
 
-			my $journey = $db->select(
-				'journeys',
-				['checkout_station_id'],
-				{
-					user_id   => $uid,
-					cancelled => 0
-				},
-				{
-					limit    => 1,
-					order_by => { -desc => 'real_departure' }
-				}
-			)->hash;
-
-			if ( not $journey ) {
-				return;
-			}
-
-			return $journey->{checkout_station_id};
+			return $self->journeys->get_latest_checkout_station_id(
+				uid => $uid,
+				db  => $db
+			);
 		}
 	);
 
@@ -2054,30 +1988,10 @@ sub startup {
 				return $ret;
 			}
 
-			my $latest = $db->select(
-				'journeys_str',
-				'*',
-				{
-					user_id   => $uid,
-					cancelled => 0
-				},
-				{
-					order_by => { -desc => 'journey_id' },
-					limit    => 1
-				}
-			)->expand->hash;
-
-			my $latest_cancellation = $db->select(
-				'journeys_str',
-				'*',
-				{
-					user_id => $uid,
-				},
-				{
-					order_by => { -desc => 'journey_id' },
-					limit    => 1
-				}
-			)->expand->hash;
+			my ( $latest, $latest_cancellation ) = $self->journeys->get_latest(
+				uid => $uid,
+				db  => $db
+			);
 
 			if ( $latest_cancellation and $latest_cancellation->{cancelled} ) {
 				if ( my $station

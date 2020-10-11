@@ -1,7 +1,7 @@
 <div class="row">
 	<div class="col s12">
 		<ul class="pagination">
-			% for my $month (history_months()) {
+			% for my $month (journeys->get_months(uid => current_user->{id})) {
 				% my $link_to = $month->[0];
 				% my $text = $month->[1];
 				% my $class = $link_to eq $current ? 'active' : 'waves-effect';

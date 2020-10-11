@@ -197,6 +197,18 @@ sub add {
 	return ( $journey_id, undef );
 }
 
+sub add_from_in_transit {
+	my ( $self, %opt ) = @_;
+	my $db      = $opt{db};
+	my $journey = $opt{journey};
+
+	delete $journey->{data};
+	$journey->{edited}        = 0;
+	$journey->{checkout_time} = DateTime->now( time_zone => 'Europe/Berlin' );
+
+	$db->insert( 'journeys', $journey );
+}
+
 sub update {
 	my ( $self, %opt ) = @_;
 
@@ -414,6 +426,34 @@ sub delete {
 	return sprintf( 'Deleted %d rows, expected 1', $rows );
 }
 
+# Used for undo (move journey entry to in_transit)
+sub pop {
+	my ( $self, %opt ) = @_;
+
+	my $uid        = $opt{uid};
+	my $db         = $opt{db};
+	my $journey_id = $opt{journey_id};
+
+	my $journey = $db->select(
+		'journeys',
+		'*',
+		{
+			user_id => $uid,
+			id      => $journey_id
+		}
+	)->hash;
+
+	$db->delete(
+		'journeys',
+		{
+			user_id => $uid,
+			id      => $journey_id
+		}
+	);
+
+	return $journey;
+}
+
 sub get {
 	my ( $self, %opt ) = @_;
 
@@ -564,6 +604,40 @@ sub get_single {
 	return $journeys[0];
 }
 
+sub get_latest {
+	my ( $self, %opt ) = @_;
+
+	my $uid = $opt{uid};
+	my $db  = $opt{db} // $self->{pg}->db;
+
+	my $latest_successful = $db->select(
+		'journeys_str',
+		'*',
+		{
+			user_id   => $uid,
+			cancelled => 0
+		},
+		{
+			order_by => { -desc => 'journey_id' },
+			limit    => 1
+		}
+	)->expand->hash;
+
+	my $latest = $db->select(
+		'journeys_str',
+		'*',
+		{
+			user_id => $uid,
+		},
+		{
+			order_by => { -desc => 'journey_id' },
+			limit    => 1
+		}
+	)->expand->hash;
+
+	return ( $latest_successful, $latest );
+}
+
 sub get_oldest_ts {
 	my ( $self, %opt ) = @_;
 	my $uid = $opt{uid};
@@ -587,6 +661,72 @@ sub get_oldest_ts {
 		return epoch_to_dt( $res_h->{sched_dep_ts} );
 	}
 	return undef;
+}
+
+sub get_latest_checkout_station_id {
+	my ( $self, %opt ) = @_;
+	my $uid = $opt{uid};
+	my $db  = $opt{db} // $self->{pg}->db;
+
+	my $res_h = $db->select(
+		'journeys',
+		['checkout_station_id'],
+		{
+			user_id   => $uid,
+			cancelled => 0
+		},
+		{
+			limit    => 1,
+			order_by => { -desc => 'real_departure' }
+		}
+	)->hash;
+
+	if ( not $res_h ) {
+		return;
+	}
+
+	return $res_h->{checkout_station_id};
+}
+
+sub get_years {
+	my ( $self, %opt ) = @_;
+
+	my $uid = $opt{uid};
+	my $db  = $opt{db} // $self->{pg}->db;
+
+	my $res = $db->select(
+		'journeys',
+		'distinct extract(year from real_departure) as year',
+		{ user_id  => $uid },
+		{ order_by => { -asc => 'year' } }
+	);
+
+	my @ret;
+	for my $row ( $res->hashes->each ) {
+		push( @ret, [ $row->{year}, $row->{year} ] );
+	}
+	return @ret;
+}
+
+sub get_months {
+	my ( $self, %opt ) = @_;
+
+	my $uid = $opt{uid};
+	my $db  = $opt{db} // $self->{pg}->db;
+
+	my $res = $db->select(
+		'journeys',
+		"distinct to_char(real_departure, 'YYYY.MM') as yearmonth",
+		{ user_id  => $uid },
+		{ order_by => { -asc => 'yearmonth' } }
+	);
+
+	my @ret;
+	for my $row ( $res->hashes->each ) {
+		my ( $year, $month ) = split( qr{[.]}, $row->{yearmonth} );
+		push( @ret, [ "${year}/${month}", "${month}.${year}" ] );
+	}
+	return @ret;
 }
 
 sub sanity_check {
