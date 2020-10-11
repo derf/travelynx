@@ -28,7 +28,7 @@ sub get_polyline_p {
 
 	my $line = $train->line // 0;
 	my $url
-	  = "https://2.db.transport.rest/trips/${trip_id}?lineName=${line}&polyline=true";
+	  = "https://v5.db.transport.rest/trips/${trip_id}?lineName=${line}&polyline=true";
 	my $cache   = $self->{main_cache};
 	my $promise = Mojo::Promise->new;
 	my $version = $self->{version};
