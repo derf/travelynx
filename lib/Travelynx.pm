@@ -1244,27 +1244,12 @@ sub startup {
 				return;
 			}
 
-			if ( not $journey->{data}{trip_id} ) {
+			if ( $journey->{data}{trip_id}
+				and not $journey->{data}{polyline_id} )
+			{
 				my ( $origin_eva, $destination_eva, $polyline_str );
-				$self->hafas->get_tripid_p($train)->then(
-					sub {
-						my ($trip_id) = @_;
-
-						my $res = $db->select( 'in_transit', ['data'],
-							{ user_id => $uid } );
-						my $res_h = $res->expand->hash;
-						my $data  = $res_h->{data} // {};
-
-						$data->{trip_id} = $trip_id;
-
-						$db->update(
-							'in_transit',
-							{ data    => JSON->new->encode($data) },
-							{ user_id => $uid }
-						);
-						return $self->hafas->get_polyline_p( $train, $trip_id );
-					}
-				)->then(
+				$self->hafas->get_polyline_p( $train,
+					$journey->{data}{trip_id} )->then(
 					sub {
 						my ($ret) = @_;
 						my $polyline = $ret->{polyline};
@@ -1278,7 +1263,7 @@ sub startup {
 
 						$polyline_str = JSON->new->encode($polyline);
 
-						return $db->select_p(
+						my $pl_res = $db->select(
 							'polylines',
 							['id'],
 							{
@@ -1288,10 +1273,7 @@ sub startup {
 							},
 							{ limit => 1 }
 						);
-					}
-				)->then(
-					sub {
-						my ($pl_res) = @_;
+
 						my $polyline_id;
 						if ( my $h = $pl_res->hash ) {
 							$polyline_id = $h->{id};
@@ -1350,7 +1332,8 @@ sub startup {
 					my ($trainsearch) = @_;
 
 					# Fallback: Take first result
-					$trainlink = $trainsearch->{suggestions}[0]{trainLink};
+					my $result = $trainsearch->{suggestions}[0];
+					$trainlink = $result->{trainLink};
 
 					# Try finding a result for the current date
 					for
@@ -1371,6 +1354,7 @@ sub startup {
             # station seems to be the more generic solution, so we do that
             # instead.
 							if ( $suggestion->{dep} eq $train->origin ) {
+								$result    = $suggestion;
 								$trainlink = $suggestion->{trainLink};
 								last;
 							}
@@ -1381,6 +1365,30 @@ sub startup {
 						$self->app->log->debug("trainlink not found");
 						return Mojo::Promise->reject("trainlink not found");
 					}
+
+                 # Calculate and store trip_id.
+                 # The trip_id's date part doesn't seem to matter -- so far,
+                 # HAFAS is happy as long as the date part starts with a number.
+                 # HAFAS-internal tripIDs use this format (withouth leading zero
+                 # for day of month < 10) though, so let's stick with it.
+
+					my $res = $db->select( 'in_transit', ['data'],
+						{ user_id => $uid } );
+					my $res_h = $res->expand->hash;
+					my $data  = $res_h->{data} // {};
+
+					my $date_map = $date_yyyy;
+					$date_map =~ tr{.}{}d;
+					$data->{trip_id} = sprintf( '1|%d|%d|%d|%s',
+						$result->{id},   $result->{cycle},
+						$result->{pool}, $date_map );
+
+					$db->update(
+						'in_transit',
+						{ data    => JSON->new->encode($data) },
+						{ user_id => $uid }
+					);
+
 					my $base2
 					  = 'https://reiseauskunft.bahn.de/bin/traininfo.exe/dn';
 					return $self->hafas->get_json_p(
