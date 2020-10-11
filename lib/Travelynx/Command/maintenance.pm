@@ -111,6 +111,8 @@ sub run {
 		my $stats_res    = $db->delete( 'journey_stats', { user_id => $uid } );
 		my $journeys_res = $db->delete( 'journeys',      { user_id => $uid } );
 		my $transit_res  = $db->delete( 'in_transit',    { user_id => $uid } );
+		my $hooks_res    = $db->delete( 'webhooks',      { user_id => $uid } );
+		my $trwl_res     = $db->delete( 'traewelling',   { user_id => $uid } );
 
 		# TODO + traewelling, webhooks
 		my $password_res
