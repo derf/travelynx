@@ -18,8 +18,28 @@ sub new {
 "travelynx/${version} on $opt{root_url} +https://finalrewind.org/projects/travelynx",
 		'Accept' => 'application/json',
 	};
+	$opt{strp1} = DateTime::Format::Strptime->new(
+		pattern   => '%Y-%m-%dT%H:%M:%S.000000Z',
+		time_zone => 'UTC',
+	);
+	$opt{strp2} = DateTime::Format::Strptime->new(
+		pattern   => '%Y-%m-%d %H:%M:%S',
+		time_zone => 'Europe/Berlin',
+	);
+	$opt{strp3} = DateTime::Format::Strptime->new(
+		pattern   => '%Y-%m-%dT%H:%M:%S%z',
+		time_zone => 'Europe/Berlin',
+	);
 
 	return bless( \%opt, $class );
+}
+
+sub parse_datetime {
+	my ( $self, $dt ) = @_;
+
+	return $self->{strp1}->parse_datetime($dt)
+	  // $self->{strp2}->parse_datetime($dt)
+	  // $self->{strp3}->parse_datetime($dt);
 }
 
 sub get_status_p {
@@ -47,29 +67,14 @@ sub get_status_p {
 			}
 			else {
 				if ( my $status = $tx->result->json->{statuses}{data}[0] ) {
-					my $strp1 = DateTime::Format::Strptime->new(
-						pattern   => '%Y-%m-%dT%H:%M:%S.000000Z',
-						time_zone => 'UTC',
-					);
-					my $strp2 = DateTime::Format::Strptime->new(
-						pattern   => '%Y-%m-%d %H:%M:%S',
-						time_zone => 'Europe/Berlin',
-					);
 					my $status_id = $status->{id};
 					my $message   = $status->{body};
 					my $checkin_at
-					  = $strp1->parse_datetime( $status->{created_at} )
-					  // $strp2->parse_datetime( $status->{created_at} );
+					  = $self->parse_datetime( $status->{created_at} );
 
-					my $dep_dt
-					  = $strp1->parse_datetime(
-						$status->{train_checkin}{departure} )
-					  // $strp2->parse_datetime(
+					my $dep_dt = $self->parse_datetime(
 						$status->{train_checkin}{departure} );
-					my $arr_dt
-					  = $strp1->parse_datetime(
-						$status->{train_checkin}{arrival} )
-					  // $strp2->parse_datetime(
+					my $arr_dt = $self->parse_datetime(
 						$status->{train_checkin}{arrival} );
 
 					my $dep_eva
@@ -198,11 +203,12 @@ sub login_p {
 				return;
 			}
 			else {
-				$token = $tx->result->json->{token};
+				my $res = $tx->result->json;
+				$token = $res->{token};
+				my $expiry_dt = $self->parse_datetime( $res->{expires_at} );
 
-               # As of 2020-10-04, Traewelling tokens expire one year after they
-               # are generated
-				my $expiry_dt = DateTime->now( time_zone => 'Europe/Berlin' )
+				# Fall back to one year expiry
+				$expiry_dt //= DateTime->now( time_zone => 'Europe/Berlin' )
 				  ->add( years => 1 );
 				$self->{model}->link(
 					uid     => $uid,
