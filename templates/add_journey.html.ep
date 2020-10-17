@@ -51,7 +51,7 @@
 	</div>
 	<div class="row">
 		<div class="input-field col s12">
-			%= text_field 'dep_station', id => 'dep_station', class => 'autocomplete validate', required => undef
+			%= text_field 'dep_station', id => 'dep_station', class => 'autocomplete validate', autocomplete => 'off', required => undef
 			<label for="dep_station">Start (Name oder DS100)</label>
 		</div>
 		<div class="input-field col s12">
@@ -65,7 +65,7 @@
 	</div>
 	<div class="row">
 		<div class="input-field col s12">
-			%= text_field 'arr_station', id => 'arr_station', class => 'autocomplete validate', required => undef
+			%= text_field 'arr_station', id => 'arr_station', class => 'autocomplete validate', autocomplete => 'off', required => undef
 			<label for="arr_station">Ziel (Name oder DS100)</label>
 		</div>
 		<div class="input-field col s12">

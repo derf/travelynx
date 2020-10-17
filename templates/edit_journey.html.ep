@@ -63,7 +63,7 @@
 					<tr>
 						<th scope="row">Start:</th>
 						<td class="input-field">
-							%= text_field 'from_name', id => 'from_name', class => 'autocomplete validate', required => undef
+							%= text_field 'from_name', id => 'from_name', class => 'autocomplete validate', autocomplete => 'off', required => undef
 						</td>
 					</tr>
 					<tr>
@@ -81,7 +81,7 @@
 					<tr>
 						<th scope="row">Ziel:</th>
 						<td class="input-field">
-							%= text_field 'to_name', id => 'to_name', class => 'autocomplete validate', required => undef
+							%= text_field 'to_name', id => 'to_name', class => 'autocomplete validate', autocomplete => 'off', required => undef
 						</td>
 					</tr>
 					<tr>

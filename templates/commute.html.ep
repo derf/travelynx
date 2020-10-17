@@ -38,7 +38,7 @@
 			</div>
 		</div>
 		<div class="input-field col s12 m12 l6">
-			%= text_field 'station', id => 'station', required => undef, class => 'autocomplete contrast-color-text'
+			%= text_field 'station', id => 'station', required => undef, class => 'autocomplete contrast-color-text' autocomplete => 'off'
 			<label for="station">Fahrtziel</label>
 		</div>
 	</div>
