@@ -273,13 +273,13 @@ sub run {
 "Fehler bei $candidate->{train_type} $candidate->{train_no}: Keine trip_id vorhanden",
 				is_error => 1
 			);
-			return;
+			next;
 		}
 		if (    $candidate->{data}{latest_push_ts}
 			and $candidate->{data}{latest_push_ts} == $candidate->{checkin_ts} )
 		{
 			$self->app->log->debug("... already handled");
-			return;
+			next;
 		}
 		$self->app->traewelling_api->checkin( %{$candidate},
 			trip_id => $trip_id );
