@@ -185,12 +185,17 @@ sub get_xml_p {
 				messages => [],
 			};
 
-			# <SDay text="... &gt; ..."> is invalid HTML, but present in
+			# <SDay text="... &gt; ..."> is invalid XML, but present in
 			# regardless. As it is the last tag, we just throw it away.
 			$body =~ s{<SDay [^>]*/>}{}s;
 
 			# More fixes for invalid XML
 			$body =~ s{P&R}{P&amp;R};
+
+			# <Attribute [...] text="[...] "[...]"" /> is invalid XML.
+			# Work around it.
+			$body
+			  =~ s{<Attribute([^>]+)text="([^"]*)"([^"=]*)""}{<Attribute$1text="$2&#042;$3&#042;"}s;
 			eval { $tree = XML::LibXML->load_xml( string => $body ) };
 			if ($@) {
 				$self->{log}->info("load_xml($url): $@");
