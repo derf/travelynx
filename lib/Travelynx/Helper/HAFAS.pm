@@ -197,10 +197,20 @@ sub get_xml_p {
 			$body
 			  =~ s{<Attribute([^>]+)text="([^"]*)"([^"=]*)""}{<Attribute$1text="$2&#042;$3&#042;"}s;
 			eval { $tree = XML::LibXML->load_xml( string => $body ) };
-			if ($@) {
-				$self->{log}->info("load_xml($url): $@");
+			if ( my $err = $@ ) {
+				if ( $err =~ m{extra content at the end}i ) {
+
+					# We requested XML, but received an HTML error page
+					# (which was returned with HTTP 200 OK).
+					$self->{log}->debug("load_xml($url): $err");
+				}
+				else {
+					# There is invalid XML which we might be able to fix via
+					# regular expressions, so dump it into the production log.
+					$self->{log}->info("load_xml($url): $err");
+				}
 				$cache->freeze( $url, $traininfo );
-				$promise->resolve($traininfo);
+				$promise->reject("hafas->get_xml_p($url): $err");
 				return;
 			}
 
