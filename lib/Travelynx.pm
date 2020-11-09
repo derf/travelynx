@@ -1153,7 +1153,13 @@ sub startup {
 				)->catch(
 					sub {
 						my ($err) = @_;
-						$self->app->log->warn("add_route_timestamps: $err");
+						if ( $err =~ m{extra content at the end}i ) {
+							$self->app->log->debug(
+								"add_route_timestamps: $err");
+						}
+						else {
+							$self->app->log->warn("add_route_timestamps: $err");
+						}
 						return;
 					}
 				)->wait;
