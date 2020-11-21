@@ -4,7 +4,9 @@
 			% for my $month (journeys->get_months_for_year(uid => current_user->{id}, year => $year)) {
 				% if (defined $month->[2]) {
 					<a class="collection-item" href="/history/<%= $month->[0] %>"><%= $month->[1] %>
-						<span class="secondary-content"><%= sprintf('%.f', $month->[2]{km_route}) %> km</span>
+						% if (defined $month->[2]{km_route}) {
+							<span class="secondary-content"><%= sprintf('%.f', $month->[2]{km_route}) %> km</span>
+						% }
 					</a>
 				% }
 				% else {

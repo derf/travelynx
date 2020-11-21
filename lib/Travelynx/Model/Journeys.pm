@@ -749,9 +749,9 @@ sub get_months_for_year {
 					month   => $row->{month}
 				}
 			)->expand->hash;
-			if ($stats) {
-				$ret[ $row->{month} - 1 ][2] = $stats->{data};
-			}
+
+			# undef -> no journeys for this month; empty hash -> no cached stats
+			$ret[ $row->{month} - 1 ][2] = $stats->{data} // {};
 		}
 	}
 	return @ret;
