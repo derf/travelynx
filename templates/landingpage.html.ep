@@ -47,7 +47,7 @@
 			% else {
 				<div class="card">
 					<div class="card-content">
-						<span class="card-title">Hallo, <%= current_user()->{name} %>!</span>
+						<span class="card-title">Hallo, <%= current_user->{name} %>!</span>
 						<p>Du bist gerade nicht eingecheckt.</p>
 						<div class="geolocation">
 							<button class="btn waves-effect waves-light btn-flat">Stationen in der Umgebung abfragen</button>
@@ -70,7 +70,7 @@
 		</div>
 	</div>
 	<h1>Letzte Fahrten</h1>
-	%= include '_history_trains', date_format => '%d.%m', journeys => [journeys->get(uid => current_user()->{id}, limit => 5, with_datetime => 1)];
+	%= include '_history_trains', date_format => '%d.%m', journeys => [journeys->get(uid => current_user->{id}, limit => 5, with_datetime => 1)];
 % }
 % else {
 	<div class="row">
