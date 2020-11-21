@@ -1,6 +1,6 @@
-@import '../../node_modules/materialize-css/sass/components/color-variables';
+@import '../../components/color-variables';
 @import 'variables.scss';
-@import '../../node_modules/materialize-css/sass/materialize.scss';
+@import '../../materialize.scss';
 @import '../common/index.scss';
 
 .progress {
