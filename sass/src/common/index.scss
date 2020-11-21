@@ -29,3 +29,13 @@ a.unmarked {
     }
   }
 }
+
+.collection-item {
+  color: $off-black;
+  .secondary-content {
+    color: $off-black;
+  }
+  &.disabled {
+    color: $inactive-color;
+  }
+}

@@ -1,10 +1,10 @@
 %= include '_history_years', current => $year;
 
-<h1>Jahresrückblick <%= $year %></h1>
-
 % if (stash('statistics')) {
 	%= include '_history_stats', stats => stash('statistics');
 % }
+%
+%= include '_history_months_for_year';
 
 % if (stash('journeys')) {
 	%= include '_history_trains', date_format => '%d.%m.', journeys => stash('journeys');

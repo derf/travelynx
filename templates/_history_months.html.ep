@@ -1,12 +1,23 @@
 <div class="row">
 	<div class="col s12">
 		<ul class="pagination">
-			% for my $month (journeys->get_months(uid => current_user->{id})) {
-				% my $link_to = $month->[0];
-				% my $text = $month->[1];
-				% my $class = $link_to eq $current ? 'active' : 'waves-effect';
-				<li class="<%= $class %>"><a href="/history/<%= $link_to %>"><%= $text %></a></li>
+			% my ($prev, $current, $next) = journeys->get_nav_months(uid => current_user->{id}, year => $year, month => $month);
+			% if ($prev) {
+				<li class="waves-effect waves-light"><a href="/history/<%= $prev->[0] %>"><i class="material-icons">chevron_left</i></a></li>
 			% }
+			% else {
+				<li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
+			% }
+			% if ($current) {
+				<li class="" style="min-width: 8em;"><a href="/history/<%= $current->[0] %>"><%= $current->[1] %></a></li>
+			% }
+			% if ($next) {
+				<li class="waves-effect waves-light"><a href="/history/<%= $next->[0] %>"><i class="material-icons">chevron_right</i></a></li>
+			% }
+			% else {
+				<li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+			% }
+			<li class=""><a href="/history/<%= $year %>"><%= $year %></a></li>
 		</ul>
 	</div>
 </div>

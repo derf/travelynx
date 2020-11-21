@@ -7,9 +7,15 @@ use Travel::Status::DE::IRIS::Stations;
 use strict;
 use warnings;
 use 5.020;
+use utf8;
 
 use DateTime;
 use JSON;
+
+my @month_name
+  = (
+	qw(Januar Februar März April Mai Juni Juli August September Oktober November Dezember)
+  );
 
 sub epoch_to_dt {
 	my ($epoch) = @_;
@@ -708,11 +714,58 @@ sub get_years {
 	return @ret;
 }
 
-sub get_months {
+sub get_months_for_year {
 	my ( $self, %opt ) = @_;
 
-	my $uid = $opt{uid};
-	my $db  = $opt{db} // $self->{pg}->db;
+	my $uid  = $opt{uid};
+	my $db   = $opt{db} // $self->{pg}->db;
+	my $year = $opt{year};
+
+	my $res = $db->select(
+		'journeys',
+'distinct extract(year from real_departure) as year, extract(month from real_departure) as month',
+		{ user_id  => $uid },
+		{ order_by => { -asc => 'year' } }
+	);
+
+	my @ret;
+
+	for my $month ( 1 .. 12 ) {
+		push( @ret,
+			[ sprintf( '%d/%02d', $year, $month ), $month_name[ $month - 1 ] ]
+		);
+	}
+
+	for my $row ( $res->hashes->each ) {
+		if ( $row->{year} == $year ) {
+
+			# TODO delegate query to the (not yet present) JourneyStats model
+			my $stats = $db->select(
+				'journey_stats',
+				['data'],
+				{
+					user_id => $uid,
+					year    => $year,
+					month   => $row->{month}
+				}
+			)->expand->hash;
+			if ($stats) {
+				$ret[ $row->{month} - 1 ][2] = $stats->{data};
+			}
+		}
+	}
+	return @ret;
+}
+
+sub get_nav_months {
+	my ( $self, %opt ) = @_;
+
+	my $uid          = $opt{uid};
+	my $db           = $opt{db} // $self->{pg}->db;
+	my $filter_year  = $opt{year};
+	my $filter_month = $opt{month};
+
+	my $selected_index = undef;
 
 	my $res = $db->select(
 		'journeys',
@@ -721,11 +774,39 @@ sub get_months {
 		{ order_by => { -asc => 'yearmonth' } }
 	);
 
-	my @ret;
+	my @months;
 	for my $row ( $res->hashes->each ) {
 		my ( $year, $month ) = split( qr{[.]}, $row->{yearmonth} );
-		push( @ret, [ "${year}/${month}", "${month}.${year}" ] );
+		push( @months, [ $year, $month ] );
+		if ( $year eq $filter_year and $month eq $filter_month ) {
+			$selected_index = $#months;
+		}
 	}
+
+	# returns (previous entry, current month, next entry). if there is no
+	# previous or next entry, the corresponding field is undef. Previous/next
+	# entry is usually previous/next month, but may also have a distance of
+	# more than one month if there are months without travels
+	my @ret = ( undef, undef, undef );
+
+	$ret[1] = [
+		"${filter_year}/${filter_month}",
+		$month_name[ $filter_month - 1 ] // $filter_month
+	];
+
+	if ( not defined $selected_index ) {
+		return @ret;
+	}
+
+	if ( $selected_index > 0 and $months[ $selected_index - 1 ] ) {
+		my ( $year, $month ) = @{ $months[ $selected_index - 1 ] };
+		$ret[0] = [ "${year}/${month}", "${month}.${year}" ];
+	}
+	if ( $selected_index < $#months ) {
+		my ( $year, $month ) = @{ $months[ $selected_index + 1 ] };
+		$ret[2] = [ "${year}/${month}", "${month}.${year}" ];
+	}
+
 	return @ret;
 }
 

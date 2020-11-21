@@ -31,13 +31,13 @@
 	</div>
 % }
 
-<h1>Account</h1>
 % my $acc = current_user();
 % my $hook = get_webhook();
 % my $traewelling = traewelling->get($acc->{id});
 % my $use_history = users->use_history(uid => $acc->{id});
 <div class="row">
 	<div class="col s12">
+		<h2>Account</h2>
 		<table class="striped">
 			<tr>
 				<th scope="row">Name</th>
@@ -159,10 +159,10 @@
 	</div>
 </div>
 
-<h2>API</h2>
 % my $token = get_api_token();
 <div class="row">
 	<div class="col s12">
+		<h2>API</h2>
 		<p>
 			Die folgenden API-Token erlauben den passwortlosen automatisierten Zugriff auf
 			API-Endpunkte.  Bitte umsichtig behandeln – sobald ein Token gesetzt
@@ -273,10 +273,10 @@
 </div>
 
 
-<h2>Export</h2>
 
 <div class="row">
 	<div class="col s12">
+		<h2>Export</h2>
 		<ul>
 			<li><a href="/export.json">Rohdaten</a> (Kein API-Ersatz, das Format kann sich jederzeit ändern)</li>
 		</ul>
@@ -284,9 +284,9 @@
 </div>
 
 % if (not $acc->{deletion_requested}) {
-	<h2>Löschen</h2>
 	<div class="row">
 		<div class="col s12">
+			<h2>Löschen</h2>
 			<p>
 				Der Löschauftrag wird vorgemerkt und erst nach drei Tagen
 				umgesetzt, bis dahin kann er jederzeit zurückgenommen werden.  Nach

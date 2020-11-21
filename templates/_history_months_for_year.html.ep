@@ -1,0 +1,16 @@
+<div class="row">
+	<div class="col s12">
+		<div class="collection">
+			% for my $month (journeys->get_months_for_year(uid => current_user->{id}, year => $year)) {
+				% if (defined $month->[2]) {
+					<a class="collection-item" href="/history/<%= $month->[0] %>"><%= $month->[1] %>
+						<span class="secondary-content"><%= sprintf('%.f', $month->[2]{km_route}) %> km</span>
+					</a>
+				% }
+				% else {
+					<div class="collection-item disabled"><%= $month->[1] %></div>
+				% }
+			% }
+		</div>
+	</div>
+</div>

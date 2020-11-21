@@ -1,6 +1,4 @@
-%= include '_history_months', current => "${year}/${month}";
-
-<h1><%= stash('month_name') %> <%= stash('year') %></h1>
+%= include '_history_months';
 
 % if (stash('statistics')) {
 	%= include '_history_stats', stats => stash('statistics');
