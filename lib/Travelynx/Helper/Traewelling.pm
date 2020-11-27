@@ -1,4 +1,7 @@
 package Travelynx::Helper::Traewelling;
+# Copyright (C) 2020 Daniel Friesel
+#
+# SPDX-License-Identifier: MIT
 
 use strict;
 use warnings;

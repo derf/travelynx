@@ -1,4 +1,7 @@
 package Travelynx::Model::Journeys;
+# Copyright (C) 2020 Daniel Friesel
+#
+# SPDX-License-Identifier: MIT
 
 use Geo::Distance;
 use List::MoreUtils qw(after_incl before_incl);

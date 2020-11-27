@@ -1,4 +1,7 @@
 package Travelynx::Controller::Api;
+# Copyright (C) 2020 Daniel Friesel
+#
+# SPDX-License-Identifier: MIT
 use Mojo::Base 'Mojolicious::Controller';
 
 use DateTime;

@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2020 Daniel Friesel
+ *
+ * SPDX-License-Identifier: MIT
+ */
 $(document).ready(function() {
 	function getPlaceholder() {
 		return $('div.geolocation div.progress');

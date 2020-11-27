@@ -1,4 +1,9 @@
 #!/usr/bin/env perl
+
+# Copyright (C) 2020 Daniel Friesel <daniel.friesel@uos.de>
+#
+# SPDX-License-Identifier: MIT
+
 use Mojo::Base -strict;
 
 # Regression test: handle negative cumulative arrival / departure delay

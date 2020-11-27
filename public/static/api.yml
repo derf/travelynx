@@ -1,3 +1,6 @@
+# Copyright (C) 2020 Daniel Friesel
+#
+# SPDX-License-Identifier: CC0-1.0
 openapi: 3.0.3
 info:
   title: travelynx

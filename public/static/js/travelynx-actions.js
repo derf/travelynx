@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2020 Daniel Friesel
+ *
+ * SPDX-License-Identifier: MIT
+ */
 var j_departure = 0;
 var j_duration = 0;
 var j_arrival = 0;

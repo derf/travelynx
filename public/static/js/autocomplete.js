@@ -1,3 +1,9 @@
+/*
+ * Copyright (C) 2020 DB Station&Service AG, Europaplatz 1, 10557 Berlin
+ * Copyright (C) 2020 Daniel Friesel
+ *
+ * SPDX-License-Identifier: CC-BY-4.0
+ */
 document.addEventListener('DOMContentLoaded', function() {
 	var elems = document.querySelectorAll('.autocomplete');
 	M.Autocomplete.init(elems, {
