@@ -51,7 +51,8 @@ Copyright: 2014-2019 Materialize
 License: MIT
 
 Files: sass/src/*
-Copyright: 2020 Daniel Friesel
+Copyright: 2019 marudor
+   2020 Daniel Friesel
 License: MIT
 
 Files: share/ice_names.json
