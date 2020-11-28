@@ -1,4 +1,5 @@
 package Travelynx::Model::Journeys;
+
 # Copyright (C) 2020 Daniel Friesel
 #
 # SPDX-License-Identifier: MIT
@@ -83,6 +84,11 @@ sub new {
 	};
 
 	return bless( \%opt, $class );
+}
+
+sub stats_cache {
+	my ($self) = @_;
+	return $self->{stats_cache};
 }
 
 # Returns (journey id, error)
@@ -191,7 +197,7 @@ sub add {
 		$journey_id
 		  = $db->insert( 'journeys', $entry, { returning => 'id' } )
 		  ->hash->{id};
-		$self->invalidate_stats_cache(
+		$self->stats_cache->invalidate(
 			ts  => $opt{rt_departure},
 			db  => $db,
 			uid => $uid
@@ -294,7 +300,7 @@ sub update {
 			# stats are partitioned by rt_departure -> both the cache for
 			# the old value (see bottom of this function) and the new value
 			# (here) must be invalidated.
-			$self->invalidate_stats_cache(
+			$self->stats_cache->invalidate(
 				ts  => $opt{rt_departure},
 				db  => $db,
 				uid => $uid,
@@ -371,7 +377,7 @@ sub update {
 		return "update($journey_id): $@";
 	}
 	if ( $rows == 1 ) {
-		$self->invalidate_stats_cache(
+		$self->stats_cache->invalidate(
 			ts  => $journey->{rt_departure},
 			db  => $db,
 			uid => $uid,
@@ -426,7 +432,7 @@ sub delete {
 	}
 
 	if ( $rows == 1 ) {
-		$self->invalidate_stats_cache(
+		$self->stats_cache->invalidate(
 			ts  => epoch_to_dt( $journey->{rt_dep_ts} ),
 			uid => $uid
 		);
@@ -743,18 +749,15 @@ sub get_months_for_year {
 		if ( $row->{year} == $year ) {
 
 			# TODO delegate query to the (not yet present) JourneyStats model
-			my $stats = $db->select(
-				'journey_stats',
-				['data'],
-				{
-					user_id => $uid,
-					year    => $year,
-					month   => $row->{month}
-				}
-			)->expand->hash;
+			my $stats = $self->stats_cache->get(
+				db    => $db,
+				uid   => $uid,
+				year  => $year,
+				month => $row->{month}
+			);
 
 			# undef -> no journeys for this month; empty hash -> no cached stats
-			$ret[ $row->{month} - 1 ][2] = $stats->{data} // {};
+			$ret[ $row->{month} - 1 ][2] = $stats // {};
 		}
 	}
 	return @ret;
@@ -943,33 +946,163 @@ sub get_travel_distance {
 		$distance_beeline, $skipped );
 }
 
-# Statistics are partitioned by real_departure, which must be provided
-# when calling this function e.g. after journey deletion or editing.
-# If a joureny's real_departure has been edited, this function must be
-# called twice: once with the old and once with the new value.
-sub invalidate_stats_cache {
+sub compute_stats {
+	my ( $self, @journeys ) = @_;
+	my $km_route         = 0;
+	my $km_beeline       = 0;
+	my $min_travel_sched = 0;
+	my $min_travel_real  = 0;
+	my $delay_dep        = 0;
+	my $delay_arr        = 0;
+	my $interchange_real = 0;
+	my $num_trains       = 0;
+	my $num_journeys     = 0;
+	my @inconsistencies;
+
+	my $next_departure = 0;
+
+	for my $journey (@journeys) {
+		$num_trains++;
+		$km_route   += $journey->{km_route};
+		$km_beeline += $journey->{km_beeline};
+		if (    $journey->{sched_duration}
+			and $journey->{sched_duration} > 0 )
+		{
+			$min_travel_sched += $journey->{sched_duration} / 60;
+		}
+		if ( $journey->{rt_duration} and $journey->{rt_duration} > 0 ) {
+			$min_travel_real += $journey->{rt_duration} / 60;
+		}
+		if ( $journey->{sched_dep_ts} and $journey->{rt_dep_ts} ) {
+			$delay_dep
+			  += ( $journey->{rt_dep_ts} - $journey->{sched_dep_ts} ) / 60;
+		}
+		if ( $journey->{sched_arr_ts} and $journey->{rt_arr_ts} ) {
+			$delay_arr
+			  += ( $journey->{rt_arr_ts} - $journey->{sched_arr_ts} ) / 60;
+		}
+
+		# Note that journeys are sorted from recent to older entries
+		if (    $journey->{rt_arr_ts}
+			and $next_departure
+			and $next_departure - $journey->{rt_arr_ts} < ( 60 * 60 ) )
+		{
+			if ( $next_departure - $journey->{rt_arr_ts} < 0 ) {
+				push( @inconsistencies,
+					epoch_to_dt($next_departure)->strftime('%d.%m.%Y %H:%M') );
+			}
+			else {
+				$interchange_real
+				  += ( $next_departure - $journey->{rt_arr_ts} ) / 60;
+			}
+		}
+		else {
+			$num_journeys++;
+		}
+		$next_departure = $journey->{rt_dep_ts};
+	}
+	my $ret = {
+		km_route             => $km_route,
+		km_beeline           => $km_beeline,
+		num_trains           => $num_trains,
+		num_journeys         => $num_journeys,
+		min_travel_sched     => $min_travel_sched,
+		min_travel_real      => $min_travel_real,
+		min_interchange_real => $interchange_real,
+		delay_dep            => $delay_dep,
+		delay_arr            => $delay_arr,
+		inconsistencies      => \@inconsistencies,
+	};
+	for my $key (
+		qw(min_travel_sched min_travel_real min_interchange_real delay_dep delay_arr)
+	  )
+	{
+		my $strf_key = $key . '_strf';
+		my $value    = $ret->{$key};
+		$ret->{$strf_key} = q{};
+		if ( $ret->{$key} < 0 ) {
+			$ret->{$strf_key} .= '-';
+			$value *= -1;
+		}
+		$ret->{$strf_key} .= sprintf( '%02d:%02d', $value / 60, $value % 60 );
+	}
+	return $ret;
+}
+
+sub get_stats {
 	my ( $self, %opt ) = @_;
 
-	my $ts  = $opt{ts};
-	my $db  = $opt{db} // $self->{pg}->db;
-	my $uid = $opt{uid};
+	if ( $opt{cancelled} ) {
+		$self->{log}
+		  ->warn('get_journey_stats called with illegal option cancelled => 1');
+		return {};
+	}
 
-	$db->delete(
-		'journey_stats',
-		{
-			user_id => $uid,
-			year    => $ts->year,
-			month   => $ts->month,
-		}
+	my $uid   = $opt{uid};
+	my $db    = $opt{db} // $self->{pg}->db;
+	my $year  = $opt{year} // 0;
+	my $month = $opt{month} // 0;
+
+	# Assumption: If the stats cache contains an entry it is up-to-date.
+	# -> Cache entries must be explicitly invalidated whenever the user
+	# checks out of a train or manually edits/adds a journey.
+
+	if (
+		my $stats = $self->stats_cache->get(
+			uid   => $uid,
+			db    => $db,
+			year  => $year,
+			month => $month
+		)
+	  )
+	{
+		return $stats;
+	}
+
+	my $interval_start = DateTime->new(
+		time_zone => 'Europe/Berlin',
+		year      => 2000,
+		month     => 1,
+		day       => 1,
+		hour      => 0,
+		minute    => 0,
+		second    => 0,
 	);
-	$db->delete(
-		'journey_stats',
-		{
-			user_id => $uid,
-			year    => $ts->year,
-			month   => 0,
-		}
+
+	# I wonder if people will still be traveling by train in the year 3000
+	my $interval_end = $interval_start->clone->add( years => 1000 );
+
+	if ( $opt{year} and $opt{month} ) {
+		$interval_start->set(
+			year  => $opt{year},
+			month => $opt{month}
+		);
+		$interval_end = $interval_start->clone->add( months => 1 );
+	}
+	elsif ( $opt{year} ) {
+		$interval_start->set( year => $opt{year} );
+		$interval_end = $interval_start->clone->add( years => 1 );
+	}
+
+	my @journeys = $self->get(
+		uid           => $uid,
+		cancelled     => $opt{cancelled} ? 1 : 0,
+		verbose       => 1,
+		with_polyline => 1,
+		after         => $interval_start,
+		before        => $interval_end
 	);
+	my $stats = $self->compute_stats(@journeys);
+
+	$self->stats_cache->add(
+		uid   => $uid,
+		db    => $db,
+		year  => $year,
+		month => $month,
+		stats => $stats
+	);
+
+	return $stats;
 }
 
 1;

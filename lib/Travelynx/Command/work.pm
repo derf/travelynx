@@ -1,4 +1,5 @@
 package Travelynx::Command::work;
+
 # Copyright (C) 2020 Daniel Friesel
 #
 # SPDX-License-Identifier: MIT
@@ -293,7 +294,7 @@ sub run {
 	# own by-year journey log.
 	for my $user ( $db->select( 'users', 'id', { status => 1 } )->hashes->each )
 	{
-		$self->app->get_journey_stats(
+		$self->app->journeys->get_stats(
 			uid  => $user->{id},
 			year => $now->year
 		);

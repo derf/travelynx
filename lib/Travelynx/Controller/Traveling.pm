@@ -1,4 +1,5 @@
 package Travelynx::Controller::Traveling;
+
 # Copyright (C) 2020 Daniel Friesel
 #
 # SPDX-License-Identifier: MIT
@@ -917,7 +918,10 @@ sub yearly_history {
 			before        => $interval_end,
 			with_datetime => 1
 		);
-		$stats = $self->get_journey_stats( year => $year );
+		$stats = $self->journeys->get_stats(
+			uid  => $self->current_user->{id},
+			year => $year
+		);
 	}
 
 	$self->respond_to(
@@ -979,7 +983,8 @@ sub monthly_history {
 			before        => $interval_end,
 			with_datetime => 1
 		);
-		$stats = $self->get_journey_stats(
+		$stats = $self->journeys->get_stats(
+			uid   => $self->current_user->{id},
 			year  => $year,
 			month => $month
 		);

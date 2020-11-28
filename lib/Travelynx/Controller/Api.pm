@@ -1,4 +1,5 @@
 package Travelynx::Controller::Api;
+
 # Copyright (C) 2020 Daniel Friesel
 #
 # SPDX-License-Identifier: MIT
@@ -547,7 +548,7 @@ sub import_v1 {
 		);
 	}
 	else {
-		$self->journeys->invalidate_stats_cache(
+		$self->journey_stats_cache->invalidate(
 			ts  => $opt{rt_departure},
 			db  => $db,
 			uid => $uid

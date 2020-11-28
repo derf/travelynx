@@ -1,4 +1,5 @@
 package Travelynx;
+
 # Copyright (C) 2020 Daniel Friesel
 #
 # SPDX-License-Identifier: MIT
@@ -27,6 +28,7 @@ use Travelynx::Helper::Sendmail;
 use Travelynx::Helper::Traewelling;
 use Travelynx::Model::InTransit;
 use Travelynx::Model::Journeys;
+use Travelynx::Model::JourneyStatsCache;
 use Travelynx::Model::Traewelling;
 use Travelynx::Model::Users;
 use XML::LibXML;
@@ -330,11 +332,23 @@ sub startup {
 	);
 
 	$self->helper(
+		journey_stats_cache => sub {
+			my ($self) = @_;
+			state $journey_stats_cache
+			  = Travelynx::Model::JourneyStatsCache->new(
+				log => $self->app->log,
+				pg  => $self->pg,
+			  );
+		}
+	);
+
+	$self->helper(
 		journeys => sub {
 			my ($self) = @_;
 			state $journeys = Travelynx::Model::Journeys->new(
 				log             => $self->app->log,
 				pg              => $self->pg,
+				stats_cache     => $self->journey_stats_cache,
 				renamed_station => $self->app->renamed_station,
 				station_by_eva  => $self->app->station_by_eva,
 			);
@@ -546,7 +560,7 @@ sub startup {
 					);
 				}
 
-				$self->journeys->invalidate_stats_cache(
+				$self->journey_stats_cache->invalidate(
 					ts  => $cache_ts,
 					db  => $db,
 					uid => $uid
@@ -756,7 +770,7 @@ sub startup {
 							month => $+{month}
 						);
 					}
-					$self->journeys->invalidate_stats_cache(
+					$self->journey_stats_cache->invalidate(
 						ts  => $cache_ts,
 						db  => $db,
 						uid => $uid
@@ -966,109 +980,6 @@ sub startup {
 					return;
 				}
 			)->wait;
-		}
-	);
-
-	$self->helper(
-		'get_journey_stats' => sub {
-			my ( $self, %opt ) = @_;
-
-			if ( $opt{cancelled} ) {
-				$self->app->log->warn(
-'get_journey_stats called with illegal option cancelled => 1'
-				);
-				return {};
-			}
-
-			my $uid   = $opt{uid}   // $self->current_user->{id};
-			my $year  = $opt{year}  // 0;
-			my $month = $opt{month} // 0;
-
-			# Assumption: If the stats cache contains an entry it is up-to-date.
-			# -> Cache entries must be explicitly invalidated whenever the user
-			# checks out of a train or manually edits/adds a journey.
-
-			my $res = $self->pg->db->select(
-				'journey_stats',
-				['data'],
-				{
-					user_id => $uid,
-					year    => $year,
-					month   => $month
-				}
-			);
-
-			my $res_h = $res->expand->hash;
-
-			if ($res_h) {
-				$res->finish;
-				return $res_h->{data};
-			}
-
-			my $interval_start = DateTime->new(
-				time_zone => 'Europe/Berlin',
-				year      => 2000,
-				month     => 1,
-				day       => 1,
-				hour      => 0,
-				minute    => 0,
-				second    => 0,
-			);
-
-          # I wonder if people will still be traveling by train in the year 3000
-			my $interval_end = $interval_start->clone->add( years => 1000 );
-
-			if ( $opt{year} and $opt{month} ) {
-				$interval_start->set(
-					year  => $opt{year},
-					month => $opt{month}
-				);
-				$interval_end = $interval_start->clone->add( months => 1 );
-			}
-			elsif ( $opt{year} ) {
-				$interval_start->set( year => $opt{year} );
-				$interval_end = $interval_start->clone->add( years => 1 );
-			}
-
-			my @journeys = $self->journeys->get(
-				uid           => $uid,
-				cancelled     => $opt{cancelled} ? 1 : 0,
-				verbose       => 1,
-				with_polyline => 1,
-				after         => $interval_start,
-				before        => $interval_end
-			);
-			my $stats = $self->compute_journey_stats(@journeys);
-
-			eval {
-				$self->pg->db->insert(
-					'journey_stats',
-					{
-						user_id => $uid,
-						year    => $year,
-						month   => $month,
-						data    => JSON->new->encode($stats),
-					}
-				);
-			};
-			if ( my $err = $@ ) {
-				if ( $err =~ m{duplicate key value violates unique constraint} )
-				{
-                 # When a user opens the same history page several times in
-                 # short succession, there is a race condition where several
-                 # Mojolicious workers execute this helper, notice that there is
-                 # no up-to-date history, compute it, and insert it using the
-                 # statement above. This will lead to a uniqueness violation
-                 # in each successive insert. However, this is harmless, and
-                 # thus ignored.
-				}
-				else {
-					# Otherwise we probably have a problem.
-					die($@);
-				}
-			}
-
-			return $stats;
 		}
 	);
 
@@ -2541,95 +2452,6 @@ sub startup {
 				  = [ [ $min_lat, $min_lon ], [ $max_lat, $max_lon ] ];
 			}
 
-			return $ret;
-		}
-	);
-
-	$self->helper(
-		'compute_journey_stats' => sub {
-			my ( $self, @journeys ) = @_;
-			my $km_route         = 0;
-			my $km_beeline       = 0;
-			my $min_travel_sched = 0;
-			my $min_travel_real  = 0;
-			my $delay_dep        = 0;
-			my $delay_arr        = 0;
-			my $interchange_real = 0;
-			my $num_trains       = 0;
-			my $num_journeys     = 0;
-			my @inconsistencies;
-
-			my $next_departure = 0;
-
-			for my $journey (@journeys) {
-				$num_trains++;
-				$km_route   += $journey->{km_route};
-				$km_beeline += $journey->{km_beeline};
-				if (    $journey->{sched_duration}
-					and $journey->{sched_duration} > 0 )
-				{
-					$min_travel_sched += $journey->{sched_duration} / 60;
-				}
-				if ( $journey->{rt_duration} and $journey->{rt_duration} > 0 ) {
-					$min_travel_real += $journey->{rt_duration} / 60;
-				}
-				if ( $journey->{sched_dep_ts} and $journey->{rt_dep_ts} ) {
-					$delay_dep
-					  += ( $journey->{rt_dep_ts} - $journey->{sched_dep_ts} )
-					  / 60;
-				}
-				if ( $journey->{sched_arr_ts} and $journey->{rt_arr_ts} ) {
-					$delay_arr
-					  += ( $journey->{rt_arr_ts} - $journey->{sched_arr_ts} )
-					  / 60;
-				}
-
-				# Note that journeys are sorted from recent to older entries
-				if (    $journey->{rt_arr_ts}
-					and $next_departure
-					and $next_departure - $journey->{rt_arr_ts} < ( 60 * 60 ) )
-				{
-					if ( $next_departure - $journey->{rt_arr_ts} < 0 ) {
-						push( @inconsistencies,
-							epoch_to_dt($next_departure)
-							  ->strftime('%d.%m.%Y %H:%M') );
-					}
-					else {
-						$interchange_real
-						  += ( $next_departure - $journey->{rt_arr_ts} ) / 60;
-					}
-				}
-				else {
-					$num_journeys++;
-				}
-				$next_departure = $journey->{rt_dep_ts};
-			}
-			my $ret = {
-				km_route             => $km_route,
-				km_beeline           => $km_beeline,
-				num_trains           => $num_trains,
-				num_journeys         => $num_journeys,
-				min_travel_sched     => $min_travel_sched,
-				min_travel_real      => $min_travel_real,
-				min_interchange_real => $interchange_real,
-				delay_dep            => $delay_dep,
-				delay_arr            => $delay_arr,
-				inconsistencies      => \@inconsistencies,
-			};
-			for my $key (
-				qw(min_travel_sched min_travel_real min_interchange_real delay_dep delay_arr)
-			  )
-			{
-				my $strf_key = $key . '_strf';
-				my $value    = $ret->{$key};
-				$ret->{$strf_key} = q{};
-				if ( $ret->{$key} < 0 ) {
-					$ret->{$strf_key} .= '-';
-					$value *= -1;
-				}
-				$ret->{$strf_key}
-				  .= sprintf( '%02d:%02d', $value / 60, $value % 60 );
-			}
 			return $ret;
 		}
 	);
