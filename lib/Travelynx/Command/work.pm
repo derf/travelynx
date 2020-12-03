@@ -288,19 +288,6 @@ sub run {
 		$self->app->traewelling_api->checkin( %{$candidate},
 			trip_id => $trip_id );
 	}
-
-	# Computing yearly stats may take a while, but we've got all time in the
-	# world here. This means users won't have to wait when loading their
-	# own by-year journey log.
-	for my $user ( $db->select( 'users', 'id', { status => 1 } )->hashes->each )
-	{
-		$self->app->journeys->get_stats(
-			uid  => $user->{id},
-			year => $now->year
-		);
-	}
-
-	# TODO wait until all background jobs have terminated
 }
 
 1;

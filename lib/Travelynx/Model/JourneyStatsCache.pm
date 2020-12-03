@@ -1,4 +1,5 @@
 package Travelynx::Model::JourneyStatsCache;
+
 # Copyright (C) 2020 Daniel Friesel
 #
 # SPDX-License-Identifier: MIT
@@ -19,7 +20,7 @@ sub new {
 sub add {
 	my ( $self, %opt ) = @_;
 
-	my $db  = $opt{db} // $self->{pg}->db;
+	my $db = $opt{db} // $self->{pg}->db;
 
 	eval {
 		$db->insert(
@@ -28,20 +29,20 @@ sub add {
 				user_id => $opt{uid},
 				year    => $opt{year},
 				month   => $opt{month},
-				data    => JSON->new->encode($opt{stats}),
+				data    => JSON->new->encode( $opt{stats} ),
 			}
 		);
 	};
 	if ( my $err = $@ ) {
-		if ( $err =~ m{duplicate key value violates unique constraint} )
-		{
-				# If a user opens the same history page several times in
-				# short succession, there is a race condition where several
-				# Mojolicious workers execute this helper, notice that there is
-				# no up-to-date history, compute it, and insert it using the
-				# statement above. This will lead to a uniqueness violation
-				# in each successive insert. However, this is harmless, and
-				# thus ignored.
+		if ( $err =~ m{duplicate key value violates unique constraint} ) {
+
+			# If a user opens the same history page several times in
+			# short succession, there is a race condition where several
+			# Mojolicious workers execute this helper, notice that there is
+			# no up-to-date history, compute it, and insert it using the
+			# statement above. This will lead to a uniqueness violation
+			# in each successive insert. However, this is harmless, and
+			# thus ignored.
 		}
 		else {
 			# Otherwise we probably have a problem.
@@ -53,7 +54,7 @@ sub add {
 sub get {
 	my ( $self, %opt ) = @_;
 
-	my $db  = $opt{db} // $self->{pg}->db;
+	my $db = $opt{db} // $self->{pg}->db;
 
 	my $stats = $db->select(
 		'journey_stats',
@@ -95,6 +96,27 @@ sub invalidate {
 			month   => 0,
 		}
 	);
+}
+
+sub get_yyyymm_having_stats {
+	my ( $self, %opt ) = @_;
+	my $uid = $opt{uid};
+	my $db  = $opt{db} // $self->{pg}->db;
+	my $res = $db->select(
+		'journey_stats',
+		[ 'year', 'month' ],
+		{ user_id  => $uid },
+		{ order_by => { -asc => [ 'year', 'month' ] } }
+	);
+
+	my @ret;
+	for my $row ( $res->hashes->each ) {
+		if ( $row->{month} != 0 ) {
+			push( @ret, [ $row->{year}, $row->{month} ] );
+		}
+	}
+
+	return @ret;
 }
 
 1;

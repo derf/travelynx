@@ -763,6 +763,62 @@ sub get_months_for_year {
 	return @ret;
 }
 
+sub get_yyyymm_having_journeys {
+	my ( $self, %opt ) = @_;
+	my $uid = $opt{uid};
+	my $db  = $opt{db} // $self->{pg}->db;
+	my $res = $db->select(
+		'journeys',
+		"distinct to_char(real_departure, 'YYYY.MM') as yearmonth",
+		{ user_id  => $uid },
+		{ order_by => { -asc => 'yearmonth' } }
+	);
+
+	my @ret;
+	for my $row ( $res->hashes->each ) {
+		push( @ret, [ split( qr{[.]}, $row->{yearmonth} ) ] );
+	}
+
+	return @ret;
+}
+
+sub generate_missing_stats {
+	my ( $self, %opt ) = @_;
+	my $uid            = $opt{uid};
+	my $db             = $opt{db} // $self->{pg}->db;
+	my @journey_months = $self->get_yyyymm_having_journeys(
+		uid => $uid,
+		db  => $db
+	);
+	my @stats_months = $self->stats_cache->get_yyyymm_having_stats(
+		uid => $uid,
+		$db => $db
+	);
+
+	my $stats_index = 0;
+
+	for my $journey_index ( 0 .. $#journey_months ) {
+		if (    $stats_index < @stats_months
+			and $journey_months[$journey_index][0]
+			== $stats_months[$stats_index][0]
+			and $journey_months[$journey_index][1]
+			== $stats_months[$stats_index][1] )
+		{
+			$stats_index++;
+		}
+		else {
+			my ( $year, $month ) = @{ $journey_months[$journey_index] };
+			$self->get_stats(
+				uid        => $uid,
+				db         => $db,
+				year       => $year,
+				month      => $month,
+				write_only => 1
+			);
+		}
+	}
+}
+
 sub get_nav_months {
 	my ( $self, %opt ) = @_;
 
@@ -1048,7 +1104,8 @@ sub get_stats {
 	# checks out of a train or manually edits/adds a journey.
 
 	if (
-		my $stats = $self->stats_cache->get(
+		not $opt{write_only}
+		and my $stats = $self->stats_cache->get(
 			uid   => $uid,
 			db    => $db,
 			year  => $year,
