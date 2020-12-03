@@ -3,7 +3,7 @@
 		% my @years = journeys->get_years(uid => current_user->{id});
 		% if (@years) {
 			<ul class="pagination">
-				% for my $year (journeys->get_years(uid => current_user->{id})) {
+				% for my $year (@years) {
 					% my $link_to = $year->[0];
 					% my $text = $year->[1];
 					% my $class = $link_to eq $current ? 'active' : 'waves-effect';
