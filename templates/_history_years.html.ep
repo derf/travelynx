@@ -1,6 +1,6 @@
 <div class="row">
 	<div class="col s12">
-		% my @years = journeys->get_years(uid => current_user->{id});
+		% my @years = journeys->get_nav_years(uid => current_user->{id});
 		% if (@years) {
 			<ul class="pagination">
 				% for my $year (@years) {

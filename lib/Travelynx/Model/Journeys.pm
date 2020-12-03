@@ -703,7 +703,7 @@ sub get_latest_checkout_station_id {
 	return $res_h->{checkout_station_id};
 }
 
-sub get_years {
+sub get_nav_years {
 	my ( $self, %opt ) = @_;
 
 	my $uid = $opt{uid};
@@ -721,6 +721,22 @@ sub get_years {
 		push( @ret, [ $row->{year}, $row->{year} ] );
 	}
 	return @ret;
+}
+
+sub get_years {
+	my ( $self, %opt ) = @_;
+
+	my @years = $self->get_nav_years(%opt);
+
+	for my $year (@years) {
+		my $stats = $self->stats_cache->get(
+			uid   => $opt{uid},
+			year  => $year,
+			month => 0,
+		);
+		$year->[2] = $stats // {};
+	}
+	return @years;
 }
 
 sub get_months_for_year {
@@ -748,7 +764,6 @@ sub get_months_for_year {
 	for my $row ( $res->hashes->each ) {
 		if ( $row->{year} == $year ) {
 
-			# TODO delegate query to the (not yet present) JourneyStats model
 			my $stats = $self->stats_cache->get(
 				db    => $db,
 				uid   => $uid,

@@ -1,6 +1,8 @@
 <h2>Fahrten</h2>
 
-%= include '_history_years', current => '';
+Für Details ein Jahr auswählen.
+
+%= include '_history_years_list';
 
 <h2>Auswertungen</h2>
 <div class="row">
