@@ -1,0 +1,13 @@
+<div class="row">
+	<div class="col s12">
+		<div class="collection">
+			% for my $year (journeys->get_years(uid => current_user->{id})) {
+				<a class="collection-item" href="/history/<%= $year->[0] %>"><%= $year->[1] %>
+					% if (defined $year->[2]{km_route}) {
+						<span class="secondary-content"><%= sprintf('%.f', $year->[2]{km_route}) %> km</span>
+					% }
+				</a>
+			% }
+		</div>
+	</div>
+</div>
