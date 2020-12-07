@@ -50,6 +50,9 @@
 					% if ($train->departure_delay) {
 						%= sprintf('(%+d)', $train->departure_delay)
 					% }
+					% if ($train->{interchange_icon}) {
+						<i class="material-icons tiny" aria-label="<%= $train->{interchange_text} %>"><%= $train->{interchange_icon} %></i>
+					% }
 					% if ($train->platform) {
 						<br/>Gleis <%= $train->platform %>
 					% }
@@ -107,6 +110,9 @@
 					%= $train->departure->strftime('%H:%M')
 					% if ($train->departure_delay) {
 						%= sprintf('(%+d)', $train->departure_delay)
+					% }
+					% if ($train->{interchange_icon}) {
+						<i class="material-icons tiny" aria-label="<%= $train->{interchange_text} %>"><%= $train->{interchange_icon} %></i>
 					% }
 				% }
 			</td><td>

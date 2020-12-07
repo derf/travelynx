@@ -1446,6 +1446,7 @@ sub startup {
 
 			my ( $eva, $exclude_via, $exclude_train_id, $exclude_before );
 			my $now = $self->now->epoch;
+			my ( $stationinfo, $arr_epoch, $arr_platform );
 
 			if ( $opt{eva} ) {
 				if ( $use_history & 0x01 ) {
@@ -1461,8 +1462,11 @@ sub startup {
 					$eva              = $status->{arr_eva};
 					$exclude_via      = $status->{dep_name};
 					$exclude_train_id = $status->{train_id};
+					$arr_platform     = $status->{arr_platform};
+					$stationinfo      = $status->{extra_data}{stationinfo_arr};
 					if ( $status->{real_arrival} ) {
-						$exclude_before = $status->{real_arrival}->epoch;
+						$exclude_before = $arr_epoch
+						  = $status->{real_arrival}->epoch;
 					}
 				}
 			}
@@ -1578,6 +1582,30 @@ sub startup {
 				my @message_ids
 				  = List::Util::uniq map { $_->[1] } $train->raw_messages;
 				$train->{message_id} = { map { $_ => 1 } @message_ids };
+				my $interchange_duration;
+				if ( exists $stationinfo->{i} ) {
+					$interchange_duration
+					  = $stationinfo->{i}{$arr_platform}{ $train->platform };
+					$interchange_duration //= $stationinfo->{i}{"*"};
+				}
+				if ( defined $interchange_duration ) {
+					my $interchange_time
+					  = ( $train->departure->epoch - $arr_epoch ) / 60;
+					if ( $interchange_time < $interchange_duration ) {
+						$train->{interchange_text} = 'Anschluss knapp';
+						$train->{interchange_icon} = 'warning';
+					}
+					elsif ( $interchange_time == $interchange_duration ) {
+						$train->{interchange_text}
+						  = 'Anschluss könnte knapp werden';
+						$train->{interchange_icon} = 'directions_run';
+					}
+
+       #else {
+       #	$train->{interchange_text} = 'Anschluss wird voraussichtlich erreicht';
+       #	$train->{interchange_icon} = 'check';
+       #}
+				}
 			}
 
 			return ( @results, @cancellations );
