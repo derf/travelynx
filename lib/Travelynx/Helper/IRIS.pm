@@ -1,4 +1,5 @@
 package Travelynx::Helper::IRIS;
+
 # Copyright (C) 2020 Daniel Friesel
 #
 # SPDX-License-Identifier: MIT
@@ -6,6 +7,8 @@ package Travelynx::Helper::IRIS;
 use strict;
 use warnings;
 use 5.020;
+
+use utf8;
 
 use Travel::Status::DE::IRIS;
 
