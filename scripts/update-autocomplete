@@ -1,0 +1,42 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use 5.020;
+
+use JSON;
+use File::Slurp qw(write_file);
+use Travel::Status::DE::IRIS::Stations;
+
+my @station_names
+  = map { $_->[1] } Travel::Status::DE::IRIS::Stations::get_stations();
+my $station_list = q{};
+
+for my $station (@station_names) {
+	$station_list .= sprintf( "\t\t\t\"%s\": null,\n", $station );
+}
+
+my $autocomplete = <<"EOF";
+/*
+ * Copyright (C) 2020 DB Station&Service AG, Europaplatz 1, 10557 Berlin
+ * Copyright (C) 2020 Daniel Friesel
+ *
+ * SPDX-License-Identifier: CC-BY-4.0
+ */
+document.addEventListener('DOMContentLoaded', function() {
+	var elems = document.querySelectorAll('.autocomplete');
+	M.Autocomplete.init(elems, {
+		minLength: 3,
+		limit: 50,
+		data: {
+$station_list
+		}
+	});
+});
+EOF
+
+write_file(
+	"public/static/js/autocomplete.js",
+	{ binmode => ':encoding(utf-8)' },
+	$autocomplete
+);
