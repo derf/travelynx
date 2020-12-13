@@ -2,7 +2,7 @@ FROM debian:stretch-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-COPY cpanfile /app/cpanfile
+COPY cpanfile* /app/
 WORKDIR /app
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
