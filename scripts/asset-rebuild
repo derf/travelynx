@@ -6,6 +6,8 @@
 
 set -x
 
+scripts/update-autocomplete
+
 for theme in dark light; do
 	sassc -t compressed sass/src/${theme}/index.scss public/static/css/${theme}.min.css
 done
