@@ -93,7 +93,7 @@ sub startup {
 		$self->secrets( $self->config->{secrets} );
 	}
 
-	chomp $self->app->config->{version};
+	chomp $self->config->{version};
 
 	$self->plugin(
 		authentication => {
