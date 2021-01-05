@@ -1,4 +1,5 @@
 package Travelynx::Helper::HAFAS;
+
 # Copyright (C) 2020 Daniel Friesel
 #
 # SPDX-License-Identifier: MIT
@@ -194,6 +195,7 @@ sub get_xml_p {
 
 			# More fixes for invalid XML
 			$body =~ s{P&R}{P&amp;R};
+			$body =~ s{Wagen \d+ \K&(?= )}{&amp;};
 
 			# <Attribute [...] text="[...] "[...]"" /> is invalid XML.
 			# Work around it.
