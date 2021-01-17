@@ -44,16 +44,18 @@ Setup
 
 First, you need to set up a PostgreSQL database so that travelynx can store
 user accounts and journeys. It must be at least version 9.4 and must use a
-UTF-8 locale. The following steps describe setup on a Debian 9 system, though
-setup on other distribution should be similar.
+UTF-8 locale. The following steps describe setup on a Debian 9 system;
+setup on other distributions should be similar.
 
 * Write down a strong random password
 * Create a postgres user for travelynx: `sudo -u postgres createuser -P travelynx`
   (enter password when prompted)
 * Create the database: `sudo -u postgres createdb -O travelynx travelynx`
 * Copy `examples/travelynx.conf` to the application root directory
-  (the one in which `index.pl` resides) and configure it
+  (the one in which `index.pl` resides) and edit it. Make sure to configure
+  db, cache, mail, and secrets.
 * Initialize the database: `carton exec perl index.pl database migrate`
+  or `PERL5LIB=local/lib/perl5 perl index.pl database migrate`
 
 Your server also needs to be able to send mail. Set up your MTA of choice and
 make sure that the sendmail binary can be used for outgoing mails. Mail
@@ -81,7 +83,7 @@ Updating
 ---
 
 It is recommended to run travelynx directly from the git repository. When
-updating, the workflow depends on whether schema updates need to applied
+updating, the workflow depends on whether schema updates need to be applied
 or not.
 
 ```
@@ -97,7 +99,9 @@ fi
 ```
 
 Note that this is subject to change -- the application may perform schema
-updates automatically in the future.
+updates automatically in the future. If you used carton for installation,
+use `carton exec perl ...` in the snippet above; if you used cpanm, export
+`PERL5LIB=.../local/lib/perl5`.
 
 Usage
 ---
@@ -123,19 +127,17 @@ bar. You will see a list of the five stations closest to your current location
 name or DS100 code manually.
 
 As soon as you select a train, you will be checked in and travelynx will switch
-to the journey / checkout view. If you already now where you're headed, you
+to the journey / checkout view. If you already know where you're headed, you
 should click/tap on the destination station in the station list now. You can
-change the destination by selecting a new one any time.
+change the destination by selecting a new one anytime.
 
 ## Checking out
 
 You are automatically checked out a few minutes after arrival at your
 destination. If the train has already arrived when you select a destination and
 its arrival was less than two hours ago, you are checked out immediately.  If
-it's more than two hours, it will not be included in the scheduled and
-real-time data fetched by travelynx. In this case, you have to check out
-without arrival data using the link at the bottom of the checkin menu's station
-list.
+it's more than two hours, you need to perform a manual checkout (without
+arrival data) using the link at the bottom of the checkin menu's station list.
 
 Testing
 ---
