@@ -1,7 +1,7 @@
 package Travelynx::Helper::Sendmail;
 # Copyright (C) 2020 Daniel Friesel
 #
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 use strict;
 use warnings;

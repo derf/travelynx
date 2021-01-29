@@ -1,5 +1,13 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 
+Files: .dockerignore .github/* .github/*/* .gitignore
+Copyright: 2020 Daniel Friesel
+License: CC0-1.0
+
+Files: Dockerfile README.md cpanfile cpanfile.snapshot
+Copyright: 2020 Daniel Friesel
+License: CC0-1.0
+
 Files: examples/*
 Copyright: 2020 Daniel Friesel
 License: CC0-1.0

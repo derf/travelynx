@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# Copyright (C) Markus Witt
+#
+# SPDX-License-Identifier: CC0-1.0
 set -eu
 
 WAIT_DB_HOST=${TRAVELYNX_DB_HOST}

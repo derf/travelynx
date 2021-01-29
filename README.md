@@ -152,3 +152,23 @@ Please use a separate development database instead.
 
 Run the tests by executing `prove`. Use `prove -v` for debug output and
 `DBI_TRACE=SQL prove -v` to monitor SQL queries.
+
+Licensing
+---
+
+The copyright of individual files is documented in the file's header or in
+.reuse/dep5. The referenced licenses are stored in the LICENSES directory.
+
+The program code of travelynx is licensed under the terms of the GNU AGPL v3.
+HTML Templates and SASS/CSS layout are licensed under the terms of the MIT
+License. This means that you are free to host your own travelynx instance,
+both for personal/internal and public use, under the following conditions.
+
+* You are free to change HTML/SASS/CSS templates as you see fit (though you
+  must not remove the copyright headers).
+* If you make changes to the program code, that is, a file below lib/ or a
+  travelynx javascript file below public/static/js/, you must make those
+  changes available to the public.
+
+The easiest way of making changes available is by maintaining a public fork of
+the Git repository. A tarball is also acceptable.

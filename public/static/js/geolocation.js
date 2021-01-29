@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2020 Daniel Friesel
  *
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 $(document).ready(function() {
 	function getPlaceholder() {

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2020 Daniel Friesel
  *
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 var j_departure = 0;
 var j_duration = 0;

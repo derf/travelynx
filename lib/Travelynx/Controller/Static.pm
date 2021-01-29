@@ -1,7 +1,7 @@
 package Travelynx::Controller::Static;
 # Copyright (C) 2020 Daniel Friesel
 #
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: AGPL-3.0-or-later
 use Mojo::Base 'Mojolicious::Controller';
 
 my $travelynx_version = qx{git describe --dirty} || 'experimental';
