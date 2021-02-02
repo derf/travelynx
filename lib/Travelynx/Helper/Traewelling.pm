@@ -1,4 +1,5 @@
 package Travelynx::Helper::Traewelling;
+
 # Copyright (C) 2020 Daniel Friesel
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -309,38 +310,27 @@ sub checkin {
 	};
 
 	my $request = {
-		tripID      => $opt{trip_id},
+		tripID   => $opt{trip_id},
+		lineName => $opt{train_type} . ' '
+		  . ( $opt{train_line} // $opt{train_no} ),
 		start       => q{} . $opt{dep_eva},
 		destination => q{} . $opt{arr_eva},
 		toot        => $opt{data}{toot} ? \1 : \0,
 		tweet       => $opt{data}{tweet} ? \1 : \0,
 	};
-	my $trip_req = sprintf(
-		"tripID=%s&lineName=%s%%20%s&start=%s",
-		$opt{trip_id}, $opt{train_type}, $opt{train_line} // $opt{train_no},
-		$opt{dep_eva}
-	);
 
 	if ( $opt{user_data}{comment} ) {
 		$request->{body} = $opt{user_data}{comment};
 	}
 
-	# Work around https://github.com/Traewelling/traewelling/issues/72
 	$self->{user_agent}->request_timeout(20)
-	  ->get_p(
-		"https://traewelling.de/api/v0/trains/trip?$trip_req" => $header )
-	  ->then(
-		sub {
-			return $self->{user_agent}->request_timeout(20)
-			  ->post_p( "https://traewelling.de/api/v0/trains/checkin" =>
-				  $header => json => $request );
-		}
-	)->then(
+	  ->post_p( "https://traewelling.de/api/v0/trains/checkin" =>
+		  $header => json => $request )->then(
 		sub {
 			my ($tx) = @_;
 			if ( my $err = $tx->error ) {
 				my $err_msg = "HTTP $err->{code} $err->{message}";
-				$self->{log}->debug("... error: $err_msg");
+				$self->{log}->warn("Traewelling checkin error: $err_msg");
 				$self->{model}->log(
 					uid => $opt{uid},
 					message =>
