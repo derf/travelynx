@@ -171,4 +171,5 @@ both for personal/internal and public use, under the following conditions.
   changes available to the public.
 
 The easiest way of making changes available is by maintaining a public fork of
-the Git repository. A tarball is also acceptable.
+the Git repository. A tarball is also acceptable. Please change the `source`
+ref in travelynx.conf if you are using a fork with custom changes.
