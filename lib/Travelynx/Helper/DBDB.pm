@@ -70,7 +70,7 @@ sub get_wagonorder_p {
 	my ( $self, $ts, $train_no ) = @_;
 	my $api_ts = $ts->strftime('%Y%m%d%H%M');
 	my $url
-	  = "https://www.apps-bahn.de/wr/wagenreihung/1.0/${train_no}/${api_ts}";
+	  = "https://ist-wr.noncd.db.de/wagenreihung/1.0/${train_no}/${api_ts}";
 
 	my $cache   = $self->{cache};
 	my $promise = Mojo::Promise->new;
