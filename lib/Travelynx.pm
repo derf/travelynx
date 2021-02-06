@@ -1242,7 +1242,8 @@ sub startup {
 				$self->dbdb->has_wagonorder_p( $train->sched_departure,
 					$train->train_no )->then(
 					sub {
-						return $self->dbdb->get_wagonorder_p(
+						my ($api) = @_;
+						return $self->dbdb->get_wagonorder_p( $api,
 							$train->sched_departure, $train->train_no );
 					}
 				)->then(

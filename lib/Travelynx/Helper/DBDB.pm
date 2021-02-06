@@ -1,4 +1,5 @@
 package Travelynx::Helper::DBDB;
+
 # Copyright (C) 2020 Daniel Friesel
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -34,21 +35,22 @@ sub has_wagonorder_p {
 	my $promise = Mojo::Promise->new;
 
 	if ( my $content = $cache->get($url) ) {
-		if ( $content eq 'y' ) {
-			return $promise->resolve;
-		}
-		elsif ( $content eq 'n' ) {
+		if ( $content eq 'n' ) {
 			return $promise->reject;
+		}
+		else {
+			return $promise->resolve($content);
 		}
 	}
 
-	$self->{user_agent}->request_timeout(5)->head_p( $url => $self->{header} )
+	$self->{user_agent}->request_timeout(5)->get_p( $url => $self->{header} )
 	  ->then(
 		sub {
 			my ($tx) = @_;
 			if ( $tx->result->is_success ) {
-				$cache->set( $url, 'y' );
-				$promise->resolve;
+				my $body = $tx->result->body;
+				$cache->set( $url, $body );
+				$promise->resolve($body);
 			}
 			else {
 				$cache->set( $url, 'n' );
@@ -67,10 +69,15 @@ sub has_wagonorder_p {
 }
 
 sub get_wagonorder_p {
-	my ( $self, $ts, $train_no ) = @_;
+	my ( $self, $api, $ts, $train_no ) = @_;
 	my $api_ts = $ts->strftime('%Y%m%d%H%M');
 	my $url
 	  = "https://ist-wr.noncd.db.de/wagenreihung/1.0/${train_no}/${api_ts}";
+
+	if ( $api !~ m{i} and $api =~ m{a} ) {
+		$url
+		  = "https://www.apps-bahn.de/wr/wagenreihung/1.0/${train_no}/${api_ts}";
+	}
 
 	my $cache   = $self->{cache};
 	my $promise = Mojo::Promise->new;
