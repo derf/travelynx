@@ -330,7 +330,12 @@ sub checkin {
 			my ($tx) = @_;
 			if ( my $err = $tx->error ) {
 				my $err_msg = "HTTP $err->{code} $err->{message}";
-				$self->{log}->warn("Traewelling checkin error: $err_msg");
+				if ( $err->{code} != 409 ) {
+					$self->{log}->warn("Traewelling checkin error: $err_msg");
+				}
+				else {
+					$self->{log}->debug("Traewelling checkin error: $err_msg");
+				}
 				$self->{model}->log(
 					uid => $opt{uid},
 					message =>
