@@ -203,8 +203,11 @@ sub get_xml_p {
 			  =~ s{<Attribute([^>]+)text="([^"]*)"([^"=]*)""}{<Attribute$1text="$2&#042;$3&#042;"}s;
 
 			# Dito for <HIMMessage [...] lead="[...]<br>[...]">.
-			$body
-			  =~ s{<HIMMessage([^>]+)lead="([^"]*)<br/?>([^"=]*)"}{<HIMMessage$1lead="$2 $3"}s;
+			while ( $body
+				=~ s{<HIMMessage([^>]+)lead="([^"]*)<br/?>([^"=]*)"}{<HIMMessage$1lead="$2 $3"}s
+			  )
+			{
+			}
 
 			eval { $tree = XML::LibXML->load_xml( string => $body ) };
 			if ( my $err = $@ ) {
