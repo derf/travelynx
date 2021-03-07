@@ -17,10 +17,18 @@ has usage => sub { shift->extract_usage };
 sub run {
 	my ($self) = @_;
 
-	my $now  = DateTime->now( time_zone => 'Europe/Berlin' );
-	my $json = JSON->new;
+	my $now              = DateTime->now( time_zone => 'Europe/Berlin' );
+	my $checkin_deadline = $now->clone->subtract( hours => 48 );
+	my $json             = JSON->new;
 
 	my $db = $self->app->pg->db;
+
+	my $res = $db->delete( 'in_transit',
+		{ checkin_time => { '<', $checkin_deadline } } );
+
+	if ( my $rows = $res->rows ) {
+		$self->app->log->debug("Removed ${rows} incomplete checkins");
+	}
 
 	for my $entry (
 		$db->select( 'in_transit_str', '*', { cancelled => 0 } )->hashes->each )
