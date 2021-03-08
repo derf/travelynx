@@ -1877,7 +1877,6 @@ sub startup {
 							from_json => $in_transit->{data}{wagonorder_dep} );
 					};
 					if (    $wr
-						and $wr->sections
 						and $wr->wagons
 						and defined $wr->direction )
 					{
