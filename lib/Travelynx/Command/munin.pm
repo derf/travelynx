@@ -30,6 +30,16 @@ sub run {
 	my $checkin_window_query
 	  = qq{select count(*) as count from journeys where checkin_time > to_timestamp(?);};
 
+	# DateTime's  math does not like time zones: When subtracting 7 days from
+	# sun 2am and the previous sunday was the switch from CET to CEST (i.e.,
+	# the switch to daylight saving time), the resulting datetime is invalid.
+	# This is a fatal error. We avoid this edge case by performing date math
+	# on the epoch timestamp, which does not know or care about time zones and
+	# daylight saving time.
+	my $one_day   = 24 * 60 * 60;
+	my $one_week  = 7 * $one_day;
+	my $one_month = 30 * $one_day;
+
 	query_to_munin( 'reg_user_count',
 		$db->select( 'users', 'count(*) as count', { status => 1 } )
 		  ->hash->{count} );
@@ -46,21 +56,15 @@ sub run {
 	);
 	query_to_munin( 'checked_in',
 		$db->select( 'in_transit', 'count(*) as count' )->hash->{count} );
-	query_to_munin(
-		'checkins_24h',
-		$db->query( $checkin_window_query,
-			$now->clone->subtract( hours => 24 )->epoch )->hash->{count}
-	);
-	query_to_munin(
-		'checkins_7d',
-		$db->query( $checkin_window_query,
-			$now->clone->subtract( days => 7 )->epoch )->hash->{count}
-	);
-	query_to_munin(
-		'checkins_30d',
-		$db->query( $checkin_window_query,
-			$now->clone->subtract( days => 30 )->epoch )->hash->{count}
-	);
+	query_to_munin( 'checkins_24h',
+		$db->query( $checkin_window_query, $now->epoch - $one_day )
+		  ->hash->{count} );
+	query_to_munin( 'checkins_7d',
+		$db->query( $checkin_window_query, $now->epoch - $one_week )
+		  ->hash->{count} );
+	query_to_munin( 'checkins_30d',
+		$db->query( $checkin_window_query, $now->epoch - $one_month )
+		  ->hash->{count} );
 	query_to_munin( 'polylines',
 		$db->select( 'polylines', 'count(*) as count' )->hash->{count} );
 	query_to_munin(
