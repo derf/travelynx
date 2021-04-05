@@ -1,4 +1,5 @@
 package Travelynx::Command::munin;
+
 # Copyright (C) 2020 Daniel Friesel
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -48,16 +49,17 @@ sub run {
 	query_to_munin(
 		'checkins_24h',
 		$db->query( $checkin_window_query,
-			$now->subtract( hours => 24 )->epoch )->hash->{count}
+			$now->clone->subtract( hours => 24 )->epoch )->hash->{count}
 	);
-	query_to_munin( 'checkins_7d',
-		$db->query( $checkin_window_query, $now->subtract( days => 7 )->epoch )
-		  ->hash->{count} );
+	query_to_munin(
+		'checkins_7d',
+		$db->query( $checkin_window_query,
+			$now->clone->subtract( days => 7 )->epoch )->hash->{count}
+	);
 	query_to_munin(
 		'checkins_30d',
-		$db->query(
-			$checkin_window_query, $now->subtract( days => 30 )->epoch
-		)->hash->{count}
+		$db->query( $checkin_window_query,
+			$now->clone->subtract( days => 30 )->epoch )->hash->{count}
 	);
 	query_to_munin( 'polylines',
 		$db->select( 'polylines', 'count(*) as count' )->hash->{count} );
