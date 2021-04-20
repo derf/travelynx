@@ -43,6 +43,7 @@ my $csrf_token
 $t->post_ok(
 	'/register' => form => {
 		csrf_token => $csrf_token,
+		dt         => 1,
 		user       => 'someone',
 		email      => 'foo@example.org',
 		password   => 'foofoofoo',
@@ -51,10 +52,23 @@ $t->post_ok(
 );
 $t->status_is(200)->content_like(qr{Verifizierungslink});
 
+# Failed registration (CSRF)
+$t->post_ok(
+	'/register' => form => {
+		csrf_token => $csrf_token,
+		user       => 'noone',
+		email      => 'foo2@example.org',
+		password   => 'foofoofoo',
+		password2  => 'foofoofoo',
+	}
+);
+$t->status_is(200)->content_like(qr{CSRF});
+
 # Failed registration (user name not available)
 $t->post_ok(
 	'/register' => form => {
 		csrf_token => $csrf_token,
+		dt         => 1,
 		user       => 'someone',
 		email      => 'foo@example.org',
 		password   => 'foofoofoo',

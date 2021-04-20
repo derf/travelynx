@@ -44,6 +44,7 @@ my $csrf_token
 $t->post_ok(
 	'/register' => form => {
 		csrf_token => $csrf_token,
+		dt         => 1,
 		user       => 'someone',
 		email      => 'foo@example.org',
 		password   => 'foofoofoo',
