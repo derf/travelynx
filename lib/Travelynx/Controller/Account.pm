@@ -1,4 +1,5 @@
 package Travelynx::Controller::Account;
+
 # Copyright (C) 2020 Daniel Friesel
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -62,6 +63,7 @@ sub registration_form {
 
 sub register {
 	my ($self)    = @_;
+	my $dt        = $self->req->param('dt');
 	my $user      = $self->req->param('user');
 	my $email     = $self->req->param('email');
 	my $password  = $self->req->param('password');
@@ -115,6 +117,18 @@ sub register {
 
 	if ( length($password) < 8 ) {
 		$self->render( 'register', invalid => 'password_short' );
+		return;
+	}
+
+	if ( not $dt
+		or DateTime->now( time_zone => 'Europe/Berlin' )->epoch - $dt < 6 )
+	{
+		# a human user should take at least five seconds to fill out the form.
+		# Throw a CSRF error at presumed spammers.
+		$self->render(
+			'register',
+			invalid => 'csrf',
+		);
 		return;
 	}
 

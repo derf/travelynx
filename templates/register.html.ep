@@ -3,6 +3,7 @@
 % }
 %= form_for '/register' => (method => 'POST') => begin
 	%= csrf_field
+	%= hidden_field dt => DateTime->now(time_zone => 'Europe/Berlin')->epoch
 	<div class="row">
 		<div class="input-field col l6 m12 s12">
 			<i class="material-icons prefix">account_circle</i>
