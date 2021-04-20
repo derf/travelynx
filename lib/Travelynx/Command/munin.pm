@@ -40,6 +40,9 @@ sub run {
 	my $one_week  = 7 * $one_day;
 	my $one_month = 30 * $one_day;
 
+	query_to_munin( 'pending_user_count',
+		$db->select( 'users', 'count(*) as count', { status => 0 } )
+		  ->hash->{count} );
 	query_to_munin( 'reg_user_count',
 		$db->select( 'users', 'count(*) as count', { status => 1 } )
 		  ->hash->{count} );
