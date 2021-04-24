@@ -205,7 +205,14 @@ sub get_xml_p {
 
 			# Dito for <HIMMessage [...] lead="[...]<br>[...]">.
 			while ( $body
-				=~ s{<HIMMessage([^>]+)lead="([^"]*)<br/?>([^"=]*)"}{<HIMMessage$1lead="$2 $3"}s
+				=~ s{<HIMMessage([^>]+)lead="([^"]*)<br/?>([^"=]*)"}{<HIMMessage$1lead="$2 $3"}is
+			  )
+			{
+			}
+
+			# ... and any other HTML tag inside an XML attribute
+			while ( $body
+				=~ s{<HIMMessage([^>]+)lead="([^"]*)<[^>]+>([^"=]*)"}{<HIMMessage$1lead="$2$3"}is
 			  )
 			{
 			}
