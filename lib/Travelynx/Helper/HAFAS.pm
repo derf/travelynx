@@ -198,10 +198,14 @@ sub get_xml_p {
 			$body =~ s{Wagen \d+ \K&}{&amp;};
 			$body =~ s{Wagen \d+, \d+ \K&}{&amp;};
 
-			# <Attribute [...] text="[...] "[...]"" /> is invalid XML.
+			# <Attribute [...] text="[...]"[...]"" /> is invalid XML.
 			# Work around it.
 			$body
-			  =~ s{<Attribute([^>]+)text="([^"]*)"([^"=]*)""}{<Attribute$1text="$2&#042;$3&#042;"}s;
+			  =~ s{<Attribute([^>]+)text="([^"]*)"([^"=>]*)""}{<Attribute$1text="$2&#042;$3&#042;"}s;
+
+			# Same for <HIMMessage lead="[...]"[...]"[...]" />
+			$body
+			  =~ s{<HIMMessage([^>]+)lead="([^"]*)"([^"=>]*)"([^"]*)"}{<Attribute$1text="$2&#042;$3&#042;$4"}s;
 
 			# Dito for <HIMMessage [...] lead="[...]<br>[...]">.
 			while ( $body
