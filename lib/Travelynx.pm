@@ -1754,7 +1754,7 @@ sub startup {
 						and $station->[0] eq $in_transit->{dep_name} )
 					{
 						$is_after = 1;
-						if ( @{$station} > 1 ) {
+						if ( @{$station} > 1 and not $dep_info ) {
 							$dep_info = $station->[1];
 						}
 					}
