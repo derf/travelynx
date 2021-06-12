@@ -7,7 +7,10 @@
 		<div class="col s12">
 			<div class="card success-color">
 				<div class="card-content white-text">
-					% if ($success eq 'mail') {
+					% if ($success eq 'name') {
+						<span class="card-title">Name geändert</span>
+					% }
+					% elsif ($success eq 'mail') {
 						<span class="card-title">Mail-Adresse geändert</span>
 					% }
 					% elsif ($success eq 'password') {
@@ -41,7 +44,7 @@
 		<table class="striped">
 			<tr>
 				<th scope="row">Name</th>
-				<td><%= $acc->{name} %></td>
+				<td><a href="/account/name"><i class="material-icons">edit</i></a><%= $acc->{name} %></td>
 			</tr>
 			<tr>
 				<th scope="row">Mail</th>

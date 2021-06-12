@@ -1,4 +1,5 @@
 package Travelynx::Model::Users;
+
 # Copyright (C) 2020 Daniel Friesel
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -16,9 +17,9 @@ sub new {
 }
 
 sub mark_seen {
-	my ($self, %opt) = @_;
+	my ( $self, %opt ) = @_;
 	my $uid = $opt{uid};
-	my $db = $opt{db} // $self->{pg}->db;
+	my $db  = $opt{db} // $self->{pg}->db;
 
 	$db->update(
 		'users',
@@ -29,9 +30,9 @@ sub mark_seen {
 
 sub verify_registration_token {
 	my ( $self, %opt ) = @_;
-	my $uid = $opt{uid};
+	my $uid   = $opt{uid};
 	my $token = $opt{token};
-	my $db = $opt{db} // $self->{pg}->db;
+	my $db    = $opt{db} // $self->{pg}->db;
 
 	my $tx = $db->begin;
 
@@ -55,8 +56,8 @@ sub verify_registration_token {
 
 sub get_uid_by_name_and_mail {
 	my ( $self, %opt ) = @_;
-	my $db = $opt{db} // $self->{pg}->db;
-	my $name = $opt{name};
+	my $db    = $opt{db} // $self->{pg}->db;
+	my $name  = $opt{name};
 	my $email = $opt{email};
 
 	my $res = $db->select(
@@ -77,7 +78,7 @@ sub get_uid_by_name_and_mail {
 
 sub get_privacy_by_name {
 	my ( $self, %opt ) = @_;
-	my $db = $opt{db} // $self->{pg}->db;
+	my $db   = $opt{db} // $self->{pg}->db;
 	my $name = $opt{name};
 
 	my $res = $db->select(
@@ -97,21 +98,17 @@ sub get_privacy_by_name {
 
 sub set_privacy {
 	my ( $self, %opt ) = @_;
-	my $db = $opt{db} // $self->{pg}->db;
-	my $uid = $opt{uid};
+	my $db           = $opt{db} // $self->{pg}->db;
+	my $uid          = $opt{uid};
 	my $public_level = $opt{level};
 
-	$db->update(
-		'users',
-		{ public_level => $public_level },
-		{ id           => $uid }
-	);
+	$db->update( 'users', { public_level => $public_level }, { id => $uid } );
 }
 
 sub mark_for_password_reset {
 	my ( $self, %opt ) = @_;
-	my $db = $opt{db} // $self->{pg}->db;
-	my $uid = $opt{uid};
+	my $db    = $opt{db} // $self->{pg}->db;
+	my $uid   = $opt{uid};
 	my $token = $opt{token};
 
 	my $res = $db->select(
@@ -126,10 +123,9 @@ sub mark_for_password_reset {
 	$db->insert(
 		'pending_passwords',
 		{
-			user_id => $uid,
-			token   => $token,
-			requested_at =>
-				DateTime->now( time_zone => 'Europe/Berlin' )
+			user_id      => $uid,
+			token        => $token,
+			requested_at => DateTime->now( time_zone => 'Europe/Berlin' )
 		}
 	);
 
@@ -138,8 +134,8 @@ sub mark_for_password_reset {
 
 sub verify_password_token {
 	my ( $self, %opt ) = @_;
-	my $db = $opt{db} // $self->{pg}->db;
-	my $uid = $opt{uid};
+	my $db    = $opt{db} // $self->{pg}->db;
+	my $uid   = $opt{uid};
 	my $token = $opt{token};
 
 	my $res = $db->select(
@@ -159,19 +155,18 @@ sub verify_password_token {
 
 sub mark_for_mail_change {
 	my ( $self, %opt ) = @_;
-	my $db = $opt{db} // $self->{pg}->db;
-	my $uid = $opt{uid};
+	my $db    = $opt{db} // $self->{pg}->db;
+	my $uid   = $opt{uid};
 	my $email = $opt{email};
 	my $token = $opt{token};
 
 	$db->insert(
 		'pending_mails',
 		{
-			user_id => $uid,
-			email   => $email,
-			token   => $token,
-			requested_at =>
-				DateTime->now( time_zone => 'Europe/Berlin' )
+			user_id      => $uid,
+			email        => $email,
+			token        => $token,
+			requested_at => DateTime->now( time_zone => 'Europe/Berlin' )
 		},
 		{
 			on_conflict => \
@@ -182,8 +177,8 @@ sub mark_for_mail_change {
 
 sub change_mail_with_token {
 	my ( $self, %opt ) = @_;
-	my $db = $opt{db} // $self->{pg}->db;
-	my $uid = $opt{uid};
+	my $db    = $opt{db} // $self->{pg}->db;
+	my $uid   = $opt{uid};
 	my $token = $opt{token};
 
 	my $tx = $db->begin;
@@ -198,11 +193,7 @@ sub change_mail_with_token {
 	)->hash;
 
 	if ($res_h) {
-		$db->update(
-			'users',
-			{ email => $res_h->{email} },
-			{ id    => $uid }
-		);
+		$db->update( 'users', { email => $res_h->{email} }, { id => $uid } );
 		$db->delete( 'pending_mails', { user_id => $uid } );
 		$tx->commit;
 		return 1;
@@ -210,10 +201,24 @@ sub change_mail_with_token {
 	return;
 }
 
+sub change_name {
+	my ( $self, %opt ) = @_;
+	my $db  = $opt{db} // $self->{pg}->db;
+	my $uid = $opt{uid};
+
+	eval { $db->update( 'users', { name => $opt{name} }, { id => $uid } ); };
+
+	if ($@) {
+		return 0;
+	}
+
+	return 1;
+}
+
 sub remove_password_token {
 	my ( $self, %opt ) = @_;
-	my $db = $opt{db} // $self->{pg}->db;
-	my $uid = $opt{uid};
+	my $db    = $opt{db} // $self->{pg}->db;
+	my $uid   = $opt{uid};
 	my $token = $opt{token};
 
 	$db->delete(
@@ -226,16 +231,16 @@ sub remove_password_token {
 }
 
 sub get_data {
-	my ($self, %opt) = @_;
-	my $db = $opt{db} // $self->{pg}->db;
+	my ( $self, %opt ) = @_;
+	my $db  = $opt{db} // $self->{pg}->db;
 	my $uid = $opt{uid};
 
 	my $user = $db->select(
 		'users',
 		'id, name, status, public_level, email, '
-			. 'extract(epoch from registered_at) as registered_at_ts, '
-			. 'extract(epoch from last_seen) as last_seen_ts, '
-			. 'extract(epoch from deletion_requested) as deletion_requested_ts',
+		  . 'extract(epoch from registered_at) as registered_at_ts, '
+		  . 'extract(epoch from last_seen) as last_seen_ts, '
+		  . 'extract(epoch from deletion_requested) as deletion_requested_ts',
 		{ id => $uid }
 	)->hash;
 	if ($user) {
@@ -257,7 +262,7 @@ sub get_data {
 			? DateTime->from_epoch(
 				epoch     => $user->{deletion_requested_ts},
 				time_zone => 'Europe/Berlin'
-				)
+			  )
 			: undef,
 		};
 	}
@@ -266,7 +271,7 @@ sub get_data {
 
 sub get_login_data {
 	my ( $self, %opt ) = @_;
-	my $db = $opt{db} // $self->{pg}->db;
+	my $db   = $opt{db} // $self->{pg}->db;
 	my $name = $opt{name};
 
 	my $res_h = $db->select(
@@ -280,11 +285,11 @@ sub get_login_data {
 
 sub add_user {
 	my ( $self, %opt ) = @_;
-	my $db = $opt{db} // $self->{pg}->db;
+	my $db        = $opt{db} // $self->{pg}->db;
 	my $user_name = $opt{name};
-	my $email = $opt{email};
-	my $token = $opt{token};
-	my $password = $opt{password_hash};
+	my $email     = $opt{email};
+	my $token     = $opt{token};
+	my $password  = $opt{password_hash};
 
 	# This helper must be called during a transaction, as user creation
 	# may fail even after the database entry has been generated, e.g.  if
@@ -322,7 +327,7 @@ sub add_user {
 
 sub flag_deletion {
 	my ( $self, %opt ) = @_;
-	my $db = $opt{db} // $self->{pg}->db;
+	my $db  = $opt{db} // $self->{pg}->db;
 	my $uid = $opt{uid};
 
 	my $now = DateTime->now( time_zone => 'Europe/Berlin' );
@@ -338,7 +343,7 @@ sub flag_deletion {
 
 sub unflag_deletion {
 	my ( $self, %opt ) = @_;
-	my $db = $opt{db} // $self->{pg}->db;
+	my $db  = $opt{db} // $self->{pg}->db;
 	my $uid = $opt{uid};
 
 	$db->update(
@@ -354,27 +359,21 @@ sub unflag_deletion {
 
 sub set_password_hash {
 	my ( $self, %opt ) = @_;
-	my $db = $opt{db} // $self->{pg}->db;
-	my $uid = $opt{uid};
+	my $db       = $opt{db} // $self->{pg}->db;
+	my $uid      = $opt{uid};
 	my $password = $opt{password_hash};
 
-	$db->update(
-		'users',
-		{ password => $password },
-		{ id       => $uid }
-	);
+	$db->update( 'users', { password => $password }, { id => $uid } );
 }
 
 sub check_if_user_name_exists {
 	my ( $self, %opt ) = @_;
-	my $db = $opt{db} // $self->{pg}->db;
+	my $db        = $opt{db} // $self->{pg}->db;
 	my $user_name = $opt{name};
 
-	my $count = $db->select(
-		'users',
-		'count(*) as count',
-		{ name => $user_name }
-	)->hash->{count};
+	my $count
+	  = $db->select( 'users', 'count(*) as count', { name => $user_name } )
+	  ->hash->{count};
 
 	if ($count) {
 		return 1;
@@ -384,7 +383,7 @@ sub check_if_user_name_exists {
 
 sub check_if_mail_is_blacklisted {
 	my ( $self, %opt ) = @_;
-	my $db = $opt{db} // $self->{pg}->db;
+	my $db   = $opt{db} // $self->{pg}->db;
 	my $mail = $opt{email};
 
 	my $count = $db->select(
@@ -416,21 +415,17 @@ sub check_if_mail_is_blacklisted {
 }
 
 sub use_history {
-	my ($self, %opt) = @_;
-	my $db = $opt{db} // $self->{pg}->db;
-	my $uid = $opt{uid};
+	my ( $self, %opt ) = @_;
+	my $db    = $opt{db} // $self->{pg}->db;
+	my $uid   = $opt{uid};
 	my $value = $opt{set};
 
 	if ($value) {
-		$db->update(
-			'users',
-			{ use_history => $value },
-			{ id          => $uid }
-		);
+		$db->update( 'users', { use_history => $value }, { id => $uid } );
 	}
 	else {
-		return $db->select( 'users', ['use_history'],
-			{ id => $uid } )->hash->{use_history};
+		return $db->select( 'users', ['use_history'], { id => $uid } )
+		  ->hash->{use_history};
 	}
 }
 

@@ -2548,6 +2548,7 @@ sub startup {
 	$authed_r->get('/fgr')->to('passengerrights#list_candidates');
 	$authed_r->get('/account/password')->to('account#password_form');
 	$authed_r->get('/account/mail')->to('account#change_mail');
+	$authed_r->get('/account/name')->to('account#change_name');
 	$authed_r->get('/export.json')->to('account#json_export');
 	$authed_r->get('/history.json')->to('traveling#json_history');
 	$authed_r->get('/history.csv')->to('traveling#csv_history');
@@ -2572,6 +2573,7 @@ sub startup {
 	  ->to('passengerrights#generate');
 	$authed_r->post('/account/password')->to('account#change_password');
 	$authed_r->post('/account/mail')->to('account#change_mail');
+	$authed_r->post('/account/name')->to('account#change_name');
 	$authed_r->post('/delete')->to('account#delete');
 	$authed_r->post('/logout')->to('account#do_logout');
 	$authed_r->post('/set_token')->to('api#set_token');

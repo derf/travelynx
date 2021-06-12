@@ -468,6 +468,93 @@ sub change_mail {
 	}
 }
 
+sub change_name {
+	my ($self) = @_;
+
+	my $action   = $self->req->param('action');
+	my $password = $self->req->param('password');
+	my $old_name = $self->current_user->{name};
+	my $new_name = $self->req->param('name');
+
+	if ( $action and $action eq 'update_name' ) {
+		if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
+			$self->render(
+				'change_name',
+				invalid => 'csrf',
+			);
+			return;
+		}
+
+		if ( not length($new_name) ) {
+			$self->render( 'change_name', invalid => 'user_empty' );
+			return;
+		}
+
+		if ( $new_name !~ m{ ^ [0-9a-zA-Z_-]+ $ }x ) {
+			$self->render( 'change_name', invalid => 'user_format' );
+			return;
+		}
+
+		if ( not $self->authenticate( $old_name, $self->param('password') ) ) {
+			$self->render( 'change_name', invalid => 'password' );
+			return;
+		}
+
+       # This call is technically superfluous. The users table has a unique
+       # constraint on the "name" column, so having two users with the same name
+       # is not possible. However, to minimize the number of failed SQL
+       # queries, we first do a select check here and only attempt an update
+       # if it succeeded.
+		if ( $self->users->check_if_user_name_exists( name => $new_name ) ) {
+			$self->render( 'change_name', invalid => 'user_collision' );
+			return;
+		}
+
+		my $success = $self->users->change_name(
+			uid  => $self->current_user->{id},
+			name => $new_name
+		);
+
+		if ( not $success ) {
+			$self->render( 'change_name', invalid => 'user_collision' );
+			return;
+		}
+
+		$self->flash( success => 'name' );
+		$self->redirect_to('account');
+
+		my $ip   = $self->req->headers->header('X-Forwarded-For');
+		my $ua   = $self->req->headers->user_agent;
+		my $date = DateTime->now( time_zone => 'Europe/Berlin' )
+		  ->strftime('%d.%m.%Y %H:%M:%S %z');
+
+		# In case Mojolicious is not running behind a reverse proxy
+		$ip
+		  //= sprintf( '%s:%s', $self->tx->remote_address,
+			$self->tx->remote_port );
+		my $confirm_url
+		  = $self->url_for('confirm_mail')->to_abs->scheme('https');
+		my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
+
+		my $body = "Hallo ${new_name},\n\n";
+		$body
+		  .= "Der Name deines Travelynx-Accounts wurde erfolgreich geändert.\n";
+		$body .= "Alter Name: ${old_name}\n";
+		$body .= "Neue Name: ${new_name}\n\n";
+		$body .= "Daten zur Anfrage:\n";
+		$body .= " * Datum: ${date}\n";
+		$body .= " * Client: ${ip}\n";
+		$body .= " * UserAgent: ${ua}\n\n\n";
+		$body .= "Impressum: ${imprint_url}\n";
+
+		$self->sendmail->custom( $self->current_user->{email},
+			'travelynx: Name geändert', $body );
+	}
+	else {
+		$self->render('change_name');
+	}
+}
+
 sub password_form {
 	my ($self) = @_;
 
