@@ -100,12 +100,12 @@ sub register {
 		return;
 	}
 
-	if ( $self->users->check_if_user_name_exists( name => $user ) ) {
+	if ( $self->users->user_name_exists( name => $user ) ) {
 		$self->render( 'register', invalid => 'user_collision' );
 		return;
 	}
 
-	if ( $self->users->check_if_mail_is_blacklisted( email => $email ) ) {
+	if ( $self->users->mail_is_blacklisted( email => $email ) ) {
 		$self->render( 'register', invalid => 'mail_blacklisted' );
 		return;
 	}
@@ -505,7 +505,7 @@ sub change_name {
        # is not possible. However, to minimize the number of failed SQL
        # queries, we first do a select check here and only attempt an update
        # if it succeeded.
-		if ( $self->users->check_if_user_name_exists( name => $new_name ) ) {
+		if ( $self->users->user_name_exists( name => $new_name ) ) {
 			$self->render( 'change_name', invalid => 'user_collision' );
 			return;
 		}

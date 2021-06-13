@@ -366,7 +366,7 @@ sub set_password_hash {
 	$db->update( 'users', { password => $password }, { id => $uid } );
 }
 
-sub check_if_user_name_exists {
+sub user_name_exists {
 	my ( $self, %opt ) = @_;
 	my $db        = $opt{db} // $self->{pg}->db;
 	my $user_name = $opt{name};
@@ -381,7 +381,7 @@ sub check_if_user_name_exists {
 	return 0;
 }
 
-sub check_if_mail_is_blacklisted {
+sub mail_is_blacklisted {
 	my ( $self, %opt ) = @_;
 	my $db   = $opt{db} // $self->{pg}->db;
 	my $mail = $opt{email};
