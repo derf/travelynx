@@ -85,23 +85,13 @@ sub register {
 		return;
 	}
 
-	if ( not length($user) ) {
-		$self->render( 'register', invalid => 'user_empty' );
+	if ( my $error = $self->users->is_name_invalid( name => $user ) ) {
+		$self->render( 'register', invalid => $error );
 		return;
 	}
 
 	if ( not length($email) ) {
 		$self->render( 'register', invalid => 'mail_empty' );
-		return;
-	}
-
-	if ( $user !~ m{ ^ [0-9a-zA-Z_-]+ $ }x ) {
-		$self->render( 'register', invalid => 'user_format' );
-		return;
-	}
-
-	if ( $self->users->user_name_exists( name => $user ) ) {
-		$self->render( 'register', invalid => 'user_collision' );
 		return;
 	}
 
@@ -485,13 +475,8 @@ sub change_name {
 			return;
 		}
 
-		if ( not length($new_name) ) {
-			$self->render( 'change_name', invalid => 'user_empty' );
-			return;
-		}
-
-		if ( $new_name !~ m{ ^ [0-9a-zA-Z_-]+ $ }x ) {
-			$self->render( 'change_name', invalid => 'user_format' );
+		if ( my $error = $self->users->is_name_invalid( name => $new_name ) ) {
+			$self->render( 'change_name', invalid => $error );
 			return;
 		}
 
@@ -500,16 +485,10 @@ sub change_name {
 			return;
 		}
 
-       # This call is technically superfluous. The users table has a unique
-       # constraint on the "name" column, so having two users with the same name
-       # is not possible. However, to minimize the number of failed SQL
-       # queries, we first do a select check here and only attempt an update
-       # if it succeeded.
-		if ( $self->users->user_name_exists( name => $new_name ) ) {
-			$self->render( 'change_name', invalid => 'user_collision' );
-			return;
-		}
-
+       # The users table has a unique constraint on the "name" column, so having
+       # two users with the same name is not possible. The race condition
+       # between the user_name_exists check in is_name_invalid and this
+       # change_name call is harmless.
 		my $success = $self->users->change_name(
 			uid  => $self->current_user->{id},
 			name => $new_name

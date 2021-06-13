@@ -201,6 +201,32 @@ sub change_mail_with_token {
 	return;
 }
 
+sub is_name_invalid {
+	my ( $self, %opt ) = @_;
+	my $db   = $opt{db} // $self->{pg}->db;
+	my $name = $opt{name};
+
+	if ( not length($name) ) {
+		return 'user_empty';
+	}
+
+	if ( $name !~ m{ ^ [0-9a-zA-Z_-]+ $ }x ) {
+		return 'user_format';
+	}
+
+	if (
+		$self->user_name_exists(
+			db   => $db,
+			name => $name
+		)
+	  )
+	{
+		return 'user_collision';
+	}
+
+	return;
+}
+
 sub change_name {
 	my ( $self, %opt ) = @_;
 	my $db  = $opt{db} // $self->{pg}->db;
