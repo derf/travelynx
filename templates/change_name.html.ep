@@ -3,6 +3,21 @@
 % }
 
 <h1>Name ändern</h1>
+<div class="row">
+	<div class="col s12">
+		<p>
+			Hier kannst du den Namen deines Accounts ändern. Dieser bestimmt die
+			URL deiner <a href="/status/<%= $name %>">Status</a>- und <a
+			href="/p/<%= $name %>">Profilseite</a> und den Accountnamen beim
+			Anmelden.
+		</p>
+		<p>
+			Beachte, dass der alte Name direkt nach der Umbenennung freigegeben
+			wird und von anderen Accounts belegt werden kann. Für die alten
+			Status- und Profilseiten werden keine Weiterleitungen eingerichtet.
+		</p>
+	</div>
+</div>
 %= form_for '/account/name' => (method => 'POST') => begin
 	%= csrf_field
 	<div class="row">

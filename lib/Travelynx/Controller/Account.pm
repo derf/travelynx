@@ -470,18 +470,27 @@ sub change_name {
 		if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
 			$self->render(
 				'change_name',
+				name    => $old_name,
 				invalid => 'csrf',
 			);
 			return;
 		}
 
 		if ( my $error = $self->users->is_name_invalid( name => $new_name ) ) {
-			$self->render( 'change_name', invalid => $error );
+			$self->render(
+				'change_name',
+				name    => $old_name,
+				invalid => $error
+			);
 			return;
 		}
 
 		if ( not $self->authenticate( $old_name, $self->param('password') ) ) {
-			$self->render( 'change_name', invalid => 'password' );
+			$self->render(
+				'change_name',
+				name    => $old_name,
+				invalid => 'password'
+			);
 			return;
 		}
 
@@ -495,7 +504,11 @@ sub change_name {
 		);
 
 		if ( not $success ) {
-			$self->render( 'change_name', invalid => 'user_collision' );
+			$self->render(
+				'change_name',
+				name    => $old_name,
+				invalid => 'user_collision'
+			);
 			return;
 		}
 
@@ -530,7 +543,7 @@ sub change_name {
 			'travelynx: Name geändert', $body );
 	}
 	else {
-		$self->render('change_name');
+		$self->render( 'change_name', name => $old_name );
 	}
 }
 
