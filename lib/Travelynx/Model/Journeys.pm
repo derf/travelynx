@@ -130,7 +130,23 @@ sub add {
 		);
 	}
 
-	my @route = ( [ $dep_station->[1], {}, undef ] );
+	my $route_has_start = 0;
+	my $route_has_stop  = 0;
+
+	for my $station ( @{ $opt{route} || [] } ) {
+		if ( $station eq $dep_station->[1] or $station eq $dep_station->[0] ) {
+			$route_has_start = 1;
+		}
+		if ( $station eq $arr_station->[1] or $station eq $arr_station->[0] ) {
+			$route_has_stop = 1;
+		}
+	}
+
+	my @route;
+
+	if ( not $route_has_start ) {
+		push( @route, [ $dep_station->[1], {}, undef ] );
+	}
 
 	if ( $opt{route} ) {
 		my @unknown_stations;
@@ -158,14 +174,8 @@ sub add {
 		}
 	}
 
-	push( @route, [ $arr_station->[1], {}, undef ] );
-
-	if ( $route[0][0] eq $route[1][0] ) {
-		shift(@route);
-	}
-
-	if ( $route[-2][0] eq $route[-1][0] ) {
-		pop(@route);
+	if ( not $route_has_stop ) {
+		push( @route, [ $arr_station->[1], {}, undef ] );
 	}
 
 	my $entry = {
