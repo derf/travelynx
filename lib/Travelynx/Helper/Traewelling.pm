@@ -38,6 +38,20 @@ sub new {
 	return bless( \%opt, $class );
 }
 
+sub epoch_to_dt_or_undef {
+	my ($epoch) = @_;
+
+	if ( not $epoch ) {
+		return undef;
+	}
+
+	return DateTime->from_epoch(
+		epoch     => $epoch,
+		time_zone => 'Europe/Berlin',
+		locale    => 'de-DE',
+	);
+}
+
 sub parse_datetime {
 	my ( $self, $dt ) = @_;
 
@@ -309,12 +323,24 @@ sub checkin {
 		'Authorization' => "Bearer $opt{token}",
 	};
 
+	my $departure_ts = epoch_to_dt_or_undef( $opt{dep_ts} );
+	my $arrival_ts   = epoch_to_dt_or_undef( $opt{arr_ts} );
+
+	if ($departure_ts) {
+		$departure_ts = $departure_ts->rfc3339;
+	}
+	if ($arrival_ts) {
+		$arrival_ts = $arrival_ts->rfc3339;
+	}
+
 	my $request = {
 		tripID   => $opt{trip_id},
 		lineName => $opt{train_type} . ' '
 		  . ( $opt{train_line} // $opt{train_no} ),
 		start       => q{} . $opt{dep_eva},
 		destination => q{} . $opt{arr_eva},
+		departure   => $departure_ts,
+		arrival     => $arrival_ts,
 		toot        => $opt{data}{toot} ? \1 : \0,
 		tweet       => $opt{data}{tweet} ? \1 : \0,
 	};

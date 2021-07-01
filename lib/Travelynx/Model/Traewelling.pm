@@ -1,4 +1,5 @@
 package Travelynx::Model::Traewelling;
+
 # Copyright (C) 2020 Daniel Friesel
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -213,7 +214,9 @@ sub get_pushable_accounts {
 			i.checkin_station_id as dep_eva, i.checkout_station_id as arr_eva,
 			i.data as journey_data, i.train_type as train_type,
 			i.train_line as train_line, i.train_no as train_no,
-			extract(epoch from i.checkin_time) as checkin_ts
+			extract(epoch from i.checkin_time) as checkin_ts,
+			extract(epoch from i.sched_departure) as dep_ts,
+			extract(epoch from i.sched_arrival) as arr_ts
 			from traewelling as t
 			join in_transit as i on t.user_id = i.user_id
 			where t.push_sync = True
