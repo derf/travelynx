@@ -207,6 +207,14 @@ sub get_xml_p {
 			$body
 			  =~ s{<HIMMessage([^>]+)lead="([^"]*)"([^"=>]*)"([^"]*)"}{<Attribute$1text="$2&#042;$3&#042;$4"}s;
 
+			# ... and <HIMMessage [...] lead="[...]<>[...]">
+			# (replace <> with t$t)
+			while ( $body
+				=~ s{<HIMMessage([^>]+)lead="([^"]*)<>([^"=]*)"}{<HIMMessage$1lead="$2&#11020;$3"}gis
+			  )
+			{
+			}
+
 			# Dito for <HIMMessage [...] lead="[...]<br>[...]">.
 			while ( $body
 				=~ s{<HIMMessage([^>]+)lead="([^"]*)<br/?>([^"=]*)"}{<HIMMessage$1lead="$2 $3"}is
