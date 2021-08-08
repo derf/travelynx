@@ -1,9 +1,9 @@
 <div class="row" style="margin-top: 5em;">
 	<div class="col s12 center-align grey-text">
+		<a href="/about">travelynx</a> v<%= $version // '???' %>
+		<span style="margin-left: 0.5em; margin-right: 0.5em;">–</span>
 		<a href="/impressum">Impressum</a>
 		<span style="margin-left: 0.5em; margin-right: 0.5em;">–</span>
 		<a href="/impressum">Datenschutz</a>
-		<span style="margin-left: 0.5em; margin-right: 0.5em;">–</span>
-		<a href="/about">travelynx</a> v<%= $version // '???' %>
 	</div>
 </div>
