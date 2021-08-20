@@ -78,6 +78,10 @@
 					<p>Aus Sicherheitsgründen kann der Account nur nach Passworteingabe
 					gelöscht werden.</p>
 				% }
+				% elsif ($invalid eq 'denylist') {
+					<span class="card-title">Registrierung deaktiviert</span>
+					<p>Für diesen Zugang ist derzeit keine Registrierung möglich.</p>
+				% }
 				% else {
 					<span class="card-title">Fehler</span>
 					<p><%= $invalid %></p>

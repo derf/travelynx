@@ -85,6 +85,22 @@ sub register {
 		return;
 	}
 
+	if ( my $registration_denylist
+		= $self->app->config->{registration}->{denylist} )
+	{
+		open( my $fh, "<", $registration_denylist )
+		  or die("cannot open($registration_denylist)");
+		while ( my $line = <$fh> ) {
+			chomp $line;
+			if ( $ip eq $line ) {
+				close($fh);
+				$self->render( 'register', invalid => "denylist" );
+				return;
+			}
+		}
+		close($fh);
+	}
+
 	if ( my $error = $self->users->is_name_invalid( name => $user ) ) {
 		$self->render( 'register', invalid => $error );
 		return;
