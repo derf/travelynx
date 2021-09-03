@@ -369,6 +369,15 @@ sub startup {
 			state $pg
 			  = Mojo::Pg->new("postgresql://${user}\@${host}:${port}/${dbname}")
 			  ->password($pw);
+
+			$pg->on(
+				connection => sub {
+					my ( $pg, $dbh ) = @_;
+					$dbh->do("set time zone 'Europe/Berlin'");
+				}
+			);
+
+			return $pg;
 		}
 	);
 
