@@ -2519,7 +2519,6 @@ sub startup {
 	$r->get('/login')->to('account#login_form');
 	$r->get('/recover')->to('account#request_password_reset');
 	$r->get('/recover/:id/:token')->to('account#recover_password');
-	$r->get('/register')->to('account#registration_form');
 	$r->get('/reg/:id/:token')->to('account#verify');
 	$r->get('/status/:name')->to('traveling#user_status');
 	$r->get('/status/:name/:ts')->to('traveling#user_status');
@@ -2533,8 +2532,12 @@ sub startup {
 	$r->post('/geolocation')->to('traveling#geolocation');
 	$r->post('/list_departures')->to('traveling#redirect_to_station');
 	$r->post('/login')->to('account#do_login');
-	$r->post('/register')->to('account#register');
 	$r->post('/recover')->to('account#request_password_reset');
+
+	if ( not $self->config->{registration}{disabled} ) {
+		$r->get('/register')->to('account#registration_form');
+		$r->post('/register')->to('account#register');
+	}
 
 	my $authed_r = $r->under(
 		sub {
