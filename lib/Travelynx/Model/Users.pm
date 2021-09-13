@@ -34,7 +34,11 @@ sub verify_registration_token {
 	my $token = $opt{token};
 	my $db    = $opt{db} // $self->{pg}->db;
 
-	my $tx = $db->begin;
+	my $tx;
+
+	if ( not $opt{in_transaction} ) {
+		$tx = $db->begin;
+	}
 
 	my $res = $db->select(
 		'pending_registrations',
@@ -48,7 +52,9 @@ sub verify_registration_token {
 	if ( $res->hash->{count} ) {
 		$db->update( 'users', { status => 1 }, { id => $uid } );
 		$db->delete( 'pending_registrations', { user_id => $uid } );
-		$tx->commit;
+		if ( not $opt{in_transaction} ) {
+			$tx->commit;
+		}
 		return 1;
 	}
 	return;
