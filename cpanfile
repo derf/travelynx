@@ -5,7 +5,6 @@ requires 'DateTime';
 requires 'DateTime::Format::Strptime';
 requires 'Email::Sender::Simple';
 requires 'Geo::Distance';
-requires 'Geo::Distance::XS';
 requires 'List::UtilsBy';
 requires 'MIME::Entity';
 requires 'Mojolicious';
