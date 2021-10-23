@@ -4,7 +4,7 @@ package Travelynx::Model::Journeys;
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-use Geo::Distance;
+use GIS::Distance;
 use List::MoreUtils qw(after_incl before_incl);
 use Travel::Status::DE::IRIS::Stations;
 
@@ -955,7 +955,7 @@ sub get_travel_distance {
 	my $distance_intermediate = 0;
 	my $distance_beeline      = 0;
 	my $skipped               = 0;
-	my $geo                   = Geo::Distance->new();
+	my $geo                   = GIS::Distance->new();
 	my @stations              = map { $_->[0] } @{$route_ref};
 	my @route                 = after_incl { $_ eq $from } @stations;
 	@route = before_incl { $_ eq $to } @route;
@@ -976,8 +976,8 @@ sub get_travel_distance {
 
 		#lonlatlonlat
 		$distance_polyline
-		  += $geo->distance( 'kilometer', $prev_station->[0],
-			$prev_station->[1], $station->[0], $station->[1] );
+		  += $geo->distance_metal( $prev_station->[1],
+			$prev_station->[0], $station->[1], $station->[0] );
 		$prev_station = $station;
 	}
 
@@ -1005,8 +1005,8 @@ sub get_travel_distance {
 			}
 			if ( $#{$prev_station} >= 4 and $#{$station} >= 4 ) {
 				$distance_intermediate
-				  += $geo->distance( 'kilometer', $prev_station->[3],
-					$prev_station->[4], $station->[3], $station->[4] );
+				  += $geo->distance_metal( $prev_station->[4],
+					$prev_station->[3], $station->[4], $station->[3] );
 			}
 			else {
 				$skipped++;
@@ -1016,10 +1016,10 @@ sub get_travel_distance {
 	}
 
 	if ( $from_station_beeline and $to_station_beeline ) {
-		$distance_beeline = $geo->distance(
-			'kilometer',                $from_station_beeline->[3],
-			$from_station_beeline->[4], $to_station_beeline->[3],
-			$to_station_beeline->[4]
+		$distance_beeline = $geo->distance_metal(
+			$from_station_beeline->[4],
+			$from_station_beeline->[3], $to_station_beeline->[4],
+			$to_station_beeline->[3]
 		);
 	}
 
