@@ -96,10 +96,12 @@
 			<p>
 				Hier hast du die Möglichkeit, deinen travelynx-Account mit einem
 				Account bei <a href="https://traewelling.de">Träwelling</a> zu
-				verknüpfen. Dies erlaubt die automatische Übernahme von Checkins
-				zwischen den beiden Diensten. Träwelling-Checkins in
+				verknüpfen. Dies erlaubt die automatische Übernahme zukünftiger
+				Checkins zwischen den beiden Diensten. Träwelling-Checkins in
 				Nahverkehrsmittel und Züge außerhalb des deutschen Schienennetzes
-				werden nicht unterstützt und ignoriert.
+				werden nicht unterstützt und ignoriert. Checkins, die vor dem
+				Verknüpfen der Accounts stattgefunden haben, werden nicht
+				synchronisiert.
 			</p>
 			<p>
 				Mit E-Mail und Passwort wird ein Login über die Träwelling-API
