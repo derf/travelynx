@@ -88,17 +88,21 @@ sub register {
 	if ( my $registration_denylist
 		= $self->app->config->{registration}->{denylist} )
 	{
-		open( my $fh, "<", $registration_denylist )
-		  or die("cannot open($registration_denylist)");
-		while ( my $line = <$fh> ) {
-			chomp $line;
-			if ( $ip eq $line ) {
-				close($fh);
-				$self->render( 'register', invalid => "denylist" );
-				return;
+		if ( open( my $fh, "<", $registration_denylist ) ) {
+			while ( my $line = <$fh> ) {
+				chomp $line;
+				if ( $ip eq $line ) {
+					close($fh);
+					$self->render( 'register', invalid => "denylist" );
+					return;
+				}
 			}
+			close($fh);
 		}
-		close($fh);
+		else {
+			$self->log->error("Cannot open($registration_denylist): $!");
+			die("Cannot verify registration: $!");
+		}
 	}
 
 	if ( my $error = $self->users->is_name_invalid( name => $user ) ) {
