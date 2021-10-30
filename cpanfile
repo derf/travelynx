@@ -13,7 +13,7 @@ requires 'Mojolicious::Plugin::Authentication';
 requires 'Mojo::Pg';
 requires 'Text::CSV';
 requires 'Travel::Status::DE::DBWagenreihung';
-requires 'Travel::Status::DE::IRIS', '1.60';
+requires 'Travel::Status::DE::IRIS';
 requires 'UUID::Tiny';
 requires 'JSON';
 requires 'JSON::XS';
