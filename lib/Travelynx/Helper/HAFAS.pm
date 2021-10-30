@@ -30,9 +30,9 @@ sub new {
 sub get_polyline_p {
 	my ( $self, $train, $trip_id ) = @_;
 
-	my $line = $train->line // 0;
-	my $url
-	  = "https://v5.db.transport.rest/trips/${trip_id}?lineName=${line}&polyline=true";
+	my $line    = $train->line // 0;
+	my $backend = $self->{hafas_rest_api};
+	my $url     = "${backend}/trips/${trip_id}?lineName=${line}&polyline=true";
 	my $cache   = $self->{main_cache};
 	my $promise = Mojo::Promise->new;
 	my $version = $self->{version};
@@ -41,6 +41,9 @@ sub get_polyline_p {
 		return $promise->resolve($content);
 	}
 
+	my $log_url = $url;
+	$log_url =~ s{://\K[^:]+:[^@]+\@}{***@};
+
 	$self->{user_agent}->request_timeout(5)->get_p( $url => $self->{header} )
 	  ->then(
 		sub {
@@ -48,7 +51,7 @@ sub get_polyline_p {
 
 			if ( my $err = $tx->error ) {
 				$promise->reject(
-"hafas->get_polyline_p($url) returned HTTP $err->{code} $err->{message}"
+"hafas->get_polyline_p($log_url) returned HTTP $err->{code} $err->{message}"
 				);
 				return;
 			}
@@ -97,7 +100,7 @@ sub get_polyline_p {
 					  . ": IRIS route does not agree with HAFAS route: $iris_stations != $hafas_stations"
 				);
 				$promise->reject(
-					"hafas->get_polyline_p($url): polyline route mismatch");
+					"hafas->get_polyline_p($log_url): polyline route mismatch");
 			}
 			else {
 				$promise->resolve($ret);
@@ -107,7 +110,7 @@ sub get_polyline_p {
 	)->catch(
 		sub {
 			my ($err) = @_;
-			$promise->reject("hafas->get_polyline_p($url): $err");
+			$promise->reject("hafas->get_polyline_p($log_url): $err");
 			return;
 		}
 	)->wait;
