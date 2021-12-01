@@ -142,7 +142,7 @@
 			<p>
 				Dieser travelynx-Account ist mit dem Träwelling-Account
 				% if (my $user = $traewelling->{data}{user_name}) {
-					<a href="https://traewelling.de/profile/<%= $user %>"><%= $user %></a>
+					<a href="https://traewelling.de/@<%= $user %>"><%= $user %></a>
 				% }
 				% else {
 					%= $traewelling->{email}
