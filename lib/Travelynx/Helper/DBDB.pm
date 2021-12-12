@@ -34,7 +34,7 @@ sub has_wagonorder_p {
 	my $cache   = $self->{cache};
 	my $promise = Mojo::Promise->new;
 
-	if ( my $content = $cache->get($url) ) {
+	if ( my $content = $cache->get("HEAD $url") ) {
 		if ( $content eq 'n' ) {
 			return $promise->reject;
 		}
@@ -48,18 +48,18 @@ sub has_wagonorder_p {
 		sub {
 			my ($tx) = @_;
 			if ( $tx->result->is_success ) {
-				$cache->set( $url, 'a' );
+				$cache->set( "HEAD $url", 'a' );
 				$promise->resolve('a');
 			}
 			else {
-				$cache->set( $url, 'n' );
+				$cache->set( "HEAD $url", 'n' );
 				$promise->reject;
 			}
 			return;
 		}
 	)->catch(
 		sub {
-			$cache->set( $url, 'n' );
+			$cache->set( "HEAD $url", 'n' );
 			$promise->reject;
 			return;
 		}
@@ -90,11 +90,17 @@ sub get_wagonorder_p {
 	  ->then(
 		sub {
 			my ($tx) = @_;
-			my $body = decode( 'utf-8', $tx->res->body );
 
-			my $json = JSON->new->decode($body);
-			$cache->freeze( $url, $json );
-			$promise->resolve($json);
+			if ( $tx->result->is_success ) {
+				my $body = decode( 'utf-8', $tx->res->body );
+				my $json = JSON->new->decode($body);
+				$cache->freeze( $url, $json );
+				$promise->resolve($json);
+			}
+			else {
+				my $code = $tx->code;
+				$promise->reject("HTTP ${code}");
+			}
 			return;
 		}
 	)->catch(
