@@ -30,7 +30,7 @@ sub has_wagonorder_p {
 	my ( $self, $ts, $train_no ) = @_;
 	my $api_ts = $ts->strftime('%Y%m%d%H%M');
 	my $url
-	  = "https://lib.finalrewind.org/dbdb/has_wagonorder/${train_no}/${api_ts}";
+	  = "https://www.apps-bahn.de/wr/wagenreihung/1.0/${train_no}/${api_ts}";
 	my $cache   = $self->{cache};
 	my $promise = Mojo::Promise->new;
 
@@ -43,14 +43,13 @@ sub has_wagonorder_p {
 		}
 	}
 
-	$self->{user_agent}->request_timeout(5)->get_p( $url => $self->{header} )
+	$self->{user_agent}->request_timeout(5)->head_p( $url => $self->{header} )
 	  ->then(
 		sub {
 			my ($tx) = @_;
 			if ( $tx->result->is_success ) {
-				my $body = $tx->result->body;
-				$cache->set( $url, $body );
-				$promise->resolve($body);
+				$cache->set( $url, 'a' );
+				$promise->resolve('a');
 			}
 			else {
 				$cache->set( $url, 'n' );
