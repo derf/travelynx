@@ -457,7 +457,7 @@ sub startup {
 			my $station  = $opt{station};
 			my $train_id = $opt{train_id};
 			my $uid      = $opt{uid} // $self->current_user->{id};
-			my $db       = $opt{db} // $self->pg->db;
+			my $db       = $opt{db}  // $self->pg->db;
 
 			my $status = $self->iris->get_departures(
 				station    => $station,
@@ -605,6 +605,11 @@ sub startup {
 			$uid //= $self->current_user->{id};
 			my $user     = $self->get_user_status( $uid, $db );
 			my $train_id = $user->{train_id};
+
+			if ( not $station ) {
+				$self->app->log->error("Checkout($uid): station is empty");
+				return ( 1, 'BUG: Checkout station is empty.' );
+			}
 
 			if ( not $user->{checked_in} and not $user->{cancelled} ) {
 				return ( 0, 'You are not checked into any train' );
@@ -1285,7 +1290,7 @@ sub startup {
 									push(
 										@wagons,
 										{
-											id => $wagon->{fahrzeugnummer},
+											id     => $wagon->{fahrzeugnummer},
 											number =>
 											  $wagon->{wagenordnungsnummer},
 											type => $wagon->{fahrzeugtyp},
@@ -1408,7 +1413,7 @@ sub startup {
 		'get_connection_targets' => sub {
 			my ( $self, %opt ) = @_;
 
-			my $uid = $opt{uid} //= $self->current_user->{id};
+			my $uid       = $opt{uid} //= $self->current_user->{id};
 			my $threshold = $opt{threshold}
 			  // DateTime->now( time_zone => 'Europe/Berlin' )
 			  ->subtract( months => 4 );
@@ -1787,7 +1792,7 @@ sub startup {
 					train_no           => $in_transit->{train_no},
 					train_id           => $in_transit->{train_id},
 					boarding_countdown => -1,
-					sched_departure =>
+					sched_departure    =>
 					  epoch_to_dt( $in_transit->{sched_dep_ts} ),
 					real_departure => epoch_to_dt( $in_transit->{real_dep_ts} ),
 					dep_ds100      => $in_transit->{dep_ds100},
@@ -2175,7 +2180,7 @@ sub startup {
 				$self->log->debug(
 					"... status is not a train, but $traewelling->{category}");
 				$self->traewelling->log(
-					uid => $uid,
+					uid     => $uid,
 					message =>
 "$traewelling->{line} nach $traewelling->{arr_name}  ist keine Zugfahrt (HAFAS-Kategorie '$traewelling->{category}')",
 					status_id => $traewelling->{status_id},
@@ -2194,7 +2199,7 @@ sub startup {
 			);
 			if ( $dep->{errstr} ) {
 				$self->traewelling->log(
-					uid => $uid,
+					uid     => $uid,
 					message =>
 "Fehler bei $traewelling->{line} nach $traewelling->{arr_name}: $dep->{errstr}",
 					status_id => $traewelling->{status_id},
@@ -2250,15 +2255,15 @@ sub startup {
 						$self->log->debug("... success!");
 						if ( $traewelling->{message} ) {
 							$self->in_transit->update_user_data(
-								uid => $uid,
-								db  => $db,
+								uid       => $uid,
+								db        => $db,
 								user_data =>
 								  { comment => $traewelling->{message} }
 							);
 						}
 						$self->traewelling->log(
-							uid => $uid,
-							db  => $db,
+							uid     => $uid,
+							db      => $db,
 							message =>
 "Eingecheckt in $traewelling->{line} nach $traewelling->{arr_name}",
 							status_id => $traewelling->{status_id},
@@ -2275,7 +2280,7 @@ sub startup {
 				if ($err) {
 					$self->log->debug("... error: $err");
 					$self->traewelling->log(
-						uid => $uid,
+						uid     => $uid,
 						message =>
 "Fehler bei $traewelling->{line} nach $traewelling->{arr_name}: $err",
 						status_id => $traewelling->{status_id},
@@ -2285,7 +2290,7 @@ sub startup {
 			}
 			else {
 				$self->traewelling->log(
-					uid => $uid,
+					uid     => $uid,
 					message =>
 "$traewelling->{line} nach $traewelling->{arr_name} nicht gefunden",
 					status_id => $traewelling->{status_id},
@@ -2484,8 +2489,8 @@ sub startup {
 			};
 
 			if (@station_coordinates) {
-				my @lats = map { $_->[0][0] } @station_coordinates;
-				my @lons = map { $_->[0][1] } @station_coordinates;
+				my @lats    = map { $_->[0][0] } @station_coordinates;
+				my @lons    = map { $_->[0][1] } @station_coordinates;
 				my $min_lat = List::Util::min @lats;
 				my $max_lat = List::Util::max @lats;
 				my $min_lon = List::Util::min @lons;
