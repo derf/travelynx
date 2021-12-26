@@ -24,22 +24,22 @@ import sys
 import xdg  # not pyxdg!
 
 
-def format_stop(stop_name, scheduled_arrival_timestamp, delay):
+def format_stop(stop_name, predicted_arrival_timestamp, delay):
     color = "#ffffff"
     if delay > 0:
         if delay <= 2:
             color = "#ffff00"
         else:
             color = "#ff0000"
-        delayStr = "{:+.0f}".format(delay)
+        delayStr = "({:+.0f})".format(delay)
     else:
         delayStr = ""
-    if isinstance(scheduled_arrival_timestamp, int):
-        scheduled_arrival_time = datetime.fromtimestamp(scheduled_arrival_timestamp)
+    if isinstance(predicted_arrival_timestamp, int):
+        predicted_arrival_time = datetime.fromtimestamp(predicted_arrival_timestamp)
     else:
         # We assume it's datetime already.
-        scheduled_arrival_time = scheduled_arrival_timestamp
-    return f'{stop_name} at <span fgcolor="{color}">{scheduled_arrival_time:%H:%M}{delayStr}</span>'
+        predicted_arrival_time = predicted_arrival_timestamp
+    return f'{stop_name} at <span fgcolor="{color}">{predicted_arrival_time:%H:%M}{delayStr}</span>'
 
 
 api_key_path = Path(xdg.xdg_config_home(), "travelynx.conf")
@@ -48,7 +48,7 @@ if api_key_path.exists():
         api_key = f.read().strip()
 else:
     print(
-        f"Could not find Travelyxn API key at {api_key_path}.",
+        f"Could not find Travelynx API key at {api_key_path}.",
         file=sys.stderr,
     )
     sys.exit(1)
@@ -76,7 +76,8 @@ train = "{}{}".format(j["train"]["type"], j["train"]["no"])
 out_fields.append(train)
 destination_name = j["toStation"]["name"]
 scheduled_arrival_timestamp = j["toStation"]["scheduledTime"]
-delay = (j["toStation"]["realTime"] - j["toStation"]["scheduledTime"]) / 60
+predicted_arrival_timestamp = j["toStation"]["realTime"]
+delay = (predicted_arrival_timestamp - scheduled_arrival_timestamp) / 60
 
 try:
     details_res = requests.get(f"https://marudor.de/api/hafas/v2/details/{train}")
@@ -86,22 +87,22 @@ try:
     if next_stop_name == destination_name:
         out_fields.append("next")
     else:
-        next_scheduled_arrival_time = dateutil.parser.isoparse(
-            details["currentStop"]["arrival"]["scheduledTime"]
+        next_predicted_arrival_time = dateutil.parser.isoparse(
+            details["currentStop"]["arrival"]["time"]
         )
-        next_scheduled_arrival_time = next_scheduled_arrival_time.astimezone(
+        next_predicted_arrival_time = next_predicted_arrival_time.astimezone(
             dateutil.tz.tzlocal()
         )
         next_delay = details["currentStop"]["arrival"]["delay"]
         out_fields.append(
             "next: "
-            + format_stop(next_stop_name, next_scheduled_arrival_time, next_delay)
+            + format_stop(next_stop_name, next_predicted_arrival_time, next_delay)
         )
 except requests.exceptions.ConnectionError:
     pass
 
 out_fields.append(
-    "dest: " + format_stop(destination_name, scheduled_arrival_timestamp, delay)
+    "dest: " + format_stop(destination_name, predicted_arrival_timestamp, delay)
 )
 
 s = ", ".join(out_fields)
