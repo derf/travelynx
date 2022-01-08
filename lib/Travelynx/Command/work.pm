@@ -248,6 +248,30 @@ sub run {
 		eval { }
 	}
 
+	for my $candidate ( $self->app->traewelling->get_pushable_accounts ) {
+		$self->app->log->debug(
+			"Pushing to Traewelling for UID $candidate->{uid}");
+		my $trip_id = $candidate->{journey_data}{trip_id};
+		if ( not $trip_id ) {
+			$self->app->log->debug("... trip_id is missing");
+			$self->app->traewelling->log(
+				uid     => $candidate->{uid},
+				message =>
+"Fehler bei $candidate->{train_type} $candidate->{train_no}: Keine trip_id vorhanden",
+				is_error => 1
+			);
+			next;
+		}
+		if (    $candidate->{data}{latest_push_ts}
+			and $candidate->{data}{latest_push_ts} == $candidate->{checkin_ts} )
+		{
+			$self->app->log->debug("... already handled");
+			next;
+		}
+		$self->app->traewelling_api->checkin( %{$candidate},
+			trip_id => $trip_id );
+	}
+
 	for my $account_data ( $self->app->traewelling->get_pull_accounts ) {
 
 		# $account_data->{user_id} is the travelynx uid
@@ -271,30 +295,6 @@ sub run {
 				$self->app->log->debug("Error $err");
 			}
 		)->wait;
-	}
-
-	for my $candidate ( $self->app->traewelling->get_pushable_accounts ) {
-		$self->app->log->debug(
-			"Pushing to Traewelling for UID $candidate->{uid}");
-		my $trip_id = $candidate->{journey_data}{trip_id};
-		if ( not $trip_id ) {
-			$self->app->log->debug("... trip_id is missing");
-			$self->app->traewelling->log(
-				uid => $candidate->{uid},
-				message =>
-"Fehler bei $candidate->{train_type} $candidate->{train_no}: Keine trip_id vorhanden",
-				is_error => 1
-			);
-			next;
-		}
-		if (    $candidate->{data}{latest_push_ts}
-			and $candidate->{data}{latest_push_ts} == $candidate->{checkin_ts} )
-		{
-			$self->app->log->debug("... already handled");
-			next;
-		}
-		$self->app->traewelling_api->checkin( %{$candidate},
-			trip_id => $trip_id );
 	}
 }
 
