@@ -74,7 +74,8 @@ sub get_status_p {
 	};
 
 	$self->{user_agent}->request_timeout(20)
-	  ->get_p( "https://traewelling.de/api/v0/user/${username}" => $header )
+	  ->get_p(
+		"https://traewelling.de/api/v1/user/${username}/statuses" => $header )
 	  ->then(
 		sub {
 			my ($tx) = @_;
@@ -84,33 +85,29 @@ sub get_status_p {
 				return;
 			}
 			else {
-				if ( my $status = $tx->result->json->{statuses}{data}[0] ) {
+				if ( my $status = $tx->result->json->{data}[0] ) {
 					my $status_id = $status->{id};
 					my $message   = $status->{body};
 					my $checkin_at
-					  = $self->parse_datetime( $status->{created_at} );
+					  = $self->parse_datetime( $status->{createdAt} );
 
 					my $dep_dt = $self->parse_datetime(
-						$status->{train_checkin}{departure} );
+						$status->{train}{origin}{departurePlanned} );
 					my $arr_dt = $self->parse_datetime(
-						$status->{train_checkin}{arrival} );
+						$status->{train}{destination}{arrivalPlanned} );
 
 					my $dep_eva
-					  = $status->{train_checkin}{origin}{ibnr};
+					  = $status->{train}{origin}{rilIdentifier};
 					my $arr_eva
-					  = $status->{train_checkin}{destination}{ibnr};
+					  = $status->{train}{destination}{rilIdentifier};
 
 					my $dep_name
-					  = $status->{train_checkin}{origin}{name};
+					  = $status->{train}{origin}{name};
 					my $arr_name
-					  = $status->{train_checkin}{destination}{name};
+					  = $status->{train}{destination}{name};
 
-					my $category
-					  = $status->{train_checkin}{hafas_trip}{category};
-					my $trip_id
-					  = $status->{train_checkin}{hafas_trip}{trip_id};
-					my $linename
-					  = $status->{train_checkin}{hafas_trip}{linename};
+					my $category = $status->{train}{category};
+					my $linename = $status->{train}{lineName};
 					my ( $train_type, $train_line ) = split( qr{ }, $linename );
 					$promise->resolve(
 						{
@@ -123,7 +120,6 @@ sub get_status_p {
 							arr_dt     => $arr_dt,
 							arr_eva    => $arr_eva,
 							arr_name   => $arr_name,
-							trip_id    => $trip_id,
 							train_type => $train_type,
 							line       => $linename,
 							line_no    => $train_line,
@@ -341,7 +337,7 @@ sub checkin {
 		destination => q{} . $opt{arr_eva},
 		departure   => $departure_ts,
 		arrival     => $arrival_ts,
-		toot        => $opt{data}{toot} ? \1 : \0,
+		toot        => $opt{data}{toot}  ? \1 : \0,
 		tweet       => $opt{data}{tweet} ? \1 : \0,
 	};
 
@@ -350,8 +346,9 @@ sub checkin {
 	}
 
 	$self->{user_agent}->request_timeout(20)
-	  ->post_p( "https://traewelling.de/api/v0/trains/checkin" =>
-		  $header => json => $request )->then(
+	  ->post_p(
+		"https://traewelling.de/api/v0/trains/checkin" => $header => json =>
+		  $request )->then(
 		sub {
 			my ($tx) = @_;
 			if ( my $err = $tx->error ) {
@@ -363,7 +360,7 @@ sub checkin {
 					$self->{log}->debug("Traewelling checkin error: $err_msg");
 				}
 				$self->{model}->log(
-					uid => $opt{uid},
+					uid     => $opt{uid},
 					message =>
 					  "Fehler bei $opt{train_type} $opt{train_no}: $err_msg",
 					is_error => 1

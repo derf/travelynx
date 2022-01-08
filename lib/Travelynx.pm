@@ -2289,6 +2289,7 @@ sub startup {
 				}
 			}
 			else {
+				$self->log->debug("... train $traewelling->{line} not found");
 				$self->traewelling->log(
 					uid     => $uid,
 					message =>
