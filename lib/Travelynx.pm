@@ -277,6 +277,17 @@ sub startup {
 	);
 
 	$self->helper(
+		base_url_for => sub {
+			my ( $self, $path ) = @_;
+			if ( ( my $url = $self->url_for($path) )->base ne q{} ) {
+				return $url;
+			}
+			return $self->url_for($path)
+			  ->base( $self->app->config->{base_url} );
+		}
+	);
+
+	$self->helper(
 		hafas => sub {
 			my ($self) = @_;
 			state $hafas = Travelynx::Helper::HAFAS->new(
@@ -284,7 +295,7 @@ sub startup {
 				hafas_rest_api => $self->app->config->{backend}{hafas_rest_api},
 				main_cache     => $self->app->cache_iris_main,
 				realtime_cache => $self->app->cache_iris_rt,
-				root_url       => $self->url_for('/')->to_abs,
+				root_url       => $self->base_url_for('/')->to_abs,
 				user_agent     => $self->ua,
 				version        => $self->app->config->{version},
 			);
@@ -298,7 +309,7 @@ sub startup {
 				log            => $self->app->log,
 				main_cache     => $self->app->cache_iris_main,
 				realtime_cache => $self->app->cache_iris_rt,
-				root_url       => $self->url_for('/')->to_abs,
+				root_url       => $self->base_url_for('/')->to_abs,
 				version        => $self->app->config->{version},
 			);
 		}
@@ -317,7 +328,7 @@ sub startup {
 			state $trwl_api = Travelynx::Helper::Traewelling->new(
 				log        => $self->app->log,
 				model      => $self->traewelling,
-				root_url   => $self->url_for('/')->to_abs,
+				root_url   => $self->base_url_for('/')->to_abs,
 				user_agent => $self->ua,
 				version    => $self->app->config->{version},
 			);
@@ -406,7 +417,7 @@ sub startup {
 			state $dbdb = Travelynx::Helper::DBDB->new(
 				log        => $self->app->log,
 				cache      => $self->app->cache_iris_main,
-				root_url   => $self->url_for('/')->to_abs,
+				root_url   => $self->base_url_for('/')->to_abs,
 				user_agent => $self->ua,
 				version    => $self->app->config->{version},
 			);
