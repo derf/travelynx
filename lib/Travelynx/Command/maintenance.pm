@@ -18,6 +18,7 @@ sub run {
 	my $verification_deadline = $now->clone->subtract( hours => 48 );
 	my $deletion_deadline     = $now->clone->subtract( hours => 72 );
 	my $old_deadline          = $now->clone->subtract( years => 1 );
+	my $old_notification_deadline = $now->clone->subtract( weeks => 4 );
 
 	my $db = $self->app->pg->db;
 	my $tx = $db->begin;
@@ -82,12 +83,39 @@ sub run {
 		printf( "Pruned %d pending mail change(s)\n", $rows );
 	}
 
+	my $to_notify = $db->select(
+		'users',
+		[ 'id', 'name', 'email', 'last_seen' ],
+		{
+			last_seen         => { '<', $old_deadline },
+			deletion_notified => undef
+		}
+	);
+
+	for my $user ( $to_notify->hashes->each ) {
+		$self->app->sendmail->age_deletion_notification(
+			name        => $user->{name},
+			email       => $user->{email},
+			last_seen   => $user->{last_seen},
+			login_url   => $self->app->base_url_for('login')->to_abs,
+			account_url => $self->app->base_url_for('account')->to_abs,
+			imprint_url => $self->app->base_url_for('impressum')->to_abs,
+		);
+		$self->app->users->mark_deletion_notified( uid => $user->{id} );
+	}
+
 	my $to_delete = $db->select( 'users', ['id'],
 		{ deletion_requested => { '<', $deletion_deadline } } );
 	my @uids_to_delete = $to_delete->arrays->map( sub { shift->[0] } )->each;
 
-	$to_delete
-	  = $db->select( 'users', ['id'], { last_seen => { '<', $old_deadline } } );
+	$to_delete = $db->select(
+		'users',
+		['id'],
+		{
+			last_seen         => { '<', $old_deadline },
+			deletion_notified => { '<', $old_notification_deadline }
+		}
+	);
 
 	push( @uids_to_delete,
 		$to_delete->arrays->map( sub { shift->[0] } )->each );

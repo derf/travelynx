@@ -1,4 +1,5 @@
 package Travelynx::Command::database;
+
 # Copyright (C) 2020 Daniel Friesel
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -1052,6 +1053,19 @@ my @migrations = (
 			qq{
 				truncate journey_stats;
 				update schema_version set version = 23;
+			}
+		);
+	},
+
+	# v23 -> v24
+	# travelynx 1.22 warns about upcoming account deletion due to inactivity
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				alter table users add column deletion_notified timestamptz;
+				comment on column users.deletion_notified is 'Time at which warning about upcoming account deletion due to inactivity was sent';
+				update schema_version set version = 24;
 			}
 		);
 	},

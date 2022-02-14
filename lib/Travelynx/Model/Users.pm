@@ -23,8 +23,25 @@ sub mark_seen {
 
 	$db->update(
 		'users',
-		{ last_seen => DateTime->now( time_zone => 'Europe/Berlin' ) },
-		{ id        => $uid }
+		{
+			last_seen         => DateTime->now( time_zone => 'Europe/Berlin' ),
+			deletion_notified => undef
+		},
+		{ id => $uid }
+	);
+}
+
+sub mark_deletion_notified {
+	my ( $self, %opt ) = @_;
+	my $uid = $opt{uid};
+	my $db  = $opt{db} // $self->{pg}->db;
+
+	$db->update(
+		'users',
+		{
+			deletion_notified => DateTime->now( time_zone => 'Europe/Berlin' ),
+		},
+		{ id => $uid }
 	);
 }
 
