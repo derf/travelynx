@@ -292,6 +292,12 @@ sub run {
 		)->catch(
 			sub {
 				my ($err) = @_;
+				$self->app->traewelling->log(
+					uid     => $account_data->{user_id},
+					message =>
+					  "Fehler bei der Status-Abfrage von Träwelling: $err",
+					is_error => 1
+				);
 				$self->app->log->debug("Error $err");
 			}
 		)->wait;
