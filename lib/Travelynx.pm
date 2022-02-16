@@ -276,10 +276,18 @@ sub startup {
 		}
 	);
 
+	if ( not $self->app->config->{base_url} ) {
+		$self->app->log->error(
+"travelynx.conf: 'base_url' is missing. Links in maintenance/work/worker-generated E-Mails will be incorrect. This variable was introduced in travelynx 1.22; see examples/travelynx.conf for documentation."
+		);
+	}
+
 	$self->helper(
 		base_url_for => sub {
 			my ( $self, $path ) = @_;
-			if ( ( my $url = $self->url_for($path) )->base ne q{} ) {
+			if ( ( my $url = $self->url_for($path) )->base ne q{}
+				or not $self->app->config->{base_url_for} )
+			{
 				return $url;
 			}
 			return $self->url_for($path)
