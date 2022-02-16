@@ -30,7 +30,7 @@ sub settings {
 			password => $password
 		)->then(
 			sub {
-				my $traewelling = $self->traewelling->get($uid);
+				my $traewelling = $self->traewelling->get( uid => $uid );
 				$self->param( sync_source => 'none' );
 				$self->render(
 					'traewelling',
@@ -53,7 +53,7 @@ sub settings {
 	}
 	elsif ( $self->param('action') and $self->param('action') eq 'logout' ) {
 		$self->render_later;
-		my $traewelling = $self->traewelling->get($uid);
+		my $traewelling = $self->traewelling->get( uid => $uid );
 		$self->traewelling_api->logout_p(
 			uid   => $uid,
 			token => $traewelling->{token}
@@ -88,7 +88,7 @@ sub settings {
 		return;
 	}
 
-	my $traewelling = $self->traewelling->get($uid);
+	my $traewelling = $self->traewelling->get( uid => $uid );
 
 	if ( $traewelling->{push_sync} ) {
 		$self->param( sync_source => 'travelynx' );

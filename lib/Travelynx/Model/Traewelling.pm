@@ -94,11 +94,13 @@ sub unlink {
 }
 
 sub get {
-	my ( $self, $uid ) = @_;
-	$uid //= $self->current_user->{id};
+	my ( $self, %opt ) = @_;
+
+	my $uid = $opt{uid};
+	my $db  = $opt{db} // $self->{pg}->db;
 
 	my $res_h
-	  = $self->{pg}->db->select( 'traewelling_str', '*', { user_id => $uid } )
+	  = $db->select( 'traewelling_str', '*', { user_id => $uid } )
 	  ->expand->hash;
 
 	$res_h->{latest_run} = epoch_to_dt( $res_h->{latest_run_ts} );

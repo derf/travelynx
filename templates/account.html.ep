@@ -36,7 +36,7 @@
 
 % my $acc = current_user();
 % my $hook = get_webhook();
-% my $traewelling = traewelling->get($acc->{id});
+% my $traewelling = traewelling->get(uid => $acc->{id});
 % my $use_history = users->use_history(uid => $acc->{id});
 <div class="row">
 	<div class="col s12">
