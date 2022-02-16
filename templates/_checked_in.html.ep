@@ -278,6 +278,20 @@
 						</ul>
 					</p>
 				% }
+				% if ($journey->{traewelling}{errored} and $journey->{traewelling_log_latest}) {
+					<p style="margin-bottom: 2ex;">
+						<ul>
+							<li> <i class="material-icons tiny">warning</i> Träwelling: <%= $journey->{traewelling_log_latest} %></li>
+						</ul>
+					</p>
+				% }
+				% if ($journey->{traewelling_url}) {
+					<p style="margin-bottom: 2ex;">
+						<ul>
+							<li> <i class="material-icons tiny">sync</i> Träwelling: <a href="<%= $journey->{traewelling_url} %>"><%= $journey->{traewelling_log_latest} %></a></li>
+						</ul>
+					</p>
+				% }
 			</div>
 			<div class="card-action">
 				% my $url = 'https://marudor.de/details/' . $journey->{train_type} . ' ' . $journey->{train_no} . '/' . DateTime->now(time_zone => 'Europe/Berlin')->epoch . '000';

@@ -362,7 +362,7 @@ sub checkin {
 				$self->{model}->log(
 					uid     => $opt{uid},
 					message =>
-					  "Fehler bei $opt{train_type} $opt{train_no}: $err_msg",
+"Checkin-Fehler bei $opt{train_type} $opt{train_no}: $err_msg",
 					is_error => 1
 				);
 				return;
@@ -390,8 +390,9 @@ sub checkin {
 			my ($err) = @_;
 			$self->{log}->debug("... error: $err");
 			$self->{model}->log(
-				uid      => $opt{uid},
-				message  => "Fehler bei $opt{train_type} $opt{train_no}: $err",
+				uid     => $opt{uid},
+				message =>
+				  "Checkin-Fehler bei $opt{train_type} $opt{train_no}: $err",
 				is_error => 1
 			);
 		}

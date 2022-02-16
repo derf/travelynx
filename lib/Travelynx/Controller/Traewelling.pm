@@ -1,4 +1,5 @@
 package Travelynx::Controller::Traewelling;
+
 # Copyright (C) 2020 Daniel Friesel
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -78,10 +79,10 @@ sub settings {
 	elsif ( $self->param('action') and $self->param('action') eq 'config' ) {
 		$self->traewelling->set_sync(
 			uid       => $uid,
-			push_sync => $self->param('sync_source') eq 'travelynx' ? 1 : 0,
+			push_sync => $self->param('sync_source') eq 'travelynx'   ? 1 : 0,
 			pull_sync => $self->param('sync_source') eq 'traewelling' ? 1 : 0,
-			toot      => $self->param('toot') ? 1 : 0,
-			tweet     => $self->param('tweet') ? 1 : 0,
+			toot      => $self->param('toot')                         ? 1 : 0,
+			tweet     => $self->param('tweet')                        ? 1 : 0,
 		);
 		$self->flash( success => 'traewelling' );
 		$self->redirect_to('account');

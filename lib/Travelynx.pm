@@ -1822,6 +1822,27 @@ sub startup {
 					comment       => $in_transit->{user_data}{comment},
 				};
 
+				my $traewelling = $self->traewelling->get(
+					uid => $uid,
+					db  => $db
+				);
+				if ( $traewelling->{latest_run}
+					>= epoch_to_dt( $in_transit->{checkin_ts} ) )
+				{
+					$ret->{traewelling} = $traewelling;
+					if ( @{ $traewelling->{data}{log} // [] }
+						and ( my $log_entry = $traewelling->{data}{log}[0] ) )
+					{
+						if ( $log_entry->[2] ) {
+							$ret->{traewelling_status} = $log_entry->[2];
+							$ret->{traewelling_url}
+							  = 'https://traewelling.de/status/'
+							  . $log_entry->[2];
+						}
+						$ret->{traewelling_log_latest} = $log_entry->[1];
+					}
+				}
+
 				my @parsed_messages;
 				for my $message ( @{ $ret->{messages} // [] } ) {
 					my ( $ts, $msg ) = @{$message};

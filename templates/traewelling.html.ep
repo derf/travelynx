@@ -9,8 +9,7 @@
 		<div class="card purple">
 			<div class="card-content white-text">
 				<span class="card-title">Beta-Feature</span>
-				<p>Die Verbindung von Checkinservices bietet viele Möglichkeiten für interessante Fehlerbilder.
-					Falls etwas nicht klappt, bitte mit möglichst detaillierten Angaben zum Hergang einen Bug melden.
+				<p>
 					Bekannte Einschränkung: Hooks werden bei einem Checkin via Träwelling nicht ausgelöst.
 				</p>
 			</div>
@@ -101,7 +100,8 @@
 				Nahverkehrsmittel und Züge außerhalb des deutschen Schienennetzes
 				werden nicht unterstützt und ignoriert. Checkins, die vor dem
 				Verknüpfen der Accounts stattgefunden haben, werden nicht
-				synchronisiert.
+				synchronisiert. Bei synchronisierten Checkins wird der zugehörige
+				Träwelling-Status von deiner travelynx-Statusseite aus verlinkt.
 			</p>
 			<p>
 				Mit E-Mail und Passwort wird ein Login über die Träwelling-API
