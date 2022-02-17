@@ -362,7 +362,7 @@ sub checkin {
 				$self->{model}->log(
 					uid     => $opt{uid},
 					message =>
-"Checkin-Fehler bei $opt{train_type} $opt{train_no}: $err_msg",
+"Konnte $opt{train_type} $opt{train_no} nicht übertragen: $err_msg",
 					is_error => 1
 				);
 				return;
@@ -392,7 +392,7 @@ sub checkin {
 			$self->{model}->log(
 				uid     => $opt{uid},
 				message =>
-				  "Checkin-Fehler bei $opt{train_type} $opt{train_no}: $err",
+"Konnte $opt{train_type} $opt{train_no} nicht übertragen: $err",
 				is_error => 1
 			);
 		}

@@ -2222,7 +2222,7 @@ sub startup {
 				$self->traewelling->log(
 					uid     => $uid,
 					message =>
-"$traewelling->{line} nach $traewelling->{arr_name}  ist keine Zugfahrt (HAFAS-Kategorie '$traewelling->{category}')",
+"$traewelling->{line} nach $traewelling->{arr_name} ist keine Zugfahrt (HAFAS-Kategorie '$traewelling->{category}')",
 					status_id => $traewelling->{status_id},
 				);
 				$self->traewelling->set_latest_pull_status_id(
@@ -2241,7 +2241,7 @@ sub startup {
 				$self->traewelling->log(
 					uid     => $uid,
 					message =>
-"Fehler bei $traewelling->{line} nach $traewelling->{arr_name}: $dep->{errstr}",
+"Konnte $traewelling->{line} nach $traewelling->{arr_name} nicht übernehmen: $dep->{errstr}",
 					status_id => $traewelling->{status_id},
 					is_error  => 1,
 				);
@@ -2322,7 +2322,7 @@ sub startup {
 					$self->traewelling->log(
 						uid     => $uid,
 						message =>
-"Fehler bei $traewelling->{line} nach $traewelling->{arr_name}: $err",
+"Konnte $traewelling->{line} nach $traewelling->{arr_name} nicht übernehmen: $err",
 						status_id => $traewelling->{status_id},
 						is_error  => 1
 					);
@@ -2333,7 +2333,7 @@ sub startup {
 				$self->traewelling->log(
 					uid     => $uid,
 					message =>
-"$traewelling->{line} nach $traewelling->{arr_name} nicht gefunden",
+"Konnte $traewelling->{line} nach $traewelling->{arr_name} nicht übernehmen: Zug nicht gefunden",
 					status_id => $traewelling->{status_id},
 					is_error  => 1
 				);

@@ -257,7 +257,7 @@ sub run {
 			$self->app->traewelling->log(
 				uid     => $candidate->{uid},
 				message =>
-"Fehler bei $candidate->{train_type} $candidate->{train_no}: Keine trip_id vorhanden",
+"Konnte $candidate->{train_type} $candidate->{train_no} nicht übertragen: Keine trip_id vorhanden",
 				is_error => 1
 			);
 			next;
@@ -293,9 +293,8 @@ sub run {
 			sub {
 				my ($err) = @_;
 				$self->app->traewelling->log(
-					uid     => $account_data->{user_id},
-					message =>
-					  "Fehler bei der Status-Abfrage von Träwelling: $err",
+					uid      => $account_data->{user_id},
+					message  => "Fehler bei der Status-Abfrage: $err",
 					is_error => 1
 				);
 				$self->app->log->debug("Error $err");
