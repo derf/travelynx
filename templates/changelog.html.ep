@@ -12,8 +12,10 @@
 		</p>
 		<p>
 			<i class="material-icons left" aria-label="Neues Feature">add</i>
-			Inaktive Accounts erhalten nach elf Monaten eine E-Mail, die auf die
-			in vier Wochen folgende Löschung hinweist.
+			Inaktive Accounts erhalten nach einem Jahr eine E-Mail, die auf die
+			in vier Wochen folgende Löschung hinweist. Betreiber:innen einer
+			selbstgehosteten travelynx-Instanz müssen hierzu <i>base_url</i>
+			in travelynx.conf setzen (siehe examples/travelynx.conf).
 		</p>
 	</div>
 </div>
