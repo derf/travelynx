@@ -14,10 +14,10 @@ has usage => sub { shift->extract_usage };
 sub run {
 	my ( $self, $filename ) = @_;
 
-	my $now                   = DateTime->now( time_zone => 'Europe/Berlin' );
-	my $verification_deadline = $now->clone->subtract( hours => 48 );
-	my $deletion_deadline     = $now->clone->subtract( hours => 72 );
-	my $old_deadline          = $now->clone->subtract( years => 1 );
+	my $now = DateTime->now( time_zone => 'Europe/Berlin' );
+	my $verification_deadline     = $now->clone->subtract( hours => 48 );
+	my $deletion_deadline         = $now->clone->subtract( hours => 72 );
+	my $old_deadline              = $now->clone->subtract( years => 1 );
 	my $old_notification_deadline = $now->clone->subtract( weeks => 4 );
 
 	my $db = $self->app->pg->db;
@@ -93,6 +93,7 @@ sub run {
 	);
 
 	for my $user ( $to_notify->hashes->each ) {
+		say "Sending account deletion notification to uid $user->{id}...";
 		$self->app->sendmail->age_deletion_notification(
 			name        => $user->{name},
 			email       => $user->{email},
