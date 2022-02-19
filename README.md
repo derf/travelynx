@@ -7,6 +7,10 @@ annotated with real-time delays and service messages. At the moment, it only
 supports german railways and trains which are exposed by the Deutsche Bahn
 [IRIS Interface](https://finalrewind.org/projects/Travel-Status-DE-IRIS/).
 
+You can use the public instance on [travelynx.de](https://travelynx.de) or
+host your own via carton/cpanminus. Experimental Docker images are also
+available. See the Setup notes below.
+
 Dependencies
 ---
 
@@ -14,9 +18,10 @@ Dependencies
  * carton or cpanminus
  * build-essential
  * libpq-dev
+ * libxml2-dev
  * git
 
-Perl Dependencies
+Installation
 ---
 
 travelynx depends on a set of Perl modules which are documented in `cpanfile`.
@@ -102,6 +107,44 @@ Note that this is subject to change -- the application may perform schema
 updates automatically in the future. If you used carton for installation,
 use `carton exec perl ...` in the snippet above; if you used cpanm, export
 `PERL5LIB=.../local/lib/perl5`.
+
+Setup with Docker
+---
+
+Note that travelynx Docker support is experimental and, in its current form,
+far from best practices. Pull requests are appreciated.
+
+First, you need to set up a PostgreSQL database so that travelynx can store
+user accounts and journeys. It must be at least version 9.4 and must use a
+UTF-8 locale. See above (or `examples/docker/postgres-init.sh`) for database
+initialization. You do not need to perform the `database migrate` step.
+
+Next, you need to prepare three files that will be mounted into the travelynx
+container: travelynx configuration, e-mail configuration, and imprint and
+privacy policy. For the sake of this readme, we assume that you are using the
+`local/` directory to store these
+
+* `mkdir local`
+* copy examples/travelynx.conf to local/travelynx.conf and configure it.
+* copy examples/docker/email-transport.sh to local/email-transport.sh and configure it.
+  The travelynx container does not contain a mail server, so it needs a
+  separate SMTP server to send mail. It does not receive mail.
+* create local/imprint.html.ep and enter imprint as well as privacy policy data.
+* Configure your web server to reverse-provy requests to the travelynx
+  instance. See `examples/nginx-site` for an nginx config.
+
+travelynx consists of two runtimes: the web application and a background
+worker. Your service supervisor (or docker compose / docker stack / kubernetes
+setup) should orchestrate them somewhere along these lines.
+
+* `docker pull derfnull/travelynx:latest`
+* Start web application: `docker run -p 8093:8093 -v ${PWD}/local:/local:ro travelynx:latest`
+* Wait until localhost:8093 responds to requests
+* Start worker: `docker run -v ${PWD}/local:/local:ro travelynx:latest worker`
+
+To install an update: stop worker and web application, update the travelynx
+image, and start them again. Database migrations will be performed
+automatically. Note that downgrades are not supported.
 
 Usage
 ---

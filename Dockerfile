@@ -1,6 +1,27 @@
-FROM debian:stretch-slim
+FROM debian:buster-slim as files
+
+ARG travelynx_version=git
+
+COPY docker-run.sh /app/
+COPY index.pl /app/
+COPY lib/ /app/lib/
+COPY public/ /app/public/
+COPY templates/ /app/templates/
+COPY share/ /app/share/
+
+WORKDIR /app
+
+RUN ln -sf ../local/imprint.html.ep templates && \
+	ln -sf ../local/privacy.html.ep templates && \
+	ln -sf ../local/travelynx.conf
+
+RUN sed -i "s/qx{git describe --dirty}/'${travelynx_version}'/" lib/Travelynx/Controller/Static.pm
+RUN sed -i "s/\$self->plugin('Config');/\$self->plugin('Config'); \$self->config->{version} = '${travelynx_version}';/" lib/Travelynx.pm
+
+FROM perl:5.30-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
+ARG APT_LISTCHANGES_FRONTEND=none
 
 COPY cpanfile* /app/
 WORKDIR /app
@@ -32,8 +53,11 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 	libxml2-dev \
 	make \
 	zlib1g-dev \
-	&& apt-get autoremove -y
+	&& apt-get autoremove -y \
+	&& rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
-COPY . /app
+COPY --from=files /app/ /app/
 
-CMD ["/app/docker-run.sh"]
+EXPOSE 8093
+
+ENTRYPOINT ["/app/docker-run.sh"]
