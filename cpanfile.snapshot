@@ -89,6 +89,7 @@ DISTRIBUTIONS
       JSON::PP 0
       List::Util 1.33
       Path::Tiny 0.077
+      PkgConfig 0.14026
       Test2::API 1.302096
       Text::ParseWords 3.26
       parent 0
@@ -104,17 +105,8 @@ DISTRIBUTIONS
       Alien::Build::Plugin::Build::SearchDep 0.35
       Alien::Build::Plugin::Prefer::BadVersion 1.05
       Alien::Build::Plugin::Probe::Vcpkg 0
-      Archive::Tar 0
-      Config 0
       ExtUtils::CBuilder 0
       ExtUtils::MakeMaker 6.52
-      HTTP::Tiny 0.044
-      IO::Zlib 0
-      Mojo::DOM 0
-      Mojolicious 7.00
-      Sort::Versions 0
-      URI 0
-      URI::Escape 0
       perl 5.006
   B-Hooks-EndOfScope-0.25
     pathname: E/ET/ETHER/B-Hooks-EndOfScope-0.25.tar.gz
@@ -347,6 +339,18 @@ DISTRIBUTIONS
       Crypt::RC4 2.02
     requirements:
       ExtUtils::MakeMaker 0
+  DBD-Pg-3.15.1
+    pathname: T/TU/TURNSTEP/DBD-Pg-3.15.1.tar.gz
+    provides:
+      Bundle::DBD::Pg v3.15.1
+      DBD::Pg v3.15.1
+    requirements:
+      DBI 1.614
+      ExtUtils::MakeMaker 6.11
+      File::Temp 0
+      Test::More 0.88
+      Time::HiRes 0
+      version 0
   DBI-1.643
     pathname: T/TI/TIMB/DBI-1.643.tar.gz
     provides:
@@ -460,19 +464,19 @@ DISTRIBUTIONS
       Sub::Install 0.921
       strict 0
       warnings 0
-  DateTime-1.54
-    pathname: D/DR/DROLSKY/DateTime-1.54.tar.gz
+  DateTime-1.55
+    pathname: D/DR/DROLSKY/DateTime-1.55.tar.gz
     provides:
-      DateTime 1.54
-      DateTime::Duration 1.54
-      DateTime::Helpers 1.54
-      DateTime::Infinite 1.54
-      DateTime::Infinite::Future 1.54
-      DateTime::Infinite::Past 1.54
-      DateTime::LeapSecond 1.54
-      DateTime::PP 1.54
-      DateTime::PPExtra 1.54
-      DateTime::Types 1.54
+      DateTime 1.55
+      DateTime::Duration 1.55
+      DateTime::Helpers 1.55
+      DateTime::Infinite 1.55
+      DateTime::Infinite::Future 1.55
+      DateTime::Infinite::Past 1.55
+      DateTime::LeapSecond 1.55
+      DateTime::PP 1.55
+      DateTime::PPExtra 1.55
+      DateTime::Types 1.55
     requirements:
       Carp 0
       DateTime::Locale 1.06
@@ -1069,6 +1073,42 @@ DISTRIBUTIONS
       perl 5.008
       strict 0
       warnings 0
+  Encode-3.16
+    pathname: D/DA/DANKOGAI/Encode-3.16.tar.gz
+    provides:
+      Encode 3.16
+      Encode::Alias 2.24
+      Encode::Byte 2.04
+      Encode::CJKConstants 2.02
+      Encode::CN 2.03
+      Encode::CN::HZ 2.10
+      Encode::Config 2.05
+      Encode::EBCDIC 2.02
+      Encode::Encoder 2.03
+      Encode::Encoding 2.08
+      Encode::GSM0338 2.10
+      Encode::Guess 2.08
+      Encode::JP 2.05
+      Encode::JP::H2Z 2.02
+      Encode::JP::JIS7 2.08
+      Encode::KR 2.03
+      Encode::KR::2022_KR 2.04
+      Encode::MIME::Header 2.28
+      Encode::MIME::Header::ISO_2022_JP 1.09
+      Encode::MIME::Name 1.03
+      Encode::Symbol 2.02
+      Encode::TW 2.03
+      Encode::UTF_EBCDIC 3.16
+      Encode::Unicode 2.19
+      Encode::Unicode::UTF7 2.10
+      Encode::XS 3.16
+      Encode::utf8 3.16
+      encoding 3.00
+    requirements:
+      Exporter 5.57
+      ExtUtils::MakeMaker 0
+      Storable 0
+      parent 0.221
   Encode-Locale-1.05
     pathname: G/GA/GAAS/Encode-Locale-1.05.tar.gz
     provides:
@@ -1164,6 +1204,52 @@ DISTRIBUTIONS
       perl 5.006
       strict 0
       warnings 0
+  ExtUtils-MakeMaker-7.64
+    pathname: B/BI/BINGOS/ExtUtils-MakeMaker-7.64.tar.gz
+    provides:
+      ExtUtils::Command 7.64
+      ExtUtils::Command::MM 7.64
+      ExtUtils::Liblist 7.64
+      ExtUtils::Liblist::Kid 7.64
+      ExtUtils::MM 7.64
+      ExtUtils::MM_AIX 7.64
+      ExtUtils::MM_Any 7.64
+      ExtUtils::MM_BeOS 7.64
+      ExtUtils::MM_Cygwin 7.64
+      ExtUtils::MM_DOS 7.64
+      ExtUtils::MM_Darwin 7.64
+      ExtUtils::MM_MacOS 7.64
+      ExtUtils::MM_NW5 7.64
+      ExtUtils::MM_OS2 7.64
+      ExtUtils::MM_OS390 7.64
+      ExtUtils::MM_QNX 7.64
+      ExtUtils::MM_UWIN 7.64
+      ExtUtils::MM_Unix 7.64
+      ExtUtils::MM_VMS 7.64
+      ExtUtils::MM_VOS 7.64
+      ExtUtils::MM_Win32 7.64
+      ExtUtils::MM_Win95 7.64
+      ExtUtils::MY 7.64
+      ExtUtils::MakeMaker 7.64
+      ExtUtils::MakeMaker::Config 7.64
+      ExtUtils::MakeMaker::Locale 7.64
+      ExtUtils::MakeMaker::_version 7.64
+      ExtUtils::MakeMaker::charstar 7.64
+      ExtUtils::MakeMaker::version 7.64
+      ExtUtils::MakeMaker::version::regex 7.64
+      ExtUtils::MakeMaker::version::vpp 7.64
+      ExtUtils::Mkbootstrap 7.64
+      ExtUtils::Mksymlists 7.64
+      ExtUtils::testlib 7.64
+      MM 7.64
+      MY 7.64
+    requirements:
+      Data::Dumper 0
+      Encode 0
+      File::Basename 0
+      File::Spec 0.8
+      Pod::Man 0
+      perl 5.006
   FFI-CheckLib-0.28
     pathname: P/PL/PLICEASE/FFI-CheckLib-0.28.tar.gz
     provides:
@@ -1357,19 +1443,19 @@ DISTRIBUTIONS
       Time::Zone 0
       perl 5.006002
       strict 0
-  HTTP-Message-6.35
-    pathname: O/OA/OALDERS/HTTP-Message-6.35.tar.gz
+  HTTP-Message-6.36
+    pathname: O/OA/OALDERS/HTTP-Message-6.36.tar.gz
     provides:
-      HTTP::Config 6.35
-      HTTP::Headers 6.35
-      HTTP::Headers::Auth 6.35
-      HTTP::Headers::ETag 6.35
-      HTTP::Headers::Util 6.35
-      HTTP::Message 6.35
-      HTTP::Request 6.35
-      HTTP::Request::Common 6.35
-      HTTP::Response 6.35
-      HTTP::Status 6.35
+      HTTP::Config 6.36
+      HTTP::Headers 6.36
+      HTTP::Headers::Auth 6.36
+      HTTP::Headers::ETag 6.36
+      HTTP::Headers::Util 6.36
+      HTTP::Message 6.36
+      HTTP::Request 6.36
+      HTTP::Request::Common 6.36
+      HTTP::Response 6.36
+      HTTP::Status 6.36
     requirements:
       Carp 0
       Compress::Raw::Zlib 0
@@ -1439,17 +1525,17 @@ DISTRIBUTIONS
       Exporter 5.57
       ExtUtils::MakeMaker 0
       perl 5.008
-  IO-Socket-SSL-2.072
-    pathname: S/SU/SULLR/IO-Socket-SSL-2.072.tar.gz
+  IO-Socket-SSL-2.074
+    pathname: S/SU/SULLR/IO-Socket-SSL-2.074.tar.gz
     provides:
-      IO::Socket::SSL 2.072
+      IO::Socket::SSL 2.074
       IO::Socket::SSL::Intercept 2.056
-      IO::Socket::SSL::OCSP_Cache 2.072
-      IO::Socket::SSL::OCSP_Resolver 2.072
+      IO::Socket::SSL::OCSP_Cache 2.074
+      IO::Socket::SSL::OCSP_Resolver 2.074
       IO::Socket::SSL::PublicSuffix undef
-      IO::Socket::SSL::SSL_Context 2.072
-      IO::Socket::SSL::SSL_HANDLE 2.072
-      IO::Socket::SSL::Session_Cache 2.072
+      IO::Socket::SSL::SSL_Context 2.074
+      IO::Socket::SSL::SSL_HANDLE 2.074
+      IO::Socket::SSL::Session_Cache 2.074
       IO::Socket::SSL::Utils 2.015
     requirements:
       ExtUtils::MakeMaker 0
@@ -1462,11 +1548,11 @@ DISTRIBUTIONS
       IO::String 1.08
     requirements:
       ExtUtils::MakeMaker 0
-  JSON-4.03
-    pathname: I/IS/ISHIGAKI/JSON-4.03.tar.gz
+  JSON-4.05
+    pathname: I/IS/ISHIGAKI/JSON-4.05.tar.gz
     provides:
-      JSON 4.03
-      JSON::Backend::PP 4.03
+      JSON 4.05
+      JSON::Backend::PP 4.05
     requirements:
       ExtUtils::MakeMaker 0
       Test::More 0
@@ -1595,10 +1681,10 @@ DISTRIBUTIONS
       Test::Deep 0
       Test::More 0
       perl 5.008
-  MRO-Compat-0.13
-    pathname: H/HA/HAARG/MRO-Compat-0.13.tar.gz
+  MRO-Compat-0.15
+    pathname: H/HA/HAARG/MRO-Compat-0.15.tar.gz
     provides:
-      MRO::Compat 0.13
+      MRO::Compat 0.15
     requirements:
       ExtUtils::MakeMaker 0
       perl 5.006
@@ -1731,7 +1817,7 @@ DISTRIBUTIONS
       File::Spec 3.00
       File::Spec::Functions 0
       if 0
-      perl 5.00503
+      perl 5.005030
       strict 0
   Module-Runtime-0.016
     pathname: Z/ZE/ZEFRAM/Module-Runtime-0.016.tar.gz
@@ -1927,13 +2013,13 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       perl 5.006
-  Net-HTTP-6.21
-    pathname: O/OA/OALDERS/Net-HTTP-6.21.tar.gz
+  Net-HTTP-6.22
+    pathname: O/OA/OALDERS/Net-HTTP-6.22.tar.gz
     provides:
-      Net::HTTP 6.21
-      Net::HTTP::Methods 6.21
-      Net::HTTP::NB 6.21
-      Net::HTTPS 6.21
+      Net::HTTP 6.22
+      Net::HTTP::Methods 6.22
+      Net::HTTP::NB 6.22
+      Net::HTTPS 6.22
     requirements:
       Carp 0
       Compress::Raw::Zlib 0
@@ -1945,14 +2031,18 @@ DISTRIBUTIONS
       perl 5.006002
       strict 0
       warnings 0
-  Net-SSLeay-1.90
-    pathname: C/CH/CHRISN/Net-SSLeay-1.90.tar.gz
+  Net-SSLeay-1.92
+    pathname: C/CH/CHRISN/Net-SSLeay-1.92.tar.gz
     provides:
-      Net::SSLeay 1.90
-      Net::SSLeay::Handle 1.90
+      Net::SSLeay 1.92
+      Net::SSLeay::Handle 1.92
     requirements:
+      English 0
       ExtUtils::MakeMaker 0
+      File::Spec::Functions 0
       MIME::Base64 0
+      Text::Wrap 0
+      constant 0
       perl 5.008001
   Package-Stash-0.39
     pathname: E/ET/ETHER/Package-Stash-0.39.tar.gz
@@ -2031,11 +2121,11 @@ DISTRIBUTIONS
       overload 0
       strict 0
       warnings 0
-  Path-Tiny-0.120
-    pathname: D/DA/DAGOLDEN/Path-Tiny-0.120.tar.gz
+  Path-Tiny-0.122
+    pathname: D/DA/DAGOLDEN/Path-Tiny-0.122.tar.gz
     provides:
-      Path::Tiny 0.120
-      Path::Tiny::Error 0.120
+      Path::Tiny 0.122
+      Path::Tiny::Error 0.122
     requirements:
       Carp 0
       Cwd 0
@@ -2057,6 +2147,14 @@ DISTRIBUTIONS
       strict 0
       warnings 0
       warnings::register 0
+  PkgConfig-0.25026
+    pathname: P/PL/PLICEASE/PkgConfig-0.25026.tar.gz
+    provides:
+      PkgConfig 0.25026
+    requirements:
+      ExtUtils::MakeMaker 6.56
+      Test::More 0.94
+      perl 5.006000
   Role-Tiny-2.002004
     pathname: H/HA/HAARG/Role-Tiny-2.002004.tar.gz
     provides:
@@ -2100,16 +2198,6 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       SQL::Abstract 2.0
       perl 5.016
-  Sort-Versions-1.62
-    pathname: N/NE/NEILB/Sort-Versions-1.62.tar.gz
-    provides:
-      Sort::Versions 1.62
-    requirements:
-      Exporter 0
-      ExtUtils::MakeMaker 0
-      perl 5.006
-      strict 0
-      warnings 0
   Specio-0.47
     pathname: D/DR/DROLSKY/Specio-0.47.tar.gz
     provides:
@@ -2397,6 +2485,17 @@ DISTRIBUTIONS
       Scalar::Util 0
       Sub::Quote 0
       overload 0
+  Time-Local-1.30
+    pathname: D/DR/DROLSKY/Time-Local-1.30.tar.gz
+    provides:
+      Time::Local 1.30
+    requirements:
+      Carp 0
+      Exporter 0
+      ExtUtils::MakeMaker 0
+      constant 0
+      parent 0
+      strict 0
   TimeDate-2.33
     pathname: A/AT/ATOOMIC/TimeDate-2.33.tar.gz
     provides:
@@ -2461,12 +2560,12 @@ DISTRIBUTIONS
       Test::Pod 0
       Travel::Status::DE::IRIS 1.2
       perl v5.20.0
-  Travel-Status-DE-IRIS-1.62
-    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.62.tar.gz
+  Travel-Status-DE-IRIS-1.64
+    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.64.tar.gz
     provides:
-      Travel::Status::DE::IRIS 1.62
-      Travel::Status::DE::IRIS::Result 1.62
-      Travel::Status::DE::IRIS::Stations 1.62
+      Travel::Status::DE::IRIS 1.64
+      Travel::Status::DE::IRIS::Result 1.64
+      Travel::Status::DE::IRIS::Stations 1.64
     requirements:
       Carp 0
       Class::Accessor 0
@@ -2772,32 +2871,32 @@ DISTRIBUTIONS
       XSLoader 0
       lib 0
       perl 5.008001
-  libwww-perl-6.59
-    pathname: O/OA/OALDERS/libwww-perl-6.59.tar.gz
+  libwww-perl-6.61
+    pathname: O/OA/OALDERS/libwww-perl-6.61.tar.gz
     provides:
-      LWP 6.59
-      LWP::Authen::Basic 6.59
-      LWP::Authen::Digest 6.59
-      LWP::Authen::Ntlm 6.59
-      LWP::ConnCache 6.59
-      LWP::Debug 6.59
-      LWP::Debug::TraceHTTP 6.59
-      LWP::DebugFile 6.59
-      LWP::MemberMixin 6.59
-      LWP::Protocol 6.59
-      LWP::Protocol::cpan 6.59
-      LWP::Protocol::data 6.59
-      LWP::Protocol::file 6.59
-      LWP::Protocol::ftp 6.59
-      LWP::Protocol::gopher 6.59
-      LWP::Protocol::http 6.59
-      LWP::Protocol::loopback 6.59
-      LWP::Protocol::mailto 6.59
-      LWP::Protocol::nntp 6.59
-      LWP::Protocol::nogo 6.59
-      LWP::RobotUA 6.59
-      LWP::Simple 6.59
-      LWP::UserAgent 6.59
+      LWP 6.61
+      LWP::Authen::Basic 6.61
+      LWP::Authen::Digest 6.61
+      LWP::Authen::Ntlm 6.61
+      LWP::ConnCache 6.61
+      LWP::Debug 6.61
+      LWP::Debug::TraceHTTP 6.61
+      LWP::DebugFile 6.61
+      LWP::MemberMixin 6.61
+      LWP::Protocol 6.61
+      LWP::Protocol::cpan 6.61
+      LWP::Protocol::data 6.61
+      LWP::Protocol::file 6.61
+      LWP::Protocol::ftp 6.61
+      LWP::Protocol::gopher 6.61
+      LWP::Protocol::http 6.61
+      LWP::Protocol::loopback 6.61
+      LWP::Protocol::mailto 6.61
+      LWP::Protocol::nntp 6.61
+      LWP::Protocol::nogo 6.61
+      LWP::RobotUA 6.61
+      LWP::Simple 6.61
+      LWP::UserAgent 6.61
       libwww::perl undef
     requirements:
       CPAN::Meta::Requirements 2.120620
@@ -2807,6 +2906,7 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       File::Copy 0
       File::Listing 6
+      File::Temp 0
       Getopt::Long 0
       HTML::Entities 0
       HTML::HeadParser 0
