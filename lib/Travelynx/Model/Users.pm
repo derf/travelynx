@@ -478,4 +478,70 @@ sub use_history {
 	}
 }
 
+sub get_webhook {
+	my ( $self, %opt ) = @_;
+	my $db  = $opt{db} // $self->{pg}->db;
+	my $uid = $opt{uid};
+
+	my $res_h = $db->select( 'webhooks_str', '*', { user_id => $uid } )->hash;
+
+	$res_h->{latest_run} = DateTime->from_epoch(
+		epoch     => $res_h->{latest_run_ts} // 0,
+		time_zone => 'Europe/Berlin',
+		locale    => 'de-DE',
+	);
+
+	return $res_h;
+}
+
+sub set_webhook {
+	my ( $self, %opt ) = @_;
+	my $db = $opt{db} // $self->{pg}->db;
+
+	if ( $opt{token} ) {
+		$opt{token} =~ tr{\r\n}{}d;
+	}
+
+	my $res = $db->insert(
+		'webhooks',
+		{
+			user_id => $opt{uid},
+			enabled => $opt{enabled},
+			url     => $opt{url},
+			token   => $opt{token}
+		},
+		{
+			on_conflict => \
+'(user_id) do update set enabled = EXCLUDED.enabled, url = EXCLUDED.url, token = EXCLUDED.token, errored = null, latest_run = null, output = null'
+		}
+	);
+}
+
+sub update_webhook_status {
+	my ( $self, %opt ) = @_;
+
+	my $db      = $opt{db} // $self->{pg}->db;
+	my $uid     = $opt{uid};
+	my $url     = $opt{url};
+	my $success = $opt{success};
+	my $text    = $opt{text};
+
+	if ( length($text) > 1000 ) {
+		$text = substr( $text, 0, 1000 ) . '…';
+	}
+
+	$db->update(
+		'webhooks',
+		{
+			errored    => $success ? 0 : 1,
+			latest_run => DateTime->now( time_zone => 'Europe/Berlin' ),
+			output     => $text,
+		},
+		{
+			user_id => $uid,
+			url     => $url
+		}
+	);
+}
+
 1;

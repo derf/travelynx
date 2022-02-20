@@ -892,74 +892,10 @@ sub startup {
 	);
 
 	$self->helper(
-		'get_webhook' => sub {
-			my ( $self, $uid ) = @_;
-			$uid //= $self->current_user->{id};
-
-			my $res_h
-			  = $self->pg->db->select( 'webhooks_str', '*',
-				{ user_id => $uid } )->hash;
-
-			$res_h->{latest_run} = epoch_to_dt( $res_h->{latest_run_ts} );
-
-			return $res_h;
-		}
-	);
-
-	$self->helper(
-		'set_webhook' => sub {
-			my ( $self, %opt ) = @_;
-
-			$opt{uid} //= $self->current_user->{id};
-
-			if ( $opt{token} ) {
-				$opt{token} =~ tr{\r\n}{}d;
-			}
-
-			my $res = $self->pg->db->insert(
-				'webhooks',
-				{
-					user_id => $opt{uid},
-					enabled => $opt{enabled},
-					url     => $opt{url},
-					token   => $opt{token}
-				},
-				{
-					on_conflict => \
-'(user_id) do update set enabled = EXCLUDED.enabled, url = EXCLUDED.url, token = EXCLUDED.token, errored = null, latest_run = null, output = null'
-				}
-			);
-		}
-	);
-
-	$self->helper(
-		'mark_hook_status' => sub {
-			my ( $self, $uid, $url, $success, $text ) = @_;
-
-			if ( length($text) > 1000 ) {
-				$text = substr( $text, 0, 1000 ) . '…';
-			}
-
-			$self->pg->db->update(
-				'webhooks',
-				{
-					errored    => $success ? 0 : 1,
-					latest_run => DateTime->now( time_zone => 'Europe/Berlin' ),
-					output     => $text,
-				},
-				{
-					user_id => $uid,
-					url     => $url
-				}
-			);
-		}
-	);
-
-	$self->helper(
 		'run_hook' => sub {
 			my ( $self, $uid, $reason, $callback ) = @_;
 
-			my $hook = $self->get_webhook($uid);
+			my $hook = $self->users->get_webhook( uid => $uid );
 
 			if ( not $hook->{enabled} or not $hook->{url} =~ m{^ https?:// }x )
 			{
@@ -994,12 +930,20 @@ sub startup {
 				sub {
 					my ($tx) = @_;
 					if ( my $err = $tx->error ) {
-						$self->mark_hook_status( $uid, $hook->{url}, 0,
-							"HTTP $err->{code} $err->{message}" );
+						$self->users->update_webhook_status(
+							uid     => $uid,
+							url     => $hook->{url},
+							success => 0,
+							text    => "HTTP $err->{code} $err->{message}"
+						);
 					}
 					else {
-						$self->mark_hook_status( $uid, $hook->{url}, 1,
-							$tx->result->body );
+						$self->users->update_webhook_status(
+							uid     => $uid,
+							url     => $hook->{url},
+							success => 1,
+							text    => $tx->result->body
+						);
 					}
 					if ($callback) {
 						&$callback();
@@ -1009,7 +953,12 @@ sub startup {
 			)->catch(
 				sub {
 					my ($err) = @_;
-					$self->mark_hook_status( $uid, $hook->{url}, 0, $err );
+					$self->users->update_webhook_status(
+						uid     => $uid,
+						url     => $hook->{url},
+						success => 0,
+						text    => $err
+					);
 					if ($callback) {
 						&$callback();
 					}

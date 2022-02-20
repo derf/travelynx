@@ -378,13 +378,16 @@ sub insight {
 sub webhook {
 	my ($self) = @_;
 
-	my $hook = $self->get_webhook;
+	my $uid = $self->current_user->{id};
+
+	my $hook = $self->users->get_webhook( uid => $uid );
 
 	if ( $self->param('action') and $self->param('action') eq 'save' ) {
 		$hook->{url}     = $self->param('url');
 		$hook->{token}   = $self->param('token');
 		$hook->{enabled} = $self->param('enabled') // 0;
-		$self->set_webhook(
+		$self->users->set_webhook(
+			uid     => $uid,
 			url     => $hook->{url},
 			token   => $hook->{token},
 			enabled => $hook->{enabled}
@@ -395,7 +398,7 @@ sub webhook {
 			sub {
 				$self->render(
 					'webhooks',
-					hook     => $self->get_webhook,
+					hook     => $self->users->get_webhook( uid => $uid ),
 					new_hook => 1
 				);
 			}
