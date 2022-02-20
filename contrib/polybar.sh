@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# See <https://github.com/thisjade/TravelynxPolybar/blob/main/README.md>
+# for configuration details
+
 # Interval for refreshing Data and giving it to Polybar
 INTERVAL=1
 
