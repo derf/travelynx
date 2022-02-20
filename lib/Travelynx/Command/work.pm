@@ -21,18 +21,14 @@ sub run {
 	my $checkin_deadline = $now->clone->subtract( hours => 48 );
 	my $json             = JSON->new;
 
-	my $db = $self->app->pg->db;
+	my $num_incomplete = $self->app->in_transit->delete_incomplete_checkins(
+		earlier_than => $checkin_deadline );
 
-	my $res = $db->delete( 'in_transit',
-		{ checkin_time => { '<', $checkin_deadline } } );
-
-	if ( my $rows = $res->rows ) {
-		$self->app->log->debug("Removed ${rows} incomplete checkins");
+	if ($num_incomplete) {
+		$self->app->log->debug("Removed ${num_incomplete} incomplete checkins");
 	}
 
-	for my $entry (
-		$db->select( 'in_transit_str', '*', { cancelled => 0 } )->hashes->each )
-	{
+	for my $entry ( $self->app->in_transit->get_all_active ) {
 
 		my $uid      = $entry->{user_id};
 		my $dep      = $entry->{dep_eva};
@@ -63,61 +59,26 @@ sub run {
 					die("could not find train $train_id at $dep\n");
 				}
 
-				# selecting on user_id and train_no avoids a race condition when
-				# a user checks into a new train while we are fetching data for
-				# their previous journey. In this case, the new train would
-				# receive data from the previous journey.
-				$db->update(
-					'in_transit',
-					{
-						dep_platform   => $train->platform,
-						real_departure => $train->departure,
-						route          => $json->encode(
-							[ $self->app->iris->route_diff($train) ]
-						),
-						messages => $json->encode(
-							[
-								map { [ $_->[0]->epoch, $_->[1] ] }
-								  $train->messages
-							]
-						),
-					},
-					{
-						user_id  => $uid,
-						train_no => $train->train_no
-					}
+				$self->app->in_transit->update_departure(
+					uid   => $uid,
+					train => $train,
+					route => [ $self->app->iris->route_diff($train) ]
 				);
+
 				if ( $train->departure_is_cancelled and $arr ) {
+					my $checked_in
+					  = $self->app->in_transit->update_departure_cancelled(
+						uid     => $uid,
+						train   => $train,
+						dep_eva => $dep,
+						arr_eva => $arr,
+					  );
 
 					# depending on the amount of users in transit, some time may
 					# have passed between fetching $entry from the database and
-					# now. Ensure that the user is still checked into this train
-					# before calling checkout to mark the cancellation.
-					if (
-						$db->select(
-							'in_transit',
-							'count(*) as count',
-							{
-								user_id             => $uid,
-								train_no            => $train->train_no,
-								checkin_station_id  => $dep,
-								checkout_station_id => $arr,
-							}
-						)->hash->{count}
-					  )
-					{
-						$db->update(
-							'in_transit',
-							{
-								cancelled => 1,
-							},
-							{
-								user_id             => $uid,
-								train_no            => $train->train_no,
-								checkin_station_id  => $dep,
-								checkout_station_id => $arr,
-							}
-						);
+					# now. Only check out if the user is still checked into this
+					# train.
+					if ($checked_in) {
 
                   # check out (adds a cancelled journey and resets journey state
                   # to checkin
@@ -173,58 +134,22 @@ sub run {
 					return;
 				}
 
-             # selecting on user_id, train_no and checkout_station_id avoids a
-             # race condition when a user checks into a new train or changes
-             # their destination station while we are fetching times based on no
-             # longer valid database entries.
-				$db->update(
-					'in_transit',
-					{
-						arr_platform  => $train->platform,
-						sched_arrival => $train->sched_arrival,
-						real_arrival  => $train->arrival,
-						route         => $json->encode(
-							[ $self->app->iris->route_diff($train) ]
-						),
-						messages => $json->encode(
-							[
-								map { [ $_->[0]->epoch, $_->[1] ] }
-								  $train->messages
-							]
-						),
-					},
-					{
-						user_id             => $uid,
-						train_no            => $train->train_no,
-						checkout_station_id => $arr
-					}
+				my $checked_in = $self->app->in_transit->update_arrival(
+					uid     => $uid,
+					train   => $train,
+					route   => [ $self->app->iris->route_diff($train) ],
+					arr_eva => $arr,
 				);
-				if ( $train->arrival_is_cancelled ) {
 
-					# depending on the amount of users in transit, some time may
-					# have passed between fetching $entry from the database and
-					# now. Ensure that the user is still checked into this train
-					# before calling checkout to mark the cancellation.
-					if (
-						$db->select(
-							'in_transit',
-							'count(*) as count',
-							{
-								user_id             => $uid,
-								train_no            => $train->train_no,
-								checkout_station_id => $arr
-							}
-						)->hash->{count}
-					  )
-					{
+				if ( $checked_in and $train->arrival_is_cancelled ) {
+
                   # check out (adds a cancelled journey and resets journey state
                   # to destination selection)
-						$self->app->checkout(
-							station => $arr,
-							force   => 0,
-							uid     => $uid
-						);
-					}
+					$self->app->checkout(
+						station => $arr,
+						force   => 0,
+						uid     => $uid
+					);
 				}
 				else {
 					$self->app->add_route_timestamps( $uid, $train, 0 );

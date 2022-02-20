@@ -1,4 +1,5 @@
 package Travelynx::Model::InTransit;
+
 # Copyright (C) 2020 Daniel Friesel
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -69,6 +70,15 @@ sub delete {
 	$db->delete( 'in_transit', { user_id => $uid } );
 }
 
+sub delete_incomplete_checkins {
+	my ( $self, %opt ) = @_;
+
+	my $db = $opt{db} // $self->{pg}->db;
+
+	return $db->delete( 'in_transit',
+		{ checkin_time => { '<', $opt{earlier_than} } } )->rows;
+}
+
 sub get {
 	my ( $self, %opt ) = @_;
 
@@ -87,6 +97,13 @@ sub get {
 		return $res->expand->hash;
 	}
 	return $res->hash;
+}
+
+sub get_all_active {
+	my ( $self, %opt ) = @_;
+	my $db = $opt{db} // $self->{pg}->db;
+	return $db->select( 'in_transit_str', '*', { cancelled => 0 } )
+	  ->hashes->each;
 }
 
 sub get_checkout_station_id {
@@ -252,11 +269,99 @@ sub unset_arrival_data {
 	);
 }
 
+sub update_departure {
+	my ( $self, %opt ) = @_;
+	my $uid   = $opt{uid};
+	my $db    = $opt{db} // $self->{pg}->db;
+	my $train = $opt{train};
+	my $json  = JSON->new;
+
+	# selecting on user_id and train_no avoids a race condition if a user checks
+	# into a new train while we are fetching data for their previous journey. In
+	# this case, the new train would receive data from the previous journey.
+	$db->update(
+		'in_transit',
+		{
+			dep_platform   => $train->platform,
+			real_departure => $train->departure,
+			route          => $json->encode( $opt{route} ),
+			messages       => $json->encode(
+				[ map { [ $_->[0]->epoch, $_->[1] ] } $train->messages ]
+			),
+		},
+		{
+			user_id  => $uid,
+			train_no => $train->train_no
+		}
+	);
+}
+
+sub update_departure_cancelled {
+	my ( $self, %opt ) = @_;
+	my $uid     = $opt{uid};
+	my $db      = $opt{db} // $self->{pg}->db;
+	my $dep_eva = $opt{dep_eva};
+	my $arr_eva = $opt{arr_eva};
+	my $train   = $opt{train};
+
+	# depending on the amount of users in transit, some time may
+	# have passed between fetching $entry from the database and
+	# now. Ensure that the user is still checked into this train
+	# by selecting on uid, train no, and checkin/checkout station ID.
+	my $rows = $db->update(
+		'in_transit',
+		{
+			cancelled => 1,
+		},
+		{
+			user_id             => $uid,
+			train_no            => $train->train_no,
+			checkin_station_id  => $dep_eva,
+			checkout_station_id => $arr_eva,
+		}
+	)->rows;
+
+	return $rows;
+}
+
+sub update_arrival {
+	my ( $self, %opt ) = @_;
+	my $uid     = $opt{uid};
+	my $db      = $opt{db} // $self->{pg}->db;
+	my $arr_eva = $opt{arr_eva};
+	my $train   = $opt{train};
+	my $json    = JSON->new;
+
+	# selecting on user_id, train_no and checkout_station_id avoids a
+	# race condition when a user checks into a new train or changes
+	# their destination station while we are fetching times based on no
+	# longer valid database entries.
+	my $rows = $db->update(
+		'in_transit',
+		{
+			arr_platform  => $train->platform,
+			sched_arrival => $train->sched_arrival,
+			real_arrival  => $train->arrival,
+			route         => $json->encode( $opt{route} ),
+			messages      => $json->encode(
+				[ map { [ $_->[0]->epoch, $_->[1] ] } $train->messages ]
+			),
+		},
+		{
+			user_id             => $uid,
+			train_no            => $train->train_no,
+			checkout_station_id => $arr_eva,
+		}
+	)->rows;
+
+	return $rows;
+}
+
 sub update_data {
 	my ( $self, %opt ) = @_;
 
 	my $uid      = $opt{uid};
-	my $db       = $opt{db} // $self->{pg}->db;
+	my $db       = $opt{db}   // $self->{pg}->db;
 	my $new_data = $opt{data} // {};
 
 	my $res_h = $db->select( 'in_transit', ['data'], { user_id => $uid } )
@@ -279,7 +384,7 @@ sub update_user_data {
 	my ( $self, %opt ) = @_;
 
 	my $uid      = $opt{uid};
-	my $db       = $opt{db} // $self->{pg}->db;
+	my $db       = $opt{db}        // $self->{pg}->db;
 	my $new_data = $opt{user_data} // {};
 
 	my $res_h = $db->select( 'in_transit', ['user_data'], { user_id => $uid } )
