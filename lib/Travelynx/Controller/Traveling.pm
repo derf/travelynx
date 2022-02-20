@@ -58,9 +58,10 @@ sub user_status {
 		$ts
 		and ( not $status->{checked_in}
 			or $status->{sched_departure}->epoch != $ts )
-		and ( $user->{public_level} & 0x20
-			or
-			( $user->{public_level} & 0x10 and $self->is_user_authenticated ) )
+		and (
+			$user->{public_level} & 0x20
+			or ( $user->{public_level} & 0x10 and $self->is_user_authenticated )
+		)
 	  )
 	{
 		for my $candidate (
@@ -173,9 +174,10 @@ sub public_profile {
 
 	if (
 		$user
-		and ( $user->{public_level} & 0x22
-			or
-			( $user->{public_level} & 0x11 and $self->is_user_authenticated ) )
+		and (
+			$user->{public_level} & 0x22
+			or ( $user->{public_level} & 0x11 and $self->is_user_authenticated )
+		)
 	  )
 	{
 		my $status = $self->get_user_status( $user->{id} );
@@ -233,9 +235,10 @@ sub public_journey_details {
 
 	if (
 		$user
-		and ( $user->{public_level} & 0x20
-			or
-			( $user->{public_level} & 0x10 and $self->is_user_authenticated ) )
+		and (
+			$user->{public_level} & 0x20
+			or ( $user->{public_level} & 0x10 and $self->is_user_authenticated )
+		)
 	  )
 	{
 		my $journey = $self->journeys->get_single(
@@ -312,15 +315,17 @@ sub public_status_card {
 	my ($self) = @_;
 
 	my $name = $self->stash('name');
+	$name =~ s{[.]html$}{};
 	my $user = $self->users->get_privacy_by_name( name => $name );
 
 	delete $self->stash->{layout};
 
 	if (
 		$user
-		and ( $user->{public_level} & 0x02
-			or
-			( $user->{public_level} & 0x01 and $self->is_user_authenticated ) )
+		and (
+			$user->{public_level} & 0x02
+			or ( $user->{public_level} & 0x01 and $self->is_user_authenticated )
+		)
 	  )
 	{
 		my $status = $self->get_user_status( $user->{id} );
@@ -1293,7 +1298,7 @@ sub add_journey_form {
 			$self->render(
 				'add_journey',
 				with_autocomplete => 1,
-				error =>
+				error             =>
 'Zug muss als „Typ Nummer“ oder „Typ Linie Nummer“ eingegeben werden.'
 			);
 			return;

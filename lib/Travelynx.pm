@@ -2520,7 +2520,7 @@ sub startup {
 	$r->get('/reg/:id/:token')->to('account#verify');
 	$r->get('/status/:name')->to('traveling#user_status');
 	$r->get('/status/:name/:ts')->to('traveling#user_status');
-	$r->get('/ajax/status/:name')->to('traveling#public_status_card');
+	$r->get('/ajax/status/#name')->to('traveling#public_status_card');
 	$r->get('/ajax/status/:name/:ts')->to('traveling#public_status_card');
 	$r->get('/p/:name')->to('traveling#public_profile');
 	$r->get('/p/:name/j/:id')->to('traveling#public_journey_details');
