@@ -353,7 +353,10 @@ sub checkin {
 			my ($tx) = @_;
 			if ( my $err = $tx->error ) {
 				my $err_msg = "HTTP $err->{code} $err->{message}";
-				if ( $err->{code} != 409 and $err->{code} != 406 ) {
+				if (    $err->{code} != 409
+					and $err->{code} != 406
+					and $err->{code} != 401 )
+				{
 					$self->{log}->warn("Traewelling checkin error: $err_msg");
 				}
 				else {
