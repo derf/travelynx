@@ -13,7 +13,7 @@ sub hash_password {
 	my @salt_bytes = map { int( rand(255) ) + 1 } ( 1 .. 16 );
 	my $salt       = en_base64( pack( 'C[16]', @salt_bytes ) );
 
-	return bcrypt( $password, '$2a$12$' . $salt );
+	return bcrypt( substr( $password, 0, 10000 ), '$2a$12$' . $salt );
 }
 
 sub make_token {

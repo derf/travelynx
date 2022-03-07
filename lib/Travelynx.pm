@@ -36,7 +36,7 @@ use XML::LibXML;
 sub check_password {
 	my ( $password, $hash ) = @_;
 
-	if ( bcrypt( $password, $hash ) eq $hash ) {
+	if ( bcrypt( substr( $password, 0, 10000 ), $hash ) eq $hash ) {
 		return 1;
 	}
 	return 0;

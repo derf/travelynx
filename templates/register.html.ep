@@ -17,12 +17,12 @@
 		</div>
 		<div class="input-field col l6 m12 s12">
 			<i class="material-icons prefix">lock</i>
-			%= password_field 'password', id => 'password', class => 'validate', required => undef, minlength => 8, autocomplete => 'new-password'
+			%= password_field 'password', id => 'password', class => 'validate', required => undef, minlength => 8, maxlength => 10000, autocomplete => 'new-password'
 			<label for="password">Passwort</label>
 		</div>
 		<div class="input-field col l6 m12 s12">
 			<i class="material-icons prefix">lock</i>
-			%= password_field 'password2', id => 'password2', class => 'validate', required => undef, minlength => 8, autocomplete => 'new-password'
+			%= password_field 'password2', id => 'password2', class => 'validate', required => undef, minlength => 8, maxlength => 10000, autocomplete => 'new-password'
 			<label for="password2">Passwort wiederholen</label>
 		</div>
 	</div>
