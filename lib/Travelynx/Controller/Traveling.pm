@@ -797,11 +797,38 @@ sub map_history {
 	}
 
 	my $route_type    = $self->param('route_type');
+	my $filter_from   = $self->param('filter_after');
+	my $filter_until  = $self->param('filter_before');
 	my $with_polyline = $route_type eq 'beeline' ? 0 : 1;
+
+	my $parser = DateTime::Format::Strptime->new(
+		pattern   => '%d.%m.%Y',
+		locale    => 'de_DE',
+		time_zone => 'Europe/Berlin'
+	);
+
+	if ( $filter_from and $filter_from =~ m{ ^ (\d+) [.] (\d+) [.] (\d+) $ }x )
+	{
+		$filter_from = $parser->parse_datetime($filter_from);
+	}
+	else {
+		$filter_from = undef;
+	}
+
+	if (    $filter_until
+		and $filter_until =~ m{ ^ (\d+) [.] (\d+) [.] (\d+) $ }x )
+	{
+		$filter_until = $parser->parse_datetime($filter_until);
+	}
+	else {
+		$filter_until = undef;
+	}
 
 	my @journeys = $self->journeys->get(
 		uid           => $self->current_user->{id},
-		with_polyline => $with_polyline
+		with_polyline => $with_polyline,
+		after         => $filter_from,
+		before        => $filter_until,
 	);
 
 	if ( not @journeys ) {

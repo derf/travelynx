@@ -13,7 +13,7 @@
 
 %= form_for '/history/map' => begin
 	<p>
-		Detailgrad und Filter:
+		Detailgrad:
 	</p>
 	<div class="row">
 		<div class="input-field col s12">
@@ -45,6 +45,28 @@
 				%= check_box include_manual => 1
 				<span>Manuelle Einträge ohne Unterwegshalte mitberücksichtigen</span>
 			</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s12 center-align">
+			<button class="btn wave-effect waves-light" type="submit">
+				Anzeigen
+			</button>
+		</div>
+	</div>
+	<p>
+		Weitere Filter:
+	</p>
+	<div class="row">
+		<div class="input-field col s12">
+			%= text_field 'filter_after', id => 'filter_after', class => 'validate', pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9]( +[0-9][0-9]:[0-9][0-9])?'
+			<label for="filter_after">Abfahrt ab (DD.MM.YYYY)</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			%= text_field 'filter_before', id => 'filter_before', class => 'validate', pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9]( +[0-9][0-9]:[0-9][0-9])?'
+			<label for="filter_before">Abfahrt bis (DD.MM.YYYY)</label>
 		</div>
 	</div>
 	<div class="row">

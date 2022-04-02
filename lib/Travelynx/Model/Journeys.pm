@@ -156,7 +156,7 @@ sub add {
 				push( @route, [ $station_info->[1], {}, undef ] );
 			}
 			else {
-				push( @route, [ $station, {}, undef ] );
+				push( @route,            [ $station, {}, undef ] );
 				push( @unknown_stations, $station );
 			}
 		}
@@ -518,6 +518,12 @@ sub get {
 	elsif ( $opt{after} and $opt{before} ) {
 		$where{real_dep_ts}
 		  = { -between => [ $opt{after}->epoch, $opt{before}->epoch, ] };
+	}
+	elsif ( $opt{after} ) {
+		$where{real_dep_ts} = { '>=', $opt{after}->epoch };
+	}
+	elsif ( $opt{before} ) {
+		$where{real_dep_ts} = { '<=', $opt{before}->epoch };
 	}
 
 	if ( $opt{with_polyline} ) {
@@ -975,9 +981,10 @@ sub get_travel_distance {
 	for my $station (@polyline) {
 
 		#lonlatlonlat
-		$distance_polyline
-		  += $geo->distance_metal( $prev_station->[1],
-			$prev_station->[0], $station->[1], $station->[0] );
+		$distance_polyline += $geo->distance_metal(
+			$prev_station->[1], $prev_station->[0],
+			$station->[1],      $station->[0]
+		);
 		$prev_station = $station;
 	}
 
@@ -1004,9 +1011,10 @@ sub get_travel_distance {
 				$to_station_beeline = $station;
 			}
 			if ( $#{$prev_station} >= 4 and $#{$station} >= 4 ) {
-				$distance_intermediate
-				  += $geo->distance_metal( $prev_station->[4],
-					$prev_station->[3], $station->[4], $station->[3] );
+				$distance_intermediate += $geo->distance_metal(
+					$prev_station->[4], $prev_station->[3],
+					$station->[4],      $station->[3]
+				);
 			}
 			else {
 				$skipped++;
@@ -1017,9 +1025,8 @@ sub get_travel_distance {
 
 	if ( $from_station_beeline and $to_station_beeline ) {
 		$distance_beeline = $geo->distance_metal(
-			$from_station_beeline->[4],
-			$from_station_beeline->[3], $to_station_beeline->[4],
-			$to_station_beeline->[3]
+			$from_station_beeline->[4], $from_station_beeline->[3],
+			$to_station_beeline->[4],   $to_station_beeline->[3]
 		);
 	}
 
@@ -1120,8 +1127,8 @@ sub get_stats {
 	}
 
 	my $uid   = $opt{uid};
-	my $db    = $opt{db} // $self->{pg}->db;
-	my $year  = $opt{year} // 0;
+	my $db    = $opt{db}    // $self->{pg}->db;
+	my $year  = $opt{year}  // 0;
 	my $month = $opt{month} // 0;
 
 	# Assumption: If the stats cache contains an entry it is up-to-date.
