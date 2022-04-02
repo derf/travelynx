@@ -787,6 +787,14 @@ sub commute {
 	);
 }
 
+sub has_str_in_list {
+	my ( $str, @strs ) = @_;
+	if ( List::Util::any { $str eq $_ } @strs ) {
+		return 1;
+	}
+	return;
+}
+
 sub map_history {
 	my ($self) = @_;
 
@@ -799,6 +807,7 @@ sub map_history {
 	my $route_type    = $self->param('route_type');
 	my $filter_from   = $self->param('filter_after');
 	my $filter_until  = $self->param('filter_before');
+	my $filter_type   = $self->param('filter_type');
 	my $with_polyline = $route_type eq 'beeline' ? 0 : 1;
 
 	my $parser = DateTime::Format::Strptime->new(
@@ -830,6 +839,11 @@ sub map_history {
 		after         => $filter_from,
 		before        => $filter_until,
 	);
+
+	if ($filter_type) {
+		my @filter = split( qr{, *}, $filter_type );
+		@journeys = grep { has_str_in_list( $_->{type}, @filter ) } @journeys;
+	}
 
 	if ( not @journeys ) {
 		$self->render(

@@ -70,6 +70,12 @@
 		</div>
 	</div>
 	<div class="row">
+		<div class="input-field col s12">
+			%= text_field 'filter_type', id => 'filter_type'
+			<label for="filter_tpye">Zugtypen</label>
+		</div>
+	</div>
+	<div class="row">
 		<div class="col s12 center-align">
 			<button class="btn wave-effect waves-light" type="submit">
 				Anzeigen
