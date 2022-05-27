@@ -4,6 +4,7 @@ package Travelynx::Command::work;
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 use Mojo::Base 'Mojolicious::Command';
+use Mojo::Promise;
 
 use DateTime;
 use JSON;
@@ -197,15 +198,22 @@ sub run {
 			trip_id => $trip_id );
 	}
 
+	my $request_count = 0;
 	for my $account_data ( $self->app->traewelling->get_pull_accounts ) {
 
 		# $account_data->{user_id} is the travelynx uid
 		# $account_data->{user_name} is the Träwelling username
+		$request_count += 1;
 		$self->app->log->debug(
-			"Pulling Traewelling status for UID $account_data->{user_id}");
-		$self->app->traewelling_api->get_status_p(
-			username => $account_data->{data}{user_name},
-			token    => $account_data->{token}
+"Scheduling Traewelling status pull for UID $account_data->{user_id}"
+		);
+		Mojo::Promise->timer( $request_count * 0.2 )->then(
+			sub {
+				return $self->app->traewelling_api->get_status_p(
+					username => $account_data->{data}{user_name},
+					token    => $account_data->{token}
+				);
+			}
 		)->then(
 			sub {
 				my ($traewelling) = @_;
