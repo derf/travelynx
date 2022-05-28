@@ -97,9 +97,9 @@ sub get_status_p {
 						$status->{train}{destination}{arrivalPlanned} );
 
 					my $dep_eva
-					  = $status->{train}{origin}{rilIdentifier};
+					  = $status->{train}{origin}{evaIdentifier};
 					my $arr_eva
-					  = $status->{train}{destination}{rilIdentifier};
+					  = $status->{train}{destination}{evaIdentifier};
 
 					my $dep_name
 					  = $status->{train}{origin}{name};
