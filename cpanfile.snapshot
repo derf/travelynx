@@ -1,83 +1,83 @@
 # carton snapshot format: version 1.0
 DISTRIBUTIONS
-  Alien-Build-2.48
-    pathname: P/PL/PLICEASE/Alien-Build-2.48.tar.gz
+  Alien-Build-2.50
+    pathname: P/PL/PLICEASE/Alien-Build-2.50.tar.gz
     provides:
-      Alien::Base 2.48
-      Alien::Base::PkgConfig 2.48
-      Alien::Base::Wrapper 2.48
-      Alien::Build 2.48
-      Alien::Build::CommandSequence 2.48
-      Alien::Build::Helper 2.48
-      Alien::Build::Interpolate 2.48
-      Alien::Build::Interpolate::Default 2.48
-      Alien::Build::Interpolate::Helper 2.48
-      Alien::Build::Log 2.48
-      Alien::Build::Log::Abbreviate 2.48
-      Alien::Build::Log::Default 2.48
-      Alien::Build::MM 2.48
-      Alien::Build::Meta 2.48
-      Alien::Build::Plugin 2.48
-      Alien::Build::Plugin::Build::Autoconf 2.48
-      Alien::Build::Plugin::Build::CMake 2.48
-      Alien::Build::Plugin::Build::Copy 2.48
-      Alien::Build::Plugin::Build::MSYS 2.48
-      Alien::Build::Plugin::Build::Make 2.48
-      Alien::Build::Plugin::Build::SearchDep 2.48
-      Alien::Build::Plugin::Core::CleanInstall 2.48
-      Alien::Build::Plugin::Core::Download 2.48
-      Alien::Build::Plugin::Core::FFI 2.48
-      Alien::Build::Plugin::Core::Gather 2.48
-      Alien::Build::Plugin::Core::Legacy 2.48
-      Alien::Build::Plugin::Core::Override 2.48
-      Alien::Build::Plugin::Core::Setup 2.48
-      Alien::Build::Plugin::Core::Tail 2.48
-      Alien::Build::Plugin::Decode::DirListing 2.48
-      Alien::Build::Plugin::Decode::DirListingFtpcopy 2.48
-      Alien::Build::Plugin::Decode::HTML 2.48
-      Alien::Build::Plugin::Decode::Mojo 2.48
-      Alien::Build::Plugin::Download::Negotiate 2.48
-      Alien::Build::Plugin::Extract::ArchiveTar 2.48
-      Alien::Build::Plugin::Extract::ArchiveZip 2.48
-      Alien::Build::Plugin::Extract::CommandLine 2.48
-      Alien::Build::Plugin::Extract::Directory 2.48
-      Alien::Build::Plugin::Extract::Negotiate 2.48
-      Alien::Build::Plugin::Fetch::CurlCommand 2.48
-      Alien::Build::Plugin::Fetch::HTTPTiny 2.48
-      Alien::Build::Plugin::Fetch::LWP 2.48
-      Alien::Build::Plugin::Fetch::Local 2.48
-      Alien::Build::Plugin::Fetch::LocalDir 2.48
-      Alien::Build::Plugin::Fetch::NetFTP 2.48
-      Alien::Build::Plugin::Fetch::Wget 2.48
-      Alien::Build::Plugin::Gather::IsolateDynamic 2.48
-      Alien::Build::Plugin::PkgConfig::CommandLine 2.48
-      Alien::Build::Plugin::PkgConfig::LibPkgConf 2.48
-      Alien::Build::Plugin::PkgConfig::MakeStatic 2.48
-      Alien::Build::Plugin::PkgConfig::Negotiate 2.48
-      Alien::Build::Plugin::PkgConfig::PP 2.48
-      Alien::Build::Plugin::Prefer::BadVersion 2.48
-      Alien::Build::Plugin::Prefer::GoodVersion 2.48
-      Alien::Build::Plugin::Prefer::SortVersions 2.48
-      Alien::Build::Plugin::Probe::CBuilder 2.48
-      Alien::Build::Plugin::Probe::CommandLine 2.48
-      Alien::Build::Plugin::Probe::Vcpkg 2.48
-      Alien::Build::Plugin::Test::Mock 2.48
-      Alien::Build::PluginMeta 2.48
-      Alien::Build::Temp 2.48
-      Alien::Build::TempDir 2.48
-      Alien::Build::Util 2.48
-      Alien::Build::Version::Basic 2.48
-      Alien::Build::rc 2.48
-      Alien::Role 2.48
-      Alien::Util 2.48
-      Test::Alien 2.48
-      Test::Alien::Build 2.48
-      Test::Alien::CanCompile 2.48
-      Test::Alien::CanPlatypus 2.48
-      Test::Alien::Diag 2.48
-      Test::Alien::Run 2.48
-      Test::Alien::Synthetic 2.48
-      alienfile 2.48
+      Alien::Base 2.50
+      Alien::Base::PkgConfig 2.50
+      Alien::Base::Wrapper 2.50
+      Alien::Build 2.50
+      Alien::Build::CommandSequence 2.50
+      Alien::Build::Helper 2.50
+      Alien::Build::Interpolate 2.50
+      Alien::Build::Interpolate::Default 2.50
+      Alien::Build::Interpolate::Helper 2.50
+      Alien::Build::Log 2.50
+      Alien::Build::Log::Abbreviate 2.50
+      Alien::Build::Log::Default 2.50
+      Alien::Build::MM 2.50
+      Alien::Build::Meta 2.50
+      Alien::Build::Plugin 2.50
+      Alien::Build::Plugin::Build::Autoconf 2.50
+      Alien::Build::Plugin::Build::CMake 2.50
+      Alien::Build::Plugin::Build::Copy 2.50
+      Alien::Build::Plugin::Build::MSYS 2.50
+      Alien::Build::Plugin::Build::Make 2.50
+      Alien::Build::Plugin::Build::SearchDep 2.50
+      Alien::Build::Plugin::Core::CleanInstall 2.50
+      Alien::Build::Plugin::Core::Download 2.50
+      Alien::Build::Plugin::Core::FFI 2.50
+      Alien::Build::Plugin::Core::Gather 2.50
+      Alien::Build::Plugin::Core::Legacy 2.50
+      Alien::Build::Plugin::Core::Override 2.50
+      Alien::Build::Plugin::Core::Setup 2.50
+      Alien::Build::Plugin::Core::Tail 2.50
+      Alien::Build::Plugin::Decode::DirListing 2.50
+      Alien::Build::Plugin::Decode::DirListingFtpcopy 2.50
+      Alien::Build::Plugin::Decode::HTML 2.50
+      Alien::Build::Plugin::Decode::Mojo 2.50
+      Alien::Build::Plugin::Download::Negotiate 2.50
+      Alien::Build::Plugin::Extract::ArchiveTar 2.50
+      Alien::Build::Plugin::Extract::ArchiveZip 2.50
+      Alien::Build::Plugin::Extract::CommandLine 2.50
+      Alien::Build::Plugin::Extract::Directory 2.50
+      Alien::Build::Plugin::Extract::Negotiate 2.50
+      Alien::Build::Plugin::Fetch::CurlCommand 2.50
+      Alien::Build::Plugin::Fetch::HTTPTiny 2.50
+      Alien::Build::Plugin::Fetch::LWP 2.50
+      Alien::Build::Plugin::Fetch::Local 2.50
+      Alien::Build::Plugin::Fetch::LocalDir 2.50
+      Alien::Build::Plugin::Fetch::NetFTP 2.50
+      Alien::Build::Plugin::Fetch::Wget 2.50
+      Alien::Build::Plugin::Gather::IsolateDynamic 2.50
+      Alien::Build::Plugin::PkgConfig::CommandLine 2.50
+      Alien::Build::Plugin::PkgConfig::LibPkgConf 2.50
+      Alien::Build::Plugin::PkgConfig::MakeStatic 2.50
+      Alien::Build::Plugin::PkgConfig::Negotiate 2.50
+      Alien::Build::Plugin::PkgConfig::PP 2.50
+      Alien::Build::Plugin::Prefer::BadVersion 2.50
+      Alien::Build::Plugin::Prefer::GoodVersion 2.50
+      Alien::Build::Plugin::Prefer::SortVersions 2.50
+      Alien::Build::Plugin::Probe::CBuilder 2.50
+      Alien::Build::Plugin::Probe::CommandLine 2.50
+      Alien::Build::Plugin::Probe::Vcpkg 2.50
+      Alien::Build::Plugin::Test::Mock 2.50
+      Alien::Build::PluginMeta 2.50
+      Alien::Build::Temp 2.50
+      Alien::Build::TempDir 2.50
+      Alien::Build::Util 2.50
+      Alien::Build::Version::Basic 2.50
+      Alien::Build::rc 2.50
+      Alien::Role 2.50
+      Alien::Util 2.50
+      Test::Alien 2.50
+      Test::Alien::Build 2.50
+      Test::Alien::CanCompile 2.50
+      Test::Alien::CanPlatypus 2.50
+      Test::Alien::Diag 2.50
+      Test::Alien::Run 2.50
+      Test::Alien::Synthetic 2.50
+      alienfile 2.50
     requirements:
       Capture::Tiny 0.17
       Digest::SHA 0
@@ -464,19 +464,19 @@ DISTRIBUTIONS
       Sub::Install 0.921
       strict 0
       warnings 0
-  DateTime-1.57
-    pathname: D/DR/DROLSKY/DateTime-1.57.tar.gz
+  DateTime-1.58
+    pathname: D/DR/DROLSKY/DateTime-1.58.tar.gz
     provides:
-      DateTime 1.57
-      DateTime::Duration 1.57
-      DateTime::Helpers 1.57
-      DateTime::Infinite 1.57
-      DateTime::Infinite::Future 1.57
-      DateTime::Infinite::Past 1.57
-      DateTime::LeapSecond 1.57
-      DateTime::PP 1.57
-      DateTime::PPExtra 1.57
-      DateTime::Types 1.57
+      DateTime 1.58
+      DateTime::Duration 1.58
+      DateTime::Helpers 1.58
+      DateTime::Infinite 1.58
+      DateTime::Infinite::Future 1.58
+      DateTime::Infinite::Past 1.58
+      DateTime::LeapSecond 1.58
+      DateTime::PP 1.58
+      DateTime::PPExtra 1.58
+      DateTime::Types 1.58
     requirements:
       Carp 0
       DateTime::Locale 1.06
@@ -529,15 +529,15 @@ DISTRIBUTIONS
       parent 0
       strict 0
       warnings 0
-  DateTime-Locale-1.33
-    pathname: D/DR/DROLSKY/DateTime-Locale-1.33.tar.gz
+  DateTime-Locale-1.35
+    pathname: D/DR/DROLSKY/DateTime-Locale-1.35.tar.gz
     provides:
-      DateTime::Locale 1.33
-      DateTime::Locale::Base 1.33
-      DateTime::Locale::Catalog 1.33
-      DateTime::Locale::Data 1.33
-      DateTime::Locale::FromData 1.33
-      DateTime::Locale::Util 1.33
+      DateTime::Locale 1.35
+      DateTime::Locale::Base 1.35
+      DateTime::Locale::Catalog 1.35
+      DateTime::Locale::Data 1.35
+      DateTime::Locale::FromData 1.35
+      DateTime::Locale::Util 1.35
     requirements:
       Carp 0
       Dist::CheckConflicts 0.02
@@ -1074,42 +1074,6 @@ DISTRIBUTIONS
       perl 5.008
       strict 0
       warnings 0
-  Encode-3.16
-    pathname: D/DA/DANKOGAI/Encode-3.16.tar.gz
-    provides:
-      Encode 3.16
-      Encode::Alias 2.24
-      Encode::Byte 2.04
-      Encode::CJKConstants 2.02
-      Encode::CN 2.03
-      Encode::CN::HZ 2.10
-      Encode::Config 2.05
-      Encode::EBCDIC 2.02
-      Encode::Encoder 2.03
-      Encode::Encoding 2.08
-      Encode::GSM0338 2.10
-      Encode::Guess 2.08
-      Encode::JP 2.05
-      Encode::JP::H2Z 2.02
-      Encode::JP::JIS7 2.08
-      Encode::KR 2.03
-      Encode::KR::2022_KR 2.04
-      Encode::MIME::Header 2.28
-      Encode::MIME::Header::ISO_2022_JP 1.09
-      Encode::MIME::Name 1.03
-      Encode::Symbol 2.02
-      Encode::TW 2.03
-      Encode::UTF_EBCDIC 3.16
-      Encode::Unicode 2.19
-      Encode::Unicode::UTF7 2.10
-      Encode::XS 3.16
-      Encode::utf8 3.16
-      encoding 3.00
-    requirements:
-      Exporter 5.57
-      ExtUtils::MakeMaker 0
-      Storable 0
-      parent 0.221
   Encode-Locale-1.05
     pathname: G/GA/GAAS/Encode-Locale-1.05.tar.gz
     provides:
@@ -1205,52 +1169,6 @@ DISTRIBUTIONS
       perl 5.006
       strict 0
       warnings 0
-  ExtUtils-MakeMaker-7.64
-    pathname: B/BI/BINGOS/ExtUtils-MakeMaker-7.64.tar.gz
-    provides:
-      ExtUtils::Command 7.64
-      ExtUtils::Command::MM 7.64
-      ExtUtils::Liblist 7.64
-      ExtUtils::Liblist::Kid 7.64
-      ExtUtils::MM 7.64
-      ExtUtils::MM_AIX 7.64
-      ExtUtils::MM_Any 7.64
-      ExtUtils::MM_BeOS 7.64
-      ExtUtils::MM_Cygwin 7.64
-      ExtUtils::MM_DOS 7.64
-      ExtUtils::MM_Darwin 7.64
-      ExtUtils::MM_MacOS 7.64
-      ExtUtils::MM_NW5 7.64
-      ExtUtils::MM_OS2 7.64
-      ExtUtils::MM_OS390 7.64
-      ExtUtils::MM_QNX 7.64
-      ExtUtils::MM_UWIN 7.64
-      ExtUtils::MM_Unix 7.64
-      ExtUtils::MM_VMS 7.64
-      ExtUtils::MM_VOS 7.64
-      ExtUtils::MM_Win32 7.64
-      ExtUtils::MM_Win95 7.64
-      ExtUtils::MY 7.64
-      ExtUtils::MakeMaker 7.64
-      ExtUtils::MakeMaker::Config 7.64
-      ExtUtils::MakeMaker::Locale 7.64
-      ExtUtils::MakeMaker::_version 7.64
-      ExtUtils::MakeMaker::charstar 7.64
-      ExtUtils::MakeMaker::version 7.64
-      ExtUtils::MakeMaker::version::regex 7.64
-      ExtUtils::MakeMaker::version::vpp 7.64
-      ExtUtils::Mkbootstrap 7.64
-      ExtUtils::Mksymlists 7.64
-      ExtUtils::testlib 7.64
-      MM 7.64
-      MY 7.64
-    requirements:
-      Data::Dumper 0
-      Encode 0
-      File::Basename 0
-      File::Spec 0.8
-      Pod::Man 0
-      perl 5.006
   FFI-CheckLib-0.28
     pathname: P/PL/PLICEASE/FFI-CheckLib-0.28.tar.gz
     provides:
@@ -1259,22 +1177,19 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       List::Util 1.33
       perl 5.006
-  File-Listing-6.14
-    pathname: P/PL/PLICEASE/File-Listing-6.14.tar.gz
+  File-Listing-6.15
+    pathname: P/PL/PLICEASE/File-Listing-6.15.tar.gz
     provides:
-      File::Listing 6.14
-      File::Listing::apache 6.14
-      File::Listing::dosftp 6.14
-      File::Listing::netware 6.14
-      File::Listing::unix 6.14
-      File::Listing::vms 6.14
+      File::Listing 6.15
+      File::Listing::apache 6.15
+      File::Listing::dosftp 6.15
+      File::Listing::netware 6.15
+      File::Listing::unix 6.15
+      File::Listing::vms 6.15
     requirements:
-      Carp 0
-      Exporter 0
+      Exporter 5.57
       ExtUtils::MakeMaker 0
       HTTP::Date 0
-      Time::Local 0
-      base 0
       perl 5.006
   File-NFSLock-1.29
     pathname: B/BB/BBB/File-NFSLock-1.29.tar.gz
@@ -1294,10 +1209,10 @@ DISTRIBUTIONS
       File::Spec 0.80
       perl 5.008001
       warnings 0
-  File-ShareDir-Install-0.13
-    pathname: E/ET/ETHER/File-ShareDir-Install-0.13.tar.gz
+  File-ShareDir-Install-0.14
+    pathname: E/ET/ETHER/File-ShareDir-Install-0.14.tar.gz
     provides:
-      File::ShareDir::Install 0.13
+      File::ShareDir::Install 0.14
     requirements:
       Carp 0
       Exporter 0
@@ -1444,19 +1359,19 @@ DISTRIBUTIONS
       Time::Zone 0
       perl 5.006002
       strict 0
-  HTTP-Message-6.36
-    pathname: O/OA/OALDERS/HTTP-Message-6.36.tar.gz
+  HTTP-Message-6.37
+    pathname: O/OA/OALDERS/HTTP-Message-6.37.tar.gz
     provides:
-      HTTP::Config 6.36
-      HTTP::Headers 6.36
-      HTTP::Headers::Auth 6.36
-      HTTP::Headers::ETag 6.36
-      HTTP::Headers::Util 6.36
-      HTTP::Message 6.36
-      HTTP::Request 6.36
-      HTTP::Request::Common 6.36
-      HTTP::Response 6.36
-      HTTP::Status 6.36
+      HTTP::Config 6.37
+      HTTP::Headers 6.37
+      HTTP::Headers::Auth 6.37
+      HTTP::Headers::ETag 6.37
+      HTTP::Headers::Util 6.37
+      HTTP::Message 6.37
+      HTTP::Request 6.37
+      HTTP::Request::Common 6.37
+      HTTP::Response 6.37
+      HTTP::Status 6.37
     requirements:
       Carp 0
       Compress::Raw::Zlib 0
@@ -1549,11 +1464,11 @@ DISTRIBUTIONS
       IO::String 1.08
     requirements:
       ExtUtils::MakeMaker 0
-  JSON-4.05
-    pathname: I/IS/ISHIGAKI/JSON-4.05.tar.gz
+  JSON-4.07
+    pathname: I/IS/ISHIGAKI/JSON-4.07.tar.gz
     provides:
-      JSON 4.05
-      JSON::Backend::PP 4.05
+      JSON 4.07
+      JSON::Backend::PP 4.07
     requirements:
       ExtUtils::MakeMaker 0
       Test::More 0
@@ -1628,10 +1543,10 @@ DISTRIBUTIONS
       IPC::Cmd 0
       XSLoader 0.22
       base 0
-  List-UtilsBy-0.11
-    pathname: P/PE/PEVANS/List-UtilsBy-0.11.tar.gz
+  List-UtilsBy-0.12
+    pathname: P/PE/PEVANS/List-UtilsBy-0.12.tar.gz
     provides:
-      List::UtilsBy 0.11
+      List::UtilsBy 0.12
     requirements:
       Exporter 5.57
       Module::Build 0.4004
@@ -1818,7 +1733,7 @@ DISTRIBUTIONS
       File::Spec 3.00
       File::Spec::Functions 0
       if 0
-      perl 5.005030
+      perl 5.00503
       strict 0
   Module-Runtime-0.016
     pathname: Z/ZE/ZEFRAM/Module-Runtime-0.016.tar.gz
@@ -1845,8 +1760,8 @@ DISTRIBUTIONS
       Mojolicious 8.50
       SQL::Abstract::Pg 1.0
       perl 5.016
-  Mojolicious-9.23
-    pathname: S/SR/SRI/Mojolicious-9.23.tar.gz
+  Mojolicious-9.26
+    pathname: S/SR/SRI/Mojolicious-9.26.tar.gz
     provides:
       Mojo undef
       Mojo::Asset undef
@@ -1914,7 +1829,7 @@ DISTRIBUTIONS
       Mojo::UserAgent::Transactor undef
       Mojo::Util undef
       Mojo::WebSocket undef
-      Mojolicious 9.23
+      Mojolicious 9.26
       Mojolicious::Command undef
       Mojolicious::Command::Author::cpanify undef
       Mojolicious::Command::Author::generate undef
@@ -1963,10 +1878,10 @@ DISTRIBUTIONS
       IO::Socket::IP 0.37
       Sub::Util 1.41
       perl 5.016
-  Mojolicious-Plugin-Authentication-1.37
-    pathname: J/JJ/JJATRIA/Mojolicious-Plugin-Authentication-1.37.tar.gz
+  Mojolicious-Plugin-Authentication-1.39
+    pathname: J/JJ/JJATRIA/Mojolicious-Plugin-Authentication-1.39.tar.gz
     provides:
-      Mojolicious::Plugin::Authentication 1.37
+      Mojolicious::Plugin::Authentication 1.39
     requirements:
       Exporter 0
       ExtUtils::MakeMaker 0
@@ -2065,10 +1980,10 @@ DISTRIBUTIONS
       perl 5.008001
       strict 0
       warnings 0
-  Package-Stash-XS-0.29
-    pathname: E/ET/ETHER/Package-Stash-XS-0.29.tar.gz
+  Package-Stash-XS-0.30
+    pathname: E/ET/ETHER/Package-Stash-XS-0.30.tar.gz
     provides:
-      Package::Stash::XS 0.29
+      Package::Stash::XS 0.30
     requirements:
       ExtUtils::MakeMaker 0
       XSLoader 0
@@ -2191,49 +2106,49 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       SQL::Abstract 2.0
       perl 5.016
-  Specio-0.47
-    pathname: D/DR/DROLSKY/Specio-0.47.tar.gz
+  Specio-0.48
+    pathname: D/DR/DROLSKY/Specio-0.48.tar.gz
     provides:
-      Specio 0.47
-      Specio::Coercion 0.47
-      Specio::Constraint::AnyCan 0.47
-      Specio::Constraint::AnyDoes 0.47
-      Specio::Constraint::AnyIsa 0.47
-      Specio::Constraint::Enum 0.47
-      Specio::Constraint::Intersection 0.47
-      Specio::Constraint::ObjectCan 0.47
-      Specio::Constraint::ObjectDoes 0.47
-      Specio::Constraint::ObjectIsa 0.47
-      Specio::Constraint::Parameterizable 0.47
-      Specio::Constraint::Parameterized 0.47
-      Specio::Constraint::Role::CanType 0.47
-      Specio::Constraint::Role::DoesType 0.47
-      Specio::Constraint::Role::Interface 0.47
-      Specio::Constraint::Role::IsaType 0.47
-      Specio::Constraint::Simple 0.47
-      Specio::Constraint::Structurable 0.47
-      Specio::Constraint::Structured 0.47
-      Specio::Constraint::Union 0.47
-      Specio::Declare 0.47
-      Specio::DeclaredAt 0.47
-      Specio::Exception 0.47
-      Specio::Exporter 0.47
-      Specio::Helpers 0.47
-      Specio::Library::Builtins 0.47
-      Specio::Library::Numeric 0.47
-      Specio::Library::Perl 0.47
-      Specio::Library::String 0.47
-      Specio::Library::Structured 0.47
-      Specio::Library::Structured::Dict 0.47
-      Specio::Library::Structured::Map 0.47
-      Specio::Library::Structured::Tuple 0.47
-      Specio::OO 0.47
-      Specio::PartialDump 0.47
-      Specio::Registry 0.47
-      Specio::Role::Inlinable 0.47
-      Specio::Subs 0.47
-      Specio::TypeChecks 0.47
-      Test::Specio 0.47
+      Specio 0.48
+      Specio::Coercion 0.48
+      Specio::Constraint::AnyCan 0.48
+      Specio::Constraint::AnyDoes 0.48
+      Specio::Constraint::AnyIsa 0.48
+      Specio::Constraint::Enum 0.48
+      Specio::Constraint::Intersection 0.48
+      Specio::Constraint::ObjectCan 0.48
+      Specio::Constraint::ObjectDoes 0.48
+      Specio::Constraint::ObjectIsa 0.48
+      Specio::Constraint::Parameterizable 0.48
+      Specio::Constraint::Parameterized 0.48
+      Specio::Constraint::Role::CanType 0.48
+      Specio::Constraint::Role::DoesType 0.48
+      Specio::Constraint::Role::Interface 0.48
+      Specio::Constraint::Role::IsaType 0.48
+      Specio::Constraint::Simple 0.48
+      Specio::Constraint::Structurable 0.48
+      Specio::Constraint::Structured 0.48
+      Specio::Constraint::Union 0.48
+      Specio::Declare 0.48
+      Specio::DeclaredAt 0.48
+      Specio::Exception 0.48
+      Specio::Exporter 0.48
+      Specio::Helpers 0.48
+      Specio::Library::Builtins 0.48
+      Specio::Library::Numeric 0.48
+      Specio::Library::Perl 0.48
+      Specio::Library::String 0.48
+      Specio::Library::Structured 0.48
+      Specio::Library::Structured::Dict 0.48
+      Specio::Library::Structured::Map 0.48
+      Specio::Library::Structured::Tuple 0.48
+      Specio::OO 0.48
+      Specio::PartialDump 0.48
+      Specio::Registry 0.48
+      Specio::Role::Inlinable 0.48
+      Specio::Subs 0.48
+      Specio::TypeChecks 0.48
+      Test::Specio 0.48
     requirements:
       B 0
       Carp 0
@@ -2308,17 +2223,17 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       Scalar::Util 0
       perl 5.006
-  Test-Compile-v3.0.1
-    pathname: E/EG/EGILES/Test-Compile-v3.0.1.tar.gz
+  Test-Compile-v3.1.0
+    pathname: E/EG/EGILES/Test-Compile-v3.1.0.tar.gz
     provides:
-      Test::Compile v3.0.1
-      Test::Compile::Internal v3.0.1
+      Test::Compile v3.1.0
+      Test::Compile::Internal v3.1.0
     requirements:
       Exporter 5.68
       Module::Build 0.38
       parent 0.225
       perl v5.10.0
-      version 0
+      version 0.77
   Test-Deep-1.130
     pathname: R/RJ/RJBS/Test-Deep-1.130.tar.gz
     provides:
@@ -2478,17 +2393,6 @@ DISTRIBUTIONS
       Scalar::Util 0
       Sub::Quote 0
       overload 0
-  Time-Local-1.30
-    pathname: D/DR/DROLSKY/Time-Local-1.30.tar.gz
-    provides:
-      Time::Local 1.30
-    requirements:
-      Carp 0
-      Exporter 0
-      ExtUtils::MakeMaker 0
-      constant 0
-      parent 0
-      strict 0
   TimeDate-2.33
     pathname: A/AT/ATOOMIC/TimeDate-2.33.tar.gz
     provides:
@@ -2553,12 +2457,12 @@ DISTRIBUTIONS
       Test::Pod 0
       Travel::Status::DE::IRIS 1.2
       perl v5.20.0
-  Travel-Status-DE-IRIS-1.65
-    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.65.tar.gz
+  Travel-Status-DE-IRIS-1.66
+    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.66.tar.gz
     provides:
-      Travel::Status::DE::IRIS 1.65
-      Travel::Status::DE::IRIS::Result 1.65
-      Travel::Status::DE::IRIS::Stations 1.65
+      Travel::Status::DE::IRIS 1.66
+      Travel::Status::DE::IRIS::Result 1.66
+      Travel::Status::DE::IRIS::Stations 1.66
     requirements:
       Carp 0
       Class::Accessor 0
@@ -2864,33 +2768,32 @@ DISTRIBUTIONS
       XSLoader 0
       lib 0
       perl 5.008001
-  libwww-perl-6.61
-    pathname: O/OA/OALDERS/libwww-perl-6.61.tar.gz
+  libwww-perl-6.67
+    pathname: O/OA/OALDERS/libwww-perl-6.67.tar.gz
     provides:
-      LWP 6.61
-      LWP::Authen::Basic 6.61
-      LWP::Authen::Digest 6.61
-      LWP::Authen::Ntlm 6.61
-      LWP::ConnCache 6.61
-      LWP::Debug 6.61
-      LWP::Debug::TraceHTTP 6.61
-      LWP::DebugFile 6.61
-      LWP::MemberMixin 6.61
-      LWP::Protocol 6.61
-      LWP::Protocol::cpan 6.61
-      LWP::Protocol::data 6.61
-      LWP::Protocol::file 6.61
-      LWP::Protocol::ftp 6.61
-      LWP::Protocol::gopher 6.61
-      LWP::Protocol::http 6.61
-      LWP::Protocol::loopback 6.61
-      LWP::Protocol::mailto 6.61
-      LWP::Protocol::nntp 6.61
-      LWP::Protocol::nogo 6.61
-      LWP::RobotUA 6.61
-      LWP::Simple 6.61
-      LWP::UserAgent 6.61
-      libwww::perl undef
+      LWP 6.67
+      LWP::Authen::Basic 6.67
+      LWP::Authen::Digest 6.67
+      LWP::Authen::Ntlm 6.67
+      LWP::ConnCache 6.67
+      LWP::Debug 6.67
+      LWP::Debug::TraceHTTP 6.67
+      LWP::DebugFile 6.67
+      LWP::MemberMixin 6.67
+      LWP::Protocol 6.67
+      LWP::Protocol::cpan 6.67
+      LWP::Protocol::data 6.67
+      LWP::Protocol::file 6.67
+      LWP::Protocol::ftp 6.67
+      LWP::Protocol::gopher 6.67
+      LWP::Protocol::http 6.67
+      LWP::Protocol::loopback 6.67
+      LWP::Protocol::mailto 6.67
+      LWP::Protocol::nntp 6.67
+      LWP::Protocol::nogo 6.67
+      LWP::RobotUA 6.67
+      LWP::Simple 6.67
+      LWP::UserAgent 6.67
     requirements:
       CPAN::Meta::Requirements 2.120620
       Digest::MD5 0
