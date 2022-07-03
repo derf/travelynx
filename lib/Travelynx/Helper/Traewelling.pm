@@ -354,6 +354,19 @@ sub checkin {
 			my ($tx) = @_;
 			if ( my $err = $tx->error ) {
 				my $err_msg = "HTTP $err->{code} $err->{message}";
+				if ( $tx->res->body ) {
+					if ( $err->{code} == 409 ) {
+						my $j = $tx->res->json;
+						$err_msg .= sprintf(
+': Bereits in %s eingecheckt: https://traewelling.de/status/%d',
+							$j->{error}{lineName},
+							$j->{error}{status_id}
+						);
+					}
+					else {
+						$err_msg .= ' ' . $tx->res->body;
+					}
+				}
 				if (    $err->{code} != 409
 					and $err->{code} != 406
 					and $err->{code} != 401 )
