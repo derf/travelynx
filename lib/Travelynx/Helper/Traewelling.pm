@@ -7,6 +7,7 @@ package Travelynx::Helper::Traewelling;
 use strict;
 use warnings;
 use 5.020;
+use utf8;
 
 use DateTime;
 use DateTime::Format::Strptime;
