@@ -71,7 +71,11 @@ sub run {
 	query_to_munin( 'polylines',
 		$db->select( 'polylines', 'count(*) as count' )->hash->{count} );
 	query_to_munin( 'traewelling_pull',
-		$db->select( 'traewelling', 'count(*) as count', { pull_sync => 1 })->hash->{count} );
+		$db->select( 'traewelling', 'count(*) as count', { pull_sync => 1 } )
+		  ->hash->{count} );
+	query_to_munin( 'traewelling_push',
+		$db->select( 'traewelling', 'count(*) as count', { push_sync => 1 } )
+		  ->hash->{count} );
 	query_to_munin(
 		'polyline_ratio',
 		$db->query(
