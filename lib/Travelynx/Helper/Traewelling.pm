@@ -76,8 +76,8 @@ sub get_status_p {
 
 	$self->{user_agent}->request_timeout(20)
 	  ->get_p(
-		"https://traewelling.de/api/v1/user/${username}/statuses" => $header )
-	  ->then(
+		"https://traewelling.de/api/v1/user/${username}/statuses?limit=1" =>
+		  $header )->then(
 		sub {
 			my ($tx) = @_;
 			if ( my $err = $tx->error ) {
