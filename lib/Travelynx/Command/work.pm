@@ -201,13 +201,26 @@ sub run {
 	my $request_count = 0;
 	for my $account_data ( $self->app->traewelling->get_pull_accounts ) {
 
+		my $in_transit = $self->app->in_transit->get(
+			uid => $account_data->{user_id},
+		);
+		if ($in_transit) {
+			$self->app->log->debug(
+"Skipping Traewelling status pull for UID $account_data->{user_id}: already checked in"
+			);
+			next;
+		}
+
 		# $account_data->{user_id} is the travelynx uid
 		# $account_data->{user_name} is the Träwelling username
 		$request_count += 1;
 		$self->app->log->debug(
 "Scheduling Traewelling status pull for UID $account_data->{user_id}"
 		);
-		Mojo::Promise->timer( $request_count * 0.2 )->then(
+
+		# In 'work', the event loop is not running,
+		# so there's no need to multiply by $request_count at the moment
+		Mojo::Promise->timer(0.5)->then(
 			sub {
 				return $self->app->traewelling_api->get_status_p(
 					username => $account_data->{data}{user_name},
