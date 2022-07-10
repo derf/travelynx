@@ -126,6 +126,17 @@ sub run {
 			"About to delete %d accounts, which is quite a lot.\n",
 			scalar @uids_to_delete
 		);
+		for my $uid (@uids_to_delete) {
+			my $journeys_res = $db->select(
+				'journeys',
+				'count(*) as count',
+				{ user_id => $uid }
+			)->hash;
+			printf STDERR (
+				" - UID %5d (%4d journeys)\n",
+				$uid, $journeys_res->{count}
+			);
+		}
 		say STDERR 'Aborting maintenance. Please investigate.';
 		exit(1);
 	}
