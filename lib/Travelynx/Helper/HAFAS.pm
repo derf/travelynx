@@ -82,11 +82,11 @@ sub get_polyline_p {
 
 			$cache->freeze( $url, $ret );
 
-			# borders ("(Gr)" as in "Grenze") are only returned by HAFAS.
+			# borders (Gr" as in "Grenze") are only returned by HAFAS.
 			# They are not stations.
 			my $iris_stations = join( '|', $train->route );
 			my $hafas_stations
-			  = join( '|', grep { $_ !~ m{\(Gr\)$} } @station_list );
+			  = join( '|', grep { $_ !~ m{(\(Gr\)|\)Gr)$} } @station_list );
 
 			# Do not return polyline if it belongs to an entirely different
 			# train. Trains with longer routes (e.g. due to train number
