@@ -149,8 +149,6 @@ sub run {
 		my $transit_res  = $db->delete( 'in_transit',    { user_id => $uid } );
 		my $hooks_res    = $db->delete( 'webhooks',      { user_id => $uid } );
 		my $trwl_res     = $db->delete( 'traewelling',   { user_id => $uid } );
-
-		# TODO + traewelling, webhooks
 		my $password_res
 		  = $db->delete( 'pending_passwords', { user_id => $uid } );
 		my $user_res = $db->delete( 'users', { id => $uid } );
