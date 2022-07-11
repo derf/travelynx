@@ -1163,5 +1163,5 @@ __END__
 
   Recommended workflow:
   > systemctl stop travelynx
-  > perl index.pl migrate
+  > perl index.pl database migrate
   > systemctl start travelynx
