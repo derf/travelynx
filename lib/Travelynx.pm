@@ -1379,6 +1379,16 @@ sub startup {
 	);
 
 	$self->helper(
+		'resolve_sb_template' => sub {
+			my ( $self, $template, %opt ) = @_;
+			my $ret = $template;
+			$ret =~ s{[{]eva[}]}{$opt{eva}}g;
+			$ret =~ s{[{]name[}]}{$opt{name}}g;
+			return $ret;
+		}
+	);
+
+	$self->helper(
 		'get_connection_targets' => sub {
 			my ( $self, %opt ) = @_;
 
@@ -1957,16 +1967,20 @@ sub startup {
 			);
 
 			if ( $latest_cancellation and $latest_cancellation->{cancelled} ) {
-				if ( my $station
-					= $self->app->station_by_eva
-					->{ $latest_cancellation->{dep_eva} } )
+				if (
+					my $station = $self->app->station_by_eva->{
+						$latest_cancellation->{dep_eva}
+					}
+				  )
 				{
 					$latest_cancellation->{dep_ds100} = $station->[0];
 					$latest_cancellation->{dep_name}  = $station->[1];
 				}
-				if ( my $station
-					= $self->app->station_by_eva
-					->{ $latest_cancellation->{arr_eva} } )
+				if (
+					my $station = $self->app->station_by_eva->{
+						$latest_cancellation->{arr_eva}
+					}
+				  )
 				{
 					$latest_cancellation->{arr_ds100} = $station->[0];
 					$latest_cancellation->{arr_name}  = $station->[1];
@@ -2554,6 +2568,7 @@ sub startup {
 	$authed_r->get('/account/hooks')->to('account#webhook');
 	$authed_r->get('/account/traewelling')->to('traewelling#settings');
 	$authed_r->get('/account/insight')->to('account#insight');
+	$authed_r->get('/account/services')->to('account#services');
 	$authed_r->get('/ajax/status_card.html')->to('traveling#status_card');
 	$authed_r->get('/cancelled')->to('traveling#cancelled');
 	$authed_r->get('/fgr')->to('passengerrights#list_candidates');
@@ -2577,6 +2592,7 @@ sub startup {
 	$authed_r->post('/account/hooks')->to('account#webhook');
 	$authed_r->post('/account/traewelling')->to('traewelling#settings');
 	$authed_r->post('/account/insight')->to('account#insight');
+	$authed_r->post('/account/services')->to('account#services');
 	$authed_r->post('/journey/add')->to('traveling#add_journey_form');
 	$authed_r->post('/journey/comment')->to('traveling#comment_form');
 	$authed_r->post('/journey/edit')->to('traveling#edit_journey');

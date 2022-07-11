@@ -10,6 +10,13 @@ use 5.020;
 
 use DateTime;
 
+my @sb_templates = (
+	undef,
+	[ 'DBF',        'https://dbf.finalrewind.org/{name}' ],
+	[ 'marudor.de', 'https://marudor.de/{name}' ],
+	[ 'NVM',        'https://nvm.finalrewind.org/board/{eva}' ],
+);
+
 sub new {
 	my ( $class, %opt ) = @_;
 
@@ -286,7 +293,7 @@ sub get_data {
 
 	my $user = $db->select(
 		'users',
-		'id, name, status, public_level, email, '
+		'id, name, status, public_level, email, external_services, '
 		  . 'extract(epoch from registered_at) as registered_at_ts, '
 		  . 'extract(epoch from last_seen) as last_seen_ts, '
 		  . 'extract(epoch from deletion_requested) as deletion_requested_ts',
@@ -294,11 +301,17 @@ sub get_data {
 	)->hash;
 	if ($user) {
 		return {
-			id            => $user->{id},
-			name          => $user->{name},
-			status        => $user->{status},
-			is_public     => $user->{public_level},
-			email         => $user->{email},
+			id        => $user->{id},
+			name      => $user->{name},
+			status    => $user->{status},
+			is_public => $user->{public_level},
+			email     => $user->{email},
+			sb_name   => $user->{external_services}
+			? $sb_templates[ $user->{external_services} & 0x07 ][0]
+			: undef,
+			sb_template => $user->{external_services}
+			? $sb_templates[ $user->{external_services} & 0x07 ][1]
+			: undef,
 			registered_at => DateTime->from_epoch(
 				epoch     => $user->{registered_at_ts},
 				time_zone => 'Europe/Berlin'
@@ -475,6 +488,24 @@ sub use_history {
 	else {
 		return $db->select( 'users', ['use_history'], { id => $uid } )
 		  ->hash->{use_history};
+	}
+}
+
+sub use_external_services {
+	my ( $self, %opt ) = @_;
+	my $db    = $opt{db} // $self->{pg}->db;
+	my $uid   = $opt{uid};
+	my $value = $opt{set};
+
+	if ($value) {
+		if ( $value < 0 or $value > 3 ) {
+			$value = 0;
+		}
+		$db->update( 'users', { external_services => $value }, { id => $uid } );
+	}
+	else {
+		return $db->select( 'users', ['external_services'], { id => $uid } )
+		  ->hash->{external_services};
 	}
 }
 

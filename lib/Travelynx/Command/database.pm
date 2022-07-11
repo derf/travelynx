@@ -1069,6 +1069,20 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v24 -> v25
+	# travelynx 1.23 adds optional links to external services, e.g.
+	# DBF or marudor.de departure boards
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				alter table users add column external_services smallint;
+				comment on column users.external_services is 'Which external service to use for stationboard or routing links';
+				update schema_version set version = 25;
+			}
+		);
+	},
 );
 
 sub setup_db {

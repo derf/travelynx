@@ -1,3 +1,4 @@
+% my $user = current_user();
 <div class="autorefresh">
 	<div class="card">
 		<div class="card-content">
@@ -102,7 +103,12 @@
 						% }
 					</div>
 					<div style="float: right; text-align: right;">
-						<b><%= $journey->{arr_name} %></b><br/>
+						% if ($user->{sb_template}) {
+							<b><a href="<%= resolve_sb_template($user->{sb_template}, name => $journey->{arr_name}, eva => $journey->{arr_eva}) %>" class="unmarked"><%= $journey->{arr_name} %></a></b><br/>
+						% }
+						% else {
+							<b><%= $journey->{arr_name} %></b><br/>
+						% }
 						% if ($journey->{real_arrival}->epoch) {
 							<b><%= $journey->{real_arrival}->strftime('%H:%M') %></b>
 							% if ($journey->{real_arrival}->epoch != $journey->{sched_arrival}->epoch) {
@@ -250,14 +256,14 @@
 				% }
 				<a class="action-share blue-text right"
 					style="margin-right: 0;"
-					% if (current_user()->{is_public} & 0x04 and $journey->{comment}) {
+					% if ($user->{is_public} & 0x04 and $journey->{comment}) {
 						data-text="<%= $journey->{comment} %> (@ <%= $journey->{train_type} %> <%= $journey->{train_no} %> → <%= $journey->{arr_name} %>) #travelynx"
 					% }
 					% else {
 						data-text="Ich bin gerade <%= $attrib %> <%= $journey->{train_type} %> <%= $journey->{train_no} %> nach <%= $journey->{arr_name} %> #travelynx"
 					% }
-					% if (current_user()->{is_public} & 0x02) {
-						data-url="<%= url_for('/status')->to_abs->scheme('https') %>/<%= current_user->{name} %>/<%= $journey->{sched_departure}->epoch %>"
+					% if ($user->{is_public} & 0x02) {
+						data-url="<%= url_for('/status')->to_abs->scheme('https') %>/<%= $user->{name} %>/<%= $journey->{sched_departure}->epoch %>"
 					% }
 					>
 					<i class="material-icons left" aria-hidden="true">share</i> Teilen
@@ -309,7 +315,11 @@
 					<tbody>
 						% for my $station (@{$journey->{route_after}}) {
 							% my $is_dest = ($journey->{arr_name} and $station->[0] eq $journey->{arr_name});
-							<tr><td><a style="<%= $is_dest? 'font-weight: bold;' : '' %>" class="action-checkout" data-station="<%= $station->[0] %>"><%= $station->[0] %>
+							<tr><td>
+								% if ($user->{sb_template}) {
+									<a href="<%= resolve_sb_template($user->{sb_template}, name => $station->[0], eva => $station->[1]{eva}) %>"><i class="material-icons tiny">info</i></a>
+								% }
+								<a style="<%= $is_dest? 'font-weight: bold;' : '' %>" class="action-checkout" data-station="<%= $station->[0] %>"><%= $station->[0] %>
 								% if ($station->[2] and $station->[2] eq 'cancelled') {
 									<span style="float: right;">entfällt</span>
 								% }
