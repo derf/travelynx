@@ -1167,6 +1167,7 @@ sub startup {
 						$route_data->{ $station->{name} } = {
 							sched_arr => $arr ? $arr->epoch : 0,
 							sched_dep => $dep ? $dep->epoch : 0,
+							eva       => $station->{evaId},
 						};
 					}
 
