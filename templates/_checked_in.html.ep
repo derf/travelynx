@@ -210,23 +210,22 @@
 			% }
 			% elsif (not $journey->{arr_name}) {
 				<p>Ziel wählen:</p>
-				<table>
-					<tbody>
-						% for my $station (@{$journey->{route_after}}) {
-							<tr><td><a class="action-checkout" data-station="<%= $station->[0] %>"><%= $station->[0] %>
-								% if ($station->[2] and $station->[2] eq 'cancelled') {
-									<span style="float: right;">entfällt</span>
-								% }
-								% elsif ($station->[1]{rt_arr}) {
-									<span style="float: right;"><%= $station->[1]{rt_arr}->strftime('%H:%M') %></span>
-								% }
-								% elsif ($station->[2] and $station->[2] eq 'additional') {
-									<span style="float: right;">Zusatzhalt</span>
-								% }
-							</a></td></tr>
-						% }
-					</tbody>
-				</table>
+				<p>
+					% for my $station (@{$journey->{route_after}}) {
+						<a class="tablerow action-checkout" data-station="<%= $station->[0] %>">
+							<span><%= $station->[0] %></span>
+							% if ($station->[2] and $station->[2] eq 'cancelled') {
+								<span>entfällt</span>
+							% }
+							% elsif ($station->[1]{rt_arr}) {
+								<span><%= $station->[1]{rt_arr}->strftime('%H:%M') %></span>
+							% }
+							% elsif ($station->[2] and $station->[2] eq 'additional') {
+								<span>Zusatzhalt</span>
+							% }
+						</a>
+					% }
+				</p>
 			% }
 		</div>
 		<div class="card-action">
@@ -311,28 +310,23 @@
 			<div class="card-content">
 				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 				<span class="card-title">Ziel ändern?</span>
-				<table>
-					<tbody>
-						% for my $station (@{$journey->{route_after}}) {
-							% my $is_dest = ($journey->{arr_name} and $station->[0] eq $journey->{arr_name});
-							<tr><td>
-								% if ($user->{sb_template}) {
-									<a href="<%= resolve_sb_template($user->{sb_template}, name => $station->[0], eva => $station->[1]{eva}) %>"><i class="material-icons tiny">info</i></a>
-								% }
-								<a style="<%= $is_dest? 'font-weight: bold;' : '' %>" class="action-checkout" data-station="<%= $station->[0] %>"><%= $station->[0] %>
-								% if ($station->[2] and $station->[2] eq 'cancelled') {
-									<span style="float: right;">entfällt</span>
-								% }
-								% elsif ($station->[1]{rt_arr}) {
-									<span style="float: right;"><%= $station->[1]{rt_arr}->strftime('%H:%M') %></span>
-								% }
-								% elsif ($station->[2] and $station->[2] eq 'additional') {
-									<span style="float: right;">Zusatzhalt</span>
-								% }
-							</a></td></tr>
+				<p>
+				% for my $station (@{$journey->{route_after}}) {
+					% my $is_dest = ($journey->{arr_name} and $station->[0] eq $journey->{arr_name});
+						<a class="action-checkout tablerow" style="<%= $is_dest? 'font-weight: bold;' : '' %>" data-station="<%= $station->[0] %>">
+						<span><%= $station->[0] %></span>
+						% if ($station->[2] and $station->[2] eq 'cancelled') {
+							<span>entfällt</span>
 						% }
-					</tbody>
-				</table>
+						% elsif ($station->[1]{rt_arr}) {
+							<span><%= $station->[1]{rt_arr}->strftime('%H:%M') %></span>
+						% }
+						% elsif ($station->[2] and $station->[2] eq 'additional') {
+							<span>Zusatzhalt</span>
+						% }
+					</a>
+				% }
+				</p>
 				<p>
 					Falls das Backend ausgefallen ist oder der Zug aus anderen
 					Gründen verloren ging: <a class="action-checkout"
