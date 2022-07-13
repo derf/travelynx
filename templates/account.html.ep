@@ -147,7 +147,7 @@
 					% }
 				</td>
 			</tr>
-			<tr>
+			<!-- <tr>
 				<th scope="row">Externe Dienste</th>
 				<td>
 					<a href="/account/services"><i class="material-icons">edit</i></a>
@@ -158,7 +158,7 @@
 						<span style="color: #999999;">Keine</span>
 					% }
 				</td>
-			</tr>
+			</tr> -->
 			<tr>
 				<th scope="row">Registriert am</th>
 				<td><%= $acc->{registered_at}->strftime('%d.%m.%Y %H:%M') %></td>
