@@ -86,14 +86,14 @@
 							</td>
 						</tr>
 					% }
-					<tr>
+					<tr class="<%= $link_class %>" data-station="<%= $result->station_uic %>" data-train="<%= $result->train_id %>" data-tr="3">
 						<td>
-							<a class="<%= $link_class %>" data-station="<%= $result->station_uic %>" data-train="<%= $result->train_id %>">
+							<a>
 								<%= $result->line %>
 							</a>
 						</td>
 						<td class="<%= $td_class %>">
-							<a class="<%= $link_class %>" data-station="<%= $result->station_uic %>" data-train="<%= $result->train_id %>">
+							<a>
 								<%= $result->destination %>
 							</a>
 						</td>

@@ -65,7 +65,13 @@ function odelay(sched, rt) {
 
 function tvly_run(link, req, err_callback) {
 	var error_icon = '<i class="material-icons">error</i>';
-	var progressbar = $('<div class="progress"><div class="indeterminate"></div></div>');
+	var progressbar;
+	if (link.data('tr')) {
+		progressbar = $('<tr><td colspan="' + link.data('tr') + '"><div class="progress"><div class="indeterminate"></div></div></td></tr>');
+	}
+	else {
+		progressbar = $('<div class="progress"><div class="indeterminate"></div></div>');
+	}
 	link.hide();
 	link.after(progressbar);
 	$.post('/action', req, function(data) {
