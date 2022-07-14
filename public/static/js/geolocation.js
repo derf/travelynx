@@ -26,22 +26,16 @@ $(document).ready(function() {
 		} else if (data.candidates.length == 0) {
 			showError('Keine Bahnhöfe in 70km Umkreis gefunden', '', null);
 		} else {
-			resultTable = $('<table><tbody></tbody></table>')
-			resultBody = resultTable.children();
+			const res = $(document.createElement('p'));
 			$.each(data.candidates, function(i, candidate) {
 
-				var ds100 = candidate.ds100,
+				const ds100 = candidate.ds100,
 					name = candidate.name,
-					distance = candidate.distance;
-				distance = distance.toFixed(1);
+					distance = candidate.distance.toFixed(1);
 
-				var stationlink = $(document.createElement('a'));
-				stationlink.attr('href', ds100);
-				stationlink.text(name);
-
-				resultBody.append('<tr><td><a href="/s/' + ds100 + '">' + name + '</a></td></tr>');
+				res.append($('<a class="tablerow" href="/s/' + ds100 + '"><span>' + name + '</span></a>'));
 			});
-			getPlaceholder().replaceWith(resultTable);
+			getPlaceholder().replaceWith(res);
 		}
 	};
 
