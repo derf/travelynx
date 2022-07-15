@@ -22,6 +22,18 @@ a.unmarked {
   color: $off-black;
 }
 
+div.targetlist {
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  align-items: center;
+  > a.nonflex {
+    padding-left: 1em;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    display: inline-block;
+  }
+}
+
 a.tablerow {
   display: flex;
   justify-content: space-between;

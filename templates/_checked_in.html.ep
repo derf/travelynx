@@ -310,7 +310,12 @@
 			<div class="card-content">
 				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 				<span class="card-title">Ziel ändern?</span>
-				<p>
+				% if ($user->{sb_template}) {
+					<div class="targetlist">
+				% }
+				% else {
+					<p>
+				% }
 				% for my $station (@{$journey->{route_after}}) {
 					% my $is_dest = ($journey->{arr_name} and $station->[0] eq $journey->{arr_name});
 						<a class="action-checkout tablerow" style="<%= $is_dest? 'font-weight: bold;' : '' %>" data-station="<%= $station->[0] %>">
@@ -325,8 +330,16 @@
 							<span>Zusatzhalt</span>
 						% }
 					</a>
+					% if ($user->{sb_template}) {
+						<a class="nonflex" href="<%= resolve_sb_template($user->{sb_template}, name => $station->[0], eva => $station->[1]{eva}) %>"><i class="material-icons tiny">info</i></a>
+					% }
 				% }
-				</p>
+				% if ($user->{sb_template}) {
+					</div>
+				% }
+				% else {
+					</p>
+				% }
 				<p>
 					Falls das Backend ausgefallen ist oder der Zug aus anderen
 					Gründen verloren ging: <a class="action-checkout"
