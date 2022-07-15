@@ -318,7 +318,7 @@
 				% }
 				% for my $station (@{$journey->{route_after}}) {
 					% my $is_dest = ($journey->{arr_name} and $station->[0] eq $journey->{arr_name});
-						<a class="action-checkout tablerow" style="<%= $is_dest? 'font-weight: bold;' : '' %>" data-station="<%= $station->[0] %>">
+					<a class="action-checkout tablerow" style="<%= $is_dest? 'font-weight: bold;' : '' %>" data-station="<%= $station->[0] %>">
 						<span><%= $station->[0] %></span>
 						% if ($station->[2] and $station->[2] eq 'cancelled') {
 							<span>entfällt</span>
