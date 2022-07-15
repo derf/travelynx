@@ -497,7 +497,7 @@ sub use_external_services {
 	my $uid   = $opt{uid};
 	my $value = $opt{set};
 
-	if ($value) {
+	if (defined $value) {
 		if ( $value < 0 or $value > 3 ) {
 			$value = 0;
 		}
