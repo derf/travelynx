@@ -12,7 +12,7 @@ use DateTime;
 
 my @sb_templates = (
 	undef,
-	[ 'DBF',        'https://dbf.finalrewind.org/{name}' ],
+	[ 'DBF',        'https://dbf.finalrewind.org/{name}?show_realtime=1#{tt}{tn}' ],
 	[ 'marudor.de', 'https://marudor.de/{name}' ],
 	[ 'NVM',        'https://nvm.finalrewind.org/board/{eva}' ],
 );

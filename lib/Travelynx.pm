@@ -1384,6 +1384,8 @@ sub startup {
 			my $ret = $template;
 			$ret =~ s{[{]eva[}]}{$opt{eva}}g;
 			$ret =~ s{[{]name[}]}{$opt{name}}g;
+			$ret =~ s{[{]tt[}]}{$opt{tt}}g;
+			$ret =~ s{[{]tn[}]}{$opt{tn}}g;
 			return $ret;
 		}
 	);
