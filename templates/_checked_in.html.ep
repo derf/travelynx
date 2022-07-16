@@ -104,7 +104,7 @@
 					</div>
 					<div style="float: right; text-align: right;">
 						% if ($user->{sb_template}) {
-							<b><a href="<%= resolve_sb_template($user->{sb_template}, name => $journey->{arr_name}, eva => $journey->{arr_eva}, tt => $journey->{train_type} // q{x}, tn => $journey->{train_no}) %>" class="unmarked"><%= $journey->{arr_name} %></a></b><br/>
+							<b><a href="<%= resolve_sb_template($user->{sb_template}, name => $journey->{arr_name}, eva => $journey->{arr_eva}, tt => $journey->{train_type} // q{x}, tn => $journey->{train_no}, id => $journey->{train_id}) %>" class="unmarked"><%= $journey->{arr_name} %></a></b><br/>
 						% }
 						% else {
 							<b><%= $journey->{arr_name} %></b><br/>
@@ -331,7 +331,7 @@
 						% }
 					</a>
 					% if ($user->{sb_template}) {
-						<a class="nonflex" href="<%= resolve_sb_template($user->{sb_template}, name => $station->[0], eva => $station->[1]{eva}, tt => $journey->{train_type} // q{x}, tn => $journey->{train_no}) %>"><i class="material-icons tiny">train</i></a>
+						<a class="nonflex" href="<%= resolve_sb_template($user->{sb_template}, name => $station->[0], eva => $station->[1]{eva}, tt => $journey->{train_type} // q{x}, tn => $journey->{train_no}, id => $journey->{train_id}) %>"><i class="material-icons tiny">train</i></a>
 					% }
 				% }
 				% if ($user->{sb_template}) {

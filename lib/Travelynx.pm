@@ -1386,6 +1386,7 @@ sub startup {
 			$ret =~ s{[{]name[}]}{$opt{name}}g;
 			$ret =~ s{[{]tt[}]}{$opt{tt}}g;
 			$ret =~ s{[{]tn[}]}{$opt{tn}}g;
+			$ret =~ s{[{]id[}]}{$opt{id}}g;
 			return $ret;
 		}
 	);
