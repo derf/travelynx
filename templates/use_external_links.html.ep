@@ -32,7 +32,7 @@
 			<div>
 				<label>
 					%= radio_button stationboard => '1'
-					<span><a href="https://dbf.finalrewind.org/">DBF</a></span>
+					<span><a href="https://dbf.finalrewind.org/">DBF</a> (Schienenverkehr)</span>
 				</label>
 			</div>
 		</div>
@@ -42,7 +42,17 @@
 			<div>
 				<label>
 					%= radio_button stationboard => '2'
-					<span><a href="https://marudor.de/">marudor.de</a></span>
+					<span><a href="https://marudor.de/">marudor.de</a> (Schienenverkehr)</span>
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			<div>
+				<label>
+					%= radio_button stationboard => '4'
+					<span><a href="https://marudor.de/regional">marudor.de/regional</a> (Nahverkehr)</span>
 				</label>
 			</div>
 		</div>
@@ -52,7 +62,7 @@
 			<div>
 				<label>
 					%= radio_button stationboard => '3'
-					<span><a href="https://nvm.finalrewind.org/">NVM</a></span>
+					<span><a href="https://nvm.finalrewind.org/">NVM</a> (Nahverkehr)</span>
 				</label>
 			</div>
 		</div>

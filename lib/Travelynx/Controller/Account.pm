@@ -382,7 +382,7 @@ sub services {
 	if ( $self->param('action') and $self->param('action') eq 'save' ) {
 		my $sb    = $self->param('stationboard');
 		my $value = 0;
-		if ( $sb =~ m{ ^ \d+ $ }x and $sb >= 0 and $sb <= 3 ) {
+		if ( $sb =~ m{ ^ \d+ $ }x and $sb >= 0 and $sb <= 4 ) {
 			$value = int($sb);
 		}
 		$self->users->use_external_services(

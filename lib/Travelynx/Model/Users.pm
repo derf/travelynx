@@ -12,9 +12,10 @@ use DateTime;
 
 my @sb_templates = (
 	undef,
-	[ 'DBF',        'https://dbf.finalrewind.org/{name}?show_realtime=1#{tt}{tn}' ],
+	[ 'DBF', 'https://dbf.finalrewind.org/{name}?show_realtime=1#{tt}{tn}' ],
 	[ 'marudor.de', 'https://marudor.de/{name}' ],
-	[ 'NVM',        'https://nvm.finalrewind.org/board/{eva}' ],
+	[ 'NVM',        'https://nvm.finalrewind.org/board/{eva}#{tt}{tn}' ],
+	[ 'marudor.de/regional', 'https://marudor.de/regional/{name}' ],
 );
 
 sub new {
@@ -497,8 +498,8 @@ sub use_external_services {
 	my $uid   = $opt{uid};
 	my $value = $opt{set};
 
-	if (defined $value) {
-		if ( $value < 0 or $value > 3 ) {
+	if ( defined $value ) {
+		if ( $value < 0 or $value > 4 ) {
 			$value = 0;
 		}
 		$db->update( 'users', { external_services => $value }, { id => $uid } );
