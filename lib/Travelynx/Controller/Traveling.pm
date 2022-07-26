@@ -604,45 +604,50 @@ sub station {
 	my $station = $self->stash('station');
 	my $train   = $self->param('train');
 
-	my $status = $self->iris->get_departures(
+	$self->render_later;
+	$self->iris->get_departures_p(
 		station      => $station,
 		lookbehind   => 120,
 		lookahead    => 30,
 		with_related => 1
-	);
+	)->then(
+		sub {
+			my ($status) = @_;
 
-	if ( $status->{errstr} ) {
-		$self->render(
-			'landingpage',
-			version           => $self->app->config->{version} // 'UNKNOWN',
-			with_autocomplete => 1,
-			with_geolocation  => 1,
-			error             => $status->{errstr}
-		);
-	}
-	else {
-		# You can't check into a train which terminates here
-		my @results = grep { $_->departure } @{ $status->{results} };
+			# You can't check into a train which terminates here
+			my @results = grep { $_->departure } @{ $status->{results} };
 
-		@results = map { $_->[0] }
-		  sort { $b->[1] <=> $a->[1] }
-		  map  { [ $_, $_->departure->epoch // $_->sched_departure->epoch ] }
-		  @results;
+			@results = map { $_->[0] }
+			  sort { $b->[1] <=> $a->[1] }
+			  map { [ $_, $_->departure->epoch // $_->sched_departure->epoch ] }
+			  @results;
 
-		if ($train) {
-			@results
-			  = grep { $_->type . ' ' . $_->train_no eq $train } @results;
+			if ($train) {
+				@results
+				  = grep { $_->type . ' ' . $_->train_no eq $train } @results;
+			}
+
+			$self->render(
+				'departures',
+				eva              => $status->{station_eva},
+				results          => \@results,
+				station          => $status->{station_name},
+				related_stations => $status->{related_stations},
+				title            => "travelynx: $status->{station_name}",
+			);
 		}
-
-		$self->render(
-			'departures',
-			eva              => $status->{station_eva},
-			results          => \@results,
-			station          => $status->{station_name},
-			related_stations => $status->{related_stations},
-			title            => "travelynx: $status->{station_name}",
-		);
-	}
+	)->catch(
+		sub {
+			my ($status) = @_;
+			$self->render(
+				'landingpage',
+				version           => $self->app->config->{version} // 'UNKNOWN',
+				with_autocomplete => 1,
+				with_geolocation  => 1,
+				error             => $status->{errstr}
+			);
+		}
+	)->wait;
 	$self->users->mark_seen( uid => $self->current_user->{id} );
 }
 

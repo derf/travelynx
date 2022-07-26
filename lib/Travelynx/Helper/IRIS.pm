@@ -10,6 +10,8 @@ use 5.020;
 
 use utf8;
 
+use Mojo::Promise;
+use Mojo::UserAgent;
 use Travel::Status::DE::IRIS;
 
 sub new {
@@ -21,8 +23,8 @@ sub new {
 sub get_departures {
 	my ( $self, %opt ) = @_;
 	my $station      = $opt{station};
-	my $lookbehind   = $opt{lookbehind} // 180;
-	my $lookahead    = $opt{lookahead} // 30;
+	my $lookbehind   = $opt{lookbehind}   // 180;
+	my $lookahead    = $opt{lookahead}    // 30;
 	my $with_related = $opt{with_related} // 0;
 
 	my @station_matches
@@ -48,8 +50,8 @@ sub get_departures {
 			with_related => $with_related,
 		);
 		return {
-			results => [ $status->results ],
-			errstr  => $status->errstr,
+			results       => [ $status->results ],
+			errstr        => $status->errstr,
 			station_ds100 =>
 			  ( $status->station ? $status->station->{ds100} : undef ),
 			station_eva =>
@@ -71,6 +73,95 @@ sub get_departures {
 			results => [],
 			errstr  => 'Unbekannte Station',
 		};
+	}
+}
+
+sub get_departures_p {
+	my ( $self, %opt ) = @_;
+	my $station      = $opt{station};
+	my $lookbehind   = $opt{lookbehind}   // 180;
+	my $lookahead    = $opt{lookahead}    // 30;
+	my $with_related = $opt{with_related} // 0;
+
+	my @station_matches
+	  = Travel::Status::DE::IRIS::Stations::get_station($station);
+
+	if ( @station_matches == 1 ) {
+		$station = $station_matches[0][0];
+		my $promise = Mojo::Promise->new;
+		Travel::Status::DE::IRIS->new_p(
+			station        => $station,
+			main_cache     => $self->{main_cache},
+			realtime_cache => $self->{realtime_cache},
+			keep_transfers => 1,
+			lookbehind     => 20,
+			datetime       => DateTime->now( time_zone => 'Europe/Berlin' )
+			  ->subtract( minutes => $lookbehind ),
+			lookahead   => $lookbehind + $lookahead,
+			lwp_options => {
+				timeout => 10,
+				agent   => 'travelynx/'
+				  . $self->{version}
+				  . ' +https://travelynx.de',
+			},
+			with_related => $with_related,
+			promise      => 'Mojo::Promise',
+			user_agent   => Mojo::UserAgent->new,
+			get_station  => \&Travel::Status::DE::IRIS::Stations::get_station,
+			meta         => Travel::Status::DE::IRIS::Stations::get_meta(),
+		)->then(
+			sub {
+				my ($status) = @_;
+				$promise->resolve(
+					{
+						results       => [ $status->results ],
+						errstr        => $status->errstr,
+						station_ds100 => (
+							  $status->station
+							? $status->station->{ds100}
+							: undef
+						),
+						station_eva => (
+							$status->station ? $status->station->{uic} : undef
+						),
+						station_name => (
+							$status->station ? $status->station->{name} : undef
+						),
+						related_stations => [ $status->related_stations ],
+					}
+				);
+				return;
+			}
+		)->catch(
+			sub {
+				my ($err) = @_;
+				$promise->reject(
+					{
+						results => [],
+						errstr  => "Error in promise: $err",
+					}
+				);
+				return;
+			}
+		)->wait;
+		return $promise;
+	}
+	elsif ( @station_matches > 1 ) {
+		return Mojo::Promise->reject(
+			{
+				results => [],
+				errstr  => 'Mehrdeutiger Stationsname. Mögliche Eingaben: '
+				  . join( q{, }, map { $_->[1] } @station_matches ),
+			}
+		);
+	}
+	else {
+		return Mojo::Promise->reject(
+			{
+				results => [],
+				errstr  => 'Unbekannte Station',
+			}
+		);
 	}
 }
 
