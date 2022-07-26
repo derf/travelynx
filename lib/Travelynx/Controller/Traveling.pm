@@ -622,9 +622,14 @@ sub station {
 			  map { [ $_, $_->departure->epoch // $_->sched_departure->epoch ] }
 			  @results;
 
+			my @connecting_trains;
 			if ($train) {
 				@results
 				  = grep { $_->type . ' ' . $_->train_no eq $train } @results;
+			}
+			else {
+				@connecting_trains = $self->get_connecting_trains(
+					eva => $status->{station_eva} );
 			}
 
 			$self->render(
@@ -633,19 +638,25 @@ sub station {
 				results          => \@results,
 				station          => $status->{station_name},
 				related_stations => $status->{related_stations},
+				connections      => \@connecting_trains,
 				title            => "travelynx: $status->{station_name}",
 			);
 		}
 	)->catch(
 		sub {
 			my ($status) = @_;
-			$self->render(
-				'landingpage',
-				version           => $self->app->config->{version} // 'UNKNOWN',
-				with_autocomplete => 1,
-				with_geolocation  => 1,
-				error             => $status->{errstr}
-			);
+			if ( $status->{errstr} ) {
+				$self->render(
+					'landingpage',
+					version => $self->app->config->{version} // 'UNKNOWN',
+					with_autocomplete => 1,
+					with_geolocation  => 1,
+					error             => $status->{errstr}
+				);
+			}
+			else {
+				$self->render( 'exception', exception => $status );
+			}
 		}
 	)->wait;
 	$self->users->mark_seen( uid => $self->current_user->{id} );

@@ -40,7 +40,7 @@
 		</div>
 	</div>
 % }
-% elsif (not param('train') and my @connections = get_connecting_trains(eva => $eva)) {
+% elsif (not param('train') and my @connections = @{stash('connections') // []}) {
 	% $have_connections = 1;
 	<div class="row">
 		<div class="col s12">
