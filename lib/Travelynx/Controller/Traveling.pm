@@ -351,8 +351,15 @@ sub status_card {
 		$self->render( '_checked_in', journey => $status );
 	}
 	elsif ( $status->{cancellation} ) {
-		$self->render( '_cancelled_departure',
-			journey => $status->{cancellation} );
+		my @connecting_trains = $self->get_connecting_trains(
+			eva              => $status->{cancellation}{dep_eva},
+			destination_name => $status->{cancellation}{arr_name}
+		);
+		$self->render(
+			'_cancelled_departure',
+			journey     => $status->{cancellation},
+			connections => \@connecting_trains
+		);
 	}
 	else {
 		$self->render( '_checked_out', journey => $status );
@@ -628,8 +635,17 @@ sub station {
 				  = grep { $_->type . ' ' . $_->train_no eq $train } @results;
 			}
 			else {
-				@connecting_trains = $self->get_connecting_trains(
-					eva => $status->{station_eva} );
+				my $user = $self->get_user_status;
+				if ( $user->{cancellation} ) {
+					@connecting_trains = $self->get_connecting_trains(
+						eva              => $user->{cancellation}{dep_eva},
+						destination_name => $user->{cancellation}{arr_name}
+					);
+				}
+				else {
+					@connecting_trains = $self->get_connecting_trains(
+						eva => $status->{station_eva} );
+				}
 			}
 
 			$self->render(
