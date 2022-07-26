@@ -3,12 +3,10 @@
 		<span class="card-title">Ausgecheckt</span>
 		<p>Aus <%= $journey->{train_type} %> <%= $journey->{train_no} %>
 			bis <a href="/s/<%= $journey->{arr_ds100} %>"><%= $journey->{arr_name} %></a></p>
-		% if (now()->epoch - $journey->{timestamp}->epoch < (30*60)) {
-			% if (my @connections = get_connecting_trains()) {
-				<span class="card-title" style="margin-top: 2ex;">Verbindungen</span>
-				<p>Zug auswählen zum Einchecken mit Zielwahl.</p>
-				%= include '_connections', connections => \@connections, checkin_from => $journey->{arr_ds100};
-			% }
+		% if (my @connections = @{stash('connections') // []}) {
+			<span class="card-title" style="margin-top: 2ex;">Verbindungen</span>
+			<p>Zug auswählen zum Einchecken mit Zielwahl.</p>
+			%= include '_connections', connections => \@connections, checkin_from => $journey->{arr_ds100};
 		% }
 	</div>
 	<div class="card-action">

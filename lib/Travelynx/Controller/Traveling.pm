@@ -362,7 +362,16 @@ sub status_card {
 		);
 	}
 	else {
-		$self->render( '_checked_out', journey => $status );
+		my @connecting_trains;
+		my $now = DateTime->now( time_zone => 'Europe/Berlin' );
+		if ( $now->epoch - $status->{timestamp}->epoch < ( 30 * 60 ) ) {
+			@connecting_trains = $self->get_connecting_trains;
+		}
+		$self->render(
+			'_checked_out',
+			journey     => $status,
+			connections => \@connecting_trains
+		);
 	}
 }
 
