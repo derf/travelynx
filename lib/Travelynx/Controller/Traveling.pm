@@ -645,7 +645,10 @@ sub station {
 			}
 			else {
 				my $user = $self->get_user_status;
-				if ( $user->{cancellation} ) {
+				if (    $user->{cancellation}
+					and $status->{station_eva} eq
+					$user->{cancellation}{dep_eva} )
+				{
 					@connecting_trains = $self->get_connecting_trains(
 						eva              => $user->{cancellation}{dep_eva},
 						destination_name => $user->{cancellation}{arr_name}
