@@ -17,9 +17,20 @@ use Travel::Status::DE::IRIS::Stations;
 sub homepage {
 	my ($self) = @_;
 	if ( $self->is_user_authenticated ) {
+		my $status = $self->get_user_status;
+		my @connecting_trains;
+		if ( $status->{checked_in} ) {
+			if ( defined $status->{arrival_countdown}
+				and $status->{arrival_countdown} < ( 20 * 60 ) )
+			{
+				@connecting_trains = $self->get_connecting_trains();
+			}
+		}
 		$self->render(
 			'landingpage',
 			version           => $self->app->config->{version} // 'UNKNOWN',
+			status            => $status,
+			connections       => \@connecting_trains,
 			with_autocomplete => 1,
 			with_geolocation  => 1
 		);
@@ -348,7 +359,17 @@ sub status_card {
 	delete $self->stash->{layout};
 
 	if ( $status->{checked_in} ) {
-		$self->render( '_checked_in', journey => $status );
+		my @connecting_trains;
+		if ( defined $status->{arrival_countdown}
+			and $status->{arrival_countdown} < ( 20 * 60 ) )
+		{
+			@connecting_trains = $self->get_connecting_trains();
+		}
+		$self->render(
+			'_checked_in',
+			journey     => $status,
+			connections => \@connecting_trains
+		);
 	}
 	elsif ( $status->{cancellation} ) {
 		my @connecting_trains = $self->get_connecting_trains(
