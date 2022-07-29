@@ -1194,4 +1194,71 @@ sub get_stats {
 	return $stats;
 }
 
+sub get_latest_dest_id {
+	my ( $self, %opt ) = @_;
+
+	my $uid = $opt{uid};
+	my $db  = $opt{db} // $self->{pg}->db;
+
+	if (
+		my $id = $self->{in_transit}->get_checkout_station_id(
+			uid => $uid,
+			db  => $db
+		)
+	  )
+	{
+		return $id;
+	}
+
+	return $self->get_latest_checkout_station_id(
+		uid => $uid,
+		db  => $db
+	);
+}
+
+sub get_connection_targets {
+	my ( $self, %opt ) = @_;
+
+	my $uid       = $opt{uid};
+	my $threshold = $opt{threshold}
+	  // DateTime->now( time_zone => 'Europe/Berlin' )->subtract( months => 4 );
+	my $db        = $opt{db} //= $self->{pg}->db;
+	my $min_count = $opt{min_count} // 3;
+
+	if ( $opt{destination_name} ) {
+		return ( $opt{destination_name} );
+	}
+
+	my $dest_id = $opt{eva} // $self->get_latest_dest_id(%opt);
+
+	if ( not $dest_id ) {
+		return;
+	}
+
+	my $res = $db->query(
+		qq{
+			select
+			count(checkout_station_id) as count,
+			checkout_station_id as dest
+			from journeys
+			where user_id = ?
+			and checkin_station_id = ?
+			and real_departure > ?
+			group by checkout_station_id
+			order by count desc;
+		},
+		$uid,
+		$dest_id,
+		$threshold
+	);
+	my @destinations
+	  = $res->hashes->grep( sub { shift->{count} >= $min_count } )
+	  ->map( sub { shift->{dest} } )->each;
+	@destinations
+	  = grep { $self->{station_by_eva}{$_} } @destinations;
+	@destinations
+	  = map { $self->{station_by_eva}{$_}->[1] } @destinations;
+	return @destinations;
+}
+
 1;

@@ -370,6 +370,7 @@ sub startup {
 			state $journeys = Travelynx::Model::Journeys->new(
 				log             => $self->app->log,
 				pg              => $self->pg,
+				in_transit      => $self->in_transit,
 				stats_cache     => $self->journey_stats_cache,
 				renamed_station => $self->app->renamed_station,
 				station_by_eva  => $self->app->station_by_eva,
@@ -1355,30 +1356,6 @@ sub startup {
 	);
 
 	$self->helper(
-		'get_latest_dest_id' => sub {
-			my ( $self, %opt ) = @_;
-
-			my $uid = $opt{uid} // $self->current_user->{id};
-			my $db  = $opt{db}  // $self->pg->db;
-
-			if (
-				my $id = $self->in_transit->get_checkout_station_id(
-					uid => $uid,
-					db  => $db
-				)
-			  )
-			{
-				return $id;
-			}
-
-			return $self->journeys->get_latest_checkout_station_id(
-				uid => $uid,
-				db  => $db
-			);
-		}
-	);
-
-	$self->helper(
 		'resolve_sb_template' => sub {
 			my ( $self, $template, %opt ) = @_;
 			my $ret = $template;
@@ -1388,54 +1365,6 @@ sub startup {
 			$ret =~ s{[{]tn[}]}{$opt{tn}}g;
 			$ret =~ s{[{]id[}]}{$opt{id}}g;
 			return $ret;
-		}
-	);
-
-	$self->helper(
-		'get_connection_targets' => sub {
-			my ( $self, %opt ) = @_;
-
-			my $uid       = $opt{uid} //= $self->current_user->{id};
-			my $threshold = $opt{threshold}
-			  // DateTime->now( time_zone => 'Europe/Berlin' )
-			  ->subtract( months => 4 );
-			my $db        = $opt{db} //= $self->pg->db;
-			my $min_count = $opt{min_count} // 3;
-
-			if ( $opt{destination_name} ) {
-				return ( $opt{destination_name} );
-			}
-
-			my $dest_id = $opt{eva} // $self->get_latest_dest_id(%opt);
-
-			if ( not $dest_id ) {
-				return;
-			}
-
-			my $res = $db->query(
-				qq{
-					select
-					count(checkout_station_id) as count,
-					checkout_station_id as dest
-					from journeys
-					where user_id = ?
-					and checkin_station_id = ?
-					and real_departure > ?
-					group by checkout_station_id
-					order by count desc;
-				},
-				$uid,
-				$dest_id,
-				$threshold
-			);
-			my @destinations
-			  = $res->hashes->grep( sub { shift->{count} >= $min_count } )
-			  ->map( sub { shift->{dest} } )->each;
-			@destinations
-			  = grep { $self->app->station_by_eva->{$_} } @destinations;
-			@destinations
-			  = map { $self->app->station_by_eva->{$_}->[1] } @destinations;
-			return @destinations;
 		}
 	);
 
@@ -1479,7 +1408,7 @@ sub startup {
 				return;
 			}
 
-			my @destinations = $self->get_connection_targets(%opt);
+			my @destinations = $self->journeys->get_connection_targets(%opt);
 
 			if ($exclude_via) {
 				@destinations = grep { $_ ne $exclude_via } @destinations;
