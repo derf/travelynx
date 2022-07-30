@@ -8,6 +8,8 @@ use Mojo::Base 'Mojolicious::Controller';
 use Crypt::Eksblowfish::Bcrypt qw(bcrypt en_base64);
 use UUID::Tiny qw(:std);
 
+# Internal Helpers
+
 sub hash_password {
 	my ($password) = @_;
 	my @salt_bytes = map { int( rand(255) ) + 1 } ( 1 .. 16 );
@@ -19,6 +21,197 @@ sub hash_password {
 sub make_token {
 	return create_uuid_as_string(UUID_V4);
 }
+
+sub send_registration_mail {
+	my ( $self, %opt ) = @_;
+
+	my $email   = $opt{email};
+	my $token   = $opt{token};
+	my $user    = $opt{user};
+	my $user_id = $opt{user_id};
+	my $ip      = $opt{ip};
+	my $date    = DateTime->now( time_zone => 'Europe/Berlin' )
+	  ->strftime('%d.%m.%Y %H:%M:%S %z');
+
+	my $ua          = $self->req->headers->user_agent;
+	my $reg_url     = $self->url_for('reg')->to_abs->scheme('https');
+	my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
+
+	my $body = "Hallo, ${user}!\n\n";
+	$body .= "Mit deiner E-Mail-Adresse (${email}) wurde ein Account bei\n";
+	$body .= "travelynx angelegt.\n\n";
+	$body
+	  .= "Falls die Registrierung von dir ausging, kannst du den Account unter\n";
+	$body .= "${reg_url}/${user_id}/${token}\n";
+	$body .= "freischalten.\n\n";
+	$body
+	  .= "Falls nicht, ignoriere diese Mail bitte. Nach etwa 48 Stunden wird deine\n";
+	$body
+	  .= "Mail-Adresse erneut zur Registrierung freigeschaltet. Falls auch diese fehlschlägt,\n";
+	$body
+	  .= "werden wir sie dauerhaft sperren und keine Mails mehr dorthin schicken.\n\n";
+	$body .= "Daten zur Registrierung:\n";
+	$body .= " * Datum: ${date}\n";
+	$body .= " * Client: ${ip}\n";
+	$body .= " * UserAgent: ${ua}\n\n\n";
+	$body .= "Impressum: ${imprint_url}\n";
+
+	return $self->sendmail->custom( $email, 'Registrierung bei travelynx',
+		$body );
+}
+
+sub send_address_confirmation_mail {
+	my ( $self, $email, $token ) = @_;
+
+	my $name = $self->current_user->{name};
+	my $ip   = $self->req->headers->header('X-Forwarded-For');
+	my $ua   = $self->req->headers->user_agent;
+	my $date = DateTime->now( time_zone => 'Europe/Berlin' )
+	  ->strftime('%d.%m.%Y %H:%M:%S %z');
+
+	# In case Mojolicious is not running behind a reverse proxy
+	$ip
+	  //= sprintf( '%s:%s', $self->tx->remote_address, $self->tx->remote_port );
+	my $confirm_url = $self->url_for('confirm_mail')->to_abs->scheme('https');
+	my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
+
+	my $body = "Hallo ${name},\n\n";
+	$body .= "Bitte bestätige unter <${confirm_url}/${token}>,\n";
+	$body .= "dass du mit dieser Adresse E-Mail empfangen kannst.\n\n";
+	$body
+	  .= "Du erhältst diese Mail, da eine Änderung der deinem travelynx-Account\n";
+	$body .= "zugeordneten Mail-Adresse beantragt wurde.\n\n";
+	$body .= "Daten zur Anfrage:\n";
+	$body .= " * Datum: ${date}\n";
+	$body .= " * Client: ${ip}\n";
+	$body .= " * UserAgent: ${ua}\n\n\n";
+	$body .= "Impressum: ${imprint_url}\n";
+
+	return $self->sendmail->custom( $email,
+		'travelynx: Mail-Adresse bestätigen', $body );
+}
+
+sub send_name_notification_mail {
+	my ( $self, $old_name, $new_name ) = @_;
+
+	my $ip   = $self->req->headers->header('X-Forwarded-For');
+	my $ua   = $self->req->headers->user_agent;
+	my $date = DateTime->now( time_zone => 'Europe/Berlin' )
+	  ->strftime('%d.%m.%Y %H:%M:%S %z');
+
+	# In case Mojolicious is not running behind a reverse proxy
+	$ip
+	  //= sprintf( '%s:%s', $self->tx->remote_address, $self->tx->remote_port );
+	my $confirm_url = $self->url_for('confirm_mail')->to_abs->scheme('https');
+	my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
+
+	my $body = "Hallo ${new_name},\n\n";
+	$body .= "Der Name deines Travelynx-Accounts wurde erfolgreich geändert.\n";
+	$body
+	  .= "Bitte beachte, dass du dich ab sofort nur mit dem neuen Namen anmelden kannst.\n\n";
+	$body .= "Alter Name: ${old_name}\n\n";
+	$body .= "Neue Name: ${new_name}\n\n";
+	$body .= "Daten zur Anfrage:\n";
+	$body .= " * Datum: ${date}\n";
+	$body .= " * Client: ${ip}\n";
+	$body .= " * UserAgent: ${ua}\n\n\n";
+	$body .= "Impressum: ${imprint_url}\n";
+
+	return $self->sendmail->custom( $self->current_user->{email},
+		'travelynx: Name geändert', $body );
+}
+
+sub send_password_notification_mail {
+	my ($self) = @_;
+	my $user   = $self->current_user->{name};
+	my $email  = $self->current_user->{email};
+	my $ip     = $self->req->headers->header('X-Forwarded-For');
+	my $ua     = $self->req->headers->user_agent;
+	my $date   = DateTime->now( time_zone => 'Europe/Berlin' )
+	  ->strftime('%d.%m.%Y %H:%M:%S %z');
+
+	# In case Mojolicious is not running behind a reverse proxy
+	$ip
+	  //= sprintf( '%s:%s', $self->tx->remote_address, $self->tx->remote_port );
+	my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
+
+	my $body = "Hallo ${user},\n\n";
+	$body
+	  .= "Das Passwort deines travelynx-Accounts wurde soeben geändert.\n\n";
+	$body .= "Daten zur Änderung:\n";
+	$body .= " * Datum: ${date}\n";
+	$body .= " * Client: ${ip}\n";
+	$body .= " * UserAgent: ${ua}\n\n\n";
+	$body .= "Impressum: ${imprint_url}\n";
+
+	$self->sendmail->custom( $email, 'travelynx: Passwort geändert', $body );
+}
+
+sub send_lostpassword_confirmation_mail {
+	my ( $self, %opt ) = @_;
+	my $email = $opt{email};
+	my $name  = $opt{name};
+	my $uid   = $opt{uid};
+	my $token = $opt{token};
+
+	my $ip   = $self->req->headers->header('X-Forwarded-For');
+	my $ua   = $self->req->headers->user_agent;
+	my $date = DateTime->now( time_zone => 'Europe/Berlin' )
+	  ->strftime('%d.%m.%Y %H:%M:%S %z');
+
+	# In case Mojolicious is not running behind a reverse proxy
+	$ip
+	  //= sprintf( '%s:%s', $self->tx->remote_address, $self->tx->remote_port );
+	my $recover_url = $self->url_for('recover')->to_abs->scheme('https');
+	my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
+
+	my $body = "Hallo ${name},\n\n";
+	$body .= "Unter ${recover_url}/${uid}/${token}\n";
+	$body
+	  .= "kannst du ein neues Passwort für deinen travelynx-Account vergeben.\n\n";
+	$body
+	  .= "Du erhältst diese Mail, da mit deinem Accountnamen und deiner Mail-Adresse\n";
+	$body
+	  .= "ein Passwort-Reset angefordert wurde. Falls diese Anfrage nicht von dir\n";
+	$body .= "ausging, kannst du sie ignorieren.\n\n";
+	$body .= "Daten zur Anfrage:\n";
+	$body .= " * Datum: ${date}\n";
+	$body .= " * Client: ${ip}\n";
+	$body .= " * UserAgent: ${ua}\n\n\n";
+	$body .= "Impressum: ${imprint_url}\n";
+
+	my $success
+	  = $self->sendmail->custom( $email, 'travelynx: Neues Passwort', $body );
+}
+
+sub send_lostpassword_notification_mail {
+	my ( $self, $account ) = @_;
+	my $user  = $account->{name};
+	my $email = $account->{email};
+	my $ip    = $self->req->headers->header('X-Forwarded-For');
+	my $ua    = $self->req->headers->user_agent;
+	my $date  = DateTime->now( time_zone => 'Europe/Berlin' )
+	  ->strftime('%d.%m.%Y %H:%M:%S %z');
+
+	# In case Mojolicious is not running behind a reverse proxy
+	$ip
+	  //= sprintf( '%s:%s', $self->tx->remote_address, $self->tx->remote_port );
+	my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
+
+	my $body = "Hallo ${user},\n\n";
+	$body .= "Das Passwort deines travelynx-Accounts wurde soeben über die";
+	$body .= " 'Passwort vergessen'-Funktion geändert.\n\n";
+	$body .= "Daten zur Änderung:\n";
+	$body .= " * Datum: ${date}\n";
+	$body .= " * Client: ${ip}\n";
+	$body .= " * UserAgent: ${ua}\n\n\n";
+	$body .= "Impressum: ${imprint_url}\n";
+
+	return $self->sendmail->custom( $email, 'travelynx: Passwort geändert',
+		$body );
+}
+
+# Controllers
 
 sub login_form {
 	my ($self) = @_;
@@ -165,44 +358,6 @@ sub register {
 	else {
 		$self->render( 'register', invalid => 'sendmail' );
 	}
-}
-
-sub send_registration_mail {
-	my ( $self, %opt ) = @_;
-
-	my $email   = $opt{email};
-	my $token   = $opt{token};
-	my $user    = $opt{user};
-	my $user_id = $opt{user_id};
-	my $ip      = $opt{ip};
-	my $date    = DateTime->now( time_zone => 'Europe/Berlin' )
-	  ->strftime('%d.%m.%Y %H:%M:%S %z');
-
-	my $ua          = $self->req->headers->user_agent;
-	my $reg_url     = $self->url_for('reg')->to_abs->scheme('https');
-	my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
-
-	my $body = "Hallo, ${user}!\n\n";
-	$body .= "Mit deiner E-Mail-Adresse (${email}) wurde ein Account bei\n";
-	$body .= "travelynx angelegt.\n\n";
-	$body
-	  .= "Falls die Registrierung von dir ausging, kannst du den Account unter\n";
-	$body .= "${reg_url}/${user_id}/${token}\n";
-	$body .= "freischalten.\n\n";
-	$body
-	  .= "Falls nicht, ignoriere diese Mail bitte. Nach etwa 48 Stunden wird deine\n";
-	$body
-	  .= "Mail-Adresse erneut zur Registrierung freigeschaltet. Falls auch diese fehlschlägt,\n";
-	$body
-	  .= "werden wir sie dauerhaft sperren und keine Mails mehr dorthin schicken.\n\n";
-	$body .= "Daten zur Registrierung:\n";
-	$body .= " * Datum: ${date}\n";
-	$body .= " * Client: ${ip}\n";
-	$body .= " * UserAgent: ${ua}\n\n\n";
-	$body .= "Impressum: ${imprint_url}\n";
-
-	return $self->sendmail->custom( $email, 'Registrierung bei travelynx',
-		$body );
 }
 
 sub verify {
@@ -495,37 +650,6 @@ sub change_mail {
 	}
 }
 
-sub send_address_confirmation_mail {
-	my ( $self, $email, $token ) = @_;
-
-	my $name = $self->current_user->{name};
-	my $ip   = $self->req->headers->header('X-Forwarded-For');
-	my $ua   = $self->req->headers->user_agent;
-	my $date = DateTime->now( time_zone => 'Europe/Berlin' )
-	  ->strftime('%d.%m.%Y %H:%M:%S %z');
-
-	# In case Mojolicious is not running behind a reverse proxy
-	$ip
-	  //= sprintf( '%s:%s', $self->tx->remote_address, $self->tx->remote_port );
-	my $confirm_url = $self->url_for('confirm_mail')->to_abs->scheme('https');
-	my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
-
-	my $body = "Hallo ${name},\n\n";
-	$body .= "Bitte bestätige unter <${confirm_url}/${token}>,\n";
-	$body .= "dass du mit dieser Adresse E-Mail empfangen kannst.\n\n";
-	$body
-	  .= "Du erhältst diese Mail, da eine Änderung der deinem travelynx-Account\n";
-	$body .= "zugeordneten Mail-Adresse beantragt wurde.\n\n";
-	$body .= "Daten zur Anfrage:\n";
-	$body .= " * Datum: ${date}\n";
-	$body .= " * Client: ${ip}\n";
-	$body .= " * UserAgent: ${ua}\n\n\n";
-	$body .= "Impressum: ${imprint_url}\n";
-
-	return $self->sendmail->custom( $email,
-		'travelynx: Mail-Adresse bestätigen', $body );
-}
-
 sub change_name {
 	my ($self) = @_;
 
@@ -590,36 +714,6 @@ sub change_name {
 	}
 }
 
-sub send_name_notification_mail {
-	my ( $self, $old_name, $new_name ) = @_;
-
-	my $ip   = $self->req->headers->header('X-Forwarded-For');
-	my $ua   = $self->req->headers->user_agent;
-	my $date = DateTime->now( time_zone => 'Europe/Berlin' )
-	  ->strftime('%d.%m.%Y %H:%M:%S %z');
-
-	# In case Mojolicious is not running behind a reverse proxy
-	$ip
-	  //= sprintf( '%s:%s', $self->tx->remote_address, $self->tx->remote_port );
-	my $confirm_url = $self->url_for('confirm_mail')->to_abs->scheme('https');
-	my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
-
-	my $body = "Hallo ${new_name},\n\n";
-	$body .= "Der Name deines Travelynx-Accounts wurde erfolgreich geändert.\n";
-	$body
-	  .= "Bitte beachte, dass du dich ab sofort nur mit dem neuen Namen anmelden kannst.\n\n";
-	$body .= "Alter Name: ${old_name}\n\n";
-	$body .= "Neue Name: ${new_name}\n\n";
-	$body .= "Daten zur Anfrage:\n";
-	$body .= " * Datum: ${date}\n";
-	$body .= " * Client: ${ip}\n";
-	$body .= " * UserAgent: ${ua}\n\n\n";
-	$body .= "Impressum: ${imprint_url}\n";
-
-	return $self->sendmail->custom( $self->current_user->{email},
-		'travelynx: Name geändert', $body );
-}
-
 sub password_form {
 	my ($self) = @_;
 
@@ -667,32 +761,6 @@ sub change_password {
 	$self->flash( success => 'password' );
 	$self->redirect_to('account');
 	$self->send_password_notification_mail();
-}
-
-sub send_password_notification_mail {
-	my ($self) = @_;
-	my $user   = $self->current_user->{name};
-	my $email  = $self->current_user->{email};
-	my $ip     = $self->req->headers->header('X-Forwarded-For');
-	my $ua     = $self->req->headers->user_agent;
-	my $date   = DateTime->now( time_zone => 'Europe/Berlin' )
-	  ->strftime('%d.%m.%Y %H:%M:%S %z');
-
-	# In case Mojolicious is not running behind a reverse proxy
-	$ip
-	  //= sprintf( '%s:%s', $self->tx->remote_address, $self->tx->remote_port );
-	my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
-
-	my $body = "Hallo ${user},\n\n";
-	$body
-	  .= "Das Passwort deines travelynx-Accounts wurde soeben geändert.\n\n";
-	$body .= "Daten zur Änderung:\n";
-	$body .= " * Datum: ${date}\n";
-	$body .= " * Client: ${ip}\n";
-	$body .= " * UserAgent: ${ua}\n\n\n";
-	$body .= "Impressum: ${imprint_url}\n";
-
-	$self->sendmail->custom( $email, 'travelynx: Passwort geändert', $body );
 }
 
 sub request_password_reset {
@@ -806,70 +874,6 @@ sub request_password_reset {
 	else {
 		$self->render('recover_password');
 	}
-}
-
-sub send_lostpassword_confirmation_mail {
-	my ( $self, %opt ) = @_;
-	my $email = $opt{email};
-	my $name  = $opt{name};
-	my $uid   = $opt{uid};
-	my $token = $opt{token};
-
-	my $ip   = $self->req->headers->header('X-Forwarded-For');
-	my $ua   = $self->req->headers->user_agent;
-	my $date = DateTime->now( time_zone => 'Europe/Berlin' )
-	  ->strftime('%d.%m.%Y %H:%M:%S %z');
-
-	# In case Mojolicious is not running behind a reverse proxy
-	$ip
-	  //= sprintf( '%s:%s', $self->tx->remote_address, $self->tx->remote_port );
-	my $recover_url = $self->url_for('recover')->to_abs->scheme('https');
-	my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
-
-	my $body = "Hallo ${name},\n\n";
-	$body .= "Unter ${recover_url}/${uid}/${token}\n";
-	$body
-	  .= "kannst du ein neues Passwort für deinen travelynx-Account vergeben.\n\n";
-	$body
-	  .= "Du erhältst diese Mail, da mit deinem Accountnamen und deiner Mail-Adresse\n";
-	$body
-	  .= "ein Passwort-Reset angefordert wurde. Falls diese Anfrage nicht von dir\n";
-	$body .= "ausging, kannst du sie ignorieren.\n\n";
-	$body .= "Daten zur Anfrage:\n";
-	$body .= " * Datum: ${date}\n";
-	$body .= " * Client: ${ip}\n";
-	$body .= " * UserAgent: ${ua}\n\n\n";
-	$body .= "Impressum: ${imprint_url}\n";
-
-	my $success
-	  = $self->sendmail->custom( $email, 'travelynx: Neues Passwort', $body );
-}
-
-sub send_lostpassword_notification_mail {
-	my ( $self, $account ) = @_;
-	my $user  = $account->{name};
-	my $email = $account->{email};
-	my $ip    = $self->req->headers->header('X-Forwarded-For');
-	my $ua    = $self->req->headers->user_agent;
-	my $date  = DateTime->now( time_zone => 'Europe/Berlin' )
-	  ->strftime('%d.%m.%Y %H:%M:%S %z');
-
-	# In case Mojolicious is not running behind a reverse proxy
-	$ip
-	  //= sprintf( '%s:%s', $self->tx->remote_address, $self->tx->remote_port );
-	my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
-
-	my $body = "Hallo ${user},\n\n";
-	$body .= "Das Passwort deines travelynx-Accounts wurde soeben über die";
-	$body .= " 'Passwort vergessen'-Funktion geändert.\n\n";
-	$body .= "Daten zur Änderung:\n";
-	$body .= " * Datum: ${date}\n";
-	$body .= " * Client: ${ip}\n";
-	$body .= " * UserAgent: ${ua}\n\n\n";
-	$body .= "Impressum: ${imprint_url}\n";
-
-	return $self->sendmail->custom( $email, 'travelynx: Passwort geändert',
-		$body );
 }
 
 sub recover_password {
