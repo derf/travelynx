@@ -1,4 +1,5 @@
 package Travelynx::Controller::Passengerrights;
+
 # Copyright (C) 2020 Daniel Friesel
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -7,12 +8,15 @@ use Mojo::Base 'Mojolicious::Controller';
 use DateTime;
 use CAM::PDF;
 
+# Internal Helpers
+
 sub mark_if_missed_connection {
 	my ( $self, $journey, $next_journey ) = @_;
 
 	my $possible_delay
 	  = (   $next_journey->{rt_departure}->epoch
-		  - $journey->{sched_arrival}->epoch ) / 60;
+		  - $journey->{sched_arrival}->epoch )
+	  / 60;
 	my $wait_time
 	  = ( $next_journey->{rt_departure}->epoch - $journey->{rt_arrival}->epoch )
 	  / 60;
@@ -84,6 +88,8 @@ sub mark_substitute_connection {
 		  = ( $last_substitute->{rt_arr_ts} - $journey->{sched_arr_ts} ) / 60;
 	}
 }
+
+# Controllers
 
 sub list_candidates {
 	my ($self) = @_;
