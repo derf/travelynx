@@ -10,6 +10,8 @@ use List::Util;
 use Travel::Status::DE::IRIS::Stations;
 use UUID::Tiny qw(:std);
 
+# Internal Helpers
+
 sub make_token {
 	return create_uuid_as_string(UUID_V4);
 }
@@ -27,6 +29,8 @@ sub sanitize {
 	}
 	return 0;
 }
+
+# Contollers
 
 sub documentation {
 	my ($self) = @_;
@@ -236,7 +240,7 @@ sub travel_v1 {
 				$self->render(
 					json => {
 						success => \0,
-						error =>
+						error   =>
 						  'Error requesting departures from fromStation: '
 						  . $status->{errstr},
 						status => $self->get_user_status_json_v1($uid)
@@ -457,13 +461,13 @@ sub import_v1 {
 		}
 
 		%opt = (
-			uid         => $uid,
-			train_type  => sanitize( q{}, $payload->{train}{type} ),
-			train_no    => sanitize( q{}, $payload->{train}{no} ),
-			train_line  => sanitize( q{}, $payload->{train}{line} ),
-			cancelled   => $payload->{cancelled} ? 1 : 0,
-			dep_station => sanitize( q{}, $payload->{fromStation}{name} ),
-			arr_station => sanitize( q{}, $payload->{toStation}{name} ),
+			uid             => $uid,
+			train_type      => sanitize( q{}, $payload->{train}{type} ),
+			train_no        => sanitize( q{}, $payload->{train}{no} ),
+			train_line      => sanitize( q{}, $payload->{train}{line} ),
+			cancelled       => $payload->{cancelled} ? 1 : 0,
+			dep_station     => sanitize( q{}, $payload->{fromStation}{name} ),
+			arr_station     => sanitize( q{}, $payload->{toStation}{name} ),
 			sched_departure =>
 			  sanitize( 0, $payload->{fromStation}{scheduledTime} ),
 			rt_departure => sanitize(
