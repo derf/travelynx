@@ -64,7 +64,8 @@ sub get_departures {
 	elsif ( @station_matches > 1 ) {
 		return {
 			results => [],
-			errstr  => 'Mehrdeutiger Stationsname. Mögliche Eingaben: '
+			errstr  =>
+			  "Mehrdeutiger Stationsname: '$station'. Mögliche Eingaben: "
 			  . join( q{, }, map { $_->[1] } @station_matches ),
 		};
 	}
@@ -150,7 +151,8 @@ sub get_departures_p {
 		return Mojo::Promise->reject(
 			{
 				results => [],
-				errstr  => 'Mehrdeutiger Stationsname. Mögliche Eingaben: '
+				errstr  =>
+				  "Mehrdeutiger Stationsname: '$station'. Mögliche Eingaben: "
 				  . join( q{, }, map { $_->[1] } @station_matches ),
 			}
 		);
