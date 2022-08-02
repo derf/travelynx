@@ -694,7 +694,7 @@ sub geolocation {
 	}
 }
 
-sub log_action {
+sub travel_action {
 	my ($self) = @_;
 	my $params = $self->req->json;
 

@@ -2298,7 +2298,7 @@ sub startup {
 	$r->get('/p/:name/j/:id')->to('traveling#public_journey_details');
 	$r->post('/api/v1/import')->to('api#import_v1');
 	$r->post('/api/v1/travel')->to('api#travel_v1');
-	$r->post('/action')->to('traveling#log_action');
+	$r->post('/action')->to('traveling#travel_action');
 	$r->post('/geolocation')->to('traveling#geolocation');
 	$r->post('/list_departures')->to('traveling#redirect_to_station');
 	$r->post('/login')->to('account#do_login');
