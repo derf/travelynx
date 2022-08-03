@@ -1464,11 +1464,11 @@ DISTRIBUTIONS
       IO::String 1.08
     requirements:
       ExtUtils::MakeMaker 0
-  JSON-4.07
-    pathname: I/IS/ISHIGAKI/JSON-4.07.tar.gz
+  JSON-4.09
+    pathname: I/IS/ISHIGAKI/JSON-4.09.tar.gz
     provides:
-      JSON 4.07
-      JSON::Backend::PP 4.07
+      JSON 4.09
+      JSON::Backend::PP 4.09
     requirements:
       ExtUtils::MakeMaker 0
       Test::More 0
@@ -1550,39 +1550,39 @@ DISTRIBUTIONS
     requirements:
       Exporter 5.57
       Module::Build 0.4004
-  MIME-tools-5.509
-    pathname: D/DS/DSKOLL/MIME-tools-5.509.tar.gz
+  MIME-tools-5.510
+    pathname: D/DS/DSKOLL/MIME-tools-5.510.tar.gz
     provides:
-      MIME::Body 5.509
-      MIME::Body::File 5.509
-      MIME::Body::InCore 5.509
-      MIME::Body::Scalar 5.509
-      MIME::Decoder 5.509
-      MIME::Decoder::Base64 5.509
-      MIME::Decoder::BinHex 5.509
-      MIME::Decoder::Binary 5.509
-      MIME::Decoder::Gzip64 5.509
-      MIME::Decoder::NBit 5.509
-      MIME::Decoder::QuotedPrint 5.509
-      MIME::Decoder::UU 5.509
-      MIME::Entity 5.509
-      MIME::Field::ConTraEnc 5.509
-      MIME::Field::ContDisp 5.509
-      MIME::Field::ContType 5.509
-      MIME::Field::ParamVal 5.509
-      MIME::Head 5.509
-      MIME::Parser 5.509
+      MIME::Body 5.510
+      MIME::Body::File 5.510
+      MIME::Body::InCore 5.510
+      MIME::Body::Scalar 5.510
+      MIME::Decoder 5.510
+      MIME::Decoder::Base64 5.510
+      MIME::Decoder::BinHex 5.510
+      MIME::Decoder::Binary 5.510
+      MIME::Decoder::Gzip64 5.510
+      MIME::Decoder::NBit 5.510
+      MIME::Decoder::QuotedPrint 5.510
+      MIME::Decoder::UU 5.510
+      MIME::Entity 5.510
+      MIME::Field::ConTraEnc 5.510
+      MIME::Field::ContDisp 5.510
+      MIME::Field::ContType 5.510
+      MIME::Field::ParamVal 5.510
+      MIME::Head 5.510
+      MIME::Parser 5.510
       MIME::Parser::FileInto undef
       MIME::Parser::FileUnder undef
       MIME::Parser::Filer undef
       MIME::Parser::Reader undef
       MIME::Parser::Results undef
-      MIME::Tools 5.509
+      MIME::Tools 5.510
       MIME::WordDecoder undef
       MIME::WordDecoder::ISO_8859 undef
       MIME::WordDecoder::US_ASCII undef
       MIME::WordDecoder::UTF_8 undef
-      MIME::Words 5.509
+      MIME::Words 5.510
     requirements:
       ExtUtils::MakeMaker 6.59
       File::Path 1
@@ -2457,12 +2457,12 @@ DISTRIBUTIONS
       Test::Pod 0
       Travel::Status::DE::IRIS 1.2
       perl v5.20.0
-  Travel-Status-DE-IRIS-1.66
-    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.66.tar.gz
+  Travel-Status-DE-IRIS-1.69
+    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.69.tar.gz
     provides:
-      Travel::Status::DE::IRIS 1.66
-      Travel::Status::DE::IRIS::Result 1.66
-      Travel::Status::DE::IRIS::Stations 1.66
+      Travel::Status::DE::IRIS 1.69
+      Travel::Status::DE::IRIS::Result 1.69
+      Travel::Status::DE::IRIS::Stations 1.69
     requirements:
       Carp 0
       Class::Accessor 0
@@ -2511,53 +2511,53 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       common::sense 0
-  URI-5.10
-    pathname: O/OA/OALDERS/URI-5.10.tar.gz
+  URI-5.12
+    pathname: O/OA/OALDERS/URI-5.12.tar.gz
     provides:
-      URI 5.10
-      URI::Escape 5.10
-      URI::Heuristic 5.10
-      URI::IRI 5.10
-      URI::QueryParam 5.10
-      URI::Split 5.10
-      URI::URL 5.10
-      URI::WithBase 5.10
-      URI::data 5.10
-      URI::file 5.10
-      URI::file::Base 5.10
-      URI::file::FAT 5.10
-      URI::file::Mac 5.10
-      URI::file::OS2 5.10
-      URI::file::QNX 5.10
-      URI::file::Unix 5.10
-      URI::file::Win32 5.10
-      URI::ftp 5.10
-      URI::gopher 5.10
-      URI::http 5.10
-      URI::https 5.10
-      URI::ldap 5.10
-      URI::ldapi 5.10
-      URI::ldaps 5.10
-      URI::mailto 5.10
-      URI::mms 5.10
-      URI::news 5.10
-      URI::nntp 5.10
-      URI::nntps 5.10
-      URI::pop 5.10
-      URI::rlogin 5.10
-      URI::rsync 5.10
-      URI::rtsp 5.10
-      URI::rtspu 5.10
-      URI::sftp 5.10
-      URI::sip 5.10
-      URI::sips 5.10
-      URI::snews 5.10
-      URI::ssh 5.10
-      URI::telnet 5.10
-      URI::tn3270 5.10
-      URI::urn 5.10
-      URI::urn::isbn 5.10
-      URI::urn::oid 5.10
+      URI 5.12
+      URI::Escape 5.12
+      URI::Heuristic 5.12
+      URI::IRI 5.12
+      URI::QueryParam 5.12
+      URI::Split 5.12
+      URI::URL 5.12
+      URI::WithBase 5.12
+      URI::data 5.12
+      URI::file 5.12
+      URI::file::Base 5.12
+      URI::file::FAT 5.12
+      URI::file::Mac 5.12
+      URI::file::OS2 5.12
+      URI::file::QNX 5.12
+      URI::file::Unix 5.12
+      URI::file::Win32 5.12
+      URI::ftp 5.12
+      URI::gopher 5.12
+      URI::http 5.12
+      URI::https 5.12
+      URI::ldap 5.12
+      URI::ldapi 5.12
+      URI::ldaps 5.12
+      URI::mailto 5.12
+      URI::mms 5.12
+      URI::news 5.12
+      URI::nntp 5.12
+      URI::nntps 5.12
+      URI::pop 5.12
+      URI::rlogin 5.12
+      URI::rsync 5.12
+      URI::rtsp 5.12
+      URI::rtspu 5.12
+      URI::sftp 5.12
+      URI::sip 5.12
+      URI::sips 5.12
+      URI::snews 5.12
+      URI::ssh 5.12
+      URI::telnet 5.12
+      URI::tn3270 5.12
+      URI::urn 5.12
+      URI::urn::isbn 5.12
+      URI::urn::oid 5.12
     requirements:
       Carp 0
       Cwd 0
