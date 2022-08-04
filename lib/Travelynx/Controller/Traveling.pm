@@ -229,7 +229,7 @@ sub homepage {
 							'landingpage',
 							version => $self->app->config->{version}
 							  // 'UNKNOWN',
-							status            => $status,
+							user_status       => $status,
 							connections       => \@connecting_trains,
 							with_autocomplete => 1,
 							with_geolocation  => 1
@@ -243,7 +243,7 @@ sub homepage {
 							'landingpage',
 							version => $self->app->config->{version}
 							  // 'UNKNOWN',
-							status            => $status,
+							user_status       => $status,
 							with_autocomplete => 1,
 							with_geolocation  => 1
 						);
@@ -257,7 +257,7 @@ sub homepage {
 		$self->render(
 			'landingpage',
 			version           => $self->app->config->{version} // 'UNKNOWN',
-			status            => $status,
+			user_status       => $status,
 			with_autocomplete => 1,
 			with_geolocation  => 1
 		);
