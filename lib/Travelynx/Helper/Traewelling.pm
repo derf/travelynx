@@ -81,7 +81,8 @@ sub get_status_p {
 		sub {
 			my ($tx) = @_;
 			if ( my $err = $tx->error ) {
-				my $err_msg = "HTTP $err->{code} $err->{message}";
+				my $err_msg
+				  = "v1/user/${username}/statuses: HTTP $err->{code} $err->{message}";
 				$promise->reject($err_msg);
 				return;
 			}
@@ -102,6 +103,11 @@ sub get_status_p {
 					my $arr_eva
 					  = $status->{train}{destination}{evaIdentifier};
 
+					my $dep_ds100
+					  = $status->{train}{origin}{rilIdentifier};
+					my $arr_ds100
+					  = $status->{train}{destination}{rilIdentifier};
+
 					my $dep_name
 					  = $status->{train}{origin}{name};
 					my $arr_name
@@ -117,9 +123,11 @@ sub get_status_p {
 							checkin    => $checkin_at,
 							dep_dt     => $dep_dt,
 							dep_eva    => $dep_eva,
+							dep_ds100  => $dep_ds100,
 							dep_name   => $dep_name,
 							arr_dt     => $arr_dt,
 							arr_eva    => $arr_eva,
+							arr_ds100  => $arr_ds100,
 							arr_name   => $arr_name,
 							train_type => $train_type,
 							line       => $linename,
@@ -130,7 +138,7 @@ sub get_status_p {
 					return;
 				}
 				else {
-					$promise->reject("unknown error");
+					$promise->reject("v1/${username}/statuses: unknown error");
 					return;
 				}
 			}
@@ -138,7 +146,7 @@ sub get_status_p {
 	)->catch(
 		sub {
 			my ($err) = @_;
-			$promise->reject($err);
+			$promise->reject("v1/${username}/statuses: $err");
 			return;
 		}
 	)->wait;
@@ -161,8 +169,7 @@ sub get_user_p {
 		sub {
 			my ($tx) = @_;
 			if ( my $err = $tx->error ) {
-				my $err_msg
-				  = "HTTP $err->{code} $err->{message} bei Abfrage der Nutzerdaten";
+				my $err_msg = "v0/getuser: HTTP $err->{code} $err->{message}";
 				$promise->reject($err_msg);
 				return;
 			}
@@ -181,7 +188,7 @@ sub get_user_p {
 	)->catch(
 		sub {
 			my ($err) = @_;
-			$promise->reject("$err bei Abfrage der Nutzerdaten");
+			$promise->reject("v0/getuser: $err");
 			return;
 		}
 	)->wait;
@@ -213,7 +220,8 @@ sub login_p {
 		sub {
 			my ($tx) = @_;
 			if ( my $err = $tx->error ) {
-				my $err_msg = "HTTP $err->{code} $err->{message} bei Login";
+				my $err_msg
+				  = "v0/auth/login: HTTP $err->{code} $err->{message}";
 				$promise->reject($err_msg);
 				return;
 			}
@@ -251,13 +259,13 @@ sub login_p {
 					token => $token
 				)->finally(
 					sub {
-						$promise->reject($err);
+						$promise->reject("v0/auth/login: $err");
 						return;
 					}
 				);
 			}
 			else {
-				$promise->reject($err);
+				$promise->reject("v0/auth/login: $err");
 			}
 			return;
 		}
@@ -291,7 +299,8 @@ sub logout_p {
 		sub {
 			my ($tx) = @_;
 			if ( my $err = $tx->error ) {
-				my $err_msg = "HTTP $err->{code} $err->{message}";
+				my $err_msg
+				  = "v0/auth/logout: HTTP $err->{code} $err->{message}";
 				$promise->reject($err_msg);
 				return;
 			}
@@ -303,7 +312,7 @@ sub logout_p {
 	)->catch(
 		sub {
 			my ($err) = @_;
-			$promise->reject($err);
+			$promise->reject("v0/auth/logout: $err");
 			return;
 		}
 	)->wait;
@@ -346,6 +355,9 @@ sub checkin {
 		$request->{body} = $opt{user_data}{comment};
 	}
 
+	my $debug_prefix
+	  = "v0/trains/checkin('$request->{lineName}' $request->{tripID} $request->{start} -> $request->{destination})";
+
 	$self->{user_agent}->request_timeout(20)
 	  ->post_p(
 		"https://traewelling.de/api/v0/trains/checkin" => $header => json =>
@@ -371,15 +383,17 @@ sub checkin {
 					and $err->{code} != 406
 					and $err->{code} != 401 )
 				{
-					$self->{log}->warn("Traewelling checkin error: $err_msg");
+					$self->{log}
+					  ->warn("Traewelling $debug_prefix error: $err_msg");
 				}
 				else {
-					$self->{log}->debug("Traewelling checkin error: $err_msg");
+					$self->{log}
+					  ->debug("Traewelling $debug_prefix error: $err_msg");
 				}
 				$self->{model}->log(
 					uid     => $opt{uid},
 					message =>
-"Konnte $opt{train_type} $opt{train_no} nicht übertragen: $err_msg",
+"Konnte $opt{train_type} $opt{train_no} nicht übertragen: $debug_prefix returned $err_msg",
 					is_error => 1
 				);
 				return;
@@ -405,11 +419,11 @@ sub checkin {
 	)->catch(
 		sub {
 			my ($err) = @_;
-			$self->{log}->debug("... error: $err");
+			$self->{log}->debug("... $debug_prefix error: $err");
 			$self->{model}->log(
 				uid     => $opt{uid},
 				message =>
-"Konnte $opt{train_type} $opt{train_no} nicht übertragen: $err",
+"Konnte $opt{train_type} $opt{train_no} nicht übertragen: $debug_prefix returned $err",
 				is_error => 1
 			);
 		}

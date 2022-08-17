@@ -13,11 +13,11 @@ use Cache::File;
 use Crypt::Eksblowfish::Bcrypt qw(bcrypt en_base64);
 use DateTime;
 use DateTime::Format::Strptime;
-use Encode qw(decode encode);
+use Encode      qw(decode encode);
 use File::Slurp qw(read_file);
 use JSON;
 use List::Util;
-use List::UtilsBy qw(uniq_by);
+use List::UtilsBy   qw(uniq_by);
 use List::MoreUtils qw(first_index);
 use Travel::Status::DE::DBWagenreihung;
 use Travel::Status::DE::IRIS::Stations;
@@ -1927,7 +1927,9 @@ sub startup {
 				$self->log->debug("... already handled");
 				return;
 			}
-			$self->log->debug("... checked in");
+			$self->log->debug(
+"... checked in : $traewelling->{dep_name} $traewelling->{dep_eva} -> $traewelling->{arr_name} $traewelling->{arr_eva}"
+			);
 			my $user_status = $self->get_user_status($uid);
 			if ( $user_status->{checked_in} ) {
 				$self->log->debug(
