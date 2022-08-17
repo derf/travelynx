@@ -7,7 +7,12 @@
 			% $td_class = 'cancelled';
 			% $link_class = 'action-cancelled-from';
 		% }
-		<tr class="<%= $link_class %>" data-station="<%= $train->station_uic %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>">
+		% if ($checkin_from) {
+			<tr class="<%= $link_class %>" data-station="<%= $train->station_uic %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>">
+		% }
+		% else {
+			<tr>
+		% }
 			<td class="<%= $td_class %>">
 				% if ($checkin_from) {
 					<a><%= $train->line %></a>
@@ -70,7 +75,12 @@
 			% $td_class = 'cancelled';
 			% $link_class = 'action-cancelled-from';
 		% }
-		<tr class="<%= $link_class %>" data-station="<%= $train->station_uic %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>" data-tr="4">
+		% if ($checkin_from) {
+			<tr class="<%= $link_class %>" data-station="<%= $train->station_uic %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>" data-tr="4">
+		% }
+		% else {
+			<tr>
+		% }
 			<td class="<%= $td_class %>">
 				% if ($checkin_from) {
 					<a><%= $train->line %></a>
