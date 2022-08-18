@@ -169,8 +169,10 @@ function tvly_reg_handlers() {
 			force: link.data('force'),
 		};
 		tvly_run(link, req, function() {
-			link.append(' – Ohne Echtzeitdaten auschecken?')
-			link.data('force', true);
+			if (!link.data('force')) {
+				link.append(' – Ohne Echtzeitdaten auschecken?')
+				link.data('force', true);
+			}
 		});
 	});
 	$('.action-undo').click(function() {
