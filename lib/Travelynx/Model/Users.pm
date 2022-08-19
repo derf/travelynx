@@ -13,9 +13,9 @@ use DateTime;
 my @sb_templates = (
 	undef,
 	[ 'DBF', 'https://dbf.finalrewind.org/{name}?rt=1#{tt}{tn}' ],
-	[ 'marudor.de', 'https://marudor.de/{name}#{id}' ],
+	[ 'marudor.de', 'https://bahn.expert/{name}#{id}' ],
 	[ 'NVM',        'https://nvm.finalrewind.org/board/{eva}#{tt}{tn}' ],
-	[ 'marudor.de/regional', 'https://marudor.de/regional/{name}#{id}' ],
+	[ 'marudor.de/regional', 'https://bahn.expert/regional/{name}#{id}' ],
 );
 
 sub new {

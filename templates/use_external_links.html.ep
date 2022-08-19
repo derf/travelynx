@@ -42,7 +42,7 @@
 			<div>
 				<label>
 					%= radio_button stationboard => '2'
-					<span><a href="https://marudor.de/">marudor.de</a> (Schienenverkehr)</span>
+					<span><a href="https://bahn.expert/">bahn.expert</a> (Schienenverkehr)</span>
 				</label>
 			</div>
 		</div>
@@ -52,7 +52,7 @@
 			<div>
 				<label>
 					%= radio_button stationboard => '4'
-					<span><a href="https://marudor.de/regional">marudor.de/regional</a> (Nahverkehr)</span>
+					<span><a href="https://bahn.expert/regional">bahn.expert/regional</a> (Nahverkehr)</span>
 				</label>
 			</div>
 		</div>

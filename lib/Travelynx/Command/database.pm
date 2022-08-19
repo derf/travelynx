@@ -1072,7 +1072,7 @@ my @migrations = (
 
 	# v24 -> v25
 	# travelynx 1.23 adds optional links to external services, e.g.
-	# DBF or marudor.de departure boards
+	# DBF or bahn.expert departure boards
 	sub {
 		my ($db) = @_;
 		$db->query(
