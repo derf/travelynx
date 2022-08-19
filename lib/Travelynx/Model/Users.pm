@@ -12,10 +12,10 @@ use DateTime;
 
 my @sb_templates = (
 	undef,
-	[ 'DBF', 'https://dbf.finalrewind.org/{name}?rt=1#{tt}{tn}' ],
-	[ 'marudor.de', 'https://bahn.expert/{name}#{id}' ],
-	[ 'NVM',        'https://nvm.finalrewind.org/board/{eva}#{tt}{tn}' ],
-	[ 'marudor.de/regional', 'https://bahn.expert/regional/{name}#{id}' ],
+	[ 'DBF',         'https://dbf.finalrewind.org/{name}?rt=1#{tt}{tn}' ],
+	[ 'bahn.expert', 'https://bahn.expert/{name}#{id}' ],
+	[ 'NVM',         'https://nvm.finalrewind.org/board/{eva}#{tt}{tn}' ],
+	[ 'bahn.expert/regional', 'https://bahn.expert/regional/{name}#{id}' ],
 );
 
 sub new {
