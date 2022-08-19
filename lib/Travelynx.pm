@@ -130,7 +130,7 @@ sub startup {
 	# security and usability for websites that want to maintain user's logged-in
 	# session after the user arrives from an external link". In practice,
 	# Safari (both iOS and macOS) does not send a SameSite=lax cookie when
-	# following a link from an external site. So, marudor.de providing a
+	# following a link from an external site. So, bahn.expert providing a
 	# checkin link to travelynx.de/s/whatever does not work because the user
 	# is not logged in due to Safari not sending the cookie.
 	#

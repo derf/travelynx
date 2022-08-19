@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 # This script queries the Travelynx API if you are checked into a train. If
-# yes, marudor.de is additionally queried for the next stop, and a JSON object
+# yes, bahn.expert is additionally queried for the next stop, and a JSON object
 # like this is written to stdout:
 # {"full_text": "RE26824, next: D\u00fcren at <span fgcolor=\"#ff0000\">15:38+5</span>, dest: Aachen Hbf at <span fgcolor=\"#ff0000\">16:07+5</span>", "markup": "pango"},
 # The script then exits.
@@ -80,7 +80,7 @@ predicted_arrival_timestamp = j["toStation"]["realTime"]
 delay = (predicted_arrival_timestamp - scheduled_arrival_timestamp) / 60
 
 try:
-    details_res = requests.get(f"https://marudor.de/api/hafas/v2/details/{train}")
+    details_res = requests.get(f"https://bahn.expert/api/hafas/v2/details/{train}")
     details = details_res.json()
     # print(json.dumps(details, sort_keys=True, indent=4), file=sys.stderr)
     next_stop_name = details["currentStop"]["station"]["title"]
