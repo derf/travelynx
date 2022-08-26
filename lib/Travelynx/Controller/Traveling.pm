@@ -219,7 +219,7 @@ sub homepage {
 		my $status = $self->get_user_status;
 		if ( $status->{checked_in} ) {
 			if ( defined $status->{arrival_countdown}
-				and $status->{arrival_countdown} < ( 20 * 60 ) )
+				and $status->{arrival_countdown} < ( 40 * 60 ) )
 			{
 				$self->render_later;
 				$self->get_connecting_trains_p->then(
@@ -587,7 +587,7 @@ sub status_card {
 
 	if ( $status->{checked_in} ) {
 		if ( defined $status->{arrival_countdown}
-			and $status->{arrival_countdown} < ( 20 * 60 ) )
+			and $status->{arrival_countdown} < ( 40 * 60 ) )
 		{
 			$self->render_later;
 			$self->get_connecting_trains_p->then(
