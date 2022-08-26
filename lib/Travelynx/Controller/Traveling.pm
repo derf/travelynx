@@ -78,7 +78,7 @@ sub get_connecting_trains_p {
 	$self->iris->get_departures_p(
 		station      => $eva,
 		lookbehind   => 10,
-		lookahead    => 40,
+		lookahead    => 60,
 		with_related => 1
 	)->then(
 		sub {
