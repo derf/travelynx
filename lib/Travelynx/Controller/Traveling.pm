@@ -79,9 +79,11 @@ sub get_connecting_trains_p {
 	my $can_check_in = not $arr_epoch || ( $arr_countdown // 1 ) < 0;
 
 	$self->iris->get_departures_p(
-		station      => $eva,
-		lookbehind   => 10,
-		lookahead    => $can_check_in ? 40 : ( ${arr_countdown} / 60 + 40 ),
+		station    => $eva,
+		lookbehind => 10,
+		lookahead  => $can_check_in
+		? 40
+		: ( ( ${arr_countdown} // 0 ) / 60 + 40 ),
 		with_related => 1
 	)->then(
 		sub {
