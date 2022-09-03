@@ -76,7 +76,7 @@ sub get_connecting_trains_p {
 		return $promise->reject;
 	}
 
-	my $can_check_in = not $arr_epoch or ( $arr_countdown // 1 ) < 0;
+	my $can_check_in = not $arr_epoch || ( $arr_countdown // 1 ) < 0;
 
 	$self->iris->get_departures_p(
 		station      => $eva,
