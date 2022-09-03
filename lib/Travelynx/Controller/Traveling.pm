@@ -8,8 +8,8 @@ use Mojo::Base 'Mojolicious::Controller';
 use DateTime;
 use DateTime::Format::Strptime;
 use JSON;
-use List::Util qw(uniq min max);
-use List::UtilsBy qw(max_by uniq_by);
+use List::Util      qw(uniq min max);
+use List::UtilsBy   qw(max_by uniq_by);
 use List::MoreUtils qw(first_index);
 use Mojo::Promise;
 use Text::CSV;
@@ -33,7 +33,7 @@ sub get_connecting_trains_p {
 
 	my ( $eva, $exclude_via, $exclude_train_id, $exclude_before );
 	my $now = $self->now->epoch;
-	my ( $stationinfo, $arr_epoch, $arr_platform );
+	my ( $stationinfo, $arr_epoch, $arr_platform, $arr_countdown );
 
 	my $promise = Mojo::Promise->new;
 
@@ -55,6 +55,7 @@ sub get_connecting_trains_p {
 			$stationinfo      = $status->{extra_data}{stationinfo_arr};
 			if ( $status->{real_arrival} ) {
 				$exclude_before = $arr_epoch = $status->{real_arrival}->epoch;
+				$arr_countdown  = $status->{arrival_countdown};
 			}
 		}
 	}
@@ -75,10 +76,12 @@ sub get_connecting_trains_p {
 		return $promise->reject;
 	}
 
+	my $can_check_in = not $arr_epoch or ( $arr_countdown // 1 ) < 0;
+
 	$self->iris->get_departures_p(
 		station      => $eva,
 		lookbehind   => 10,
-		lookahead    => 60,
+		lookahead    => $can_check_in ? 40 : ( ${arr_countdown} / 60 + 40 ),
 		with_related => 1
 	)->then(
 		sub {
