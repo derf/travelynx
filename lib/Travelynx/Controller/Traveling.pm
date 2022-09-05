@@ -136,7 +136,7 @@ sub get_connecting_trains_p {
 					my @via
 					  = ( $train->sched_route_post, $train->sched_route_end );
 					for my $dest (@destinations) {
-						if ( List::Util::any { $_ eq $dest } @via ) {
+						if ( has_str_in_list( $dest, @via ) ) {
 							push( @cancellations, [ $train, $dest ] );
 							next;
 						}
@@ -146,7 +146,7 @@ sub get_connecting_trains_p {
 					my @via = ( $train->route_post, $train->route_end );
 					for my $dest (@destinations) {
 						if ( $via_count{$dest} < 2
-							and List::Util::any { $_ eq $dest } @via )
+							and has_str_in_list( $dest, @via ) )
 						{
 							push( @results, [ $train, $dest ] );
 
