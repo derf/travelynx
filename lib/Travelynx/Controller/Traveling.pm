@@ -99,6 +99,7 @@ sub get_connecting_trains_p {
 			  @{ $stationboard->{results} };
 			my @results;
 			my @cancellations;
+			my $excluded_train;
 			my %via_count = map { $_ => 0 } @destinations;
 			for my $train ( @{ $stationboard->{results} } ) {
 				if ( not $train->departure ) {
@@ -113,6 +114,7 @@ sub get_connecting_trains_p {
 				if (    $exclude_train_id
 					and $train->train_id eq $exclude_train_id )
 				{
+					$excluded_train = $train;
 					next;
 				}
 
@@ -167,13 +169,27 @@ sub get_connecting_trains_p {
 			  map {
 				[
 					$_,
-					$_->[0]->departure->epoch // $_->[0]->sched_departure->epoch
+					$_->[0]->departure->epoch
+					  // $_->[0]->sched_departure->epoch
 				]
 			  } @results;
 			@cancellations = map { $_->[0] }
 			  sort { $a->[1] <=> $b->[1] }
 			  map { [ $_, $_->[0]->sched_departure->epoch ] } @cancellations;
 
+			# remove trains whose route matches the excluded one's
+			if ($excluded_train) {
+				my $route_pre = join( '|', reverse $excluded_train->route_pre );
+				@results
+				  = grep { join( '|', $_->[0]->route_post ) ne $route_pre }
+				  @results;
+				my $route_post = join( '|', $excluded_train->route_post );
+				@results
+				  = grep { join( '|', $_->[0]->route_post ) ne $route_post }
+				  @results;
+			}
+
+			# add message IDs and 'transfer short' hints
 			for my $result (@results) {
 				my $train = $result->[0];
 				my @message_ids
