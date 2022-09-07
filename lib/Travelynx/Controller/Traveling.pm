@@ -319,7 +319,8 @@ sub user_status {
 			or $status->{sched_departure}->epoch != $ts )
 		and (
 			$user->{public_level} & 0x20
-			or ( $user->{public_level} & 0x10 and $self->is_user_authenticated )
+			or (    $user->{public_level} & 0x10
+				and $self->is_user_authenticated )
 		)
 	  )
 	{
@@ -435,7 +436,8 @@ sub public_profile {
 		$user
 		and (
 			$user->{public_level} & 0x22
-			or ( $user->{public_level} & 0x11 and $self->is_user_authenticated )
+			or (    $user->{public_level} & 0x11
+				and $self->is_user_authenticated )
 		)
 	  )
 	{
@@ -496,7 +498,8 @@ sub public_journey_details {
 		$user
 		and (
 			$user->{public_level} & 0x20
-			or ( $user->{public_level} & 0x10 and $self->is_user_authenticated )
+			or (    $user->{public_level} & 0x10
+				and $self->is_user_authenticated )
 		)
 	  )
 	{
@@ -583,7 +586,8 @@ sub public_status_card {
 		$user
 		and (
 			$user->{public_level} & 0x02
-			or ( $user->{public_level} & 0x01 and $self->is_user_authenticated )
+			or (    $user->{public_level} & 0x01
+				and $self->is_user_authenticated )
 		)
 	  )
 	{
@@ -1181,7 +1185,8 @@ sub map_history {
 		time_zone => 'Europe/Berlin'
 	);
 
-	if ( $filter_from and $filter_from =~ m{ ^ (\d+) [.] (\d+) [.] (\d+) $ }x )
+	if (    $filter_from
+		and $filter_from =~ m{ ^ (\d+) [.] (\d+) [.] (\d+) $ }x )
 	{
 		$filter_from = $parser->parse_datetime($filter_from);
 	}
@@ -1207,7 +1212,8 @@ sub map_history {
 
 	if ($filter_type) {
 		my @filter = split( qr{, *}, $filter_type );
-		@journeys = grep { has_str_in_list( $_->{type}, @filter ) } @journeys;
+		@journeys
+		  = grep { has_str_in_list( $_->{type}, @filter ) } @journeys;
 	}
 
 	if ( not @journeys ) {
