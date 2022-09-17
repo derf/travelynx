@@ -8,14 +8,14 @@ supports german railways and trains which are exposed by the Deutsche Bahn
 [IRIS Interface](https://finalrewind.org/projects/Travel-Status-DE-IRIS/).
 
 You can use the public instance on [travelynx.de](https://travelynx.de) or
-host your own via carton/cpanminus. Experimental Docker images are also
+host your own via carton. Experimental Docker images are also
 available. See the Setup notes below.
 
 Dependencies
 ---
 
  * perl >= 5.20
- * carton or cpanminus
+ * carton
  * build-essential
  * libpq-dev
  * libxml2-dev
@@ -25,19 +25,14 @@ Installation
 ---
 
 travelynx depends on a set of Perl modules which are documented in `cpanfile`.
-After installing the dependencies mentioned above, you can use carton or
-cpanminus to install Perl depenencies locally.
+After installing the dependencies mentioned above, you can use carton to
+install Perl depenencies locally. You may alsobe able to use cpanminus;
+however this method is untested.
 
-In the project root directory (where `cpanfile` resides), run either
+In the project root directory (where `cpanfile` resides), run
 
 ```
 carton install
-```
-
-or
-
-```
-cpanm --installdeps .
 ```
 
 and set `PERL5LIB=.../local/lib/perl5` before executing any travelynx
@@ -105,7 +100,7 @@ fi
 
 Note that this is subject to change -- the application may perform schema
 updates automatically in the future. If you used carton for installation,
-use `carton exec perl ...` in the snippet above; if you used cpanm, export
+use `carton exec perl ...` in the snippet above; otherwise, export
 `PERL5LIB=.../local/lib/perl5`.
 
 Setup with Docker
