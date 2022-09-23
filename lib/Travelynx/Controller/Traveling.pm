@@ -976,7 +976,9 @@ sub station {
 							station          => $status->{station_name},
 							related_stations => $status->{related_stations},
 							connections      => \@connecting_trains,
-							title => "travelynx: $status->{station_name}",
+							title   => "travelynx: $status->{station_name}",
+							version => $self->app->config->{version}
+							  // 'UNKNOWN',
 						);
 					}
 				)->catch(
@@ -987,7 +989,9 @@ sub station {
 							results          => \@results,
 							station          => $status->{station_name},
 							related_stations => $status->{related_stations},
-							title => "travelynx: $status->{station_name}",
+							title   => "travelynx: $status->{station_name}",
+							version => $self->app->config->{version}
+							  // 'UNKNOWN',
 						);
 					}
 				)->wait;
@@ -1000,6 +1004,7 @@ sub station {
 					station          => $status->{station_name},
 					related_stations => $status->{related_stations},
 					title            => "travelynx: $status->{station_name}",
+					version => $self->app->config->{version} // 'UNKNOWN',
 				);
 			}
 		}
