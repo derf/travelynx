@@ -5,8 +5,6 @@ package Travelynx::Controller::Static;
 # SPDX-License-Identifier: AGPL-3.0-or-later
 use Mojo::Base 'Mojolicious::Controller';
 
-my $travelynx_version = qx{git describe --dirty} || 'experimental';
-
 sub about {
 	my ($self) = @_;
 
