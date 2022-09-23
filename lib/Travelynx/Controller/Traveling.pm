@@ -206,7 +206,7 @@ sub get_connecting_trains_p {
 					  = ( $train->departure->epoch - $arr_epoch ) / 60;
 					if ( $interchange_time < $interchange_duration ) {
 						$train->{interchange_text} = 'Anschluss knapp';
-						$train->{interchange_icon} = 'warning';
+						$train->{interchange_icon} = 'directions_run';
 					}
 					elsif ( $interchange_time == $interchange_duration ) {
 						$train->{interchange_text}
