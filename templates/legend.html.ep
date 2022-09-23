@@ -1,0 +1,43 @@
+<div class="row">
+	<div class="col s12">
+		<h2>Legende</h2>
+		<p>travelynx verwendet bei Angaben zu Zügen und Stationen die folgenden Symbole.</p>
+		<h3>Abfahrtstafel</h3>
+		<table class="striped">
+			<tbody>
+				<tr>
+					<td><i class="material-icons">gps_off</i></td>
+					<td>Keine Echtzeitdaten vorhanden. Bei den angegebenen Zeiten handelt es sich um Angaben aus dem Fahrplan.</td>
+				</tr>
+			</tbody>
+		</table>
+		<h3>Anschlusszüge</h3>
+		<table class="striped">
+			<tbody>
+				<tr>
+					<td><i class="material-icons">directions_run</i></td>
+					<td>Knapper Umstieg. Zug wird möglicherweise nicht erreicht.</td>
+				<tr>
+					<td><i class="material-icons">warning</i></td>
+					<td>Der Zug ist überbesetzt. Möglicherweise sind keine freien Sitzplätze vorhanden.</td>
+				</tr>
+				<tr>
+					<td><i class="material-icons">info_outline</i></td>
+					<td>Eingeschränkte Barrierefreihet, z.B. fehlendes oder defektes rollstuhlgerechtes WC.</td>
+				</tr>
+				<tr>
+					<td><i class="material-icons">people</i></td>
+					<td>Mindestens ein Wagen fehlt.</td>
+				</tr>
+				<tr>
+					<td><i class="material-icons">compare_arrows</i></td>
+					<td>Abweichende Wagenreihung.</td>
+				</tr>
+				<tr>
+					<td><i class="material-icons">portable_wifi_off</i></td>
+					<td>WLAN ganz oder teilweise ausgefallen.</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

@@ -1,4 +1,5 @@
 package Travelynx::Controller::Static;
+
 # Copyright (C) 2020 Daniel Friesel
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -24,6 +25,12 @@ sub imprint {
 	my ($self) = @_;
 
 	$self->render('imprint');
+}
+
+sub legend {
+	my ($self) = @_;
+
+	$self->render('legend');
 }
 
 sub offline {

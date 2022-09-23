@@ -2286,6 +2286,7 @@ sub startup {
 	$r->get('/changelog')->to('static#changelog');
 	$r->get('/impressum')->to('static#imprint');
 	$r->get('/imprint')->to('static#imprint');
+	$r->get('/legend')->to('static#legend');
 	$r->get('/offline.html')->to('static#offline');
 	$r->get('/api/v1/:user_action/:token')->to('api#get_v1');
 	$r->get('/login')->to('account#login_form');
