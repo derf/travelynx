@@ -1,0 +1,19 @@
+<table class="striped"><tbody>
+	% for my $res (@{$transit_fyi}) {
+		% my ($info, $via, $via_arr) = @{$res};
+		% $via_arr = $via_arr ? $via_arr->strftime('%H:%M') : q{};
+		<tr>
+			<td>
+				%= $info->{line}
+				<br/>
+				%= $info->{departure}->strftime('%H:%M')
+				% if ($info->{departure_delay}) {
+					%= sprintf('(%+d)', $info->{departure_delay})
+				% }
+			</td>
+			<td>
+				<%= $via %><br/><%= $via_arr %>
+			</td>
+		</tr>
+	% }
+</tbody></table>

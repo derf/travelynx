@@ -28,8 +28,11 @@ sub has_str_in_list {
 sub get_connecting_trains_p {
 	my ( $self, %opt ) = @_;
 
-	my $uid         = $opt{uid} //= $self->current_user->{id};
-	my $use_history = $self->users->use_history( uid => $uid );
+	my $uid = $opt{uid} //= $self->current_user->{id};
+	my ( $use_history, $lt_stops ) = $self->users->use_history(
+		uid                => $uid,
+		with_local_transit => 1
+	);
 
 	my ( $eva, $exclude_via, $exclude_train_id, $exclude_before );
 	my $now = $self->now->epoch;
@@ -72,7 +75,7 @@ sub get_connecting_trains_p {
 		@destinations = grep { $_ ne $exclude_via } @destinations;
 	}
 
-	if ( not @destinations ) {
+	if ( not( @destinations or $use_history & 0x04 and @{$lt_stops} ) ) {
 		return $promise->reject;
 	}
 
@@ -82,43 +85,44 @@ sub get_connecting_trains_p {
 
 	my $iris_promise = Mojo::Promise->new;
 
-	$self->iris->get_departures_p(
-		station      => $eva,
-		lookbehind   => 10,
-		lookahead    => $lookahead,
-		with_related => 1
-	)->then(
-		sub {
-			my ($stationboard) = @_;
-			if ( $stationboard->{errstr} ) {
-				$iris_promise->reject( $stationboard->{errstr} );
-				return;
-			}
+	if (@destinations) {
+		$self->iris->get_departures_p(
+			station      => $eva,
+			lookbehind   => 10,
+			lookahead    => $lookahead,
+			with_related => 1
+		)->then(
+			sub {
+				my ($stationboard) = @_;
+				if ( $stationboard->{errstr} ) {
+					$iris_promise->reject( $stationboard->{errstr} );
+					return;
+				}
 
-			@{ $stationboard->{results} } = map { $_->[0] }
-			  sort { $a->[1] <=> $b->[1] }
-			  map  { [ $_, $_->departure ? $_->departure->epoch : 0 ] }
-			  @{ $stationboard->{results} };
-			my @results;
-			my @cancellations;
-			my $excluded_train;
-			my %via_count = map { $_ => 0 } @destinations;
-			for my $train ( @{ $stationboard->{results} } ) {
-				if ( not $train->departure ) {
-					next;
-				}
-				if (    $exclude_before
-					and $train->departure
-					and $train->departure->epoch < $exclude_before )
-				{
-					next;
-				}
-				if (    $exclude_train_id
-					and $train->train_id eq $exclude_train_id )
-				{
-					$excluded_train = $train;
-					next;
-				}
+				@{ $stationboard->{results} } = map { $_->[0] }
+				  sort { $a->[1] <=> $b->[1] }
+				  map  { [ $_, $_->departure ? $_->departure->epoch : 0 ] }
+				  @{ $stationboard->{results} };
+				my @results;
+				my @cancellations;
+				my $excluded_train;
+				my %via_count = map { $_ => 0 } @destinations;
+				for my $train ( @{ $stationboard->{results} } ) {
+					if ( not $train->departure ) {
+						next;
+					}
+					if (    $exclude_before
+						and $train->departure
+						and $train->departure->epoch < $exclude_before )
+					{
+						next;
+					}
+					if (    $exclude_train_id
+						and $train->train_id eq $exclude_train_id )
+					{
+						$excluded_train = $train;
+						next;
+					}
 
              # In general, this function is meant to return feasible
              # connections. However, cancelled connections may also be of
@@ -136,97 +140,105 @@ sub get_connecting_trains_p {
              # the route. Also note that this specific case is not yet handled
              # properly by the cancellation logic etc.
 
-				if ( $train->departure_is_cancelled ) {
-					my @via
-					  = ( $train->sched_route_post, $train->sched_route_end );
-					for my $dest (@destinations) {
-						if ( has_str_in_list( $dest, @via ) ) {
-							push( @cancellations, [ $train, $dest ] );
-							next;
+					if ( $train->departure_is_cancelled ) {
+						my @via = (
+							$train->sched_route_post, $train->sched_route_end
+						);
+						for my $dest (@destinations) {
+							if ( has_str_in_list( $dest, @via ) ) {
+								push( @cancellations, [ $train, $dest ] );
+								next;
+							}
 						}
 					}
-				}
-				else {
-					my @via = ( $train->route_post, $train->route_end );
-					for my $dest (@destinations) {
-						if ( $via_count{$dest} < 2
-							and has_str_in_list( $dest, @via ) )
-						{
-							push( @results, [ $train, $dest ] );
+					else {
+						my @via = ( $train->route_post, $train->route_end );
+						for my $dest (@destinations) {
+							if ( $via_count{$dest} < 2
+								and has_str_in_list( $dest, @via ) )
+							{
+								push( @results, [ $train, $dest ] );
 
                  # Show all past and up to two future departures per destination
-							if ( not $train->departure
-								or $train->departure->epoch >= $now )
-							{
-								$via_count{$dest}++;
+								if ( not $train->departure
+									or $train->departure->epoch >= $now )
+								{
+									$via_count{$dest}++;
+								}
+								next;
 							}
-							next;
 						}
 					}
 				}
-			}
 
-			@results = map { $_->[0] }
-			  sort { $a->[1] <=> $b->[1] }
-			  map {
-				[
-					$_,
-					$_->[0]->departure->epoch
-					  // $_->[0]->sched_departure->epoch
-				]
-			  } @results;
-			@cancellations = map { $_->[0] }
-			  sort { $a->[1] <=> $b->[1] }
-			  map { [ $_, $_->[0]->sched_departure->epoch ] } @cancellations;
+				@results = map { $_->[0] }
+				  sort { $a->[1] <=> $b->[1] }
+				  map {
+					[
+						$_,
+						$_->[0]->departure->epoch
+						  // $_->[0]->sched_departure->epoch
+					]
+				  } @results;
+				@cancellations = map { $_->[0] }
+				  sort { $a->[1] <=> $b->[1] }
+				  map  { [ $_, $_->[0]->sched_departure->epoch ] }
+				  @cancellations;
 
-			# remove trains whose route matches the excluded one's
-			if ($excluded_train) {
-				my $route_pre = join( '|', reverse $excluded_train->route_pre );
-				@results
-				  = grep { join( '|', $_->[0]->route_post ) ne $route_pre }
-				  @results;
-				my $route_post = join( '|', $excluded_train->route_post );
-				@results
-				  = grep { join( '|', $_->[0]->route_post ) ne $route_post }
-				  @results;
-			}
-
-			# add message IDs and 'transfer short' hints
-			for my $result (@results) {
-				my $train = $result->[0];
-				my @message_ids
-				  = List::Util::uniq map { $_->[1] } $train->raw_messages;
-				$train->{message_id} = { map { $_ => 1 } @message_ids };
-				my $interchange_duration;
-				if ( exists $stationinfo->{i} ) {
-					$interchange_duration
-					  = $stationinfo->{i}{$arr_platform}{ $train->platform };
-					$interchange_duration //= $stationinfo->{i}{"*"};
+				# remove trains whose route matches the excluded one's
+				if ($excluded_train) {
+					my $route_pre
+					  = join( '|', reverse $excluded_train->route_pre );
+					@results
+					  = grep { join( '|', $_->[0]->route_post ) ne $route_pre }
+					  @results;
+					my $route_post = join( '|', $excluded_train->route_post );
+					@results
+					  = grep { join( '|', $_->[0]->route_post ) ne $route_post }
+					  @results;
 				}
-				if ( defined $interchange_duration ) {
-					my $interchange_time
-					  = ( $train->departure->epoch - $arr_epoch ) / 60;
-					if ( $interchange_time < $interchange_duration ) {
-						$train->{interchange_text} = 'Anschluss knapp';
-						$train->{interchange_icon} = 'directions_run';
+
+				# add message IDs and 'transfer short' hints
+				for my $result (@results) {
+					my $train = $result->[0];
+					my @message_ids
+					  = List::Util::uniq map { $_->[1] } $train->raw_messages;
+					$train->{message_id} = { map { $_ => 1 } @message_ids };
+					my $interchange_duration;
+					if ( exists $stationinfo->{i} ) {
+						$interchange_duration
+						  = $stationinfo->{i}{$arr_platform}
+						  { $train->platform };
+						$interchange_duration //= $stationinfo->{i}{"*"};
 					}
-					elsif ( $interchange_time == $interchange_duration ) {
-						$train->{interchange_text}
-						  = 'Anschluss könnte knapp werden';
-						$train->{interchange_icon} = 'directions_run';
+					if ( defined $interchange_duration ) {
+						my $interchange_time
+						  = ( $train->departure->epoch - $arr_epoch ) / 60;
+						if ( $interchange_time < $interchange_duration ) {
+							$train->{interchange_text} = 'Anschluss knapp';
+							$train->{interchange_icon} = 'directions_run';
+						}
+						elsif ( $interchange_time == $interchange_duration ) {
+							$train->{interchange_text}
+							  = 'Anschluss könnte knapp werden';
+							$train->{interchange_icon} = 'directions_run';
+						}
 					}
 				}
-			}
 
-			$iris_promise->resolve( [ @results, @cancellations ] );
-			return;
-		}
-	)->catch(
-		sub {
-			$iris_promise->reject(@_);
-			return;
-		}
-	)->wait;
+				$iris_promise->resolve( [ @results, @cancellations ] );
+				return;
+			}
+		)->catch(
+			sub {
+				$iris_promise->reject(@_);
+				return;
+			}
+		)->wait;
+	}
+	else {
+		$iris_promise->resolve( [] );
+	}
 
 	my $hafas_promise = Mojo::Promise->new;
 	my $rest_api      = $self->config->{backend}{hafas_rest_api};
@@ -254,6 +266,7 @@ sub get_connecting_trains_p {
 			my ( $iris, $hafas ) = @_;
 			my @iris_trains  = @{ $iris->[0] };
 			my @hafas_trains = @{ $hafas->[0] };
+			my @transit_fyi;
 
 			my $strp = DateTime::Format::Strptime->new(
 				pattern   => '%Y-%m-%dT%H:%M:%S%z',
@@ -296,6 +309,44 @@ sub get_connecting_trains_p {
 						}
 					}
 				}
+				if ( $use_history & 0x04 and @{$lt_stops} ) {
+					my %via_count = map { $_ => 0 } @{$lt_stops};
+					for my $hafas_train (@hafas_trains) {
+						for
+						  my $stop ( @{ $hafas_train->{nextStopovers} // [] } )
+						{
+							for my $dest ( @{$lt_stops} ) {
+								if (    $stop->{stop}{name}
+									and $stop->{stop}{name} eq $dest
+									and $via_count{$dest} < 2
+									and $hafas_train->{when} )
+								{
+									my $departure = $strp->parse_datetime(
+										$hafas_train->{when} );
+									my $arrival
+									  = $strp->parse_datetime(
+										$stop->{arrival} );
+									if ( $departure->epoch >= $exclude_before )
+									{
+										$via_count{$dest}++;
+										push(
+											@transit_fyi,
+											[
+												{
+													line =>
+													  $hafas_train->{line}
+													  {name},
+													departure => $departure,
+												},
+												$dest, $arrival
+											]
+										);
+									}
+								}
+							}
+						}
+					}
+				}
 			};
 			if ($@) {
 				$self->app->log->error(
@@ -303,7 +354,7 @@ sub get_connecting_trains_p {
 				);
 			}
 
-			$promise->resolve( \@iris_trains );
+			$promise->resolve( \@iris_trains, \@transit_fyi );
 			return;
 		}
 	)->catch(

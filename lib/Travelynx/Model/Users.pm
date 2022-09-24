@@ -9,6 +9,7 @@ use warnings;
 use 5.020;
 
 use DateTime;
+use JSON;
 
 my @sb_templates = (
 	undef,
@@ -483,12 +484,34 @@ sub use_history {
 	my $uid   = $opt{uid};
 	my $value = $opt{set};
 
+	if ( $opt{destinations} ) {
+		$db->insert(
+			'localtransit',
+			{
+				user_id => $uid,
+				data    =>
+				  JSON->new->encode( { destinations => $opt{destinations} } )
+			},
+			{ on_conflict => \'(user_id) do update set data = EXCLUDED.data' }
+		);
+	}
+
 	if ($value) {
 		$db->update( 'users', { use_history => $value }, { id => $uid } );
 	}
 	else {
-		return $db->select( 'users', ['use_history'], { id => $uid } )
-		  ->hash->{use_history};
+		if ( $opt{with_local_transit} ) {
+			my $res = $db->select(
+				'user_transit',
+				[ 'use_history', 'data' ],
+				{ id => $uid }
+			)->expand->hash;
+			return ( $res->{use_history}, $res->{data}{destinations} // [] );
+		}
+		else {
+			return $db->select( 'users', ['use_history'], { id => $uid } )
+			  ->hash->{use_history};
+		}
 	}
 }
 

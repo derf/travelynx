@@ -6,7 +6,7 @@ package Travelynx::Controller::Account;
 use Mojo::Base 'Mojolicious::Controller';
 
 use Crypt::Eksblowfish::Bcrypt qw(bcrypt en_base64);
-use UUID::Tiny qw(:std);
+use UUID::Tiny                 qw(:std);
 
 # Internal Helpers
 
@@ -498,8 +498,11 @@ sub privacy {
 sub insight {
 	my ($self) = @_;
 
-	my $user        = $self->current_user;
-	my $use_history = $self->users->use_history( uid => $user->{id} );
+	my $user = $self->current_user;
+	my ( $use_history, $destinations ) = $self->users->use_history(
+		uid                => $user->{id},
+		with_local_transit => 1
+	);
 
 	if ( $self->param('action') and $self->param('action') eq 'save' ) {
 		if ( $self->param('on_departure') ) {
@@ -516,16 +519,31 @@ sub insight {
 			$use_history &= ~0x02;
 		}
 
+		if ( $self->param('local_transit') ) {
+			$use_history |= 0x04;
+		}
+		else {
+			$use_history &= ~0x04;
+		}
+
+		if ( $self->param('destinations') ) {
+			$destinations
+			  = [ split( qr{\r?\n\r?}, $self->param('destinations') ) ];
+		}
+
 		$self->users->use_history(
-			uid => $user->{id},
-			set => $use_history
+			uid          => $user->{id},
+			set          => $use_history,
+			destinations => $destinations
 		);
 		$self->flash( success => 'use_history' );
 		$self->redirect_to('account');
 	}
 
-	$self->param( on_departure => $use_history & 0x01 ? 1 : 0 );
-	$self->param( on_arrival   => $use_history & 0x02 ? 1 : 0 );
+	$self->param( on_departure  => $use_history & 0x01 ? 1 : 0 );
+	$self->param( on_arrival    => $use_history & 0x02 ? 1 : 0 );
+	$self->param( local_transit => $use_history & 0x04 ? 1 : 0 );
+	$self->param( destinations  => join( "\n", @{$destinations} ) );
 	$self->render('use_history');
 
 }

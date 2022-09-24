@@ -1083,6 +1083,29 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v25 -> v26
+	# travelynx 1.24 adds local transit connections and needs to know targets
+	# for that to work, as local transit does not support checkins yet.
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				create table localtransit (
+					user_id integer not null references users (id) primary key,
+					data jsonb
+				);
+				create view user_transit as select
+					id,
+					use_history,
+					localtransit.data as data
+					from users
+					left join localtransit on localtransit.user_id = id
+				;
+				update schema_version set version = 26;
+			}
+		);
+	},
 );
 
 sub setup_db {
