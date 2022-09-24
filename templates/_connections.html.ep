@@ -1,4 +1,4 @@
-<div class="hide-on-med-and-up"><table class="striped"><tbody>
+<div><table class="striped"><tbody>
 	% for my $res (@{$connections}) {
 		% my ($train, $via) = @{$res};
 		% my $td_class = '';
@@ -28,7 +28,6 @@
 				% else {
 					%= $via
 				% }
-				<br/>
 				% if ($train->{message_id}{96} or $train->{message_id}{97}) {
 					<i class="material-icons tiny" aria-label="Zug ist überbesetzt">warning</i>
 				% }
@@ -51,72 +50,9 @@
 					⊖
 				% }
 				% else {
-					%= $train->departure->strftime('%H:%M')
-					% if ($train->departure_delay) {
-						%= sprintf('(%+d)', $train->departure_delay)
-					% }
-					% if ($train->{interchange_icon}) {
-						<i class="material-icons tiny" aria-label="<%= $train->{interchange_text} %>"><%= $train->{interchange_icon} %></i>
-					% }
 					% if ($train->platform) {
-						<br/>Gleis <%= $train->platform %>
+						Gleis <%= $train->platform %><br/>
 					% }
-				% }
-			</td>
-		</tr>
-	% }
-</tbody></table></div>
-<div class="hide-on-small-only"><table class="striped"><tbody>
-	% for my $res (@{$connections}) {
-		% my ($train, $via) = @{$res};
-		% my $td_class = '';
-		% my $link_class = 'action-checkin';
-		% if ($train->departure_is_cancelled) {
-			% $td_class = 'cancelled';
-			% $link_class = 'action-cancelled-from';
-		% }
-		% if ($checkin_from) {
-			<tr class="<%= $link_class %>" data-station="<%= $train->station_uic %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>" data-tr="4">
-		% }
-		% else {
-			<tr>
-		% }
-			<td class="<%= $td_class %>">
-				% if ($checkin_from) {
-					<a><%= $train->line %></a>
-				% }
-				% else {
-					%= $train->line
-				% }
-			</td>
-			<td class="<%= $td_class %>">
-				% if ($checkin_from) {
-					<a><%= $via %></a>
-				% }
-				% else {
-					%= $via
-				% }
-				% if ($train->{message_id}{96} or $train->{message_id}{97}) {
-					<i class="material-icons tiny" aria-label="Zug ist überbesetzt">warning</i>
-				% }
-				% if ($train->{message_id}{82} or $train->{message_id}{85}) {
-					<i class="material-icons tiny" aria-label="Fehlende Wagen">people</i>
-				% }
-				% if (($train->{message_id}{73} or $train->{message_id}{74} or $train->{message_id}{75} or $train->{message_id}{76} or $train->{message_id}{80}) and not $train->{message_id}{84}) {
-					<i class="material-icons tiny" aria-label="Abweichende Wagenreihung">compare_arrows</i>
-				% }
-				% if ($train->{message_id}{83} or $train->{message_id}{93} or $train->{message_id}{95}) {
-					<i class="material-icons tiny" aria-label="Eingeschränkte Barrierefreiheit">info_outline</i>
-				% }
-				% if ($train->{message_id}{70} or $train->{message_id}{71}) {
-					<i class="material-icons tiny" aria-label="Ohne WLAN">portable_wifi_off</i>
-				% }
-			</td>
-			<td>
-				% if ($train->departure_is_cancelled) {
-					%= $train->sched_departure->strftime('%H:%M')
-				% }
-				% else {
 					%= $train->departure->strftime('%H:%M')
 					% if ($train->departure_delay) {
 						%= sprintf('(%+d)', $train->departure_delay)
@@ -124,13 +60,6 @@
 					% if ($train->{interchange_icon}) {
 						<i class="material-icons tiny" aria-label="<%= $train->{interchange_text} %>"><%= $train->{interchange_icon} %></i>
 					% }
-				% }
-			</td><td>
-				% if ($train->platform and not $train->departure_is_cancelled) {
-					Gleis <%= $train->platform %>
-				% }
-				% elsif ($train->departure_is_cancelled) {
-					fällt aus
 				% }
 			</td>
 		</tr>
