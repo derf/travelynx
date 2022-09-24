@@ -29,6 +29,9 @@
 				% else {
 					<%= $via %><br/><%= $via_arr %>
 				% }
+				% if ($train->{interchange_icon}) {
+					<i class="material-icons tiny" aria-label="<%= $train->{interchange_text} %>"><%= $train->{interchange_icon} %></i>
+				% }
 				% if ($train->{message_id}{96} or $train->{message_id}{97}) {
 					<i class="material-icons tiny" aria-label="Zug ist überbesetzt">warning</i>
 				% }
@@ -57,9 +60,6 @@
 					%= $train->departure->strftime('%H:%M')
 					% if ($train->departure_delay) {
 						%= sprintf('(%+d)', $train->departure_delay)
-					% }
-					% if ($train->{interchange_icon}) {
-						<i class="material-icons tiny" aria-label="<%= $train->{interchange_text} %>"><%= $train->{interchange_icon} %></i>
 					% }
 				% }
 			</td>
