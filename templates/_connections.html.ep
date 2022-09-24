@@ -22,6 +22,9 @@
 					%= $train->line
 				% }
 				<br/>
+				% if ($checkin_from) {
+					<a>
+				% }
 				% if ($train->departure_is_cancelled) {
 					%= $train->sched_departure->strftime('%H:%M')
 					⊖
@@ -31,6 +34,9 @@
 					% if ($train->departure_delay) {
 						%= sprintf('(%+d)', $train->departure_delay)
 					% }
+				% }
+				% if ($checkin_from) {
+					</a>
 				% }
 			</td>
 			<td class="<%= $td_class %>">
