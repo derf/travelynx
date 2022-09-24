@@ -119,10 +119,15 @@ sub get_polyline_p {
 }
 
 sub get_json_p {
-	my ( $self, $url ) = @_;
+	my ( $self, $url, %opt ) = @_;
 
 	my $cache   = $self->{main_cache};
 	my $promise = Mojo::Promise->new;
+
+	if ( $opt{realtime} ) {
+		$cache = $self->{realtime_cache};
+	}
+	$opt{encoding} //= 'ISO-8859-15';
 
 	if ( my $content = $cache->thaw($url) ) {
 		return $promise->resolve($content);
@@ -140,7 +145,7 @@ sub get_json_p {
 				return;
 			}
 
-			my $body = decode( 'ISO-8859-15', $tx->res->body );
+			my $body = decode( $opt{encoding}, $tx->res->body );
 
 			$body =~ s{^TSLs[.]sls = }{};
 			$body =~ s{;$}{};
