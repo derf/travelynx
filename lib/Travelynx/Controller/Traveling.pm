@@ -77,19 +77,21 @@ sub get_connecting_trains_p {
 	}
 
 	my $can_check_in = not $arr_epoch || ( $arr_countdown // 1 ) < 0;
+	my $lookahead
+	  = $can_check_in ? 40 : ( ( ${arr_countdown} // 0 ) / 60 + 40 );
+
+	my $iris_promise = Mojo::Promise->new;
 
 	$self->iris->get_departures_p(
-		station    => $eva,
-		lookbehind => 10,
-		lookahead  => $can_check_in
-		? 40
-		: ( ( ${arr_countdown} // 0 ) / 60 + 40 ),
+		station      => $eva,
+		lookbehind   => 10,
+		lookahead    => $lookahead,
 		with_related => 1
 	)->then(
 		sub {
 			my ($stationboard) = @_;
 			if ( $stationboard->{errstr} ) {
-				$promise->reject( $stationboard->{errstr} );
+				$iris_promise->reject( $stationboard->{errstr} );
 				return;
 			}
 
@@ -213,22 +215,107 @@ sub get_connecting_trains_p {
 						  = 'Anschluss könnte knapp werden';
 						$train->{interchange_icon} = 'directions_run';
 					}
-
-       #else {
-       #	$train->{interchange_text} = 'Anschluss wird voraussichtlich erreicht';
-       #	$train->{interchange_icon} = 'check';
-       #}
 				}
 			}
 
-			$promise->resolve( @results, @cancellations );
+			$iris_promise->resolve( [ @results, @cancellations ] );
+			return;
 		}
 	)->catch(
 		sub {
-			$promise->reject(@_);
+			$iris_promise->reject(@_);
 			return;
 		}
 	)->wait;
+
+	my $hafas_promise = Mojo::Promise->new;
+	my $rest_api      = $self->config->{backend}{hafas_rest_api};
+	$self->hafas->get_json_p(
+"${rest_api}/stops/${eva}/departures?results=120&duration=${lookahead}&stopovers=true&when=10 minutes ago",
+		realtime => 1,
+		encoding => 'utf-8'
+	)->then(
+		sub {
+			my ($json) = @_;
+			$hafas_promise->resolve($json);
+			return;
+		}
+	)->catch(
+		sub {
+			# HAFAS data is optional.
+			# Errors are logged by get_json_p and can be silently ignored here.
+			$hafas_promise->resolve( [] );
+			return;
+		}
+	)->wait;
+
+	Mojo::Promise->all( $iris_promise, $hafas_promise )->then(
+		sub {
+			my ( $iris, $hafas ) = @_;
+			my @iris_trains  = @{ $iris->[0] };
+			my @hafas_trains = @{ $hafas->[0] };
+
+			my $strp = DateTime::Format::Strptime->new(
+				pattern   => '%Y-%m-%dT%H:%M:%S%z',
+				time_zone => 'Europe/Berlin',
+			);
+
+			# We've already got a list of connecting trains; this function
+			# only adds further information to them. We ignore errors, as
+			# partial data is better than no data.
+			eval {
+				for my $iris_train (@iris_trains) {
+					if ( $iris_train->[0]->departure_is_cancelled ) {
+						continue;
+					}
+					for my $hafas_train (@hafas_trains) {
+						if ( $hafas_train->{line}{fahrtNr}
+							== $iris_train->[0]->train_no )
+						{
+							for my $stop (
+								@{ $hafas_train->{nextStopovers} // [] } )
+							{
+								if (    $stop->{stop}{name}
+									and $stop->{stop}{name} eq $iris_train->[1]
+									and $stop->{arrival} )
+								{
+									$iris_train->[2] = $strp->parse_datetime(
+										$stop->{arrival} );
+									if (    $iris_train->[2]
+										and $iris_train->[0]->arrival_delay
+										and $stop->{arrival} eq
+										$stop->{plannedArrival} )
+									{
+# If the departure is delayed, but the arrival supposedly on time, we assume that this is an API issue and manually compute the expected arrival time.
+# This avoids cases where a connection is shown as arriving at its destination before having departed at a previous stop.
+										$iris_train->[2]->add( minutes =>
+											  $iris_train->[0]->arrival_delay );
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+			if ($@) {
+				$self->app->log->error(
+					"get_connecting_trains_p($uid): IRIS/HAFAS merge failed: $@"
+				);
+			}
+
+			$promise->resolve( \@iris_trains );
+			return;
+		}
+	)->catch(
+		sub {
+			my ($err) = @_;
+
+# TODO logging. HAFAS errors should never happen, IRIS errors are noteworthy too.
+			$promise->reject($err);
+			return;
+		}
+	)->wait;
+
 	return $promise;
 }
 
@@ -245,13 +332,14 @@ sub homepage {
 				$self->render_later;
 				$self->get_connecting_trains_p->then(
 					sub {
-						my @connecting_trains = @_;
+						my ( $connecting_trains, $transit_fyi ) = @_;
 						$self->render(
 							'landingpage',
 							version => $self->app->config->{version}
 							  // 'UNKNOWN',
 							user_status       => $status,
-							connections       => \@connecting_trains,
+							connections       => $connecting_trains,
+							transit_fyi       => $transit_fyi,
 							with_autocomplete => 1,
 							with_geolocation  => 1
 						);
@@ -617,11 +705,12 @@ sub status_card {
 			$self->render_later;
 			$self->get_connecting_trains_p->then(
 				sub {
-					my @connecting_trains = @_;
+					my ( $connecting_trains, $transit_fyi ) = @_;
 					$self->render(
 						'_checked_in',
 						journey     => $status,
-						connections => \@connecting_trains
+						connections => $connecting_trains,
+						transit_fyi => $transit_fyi
 					);
 				}
 			)->catch(
@@ -640,11 +729,11 @@ sub status_card {
 			destination_name => $status->{cancellation}{arr_name}
 		)->then(
 			sub {
-				my (@connecting_trains) = @_;
+				my ($connecting_trains) = @_;
 				$self->render(
 					'_cancelled_departure',
 					journey     => $status->{cancellation},
-					connections => \@connecting_trains
+					connections => $connecting_trains
 				);
 			}
 		)->catch(
@@ -662,11 +751,11 @@ sub status_card {
 			$self->render_later;
 			$self->get_connecting_trains_p->then(
 				sub {
-					my @connecting_trains = @_;
+					my ($connecting_trains) = @_;
 					$self->render(
 						'_checked_out',
 						journey     => $status,
-						connections => \@connecting_trains
+						connections => $connecting_trains
 					);
 				}
 			)->catch(
@@ -968,14 +1057,14 @@ sub station {
 			if ($connections_p) {
 				$connections_p->then(
 					sub {
-						my @connecting_trains = @_;
+						my ($connecting_trains) = @_;
 						$self->render(
 							'departures',
 							eva              => $status->{station_eva},
 							results          => \@results,
 							station          => $status->{station_name},
 							related_stations => $status->{related_stations},
-							connections      => \@connecting_trains,
+							connections      => $connecting_trains,
 							title   => "travelynx: $status->{station_name}",
 							version => $self->app->config->{version}
 							  // 'UNKNOWN',

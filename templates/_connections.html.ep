@@ -1,6 +1,7 @@
 <div><table class="striped"><tbody>
 	% for my $res (@{$connections}) {
-		% my ($train, $via) = @{$res};
+		% my ($train, $via, $via_arr) = @{$res};
+		% $via_arr = $via_arr ? $via_arr->strftime('%H:%M') : q{};
 		% my $td_class = '';
 		% my $link_class = 'action-checkin';
 		% if ($train->is_cancelled) {
@@ -23,10 +24,10 @@
 			</td>
 			<td class="<%= $td_class %>">
 				% if ($checkin_from) {
-					<a><%= $via %></a>
+					<a><%= $via %><br/><%= $via_arr %></a>
 				% }
 				% else {
-					%= $via
+					<%= $via %><br/><%= $via_arr %>
 				% }
 				% if ($train->{message_id}{96} or $train->{message_id}{97}) {
 					<i class="material-icons tiny" aria-label="Zug ist überbesetzt">warning</i>
