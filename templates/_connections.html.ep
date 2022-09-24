@@ -21,6 +21,17 @@
 				% else {
 					%= $train->line
 				% }
+				<br/>
+				% if ($train->departure_is_cancelled) {
+					%= $train->sched_departure->strftime('%H:%M')
+					⊖
+				% }
+				% else {
+					%= $train->departure->strftime('%H:%M')
+					% if ($train->departure_delay) {
+						%= sprintf('(%+d)', $train->departure_delay)
+					% }
+				% }
 			</td>
 			<td class="<%= $td_class %>">
 				% if ($checkin_from) {
@@ -49,18 +60,8 @@
 				% }
 			</td>
 			<td>
-				% if ($train->departure_is_cancelled) {
-					%= $train->sched_departure->strftime('%H:%M')
-					⊖
-				% }
-				% else {
-					% if ($train->platform) {
-						Gleis <%= $train->platform %><br/>
-					% }
-					%= $train->departure->strftime('%H:%M')
-					% if ($train->departure_delay) {
-						%= sprintf('(%+d)', $train->departure_delay)
-					% }
+				% if ($train->platform) {
+					Gleis <%= $train->platform %><br/>
 				% }
 			</td>
 		</tr>
