@@ -5,14 +5,17 @@
 		<tr>
 			<td>
 				%= $info->{line}
-				<br/>
+			</td>
+			<td>
+				%= $via
+			</td>
+			<td>
 				%= $info->{departure}->strftime('%H:%M')
+				→
+				%= $via_arr
 				% if ($info->{departure_delay}) {
 					%= sprintf('(%+d)', $info->{departure_delay})
 				% }
-			</td>
-			<td>
-				<%= $via %><br/><%= $via_arr %>
 			</td>
 		</tr>
 	% }
