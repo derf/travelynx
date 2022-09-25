@@ -326,6 +326,16 @@ sub get_connecting_trains_p {
 									my $arrival
 									  = $strp->parse_datetime(
 										$stop->{arrival} );
+									my $delay = undef;
+									if ( defined $hafas_train->{delay} ) {
+										$delay = $hafas_train->{delay} / 60;
+										if (    $delay
+											and $stop->{arrival} eq
+											$stop->{plannedArrival} )
+										{
+											$arrival->add( minutes => $delay );
+										}
+									}
 									if ( $departure->epoch >= $exclude_before )
 									{
 										$via_count{$dest}++;
@@ -337,6 +347,7 @@ sub get_connecting_trains_p {
 													  $hafas_train->{line}
 													  {name},
 													departure => $departure,
+													departure_delay => $delay
 												},
 												$dest, $arrival
 											]
