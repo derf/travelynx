@@ -295,14 +295,15 @@ sub get_connecting_trains_p {
 									$iris_train->[2] = $strp->parse_datetime(
 										$stop->{arrival} );
 									if (    $iris_train->[2]
-										and $iris_train->[0]->arrival_delay
+										and $iris_train->[0]->departure_delay
 										and $stop->{arrival} eq
 										$stop->{plannedArrival} )
 									{
 # If the departure is delayed, but the arrival supposedly on time, we assume that this is an API issue and manually compute the expected arrival time.
 # This avoids cases where a connection is shown as arriving at its destination before having departed at a previous stop.
-										$iris_train->[2]->add( minutes =>
-											  $iris_train->[0]->arrival_delay );
+										$iris_train->[2]
+										  ->add( minutes => $iris_train->[0]
+											  ->departure_delay );
 									}
 									last;
 								}
