@@ -279,7 +279,7 @@ sub get_connecting_trains_p {
 			eval {
 				for my $iris_train (@iris_trains) {
 					if ( $iris_train->[0]->departure_is_cancelled ) {
-						continue;
+						next;
 					}
 					for my $hafas_train (@hafas_trains) {
 						if ( $hafas_train->{line}{fahrtNr}
@@ -304,8 +304,10 @@ sub get_connecting_trains_p {
 										$iris_train->[2]->add( minutes =>
 											  $iris_train->[0]->arrival_delay );
 									}
+									last;
 								}
 							}
+							last;
 						}
 					}
 				}
