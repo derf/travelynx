@@ -2,6 +2,42 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		1.24
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left" aria-label="Neues Feature">add</i>
+			Angabe der geschätzten Ankunft am Ziel bei Checkinvorschlägen.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Neues Feature">add</i>
+			Anzeige von Anschlussmöglichkeiten an den Nahverkehr (Bus und
+			Stadtbahn) unterhalb der Anschlusszüge. Da travelynx derzeit keine
+			Checkins in Nahverkehrsmittel unterstützt, muss die Liste relevanter
+			Ziele händisch unter Account → Verbindungen gepflegt werden. Sofern
+			eine zukünftige travelynx-Version Nahverkehrs-Checkins unterstützt,
+			entfällt diese Liste.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Neues Feature">add</i>
+			Optionale Verlinkung externer Dienste (z.B. DBF oder bahn.expert)
+			in der eigenen Checkin-Ansicht. Somit können von dort aus alle
+			Abfahrten an einer Ziel- oder Unterwegsstation eingesehen werden.
+			Dieses Feature ist standardmäßig deaktiviert und kann über
+			Account → Externe Dienste konfiguriert werden.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Verbesserung">star</i>
+			Checkinvorschläge für Anschlussverbindungen schauen weiter in die
+			Zukunft und enthalten weniger nutzlose Vorschläge (z.B. Rückfahrt zur
+			Ursprungsstation oder Weiterfahrt zu einem späteren Ziel mit dem
+			Folgetakt).
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		1.23
 	</div>
 	<div class="col s12 m11 l11">
@@ -13,7 +49,6 @@
 		</p>
 	</div>
 </div>
-
 
 <div class="row">
 	<div class="col s12 m1 l1">
@@ -35,7 +70,6 @@
 	</div>
 </div>
 
-
 <div class="row">
 	<div class="col s12 m1 l1">
 		1.21
@@ -54,7 +88,6 @@
 		</p>
 	</div>
 </div>
-
 
 <div class="row">
 	<div class="col s12 m1 l1">
