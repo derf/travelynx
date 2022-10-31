@@ -165,20 +165,20 @@ sub get_user_p {
 	};
 	my $promise = Mojo::Promise->new;
 
-	$ua->get_p( "https://traewelling.de/api/v0/getuser" => $header )->then(
+	$ua->get_p( "https://traewelling.de/api/v1/auth/user" => $header )->then(
 		sub {
 			my ($tx) = @_;
 			if ( my $err = $tx->error ) {
-				my $err_msg = "v0/getuser: HTTP $err->{code} $err->{message}";
+				my $err_msg = "v1/auth/user: HTTP $err->{code} $err->{message}";
 				$promise->reject($err_msg);
 				return;
 			}
 			else {
-				my $user_data = $tx->result->json;
+				my $user_data = $tx->result->json->{data};
 				$self->{model}->set_user(
 					uid         => $uid,
 					trwl_id     => $user_data->{id},
-					screen_name => $user_data->{name},
+					screen_name => $user_data->{displayName},
 					user_name   => $user_data->{username},
 				);
 				$promise->resolve;
@@ -188,7 +188,7 @@ sub get_user_p {
 	)->catch(
 		sub {
 			my ($err) = @_;
-			$promise->reject("v0/getuser: $err");
+			$promise->reject("v1/auth/user: $err");
 			return;
 		}
 	)->wait;
@@ -206,7 +206,7 @@ sub login_p {
 	my $ua = $self->{user_agent}->request_timeout(20);
 
 	my $request = {
-		email    => $email,
+		login    => $email,
 		password => $password,
 	};
 
@@ -214,19 +214,19 @@ sub login_p {
 	my $token;
 
 	$ua->post_p(
-		"https://traewelling.de/api/v0/auth/login" => $self->{header},
+		"https://traewelling.de/api/v1/auth/login" => $self->{header},
 		json                                       => $request
 	)->then(
 		sub {
 			my ($tx) = @_;
 			if ( my $err = $tx->error ) {
 				my $err_msg
-				  = "v0/auth/login: HTTP $err->{code} $err->{message}";
+				  = "v1/auth/login: HTTP $err->{code} $err->{message}";
 				$promise->reject($err_msg);
 				return;
 			}
 			else {
-				my $res = $tx->result->json;
+				my $res = $tx->result->json->{data};
 				$token = $res->{token};
 				my $expiry_dt = $self->parse_datetime( $res->{expires_at} );
 
@@ -259,13 +259,13 @@ sub login_p {
 					token => $token
 				)->finally(
 					sub {
-						$promise->reject("v0/auth/login: $err");
+						$promise->reject("v1/auth/login: $err");
 						return;
 					}
 				);
 			}
 			else {
-				$promise->reject("v0/auth/login: $err");
+				$promise->reject("v1/auth/login: $err");
 			}
 			return;
 		}
@@ -294,13 +294,13 @@ sub logout_p {
 	my $promise = Mojo::Promise->new;
 
 	$ua->post_p(
-		"https://traewelling.de/api/v0/auth/logout" => $header => json =>
+		"https://traewelling.de/api/v1/auth/logout" => $header => json =>
 		  $request )->then(
 		sub {
 			my ($tx) = @_;
 			if ( my $err = $tx->error ) {
 				my $err_msg
-				  = "v0/auth/logout: HTTP $err->{code} $err->{message}";
+				  = "v1/auth/logout: HTTP $err->{code} $err->{message}";
 				$promise->reject($err_msg);
 				return;
 			}
@@ -312,7 +312,7 @@ sub logout_p {
 	)->catch(
 		sub {
 			my ($err) = @_;
-			$promise->reject("v0/auth/logout: $err");
+			$promise->reject("v1/auth/logout: $err");
 			return;
 		}
 	)->wait;
