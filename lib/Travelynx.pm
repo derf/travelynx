@@ -994,82 +994,6 @@ sub startup {
 				return;
 			}
 
-			if ( $journey->{data}{trip_id}
-				and not $journey->{polyline} )
-			{
-				my ( $origin_eva, $destination_eva, $polyline_str );
-				$self->hafas->get_polyline_p( $train,
-					$journey->{data}{trip_id} )->then(
-					sub {
-						my ($ret) = @_;
-						my $polyline = $ret->{polyline};
-						$origin_eva      = 0 + $ret->{raw}{origin}{id};
-						$destination_eva = 0 + $ret->{raw}{destination}{id};
-
-						# work around Cache::File turning floats into strings
-						for my $coord ( @{$polyline} ) {
-							@{$coord} = map { 0 + $_ } @{$coord};
-						}
-
-						$polyline_str = JSON->new->encode($polyline);
-
-						my $pl_res = $db->select(
-							'polylines',
-							['id'],
-							{
-								origin_eva      => $origin_eva,
-								destination_eva => $destination_eva,
-								polyline        => $polyline_str
-							},
-							{ limit => 1 }
-						);
-
-						my $polyline_id;
-						if ( my $h = $pl_res->hash ) {
-							$polyline_id = $h->{id};
-						}
-						else {
-							eval {
-								$polyline_id = $db->insert(
-									'polylines',
-									{
-										origin_eva      => $origin_eva,
-										destination_eva => $destination_eva,
-										polyline        => $polyline_str
-									},
-									{ returning => 'id' }
-								)->hash->{id};
-							};
-							if ($@) {
-								$self->app->log->warn(
-									"add_route_timestamps: insert polyline: $@"
-								);
-							}
-						}
-						if ($polyline_id) {
-							$self->in_transit->set_polyline_id(
-								uid         => $uid,
-								db          => $db,
-								polyline_id => $polyline_id
-							);
-						}
-						return;
-					}
-				)->catch(
-					sub {
-						my ($err) = @_;
-						if ( $err =~ m{extra content at the end}i ) {
-							$self->app->log->debug(
-								"add_route_timestamps: $err");
-						}
-						else {
-							$self->app->log->warn("add_route_timestamps: $err");
-						}
-						return;
-					}
-				)->wait;
-			}
-
 			my ($platform) = ( ( $train->platform // 0 ) =~ m{(\d+)} );
 
 			my $route = $journey->{route};
@@ -1136,11 +1060,14 @@ sub startup {
 					);
 
 					return $self->hafas->get_route_timestamps_p(
-						trip_id => $trip_id );
+						train         => $train,
+						trip_id       => $trip_id,
+						with_polyline => not $journey->{polyline}
+					);
 				}
 			)->then(
 				sub {
-					my ( $route_data, $journey ) = @_;
+					my ( $route_data, $journey, $polyline ) = @_;
 
 					for my $station ( @{$route} ) {
 						$station->[1]
@@ -1172,6 +1099,56 @@ sub startup {
 						],
 						him_messages => \@messages,
 					);
+
+					if ($polyline) {
+						my $coords   = $polyline->{coords};
+						my $from_eva = $polyline->{from_eva};
+						my $to_eva   = $polyline->{to_eva};
+
+						my $polyline_str = JSON->new->encode($coords);
+
+						my $pl_res = $db->select(
+							'polylines',
+							['id'],
+							{
+								origin_eva      => $from_eva,
+								destination_eva => $to_eva,
+								polyline        => $polyline_str
+							},
+							{ limit => 1 }
+						);
+
+						my $polyline_id;
+						if ( my $h = $pl_res->hash ) {
+							$polyline_id = $h->{id};
+						}
+						else {
+							eval {
+								$polyline_id = $db->insert(
+									'polylines',
+									{
+										origin_eva      => $from_eva,
+										destination_eva => $to_eva,
+										polyline        => $polyline_str
+									},
+									{ returning => 'id' }
+								)->hash->{id};
+							};
+							if ($@) {
+								$self->app->log->warn(
+									"add_route_timestamps: insert polyline: $@"
+								);
+							}
+						}
+						if ($polyline_id) {
+							$self->in_transit->set_polyline_id(
+								uid         => $uid,
+								db          => $db,
+								polyline_id => $polyline_id
+							);
+						}
+					}
+
 					return;
 				}
 			)->catch(

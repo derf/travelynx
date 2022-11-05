@@ -34,97 +34,6 @@ sub new {
 	return bless( \%opt, $class );
 }
 
-sub get_polyline_p {
-	my ( $self, $train, $trip_id ) = @_;
-
-	my $line    = $train->line // 0;
-	my $backend = $self->{hafas_rest_api};
-	my $url     = "${backend}/trips/${trip_id}?lineName=${line}&polyline=true";
-	my $cache   = $self->{main_cache};
-	my $promise = Mojo::Promise->new;
-	my $version = $self->{version};
-
-	if ( my $content = $cache->thaw($url) ) {
-		return $promise->resolve($content);
-	}
-
-	my $log_url = $url;
-	$log_url =~ s{://\K[^:]+:[^@]+\@}{***@};
-
-	$self->{user_agent}->request_timeout(5)->get_p( $url => $self->{header} )
-	  ->then(
-		sub {
-			my ($tx) = @_;
-
-			if ( my $err = $tx->error ) {
-				$promise->reject(
-"hafas->get_polyline_p($log_url) returned HTTP $err->{code} $err->{message}"
-				);
-				return;
-			}
-
-			my $body = decode( 'utf-8', $tx->res->body );
-			my $json = JSON->new->decode($body);
-			my @station_list;
-			my @coordinate_list;
-
-			for my $feature ( @{ $json->{polyline}{features} } ) {
-				if ( exists $feature->{geometry}{coordinates} ) {
-					my $coord = $feature->{geometry}{coordinates};
-					if ( exists $feature->{properties}{type}
-						and $feature->{properties}{type} eq 'stop' )
-					{
-						push( @{$coord},     $feature->{properties}{id} );
-						push( @station_list, $feature->{properties}{name} );
-					}
-					push( @coordinate_list, $coord );
-				}
-			}
-
-			my $ret = {
-				name     => $json->{line}{name} // '?',
-				polyline => [@coordinate_list],
-				raw      => $json,
-			};
-
-			$cache->freeze( $url, $ret );
-
-			# borders (Gr" as in "Grenze") are only returned by HAFAS.
-			# They are not stations.
-			my $iris_stations = join( '|', $train->route );
-			my $hafas_stations
-			  = join( '|', grep { $_ !~ m{(\(Gr\)|\)Gr)$} } @station_list );
-
-			# Do not return polyline if it belongs to an entirely different
-			# train. Trains with longer routes (e.g. due to train number
-			# changes, which are handled by HAFAS but left out in IRIS)
-			# are okay though.
-			if ( $iris_stations ne $hafas_stations
-				and index( $hafas_stations, $iris_stations ) == -1 )
-			{
-				$self->{log}->info( 'Ignoring polyline for '
-					  . $train->line
-					  . ": IRIS route does not agree with HAFAS route: $iris_stations != $hafas_stations"
-				);
-				$promise->reject(
-					"hafas->get_polyline_p($log_url): polyline route mismatch");
-			}
-			else {
-				$promise->resolve($ret);
-			}
-			return;
-		}
-	)->catch(
-		sub {
-			my ($err) = @_;
-			$promise->reject("hafas->get_polyline_p($log_url): $err");
-			return;
-		}
-	)->wait;
-
-	return $promise;
-}
-
 sub get_json_p {
 	my ( $self, $url, %opt ) = @_;
 
@@ -186,14 +95,16 @@ sub get_route_timestamps_p {
 
 			# name => $opt{train_no},
 		},
-		cache      => $self->{realtime_cache},
-		promise    => 'Mojo::Promise',
-		user_agent => $self->{user_agent}->request_timeout(10)
+		with_polyline => $opt{with_polyline},
+		cache         => $self->{realtime_cache},
+		promise       => 'Mojo::Promise',
+		user_agent    => $self->{user_agent}->request_timeout(10),
 	)->then(
 		sub {
 			my ($hafas) = @_;
 			my $journey = $hafas->result;
 			my $ret     = {};
+			my $polyline;
 
 			my $station_is_past = 1;
 			for my $stop ( $journey->route ) {
@@ -228,7 +139,41 @@ sub get_route_timestamps_p {
 				$ret->{$name}{isPast} = $station_is_past;
 			}
 
-			$promise->resolve( $ret, $journey );
+			if ( $journey->polyline ) {
+				my @station_list;
+				my @coordinate_list;
+
+				for my $coord ( $journey->polyline ) {
+					if ( $coord->{name} ) {
+						push( @coordinate_list,
+							[ $coord->{lon}, $coord->{lat}, $coord->{eva} ] );
+						push( @station_list, $coord->{name} );
+					}
+					else {
+						push( @coordinate_list,
+							[ $coord->{lon}, $coord->{lat} ] );
+					}
+				}
+				my $iris_stations  = join( '|', $opt{train}->route );
+				my $hafas_stations = join( '|', @station_list );
+				if ( $iris_stations eq $hafas_stations
+					or index( $hafas_stations, $iris_stations ) != -1 )
+				{
+					$polyline = {
+						from_eva => ( $journey->route )[0]{eva},
+						to_eva   => ( $journey->route )[-1]{eva},
+						coords   => \@coordinate_list,
+					};
+				}
+				else {
+					$self->{log}->info( 'Ignoring polyline for '
+						  . $opt{train}->line
+						  . ": IRIS route does not agree with HAFAS route: $iris_stations != $hafas_stations"
+					);
+				}
+			}
+
+			$promise->resolve( $ret, $journey, $polyline );
 			return;
 		}
 	)->catch(
