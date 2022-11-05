@@ -719,11 +719,15 @@ sub startup {
 					if ( $station_data->{sched_arr} ) {
 						my $sched_arr
 						  = epoch_to_dt( $station_data->{sched_arr} );
-						my $rt_arr = $sched_arr->clone;
-						if (    $station_data->{adelay}
-							and $station_data->{adelay} =~ m{^\d+$} )
-						{
-							$rt_arr->add( minutes => $station_data->{adelay} );
+						my $rt_arr = epoch_to_dt( $station_data->{rt_arr} );
+						if ( $rt_arr->epoch == 0 ) {
+							$rt_arr = $sched_arr->clone;
+							if (    $station_data->{arr_delay}
+								and $station_data->{arr_delay} =~ m{^\d+$} )
+							{
+								$rt_arr->add(
+									minutes => $station_data->{arr_delay} );
+							}
 						}
 						$self->in_transit->set_arrival_times(
 							uid           => $uid,
@@ -1076,8 +1080,6 @@ sub startup {
 			my $date_yyyy = $train->start->strftime('%d.%m.%Y');
 			my $train_no  = $train->type . ' ' . $train->train_no;
 
-			my ( $trainlink, $route_data );
-
 			$self->hafas->get_json_p(
 				"${base}&date=${date_yy}&trainname=${train_no}")->then(
 				sub {
@@ -1085,7 +1087,6 @@ sub startup {
 
 					# Fallback: Take first result
 					my $result = $trainsearch->{suggestions}[0];
-					$trainlink = $result->{trainLink};
 
 					# Try finding a result for the current date
 					for
@@ -1106,14 +1107,13 @@ sub startup {
             # station seems to be the more generic solution, so we do that
             # instead.
 							if ( $suggestion->{dep} eq $train->origin ) {
-								$result    = $suggestion;
-								$trainlink = $suggestion->{trainLink};
+								$result = $suggestion;
 								last;
 							}
 						}
 					}
 
-					if ( not $trainlink ) {
+					if ( not $result ) {
 						$self->app->log->debug("trainlink not found");
 						return Mojo::Promise->reject("trainlink not found");
 					}
@@ -1135,65 +1135,27 @@ sub startup {
 						data => { trip_id => $trip_id }
 					);
 
-					my $base2
-					  = 'https://reiseauskunft.bahn.de/bin/traininfo.exe/dn';
-					return $self->hafas->get_json_p(
-"${base2}/${trainlink}?rt=1&date=${date_yy}&L=vs_json.vs_hap"
-					);
+					return $self->hafas->get_route_timestamps_p(
+						trip_id => $trip_id );
 				}
 			)->then(
 				sub {
-					my ($traininfo) = @_;
-					if ( not $traininfo or $traininfo->{error} ) {
-						$self->app->log->debug("traininfo error");
-						return Mojo::Promise->reject("traininfo error");
-					}
-					my $routeinfo
-					  = $traininfo->{suggestions}[0]{locations};
-
-					my $strp = DateTime::Format::Strptime->new(
-						pattern   => '%d.%m.%y %H:%M',
-						time_zone => 'Europe/Berlin',
-					);
-
-					$route_data = {};
-
-					for my $station ( @{$routeinfo} ) {
-						my $arr
-						  = $strp->parse_datetime(
-							$station->{arrDate} . ' ' . $station->{arrTime} );
-						my $dep
-						  = $strp->parse_datetime(
-							$station->{depDate} . ' ' . $station->{depTime} );
-						$route_data->{ $station->{name} } = {
-							sched_arr => $arr ? $arr->epoch : 0,
-							sched_dep => $dep ? $dep->epoch : 0,
-							eva       => $station->{evaId},
-						};
-					}
-
-					my $base2
-					  = 'https://reiseauskunft.bahn.de/bin/traininfo.exe/dn';
-					return $self->hafas->get_xml_p(
-						"${base2}/${trainlink}?rt=1&date=${date_yy}&L=vs_java3"
-					);
-				}
-			)->then(
-				sub {
-					my ($traininfo2) = @_;
-
-					for my $station ( keys %{$route_data} ) {
-						for my $key (
-							keys %{ $traininfo2->{station}{$station} // {} } )
-						{
-							$route_data->{$station}{$key}
-							  = $traininfo2->{station}{$station}{$key};
-						}
-					}
+					my ( $route_data, $journey ) = @_;
 
 					for my $station ( @{$route} ) {
 						$station->[1]
 						  = $route_data->{ $station->[0] };
+					}
+
+					my @messages;
+					for my $m ( $journey->messages ) {
+						push(
+							@messages,
+							{
+								header => $m->short,
+								lead   => $m->text,
+							}
+						);
 					}
 
 					$self->in_transit->set_route_data(
@@ -1208,7 +1170,7 @@ sub startup {
 							map { [ $_->[0]->epoch, $_->[1] ] }
 							  $train->qos_messages
 						],
-						him_messages => $traininfo2->{messages},
+						him_messages => \@messages,
 					);
 					return;
 				}
@@ -1585,13 +1547,7 @@ sub startup {
 				if ( $dep_info and $dep_info->{sched_arr} ) {
 					$dep_info->{sched_arr}
 					  = epoch_to_dt( $dep_info->{sched_arr} );
-					$dep_info->{rt_arr} = $dep_info->{sched_arr}->clone;
-					if (    $dep_info->{adelay}
-						and $dep_info->{adelay} =~ m{^\d+$} )
-					{
-						$dep_info->{rt_arr}
-						  ->add( minutes => $dep_info->{adelay} );
-					}
+					$dep_info->{rt_arr} = epoch_to_dt( $dep_info->{rt_arr} );
 					$dep_info->{rt_arr_countdown} = $ret->{boarding_countdown}
 					  = $dep_info->{rt_arr}->epoch - $epoch;
 				}
@@ -1610,13 +1566,7 @@ sub startup {
 						{
 							$times->{sched_arr}
 							  = epoch_to_dt( $times->{sched_arr} );
-							$times->{rt_arr} = $times->{sched_arr}->clone;
-							if (    $times->{adelay}
-								and $times->{adelay} =~ m{^\d+$} )
-							{
-								$times->{rt_arr}
-								  ->add( minutes => $times->{adelay} );
-							}
+							$times->{rt_arr} = epoch_to_dt( $times->{rt_arr} );
 							$times->{rt_arr_countdown}
 							  = $times->{rt_arr}->epoch - $epoch;
 						}
@@ -1625,13 +1575,7 @@ sub startup {
 						{
 							$times->{sched_dep}
 							  = epoch_to_dt( $times->{sched_dep} );
-							$times->{rt_dep} = $times->{sched_dep}->clone;
-							if (    $times->{ddelay}
-								and $times->{ddelay} =~ m{^\d+$} )
-							{
-								$times->{rt_dep}
-								  ->add( minutes => $times->{ddelay} );
-							}
+							$times->{rt_dep} = epoch_to_dt( $times->{rt_dep} );
 							$times->{rt_dep_countdown}
 							  = $times->{rt_dep}->epoch - $epoch;
 						}

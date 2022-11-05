@@ -12,7 +12,14 @@ use DateTime;
 use Encode qw(decode);
 use JSON;
 use Mojo::Promise;
+use Travel::Status::DE::HAFAS;
 use XML::LibXML;
+
+sub _epoch {
+	my ($dt) = @_;
+
+	return $dt ? $dt->epoch : 0;
+}
 
 sub new {
 	my ( $class, %opt ) = @_;
@@ -167,129 +174,71 @@ sub get_json_p {
 	return $promise;
 }
 
-sub get_xml_p {
-	my ( $self, $url ) = @_;
+sub get_route_timestamps_p {
+	my ( $self, %opt ) = @_;
 
-	my $cache   = $self->{realtime_cache};
 	my $promise = Mojo::Promise->new;
+	my $now     = DateTime->now( time_zone => 'Europe/Berlin' );
 
-	if ( my $content = $cache->thaw($url) ) {
-		return $promise->resolve($content);
-	}
+	Travel::Status::DE::HAFAS->new_p(
+		journey => {
+			id => $opt{trip_id},
 
-	$self->{user_agent}->request_timeout(5)->get_p( $url => $self->{header} )
-	  ->then(
+			# name => $opt{train_no},
+		},
+		cache      => $self->{realtime_cache},
+		promise    => 'Mojo::Promise',
+		user_agent => $self->{user_agent}->request_timeout(10)
+	)->then(
 		sub {
-			my ($tx) = @_;
+			my ($hafas) = @_;
+			my $journey = $hafas->result;
+			my $ret     = {};
 
-			if ( my $err = $tx->error ) {
-				$promise->reject(
-"hafas->get_xml_p($url) returned HTTP $err->{code} $err->{message}"
-				);
-				return;
-			}
-
-			my $body = decode( 'ISO-8859-15', $tx->res->body );
-			my $tree;
-
-			my $traininfo = {
-				station  => {},
-				messages => [],
-			};
-
-			# <SDay text="... &gt; ..."> is invalid XML, but present in
-			# regardless. As it is the last tag, we just throw it away.
-			$body =~ s{<SDay [^>]*/>}{}s;
-
-			# More fixes for invalid XML
-			$body =~ s{P&R}{P&amp;R};
-			$body =~ s{& }{&amp; }g;
-
-			# <Attribute [...] text="[...]"[...]"" /> is invalid XML.
-			# Work around it.
-			$body
-			  =~ s{<Attribute([^>]+)text="([^"]*)"([^"=>]*)""}{<Attribute$1text="$2&#042;$3&#042;"}s;
-
-			# Same for <HIMMessage lead="[...]"[...]"[...]" />
-			$body
-			  =~ s{<HIMMessage([^>]+)lead="([^"]*)"([^"=>]*)"([^"]*)"}{<Attribute$1text="$2&#042;$3&#042;$4"}s;
-
-			# ... and <HIMMessage [...] lead="[...]<>[...]">
-			# (replace <> with t$t)
-			while ( $body
-				=~ s{<HIMMessage([^>]+)lead="([^"]*)<>([^"=]*)"}{<HIMMessage$1lead="$2&#11020;$3"}gis
-			  )
-			{
-			}
-
-			# Dito for <HIMMessage [...] lead="[...]<br>[...]">.
-			while ( $body
-				=~ s{<HIMMessage([^>]+)lead="([^"]*)<br/?>([^"=]*)"}{<HIMMessage$1lead="$2 $3"}is
-			  )
-			{
-			}
-
-			# ... and any other HTML tag inside an XML attribute
-			while ( $body
-				=~ s{<HIMMessage([^>]+)lead="([^"]*)<[^>]+>([^"=]*)"}{<HIMMessage$1lead="$2$3"}is
-			  )
-			{
-			}
-
-			eval { $tree = XML::LibXML->load_xml( string => $body ) };
-			if ( my $err = $@ ) {
-				if ( $err =~ m{extra content at the end}i ) {
-
-					# We requested XML, but received an HTML error page
-					# (which was returned with HTTP 200 OK).
-					$self->{log}->debug("load_xml($url): $err");
-				}
-				else {
-					# There is invalid XML which we might be able to fix via
-					# regular expressions, so dump it into the production log.
-					$self->{log}->info("load_xml($url): $err");
-				}
-				$cache->freeze( $url, $traininfo );
-				$promise->reject("hafas->get_xml_p($url): $err");
-				return;
-			}
-
-			for my $station ( $tree->findnodes('/Journey/St') ) {
-				my $name   = $station->getAttribute('name');
-				my $adelay = $station->getAttribute('adelay');
-				my $ddelay = $station->getAttribute('ddelay');
-				$traininfo->{station}{$name} = {
-					adelay => $adelay,
-					ddelay => $ddelay,
+			my $station_is_past = 1;
+			for my $stop ( $journey->route ) {
+				my $name = $stop->{name};
+				$ret->{$name} = {
+					sched_arr   => _epoch( $stop->{sched_arr} ),
+					sched_dep   => _epoch( $stop->{sched_dep} ),
+					rt_arr      => _epoch( $stop->{rt_arr} ),
+					rt_dep      => _epoch( $stop->{rt_dep} ),
+					arr_delay   => $stop->{arr_delay},
+					dep_delay   => $stop->{dep_delay},
+					eva         => $stop->{eva},
+					load        => $stop->{load},
+					isCancelled => (
+						( $stop->{arr_cancelled} or not $stop->{sched_arr} )
+						  and
+						  ( $stop->{dep_cancelled} or not $stop->{sched_dep} )
+					),
 				};
+				if (
+					    $station_is_past
+					and not $ret->{$name}{isCancelled}
+					and $now->epoch < (
+						$ret->{$name}{rt_arr} // $ret->{$name}{rt_dep}
+						  // $ret->{$name}{sched_arr}
+						  // $ret->{$name}{sched_dep} // $now->epoch
+					)
+				  )
+				{
+					$station_is_past = 0;
+				}
+				$ret->{$name}{isPast} = $station_is_past;
 			}
 
-			for my $message ( $tree->findnodes('/Journey/HIMMessage') ) {
-				my $header  = $message->getAttribute('header');
-				my $lead    = $message->getAttribute('lead');
-				my $display = $message->getAttribute('display');
-				push(
-					@{ $traininfo->{messages} },
-					{
-						header  => $header,
-						lead    => $lead,
-						display => $display
-					}
-				);
-			}
-
-			$cache->freeze( $url, $traininfo );
-			$promise->resolve($traininfo);
+			$promise->resolve( $ret, $journey );
 			return;
 		}
 	)->catch(
 		sub {
 			my ($err) = @_;
-			$self->{log}->info("hafas->get_xml_p($url): $err");
-			$promise->reject("hafas->get_xml_p($url): $err");
+			$promise->reject($err);
 			return;
 		}
 	)->wait;
+
 	return $promise;
 }
 

@@ -3,9 +3,11 @@
 		<a href="https://finalrewind.org/projects/travelynx">travelynx</a> v<%= stash('version') // '???' %><br/>
 		Entwickelt von <a href="https://twitter.com/derfnull">@derfnull</a><br/>
 		<a href="<%= app->config->{ref}{source} // 'https://github.com/derf/travelynx' %>">Quelltext</a> lizensiert unter AGPL v3<br/><br/>
-		Backend:
+		Backends:
 		<a href="https://finalrewind.org/projects/Travel-Status-DE-IRIS/">Travel::Status::DE::IRIS</a>
-		v<%= $Travel::Status::DE::IRIS::VERSION %><br/>
+		v<%= $Travel::Status::DE::IRIS::VERSION %> und
+		<a href="https://finalrewind.org/projects/Travel-Status-DE-DeutscheBahn/">Travel::Status::DE::HAFAS</a>
+		v<%= $Travel::Status::DE::HAFAS::VERSION %><br/>
 		<a href="http://data.deutschebahn.com/dataset/data-haltestellen">Haltestellendaten</a>
 		© DB Station&amp;Service AG,
 		Europaplatz 1,
