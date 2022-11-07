@@ -120,7 +120,7 @@
 			<div class="input-field col s12">
 				<i class="material-icons prefix">account_circle</i>
 				%= text_field 'email', id => 'email', class => 'validate', required => undef, maxlength => 250
-				<label for="email">E-Mail</label>
+				<label for="email">Login (Name oder E-Mail)</label>
 			</div>
 			<div class="input-field col s12">
 				<i class="material-icons prefix">lock</i>
