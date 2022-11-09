@@ -169,8 +169,13 @@ sub get_route_timestamps_p {
 							[ $coord->{lon}, $coord->{lat} ] );
 					}
 				}
-				my $iris_stations  = join( '|', $opt{train}->route );
-				my $hafas_stations = join( '|', @station_list );
+				my $iris_stations = join( '|', $opt{train}->route );
+
+				# borders (Gr" as in "Grenze") are only returned by HAFAS.
+				# They are not stations.
+				my $hafas_stations
+				  = join( '|', grep { $_ !~ m{(\(Gr\)|\)Gr)$} } @station_list );
+
 				if ( $iris_stations eq $hafas_stations
 					or index( $hafas_stations, $iris_stations ) != -1 )
 				{
