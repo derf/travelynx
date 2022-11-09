@@ -18,7 +18,6 @@ Dependencies
  * carton
  * build-essential
  * libpq-dev
- * libxml2-dev
  * git
 
 Installation

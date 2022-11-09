@@ -37,8 +37,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 	libpq-dev \
 	libssl1.1 \
 	libssl-dev \
-	libxml2 \
-	libxml2-dev \
 	make \
 	zlib1g-dev \
 	&& cpanm -in --no-man-pages --installdeps . \
@@ -50,7 +48,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 	libc6-dev \
 	libdb5.3-dev \
 	libssl-dev \
-	libxml2-dev \
 	make \
 	zlib1g-dev \
 	&& apt-get autoremove -y \

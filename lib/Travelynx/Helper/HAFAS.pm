@@ -13,7 +13,6 @@ use Encode qw(decode);
 use JSON;
 use Mojo::Promise;
 use Travel::Status::DE::HAFAS;
-use XML::LibXML;
 
 sub _epoch {
 	my ($dt) = @_;

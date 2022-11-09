@@ -31,7 +31,6 @@ use Travelynx::Model::Journeys;
 use Travelynx::Model::JourneyStatsCache;
 use Travelynx::Model::Traewelling;
 use Travelynx::Model::Users;
-use XML::LibXML;
 
 sub check_password {
 	my ( $password, $hash ) = @_;
