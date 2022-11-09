@@ -83,6 +83,22 @@ sub get_json_p {
 	return $promise;
 }
 
+sub get_departures_p {
+	my ( $self, %opt ) = @_;
+
+	my $when = DateTime->now( time_zone => 'Europe/Berlin' )
+	  ->subtract( minutes => $opt{lookbehind} );
+	return Travel::Status::DE::HAFAS->new_p(
+		station    => $opt{eva},
+		datetime   => $when,
+		duration   => $opt{lookahead},
+		results    => 120,
+		cache      => $self->{realtime_cache},
+		promise    => 'Mojo::Promise',
+		user_agent => $self->{user_agent}->request_timeout(5),
+	);
+}
+
 sub get_route_timestamps_p {
 	my ( $self, %opt ) = @_;
 

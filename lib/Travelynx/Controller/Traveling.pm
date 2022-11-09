@@ -241,15 +241,14 @@ sub get_connecting_trains_p {
 	}
 
 	my $hafas_promise = Mojo::Promise->new;
-	my $rest_api      = $self->config->{backend}{hafas_rest_api};
-	$self->hafas->get_json_p(
-"${rest_api}/stops/${eva}/departures?results=120&duration=${lookahead}&stopovers=true&when=10 minutes ago",
-		realtime => 1,
-		encoding => 'utf-8'
+	$self->hafas->get_departures_p(
+		eva        => $eva,
+		lookbehind => 10,
+		lookahead  => $lookahead
 	)->then(
 		sub {
-			my ($json) = @_;
-			$hafas_promise->resolve($json);
+			my ($status) = @_;
+			$hafas_promise->resolve( [ $status->results ] );
 			return;
 		}
 	)->catch(
@@ -268,11 +267,6 @@ sub get_connecting_trains_p {
 			my @hafas_trains = @{ $hafas->[0] };
 			my @transit_fyi;
 
-			my $strp = DateTime::Format::Strptime->new(
-				pattern   => '%Y-%m-%dT%H:%M:%S%z',
-				time_zone => 'Europe/Berlin',
-			);
-
 			# We've already got a list of connecting trains; this function
 			# only adds further information to them. We ignore errors, as
 			# partial data is better than no data.
@@ -282,25 +276,19 @@ sub get_connecting_trains_p {
 						next;
 					}
 					for my $hafas_train (@hafas_trains) {
-						if ( $hafas_train->{line}{fahrtNr}
+						if (    $hafas_train->number
+							and $hafas_train->number
 							== $iris_train->[0]->train_no )
 						{
-							for my $stop (
-								@{ $hafas_train->{nextStopovers} // [] } )
-							{
-								if (    $stop->{stop}{name}
-									and $stop->{stop}{name} eq $iris_train->[1]
-									and $stop->{arrival} )
+							for my $stop ( $hafas_train->route ) {
+								if (    $stop->{name}
+									and $stop->{name} eq $iris_train->[1]
+									and $stop->{arr} )
 								{
-									$iris_train->[2] = $strp->parse_datetime(
-										$stop->{arrival} );
-									if (    $iris_train->[2]
-										and $iris_train->[0]->departure_delay
-										and $stop->{arrival} eq
-										$stop->{plannedArrival} )
+									$iris_train->[2] = $stop->{arr};
+									if ( $iris_train->[0]->departure_delay
+										and not $stop->{arr_delay} )
 									{
-# If the departure is delayed, but the arrival supposedly on time, we assume that this is an API issue and manually compute the expected arrival time.
-# This avoids cases where a connection is shown as arriving at its destination before having departed at a previous stop.
 										$iris_train->[2]
 										  ->add( minutes => $iris_train->[0]
 											  ->departure_delay );
@@ -315,29 +303,20 @@ sub get_connecting_trains_p {
 				if ( $use_history & 0x04 and @{$lt_stops} ) {
 					my %via_count = map { $_ => 0 } @{$lt_stops};
 					for my $hafas_train (@hafas_trains) {
-						for
-						  my $stop ( @{ $hafas_train->{nextStopovers} // [] } )
-						{
+						for my $stop ( $hafas_train->route ) {
 							for my $dest ( @{$lt_stops} ) {
-								if (    $stop->{stop}{name}
-									and $stop->{stop}{name} eq $dest
+								if (    $stop->{name}
+									and $stop->{name} eq $dest
 									and $via_count{$dest} < 2
-									and $hafas_train->{when} )
+									and $hafas_train->datetime )
 								{
-									my $departure = $strp->parse_datetime(
-										$hafas_train->{when} );
-									my $arrival
-									  = $strp->parse_datetime(
-										$stop->{arrival} );
-									my $delay = undef;
-									if ( defined $hafas_train->{delay} ) {
-										$delay = $hafas_train->{delay} / 60;
-										if (    $delay
-											and $stop->{arrival} eq
-											$stop->{plannedArrival} )
-										{
-											$arrival->add( minutes => $delay );
-										}
+									my $departure = $hafas_train->datetime;
+									my $arrival   = $stop->{arr};
+									my $delay     = $hafas_train->delay;
+									if (    $delay
+										and $stop->{arr} == $stop->{sched_arr} )
+									{
+										$arrival->add( minutes => $delay );
 									}
 									if ( $departure->epoch >= $exclude_before )
 									{
@@ -346,9 +325,7 @@ sub get_connecting_trains_p {
 											@transit_fyi,
 											[
 												{
-													line =>
-													  $hafas_train->{line}
-													  {name},
+													line => $hafas_train->line,
 													departure => $departure,
 													departure_delay => $delay
 												},
@@ -1164,18 +1141,18 @@ sub station {
 		}
 	)->catch(
 		sub {
-			my ($status) = @_;
-			if ( $status->{errstr} ) {
+			my ($err) = @_;
+			if ( ref($err) eq 'HASH' ) {
 				$self->render(
 					'landingpage',
 					version => $self->app->config->{version} // 'UNKNOWN',
 					with_autocomplete => 1,
 					with_geolocation  => 1,
-					error             => $status->{errstr}
+					error             => $err->{errstr},
 				);
 			}
 			else {
-				$self->render( 'exception', exception => $status );
+				$self->render( 'exception', exception => $err );
 			}
 		}
 	)->wait;
