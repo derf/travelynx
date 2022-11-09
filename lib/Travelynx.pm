@@ -1528,29 +1528,34 @@ sub startup {
 				for my $station (@route_after) {
 					if ( @{$station} > 1 ) {
 
-						# Note: $station->[1]{sched_arr} may already have been
-						# converted to a DateTime object in $station->[1] is
-						# $dep_info. This can happen when a station is present
-						# several times in a train's route, e.g. for Frankfurt
-						# Flughafen in some nightly connections.
+                     # Note: $station->[1]{sched_arr} may already have been
+                     # converted to a DateTime object. This can happen when a
+                     # station is present several times in a train's route, e.g.
+                     # for Frankfurt Flughafen in some nightly connections.
 						my $times = $station->[1];
 						if ( $times->{sched_arr}
 							and ref( $times->{sched_arr} ) ne 'DateTime' )
 						{
 							$times->{sched_arr}
 							  = epoch_to_dt( $times->{sched_arr} );
-							$times->{rt_arr} = epoch_to_dt( $times->{rt_arr} );
-							$times->{rt_arr_countdown}
-							  = $times->{rt_arr}->epoch - $epoch;
+							if ( $times->{rt_arr} ) {
+								$times->{rt_arr}
+								  = epoch_to_dt( $times->{rt_arr} );
+								$times->{rt_arr_countdown}
+								  = $times->{rt_arr}->epoch - $epoch;
+							}
 						}
 						if ( $times->{sched_dep}
 							and ref( $times->{sched_dep} ) ne 'DateTime' )
 						{
 							$times->{sched_dep}
 							  = epoch_to_dt( $times->{sched_dep} );
-							$times->{rt_dep} = epoch_to_dt( $times->{rt_dep} );
-							$times->{rt_dep_countdown}
-							  = $times->{rt_dep}->epoch - $epoch;
+							if ( $times->{rt_dep} ) {
+								$times->{rt_dep}
+								  = epoch_to_dt( $times->{rt_dep} );
+								$times->{rt_dep_countdown}
+								  = $times->{rt_dep}->epoch - $epoch;
+							}
 						}
 					}
 				}

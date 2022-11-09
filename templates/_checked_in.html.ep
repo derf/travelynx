@@ -225,6 +225,9 @@
 							% elsif ($station->[1]{rt_arr}) {
 								<span><%= $station->[1]{rt_arr}->strftime('%H:%M') %></span>
 							% }
+							% elsif ($station->[1]{sched_arr}) {
+								<span><%= $station->[1]{sched_arr}->strftime('%H:%M') %></span>
+							% }
 							% elsif ($station->[2] and $station->[2] eq 'additional') {
 								<span>Zusatzhalt</span>
 							% }
@@ -330,6 +333,9 @@
 						% }
 						% elsif ($station->[1]{rt_arr}) {
 							<span><%= $station->[1]{rt_arr}->strftime('%H:%M') %></span>
+						% }
+						% elsif ($station->[1]{sched_arr}) {
+							<span><%= $station->[1]{sched_arr}->strftime('%H:%M') %></span>
 						% }
 						% elsif ($station->[2] and $station->[2] eq 'additional') {
 							<span>Zusatzhalt</span>
