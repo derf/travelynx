@@ -11,6 +11,7 @@
 				<span class="card-title">Beta-Feature</span>
 				<p>
 					Bekannte Einschränkung: Hooks werden bei einem Checkin via Träwelling nicht ausgelöst.
+					Die Träwelling-API ist noch nicht stabil.
 				</p>
 			</div>
 			<div class="card-action">
