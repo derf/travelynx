@@ -340,7 +340,7 @@ sub checkin {
 	}
 
 	my $request = {
-		tripID   => $opt{trip_id},
+		tripId   => $opt{trip_id},
 		lineName => $opt{train_type} . ' '
 		  . ( $opt{train_line} // $opt{train_no} ),
 		start       => q{} . $opt{dep_eva},
@@ -355,12 +355,13 @@ sub checkin {
 		$request->{body} = $opt{user_data}{comment};
 	}
 
+# https://github.com/Traewelling/traewelling/blob/develop/app/Http/Controllers/API/v1/TransportController.php -> create. trains/checkin ist richtig.
 	my $debug_prefix
-	  = "v0/trains/checkin('$request->{lineName}' $request->{tripID} $request->{start} -> $request->{destination})";
+	  = "v1/trains/checkin('$request->{lineName}' $request->{tripId} $request->{start} -> $request->{destination})";
 
 	$self->{user_agent}->request_timeout(20)
 	  ->post_p(
-		"https://traewelling.de/api/v0/trains/checkin" => $header => json =>
+		"https://traewelling.de/api/v1/trains/checkin" => $header => json =>
 		  $request )->then(
 		sub {
 			my ($tx) = @_;
