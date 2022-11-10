@@ -1072,13 +1072,15 @@ sub startup {
 
 					my @messages;
 					for my $m ( $journey->messages ) {
-						push(
-							@messages,
-							{
-								header => $m->short,
-								lead   => $m->text,
-							}
-						);
+						if ( not $m->code ) {
+							push(
+								@messages,
+								{
+									header => $m->short,
+									lead   => $m->text,
+								}
+							);
+						}
 					}
 
 					$self->in_transit->set_route_data(
