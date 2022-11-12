@@ -40,11 +40,12 @@ a.tablerow {
   padding-top: 1em;
   padding-bottom: 1em;
   border-bottom: 1px solid rgba(0,0,0,0.12);
+  .material-icons {
+    vertical-align: bottom;
+    margin-bottom: 0.2em;
+  }
   span {
     display: inline-block;
-  }
-  .material-icons {
-    margin-bottom: 0.2em;
   }
 }
 

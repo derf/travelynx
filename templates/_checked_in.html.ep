@@ -222,7 +222,7 @@
 							<span>
 							% if ($station->[1]{load}{SECOND}) {
 								% my ($first, $second) = load_icon($station->[1]{load});
-								<i class="material-icons tiny" aria-hidden="true" style="padding-right: 0.5em; vertical-align: bottom;"><%= $first %></i> <i class="material-icons tiny" aria-hidden="true" style="vertical-align: bottom;"><%= $second %></i>
+								<i class="material-icons tiny" aria-hidden="true"><%= $first %></i> <i class="material-icons tiny" aria-hidden="true"><%= $second %></i>
 							% }
 							% if ($station->[2] and $station->[2] eq 'cancelled') {
 								entfällt
@@ -337,7 +337,7 @@
 						<span>
 						% if ($station->[1]{load}{SECOND}) {
 							% my ($first, $second) = load_icon($station->[1]{load});
-							<i class="material-icons tiny" aria-hidden="true" style="padding-right: 0.5em; vertical-align: bottom;"><%= $first %></i> <i class="material-icons tiny" aria-hidden="true" style="vertical-align: bottom;"><%= $second %></i>
+							<i class="material-icons tiny" aria-hidden="true"><%= $first %></i> <i class="material-icons tiny" aria-hidden="true"><%= $second %></i>
 						% }
 						% if ($station->[2] and $station->[2] eq 'cancelled') {
 							entfällt
