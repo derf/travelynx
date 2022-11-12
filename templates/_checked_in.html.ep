@@ -219,18 +219,24 @@
 					% for my $station (@{$journey->{route_after}}) {
 						<a class="tablerow action-checkout" data-station="<%= $station->[0] %>">
 							<span><%= $station->[0] %></span>
+							<span>
+							% if ($station->[1]{load}{SECOND}) {
+								% my ($first, $second) = load_icon($station->[1]{load});
+								<i class="material-icons tiny" aria-hidden="true" style="padding-right: 0.5em; vertical-align: bottom;"><%= $first %></i> <i class="material-icons tiny" aria-hidden="true" style="vertical-align: bottom;"><%= $second %></i>
+							% }
 							% if ($station->[2] and $station->[2] eq 'cancelled') {
-								<span>entfällt</span>
+								entfällt
 							% }
 							% elsif ($station->[1]{rt_arr}) {
-								<span><%= $station->[1]{rt_arr}->strftime('%H:%M') %></span>
+								<%= $station->[1]{rt_arr}->strftime('%H:%M') %>
 							% }
 							% elsif ($station->[1]{sched_arr}) {
-								<span><%= $station->[1]{sched_arr}->strftime('%H:%M') %></span>
+								<%= $station->[1]{sched_arr}->strftime('%H:%M') %>
 							% }
 							% elsif ($station->[2] and $station->[2] eq 'additional') {
-								<span>Zusatzhalt</span>
+								Zusatzhalt
 							% }
+							</span>
 						</a>
 					% }
 				</p>
@@ -328,18 +334,24 @@
 					% my $is_dest = ($journey->{arr_name} and $station->[0] eq $journey->{arr_name});
 					<a class="action-checkout tablerow" style="<%= $is_dest? 'font-weight: bold;' : '' %>" data-station="<%= $station->[0] %>">
 						<span><%= $station->[0] %></span>
+						<span>
+						% if ($station->[1]{load}{SECOND}) {
+							% my ($first, $second) = load_icon($station->[1]{load});
+							<i class="material-icons tiny" aria-hidden="true" style="padding-right: 0.5em; vertical-align: bottom;"><%= $first %></i> <i class="material-icons tiny" aria-hidden="true" style="vertical-align: bottom;"><%= $second %></i>
+						% }
 						% if ($station->[2] and $station->[2] eq 'cancelled') {
-							<span>entfällt</span>
+							entfällt
 						% }
 						% elsif ($station->[1]{rt_arr}) {
-							<span><%= $station->[1]{rt_arr}->strftime('%H:%M') %></span>
+							<%= $station->[1]{rt_arr}->strftime('%H:%M') %>
 						% }
 						% elsif ($station->[1]{sched_arr}) {
-							<span><%= $station->[1]{sched_arr}->strftime('%H:%M') %></span>
+							<%= $station->[1]{sched_arr}->strftime('%H:%M') %>
 						% }
 						% elsif ($station->[2] and $station->[2] eq 'additional') {
-							<span>Zusatzhalt</span>
+							Zusatzhalt
 						% }
+						</span>
 					</a>
 					% if ($user->{sb_template}) {
 						<a class="nonflex" href="<%= resolve_sb_template($user->{sb_template}, name => $station->[0], eva => $station->[1]{eva}, tt => $journey->{train_type} // q{x}, tn => $journey->{train_no}, id => $journey->{train_id}) %>"><i class="material-icons tiny">train</i></a>

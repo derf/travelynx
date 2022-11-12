@@ -467,6 +467,21 @@ sub startup {
 	);
 
 	$self->helper(
+		'load_icon' => sub {
+			my ( $self, $load ) = @_;
+			my $first  = $load->{FIRST}  // 0;
+			my $second = $load->{SECOND} // 0;
+
+			my @symbols
+			  = (
+				qw(help_outline person_outline people priority_high not_interested)
+			  );
+
+			return ( $symbols[$first], $symbols[$second] );
+		}
+	);
+
+	$self->helper(
 		'checkin' => sub {
 			my ( $self, %opt ) = @_;
 
