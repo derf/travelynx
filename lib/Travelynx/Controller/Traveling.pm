@@ -280,6 +280,11 @@ sub get_connecting_trains_p {
 							and $hafas_train->number
 							== $iris_train->[0]->train_no )
 						{
+							if (    $hafas_train->load
+								and $hafas_train->load->{SECOND} )
+							{
+								$iris_train->[3] = $hafas_train->load;
+							}
 							for my $stop ( $hafas_train->route ) {
 								if (    $stop->{name}
 									and $stop->{name} eq $iris_train->[1]

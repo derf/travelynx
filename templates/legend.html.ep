@@ -17,6 +17,7 @@
 				<tr>
 					<td><i class="material-icons">directions_run</i></td>
 					<td>Knapper Umstieg. Zug wird möglicherweise nicht erreicht.</td>
+				</tr>
 				<tr>
 					<td><i class="material-icons">warning</i></td>
 					<td>Der Zug ist überbesetzt. Möglicherweise sind keine freien Sitzplätze vorhanden.</td>
@@ -26,7 +27,7 @@
 					<td>Eingeschränkte Barrierefreihet, z.B. fehlendes oder defektes rollstuhlgerechtes WC.</td>
 				</tr>
 				<tr>
-					<td><i class="material-icons">people</i></td>
+					<td><i class="material-icons">remove</i></td>
 					<td>Mindestens ein Wagen fehlt.</td>
 				</tr>
 				<tr>
@@ -37,6 +38,32 @@
 					<td><i class="material-icons">portable_wifi_off</i></td>
 					<td>WLAN ganz oder teilweise ausgefallen.</td>
 				</tr>
+			</tbody>
+		</table>
+		<h3>Auslastung</h3>
+		<p>Die erwartete Auslastung der ersten und zweiten Wagenklasse wird bei Anschluss-Vorschlägen sowie bei Unterwegshalten des aktuellen Zuges angegeben, sofern verfügbar.</p>
+		<table class="striped">
+			<tbody>
+				<tr>
+					<td><i class="material-icons">help_outline</i></td>
+					<td>Auslastung unbekannt</td>
+				</tr>
+				<tr>
+					<td><i class="material-icons">person_outline</i></td>
+					<td>Niedrige Auslastung</td>
+				</tr>
+				<tr>
+					<td><i class="material-icons">people</i></td>
+					<td>Hohe Auslastung</td>
+				</tr>
+				<tr>
+					<td><i class="material-icons">priority_high</i></td>
+					<td>Sehr hohe Auslastung</td>
+				</tr>
+				<tr>
+					<td><i class="material-icons">not_interested</i></td>
+					<td>Der Zug ist ausgebucht</td>
+				<tr>
 			</tbody>
 		</table>
 	</div>
