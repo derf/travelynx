@@ -2,12 +2,16 @@
 	<div class="col s12">
 		<h2>Legende</h2>
 		<p>travelynx verwendet bei Angaben zu Zügen und Stationen die folgenden Symbole.</p>
-		<h3>Abfahrtstafel</h3>
+		<h3>Abfahrtstafel und Route</h3>
 		<table class="striped">
 			<tbody>
 				<tr>
 					<td><i class="material-icons">gps_off</i></td>
 					<td>Keine Echtzeitdaten vorhanden. Bei den angegebenen Zeiten handelt es sich um Angaben aus dem Fahrplan.</td>
+				</tr>
+				<tr>
+					<td>(HH:MM)</td>
+					<td>Route: Ein Ausstieg ist an dieser Station möglicherweise nicht vorgesehen.</td>
 				</tr>
 			</tbody>
 		</table>

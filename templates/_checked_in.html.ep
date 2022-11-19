@@ -227,11 +227,11 @@
 							% if ($station->[2] and $station->[2] eq 'cancelled') {
 								entfällt
 							% }
-							% elsif ($station->[1]{rt_arr}) {
-								<%= $station->[1]{rt_arr}->strftime('%H:%M') %>
+							% elsif ($station->[1]{rt_arr} or $station->[1]{sched_arr}) {
+								%= ($station->[1]{rt_arr} || $station->[1]{sched_arr})->strftime('%H:%M')
 							% }
-							% elsif ($station->[1]{sched_arr}) {
-								<%= $station->[1]{sched_arr}->strftime('%H:%M') %>
+							% elsif ($station->[1]{rt_dep} or $station->[1]{sched_dep}) {
+								(<%= ($station->[1]{rt_dep} || $station->[1]{sched_dep})->strftime('%H:%M') %>)
 							% }
 							% elsif ($station->[2] and $station->[2] eq 'additional') {
 								Zusatzhalt
@@ -342,11 +342,11 @@
 						% if ($station->[2] and $station->[2] eq 'cancelled') {
 							entfällt
 						% }
-						% elsif ($station->[1]{rt_arr}) {
-							<%= $station->[1]{rt_arr}->strftime('%H:%M') %>
+						% elsif ($station->[1]{rt_arr} or $station->[1]{sched_arr}) {
+							%= ($station->[1]{rt_arr} || $station->[1]{sched_arr})->strftime('%H:%M')
 						% }
-						% elsif ($station->[1]{sched_arr}) {
-							<%= $station->[1]{sched_arr}->strftime('%H:%M') %>
+						% elsif ($station->[1]{rt_dep} or $station->[1]{sched_dep}) {
+							(<%= ($station->[1]{rt_dep} || $station->[1]{sched_dep})->strftime('%H:%M') %>)
 						% }
 						% elsif ($station->[2] and $station->[2] eq 'additional') {
 							Zusatzhalt
