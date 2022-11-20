@@ -1444,17 +1444,18 @@ DISTRIBUTIONS
       Exporter 5.57
       ExtUtils::MakeMaker 0
       perl 5.008
-  IO-Socket-SSL-2.075
-    pathname: S/SU/SULLR/IO-Socket-SSL-2.075.tar.gz
+  IO-Socket-SSL-2.076
+    pathname: S/SU/SULLR/IO-Socket-SSL-2.076.tar.gz
     provides:
-      IO::Socket::SSL 2.075
+      IO::Socket::SSL 2.076
       IO::Socket::SSL::Intercept 2.056
-      IO::Socket::SSL::OCSP_Cache 2.075
-      IO::Socket::SSL::OCSP_Resolver 2.075
+      IO::Socket::SSL::OCSP_Cache 2.076
+      IO::Socket::SSL::OCSP_Resolver 2.076
       IO::Socket::SSL::PublicSuffix undef
-      IO::Socket::SSL::SSL_Context 2.075
-      IO::Socket::SSL::SSL_HANDLE 2.075
-      IO::Socket::SSL::Session_Cache 2.075
+      IO::Socket::SSL::SSL_Context 2.076
+      IO::Socket::SSL::SSL_HANDLE 2.076
+      IO::Socket::SSL::Session_Cache 2.076
+      IO::Socket::SSL::Trace 2.076
       IO::Socket::SSL::Utils 2.015
     requirements:
       ExtUtils::MakeMaker 0
@@ -1736,7 +1737,7 @@ DISTRIBUTIONS
       File::Spec 3.00
       File::Spec::Functions 0
       if 0
-      perl 5.00503
+      perl 5.005030
       strict 0
   Module-Runtime-0.016
     pathname: Z/ZE/ZEFRAM/Module-Runtime-0.016.tar.gz
@@ -1763,8 +1764,8 @@ DISTRIBUTIONS
       Mojolicious 8.50
       SQL::Abstract::Pg 1.0
       perl 5.016
-  Mojolicious-9.28
-    pathname: S/SR/SRI/Mojolicious-9.28.tar.gz
+  Mojolicious-9.29
+    pathname: S/SR/SRI/Mojolicious-9.29.tar.gz
     provides:
       Mojo undef
       Mojo::Asset undef
@@ -1832,7 +1833,7 @@ DISTRIBUTIONS
       Mojo::UserAgent::Transactor undef
       Mojo::Util undef
       Mojo::WebSocket undef
-      Mojolicious 9.28
+      Mojolicious 9.29
       Mojolicious::Command undef
       Mojolicious::Command::Author::cpanify undef
       Mojolicious::Command::Author::generate undef
@@ -1925,10 +1926,10 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       Module::Runtime 0.014
-  Mozilla-CA-20211001
-    pathname: A/AB/ABH/Mozilla-CA-20211001.tar.gz
+  Mozilla-CA-20221114
+    pathname: H/HA/HAARG/Mozilla-CA-20221114.tar.gz
     provides:
-      Mozilla::CA 20211001
+      Mozilla::CA 20221114
     requirements:
       ExtUtils::MakeMaker 0
       perl 5.006
@@ -2487,12 +2488,12 @@ DISTRIBUTIONS
       Test::More 0
       Test::Pod 0
       perl v5.14.0
-  Travel-Status-DE-IRIS-1.72
-    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.72.tar.gz
+  Travel-Status-DE-IRIS-1.73
+    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.73.tar.gz
     provides:
-      Travel::Status::DE::IRIS 1.72
-      Travel::Status::DE::IRIS::Result 1.72
-      Travel::Status::DE::IRIS::Stations 1.72
+      Travel::Status::DE::IRIS 1.73
+      Travel::Status::DE::IRIS::Result 1.73
+      Travel::Status::DE::IRIS::Stations 1.73
     requirements:
       Carp 0
       Class::Accessor 0
