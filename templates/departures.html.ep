@@ -97,7 +97,13 @@
 								<%= $result->destination %>
 							</a>
 						</td>
-						<td class="<%= $td_class %>"><%= $result->departure->strftime('%H:%M') %>
+						<td class="<%= $td_class %>">
+							% if ($result->departure_hidden) {
+								(<%= $result->departure->strftime('%H:%M') %>)
+							% }
+							% else {
+								%= $result->departure->strftime('%H:%M')
+							% }
 							% if ($result->departure_delay) {
 								(<%= sprintf('%+d', $result->departure_delay) %>)
 							% }
