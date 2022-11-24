@@ -957,6 +957,16 @@ sub get_travel_distance {
 	my $route_ref    = $journey->{route};
 	my $polyline_ref = $journey->{polyline};
 
+	if ( not $to ) {
+		$self->{log}
+		  ->warn("Journey $journey->{id} has no to_name for EVA $to_eva");
+	}
+
+	if ( not $from ) {
+		$self->{log}
+		  ->warn("Journey $journey->{id} has no from_name for EVA $from_eva");
+	}
+
 	my $distance_polyline     = 0;
 	my $distance_intermediate = 0;
 	my $distance_beeline      = 0;
