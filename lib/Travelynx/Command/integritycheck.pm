@@ -1,4 +1,4 @@
-package Travelynx::Command::missingstations;
+package Travelynx::Command::integritycheck;
 
 # Copyright (C) 2022 Daniel Friesel
 #
