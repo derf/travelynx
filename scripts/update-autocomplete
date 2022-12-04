@@ -6,10 +6,11 @@ use 5.020;
 
 use JSON;
 use File::Slurp qw(write_file);
+use List::Util  qw(uniq);
 use Travel::Status::DE::IRIS::Stations;
 
 my @station_names
-  = map { $_->[1] } Travel::Status::DE::IRIS::Stations::get_stations();
+  = uniq map { $_->[1] } Travel::Status::DE::IRIS::Stations::get_stations();
 my $station_list = q{};
 
 for my $station (@station_names) {
