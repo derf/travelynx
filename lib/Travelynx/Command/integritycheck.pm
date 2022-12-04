@@ -56,8 +56,9 @@ sub run {
 	my %notified;
 	my $rename = $self->app->renamed_station;
 
-	$res = $self->app->pg->db->select( 'journeys', [ 'route', 'edited' ] );
-	for my $j ( $res->expand->hashes->each ) {
+	$res
+	  = $self->app->pg->db->select( 'journeys', [ 'route', 'edited' ] )->expand;
+	while ( my $j = $res->hash ) {
 		if ( $j->{edited} & 0x0010 ) {
 			next;
 		}
