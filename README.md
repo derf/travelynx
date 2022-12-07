@@ -31,7 +31,7 @@ however this method is untested.
 In the project root directory (where `cpanfile` resides), run
 
 ```
-carton install
+carton install --deployment
 ```
 
 and set `PERL5LIB=.../local/lib/perl5` before executing any travelynx
@@ -87,6 +87,7 @@ or not.
 
 ```
 git pull
+carton install --deployment # if you are using carton: update dependencies
 chmod -R a+rX . # only needed if travelynx is running under a different user
 if perl index.pl database has-current-schema; then
     systemctl reload travelynx

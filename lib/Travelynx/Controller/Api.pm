@@ -7,7 +7,6 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use DateTime;
 use List::Util;
-use Travel::Status::DE::IRIS::Stations;
 use UUID::Tiny qw(:std);
 
 # Internal Helpers
@@ -184,41 +183,24 @@ sub travel_v1 {
 			return;
 		}
 
-		if (
-			@{
-				[
-					Travel::Status::DE::IRIS::Stations::get_station(
-						$from_station)
-				]
-			} != 1
-		  )
-		{
+		if ( not $self->stations->search($from_station) ) {
 			$self->render(
 				json => {
 					success    => \0,
 					deprecated => \0,
-					error      => 'fromStation is ambiguous',
+					error      => 'Unknown fromStation',
 					status     => $self->get_user_status_json_v1($uid)
 				},
 			);
 			return;
 		}
 
-		if (
-			$to_station
-			and @{
-				[
-					Travel::Status::DE::IRIS::Stations::get_station(
-						$to_station)
-				]
-			} != 1
-		  )
-		{
+		if ( $to_station and not $self->stations->search($to_station) ) {
 			$self->render(
 				json => {
 					success    => \0,
 					deprecated => \0,
-					error      => 'toStation is ambiguous',
+					error      => 'Unknown toStation',
 					status     => $self->get_user_status_json_v1($uid)
 				},
 			);

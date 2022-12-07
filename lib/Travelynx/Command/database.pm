@@ -6,11 +6,26 @@ package Travelynx::Command::database;
 use Mojo::Base 'Mojolicious::Command';
 
 use DateTime;
+use File::Slurp qw(read_file);
+use JSON;
 use Travel::Status::DE::IRIS::Stations;
 
 has description => 'Initialize or upgrade database layout';
 
 has usage => sub { shift->extract_usage };
+
+sub get_iris_version {
+	my ($db) = @_;
+	my $version;
+
+	eval { $version = $db->select( 'schema_version', ['iris'] )->hash->{iris}; };
+	if ($@) {
+
+		# If it failed, the version table does not exist -> run setup first.
+		return undef;
+	}
+	return $version;
+}
 
 sub get_schema_version {
 	my ($db) = @_;
@@ -1106,7 +1121,211 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v26 -> v27
+	# add list of stations that are not (or no longer) present in T-S-DE-IRIS
+	# (in this case, stations that were removed up to 1.74)
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				alter table schema_version
+					add column iris varchar(12);
+				create table stations (
+					eva int not null primary key,
+					ds100 varchar(16) not null,
+					name varchar(64) not null,
+					lat real not null,
+					lon real not null,
+					source smallint not null,
+					archived bool not null
+				);
+				update schema_version set version = 27;
+				update schema_version set iris = '0';
+			}
+		);
+	},
 );
+
+sub sync_stations {
+	my ( $db, $iris_version ) = @_;
+
+	$db->update( 'schema_version',
+		{ iris => $Travel::Status::DE::IRIS::Stations::VERSION } );
+
+	say 'Updating stations table, this may take a while ...';
+	my $total = scalar Travel::Status::DE::IRIS::Stations::get_stations();
+	my $count = 0;
+	for my $s ( Travel::Status::DE::IRIS::Stations::get_stations() ) {
+		my ( $ds100, $name, $eva, $lon, $lat ) = @{$s};
+		$db->insert(
+			'stations',
+			{
+				eva      => $eva,
+				ds100    => $ds100,
+				name     => $name,
+				lat      => $lat,
+				lon      => $lon,
+				source   => 0,
+				archived => 0
+			},
+			{
+				on_conflict => \
+				  '(eva) do update set archived = false, source = 0'
+			}
+		);
+		if ( $count++ % 1000 == 0 ) {
+			printf( "    %2.0f%% complete\n", $count * 100 / $total );
+		}
+	}
+	say '    done';
+
+	my $res1 = $db->query(
+		qq{
+			select checkin_station_id
+			from journeys
+			left join stations on journeys.checkin_station_id = stations.eva
+			where stations.eva is null
+			limit 1;
+		}
+	)->hash;
+
+	my $res2 = $db->query(
+		qq{
+			select checkout_station_id
+			from journeys
+			left join stations on journeys.checkout_station_id = stations.eva
+			where stations.eva is null
+			limit 1;
+		}
+	)->hash;
+
+	if ( $res1 or $res2 ) {
+		say 'Dropping stats cache for archived stations ...';
+		$db->query('truncate journey_stats;');
+	}
+
+	say 'Updating archived stations ...';
+	my $old_stations
+	  = JSON->new->utf8->decode( scalar read_file('share/old_stations.json') );
+	for my $s ( @{$old_stations} ) {
+		$db->insert(
+			'stations',
+			{
+				eva      => $s->{eva},
+				ds100    => $s->{ds100},
+				name     => $s->{name},
+				lat      => $s->{latlong}[0],
+				lon      => $s->{latlong}[1],
+				source   => 0,
+				archived => 1
+			},
+			{ on_conflict => undef }
+		);
+	}
+
+	if ( $iris_version == 0 ) {
+		say 'Applying EVA ID changes ...';
+		for my $change (
+			[ 721394, 301002, 'RKBP: Kronenplatz (U), Karlsruhe' ],
+			[
+				721356, 901012,
+				'RKME: Ettlinger Tor/Staatstheater (U), Karlsruhe'
+			],
+		  )
+		{
+			my ( $old, $new, $desc ) = @{$change};
+			my $rows = $db->update(
+				'journeys',
+				{ checkout_station_id => $new },
+				{ checkout_station_id => $old }
+			)->rows;
+			$rows += $db->update(
+				'journeys',
+				{ checkin_station_id => $new },
+				{ checkin_station_id => $old }
+			)->rows;
+			if ($rows) {
+				say "$desc ($old -> $new) : $rows rows";
+			}
+		}
+	}
+
+	say 'Checking for unknown EVA IDs ...';
+	my $found = 0;
+
+	$res1 = $db->query(
+		qq{
+			select checkin_station_id
+			from journeys
+			left join stations on journeys.checkin_station_id = stations.eva
+			where stations.eva is null;
+		}
+	);
+
+	$res2 = $db->query(
+		qq{
+			select checkout_station_id
+			from journeys
+			left join stations on journeys.checkout_station_id = stations.eva
+			where stations.eva is null;
+		}
+	);
+
+	my %notified;
+	while ( my $row = $res1->hash ) {
+		my $eva = $row->{checkin_station_id};
+		if ( not $found ) {
+			$found = 1;
+			say '';
+			say '------------8<----------';
+			say 'Travel::Status::DE::IRIS v'
+			  . $Travel::Status::DE::IRIS::Stations::VERSION;
+		}
+		if ( not $notified{$eva} ) {
+			say $eva;
+			$notified{$eva} = 1;
+		}
+	}
+
+	while ( my $row = $res2->hash ) {
+		my $eva = $row->{checkout_station_id};
+		if ( not $found ) {
+			$found = 1;
+			say '';
+			say '------------8<----------';
+			say 'Travel::Status::DE::IRIS v'
+			  . $Travel::Status::DE::IRIS::Stations::VERSION;
+		}
+		if ( not $notified{$eva} ) {
+			say $eva;
+			$notified{$eva} = 1;
+		}
+	}
+
+	if ($found) {
+		say '------------8<----------';
+		say '';
+		say
+'Due to a conceptual flaw in past travelynx releases, your database contains unknown EVA IDs.';
+		say
+'Please file a bug report titled "Missing EVA IDs after DB migration" at https://github.com/derf/travelynx/issues';
+		say 'and include the list shown above in the bug report.';
+		say
+'If you do not have a GitHub account, please send an E-Mail to derf+travelynx@finalrewind.org instead.';
+		say '';
+		say 'This issue does not affect usability or long-term data integrity,';
+		say 'and handling it is not time-critical.';
+		say
+'Past journeys referencing unknown EVA IDs may have inaccurate distance statistics,';
+		say
+'but this will be resolved once a future release handles those EVA IDs.';
+		say 'Note that this issue was already present in previous releases.';
+	}
+	else {
+		say 'None found.';
+	}
+}
 
 sub setup_db {
 	my ($db) = @_;
@@ -1129,7 +1348,7 @@ sub migrate_db {
 	say "Found travelynx schema v${schema_version}";
 
 	if ( $schema_version == @migrations ) {
-		say "Database layout is up-to-date";
+		say 'Database layout is up-to-date';
 	}
 
 	eval {
@@ -1142,6 +1361,24 @@ sub migrate_db {
 		say STDERR "Migration failed: $@";
 		say STDERR "Rolling back to v${schema_version}";
 		exit(1);
+	}
+
+	my $iris_version = get_iris_version($db);
+	say "Found IRIS station database v${iris_version}";
+	if ( $iris_version eq $Travel::Status::DE::IRIS::Stations::VERSION ) {
+		say 'Station database is up-to-date';
+	}
+	else {
+		eval {
+			say
+"Synchronizing with Travel::Status::DE::IRIS $Travel::Status::DE::IRIS::Stations::VERSION";
+			sync_stations( $db, $iris_version );
+		};
+		if ($@) {
+			say STDERR "Synchronization failed: $@";
+			say STDERR "Rolling back to v${schema_version}";
+			exit(1);
+		}
 	}
 
 	if ( get_schema_version($db) == @migrations ) {

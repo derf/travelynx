@@ -20,7 +20,6 @@ use List::Util;
 use List::UtilsBy   qw(uniq_by);
 use List::MoreUtils qw(first_index);
 use Travel::Status::DE::DBWagenreihung;
-use Travel::Status::DE::IRIS::Stations;
 use Travelynx::Helper::DBDB;
 use Travelynx::Helper::HAFAS;
 use Travelynx::Helper::IRIS;
@@ -29,6 +28,7 @@ use Travelynx::Helper::Traewelling;
 use Travelynx::Model::InTransit;
 use Travelynx::Model::Journeys;
 use Travelynx::Model::JourneyStatsCache;
+use Travelynx::Model::Stations;
 use Travelynx::Model::Traewelling;
 use Travelynx::Model::Users;
 
@@ -53,27 +53,6 @@ sub epoch_to_dt {
 		time_zone => 'Europe/Berlin',
 		locale    => 'de-DE',
 	);
-}
-
-sub get_station {
-	my ( $station_name, $exact_match ) = @_;
-
-	my @candidates
-	  = Travel::Status::DE::IRIS::Stations::get_station($station_name);
-
-	if ( @candidates == 1 ) {
-		if ( not $exact_match ) {
-			return $candidates[0];
-		}
-		if (   $candidates[0][0] eq $station_name
-			or $candidates[0][1] eq $station_name
-			or $candidates[0][2] eq $station_name )
-		{
-			return $candidates[0];
-		}
-		return undef;
-	}
-	return undef;
 }
 
 sub startup {
@@ -227,19 +206,11 @@ sub startup {
 	$self->attr(
 		coordinates_by_station => sub {
 			my $legacy_names = $self->app->renamed_station;
-			my %location;
-			for
-			  my $station ( Travel::Status::DE::IRIS::Stations::get_stations() )
-			{
-				if ( $station->[3] ) {
-					$location{ $station->[1] }
-					  = [ $station->[4], $station->[3] ];
-				}
-			}
+			my $location     = $self->stations->get_latlon_by_name;
 			while ( my ( $old_name, $new_name ) = each %{$legacy_names} ) {
-				$location{$old_name} = $location{$new_name};
+				$location->{$old_name} = $location->{$new_name};
 			}
-			return \%location;
+			return $location;
 		}
 	);
 
@@ -258,18 +229,6 @@ sub startup {
 			my $legacy_to_new = JSON->new->utf8->decode(
 				scalar read_file('share/old_station_names.json') );
 			return $legacy_to_new;
-		}
-	);
-
-	$self->attr(
-		station_by_eva => sub {
-			my %map;
-			for
-			  my $station ( Travel::Status::DE::IRIS::Stations::get_stations() )
-			{
-				$map{ $station->[2] } = $station;
-			}
-			return \%map;
 		}
 	);
 
@@ -369,7 +328,7 @@ sub startup {
 				in_transit      => $self->in_transit,
 				stats_cache     => $self->journey_stats_cache,
 				renamed_station => $self->app->renamed_station,
-				station_by_eva  => $self->app->station_by_eva,
+				stations        => $self->stations,
 			);
 		}
 	);
@@ -406,6 +365,14 @@ sub startup {
 				config => ( $self->config->{mail} // {} ),
 				log    => $self->log
 			);
+		}
+	);
+
+	$self->helper(
+		stations => sub {
+			my ($self) = @_;
+			state $stations
+			  = Travelynx::Model::Stations->new( pg => $self->pg );
 		}
 	);
 
@@ -457,7 +424,8 @@ sub startup {
 
 			my @unknown_stations;
 			for my $station (@stations) {
-				my $station_info = get_station($station);
+				my $station_info
+				  = $self->stations->get_by_name( $station );
 				if ( not $station_info ) {
 					push( @unknown_stations, $station );
 				}
@@ -689,7 +657,7 @@ sub startup {
 				($train) = List::Util::first { $_->train_id eq $train_id }
 				@{ $status->{results} };
 				if (    $train
-					and $self->app->station_by_eva->{ $train->station_uic } )
+					and $self->stations->get_by_eva( $train->station_uic ) )
 				{
 					$new_checkout_station_id = $train->station_uic;
 				}
@@ -1426,17 +1394,17 @@ sub startup {
 			if ($in_transit) {
 
 				if ( my $station
-					= $self->app->station_by_eva->{ $in_transit->{dep_eva} } )
+					= $self->stations->get_by_eva( $in_transit->{dep_eva} ) )
 				{
-					$in_transit->{dep_ds100} = $station->[0];
-					$in_transit->{dep_name}  = $station->[1];
+					$in_transit->{dep_ds100} = $station->{ds100};
+					$in_transit->{dep_name}  = $station->{name};
 				}
 				if ( $in_transit->{arr_eva}
 					and my $station
-					= $self->app->station_by_eva->{ $in_transit->{arr_eva} } )
+					= $self->stations->get_by_eva( $in_transit->{arr_eva} ) )
 				{
-					$in_transit->{arr_ds100} = $station->[0];
-					$in_transit->{arr_name}  = $station->[1];
+					$in_transit->{arr_ds100} = $station->{ds100};
+					$in_transit->{arr_name}  = $station->{name};
 				}
 
 				my @route = @{ $in_transit->{route} // [] };
@@ -1664,22 +1632,22 @@ sub startup {
 
 			if ( $latest_cancellation and $latest_cancellation->{cancelled} ) {
 				if (
-					my $station = $self->app->station_by_eva->{
+					my $station = $self->stations->get_by_eva(
 						$latest_cancellation->{dep_eva}
-					}
+					)
 				  )
 				{
-					$latest_cancellation->{dep_ds100} = $station->[0];
-					$latest_cancellation->{dep_name}  = $station->[1];
+					$latest_cancellation->{dep_ds100} = $station->{ds100};
+					$latest_cancellation->{dep_name}  = $station->{name};
 				}
 				if (
-					my $station = $self->app->station_by_eva->{
+					my $station = $self->stations->get_by_eva(
 						$latest_cancellation->{arr_eva}
-					}
+					)
 				  )
 				{
-					$latest_cancellation->{arr_ds100} = $station->[0];
-					$latest_cancellation->{arr_name}  = $station->[1];
+					$latest_cancellation->{arr_ds100} = $station->{ds100};
+					$latest_cancellation->{arr_name}  = $station->{name};
 				}
 			}
 			else {
@@ -1690,16 +1658,16 @@ sub startup {
 				my $ts          = $latest->{checkout_ts};
 				my $action_time = epoch_to_dt($ts);
 				if ( my $station
-					= $self->app->station_by_eva->{ $latest->{dep_eva} } )
+					= $self->stations->get_by_eva( $latest->{dep_eva} ) )
 				{
-					$latest->{dep_ds100} = $station->[0];
-					$latest->{dep_name}  = $station->[1];
+					$latest->{dep_ds100} = $station->{ds100};
+					$latest->{dep_name}  = $station->{name};
 				}
 				if ( my $station
-					= $self->app->station_by_eva->{ $latest->{arr_eva} } )
+					= $self->stations->get_by_eva( $latest->{arr_eva} ) )
 				{
-					$latest->{arr_ds100} = $station->[0];
-					$latest->{arr_name}  = $station->[1];
+					$latest->{arr_ds100} = $station->{ds100};
+					$latest->{arr_name}  = $station->{name};
 				}
 				return {
 					checked_in      => 0,
@@ -1816,28 +1784,18 @@ sub startup {
 			}
 
 			if ( $status->{dep_eva} ) {
-				my @station_descriptions
-				  = Travel::Status::DE::IRIS::Stations::get_station(
-					$status->{dep_eva} );
-				if ( @station_descriptions == 1 ) {
-					(
-						undef, undef, undef,
-						$ret->{fromStation}{longitude},
-						$ret->{fromStation}{latitude}
-					) = @{ $station_descriptions[0] };
+				if ( my $s = $self->stations->get_by_eva( $status->{dep_eva} ) )
+				{
+					$ret->{fromStation}{longitude} = $s->{lon};
+					$ret->{fromStation}{latitude}  = $s->{lat};
 				}
 			}
 
-			if ( $status->{arr_ds100} ) {
-				my @station_descriptions
-				  = Travel::Status::DE::IRIS::Stations::get_station(
-					$status->{arr_ds100} );
-				if ( @station_descriptions == 1 ) {
-					(
-						undef, undef, undef,
-						$ret->{toStation}{longitude},
-						$ret->{toStation}{latitude}
-					) = @{ $station_descriptions[0] };
+			if ( $status->{arr_eva} ) {
+				if ( my $s = $self->stations->get_by_eva( $status->{arr_eva} ) )
+				{
+					$ret->{toStation}{longitude} = $s->{lon};
+					$ret->{toStation}{latitude}  = $s->{lat};
 				}
 			}
 

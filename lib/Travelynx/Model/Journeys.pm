@@ -6,7 +6,6 @@ package Travelynx::Model::Journeys;
 
 use GIS::Distance;
 use List::MoreUtils qw(after_incl before_incl);
-use Travel::Status::DE::IRIS::Stations;
 
 use strict;
 use warnings;
@@ -35,33 +34,12 @@ sub epoch_to_dt {
 	);
 }
 
-sub get_station {
-	my ( $station_name, $exact_match ) = @_;
-
-	my @candidates
-	  = Travel::Status::DE::IRIS::Stations::get_station($station_name);
-
-	if ( @candidates == 1 ) {
-		if ( not $exact_match ) {
-			return $candidates[0];
-		}
-		if (   $candidates[0][0] eq $station_name
-			or $candidates[0][1] eq $station_name
-			or $candidates[0][2] eq $station_name )
-		{
-			return $candidates[0];
-		}
-		return undef;
-	}
-	return undef;
-}
-
 sub grep_unknown_stations {
-	my (@stations) = @_;
+	my ( $self, @stations ) = @_;
 
 	my @unknown_stations;
 	for my $station (@stations) {
-		my $station_info = get_station($station);
+		my $station_info = $self->{stations}->get_by_name($station);
 		if ( not $station_info ) {
 			push( @unknown_stations, $station );
 		}
@@ -100,8 +78,8 @@ sub add {
 	my $db          = $opt{db};
 	my $uid         = $opt{uid};
 	my $now         = DateTime->now( time_zone => 'Europe/Berlin' );
-	my $dep_station = get_station( $opt{dep_station} );
-	my $arr_station = get_station( $opt{arr_station} );
+	my $dep_station = $self->{stations}->search( $opt{dep_station} );
+	my $arr_station = $self->{stations}->search( $opt{arr_station} );
 
 	if ( not $dep_station ) {
 		return ( undef, 'Unbekannter Startbahnhof' );
@@ -134,10 +112,14 @@ sub add {
 	my $route_has_stop  = 0;
 
 	for my $station ( @{ $opt{route} || [] } ) {
-		if ( $station eq $dep_station->[1] or $station eq $dep_station->[0] ) {
+		if (   $station eq $dep_station->{name}
+			or $station eq $dep_station->{ds100} )
+		{
 			$route_has_start = 1;
 		}
-		if ( $station eq $arr_station->[1] or $station eq $arr_station->[0] ) {
+		if (   $station eq $arr_station->{name}
+			or $station eq $arr_station->{ds100} )
+		{
 			$route_has_stop = 1;
 		}
 	}
@@ -145,15 +127,15 @@ sub add {
 	my @route;
 
 	if ( not $route_has_start ) {
-		push( @route, [ $dep_station->[1], {}, undef ] );
+		push( @route, [ $dep_station->{name}, {}, undef ] );
 	}
 
 	if ( $opt{route} ) {
 		my @unknown_stations;
 		for my $station ( @{ $opt{route} } ) {
-			my $station_info = get_station($station);
+			my $station_info = $self->{stations}->search($station);
 			if ($station_info) {
-				push( @route, [ $station_info->[1], {}, undef ] );
+				push( @route, [ $station_info->{name}, {}, undef ] );
 			}
 			else {
 				push( @route,            [ $station, {}, undef ] );
@@ -175,7 +157,7 @@ sub add {
 	}
 
 	if ( not $route_has_stop ) {
-		push( @route, [ $arr_station->[1], {}, undef ] );
+		push( @route, [ $arr_station->{name}, {}, undef ] );
 	}
 
 	my $entry = {
@@ -184,11 +166,11 @@ sub add {
 		train_line          => $opt{train_line},
 		train_no            => $opt{train_no},
 		train_id            => 'manual',
-		checkin_station_id  => $dep_station->[2],
+		checkin_station_id  => $dep_station->{eva},
 		checkin_time        => $now,
 		sched_departure     => $opt{sched_departure},
 		real_departure      => $opt{rt_departure},
-		checkout_station_id => $arr_station->[2],
+		checkout_station_id => $arr_station->{eva},
 		sched_arrival       => $opt{sched_arrival},
 		real_arrival        => $opt{rt_arrival},
 		checkout_time       => $now,
@@ -252,14 +234,14 @@ sub update {
 
 	eval {
 		if ( exists $opt{from_name} ) {
-			my $from_station = get_station( $opt{from_name}, 1 );
+			my $from_station = $self->{stations}->search( $opt{from_name} );
 			if ( not $from_station ) {
 				die("Unbekannter Startbahnhof\n");
 			}
 			$rows = $db->update(
 				'journeys',
 				{
-					checkin_station_id => $from_station->[2],
+					checkin_station_id => $from_station->{eva},
 					edited             => $journey->{edited} | 0x0004,
 				},
 				{
@@ -268,14 +250,14 @@ sub update {
 			)->rows;
 		}
 		if ( exists $opt{to_name} ) {
-			my $to_station = get_station( $opt{to_name}, 1 );
+			my $to_station = $self->{stations}->search( $opt{to_name} );
 			if ( not $to_station ) {
 				die("Unbekannter Zielbahnhof\n");
 			}
 			$rows = $db->update(
 				'journeys',
 				{
-					checkout_station_id => $to_station->[2],
+					checkout_station_id => $to_station->{eva},
 					edited              => $journey->{edited} | 0x0400,
 				},
 				{
@@ -559,13 +541,13 @@ sub get {
 			$ref->{polyline} = $entry->{polyline};
 		}
 
-		if ( my $station = $self->{station_by_eva}->{ $ref->{from_eva} } ) {
-			$ref->{from_ds100} = $station->[0];
-			$ref->{from_name}  = $station->[1];
+		if ( my $station = $self->{stations}->get_by_eva( $ref->{from_eva} ) ) {
+			$ref->{from_ds100} = $station->{ds100};
+			$ref->{from_name}  = $station->{name};
 		}
-		if ( my $station = $self->{station_by_eva}->{ $ref->{to_eva} } ) {
-			$ref->{to_ds100} = $station->[0];
-			$ref->{to_name}  = $station->[1];
+		if ( my $station = $self->{stations}->get_by_eva( $ref->{to_eva} ) ) {
+			$ref->{to_ds100} = $station->{ds100};
+			$ref->{to_name}  = $station->{name};
 		}
 
 		if ( $opt{with_datetime} ) {
@@ -938,7 +920,8 @@ sub sanity_check {
 	}
 	if ( $journey->{edited} & 0x0010 and not $lax ) {
 		my @unknown_stations
-		  = grep_unknown_stations( map { $_->[0] } @{ $journey->{route} } );
+		  = $self->grep_unknown_stations( map { $_->[0] }
+			  @{ $journey->{route} } );
 		if (@unknown_stations) {
 			return 'Unbekannte Station(en): ' . join( ', ', @unknown_stations );
 		}
@@ -989,8 +972,6 @@ sub get_travel_distance {
 
 	my $prev_station = shift @polyline;
 	for my $station (@polyline) {
-
-		#lonlatlonlat
 		$distance_polyline += $geo->distance_metal(
 			$prev_station->[1], $prev_station->[0],
 			$station->[1],      $station->[0]
@@ -998,45 +979,30 @@ sub get_travel_distance {
 		$prev_station = $station;
 	}
 
-	$prev_station = get_station( shift @route );
+	$prev_station = $self->{stations}->get_by_name( shift @route );
 	if ( not $prev_station ) {
 		return ( $distance_polyline, 0, 0 );
 	}
 
-	# Geo-coordinates for stations outside Germany are not available
-	# at the moment. When calculating distance with intermediate stops,
-	# these are simply left out (as if they were not part of the route).
-	# For beeline distance calculation, we use the route's first and last
-	# station with known geo-coordinates.
 	my $from_station_beeline;
 	my $to_station_beeline;
 
-	# $#{$station} >= 4    iff    $station has geocoordinates
 	for my $station_name (@route) {
-		if ( my $station = get_station($station_name) ) {
-			if ( not $from_station_beeline and $#{$prev_station} >= 4 ) {
-				$from_station_beeline = $prev_station;
-			}
-			if ( $#{$station} >= 4 ) {
-				$to_station_beeline = $station;
-			}
-			if ( $#{$prev_station} >= 4 and $#{$station} >= 4 ) {
-				$distance_intermediate += $geo->distance_metal(
-					$prev_station->[4], $prev_station->[3],
-					$station->[4],      $station->[3]
-				);
-			}
-			else {
-				$skipped++;
-			}
+		if ( my $station = $self->{stations}->get_by_name($station_name) ) {
+			$from_station_beeline //= $prev_station;
+			$to_station_beeline = $station;
+			$distance_intermediate += $geo->distance_metal(
+				$prev_station->{lat}, $prev_station->{lon},
+				$station->{lat},      $station->{lon}
+			);
 			$prev_station = $station;
 		}
 	}
 
 	if ( $from_station_beeline and $to_station_beeline ) {
 		$distance_beeline = $geo->distance_metal(
-			$from_station_beeline->[4], $from_station_beeline->[3],
-			$to_station_beeline->[4],   $to_station_beeline->[3]
+			$from_station_beeline->{lat}, $from_station_beeline->{lon},
+			$to_station_beeline->{lat},   $to_station_beeline->{lon}
 		);
 	}
 
@@ -1264,10 +1230,8 @@ sub get_connection_targets {
 	my @destinations
 	  = $res->hashes->grep( sub { shift->{count} >= $min_count } )
 	  ->map( sub { shift->{dest} } )->each;
-	@destinations
-	  = grep { $self->{station_by_eva}{$_} } @destinations;
-	@destinations
-	  = map { $self->{station_by_eva}{$_}->[1] } @destinations;
+	@destinations = $self->{stations}->get_by_evas(@destinations);
+	@destinations = map { $_->{name} } @destinations;
 	return @destinations;
 }
 

@@ -13,6 +13,7 @@ use utf8;
 use Mojo::Promise;
 use Mojo::UserAgent;
 use Travel::Status::DE::IRIS;
+use Travel::Status::DE::IRIS::Stations;
 
 sub new {
 	my ( $class, %opt ) = @_;
