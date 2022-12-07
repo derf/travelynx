@@ -43,12 +43,12 @@
 	</div>
 	<div class="col s12 m11 l11">
 		<p>
-			<i class="material-icons left" aria-label="Interne Änderungen">build</i>
+			<i class="material-icons left" aria-label="Interne Änderungen">star</i>
 			Umstellung der Träwelling-Anbindung auf Träwelling-API v1, da v0
 			sukzessive abgeschaltet wird.  API v1 ist noch nicht stabil.
 		</p>
 		<p>
-			<i class="material-icons left" aria-label="Interne Änderungen">build</i>
+			<i class="material-icons left" aria-label="Interne Änderungen">star</i>
 			Nutzung eines internen HAFAS-mgate.exe-Clients anstelle von transport.rest.
 		</p>
 	</div>
