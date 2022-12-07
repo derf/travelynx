@@ -473,7 +473,7 @@ sub get {
 
 	my @select
 	  = (
-		qw(journey_id train_type train_line train_no checkin_ts sched_dep_ts real_dep_ts dep_eva checkout_ts sched_arr_ts real_arr_ts arr_eva cancelled edited route messages user_data)
+		qw(journey_id train_type train_line train_no checkin_ts sched_dep_ts real_dep_ts dep_eva dep_ds100 dep_name dep_lat dep_lon checkout_ts sched_arr_ts real_arr_ts arr_eva arr_ds100 arr_name arr_lat arr_lon cancelled edited route messages user_data)
 	  );
 	my %where = (
 		user_id   => $uid,
@@ -524,10 +524,16 @@ sub get {
 			line         => $entry->{train_line},
 			no           => $entry->{train_no},
 			from_eva     => $entry->{dep_eva},
+			from_ds100   => $entry->{dep_ds100},
+			from_name    => $entry->{dep_name},
+			from_latlon  => [ $entry->{dep_lat}, $entry->{dep_lon} ],
 			checkin_ts   => $entry->{checkin_ts},
 			sched_dep_ts => $entry->{sched_dep_ts},
 			rt_dep_ts    => $entry->{real_dep_ts},
 			to_eva       => $entry->{arr_eva},
+			to_ds100     => $entry->{arr_ds100},
+			to_name      => $entry->{arr_name},
+			to_latlon    => [ $entry->{arr_lat}, $entry->{arr_lon} ],
 			checkout_ts  => $entry->{checkout_ts},
 			sched_arr_ts => $entry->{sched_arr_ts},
 			rt_arr_ts    => $entry->{real_arr_ts},
@@ -539,15 +545,6 @@ sub get {
 
 		if ( $opt{with_polyline} ) {
 			$ref->{polyline} = $entry->{polyline};
-		}
-
-		if ( my $station = $self->{stations}->get_by_eva( $ref->{from_eva} ) ) {
-			$ref->{from_ds100} = $station->{ds100};
-			$ref->{from_name}  = $station->{name};
-		}
-		if ( my $station = $self->{stations}->get_by_eva( $ref->{to_eva} ) ) {
-			$ref->{to_ds100} = $station->{ds100};
-			$ref->{to_name}  = $station->{name};
 		}
 
 		if ( $opt{with_datetime} ) {
@@ -935,8 +932,10 @@ sub get_travel_distance {
 
 	my $from         = $journey->{from_name};
 	my $from_eva     = $journey->{from_eva};
+	my $from_latlon  = $journey->{from_latlon};
 	my $to           = $journey->{to_name};
 	my $to_eva       = $journey->{to_eva};
+	my $to_latlon    = $journey->{to_latlon};
 	my $route_ref    = $journey->{route};
 	my $polyline_ref = $journey->{polyline};
 
@@ -979,32 +978,22 @@ sub get_travel_distance {
 		$prev_station = $station;
 	}
 
-	$prev_station = $self->{stations}->get_by_name( shift @route );
+	$prev_station = $self->{latlon_by_station}->{ shift @route };
 	if ( not $prev_station ) {
 		return ( $distance_polyline, 0, 0 );
 	}
 
-	my $from_station_beeline;
-	my $to_station_beeline;
-
 	for my $station_name (@route) {
-		if ( my $station = $self->{stations}->get_by_name($station_name) ) {
-			$from_station_beeline //= $prev_station;
-			$to_station_beeline = $station;
+		if ( my $station = $self->{latlon_by_station}->{$station_name} ) {
 			$distance_intermediate += $geo->distance_metal(
-				$prev_station->{lat}, $prev_station->{lon},
-				$station->{lat},      $station->{lon}
+				$prev_station->[0], $prev_station->[1],
+				$station->[0],      $station->[1]
 			);
 			$prev_station = $station;
 		}
 	}
 
-	if ( $from_station_beeline and $to_station_beeline ) {
-		$distance_beeline = $geo->distance_metal(
-			$from_station_beeline->{lat}, $from_station_beeline->{lon},
-			$to_station_beeline->{lat},   $to_station_beeline->{lon}
-		);
-	}
+	$distance_beeline = $geo->distance_metal( @{$from_latlon}, @{$to_latlon} );
 
 	return ( $distance_polyline, $distance_intermediate,
 		$distance_beeline, $skipped );

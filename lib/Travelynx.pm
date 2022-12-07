@@ -323,12 +323,13 @@ sub startup {
 		journeys => sub {
 			my ($self) = @_;
 			state $journeys = Travelynx::Model::Journeys->new(
-				log             => $self->app->log,
-				pg              => $self->pg,
-				in_transit      => $self->in_transit,
-				stats_cache     => $self->journey_stats_cache,
-				renamed_station => $self->app->renamed_station,
-				stations        => $self->stations,
+				log               => $self->app->log,
+				pg                => $self->pg,
+				in_transit        => $self->in_transit,
+				stats_cache       => $self->journey_stats_cache,
+				renamed_station   => $self->app->renamed_station,
+				latlon_by_station => $self->app->coordinates_by_station,
+				stations          => $self->stations,
 			);
 		}
 	);
@@ -424,8 +425,7 @@ sub startup {
 
 			my @unknown_stations;
 			for my $station (@stations) {
-				my $station_info
-				  = $self->stations->get_by_name( $station );
+				my $station_info = $self->stations->get_by_name($station);
 				if ( not $station_info ) {
 					push( @unknown_stations, $station );
 				}
