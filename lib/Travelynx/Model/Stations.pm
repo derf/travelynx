@@ -62,6 +62,16 @@ sub get_by_name {
 }
 
 # Slow
+sub get_by_names {
+	my ( $self, @names ) = @_;
+
+	my @ret
+	  = $self->{pg}->db->select( 'stations', '*', { name => { '=', \@names } } )
+	  ->hashes->each;
+	return @ret;
+}
+
+# Slow
 sub get_by_ds100 {
 	my ( $self, $ds100, %opt ) = @_;
 
@@ -83,6 +93,16 @@ sub search {
 
 	return $self->get_by_ds100( $identifier, %opt )
 	  // $self->get_by_name( $identifier, %opt );
+}
+
+# Slow
+sub grep_unknown {
+	my ( $self, @stations ) = @_;
+
+	my %station = map { $_->{name} => 1 } $self->get_by_names(@stations);
+	my @unknown_stations = grep { not $station{$_} } @stations;
+
+	return @unknown_stations;
 }
 
 1;

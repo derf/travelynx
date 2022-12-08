@@ -420,21 +420,6 @@ sub startup {
 	);
 
 	$self->helper(
-		'grep_unknown_stations' => sub {
-			my ( $self, @stations ) = @_;
-
-			my @unknown_stations;
-			for my $station (@stations) {
-				my $station_info = $self->stations->get_by_name($station);
-				if ( not $station_info ) {
-					push( @unknown_stations, $station );
-				}
-			}
-			return @unknown_stations;
-		}
-	);
-
-	$self->helper(
 		'load_icon' => sub {
 			my ( $self, $load ) = @_;
 			my $first  = $load->{FIRST}  // 0;
@@ -750,7 +735,7 @@ sub startup {
 					$has_arrived = $train->arrival->epoch < $now->epoch ? 1 : 0;
 					if ($has_arrived) {
 						my @unknown_stations
-						  = $self->grep_unknown_stations( $train->route );
+						  = $self->stations->grep_unknown( $train->route );
 						if (@unknown_stations) {
 							$self->app->log->warn(
 								sprintf(

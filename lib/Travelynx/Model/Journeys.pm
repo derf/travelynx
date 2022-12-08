@@ -34,19 +34,6 @@ sub epoch_to_dt {
 	);
 }
 
-sub grep_unknown_stations {
-	my ( $self, @stations ) = @_;
-
-	my @unknown_stations;
-	for my $station (@stations) {
-		my $station_info = $self->{stations}->get_by_name($station);
-		if ( not $station_info ) {
-			push( @unknown_stations, $station );
-		}
-	}
-	return @unknown_stations;
-}
-
 sub new {
 	my ( $class, %opt ) = @_;
 
@@ -917,8 +904,8 @@ sub sanity_check {
 	}
 	if ( $journey->{edited} & 0x0010 and not $lax ) {
 		my @unknown_stations
-		  = $self->grep_unknown_stations( map { $_->[0] }
-			  @{ $journey->{route} } );
+		  = $self->{stations}
+		  ->grep_unknown( map { $_->[0] } @{ $journey->{route} } );
 		if (@unknown_stations) {
 			return 'Unbekannte Station(en): ' . join( ', ', @unknown_stations );
 		}
