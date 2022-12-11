@@ -1647,28 +1647,28 @@ DISTRIBUTIONS
       Net::Domain 1.05
       Net::SMTP 1.03
       Test::More 0
-  Module-Build-0.4231
-    pathname: L/LE/LEONT/Module-Build-0.4231.tar.gz
+  Module-Build-0.4232
+    pathname: L/LE/LEONT/Module-Build-0.4232.tar.gz
     provides:
-      Module::Build 0.4231
-      Module::Build::Base 0.4231
-      Module::Build::Compat 0.4231
-      Module::Build::Config 0.4231
-      Module::Build::Cookbook 0.4231
-      Module::Build::Dumper 0.4231
-      Module::Build::Notes 0.4231
-      Module::Build::PPMMaker 0.4231
-      Module::Build::Platform::Default 0.4231
-      Module::Build::Platform::MacOS 0.4231
-      Module::Build::Platform::Unix 0.4231
-      Module::Build::Platform::VMS 0.4231
-      Module::Build::Platform::VOS 0.4231
-      Module::Build::Platform::Windows 0.4231
-      Module::Build::Platform::aix 0.4231
-      Module::Build::Platform::cygwin 0.4231
-      Module::Build::Platform::darwin 0.4231
-      Module::Build::Platform::os2 0.4231
-      Module::Build::PodParser 0.4231
+      Module::Build 0.4232
+      Module::Build::Base 0.4232
+      Module::Build::Compat 0.4232
+      Module::Build::Config 0.4232
+      Module::Build::Cookbook 0.4232
+      Module::Build::Dumper 0.4232
+      Module::Build::Notes 0.4232
+      Module::Build::PPMMaker 0.4232
+      Module::Build::Platform::Default 0.4232
+      Module::Build::Platform::MacOS 0.4232
+      Module::Build::Platform::Unix 0.4232
+      Module::Build::Platform::VMS 0.4232
+      Module::Build::Platform::VOS 0.4232
+      Module::Build::Platform::Windows 0.4232
+      Module::Build::Platform::aix 0.4232
+      Module::Build::Platform::cygwin 0.4232
+      Module::Build::Platform::darwin 0.4232
+      Module::Build::Platform::os2 0.4232
+      Module::Build::PodParser 0.4232
     requirements:
       CPAN::Meta 2.142060
       Cwd 0
@@ -1687,7 +1687,6 @@ DISTRIBUTIONS
       Getopt::Long 0
       Module::Metadata 1.000002
       Perl::OSType 1
-      Pod::Man 2.17
       TAP::Harness 3.29
       Text::Abbrev 0
       Text::ParseWords 0
@@ -2494,12 +2493,12 @@ DISTRIBUTIONS
       Test::More 0
       Test::Pod 0
       perl v5.14.0
-  Travel-Status-DE-IRIS-1.75
-    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.75.tar.gz
+  Travel-Status-DE-IRIS-1.76
+    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.76.tar.gz
     provides:
-      Travel::Status::DE::IRIS 1.75
-      Travel::Status::DE::IRIS::Result 1.75
-      Travel::Status::DE::IRIS::Stations 1.75
+      Travel::Status::DE::IRIS 1.76
+      Travel::Status::DE::IRIS::Result 1.76
+      Travel::Status::DE::IRIS::Stations 1.76
     requirements:
       Carp 0
       Class::Accessor 0
