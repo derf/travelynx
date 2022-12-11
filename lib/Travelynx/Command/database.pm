@@ -14,27 +14,13 @@ has description => 'Initialize or upgrade database layout';
 
 has usage => sub { shift->extract_usage };
 
-sub get_iris_version {
-	my ($db) = @_;
-	my $version;
-
-	eval { $version = $db->select( 'schema_version', ['iris'] )->hash->{iris}; };
-	if ($@) {
-
-		# If it failed, the version table does not exist -> run setup first.
-		return undef;
-	}
-	return $version;
-}
-
 sub get_schema_version {
-	my ($db) = @_;
+	my ( $db, $key ) = @_;
 	my $version;
 
-	eval {
-		$version
-		  = $db->select( 'schema_version', ['version'] )->hash->{version};
-	};
+	$key //= 'version';
+
+	eval { $version = $db->select( 'schema_version', [$key] )->hash->{$key}; };
 	if ($@) {
 
 		# If it failed, the version table does not exist -> run setup first.
@@ -1430,7 +1416,7 @@ sub migrate_db {
 		exit(1);
 	}
 
-	my $iris_version = get_iris_version($db);
+	my $iris_version = get_schema_version( $db, 'iris' );
 	say "Found IRIS station database v${iris_version}";
 	if ( $iris_version eq $Travel::Status::DE::IRIS::Stations::VERSION ) {
 		say 'Station database is up-to-date';
