@@ -1198,6 +1198,20 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v28 -> v29
+	# add pre-migration travelynx version. This way, a failed migration can
+	# print a helpful "git checkout" command.
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				alter table schema_version
+					add column travelynx varchar(64);
+				update schema_version set version = 29;
+			}
+		);
+	},
 );
 
 sub sync_stations {
@@ -1393,27 +1407,56 @@ sub setup_db {
 	}
 }
 
+sub failure_hints {
+	my ($old_version) = @_;
+	say STDERR 'This travelynx instance has reached an undefined state:';
+	say STDERR
+'The source code is expecting a different schema version than present in the database.';
+	say STDERR
+'Please file a detailed bug report at <https://github.com/derf/travelynx/issues>';
+	say STDERR 'or send an e-mail to derf+travelynx@finalrewind.org.';
+	if ($old_version) {
+		say STDERR '';
+		say STDERR
+		  "The last migration was performed with travelynx v${old_version}.";
+		say STDERR
+'You may be able to return to a working state with the following command:';
+		say STDERR "git checkout ${old_version}";
+		say STDERR '';
+		say STDERR 'We apologize for any inconvenience.';
+	}
+}
+
 sub migrate_db {
-	my ($db) = @_;
+	my ( $self, $db ) = @_;
 	my $tx = $db->begin;
 
 	my $schema_version = get_schema_version($db);
 	say "Found travelynx schema v${schema_version}";
 
+	my $old_version;
+
+	if ( $schema_version >= 29 ) {
+		$old_version = get_schema_version( $db, 'travelynx' );
+	}
+
 	if ( $schema_version == @migrations ) {
 		say 'Database layout is up-to-date';
 	}
-
-	eval {
-		for my $i ( $schema_version .. $#migrations ) {
-			printf( "Updating to v%d ...\n", $i + 1 );
-			$migrations[$i]($db);
+	else {
+		eval {
+			for my $i ( $schema_version .. $#migrations ) {
+				printf( "Updating to v%d ...\n", $i + 1 );
+				$migrations[$i]($db);
+			}
+			say 'Update complete.';
+		};
+		if ($@) {
+			say STDERR "Migration failed: $@";
+			say STDERR "Rolling back to v${schema_version}";
+			failure_hints($old_version);
+			exit(1);
 		}
-	};
-	if ($@) {
-		say STDERR "Migration failed: $@";
-		say STDERR "Rolling back to v${schema_version}";
-		exit(1);
 	}
 
 	my $iris_version = get_schema_version( $db, 'iris' );
@@ -1426,16 +1469,24 @@ sub migrate_db {
 			say
 "Synchronizing with Travel::Status::DE::IRIS $Travel::Status::DE::IRIS::Stations::VERSION";
 			sync_stations( $db, $iris_version );
+			say 'Synchronization complete.';
 		};
 		if ($@) {
 			say STDERR "Synchronization failed: $@";
-			say STDERR "Rolling back to v${schema_version}";
+			if ( $schema_version != @migrations ) {
+				say STDERR "Rolling back to v${schema_version}";
+				failure_hints($old_version);
+			}
 			exit(1);
 		}
 	}
 
+	$db->update( 'schema_version',
+		{ travelynx => $self->app->config->{version} } );
+
 	if ( get_schema_version($db) == @migrations ) {
 		$tx->commit;
+		say 'Changes committed to database. Have a nice day.';
 	}
 	else {
 		printf STDERR (
@@ -1444,6 +1495,8 @@ sub migrate_db {
 			get_schema_version($db)
 		);
 		say STDERR "Rolling back to v${schema_version}";
+		say STDERR "";
+		failure_hints($old_version);
 		exit(1);
 	}
 }
@@ -1462,7 +1515,7 @@ sub run {
 		if ( not defined get_schema_version($db) ) {
 			setup_db($db);
 		}
-		migrate_db($db);
+		$self->migrate_db($db);
 	}
 	elsif ( $command eq 'has-current-schema' ) {
 		if (    get_schema_version($db) == @migrations
