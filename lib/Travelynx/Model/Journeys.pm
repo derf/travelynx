@@ -547,6 +547,11 @@ sub get {
 		if ( $opt{verbose} ) {
 			my $rename = $self->{renamed_station};
 			for my $stop ( @{ $ref->{route} } ) {
+				if ( $stop->[0] =~ m{^Betriebsstelle nicht bekannt (\d+)$} ) {
+					if ( my $s = $self->{stations}->get_by_eva($1) ) {
+						$stop->[0] = $s->{name};
+					}
+				}
 				if ( $rename->{ $stop->[0] } ) {
 					$stop->[0] = $rename->{ $stop->[0] };
 				}
