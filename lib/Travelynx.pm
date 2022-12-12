@@ -1034,6 +1034,14 @@ sub startup {
 					my ( $route_data, $journey, $polyline ) = @_;
 
 					for my $station ( @{$route} ) {
+						if ( $station->[0]
+							=~ m{^Betriebsstelle nicht bekannt (\d+)$} )
+						{
+							my $eva = $1;
+							if ( $route_data->{$eva} ) {
+								$station->[0] = $route_data->{$eva}{name};
+							}
+						}
 						$station->[1]
 						  = $route_data->{ $station->[0] };
 					}
