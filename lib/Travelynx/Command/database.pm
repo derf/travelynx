@@ -1224,7 +1224,7 @@ sub sync_stations {
 			},
 			{
 				on_conflict => \
-				  '(eva) do update set archived = false, source = 0'
+'(eva) do update set archived = false, source = 0, ds100 = EXCLUDED.ds100, name=EXCLUDED.name, lat=EXCLUDED.lat, lon=EXCLUDED.lon'
 			}
 		);
 		if ( $count++ % 1000 == 0 ) {
