@@ -1465,7 +1465,10 @@ sub run {
 		migrate_db($db);
 	}
 	elsif ( $command eq 'has-current-schema' ) {
-		if ( get_schema_version($db) == @migrations ) {
+		if (    get_schema_version($db) == @migrations
+			and get_schema_version( $db, 'iris' ) eq
+			$Travel::Status::DE::IRIS::Stations::VERSION )
+		{
 			say "yes";
 		}
 		else {
