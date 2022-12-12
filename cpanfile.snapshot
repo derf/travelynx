@@ -1450,18 +1450,18 @@ DISTRIBUTIONS
       Exporter 5.57
       ExtUtils::MakeMaker 0
       perl 5.008
-  IO-Socket-SSL-2.077
-    pathname: S/SU/SULLR/IO-Socket-SSL-2.077.tar.gz
+  IO-Socket-SSL-2.078
+    pathname: S/SU/SULLR/IO-Socket-SSL-2.078.tar.gz
     provides:
-      IO::Socket::SSL 2.077
+      IO::Socket::SSL 2.078
       IO::Socket::SSL::Intercept 2.056
-      IO::Socket::SSL::OCSP_Cache 2.077
-      IO::Socket::SSL::OCSP_Resolver 2.077
+      IO::Socket::SSL::OCSP_Cache 2.078
+      IO::Socket::SSL::OCSP_Resolver 2.078
       IO::Socket::SSL::PublicSuffix undef
-      IO::Socket::SSL::SSL_Context 2.077
-      IO::Socket::SSL::SSL_HANDLE 2.077
-      IO::Socket::SSL::Session_Cache 2.077
-      IO::Socket::SSL::Trace 2.077
+      IO::Socket::SSL::SSL_Context 2.078
+      IO::Socket::SSL::SSL_HANDLE 2.078
+      IO::Socket::SSL::Session_Cache 2.078
+      IO::Socket::SSL::Trace 2.078
       IO::Socket::SSL::Utils 2.015
     requirements:
       ExtUtils::MakeMaker 0
@@ -2493,12 +2493,12 @@ DISTRIBUTIONS
       Test::More 0
       Test::Pod 0
       perl v5.14.0
-  Travel-Status-DE-IRIS-1.76
-    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.76.tar.gz
+  Travel-Status-DE-IRIS-1.77
+    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.77.tar.gz
     provides:
-      Travel::Status::DE::IRIS 1.76
-      Travel::Status::DE::IRIS::Result 1.76
-      Travel::Status::DE::IRIS::Stations 1.76
+      Travel::Status::DE::IRIS 1.77
+      Travel::Status::DE::IRIS::Result 1.77
+      Travel::Status::DE::IRIS::Stations 1.77
     requirements:
       Carp 0
       Class::Accessor 0
