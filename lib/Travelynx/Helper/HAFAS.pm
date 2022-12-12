@@ -188,7 +188,7 @@ sub get_route_timestamps_p {
 					};
 				}
 				else {
-					$self->{log}->info( 'Ignoring polyline for '
+					$self->{log}->debug( 'Ignoring polyline for '
 						  . $opt{train}->line
 						  . ": IRIS route does not agree with HAFAS route: $iris_stations != $hafas_stations"
 					);
