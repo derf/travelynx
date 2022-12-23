@@ -380,17 +380,8 @@ sub checkin {
 						$err_msg .= ' ' . $tx->res->body;
 					}
 				}
-				if (    $err->{code} != 409
-					and $err->{code} != 406
-					and $err->{code} != 401 )
-				{
-					$self->{log}
-					  ->warn("Traewelling $debug_prefix error: $err_msg");
-				}
-				else {
-					$self->{log}
-					  ->debug("Traewelling $debug_prefix error: $err_msg");
-				}
+				$self->{log}
+				  ->debug("Traewelling $debug_prefix error: $err_msg");
 				$self->{model}->log(
 					uid     => $opt{uid},
 					message =>
