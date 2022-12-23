@@ -1128,14 +1128,7 @@ sub startup {
 			)->catch(
 				sub {
 					my ($err) = @_;
-					if ( $err
-						=~ m{trainlink not found|extra content at the end}i )
-					{
-						$self->app->log->debug("add_route_timestamps: $err");
-					}
-					else {
-						$self->app->log->warn("add_route_timestamps: $err");
-					}
+					$self->app->log->debug("add_route_timestamps: $err");
 					return;
 				}
 			)->wait;
