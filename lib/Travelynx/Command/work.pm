@@ -57,7 +57,9 @@ sub run {
 				@{ $status->{results} };
 
 				if ( not $train ) {
-					die("could not find train $train_id at $dep\n");
+					$self->log->info(
+						"could not find train $train_id at $dep\n");
+					return;
 				}
 
 				$self->app->in_transit->update_departure(
