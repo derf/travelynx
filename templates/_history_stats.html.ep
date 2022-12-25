@@ -26,10 +26,6 @@
 		<table class="striped">
 			<tr>
 				<th scope="row">Fahrten</th>
-				<td><%= $stats->{num_journeys} %></td>
-			</tr>
-			<tr>
-				<th scope="row">Züge</th>
 				<td><%= $stats->{num_trains} %></td>
 			</tr>
 			<tr>
