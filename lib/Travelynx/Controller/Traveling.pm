@@ -206,9 +206,13 @@ sub get_connecting_trains_p {
 					$train->{message_id} = { map { $_ => 1 } @message_ids };
 					my $interchange_duration;
 					if ( exists $stationinfo->{i} ) {
-						$interchange_duration
-						  = $stationinfo->{i}{$arr_platform}
-						  { $train->platform };
+						if (    defined $arr_platform
+							and defined $train->platform )
+						{
+							$interchange_duration
+							  = $stationinfo->{i}{$arr_platform}
+							  { $train->platform };
+						}
 						$interchange_duration //= $stationinfo->{i}{"*"};
 					}
 					if ( defined $interchange_duration ) {
