@@ -1473,6 +1473,13 @@ sub yearly_history {
 		before        => $interval_end,
 		with_datetime => 1
 	);
+
+	if ( not @journeys ) {
+		$self->render( 'not_found',
+			message => 'Keine Zugfahrten im angefragten Jahr gefunden.' );
+		return;
+	}
+
 	$stats = $self->journeys->get_stats(
 		uid  => $self->current_user->{id},
 		year => $year
@@ -1534,6 +1541,13 @@ sub monthly_history {
 		before        => $interval_end,
 		with_datetime => 1
 	);
+
+	if ( not @journeys ) {
+		$self->render( 'not_found',
+			message => 'Keine Zugfahrten im angefragten Monat gefunden.' );
+		return;
+	}
+
 	$stats = $self->journeys->get_stats(
 		uid   => $self->current_user->{id},
 		year  => $year,
