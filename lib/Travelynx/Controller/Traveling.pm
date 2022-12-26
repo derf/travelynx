@@ -1454,33 +1454,29 @@ sub yearly_history {
 	# -> Limit time range to avoid accidental DoS.
 	if ( not( $year =~ m{ ^ [0-9]{4} $ }x and $year > 1990 and $year < 2100 ) )
 	{
-		@journeys = $self->journeys->get(
-			uid           => $self->current_user->{id},
-			with_datetime => 1
-		);
+		$self->render('not_found');
+		return;
 	}
-	else {
-		my $interval_start = DateTime->new(
-			time_zone => 'Europe/Berlin',
-			year      => $year,
-			month     => 1,
-			day       => 1,
-			hour      => 0,
-			minute    => 0,
-			second    => 0,
-		);
-		my $interval_end = $interval_start->clone->add( years => 1 );
-		@journeys = $self->journeys->get(
-			uid           => $self->current_user->{id},
-			after         => $interval_start,
-			before        => $interval_end,
-			with_datetime => 1
-		);
-		$stats = $self->journeys->get_stats(
-			uid  => $self->current_user->{id},
-			year => $year
-		);
-	}
+	my $interval_start = DateTime->new(
+		time_zone => 'Europe/Berlin',
+		year      => $year,
+		month     => 1,
+		day       => 1,
+		hour      => 0,
+		minute    => 0,
+		second    => 0,
+	);
+	my $interval_end = $interval_start->clone->add( years => 1 );
+	@journeys = $self->journeys->get(
+		uid           => $self->current_user->{id},
+		after         => $interval_start,
+		before        => $interval_end,
+		with_datetime => 1
+	);
+	$stats = $self->journeys->get_stats(
+		uid  => $self->current_user->{id},
+		year => $year
+	);
 
 	$self->respond_to(
 		json => {
@@ -1519,34 +1515,30 @@ sub monthly_history {
 			and $month < 13 )
 	  )
 	{
-		@journeys = $self->journeys->get(
-			uid           => $self->current_user->{id},
-			with_datetime => 1
-		);
+		$self->render('not_found');
+		return;
 	}
-	else {
-		my $interval_start = DateTime->new(
-			time_zone => 'Europe/Berlin',
-			year      => $year,
-			month     => $month,
-			day       => 1,
-			hour      => 0,
-			minute    => 0,
-			second    => 0,
-		);
-		my $interval_end = $interval_start->clone->add( months => 1 );
-		@journeys = $self->journeys->get(
-			uid           => $self->current_user->{id},
-			after         => $interval_start,
-			before        => $interval_end,
-			with_datetime => 1
-		);
-		$stats = $self->journeys->get_stats(
-			uid   => $self->current_user->{id},
-			year  => $year,
-			month => $month
-		);
-	}
+	my $interval_start = DateTime->new(
+		time_zone => 'Europe/Berlin',
+		year      => $year,
+		month     => $month,
+		day       => 1,
+		hour      => 0,
+		minute    => 0,
+		second    => 0,
+	);
+	my $interval_end = $interval_start->clone->add( months => 1 );
+	@journeys = $self->journeys->get(
+		uid           => $self->current_user->{id},
+		after         => $interval_start,
+		before        => $interval_end,
+		with_datetime => 1
+	);
+	$stats = $self->journeys->get_stats(
+		uid   => $self->current_user->{id},
+		year  => $year,
+		month => $month
+	);
 
 	$self->respond_to(
 		json => {
