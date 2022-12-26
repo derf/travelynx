@@ -3,7 +3,12 @@
 		<div class="card caution-color">
 			<div class="card-content white-text">
 				<span class="card-title">404 Not Found</span>
-				<p>Diese Seite gibt es hier nicht.</p>
+				% if (my $m = stash('message')) {
+					<p><%= $m %></p>
+				% }
+				% else {
+					<p>Diese Seite gibt es hier nicht.</p>
+				% }
 			</div>
 		</div>
 	</div>
