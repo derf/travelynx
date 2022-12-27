@@ -1063,6 +1063,7 @@ sub compute_review {
 	my $min_total = $stats->{min_travel_real} + $stats->{min_interchange_real};
 
 	for my $journey (@journeys) {
+		my %seen;
 		if ( $journey->{rt_duration} ) {
 			if ( not $longest_t
 				or $journey->{rt_duration} > $longest_t->{rt_duration} )
@@ -1090,7 +1091,10 @@ sub compute_review {
 		if ( $journey->{messages} and @{ $journey->{messages} } ) {
 			$message_count += 1;
 			for my $message ( @{ $journey->{messages} } ) {
-				$num_by_message{ $message->[1] } += 1;
+				if ( not $seen{ $message->[1] } ) {
+					$num_by_message{ $message->[1] } += 1;
+					$seen{ $message->[1] } = 1;
+				}
 			}
 		}
 		if ( $journey->{type} ) {
@@ -1119,9 +1123,14 @@ sub compute_review {
 	$review{km_circle}      = sprintf( '%.1f', $stats->{km_route} / 40030 );
 	$review{km_diag}        = sprintf( '%.1f', $stats->{km_route} / 12742 );
 
+	$review{trains_per_day} =~ tr{.}{,};
+	$review{km_circle}      =~ tr{.}{,};
+	$review{km_diag}        =~ tr{.}{,};
+
 	$review{traveling_min_total} = $min_total;
 	$review{traveling_percentage_year}
 	  = sprintf( "%.1f%%", $min_total * 100 / 525948.77 );
+	$review{traveling_percentage_year} =~ tr{.}{,};
 	$review{traveling_time_year} = min_to_human($min_total);
 
 	if (@linetypes) {
