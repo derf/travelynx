@@ -149,7 +149,7 @@
 						<strong><%= $review->{top_trip_percent_h} %></strong> deiner Check-Ins konzentrierten sich auf diese Strecken:<br/>
 						% for my $i (0 .. $#{$review->{top_trips}}) {
 							% my $trip = $review->{top_trips}[$i];
-							<%= $trip->[0] %> → <%= $trip->[1] %><br/>
+							<%= join(q{ }, @{$trip}) %><br/>
 						% }
 					</p>
 				% }
