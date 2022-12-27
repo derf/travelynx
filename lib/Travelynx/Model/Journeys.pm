@@ -1375,18 +1375,12 @@ sub compute_review {
 	$review{top_trip_count} = $top_trip_count;
 	$review{top_trip_percent_h}
 	  = sprintf( '%.1f%%', $top_trip_count * 100 / $stats->{num_trains} );
+	$review{top_trip_percent_h} =~ tr{.}{,};
 
 	$review{single_trip_count} = $single_trip_count;
 	$review{single_trip_percent_h}
 	  = sprintf( '%.1f%%', $single_trip_count * 100 / $stats->{num_trains} );
-
-	if ( @stops >= 3 ) {
-		my $desc = q{};
-		$review{typical_stops_3} = [ $stops[0][0], $stops[1][0], $stops[2][0] ];
-	}
-	elsif ( @stops == 2 ) {
-		$review{typical_stops_2} = [ $stops[0][0], $stops[1][0] ];
-	}
+	$review{single_trip_percent_h} =~ tr{.}{,};
 
 	return \%review;
 }
