@@ -21,10 +21,10 @@
 				<p>
 					Dabei hast du ca. <strong><%= $review->{km_route} %> km</strong> (Luftlinie: <%= $review->{km_beeline} %> km) auf Schienen zurückgelegt.
 					% if ($review->{km_circle} > 1) {
-						Das entspricht <%= $review->{km_circle} %> Fahrten um die Erde.
+						Das entspricht <%= $review->{km_circle_h} %> Fahrten um die Erde.
 					% }
 					% elsif ($review->{km_diag} > 1) {
-						Das entspricht <%= $review->{km_diag} %> Reisen zum Mittelpunkt der Erde und zurück.
+						Das entspricht <%= $review->{km_diag_h} %> Reisen zum Mittelpunkt der Erde und zurück.
 					% }
 				</p>
 				<p>
@@ -34,13 +34,13 @@
 			<div class="carousel-item" href="#two">
 				<h2>Eine typische Zugfahrt</h2>
 				<p>
-					% if ($review->{typical_stops_3} and $review->{typical_type}) {
+					% if ($review->{typical_stops_3} and $review->{typical_type_1}) {
 						… führte dich mit
-						% if ($review->{typical_type} eq 'S') {
+						% if ($review->{typical_type_1} eq 'S') {
 							einer <strong>S-Bahn</strong>
 						% }
 						% else {
-							einem <strong><%= $review->{typical_type} %></strong>
+							einem <strong><%= $review->{typical_type_1} %></strong>
 						% }
 						durch das Dreieck <%= join(' / ', @{$review->{typical_stops_3}}) %>.
 					% }
@@ -99,8 +99,43 @@
 							<p><strong><%= $review->{"issue${i}_count"} %>×</strong> „<%= $review->{"issue${i}_text"} %>“</p>
 						% }
 					% }
+					<p>Lediglich <strong><%= $review->{punctual_percent_h} %></strong> der Züge waren pünktlich auf die Minute.</p>
 				</div>
 			% }
+			<div class="carousel-item" href="#five">
+				<h2>De trein is stukkie wukkie</h2>
+				<p>
+					% if ($review->{fgr_percent} >= 0.1) {
+						<strong><%= $review->{fgr_percent_h} %></strong> deiner Fahrten hatten mindestens eine Stunde Verspätung
+					% }
+					% if ($review->{cancel_count}) {
+						% if ($review->{fgr_percent} >= 0.1) {
+							und <strong><%= $review->{cancel_count} %></strong> Züge kamen gar nicht erst am Ziel an.
+						% }
+						% else {
+							<strong><%= $review->{cancel_count} %></strong> deiner geplanten Fahrten sind ausgefallen.
+						% }
+					% }
+				</p>
+				<p>
+					Mit <strong><%= $review->{most_delayed_delay_arr} %></strong> hatte <a href="/journey/<%= $review->{most_delayed_id} %>"><%= $review->{most_delayed_type} %> <%= $review->{most_delayed_lineno} %></a> <%= $review->{most_delayed_from} %> → <%= $review->{most_delayed_to} %> die größte Verspätung.
+				</p>
+				<p>
+					Die Fahrt mit <a href="/journey/<%= $review->{most_delay_id} %>"><%= $review->{most_delay_type} %> <%= $review->{most_delay_lineno} %></a>
+					von <%= $review->{most_delay_from} %> nach <%= $review->{most_delay_to} %> verlief besonders gemächlich:
+					sie dauerte <strong><%= $review->{most_delay_delta} %></strong> länger als geplant.
+				</p>
+				<p>
+					In <a href="/journey/<%= $review->{most_undelay_id} %>"><%= $review->{most_undelay_type} %> <%= $review->{most_undelay_lineno} %></a>
+					wurde hingegen Vmax ausgereizt und die Strecke von
+					<%= $review->{most_undelay_from} %> nach <%= $review->{most_undelay_to} %>
+					<strong><%= $review->{most_undelay_delta} %></strong> schneller absolviert als vorgesehen.
+				</p>
+			</div>
+			<div class="carousel-item" href="#six">
+				<h2>Last, but not least</h2>
+				<p><em>Thank you for traveling with travelynx</em></p>
+			</div>
 		</div>
 	</div>
 </div>

@@ -1044,13 +1044,17 @@ sub compute_review {
 	my $longest_t;
 	my $shortest_km;
 	my $shortest_t;
-	my $message_count
-	  ; # anzahl fahrten bei denen irgendeine nachricht vermerkt war -> irgendwas war anders als geplant
-	my %num_by_message;    # für jede nachricht
-	my %num_by_wrtype
-	  ;    # zugtyp, sofern wagenreihung verfügbar. 'none' für nicht verfügbar.
-	my %num_by_linetype;    # zugtyp nach "ICE 123" / "RE 127".
-	my %num_by_stop;        # arr/dep name
+	my $most_delayed;
+	my $most_delay;
+	my $most_undelay;
+	my $num_cancelled = 0;
+	my $num_fgr       = 0;
+	my $num_punctual  = 0;
+	my $message_count = 0;
+	my %num_by_message;
+	my %num_by_wrtype;
+	my %num_by_linetype;
+	my %num_by_stop;
 
 	if ( not $stats or not @journeys or $stats->{num_trains} == 0 ) {
 		return;
@@ -1063,7 +1067,13 @@ sub compute_review {
 	my $min_total = $stats->{min_travel_real} + $stats->{min_interchange_real};
 
 	for my $journey (@journeys) {
+		if ( $journey->{cancelled} ) {
+			$num_cancelled += 1;
+			next;
+		}
+
 		my %seen;
+
 		if ( $journey->{rt_duration} ) {
 			if ( not $longest_t
 				or $journey->{rt_duration} > $longest_t->{rt_duration} )
@@ -1076,6 +1086,7 @@ sub compute_review {
 				$shortest_t = $journey;
 			}
 		}
+
 		if ( $journey->{km_route} ) {
 			if ( not $longest_km
 				or $journey->{km_route} > $longest_km->{km_route} )
@@ -1088,6 +1099,7 @@ sub compute_review {
 				$shortest_km = $journey;
 			}
 		}
+
 		if ( $journey->{messages} and @{ $journey->{messages} } ) {
 			$message_count += 1;
 			for my $message ( @{ $journey->{messages} } ) {
@@ -1097,14 +1109,64 @@ sub compute_review {
 				}
 			}
 		}
+
 		if ( $journey->{type} ) {
 			$num_by_linetype{ $journey->{type} } += 1;
 		}
+
 		if ( $journey->{from_name} ) {
 			$num_by_stop{ $journey->{from_name} } += 1;
 		}
 		if ( $journey->{to_name} ) {
 			$num_by_stop{ $journey->{to_name} } += 1;
+		}
+
+		if ( $journey->{sched_dep_ts} and $journey->{rt_dep_ts} ) {
+			$journey->{delay_dep}
+			  = ( $journey->{rt_dep_ts} - $journey->{sched_dep_ts} ) / 60;
+		}
+		if ( $journey->{sched_arr_ts} and $journey->{rt_arr_ts} ) {
+			$journey->{delay_arr}
+			  = ( $journey->{rt_arr_ts} - $journey->{sched_arr_ts} ) / 60;
+		}
+
+		if ( $journey->{delay_arr} and $journey->{delay_arr} >= 60 ) {
+			$num_fgr += 1;
+		}
+		if ( not $journey->{delay_arr} and not $journey->{delay_dep} ) {
+			$num_punctual += 1;
+		}
+
+		if ( $journey->{delay_arr} and $journey->{delay_arr} > 0 ) {
+			if ( not $most_delayed
+				or $journey->{delay_arr} > $most_delayed->{delay_arr} )
+			{
+				$most_delayed = $journey;
+			}
+		}
+
+		if ( $journey->{rt_duration} and $journey->{sched_duration} ) {
+			my $slowdown = $journey->{rt_duration} - $journey->{sched_duration};
+			my $speedup  = -$slowdown;
+			if (
+				not $most_delay
+				or $slowdown > (
+					$most_delay->{rt_duration} - $most_delay->{sched_duration}
+				)
+			  )
+			{
+				$most_delay = $journey;
+			}
+			if (
+				not $most_undelay
+				or $speedup > (
+					    $most_undelay->{sched_duration}
+					  - $most_undelay->{rt_duration}
+				)
+			  )
+			{
+				$most_undelay = $journey;
+			}
 		}
 	}
 
@@ -1116,16 +1178,19 @@ sub compute_review {
 	my @reasons = sort { $b->[1] <=> $a->[1] }
 	  map { [ $_, $num_by_message{$_} ] } keys %num_by_message;
 
-	$review{num_stops}      = scalar @stops;
+	$review{num_stops} = scalar @stops;
+	$review{km_circle} = $stats->{km_route} / 40030;
+	$review{km_diag}   = $stats->{km_route} / 12742;
+
 	$review{trains_per_day} = sprintf( '%.1f', $stats->{num_trains} / 365 );
 	$review{km_route}       = sprintf( '%.0f', $stats->{km_route} );
 	$review{km_beeline}     = sprintf( '%.0f', $stats->{km_beeline} );
-	$review{km_circle}      = sprintf( '%.1f', $stats->{km_route} / 40030 );
-	$review{km_diag}        = sprintf( '%.1f', $stats->{km_route} / 12742 );
+	$review{km_circle_h}    = sprintf( '%.1f', $review{km_circle} );
+	$review{km_diag_h}      = sprintf( '%.1f', $review{km_diag} );
 
 	$review{trains_per_day} =~ tr{.}{,};
-	$review{km_circle}      =~ tr{.}{,};
-	$review{km_diag}        =~ tr{.}{,};
+	$review{km_circle_h}    =~ tr{.}{,};
+	$review{km_diag_h}      =~ tr{.}{,};
 
 	$review{traveling_min_total} = $min_total;
 	$review{traveling_percentage_year}
@@ -1134,7 +1199,10 @@ sub compute_review {
 	$review{traveling_time_year} = min_to_human($min_total);
 
 	if (@linetypes) {
-		$review{typical_type} = $linetypes[0][0];
+		$review{typical_type_1} = $linetypes[0][0];
+	}
+	if ( @linetypes > 1 ) {
+		$review{typical_type_2} = $linetypes[1][0];
 	}
 	if ( @stops >= 3 ) {
 		my $desc = q{};
@@ -1184,6 +1252,46 @@ sub compute_review {
 	$review{shortest_km_to}     = $shortest_km->{to_name};
 	$review{shortest_km_id}     = $shortest_km->{id};
 
+	$review{most_delayed_type} = $most_delayed->{type};
+	$review{most_delayed_delay_dep}
+	  = min_to_human( $most_delayed->{delay_dep} );
+	$review{most_delayed_delay_arr}
+	  = min_to_human( $most_delayed->{delay_arr} );
+	$review{most_delayed_lineno} = $most_delayed->{line} // $most_delayed->{no};
+	$review{most_delayed_from}   = $most_delayed->{from_name};
+	$review{most_delayed_to}     = $most_delayed->{to_name};
+	$review{most_delayed_id}     = $most_delayed->{id};
+
+	$review{most_delay_type}      = $most_delay->{type};
+	$review{most_delay_delay_dep} = $most_delay->{delay_dep};
+	$review{most_delay_delay_arr} = $most_delay->{delay_arr};
+	$review{most_delay_sched_time}
+	  = min_to_human( $most_delay->{sched_duration} / 60 );
+	$review{most_delay_real_time}
+	  = min_to_human( $most_delay->{rt_duration} / 60 );
+	$review{most_delay_delta} = min_to_human(
+		( $most_delay->{rt_duration} - $most_delay->{sched_duration} ) / 60 );
+	$review{most_delay_lineno} = $most_delay->{line} // $most_delay->{no};
+	$review{most_delay_from}   = $most_delay->{from_name};
+	$review{most_delay_to}     = $most_delay->{to_name};
+	$review{most_delay_id}     = $most_delay->{id};
+
+	$review{most_undelay_type}      = $most_undelay->{type};
+	$review{most_undelay_delay_dep} = $most_undelay->{delay_dep};
+	$review{most_undelay_delay_arr} = $most_undelay->{delay_arr};
+	$review{most_undelay_sched_time}
+	  = min_to_human( $most_undelay->{sched_duration} / 60 );
+	$review{most_undelay_real_time}
+	  = min_to_human( $most_undelay->{rt_duration} / 60 );
+	$review{most_undelay_delta}
+	  = min_to_human(
+		( $most_undelay->{sched_duration} - $most_undelay->{rt_duration} )
+		/ 60 );
+	$review{most_undelay_lineno} = $most_undelay->{line} // $most_undelay->{no};
+	$review{most_undelay_from}   = $most_undelay->{from_name};
+	$review{most_undelay_to}     = $most_undelay->{to_name};
+	$review{most_undelay_id}     = $most_undelay->{id};
+
 	$review{issue_percent}
 	  = sprintf( '%.0f%%', $message_count * 100 / $stats->{num_trains} );
 	for my $i ( 0 .. 2 ) {
@@ -1194,14 +1302,14 @@ sub compute_review {
 		}
 	}
 
-	printf( "In %.0f%% der Fahrten war irgendetwas nicht wie vorgesehen\n",
-		$message_count * 100 / $stats->{num_trains} );
-	say "Die drei häufigsten Anmerkungen waren:";
-	for my $i ( 0 .. 2 ) {
-		if ( $reasons[$i] ) {
-			printf( "%d× %s\n", $reasons[$i][1], $reasons[$i][0] );
-		}
-	}
+	$review{cancel_count}  = $num_cancelled;
+	$review{fgr_percent}   = $num_fgr * 100 / $stats->{num_trains};
+	$review{fgr_percent_h} = sprintf( '%.1f%%', $review{fgr_percent} );
+	$review{fgr_percent_h} =~ tr{.}{,};
+	$review{punctual_percent} = $num_punctual * 100 / $stats->{num_trains};
+	$review{punctual_percent_h}
+	  = sprintf( '%.1f%%', $review{punctual_percent} );
+	$review{punctual_percent_h} =~ tr{.}{,};
 
 	return \%review;
 }
@@ -1348,7 +1456,7 @@ sub get_stats {
 
 	my @journeys = $self->get(
 		uid           => $uid,
-		cancelled     => $opt{cancelled} ? 1 : 0,
+		cancelled     => 0,
 		verbose       => 1,
 		with_polyline => 1,
 		after         => $interval_start,
@@ -1365,7 +1473,15 @@ sub get_stats {
 	);
 
 	if ( $opt{review} ) {
-		return ( $stats, $self->compute_review( $stats, @journeys ) );
+		my @cancelled_journeys = $self->get(
+			uid       => $uid,
+			cancelled => 1,
+			verbose   => 1,
+			after     => $interval_start,
+			before    => $interval_end
+		);
+		return ( $stats,
+			$self->compute_review( $stats, @journeys, @cancelled_journeys ) );
 	}
 
 	return $stats;
