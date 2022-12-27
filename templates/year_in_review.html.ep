@@ -96,8 +96,8 @@
 			<div class="carousel-item" href="#four">
 				<h2>Oepsie Woepsie</h2>
 				% if ($review->{issue1_count}) {
-					<p><strong><%= $review->{issue_percent} %></strong> aller Fahrten liefen nicht wie vorgesehen ab.</p>
-					<p>Die häufigsten Anmerkungen waren:</p>
+					<p><strong><%= $review->{issue_percent} %></strong> aller Fahrten liefen nicht wie vorgesehen ab.<br/>
+						Die häufigsten Anmerkungen waren:</p>
 					% for my $i (1 .. 3) {
 						% if ($review->{"issue${i}_count"}) {
 							<p><strong><%= $review->{"issue${i}_count"} %>×</strong> „<%= $review->{"issue${i}_text"} %>“</p>
