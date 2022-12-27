@@ -1345,10 +1345,10 @@ sub compute_review {
 			my ( $from, $to ) = split( qr{[|]}, $trips[$i][0] );
 			my $found = 0;
 			for my $j ( 0 .. $i - 1 ) {
-				if (    $review{top_trip_count}[$j][0] eq $to
-					and $review{top_trip_count}[$j][2] eq $from )
+				if (    $review{top_trips}[$j][0] eq $to
+					and $review{top_trips}[$j][2] eq $from )
 				{
-					$review{top_trip_count}[$j][1] = '↔';
+					$review{top_trips}[$j][1] = '↔';
 					$found = 1;
 					last;
 				}
