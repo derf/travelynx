@@ -1344,7 +1344,7 @@ sub compute_review {
 		if ( $trips[$i] ) {
 			my ( $from, $to ) = split( qr{[|]}, $trips[$i][0] );
 			my $found = 0;
-			for my $j ( 0 .. $i - 1 ) {
+			for my $j ( 0 .. $#{ $review{top_trips} } ) {
 				if (    $review{top_trips}[$j][0] eq $to
 					and $review{top_trips}[$j][2] eq $from )
 				{
