@@ -1448,11 +1448,73 @@ sub csv_history {
 	);
 }
 
+sub year_in_review {
+	my ($self) = @_;
+	my $year = $self->stash('year');
+	my @journeys;
+
+	# DateTime is very slow when looking far into the future due to DST changes
+	# -> Limit time range to avoid accidental DoS.
+	if ( not( $year =~ m{ ^ [0-9]{4} $ }x and $year > 1990 and $year < 2100 ) )
+	{
+		$self->render('not_found');
+		return;
+	}
+
+	my $interval_start = DateTime->new(
+		time_zone => 'Europe/Berlin',
+		year      => $year,
+		month     => 1,
+		day       => 1,
+		hour      => 0,
+		minute    => 0,
+		second    => 0,
+	);
+	my $interval_end = $interval_start->clone->add( years => 1 );
+	@journeys = $self->journeys->get(
+		uid           => $self->current_user->{id},
+		after         => $interval_start,
+		before        => $interval_end,
+		with_datetime => 1
+	);
+
+	if ( not @journeys ) {
+		$self->render( 'not_found',
+			message => 'Keine Zugfahrten im angefragten Jahr gefunden.' );
+		return;
+	}
+
+	my $now = $self->now;
+	if (
+		not( $year < $now->year or ( $now->month == 12 and $now->day == 31 ) ) )
+	{
+		$self->render( 'not_found',
+			message =>
+'Der aktuelle Jahresrückblick wird erst zum Jahresende (am 31.12.) freigeschaltet'
+		);
+		return;
+	}
+
+	my ( $stats, $review ) = $self->journeys->get_stats(
+		uid    => $self->current_user->{id},
+		year   => $year,
+		review => 1
+	);
+
+	$self->render(
+		'year_in_review',
+		title  => "travelynx Jahresrückblick $year",
+		year   => $year,
+		stats  => $stats,
+		review => $review
+	);
+
+}
+
 sub yearly_history {
 	my ($self) = @_;
 	my $year = $self->stash('year');
 	my @journeys;
-	my $stats;
 
 	# DateTime is very slow when looking far into the future due to DST changes
 	# -> Limit time range to avoid accidental DoS.
@@ -1484,10 +1546,16 @@ sub yearly_history {
 		return;
 	}
 
-	$stats = $self->journeys->get_stats(
+	my $stats = $self->journeys->get_stats(
 		uid  => $self->current_user->{id},
 		year => $year
 	);
+
+	my $with_review;
+	my $now = $self->now;
+	if ( $year < $now->year or ( $now->month == 12 and $now->day == 31 ) ) {
+		$with_review = 1;
+	}
 
 	$self->respond_to(
 		json => {
@@ -1497,10 +1565,11 @@ sub yearly_history {
 			}
 		},
 		any => {
-			template   => 'history_by_year',
-			journeys   => [@journeys],
-			year       => $year,
-			statistics => $stats
+			template    => 'history_by_year',
+			journeys    => [@journeys],
+			year        => $year,
+			have_review => $with_review,
+			statistics  => $stats
 		}
 	);
 
@@ -1511,7 +1580,6 @@ sub monthly_history {
 	my $year   = $self->stash('year');
 	my $month  = $self->stash('month');
 	my @journeys;
-	my $stats;
 	my @months
 	  = (
 		qw(Januar Februar März April Mai Juni Juli August September Oktober November Dezember)
@@ -1552,7 +1620,7 @@ sub monthly_history {
 		return;
 	}
 
-	$stats = $self->journeys->get_stats(
+	my $stats = $self->journeys->get_stats(
 		uid   => $self->current_user->{id},
 		year  => $year,
 		month => $month

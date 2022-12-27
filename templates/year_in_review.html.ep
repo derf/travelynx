@@ -1,0 +1,106 @@
+<div class="row">
+	<div class="col s12 m12 l12">
+		<div class="carousel carousel-slider center">
+			<div class="carousel-item" href="#one">
+				<h2>Jahresrückblick <%= $year %></h2>
+				<p>
+					Du hast in diesem Jahr <strong><%= $stats->{num_trains} %> Fahrten</strong> von und zu <strong><%= $review->{num_stops} %> Betriebsstellen</strong> in travelynx erfasst.
+					% if ($stats->{num_trains} > 365) {
+						Das sind mehr als <%= $review->{trains_per_day} %> Züge pro Tag!
+					% }
+				</p>
+				<p>
+					% if ($review->{traveling_min_total} > 525) {
+						Insgesamt hast du mindestens <strong><%= $review->{traveling_percentage_year} %> des Jahres</strong>
+						(<%= $review->{traveling_time_year} %>) in Zügen und auf Bahnhöfen verbracht.
+					% }
+					% else {
+						Insgesamt hast du mindestens <strong><%= $review->{traveling_time_year} %></strong> in Zügen und auf Bahnhöfen verbracht.
+					% }
+				</p>
+				<p>
+					Dabei hast du ca. <strong><%= $review->{km_route} %> km</strong> (Luftlinie: <%= $review->{km_beeline} %> km) auf Schienen zurückgelegt.
+					% if ($review->{km_circle} > 1) {
+						Das entspricht <%= $review->{km_circle} %> Fahrten um die Erde.
+					% }
+					% elsif ($review->{km_diag} > 1) {
+						Das entspricht <%= $review->{km_diag} %> Reisen zum Mittelpunkt der Erde und zurück.
+					% }
+				</p>
+				<p>
+					<em>Hier streichen</em> 🐈 <em>oder unten klicken für nächste Seite</em>
+				</p>
+			</div>
+			<div class="carousel-item" href="#two">
+				<h2>Eine typische Zugfahrt</h2>
+				<p>
+					% if ($review->{typical_stops_3} and $review->{typical_type}) {
+						… führte dich mit
+						% if ($review->{typical_type} eq 'S') {
+							einer <strong>S-Bahn</strong>
+						% }
+						% else {
+							einem <strong><%= $review->{typical_type} %></strong>
+						% }
+						durch das Dreieck <%= join(' / ', @{$review->{typical_stops_3}}) %>.
+					% }
+					% elsif ($review->{typical_stops_2}) {
+						… befand sich jederzeit auf deiner Pendelstrecke zwischen <strong><%= $review->{typical_stops_2}[0] %></strong> und <strong><%= $review->{typical_stops_2}[1] %></strong>.
+					% }
+				</p>
+				<p>
+					Im Mittel benötigte sie <strong><%= $review->{typical_time} %></strong> für eine Entfernung von ca. <strong><%= $review->{typical_km} %> km</strong> (<%= $review->{typical_kmh} %> km/h).
+				</p>
+				% if ($review->{typical_delay_dep} == 0 and $review->{typical_delay_arr} == 0) {
+					<p>Außerdem war sie <strong>komplett pünktlich</strong> (wtf).</p>
+				% }
+				% elsif ($review->{typical_delay_dep} > 0 and $review->{typical_delay_arr} > 0) {
+					<p>Sie fuhr <strong><%= $review->{typical_delay_dep_h} %></strong> zu spät
+					% if ($review->{typical_delay_arr} < $review->{typical_delay_dep}) {
+						ab, konnte aber einen Teil der Verspätung wieder herausholen.
+						Ihr Ziel erreichte sie nur noch <strong><%= $review->{typical_delay_arr_h} %></strong> später als vorgesehen.
+					% }
+					% elsif ($review->{typical_delay_arr} == $review->{typical_delay_dep}) {
+						ab und kam ebenso <strong><%= $review->{typical_delay_arr_h} %></strong> zu spät am Ziel an.
+					% }
+					% else {
+						ab und schlich mit <strong>+<%= $review->{typical_delay_arr} %></strong> ins Ziel.
+					% }
+				% }
+			</div>
+			<div class="carousel-item" href="#three">
+				<h2>High Scores</h2>
+				<p><a href="/journey/<%= $review->{longest_t_id} %>">Längste Zugfahrt</a>:
+					<strong><%= $review->{longest_t_time} %></strong> mit <strong><%= $review->{longest_t_type} %> <%= $review->{longest_t_lineno} %></strong> von <%= $review->{longest_t_from} %> nach <%= $review->{longest_t_to} %>.</p>
+				% if ($review->{longest_km_id} == $review->{longest_t_id}) {
+					<p>Mit <strong><%= $review->{longest_km_km} %> km</strong> war sie gleichzeitig deine weiteste Fahrt.</p>
+				% }
+				% else {
+				<p><a href="/journey/<%= $review->{longest_km_id} %>">Größte Entfernung</a>:
+					<strong><%= $review->{longest_km_km} %> km</strong> mit <strong><%= $review->{longest_km_type} %> <%= $review->{longest_km_lineno} %></strong> von <%= $review->{longest_km_from} %> nach <%= $review->{longest_km_to} %>.</p>
+				% }
+				<p><a href="/journey/<%= $review->{shortest_t_id} %>">Kürzeste Zugfahrt</a>:
+					<strong><%= $review->{shortest_t_time} %></strong> mit <strong><%= $review->{shortest_t_type} %> <%= $review->{shortest_t_lineno} %></strong> von <%= $review->{shortest_t_from} %> nach <%= $review->{shortest_t_to} %>.</p>
+				% if ($review->{shortest_km_id} == $review->{shortest_t_id}) {
+					<p>Mit <strong><%= $review->{shortest_km_m} %> m</strong> war sie gleichzeitig dein kleinster Katzensprung.</p>
+				% }
+				% else {
+				<p><a href="/journey/<%= $review->{shortest_km_id} %>">Kleinster Katzensprung</a>:
+					<strong><%= $review->{shortest_km_m} %> m</strong> mit <strong><%= $review->{shortest_km_type} %> <%= $review->{shortest_km_lineno} %></strong> von <%= $review->{shortest_km_from} %> nach <%= $review->{shortest_km_to} %>.</p>
+				% }
+			</div>
+			% if ($review->{issue1_count}) {
+				<div class="carousel-item" href="#four">
+					<h2>Oepsie Woepsie</h2>
+					<p><strong><%= $review->{issue_percent} %></strong> aller Fahrten liefen nicht wie vorgesehen ab.</p>
+					<p>Die drei häufigsten Anmerkungen waren:</p>
+					% for my $i (1 .. 3) {
+						% if ($review->{"issue${i}_count"}) {
+							<p><strong><%= $review->{"issue${i}_count"} %>×</strong> „<%= $review->{"issue${i}_text"} %>“</p>
+						% }
+					% }
+				</div>
+			% }
+		</div>
+	</div>
+</div>

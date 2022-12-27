@@ -266,4 +266,9 @@ $(document).ready(function() {
 	$('a[href]').click(function() {
 		$('nav .preloader-wrapper').addClass('active');
 	});
+	const elems = document.querySelectorAll('.carousel');
+	const instances = M.Carousel.init(elems, {
+		fullWidth: true,
+		indicators: true}
+	);
 });

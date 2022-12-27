@@ -34,6 +34,53 @@ sub epoch_to_dt {
 	);
 }
 
+sub min_to_human {
+	my ($minutes) = @_;
+
+	my @ret;
+
+	if ( $minutes >= 14 * 24 * 60 ) {
+		push( @ret, int( $minutes / ( 7 * 24 * 60 ) ) . ' Wochen' );
+	}
+	elsif ( $minutes >= 7 * 24 * 60 ) {
+		push( @ret, '1 Woche' );
+	}
+	$minutes %= 7 * 24 * 60;
+
+	if ( $minutes >= 2 * 24 * 60 ) {
+		push( @ret, int( $minutes / ( 24 * 60 ) ) . ' Tage' );
+	}
+	elsif ( $minutes >= 24 * 60 ) {
+		push( @ret, '1 Tag' );
+	}
+	$minutes %= 24 * 60;
+
+	if ( $minutes >= 2 * 60 ) {
+		push( @ret, int( $minutes / 60 ) . ' Stunden' );
+	}
+	elsif ( $minutes >= 60 ) {
+		push( @ret, '1 Stunde' );
+	}
+	$minutes %= 60;
+
+	if ( $minutes >= 2 ) {
+		push( @ret, "$minutes Minuten" );
+	}
+	elsif ($minutes) {
+		push( @ret, "1 Minute" );
+	}
+
+	if ( @ret == 1 ) {
+		return $ret[0];
+	}
+
+	if ( @ret > 2 ) {
+		my $last = pop(@ret);
+		return join( ', ', @ret ) . " und $last";
+	}
+	return "$ret[0] und $ret[1]";
+}
+
 sub new {
 	my ( $class, %opt ) = @_;
 
@@ -991,6 +1038,165 @@ sub get_travel_distance {
 		$distance_beeline, $skipped );
 }
 
+sub compute_review {
+	my ( $self, $stats, @journeys ) = @_;
+	my $longest_km;
+	my $longest_t;
+	my $shortest_km;
+	my $shortest_t;
+	my $message_count
+	  ; # anzahl fahrten bei denen irgendeine nachricht vermerkt war -> irgendwas war anders als geplant
+	my %num_by_message;    # für jede nachricht
+	my %num_by_wrtype
+	  ;    # zugtyp, sofern wagenreihung verfügbar. 'none' für nicht verfügbar.
+	my %num_by_linetype;    # zugtyp nach "ICE 123" / "RE 127".
+	my %num_by_stop;        # arr/dep name
+
+	if ( not $stats or not @journeys or $stats->{num_trains} == 0 ) {
+		return;
+	}
+
+	my %review;
+
+	my $trains_per_journey = $stats->{num_trains} / $stats->{num_journeys};
+	my $avg_change_count   = sprintf( '%.1f', $trains_per_journey - 1 );
+	my $min_total = $stats->{min_travel_real} + $stats->{min_interchange_real};
+
+	for my $journey (@journeys) {
+		if ( $journey->{rt_duration} ) {
+			if ( not $longest_t
+				or $journey->{rt_duration} > $longest_t->{rt_duration} )
+			{
+				$longest_t = $journey;
+			}
+			if ( not $shortest_t
+				or $journey->{rt_duration} < $shortest_t->{rt_duration} )
+			{
+				$shortest_t = $journey;
+			}
+		}
+		if ( $journey->{km_route} ) {
+			if ( not $longest_km
+				or $journey->{km_route} > $longest_km->{km_route} )
+			{
+				$longest_km = $journey;
+			}
+			if ( not $shortest_km
+				or $journey->{km_route} < $shortest_km->{km_route} )
+			{
+				$shortest_km = $journey;
+			}
+		}
+		if ( $journey->{messages} and @{ $journey->{messages} } ) {
+			$message_count += 1;
+			for my $message ( @{ $journey->{messages} } ) {
+				$num_by_message{ $message->[1] } += 1;
+			}
+		}
+		if ( $journey->{type} ) {
+			$num_by_linetype{ $journey->{type} } += 1;
+		}
+		if ( $journey->{from_name} ) {
+			$num_by_stop{ $journey->{from_name} } += 1;
+		}
+		if ( $journey->{to_name} ) {
+			$num_by_stop{ $journey->{to_name} } += 1;
+		}
+	}
+
+	my @linetypes = sort { $b->[1] <=> $a->[1] }
+	  map { [ $_, $num_by_linetype{$_} ] } keys %num_by_linetype;
+	my @stops = sort { $b->[1] <=> $a->[1] }
+	  map { [ $_, $num_by_stop{$_} ] } keys %num_by_stop;
+
+	my @reasons = sort { $b->[1] <=> $a->[1] }
+	  map { [ $_, $num_by_message{$_} ] } keys %num_by_message;
+
+	$review{num_stops}      = scalar @stops;
+	$review{trains_per_day} = sprintf( '%.1f', $stats->{num_trains} / 365 );
+	$review{km_route}       = sprintf( '%.0f', $stats->{km_route} );
+	$review{km_beeline}     = sprintf( '%.0f', $stats->{km_beeline} );
+	$review{km_circle}      = sprintf( '%.1f', $stats->{km_route} / 40030 );
+	$review{km_diag}        = sprintf( '%.1f', $stats->{km_route} / 12742 );
+
+	$review{traveling_min_total} = $min_total;
+	$review{traveling_percentage_year}
+	  = sprintf( "%.1f%%", $min_total * 100 / 525948.77 );
+	$review{traveling_time_year} = min_to_human($min_total);
+
+	if (@linetypes) {
+		$review{typical_type} = $linetypes[0][0];
+	}
+	if ( @stops >= 3 ) {
+		my $desc = q{};
+		$review{typical_stops_3} = [ $stops[0][0], $stops[1][0], $stops[2][0] ];
+	}
+	elsif ( @stops == 2 ) {
+		$review{typical_stops_2} = [ $stops[0][0], $stops[1][0] ];
+	}
+	$review{typical_time}
+	  = min_to_human( $stats->{min_travel_real} / $stats->{num_trains} );
+	$review{typical_km}
+	  = sprintf( '%.0f', $stats->{km_route} / $stats->{num_trains} );
+	$review{typical_kmh} = sprintf( '%.0f',
+		$stats->{km_route} / ( $stats->{min_travel_real} / 60 ) );
+	$review{typical_delay_dep}
+	  = sprintf( '%.0f', $stats->{delay_dep} / $stats->{num_trains} );
+	$review{typical_delay_dep_h} = min_to_human( $review{typical_delay_dep} );
+	$review{typical_delay_arr}
+	  = sprintf( '%.0f', $stats->{delay_arr} / $stats->{num_trains} );
+	$review{typical_delay_arr_h} = min_to_human( $review{typical_delay_arr} );
+
+	$review{longest_t_time}   = min_to_human( $longest_t->{rt_duration} / 60 );
+	$review{longest_t_type}   = $longest_t->{type};
+	$review{longest_t_lineno} = $longest_t->{line} // $longest_t->{no};
+	$review{longest_t_from}   = $longest_t->{from_name};
+	$review{longest_t_to}     = $longest_t->{to_name};
+	$review{longest_t_id}     = $longest_t->{id};
+
+	$review{longest_km_km}     = sprintf( '%.0f', $longest_km->{km_route} );
+	$review{longest_km_type}   = $longest_km->{type};
+	$review{longest_km_lineno} = $longest_km->{line} // $longest_km->{no};
+	$review{longest_km_from}   = $longest_km->{from_name};
+	$review{longest_km_to}     = $longest_km->{to_name};
+	$review{longest_km_id}     = $longest_km->{id};
+
+	$review{shortest_t_time} = min_to_human( $shortest_t->{rt_duration} / 60 );
+	$review{shortest_t_type} = $shortest_t->{type};
+	$review{shortest_t_lineno} = $shortest_t->{line} // $shortest_t->{no};
+	$review{shortest_t_from}   = $shortest_t->{from_name};
+	$review{shortest_t_to}     = $shortest_t->{to_name};
+	$review{shortest_t_id}     = $shortest_t->{id};
+
+	$review{shortest_km_m} = sprintf( '%.0f', $shortest_km->{km_route} * 1000 );
+	$review{shortest_km_type}   = $shortest_km->{type};
+	$review{shortest_km_lineno} = $shortest_km->{line} // $shortest_km->{no};
+	$review{shortest_km_from}   = $shortest_km->{from_name};
+	$review{shortest_km_to}     = $shortest_km->{to_name};
+	$review{shortest_km_id}     = $shortest_km->{id};
+
+	$review{issue_percent}
+	  = sprintf( '%.0f%%', $message_count * 100 / $stats->{num_trains} );
+	for my $i ( 0 .. 2 ) {
+		if ( $reasons[$i] ) {
+			my $p = 'issue' . ( $i + 1 );
+			$review{"${p}_count"} = $reasons[$i][1];
+			$review{"${p}_text"}  = $reasons[$i][0];
+		}
+	}
+
+	printf( "In %.0f%% der Fahrten war irgendetwas nicht wie vorgesehen\n",
+		$message_count * 100 / $stats->{num_trains} );
+	say "Die drei häufigsten Anmerkungen waren:";
+	for my $i ( 0 .. 2 ) {
+		if ( $reasons[$i] ) {
+			printf( "%d× %s\n", $reasons[$i][1], $reasons[$i][0] );
+		}
+	}
+
+	return \%review;
+}
+
 sub compute_stats {
 	my ( $self, @journeys ) = @_;
 	my $km_route         = 0;
@@ -1093,7 +1299,8 @@ sub get_stats {
 	# checks out of a train or manually edits/adds a journey.
 
 	if (
-		not $opt{write_only}
+		    not $opt{write_only}
+		and not $opt{review}
 		and my $stats = $self->stats_cache->get(
 			uid   => $uid,
 			db    => $db,
@@ -1147,6 +1354,10 @@ sub get_stats {
 		month => $month,
 		stats => $stats
 	);
+
+	if ( $opt{review} ) {
+		return ( $stats, $self->compute_review( $stats, @journeys ) );
+	}
 
 	return $stats;
 }
