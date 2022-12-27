@@ -57,7 +57,7 @@ sub run {
 				@{ $status->{results} };
 
 				if ( not $train ) {
-					$self->log->info(
+					$self->app->log->info(
 						"could not find train $train_id at $dep\n");
 					return;
 				}
