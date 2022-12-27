@@ -1056,6 +1056,7 @@ sub compute_review {
 	my %num_by_wrtype;
 	my %num_by_linetype;
 	my %num_by_stop;
+	my %num_by_trip;
 
 	if ( not $stats or not @journeys or $stats->{num_trains} == 0 ) {
 		return;
@@ -1117,6 +1118,10 @@ sub compute_review {
 		if ( $journey->{to_name} ) {
 			$num_by_stop{ $journey->{to_name} } += 1;
 		}
+		if ( $journey->{from_name} and $journey->{to_name} ) {
+			$num_by_trip{ $journey->{from_name} . '|' . $journey->{to_name} }
+			  += 1;
+		}
 
 		if ( $journey->{sched_dep_ts} and $journey->{rt_dep_ts} ) {
 			$journey->{delay_dep}
@@ -1171,6 +1176,8 @@ sub compute_review {
 	  map { [ $_, $num_by_linetype{$_} ] } keys %num_by_linetype;
 	my @stops = sort { $b->[1] <=> $a->[1] }
 	  map { [ $_, $num_by_stop{$_} ] } keys %num_by_stop;
+	my @trips = sort { $b->[1] <=> $a->[1] }
+	  map { [ $_, $num_by_trip{$_} ] } keys %num_by_trip;
 
 	my @reasons = sort { $b->[1] <=> $a->[1] }
 	  map { [ $_, $num_by_message{$_} ] } keys %num_by_message;
@@ -1330,6 +1337,44 @@ sub compute_review {
 	$review{punctual_percent_h}
 	  = sprintf( '%.1f%%', $review{punctual_percent} );
 	$review{punctual_percent_h} =~ tr{.}{,};
+
+	my $top_trip_count    = 0;
+	my $single_trip_count = 0;
+	for my $i ( 0 .. 3 ) {
+		if ( $trips[$i] ) {
+			push( @{ $review{top_trips} },
+				[ split( qr{[|]}, $trips[$i][0] ) ] );
+			$top_trip_count += $trips[$i][1];
+		}
+	}
+
+	for my $trip (@trips) {
+		if ( $trip->[1] == 1 ) {
+			$single_trip_count += 1;
+			if ( @{ $review{single_trips} // [] } < 3 ) {
+				push(
+					@{ $review{single_trips} },
+					[ split( qr{[|]}, $trip->[0] ) ]
+				);
+			}
+		}
+	}
+
+	$review{top_trip_count} = $top_trip_count;
+	$review{top_trip_percent_h}
+	  = sprintf( '%.1f%%', $top_trip_count * 100 / $stats->{num_trains} );
+
+	$review{single_trip_count} = $single_trip_count;
+	$review{single_trip_percent_h}
+	  = sprintf( '%.1f%%', $single_trip_count * 100 / $stats->{num_trains} );
+
+	if ( @stops >= 3 ) {
+		my $desc = q{};
+		$review{typical_stops_3} = [ $stops[0][0], $stops[1][0], $stops[2][0] ];
+	}
+	elsif ( @stops == 2 ) {
+		$review{typical_stops_2} = [ $stops[0][0], $stops[1][0] ];
+	}
 
 	return \%review;
 }

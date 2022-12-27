@@ -144,6 +144,24 @@
 			</div>
 			<div class="carousel-item" href="#six">
 				<h2>Last, but not least</h2>
+				% if ($review->{top_trip_count}) {
+					<p>
+						<strong><%= $review->{top_trip_percent_h} %></strong> deiner Check-Ins konzentrierten sich auf diese Strecken:<br/>
+						% for my $i (0 .. $#{$review->{top_trips}}) {
+							% my $trip = $review->{top_trips}[$i];
+							<%= $trip->[0] %> → <%= $trip->[1] %><br/>
+						% }
+					</p>
+				% }
+				% if ($review->{single_trip_count}) {
+					<p>
+						<strong><%= $review->{single_trip_percent_h} %></strong> aller Verbindungen bist du nur genau einmal gefahren. Zum Beispiel:<br/>
+						% for my $i (0 .. $#{$review->{single_trips}}) {
+							% my $trip = $review->{single_trips}[$i];
+							<%= $trip->[0] %> → <%= $trip->[1] %><br/>
+						% }
+					</p>
+				% }
 				<p><em>Thank you for traveling with travelynx</em></p>
 			</div>
 		</div>
