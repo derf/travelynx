@@ -67,18 +67,19 @@ sub min_to_human {
 		push( @ret, "$minutes Minuten" );
 	}
 	elsif ($minutes) {
-		push( @ret, "1 Minute" );
+		push( @ret, '1 Minute' );
+	}
+
+	if ( @ret == 0 ) {
+		return '0 Minuten';
 	}
 
 	if ( @ret == 1 ) {
 		return $ret[0];
 	}
 
-	if ( @ret > 2 ) {
-		my $last = pop(@ret);
-		return join( ', ', @ret ) . " und $last";
-	}
-	return "$ret[0] und $ret[1]";
+	my $last = pop(@ret);
+	return join( ', ', @ret ) . " und $last";
 }
 
 sub new {
@@ -1062,10 +1063,6 @@ sub compute_review {
 
 	my %review;
 
-	my $trains_per_journey = $stats->{num_trains} / $stats->{num_journeys};
-	my $avg_change_count   = sprintf( '%.1f', $trains_per_journey - 1 );
-	my $min_total = $stats->{min_travel_real} + $stats->{min_interchange_real};
-
 	for my $journey (@journeys) {
 		if ( $journey->{cancelled} ) {
 			$num_cancelled += 1;
@@ -1192,6 +1189,7 @@ sub compute_review {
 	$review{km_circle_h}    =~ tr{.}{,};
 	$review{km_diag_h}      =~ tr{.}{,};
 
+	my $min_total = $stats->{min_travel_real} + $stats->{min_interchange_real};
 	$review{traveling_min_total} = $min_total;
 	$review{traveling_percentage_year}
 	  = sprintf( "%.1f%%", $min_total * 100 / 525948.77 );
@@ -1224,73 +1222,95 @@ sub compute_review {
 	  = sprintf( '%.0f', $stats->{delay_arr} / $stats->{num_trains} );
 	$review{typical_delay_arr_h} = min_to_human( $review{typical_delay_arr} );
 
-	$review{longest_t_time}   = min_to_human( $longest_t->{rt_duration} / 60 );
-	$review{longest_t_type}   = $longest_t->{type};
-	$review{longest_t_lineno} = $longest_t->{line} // $longest_t->{no};
-	$review{longest_t_from}   = $longest_t->{from_name};
-	$review{longest_t_to}     = $longest_t->{to_name};
-	$review{longest_t_id}     = $longest_t->{id};
+	if ($longest_t) {
+		$review{longest_t_time}
+		  = min_to_human( $longest_t->{rt_duration} / 60 );
+		$review{longest_t_type}   = $longest_t->{type};
+		$review{longest_t_lineno} = $longest_t->{line} // $longest_t->{no};
+		$review{longest_t_from}   = $longest_t->{from_name};
+		$review{longest_t_to}     = $longest_t->{to_name};
+		$review{longest_t_id}     = $longest_t->{id};
+	}
 
-	$review{longest_km_km}     = sprintf( '%.0f', $longest_km->{km_route} );
-	$review{longest_km_type}   = $longest_km->{type};
-	$review{longest_km_lineno} = $longest_km->{line} // $longest_km->{no};
-	$review{longest_km_from}   = $longest_km->{from_name};
-	$review{longest_km_to}     = $longest_km->{to_name};
-	$review{longest_km_id}     = $longest_km->{id};
+	if ($longest_km) {
+		$review{longest_km_km}     = sprintf( '%.0f', $longest_km->{km_route} );
+		$review{longest_km_type}   = $longest_km->{type};
+		$review{longest_km_lineno} = $longest_km->{line} // $longest_km->{no};
+		$review{longest_km_from}   = $longest_km->{from_name};
+		$review{longest_km_to}     = $longest_km->{to_name};
+		$review{longest_km_id}     = $longest_km->{id};
+	}
 
-	$review{shortest_t_time} = min_to_human( $shortest_t->{rt_duration} / 60 );
-	$review{shortest_t_type} = $shortest_t->{type};
-	$review{shortest_t_lineno} = $shortest_t->{line} // $shortest_t->{no};
-	$review{shortest_t_from}   = $shortest_t->{from_name};
-	$review{shortest_t_to}     = $shortest_t->{to_name};
-	$review{shortest_t_id}     = $shortest_t->{id};
+	if ($shortest_t) {
+		$review{shortest_t_time}
+		  = min_to_human( $shortest_t->{rt_duration} / 60 );
+		$review{shortest_t_type}   = $shortest_t->{type};
+		$review{shortest_t_lineno} = $shortest_t->{line} // $shortest_t->{no};
+		$review{shortest_t_from}   = $shortest_t->{from_name};
+		$review{shortest_t_to}     = $shortest_t->{to_name};
+		$review{shortest_t_id}     = $shortest_t->{id};
+	}
 
-	$review{shortest_km_m} = sprintf( '%.0f', $shortest_km->{km_route} * 1000 );
-	$review{shortest_km_type}   = $shortest_km->{type};
-	$review{shortest_km_lineno} = $shortest_km->{line} // $shortest_km->{no};
-	$review{shortest_km_from}   = $shortest_km->{from_name};
-	$review{shortest_km_to}     = $shortest_km->{to_name};
-	$review{shortest_km_id}     = $shortest_km->{id};
+	if ($shortest_km) {
+		$review{shortest_km_m}
+		  = sprintf( '%.0f', $shortest_km->{km_route} * 1000 );
+		$review{shortest_km_type}   = $shortest_km->{type};
+		$review{shortest_km_lineno} = $shortest_km->{line}
+		  // $shortest_km->{no};
+		$review{shortest_km_from} = $shortest_km->{from_name};
+		$review{shortest_km_to}   = $shortest_km->{to_name};
+		$review{shortest_km_id}   = $shortest_km->{id};
+	}
 
-	$review{most_delayed_type} = $most_delayed->{type};
-	$review{most_delayed_delay_dep}
-	  = min_to_human( $most_delayed->{delay_dep} );
-	$review{most_delayed_delay_arr}
-	  = min_to_human( $most_delayed->{delay_arr} );
-	$review{most_delayed_lineno} = $most_delayed->{line} // $most_delayed->{no};
-	$review{most_delayed_from}   = $most_delayed->{from_name};
-	$review{most_delayed_to}     = $most_delayed->{to_name};
-	$review{most_delayed_id}     = $most_delayed->{id};
+	if ($most_delayed) {
+		$review{most_delayed_type} = $most_delayed->{type};
+		$review{most_delayed_delay_dep}
+		  = min_to_human( $most_delayed->{delay_dep} );
+		$review{most_delayed_delay_arr}
+		  = min_to_human( $most_delayed->{delay_arr} );
+		$review{most_delayed_lineno} = $most_delayed->{line}
+		  // $most_delayed->{no};
+		$review{most_delayed_from} = $most_delayed->{from_name};
+		$review{most_delayed_to}   = $most_delayed->{to_name};
+		$review{most_delayed_id}   = $most_delayed->{id};
+	}
 
-	$review{most_delay_type}      = $most_delay->{type};
-	$review{most_delay_delay_dep} = $most_delay->{delay_dep};
-	$review{most_delay_delay_arr} = $most_delay->{delay_arr};
-	$review{most_delay_sched_time}
-	  = min_to_human( $most_delay->{sched_duration} / 60 );
-	$review{most_delay_real_time}
-	  = min_to_human( $most_delay->{rt_duration} / 60 );
-	$review{most_delay_delta} = min_to_human(
-		( $most_delay->{rt_duration} - $most_delay->{sched_duration} ) / 60 );
-	$review{most_delay_lineno} = $most_delay->{line} // $most_delay->{no};
-	$review{most_delay_from}   = $most_delay->{from_name};
-	$review{most_delay_to}     = $most_delay->{to_name};
-	$review{most_delay_id}     = $most_delay->{id};
+	if ($most_delay) {
+		$review{most_delay_type}      = $most_delay->{type};
+		$review{most_delay_delay_dep} = $most_delay->{delay_dep};
+		$review{most_delay_delay_arr} = $most_delay->{delay_arr};
+		$review{most_delay_sched_time}
+		  = min_to_human( $most_delay->{sched_duration} / 60 );
+		$review{most_delay_real_time}
+		  = min_to_human( $most_delay->{rt_duration} / 60 );
+		$review{most_delay_delta}
+		  = min_to_human(
+			( $most_delay->{rt_duration} - $most_delay->{sched_duration} )
+			/ 60 );
+		$review{most_delay_lineno} = $most_delay->{line} // $most_delay->{no};
+		$review{most_delay_from}   = $most_delay->{from_name};
+		$review{most_delay_to}     = $most_delay->{to_name};
+		$review{most_delay_id}     = $most_delay->{id};
+	}
 
-	$review{most_undelay_type}      = $most_undelay->{type};
-	$review{most_undelay_delay_dep} = $most_undelay->{delay_dep};
-	$review{most_undelay_delay_arr} = $most_undelay->{delay_arr};
-	$review{most_undelay_sched_time}
-	  = min_to_human( $most_undelay->{sched_duration} / 60 );
-	$review{most_undelay_real_time}
-	  = min_to_human( $most_undelay->{rt_duration} / 60 );
-	$review{most_undelay_delta}
-	  = min_to_human(
-		( $most_undelay->{sched_duration} - $most_undelay->{rt_duration} )
-		/ 60 );
-	$review{most_undelay_lineno} = $most_undelay->{line} // $most_undelay->{no};
-	$review{most_undelay_from}   = $most_undelay->{from_name};
-	$review{most_undelay_to}     = $most_undelay->{to_name};
-	$review{most_undelay_id}     = $most_undelay->{id};
+	if ($most_undelay) {
+		$review{most_undelay_type}      = $most_undelay->{type};
+		$review{most_undelay_delay_dep} = $most_undelay->{delay_dep};
+		$review{most_undelay_delay_arr} = $most_undelay->{delay_arr};
+		$review{most_undelay_sched_time}
+		  = min_to_human( $most_undelay->{sched_duration} / 60 );
+		$review{most_undelay_real_time}
+		  = min_to_human( $most_undelay->{rt_duration} / 60 );
+		$review{most_undelay_delta}
+		  = min_to_human(
+			( $most_undelay->{sched_duration} - $most_undelay->{rt_duration} )
+			/ 60 );
+		$review{most_undelay_lineno} = $most_undelay->{line}
+		  // $most_undelay->{no};
+		$review{most_undelay_from} = $most_undelay->{from_name};
+		$review{most_undelay_to}   = $most_undelay->{to_name};
+		$review{most_undelay_id}   = $most_undelay->{id};
+	}
 
 	$review{issue_percent}
 	  = sprintf( '%.0f%%', $message_count * 100 / $stats->{num_trains} );

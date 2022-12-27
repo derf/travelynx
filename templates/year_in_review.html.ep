@@ -52,7 +52,7 @@
 					Im Mittel benötigte sie <strong><%= $review->{typical_time} %></strong> für eine Entfernung von ca. <strong><%= $review->{typical_km} %> km</strong> (<%= $review->{typical_kmh} %> km/h).
 				</p>
 				% if ($review->{typical_delay_dep} == 0 and $review->{typical_delay_arr} == 0) {
-					<p>Außerdem war sie <strong>komplett pünktlich</strong> (wtf).</p>
+					<p>Außerdem war sie <strong>komplett pünktlich</strong>. Beeindruckend!</p>
 				% }
 				% elsif ($review->{typical_delay_dep} > 0 and $review->{typical_delay_arr} > 0) {
 					<p>Sie fuhr <strong><%= $review->{typical_delay_dep_h} %></strong> zu spät
@@ -61,7 +61,7 @@
 						Ihr Ziel erreichte sie nur noch <strong><%= $review->{typical_delay_arr_h} %></strong> später als vorgesehen.
 					% }
 					% elsif ($review->{typical_delay_arr} == $review->{typical_delay_dep}) {
-						ab und kam ebenso <strong><%= $review->{typical_delay_arr_h} %></strong> zu spät am Ziel an.
+						ab und kam mit der gleichen Verspätung am Ziel an.
 					% }
 					% else {
 						ab und schlich mit <strong>+<%= $review->{typical_delay_arr} %></strong> ins Ziel.
@@ -70,28 +70,32 @@
 			</div>
 			<div class="carousel-item" href="#three">
 				<h2>High Scores</h2>
-				<p><a href="/journey/<%= $review->{longest_t_id} %>">Längste Zugfahrt</a>:
-					<strong><%= $review->{longest_t_time} %></strong> mit <strong><%= $review->{longest_t_type} %> <%= $review->{longest_t_lineno} %></strong> von <%= $review->{longest_t_from} %> nach <%= $review->{longest_t_to} %>.</p>
-				% if ($review->{longest_km_id} == $review->{longest_t_id}) {
-					<p>Mit <strong><%= $review->{longest_km_km} %> km</strong> war sie gleichzeitig deine weiteste Fahrt.</p>
+				% if ($review->{longest_t_id}) {
+					<p><a href="/journey/<%= $review->{longest_t_id} %>">Längste Zugfahrt</a>:
+						<strong><%= $review->{longest_t_time} %></strong> mit <strong><%= $review->{longest_t_type} %> <%= $review->{longest_t_lineno} %></strong> von <%= $review->{longest_t_from} %> nach <%= $review->{longest_t_to} %>.</p>
+					% if ($review->{longest_km_id} == $review->{longest_t_id}) {
+						<p>Mit <strong><%= $review->{longest_km_km} %> km</strong> war sie gleichzeitig deine weiteste Fahrt.</p>
+					% }
 				% }
-				% else {
-				<p><a href="/journey/<%= $review->{longest_km_id} %>">Größte Entfernung</a>:
-					<strong><%= $review->{longest_km_km} %> km</strong> mit <strong><%= $review->{longest_km_type} %> <%= $review->{longest_km_lineno} %></strong> von <%= $review->{longest_km_from} %> nach <%= $review->{longest_km_to} %>.</p>
+				% if ($review->{longest_km_id} and $review->{longest_km_id} != $review->{longest_t_id}) {
+					<p><a href="/journey/<%= $review->{longest_km_id} %>">Größte Entfernung</a>:
+						<strong><%= $review->{longest_km_km} %> km</strong> mit <strong><%= $review->{longest_km_type} %> <%= $review->{longest_km_lineno} %></strong> von <%= $review->{longest_km_from} %> nach <%= $review->{longest_km_to} %>.</p>
 				% }
-				<p><a href="/journey/<%= $review->{shortest_t_id} %>">Kürzeste Zugfahrt</a>:
-					<strong><%= $review->{shortest_t_time} %></strong> mit <strong><%= $review->{shortest_t_type} %> <%= $review->{shortest_t_lineno} %></strong> von <%= $review->{shortest_t_from} %> nach <%= $review->{shortest_t_to} %>.</p>
-				% if ($review->{shortest_km_id} == $review->{shortest_t_id}) {
-					<p>Mit <strong><%= $review->{shortest_km_m} %> m</strong> war sie gleichzeitig dein kleinster Katzensprung.</p>
+				% if ($review->{shortest_t_id}) {
+					<p><a href="/journey/<%= $review->{shortest_t_id} %>">Kürzeste Zugfahrt</a>:
+						<strong><%= $review->{shortest_t_time} %></strong> mit <strong><%= $review->{shortest_t_type} %> <%= $review->{shortest_t_lineno} %></strong> von <%= $review->{shortest_t_from} %> nach <%= $review->{shortest_t_to} %>.</p>
+					% if ($review->{shortest_km_id} == $review->{shortest_t_id}) {
+						<p>Mit <strong><%= $review->{shortest_km_m} %> m</strong> war sie gleichzeitig dein kleinster Katzensprung.</p>
+					% }
 				% }
-				% else {
-				<p><a href="/journey/<%= $review->{shortest_km_id} %>">Kleinster Katzensprung</a>:
-					<strong><%= $review->{shortest_km_m} %> m</strong> mit <strong><%= $review->{shortest_km_type} %> <%= $review->{shortest_km_lineno} %></strong> von <%= $review->{shortest_km_from} %> nach <%= $review->{shortest_km_to} %>.</p>
+				% if ($review->{shortest_km_id} and $review->{shortest_km_id} != $review->{shortest_t_id}) {
+					<p><a href="/journey/<%= $review->{shortest_km_id} %>">Kleinster Katzensprung</a>:
+						<strong><%= $review->{shortest_km_m} %> m</strong> mit <strong><%= $review->{shortest_km_type} %> <%= $review->{shortest_km_lineno} %></strong> von <%= $review->{shortest_km_from} %> nach <%= $review->{shortest_km_to} %>.</p>
 				% }
 			</div>
-			% if ($review->{issue1_count}) {
-				<div class="carousel-item" href="#four">
-					<h2>Oepsie Woepsie</h2>
+			<div class="carousel-item" href="#four">
+				<h2>Oepsie Woepsie</h2>
+				% if ($review->{issue1_count}) {
 					<p><strong><%= $review->{issue_percent} %></strong> aller Fahrten liefen nicht wie vorgesehen ab.</p>
 					<p>Die häufigsten Anmerkungen waren:</p>
 					% for my $i (1 .. 3) {
@@ -99,9 +103,9 @@
 							<p><strong><%= $review->{"issue${i}_count"} %>×</strong> „<%= $review->{"issue${i}_text"} %>“</p>
 						% }
 					% }
-					<p>Lediglich <strong><%= $review->{punctual_percent_h} %></strong> der Züge waren pünktlich auf die Minute.</p>
-				</div>
-			% }
+				% }
+				<p>Lediglich <strong><%= $review->{punctual_percent_h} %></strong> der Züge waren pünktlich auf die Minute.</p>
+			</div>
 			<div class="carousel-item" href="#five">
 				<h2>De trein is stukkie wukkie</h2>
 				<p>
@@ -117,20 +121,26 @@
 						% }
 					% }
 				</p>
-				<p>
-					Mit <strong><%= $review->{most_delayed_delay_arr} %></strong> hatte <a href="/journey/<%= $review->{most_delayed_id} %>"><%= $review->{most_delayed_type} %> <%= $review->{most_delayed_lineno} %></a> <%= $review->{most_delayed_from} %> → <%= $review->{most_delayed_to} %> die größte Verspätung.
-				</p>
-				<p>
-					Die Fahrt mit <a href="/journey/<%= $review->{most_delay_id} %>"><%= $review->{most_delay_type} %> <%= $review->{most_delay_lineno} %></a>
-					von <%= $review->{most_delay_from} %> nach <%= $review->{most_delay_to} %> verlief besonders gemächlich:
-					sie dauerte <strong><%= $review->{most_delay_delta} %></strong> länger als geplant.
-				</p>
-				<p>
-					In <a href="/journey/<%= $review->{most_undelay_id} %>"><%= $review->{most_undelay_type} %> <%= $review->{most_undelay_lineno} %></a>
-					wurde hingegen Vmax ausgereizt und die Strecke von
-					<%= $review->{most_undelay_from} %> nach <%= $review->{most_undelay_to} %>
-					<strong><%= $review->{most_undelay_delta} %></strong> schneller absolviert als vorgesehen.
-				</p>
+				% if ($review->{most_delayed_id}) {
+					<p>
+						Mit <strong><%= $review->{most_delayed_delay_arr} %></strong> hatte <a href="/journey/<%= $review->{most_delayed_id} %>"><%= $review->{most_delayed_type} %> <%= $review->{most_delayed_lineno} %></a> <%= $review->{most_delayed_from} %> → <%= $review->{most_delayed_to} %> die größte Verspätung.
+					</p>
+				% }
+				% if ($review->{most_delay_id}) {
+					<p>
+						Die Fahrt mit <a href="/journey/<%= $review->{most_delay_id} %>"><%= $review->{most_delay_type} %> <%= $review->{most_delay_lineno} %></a>
+						von <%= $review->{most_delay_from} %> nach <%= $review->{most_delay_to} %> verlief besonders gemächlich:
+						sie dauerte <strong><%= $review->{most_delay_delta} %></strong> länger als geplant.
+					</p>
+				% }
+				% if ($review->{most_undelay_id}) {
+					<p>
+						In <a href="/journey/<%= $review->{most_undelay_id} %>"><%= $review->{most_undelay_type} %> <%= $review->{most_undelay_lineno} %></a>
+						wurde hingegen Vmax ausgereizt und die Strecke von
+						<%= $review->{most_undelay_from} %> nach <%= $review->{most_undelay_to} %>
+						<strong><%= $review->{most_undelay_delta} %></strong> schneller absolviert als vorgesehen.
+					</p>
+				% }
 			</div>
 			<div class="carousel-item" href="#six">
 				<h2>Last, but not least</h2>
