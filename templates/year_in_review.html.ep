@@ -6,7 +6,7 @@
 				<p>
 					Du hast in diesem Jahr <strong><%= $stats->{num_trains} %> Fahrten</strong> von und zu <strong><%= $review->{num_stops} %> Betriebsstellen</strong> in travelynx erfasst.
 					% if ($stats->{num_trains} > 365) {
-						Das sind mehr als <%= $review->{trains_per_day} %> Züge pro Tag!
+						Das sind mehr als <strong><%= $review->{trains_per_day} %> Züge pro Tag</strong>!
 					% }
 				</p>
 				<p>
@@ -21,10 +21,10 @@
 				<p>
 					Dabei hast du ca. <strong><%= $review->{km_route} %> km</strong> (Luftlinie: <%= $review->{km_beeline} %> km) auf Schienen zurückgelegt.
 					% if ($review->{km_circle} > 1) {
-						Das entspricht <%= $review->{km_circle_h} %> Fahrten um die Erde.
+						Das entspricht <strong><%= $review->{km_circle_h} %> Fahrten um die Erde</strong>.
 					% }
 					% elsif ($review->{km_diag} > 1) {
-						Das entspricht <%= $review->{km_diag_h} %> Reisen zum Mittelpunkt der Erde und zurück.
+						Das entspricht <strong><%= $review->{km_diag_h} %> Reisen zum Mittelpunkt der Erde und zurück</strong>.
 					% }
 				</p>
 				<p>
@@ -42,7 +42,7 @@
 						% else {
 							einem <strong><%= $review->{typical_type_1} %></strong>
 						% }
-						durch das Dreieck <%= join(' / ', @{$review->{typical_stops_3}}) %>.
+						durch das Dreieck <strong><%= join(' / ', @{$review->{typical_stops_3}}) %></strong>.
 					% }
 					% elsif ($review->{typical_stops_2}) {
 						… befand sich jederzeit auf deiner Pendelstrecke zwischen <strong><%= $review->{typical_stops_2}[0] %></strong> und <strong><%= $review->{typical_stops_2}[1] %></strong>.
@@ -155,7 +155,7 @@
 				% }
 				% if ($review->{single_trip_count}) {
 					<p>
-						<strong><%= $review->{single_trip_percent_h} %></strong> aller Verbindungen bist du nur genau einmal gefahren. Zum Beispiel:<br/>
+						<strong><%= $review->{single_trip_percent_h} %></strong> aller Verbindungen bist du nur genau <strong>einmal</strong> gefahren. Zum Beispiel:<br/>
 						% for my $i (0 .. $#{$review->{single_trips}}) {
 							% my $trip = $review->{single_trips}[$i];
 							<%= $trip->[0] %> → <%= $trip->[1] %><br/>
