@@ -28,19 +28,6 @@ sub run {
 	my $now    = DateTime->now( time_zone => 'Europe/Berlin' );
 	my $active = $now->clone->subtract( months => 1 );
 
-	my $checkin_window_query
-	  = qq{select count(*) as count from journeys where checkin_time > to_timestamp(?);};
-
-	# DateTime's  math does not like time zones: When subtracting 7 days from
-	# sun 2am and the previous sunday was the switch from CET to CEST (i.e.,
-	# the switch to daylight saving time), the resulting datetime is invalid.
-	# This is a fatal error. We avoid this edge case by performing date math
-	# on the epoch timestamp, which does not know or care about time zones and
-	# daylight saving time.
-	my $one_day   = 24 * 60 * 60;
-	my $one_week  = 7 * $one_day;
-	my $one_month = 30 * $one_day;
-
 	my @out;
 
 	push(
@@ -84,25 +71,8 @@ sub run {
 	push(
 		@out,
 		query_to_influx(
-			'checkins_24h_count',
-			$db->query( $checkin_window_query, $now->epoch - $one_day )
-			  ->hash->{count}
-		)
-	);
-	push(
-		@out,
-		query_to_influx(
-			'checkins_7d_count',
-			$db->query( $checkin_window_query, $now->epoch - $one_week )
-			  ->hash->{count}
-		)
-	);
-	push(
-		@out,
-		query_to_influx(
-			'checkins_30d_count',
-			$db->query( $checkin_window_query, $now->epoch - $one_month )
-			  ->hash->{count}
+			'checkin_count',
+			$db->select( 'journeys', 'count(*) as count' )->hash->{count}
 		)
 	);
 	push(
