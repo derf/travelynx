@@ -66,7 +66,7 @@
 
     .indicator-item {
       &.active {
-        background-color: #fff;
+        background-color: $off-black;
       }
 
       display: inline-block;
@@ -75,7 +75,7 @@
       height: 8px;
       width: 8px;
       margin: 24px 4px;
-      background-color: rgba(255,255,255,.5);
+      background-color: $inactive-color;
 
       transition: background-color .3s;
       border-radius: 50%;
