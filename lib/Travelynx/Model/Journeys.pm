@@ -1039,6 +1039,22 @@ sub get_travel_distance {
 		$distance_beeline, $skipped );
 }
 
+sub grep_single {
+	my ( $self, @journeys ) = @_;
+
+	my %num_by_trip;
+	for my $journey (@journeys) {
+		if ( $journey->{from_name} and $journey->{to_name} ) {
+			$num_by_trip{ $journey->{from_name} . '|' . $journey->{to_name} }
+			  += 1;
+		}
+	}
+
+	return
+	  grep { $num_by_trip{ $_->{from_name} . '|' . $_->{to_name} } == 1 }
+	  @journeys;
+}
+
 sub compute_review {
 	my ( $self, $stats, @journeys ) = @_;
 	my $longest_km;

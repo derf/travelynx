@@ -1513,7 +1513,8 @@ sub year_in_review {
 
 sub yearly_history {
 	my ($self) = @_;
-	my $year = $self->stash('year');
+	my $year   = $self->stash('year');
+	my $filter = $self->param('filter');
 	my @journeys;
 
 	# DateTime is very slow when looking far into the future due to DST changes
@@ -1539,6 +1540,10 @@ sub yearly_history {
 		before        => $interval_end,
 		with_datetime => 1
 	);
+
+	if ( $filter and $filter eq 'single' ) {
+		@journeys = $self->journeys->grep_single(@journeys);
+	}
 
 	if ( not @journeys ) {
 		$self->render( 'not_found',

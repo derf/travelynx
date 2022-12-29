@@ -155,7 +155,7 @@
 				% }
 				% if ($review->{single_trip_count}) {
 					<p>
-						<strong><%= $review->{single_trip_percent_h} %></strong> aller Verbindungen bist du nur genau <strong>einmal</strong> gefahren. Zum Beispiel:<br/>
+						<a href="/history/<%= $year %>?filter=single"><strong><%= $review->{single_trip_percent_h} %></strong> aller Verbindungen</a> bist du nur genau <strong>einmal</strong> gefahren. Zum Beispiel:<br/>
 						% for my $i (0 .. $#{$review->{single_trips}}) {
 							% my $trip = $review->{single_trips}[$i];
 							<%= $trip->[0] %> → <%= $trip->[1] %><br/>

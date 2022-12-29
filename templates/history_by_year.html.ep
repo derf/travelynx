@@ -23,6 +23,14 @@
 
 %= include '_history_months_for_year';
 
+% if (param('filter') and param('filter') eq 'single') {
+<div class="row">
+	<div class="col s12 m12 l12">
+		<p>Die folgende Auflistung enthält nur Fahrten, deren Kombination aus Start und Ziel im aktuellen Jahr einmalig ist.</p>
+	</div>
+</div>
+% }
+
 % if (stash('journeys')) {
 	%= include '_history_trains', date_format => '%d.%m.', journeys => stash('journeys');
 % }
