@@ -1503,10 +1503,11 @@ sub year_in_review {
 
 	$self->render(
 		'year_in_review',
-		title  => "travelynx Jahresrückblick $year",
-		year   => $year,
-		stats  => $stats,
-		review => $review
+		version => $self->app->config->{version} // 'UNKNOWN',
+		title   => "travelynx Jahresrückblick $year",
+		year    => $year,
+		stats   => $stats,
+		review  => $review,
 	);
 
 }
