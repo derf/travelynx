@@ -176,6 +176,9 @@ sub run {
 		eval { }
 	}
 
+	my $started_at       = $now;
+	my $main_finished_at = DateTime->now( time_zone => 'Europe/Berlin' );
+
 	for my $candidate ( $self->app->traewelling->get_pushable_accounts ) {
 		$self->app->log->debug(
 			"Pushing to Traewelling for UID $candidate->{uid}");
@@ -199,6 +202,7 @@ sub run {
 		$self->app->traewelling_api->checkin( %{$candidate},
 			trip_id => $trip_id );
 	}
+	my $trwl_push_finished_at = DateTime->now( time_zone => 'Europe/Berlin' );
 
 	my $request_count = 0;
 	for my $account_data ( $self->app->traewelling->get_pull_accounts ) {
@@ -249,16 +253,19 @@ sub run {
 			}
 		)->wait;
 	}
+	my $trwl_pull_finished_at = DateTime->now( time_zone => 'Europe/Berlin' );
 
-	my $started_at = $now;
-	$now = DateTime->now( time_zone => 'Europe/Berlin' );
-
-	my $worker_duration = $now->epoch - $started_at->epoch;
+	my $worker_duration = $main_finished_at->epoch - $started_at->epoch;
+	my $trwl_push_duration
+	  = $trwl_push_finished_at->epoch - $main_finished_at->epoch;
+	my $trwl_pull_duration
+	  = $trwl_pull_finished_at->epoch - $trwl_push_finished_at->epoch;
+	my $trwl_duration
+	  = $trwl_pull_finished_at->epoch - $main_finished_at->epoch;
 
 	if ( $self->app->config->{influxdb}->{url} ) {
-		$self->app->ua->post_p(
-			$self->app->config->{influxdb}->{url},
-			"worker duration_seconds=$worker_duration"
+		$self->app->ua->post_p( $self->app->config->{influxdb}->{url},
+"worker main_seconds=${worker_duration},traewelling_push_seconds=${trwl_push_duration},traewelling_pull_seconds=${trwl_pull_duration},traewelling_seconds=${trwl_duration}"
 		)->wait;
 	}
 }
