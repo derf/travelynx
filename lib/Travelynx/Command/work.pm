@@ -249,6 +249,18 @@ sub run {
 			}
 		)->wait;
 	}
+
+	my $started_at = $now;
+	$now = DateTime->now( time_zone => 'Europe/Berlin' );
+
+	my $worker_duration = $now->epoch - $started_at->epoch;
+
+	if ( $self->app->config->{influxdb}->{url} ) {
+		$self->app->ua->post_p(
+			$self->app->config->{influxdb}->{url},
+			"worker duration_seconds=$worker_duration"
+		)->wait;
+	}
 }
 
 1;
