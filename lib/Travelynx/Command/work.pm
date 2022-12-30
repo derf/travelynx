@@ -29,6 +29,8 @@ sub run {
 		$self->app->log->debug("Removed ${num_incomplete} incomplete checkins");
 	}
 
+	my $errors = 0;
+
 	for my $entry ( $self->app->in_transit->get_all_active ) {
 
 		my $uid      = $entry->{user_id};
@@ -98,6 +100,7 @@ sub run {
 			}
 		};
 		if ($@) {
+			$errors += 1;
 			$self->app->log->error("work($uid)/departure: $@");
 		}
 
@@ -170,6 +173,7 @@ sub run {
 			}
 		};
 		if ($@) {
+			$errors += 1;
 			$self->app->log->error("work($uid)/arrival: $@");
 		}
 
@@ -265,7 +269,7 @@ sub run {
 
 	if ( $self->app->config->{influxdb}->{url} ) {
 		$self->app->ua->post_p( $self->app->config->{influxdb}->{url},
-"worker main_seconds=${worker_duration},traewelling_push_seconds=${trwl_push_duration},traewelling_pull_seconds=${trwl_pull_duration},traewelling_seconds=${trwl_duration}"
+"worker main_seconds=${worker_duration},traewelling_push_seconds=${trwl_push_duration},traewelling_pull_seconds=${trwl_pull_duration},traewelling_seconds=${trwl_duration},errors=${errors}"
 		)->wait;
 	}
 }
