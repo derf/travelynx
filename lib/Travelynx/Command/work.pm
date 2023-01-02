@@ -1,6 +1,6 @@
 package Travelynx::Command::work;
 
-# Copyright (C) 2020 Daniel Friesel
+# Copyright (C) 2020-2023 Daniel Friesel
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 use Mojo::Base 'Mojolicious::Command';
@@ -10,8 +10,7 @@ use DateTime;
 use JSON;
 use List::Util;
 
-has description =>
-  'Perform automatic checkout when users arrive at their destination';
+has description => 'Update real-time data of active journeys';
 
 has usage => sub { shift->extract_usage };
 
@@ -182,95 +181,16 @@ sub run {
 
 	my $started_at       = $now;
 	my $main_finished_at = DateTime->now( time_zone => 'Europe/Berlin' );
-
-	for my $candidate ( $self->app->traewelling->get_pushable_accounts ) {
-		$self->app->log->debug(
-			"Pushing to Traewelling for UID $candidate->{uid}");
-		my $trip_id = $candidate->{journey_data}{trip_id};
-		if ( not $trip_id ) {
-			$self->app->log->debug("... trip_id is missing");
-			$self->app->traewelling->log(
-				uid     => $candidate->{uid},
-				message =>
-"Konnte $candidate->{train_type} $candidate->{train_no} nicht übertragen: Keine trip_id vorhanden",
-				is_error => 1
-			);
-			next;
-		}
-		if (    $candidate->{data}{latest_push_ts}
-			and $candidate->{data}{latest_push_ts} == $candidate->{checkin_ts} )
-		{
-			$self->app->log->debug("... already handled");
-			next;
-		}
-		$self->app->traewelling_api->checkin( %{$candidate},
-			trip_id => $trip_id );
-	}
-	my $trwl_push_finished_at = DateTime->now( time_zone => 'Europe/Berlin' );
-
-	my $request_count = 0;
-	for my $account_data ( $self->app->traewelling->get_pull_accounts ) {
-
-		my $in_transit = $self->app->in_transit->get(
-			uid => $account_data->{user_id},
-		);
-		if ($in_transit) {
-			$self->app->log->debug(
-"Skipping Traewelling status pull for UID $account_data->{user_id}: already checked in"
-			);
-			next;
-		}
-
-		# $account_data->{user_id} is the travelynx uid
-		# $account_data->{user_name} is the Träwelling username
-		$request_count += 1;
-		$self->app->log->debug(
-"Scheduling Traewelling status pull for UID $account_data->{user_id}"
-		);
-
-		# In 'work', the event loop is not running,
-		# so there's no need to multiply by $request_count at the moment
-		Mojo::Promise->timer(0.5)->then(
-			sub {
-				return $self->app->traewelling_api->get_status_p(
-					username => $account_data->{data}{user_name},
-					token    => $account_data->{token}
-				);
-			}
-		)->then(
-			sub {
-				my ($traewelling) = @_;
-				$self->app->traewelling_to_travelynx(
-					traewelling => $traewelling,
-					user_data   => $account_data
-				);
-			}
-		)->catch(
-			sub {
-				my ($err) = @_;
-				$self->app->traewelling->log(
-					uid      => $account_data->{user_id},
-					message  => "Fehler bei der Status-Abfrage: $err",
-					is_error => 1
-				);
-				$self->app->log->debug("Error $err");
-			}
-		)->wait;
-	}
-	my $trwl_pull_finished_at = DateTime->now( time_zone => 'Europe/Berlin' );
-
-	my $worker_duration = $main_finished_at->epoch - $started_at->epoch;
-	my $trwl_push_duration
-	  = $trwl_push_finished_at->epoch - $main_finished_at->epoch;
-	my $trwl_pull_duration
-	  = $trwl_pull_finished_at->epoch - $trwl_push_finished_at->epoch;
-	my $trwl_duration
-	  = $trwl_pull_finished_at->epoch - $main_finished_at->epoch;
+	my $worker_duration  = $main_finished_at->epoch - $started_at->epoch;
 
 	if ( $self->app->config->{influxdb}->{url} ) {
 		$self->app->ua->post_p( $self->app->config->{influxdb}->{url},
-"worker main_seconds=${worker_duration},traewelling_push_seconds=${trwl_push_duration},traewelling_pull_seconds=${trwl_pull_duration},traewelling_seconds=${trwl_duration},errors=${errors}"
-		)->wait;
+			"worker runtime_seconds=${worker_duration},errors=${errors}" )
+		  ->wait;
+	}
+
+	if ( not $self->app->config->{traewelling}->{separate_worker} ) {
+		$self->app->start('traewelling');
 	}
 }
 
