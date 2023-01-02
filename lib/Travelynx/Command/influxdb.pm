@@ -28,10 +28,11 @@ sub run {
 	my $now    = DateTime->now( time_zone => 'Europe/Berlin' );
 	my $active = $now->clone->subtract( months => 1 );
 
-	my @out;
+	my @stats;
+	my @traewelling;
 
 	push(
-		@out,
+		@stats,
 		query_to_influx(
 			'pending_user_count',
 			$db->select( 'users', 'count(*) as count', { status => 0 } )
@@ -39,7 +40,7 @@ sub run {
 		)
 	);
 	push(
-		@out,
+		@stats,
 		query_to_influx(
 			'reg_user_count',
 			$db->select( 'users', 'count(*) as count', { status => 1 } )
@@ -47,7 +48,7 @@ sub run {
 		)
 	);
 	push(
-		@out,
+		@stats,
 		query_to_influx(
 			'active_user_count',
 			$db->select(
@@ -62,30 +63,30 @@ sub run {
 	);
 
 	push(
-		@out,
+		@stats,
 		query_to_influx(
 			'checked_in_count',
 			$db->select( 'in_transit', 'count(*) as count' )->hash->{count}
 		)
 	);
 	push(
-		@out,
+		@stats,
 		query_to_influx(
 			'checkin_count',
 			$db->select( 'journeys', 'count(*) as count' )->hash->{count}
 		)
 	);
 	push(
-		@out,
+		@stats,
 		query_to_influx(
 			'polyline_count',
 			$db->select( 'polylines', 'count(*) as count' )->hash->{count}
 		)
 	);
 	push(
-		@out,
+		@traewelling,
 		query_to_influx(
-			'traewelling_pull_count',
+			'pull_user_count',
 			$db->select(
 				'traewelling',
 				'count(*) as count',
@@ -94,9 +95,9 @@ sub run {
 		)
 	);
 	push(
-		@out,
+		@traewelling,
 		query_to_influx(
-			'traewelling_push_count',
+			'push_user_count',
 			$db->select(
 				'traewelling',
 				'count(*) as count',
@@ -105,7 +106,7 @@ sub run {
 		)
 	);
 	push(
-		@out,
+		@stats,
 		query_to_influx(
 			'polyline_ratio',
 			$db->query(
@@ -114,7 +115,21 @@ sub run {
 		)
 	);
 
-	say join( ',', @out );
+	if ( $self->app->config->{influxdb}->{url} ) {
+		$self->app->ua->post_p(
+			$self->app->config->{influxdb}->{url},
+			'stats ' . join( ',', @stats )
+		)->wait;
+		$self->app->ua->post_p(
+			$self->app->config->{influxdb}->{url},
+			'traewelling ' . join( ',', @traewelling )
+		)->wait;
+	}
+	else {
+		$self->app->log->warn(
+			"influxdb command called, but no influxdb url has been configured");
+	}
+
 	return;
 }
 
@@ -124,6 +139,6 @@ __END__
 
 =head1 SYNOPSIS
 
-  Usage: index.pl influx
+  Usage: index.pl influxdb
 
-  Write statistics for InfluxDB to stdout
+  Write statistics to InfluxDB
