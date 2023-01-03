@@ -71,7 +71,10 @@ sub get_v1 {
 	}
 
 	my $token = $self->get_api_token($uid);
-	if ( $api_token ne $token->{$api_action} ) {
+	if (   not $api_token
+		or not $token->{$api_action}
+		or $api_token ne $token->{$api_action} )
+	{
 		$self->render(
 			json => {
 				error => 'Invalid token',
