@@ -197,7 +197,7 @@
 						<span>Checkin-Synchronisierung Träwelling → travelynx</span>
 					</label>
 				</div>
-				<p>Alle drei Minuten wird dein Status auf Träwelling abgefragt.
+				<p>Alle fünf Minuten wird dein Status auf Träwelling abgefragt.
 					Falls du gerade in einen Zug eingecheckt bist, wird dieser von
 					travelynx übernommen.  Träwelling-Checkins in Nahverkehrsmittel
 					und Züge außerhalb des deutschen Schienennetzes werden nicht

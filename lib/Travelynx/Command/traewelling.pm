@@ -39,7 +39,7 @@ sub pull_sync {
 
 		# In 'work', the event loop is not running,
 		# so there's no need to multiply by $request_count at the moment
-		Mojo::Promise->timer(0.5)->then(
+		Mojo::Promise->timer(1)->then(
 			sub {
 				return $self->app->traewelling_api->get_status_p(
 					username => $account_data->{data}{user_name},
