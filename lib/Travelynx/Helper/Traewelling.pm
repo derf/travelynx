@@ -343,6 +343,7 @@ sub checkin {
 		tripId   => $opt{trip_id},
 		lineName => $opt{train_type} . ' '
 		  . ( $opt{train_line} // $opt{train_no} ),
+		ibnr        => \1,
 		start       => q{} . $opt{dep_eva},
 		destination => q{} . $opt{arr_eva},
 		departure   => $departure_ts,
