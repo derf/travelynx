@@ -126,8 +126,15 @@ sub run {
 		if ( not $direction or $direction eq 'pull' ) {
 			$report .= ",pull_runtime_seconds=${trwl_pull_duration}";
 		}
-		$self->app->ua->post_p( $self->app->config->{influxdb}->{url},
-			"traewelling ${report}" )->wait;
+		if ( $self->app->mode eq 'development' ) {
+			$self->app->log->debug( 'POST '
+				  . $self->app->config->{influxdb}->{url}
+				  . " traewelling ${report}" );
+		}
+		else {
+			$self->app->ua->post_p( $self->app->config->{influxdb}->{url},
+				"traewelling ${report}" )->wait;
+		}
 	}
 }
 

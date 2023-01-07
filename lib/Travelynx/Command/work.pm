@@ -184,9 +184,17 @@ sub run {
 	my $worker_duration  = $main_finished_at->epoch - $started_at->epoch;
 
 	if ( $self->app->config->{influxdb}->{url} ) {
-		$self->app->ua->post_p( $self->app->config->{influxdb}->{url},
-			"worker runtime_seconds=${worker_duration},errors=${errors}" )
-		  ->wait;
+		if ( $self->app->mode eq 'development' ) {
+			$self->app->log->debug( 'POST '
+				  . $self->app->config->{influxdb}->{url}
+				  . " worker runtime_seconds=${worker_duration},errors=${errors}"
+			);
+		}
+		else {
+			$self->app->ua->post_p( $self->app->config->{influxdb}->{url},
+				"worker runtime_seconds=${worker_duration},errors=${errors}" )
+			  ->wait;
+		}
 	}
 
 	if ( not $self->app->config->{traewelling}->{separate_worker} ) {
