@@ -373,8 +373,8 @@ sub checkin {
 						my $j = $tx->res->json;
 						$err_msg .= sprintf(
 ': Bereits in %s eingecheckt: https://traewelling.de/status/%d',
-							$j->{error}{lineName},
-							$j->{error}{status_id}
+							$j->{message}{lineName},
+							$j->{message}{status_id}
 						);
 					}
 					else {
