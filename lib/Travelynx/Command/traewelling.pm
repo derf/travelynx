@@ -16,6 +16,7 @@ has usage => sub { shift->extract_usage };
 
 sub pull_sync {
 	my ($self) = @_;
+	my %pull_result;
 	my $request_count = 0;
 	for my $account_data ( $self->app->traewelling->get_pull_accounts ) {
 
@@ -48,6 +49,7 @@ sub pull_sync {
 		)->then(
 			sub {
 				my ($traewelling) = @_;
+				$pull_result{ $traewelling->{http} } += 1;
 				$self->app->traewelling_to_travelynx(
 					traewelling => $traewelling,
 					user_data   => $account_data
@@ -56,19 +58,23 @@ sub pull_sync {
 		)->catch(
 			sub {
 				my ($err) = @_;
+				$pull_result{ $err->{http} // 0 } += 1;
 				$self->app->traewelling->log(
 					uid      => $account_data->{user_id},
-					message  => "Fehler bei der Status-Abfrage: $err",
+					message  => "Fehler bei der Status-Abfrage: $err->{text}",
 					is_error => 1
 				);
-				$self->app->log->debug("Error $err");
+				$self->app->log->debug("Error $err->{text}");
 			}
 		)->wait;
 	}
+
+	return \%pull_result;
 }
 
 sub push_sync {
 	my ($self) = @_;
+	my %push_result;
 
 	for my $candidate ( $self->app->traewelling->get_pushable_accounts ) {
 		$self->app->log->debug(
@@ -90,9 +96,21 @@ sub push_sync {
 			$self->app->log->debug("... already handled");
 			next;
 		}
-		$self->app->traewelling_api->checkin( %{$candidate},
-			trip_id => $trip_id );
+		$self->app->traewelling_api->checkin_p( %{$candidate},
+			trip_id => $trip_id )->then(
+			sub {
+				my ($status) = @_;
+				$push_result{ $status->{http} } += 1;
+			}
+		)->catch(
+			sub {
+				my ($status) = @_;
+				$push_result{ $status->{http} // 0 } += 1;
+			}
+		)->wait;
 	}
+
+	return \%push_result;
 }
 
 sub run {
@@ -100,15 +118,17 @@ sub run {
 
 	my $now        = DateTime->now( time_zone => 'Europe/Berlin' );
 	my $started_at = $now;
+	my $push_result;
+	my $pull_result;
 
 	if ( not $direction or $direction eq 'push' ) {
-		$self->push_sync;
+		$push_result = $self->push_sync;
 	}
 
 	my $trwl_push_finished_at = DateTime->now( time_zone => 'Europe/Berlin' );
 
 	if ( not $direction or $direction eq 'pull' ) {
-		$self->pull_sync;
+		$pull_result = $self->pull_sync;
 	}
 
 	my $trwl_pull_finished_at = DateTime->now( time_zone => 'Europe/Berlin' );
@@ -134,6 +154,40 @@ sub run {
 		else {
 			$self->app->ua->post_p( $self->app->config->{influxdb}->{url},
 				"traewelling ${report}" )->wait;
+		}
+
+		if ($push_result) {
+			for my $status ( keys %{$push_result} ) {
+				my $count = $push_result->{$status};
+				if ( $self->app->mode eq 'development' ) {
+					$self->app->log->debug( 'POST '
+						  . $self->app->config->{influxdb}->{url}
+						  . " traewelling_push,http=$status count=$count" );
+				}
+				else {
+					$self->app->ua->post_p(
+						$self->app->config->{influxdb}->{url},
+						"traewelling_push,http=$status count=$count"
+					)->wait;
+				}
+			}
+		}
+
+		if ($pull_result) {
+			for my $status ( keys %{$pull_result} ) {
+				my $count = $pull_result->{$status};
+				if ( $self->app->mode eq 'development' ) {
+					$self->app->log->debug( 'POST '
+						  . $self->app->config->{influxdb}->{url}
+						  . " traewelling_pull,http=$status count=$count" );
+				}
+				else {
+					$self->app->ua->post_p(
+						$self->app->config->{influxdb}->{url},
+						"traewelling_pull,http=$status count=$count"
+					)->wait;
+				}
+			}
 		}
 	}
 }

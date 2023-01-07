@@ -83,7 +83,7 @@ sub get_status_p {
 			if ( my $err = $tx->error ) {
 				my $err_msg
 				  = "v1/user/${username}/statuses: HTTP $err->{code} $err->{message}";
-				$promise->reject($err_msg);
+				$promise->reject( { http => $err->{code}, text => $err_msg } );
 				return;
 			}
 			else {
@@ -118,6 +118,7 @@ sub get_status_p {
 					my ( $train_type, $train_line ) = split( qr{ }, $linename );
 					$promise->resolve(
 						{
+							http       => $tx->res->code,
 							status_id  => $status_id,
 							message    => $message,
 							checkin    => $checkin_at,
@@ -138,7 +139,8 @@ sub get_status_p {
 					return;
 				}
 				else {
-					$promise->reject("v1/${username}/statuses: unknown error");
+					$promise->reject(
+						{ text => "v1/${username}/statuses: unknown error" } );
 					return;
 				}
 			}
@@ -146,7 +148,7 @@ sub get_status_p {
 	)->catch(
 		sub {
 			my ($err) = @_;
-			$promise->reject("v1/${username}/statuses: $err");
+			$promise->reject( { text => "v1/${username}/statuses: $err" } );
 			return;
 		}
 	)->wait;
@@ -320,7 +322,7 @@ sub logout_p {
 	return $promise;
 }
 
-sub checkin {
+sub checkin_p {
 	my ( $self, %opt ) = @_;
 
 	my $header = {
@@ -356,9 +358,10 @@ sub checkin {
 		$request->{body} = $opt{user_data}{comment};
 	}
 
-# https://github.com/Traewelling/traewelling/blob/develop/app/Http/Controllers/API/v1/TransportController.php -> create. trains/checkin ist richtig.
 	my $debug_prefix
 	  = "v1/trains/checkin('$request->{lineName}' $request->{tripId} $request->{start} -> $request->{destination})";
+
+	my $promise = Mojo::Promise->new;
 
 	$self->{user_agent}->request_timeout(20)
 	  ->post_p(
@@ -389,13 +392,11 @@ sub checkin {
 "Konnte $opt{train_type} $opt{train_no} nicht übertragen: $debug_prefix returned $err_msg",
 					is_error => 1
 				);
+				$promise->reject( { http => $err->{code} } );
 				return;
 			}
 			$self->{log}->debug( "... success! " . $tx->res->body );
 
-			# As of 2020-10-04, traewelling.de checkins do not yet return
-			# "statusId". The patch is present on the develop branch and waiting
-			# for a merge into master.
 			$self->{model}->log(
 				uid       => $opt{uid},
 				message   => "Eingecheckt in $opt{train_type} $opt{train_no}",
@@ -405,9 +406,11 @@ sub checkin {
 				uid => $opt{uid},
 				ts  => $opt{checkin_ts}
 			);
+			$promise->resolve( { http => $tx->res->code } );
 
 			# TODO store status_id in in_transit object so that it can be shown
 			# on the user status page
+			return;
 		}
 	)->catch(
 		sub {
@@ -419,8 +422,12 @@ sub checkin {
 "Konnte $opt{train_type} $opt{train_no} nicht übertragen: $debug_prefix returned $err",
 				is_error => 1
 			);
+			$promise->reject( { connection => $err } );
+			return;
 		}
 	)->wait;
+
+	return $promise;
 }
 
 1;
