@@ -242,7 +242,7 @@ sub startup {
 		base_url_for => sub {
 			my ( $self, $path ) = @_;
 			if ( ( my $url = $self->url_for($path) )->base ne q{}
-				or not $self->app->config->{base_url_for} )
+				or not $self->app->config->{base_url} )
 			{
 				return $url;
 			}
