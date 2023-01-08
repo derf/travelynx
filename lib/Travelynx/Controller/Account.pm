@@ -1001,7 +1001,7 @@ sub webfinger {
 	$self->render(
 		text => JSON->new->encode(
 			{
-				subject => "acct:${resource}",
+				subject => $resource,
 				aliases => [ $profile_url, ],
 				links   => [
 					{
