@@ -981,7 +981,7 @@ sub webfinger {
 	my $root_url = $self->base_url_for('/')->to_abs->host;
 
 	if (   not $root_url
-		or not $resource =~ m{ ^ (?<name> [^@]+ ) [@] $root_url $ }x )
+		or not $resource =~ m{ ^ acct: (?<name> [^@]+ ) [@] $root_url $ }x )
 	{
 		$self->render( 'not_found', status => 404 );
 		return;
