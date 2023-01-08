@@ -2182,6 +2182,7 @@ sub startup {
 	$r->get('/ajax/status/:name/:ts')->to('traveling#public_status_card');
 	$r->get('/p/:name')->to('traveling#public_profile');
 	$r->get('/p/:name/j/:id')->to('traveling#public_journey_details');
+	$r->get('/.well-known/webfinger')->to('account#webfinger');
 	$r->post('/api/v1/import')->to('api#import_v1');
 	$r->post('/api/v1/travel')->to('api#travel_v1');
 	$r->post('/action')->to('traveling#travel_action');

@@ -6,7 +6,8 @@ package Travelynx::Controller::Account;
 use Mojo::Base 'Mojolicious::Controller';
 
 use Crypt::Eksblowfish::Bcrypt qw(bcrypt en_base64);
-use UUID::Tiny                 qw(:std);
+use JSON;
+use UUID::Tiny qw(:std);
 
 # Internal Helpers
 
@@ -964,6 +965,53 @@ sub json_export {
 				  ->hashes->each
 			],
 		}
+	);
+}
+
+sub webfinger {
+	my ($self) = @_;
+
+	my $resource = $self->param('resource');
+
+	if ( not $resource ) {
+		$self->render('not_found');
+		return;
+	}
+
+	my $root_url = $self->url_for('/')->host;
+
+	if (   not $root_url
+		or not $resource =~ m{ ^ (?<name> [^@]+ ) [@] $root_url $ }x )
+	{
+		$self->render('not_found');
+		return;
+	}
+
+	my $name = $+{name};
+	my $user = $self->users->get_privacy_by_name( name => $name );
+
+	if ( not $user or not $user->{public_level} & 0x22 ) {
+		$self->render('not_found');
+	}
+
+	my $profile_url
+	  = $self->url_for("/p/${name}")->to_abs->scheme('https')->to_string;
+
+	$self->render(
+		text => JSON->new->encode(
+			{
+				subject => "acct:${resource}",
+				aliases => [ $profile_url, ],
+				links   => [
+					{
+						rel  => 'http://webfinger.net/rel/profile-page',
+						type => 'text/html',
+						href => $profile_url,
+					},
+				],
+			}
+		),
+		format => 'json',
 	);
 }
 
