@@ -974,16 +974,16 @@ sub webfinger {
 	my $resource = $self->param('resource');
 
 	if ( not $resource ) {
-		$self->render('not_found');
+		$self->render( 'not_found', status => 404 );
 		return;
 	}
 
-	my $root_url = $self->url_for('/')->host;
+	my $root_url = $self->base_url_for('/')->to_abs->host;
 
 	if (   not $root_url
 		or not $resource =~ m{ ^ (?<name> [^@]+ ) [@] $root_url $ }x )
 	{
-		$self->render('not_found');
+		$self->render( 'not_found', status => 404 );
 		return;
 	}
 
@@ -991,11 +991,11 @@ sub webfinger {
 	my $user = $self->users->get_privacy_by_name( name => $name );
 
 	if ( not $user or not $user->{public_level} & 0x22 ) {
-		$self->render('not_found');
+		$self->render( 'not_found', status => 404 );
 	}
 
 	my $profile_url
-	  = $self->url_for("/p/${name}")->to_abs->scheme('https')->to_string;
+	  = $self->base_url_for("/p/${name}")->to_abs->scheme('https')->to_string;
 
 	$self->render(
 		text => JSON->new->encode(
