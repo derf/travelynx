@@ -992,6 +992,7 @@ sub webfinger {
 
 	if ( not $user or not $user->{public_level} & 0x22 ) {
 		$self->render( 'not_found', status => 404 );
+		return;
 	}
 
 	my $profile_url
