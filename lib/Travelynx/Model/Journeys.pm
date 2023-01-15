@@ -1164,7 +1164,11 @@ sub compute_review {
 			}
 		}
 
-		if ( $journey->{rt_duration} and $journey->{sched_duration} and $journey->{rt_duration} > 0 and $journey->{sched_duration} > 0 ) {
+		if (    $journey->{rt_duration}
+			and $journey->{sched_duration}
+			and $journey->{rt_duration} > 0
+			and $journey->{sched_duration} > 0 )
+		{
 			my $slowdown = $journey->{rt_duration} - $journey->{sched_duration};
 			my $speedup  = -$slowdown;
 			if (
