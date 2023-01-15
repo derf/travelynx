@@ -179,27 +179,35 @@ sub route_diff {
 
 	while ( $route_idx <= $#route and $sched_idx <= $#sched_route ) {
 		if ( $route[$route_idx] eq $sched_route[$sched_idx] ) {
-			push( @json_route, [ $route[$route_idx], {}, undef ] );
+			push( @json_route, [ $route[$route_idx], undef, {} ] );
 			$route_idx++;
 			$sched_idx++;
 		}
 
 		# this branch is inefficient, but won't be taken frequently
 		elsif ( not( grep { $_ eq $route[$route_idx] } @sched_route ) ) {
-			push( @json_route, [ $route[$route_idx], {}, 'additional' ], );
+			push( @json_route,
+				[ $route[$route_idx], undef, { isAdditional => 1 } ],
+			);
 			$route_idx++;
 		}
 		else {
-			push( @json_route, [ $sched_route[$sched_idx], {}, 'cancelled' ], );
+			push( @json_route,
+				[ $sched_route[$sched_idx], undef, { isCancelled => 1 } ],
+			);
 			$sched_idx++;
 		}
 	}
 	while ( $route_idx <= $#route ) {
-		push( @json_route, [ $route[$route_idx], {}, 'additional' ], );
+		push( @json_route,
+			[ $route[$route_idx], undef, { isAdditional => 1 } ],
+		);
 		$route_idx++;
 	}
 	while ( $sched_idx <= $#sched_route ) {
-		push( @json_route, [ $sched_route[$sched_idx], {}, 'cancelled' ], );
+		push( @json_route,
+			[ $sched_route[$sched_idx], undef, { isCancelled => 1 } ],
+		);
 		$sched_idx++;
 	}
 	return @json_route;

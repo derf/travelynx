@@ -124,19 +124,19 @@
 							% if ($station->[0] eq $journey->{arr_name}) {
 								% last;
 							% }
-							% if (($station->[1]{rt_arr_countdown} // 0) > 0 and $station->[1]{rt_arr}) {
-								<%= $station->[0] %><br/><%= $station->[1]{rt_arr}->strftime('%H:%M') %>
-								% if ($station->[1]{sched_arr} and $station->[1]{sched_arr}->epoch != $station->[1]{rt_arr}->epoch) {
-									%= sprintf('(%+d)', ($station->[1]{rt_arr}->epoch - $station->[1]{sched_arr}->epoch ) / 60);
+							% if (($station->[2]{rt_arr_countdown} // 0) > 0 and $station->[2]{rt_arr}) {
+								<%= $station->[0] %><br/><%= $station->[2]{rt_arr}->strftime('%H:%M') %>
+								% if ($station->[2]{sched_arr} and $station->[2]{sched_arr}->epoch != $station->[2]{rt_arr}->epoch) {
+									%= sprintf('(%+d)', ($station->[2]{rt_arr}->epoch - $station->[2]{sched_arr}->epoch ) / 60);
 								% }
 								% last;
 							% }
-							% if (($station->[1]{rt_dep_countdown} // 0) > 0 and $station->[1]{rt_arr} and $station->[1]{rt_dep}) {
+							% if (($station->[2]{rt_dep_countdown} // 0) > 0 and $station->[2]{rt_arr} and $station->[2]{rt_dep}) {
 								<%= $station->[0] %><br/>
-								<%= $station->[1]{rt_arr}->strftime('%H:%M') %> →
-								<%= $station->[1]{rt_dep}->strftime('%H:%M') %>
-								% if ($station->[1]{sched_dep} and $station->[1]{sched_dep}->epoch != $station->[1]{rt_dep}->epoch) {
-									%= sprintf('(%+d)', ($station->[1]{rt_dep}->epoch - $station->[1]{sched_dep}->epoch ) / 60);
+								<%= $station->[2]{rt_arr}->strftime('%H:%M') %> →
+								<%= $station->[2]{rt_dep}->strftime('%H:%M') %>
+								% if ($station->[2]{sched_dep} and $station->[2]{sched_dep}->epoch != $station->[2]{rt_dep}->epoch) {
+									%= sprintf('(%+d)', ($station->[2]{rt_dep}->epoch - $station->[2]{sched_dep}->epoch ) / 60);
 								% }
 								% last;
 							% }
@@ -149,19 +149,19 @@
 							% if ($station->[0] eq $journey->{arr_name}) {
 								% last;
 							% }
-							% if (($station->[1]{rt_arr_countdown} // 0) > 0 and $station->[1]{rt_arr}) {
-								<%= $station->[0] %><br/><%= $station->[1]{rt_arr}->strftime('%H:%M') %>
-								% if ($station->[1]{sched_arr} and $station->[1]{sched_arr}->epoch != $station->[1]{rt_arr}->epoch) {
-									%= sprintf('(%+d)', ($station->[1]{rt_arr}->epoch - $station->[1]{sched_arr}->epoch ) / 60);
+							% if (($station->[2]{rt_arr_countdown} // 0) > 0 and $station->[2]{rt_arr}) {
+								<%= $station->[0] %><br/><%= $station->[2]{rt_arr}->strftime('%H:%M') %>
+								% if ($station->[2]{sched_arr} and $station->[2]{sched_arr}->epoch != $station->[2]{rt_arr}->epoch) {
+									%= sprintf('(%+d)', ($station->[2]{rt_arr}->epoch - $station->[2]{sched_arr}->epoch ) / 60);
 								% }
 								% last;
 							% }
-							% if (($station->[1]{rt_dep_countdown} // 0) > 0 and $station->[1]{rt_arr} and $station->[1]{rt_dep}) {
+							% if (($station->[2]{rt_dep_countdown} // 0) > 0 and $station->[2]{rt_arr} and $station->[2]{rt_dep}) {
 								<%= $station->[0] %><br/>
-								<%= $station->[1]{rt_arr}->strftime('%H:%M') %> →
-								<%= $station->[1]{rt_dep}->strftime('%H:%M') %>
-								% if ($station->[1]{sched_dep} and $station->[1]{sched_dep}->epoch != $station->[1]{rt_dep}->epoch) {
-									%= sprintf('(%+d)', ($station->[1]{rt_dep}->epoch - $station->[1]{sched_dep}->epoch ) / 60);
+								<%= $station->[2]{rt_arr}->strftime('%H:%M') %> →
+								<%= $station->[2]{rt_dep}->strftime('%H:%M') %>
+								% if ($station->[2]{sched_dep} and $station->[2]{sched_dep}->epoch != $station->[2]{rt_dep}->epoch) {
+									%= sprintf('(%+d)', ($station->[2]{rt_dep}->epoch - $station->[2]{sched_dep}->epoch ) / 60);
 								% }
 								% last;
 							% }
@@ -220,20 +220,20 @@
 						<a class="tablerow action-checkout" data-station="<%= $station->[0] %>">
 							<span><%= $station->[0] %></span>
 							<span>
-							% if ($station->[1]{load}{SECOND}) {
-								% my ($first, $second) = load_icon($station->[1]{load});
+							% if ($station->[2]{load}{SECOND}) {
+								% my ($first, $second) = load_icon($station->[2]{load});
 								<i class="material-icons tiny" aria-hidden="true"><%= $first %></i> <i class="material-icons tiny" aria-hidden="true"><%= $second %></i>
 							% }
-							% if ($station->[2] and $station->[2] eq 'cancelled') {
+							% if ($station->[2]{isCancelled}) {
 								entfällt
 							% }
-							% elsif ($station->[1]{rt_arr} or $station->[1]{sched_arr}) {
-								%= ($station->[1]{rt_arr} || $station->[1]{sched_arr})->strftime('%H:%M')
+							% elsif ($station->[2]{rt_arr} or $station->[2]{sched_arr}) {
+								%= ($station->[2]{rt_arr} || $station->[2]{sched_arr})->strftime('%H:%M')
 							% }
-							% elsif ($station->[1]{rt_dep} or $station->[1]{sched_dep}) {
-								(<%= ($station->[1]{rt_dep} || $station->[1]{sched_dep})->strftime('%H:%M') %>)
+							% elsif ($station->[2]{rt_dep} or $station->[2]{sched_dep}) {
+								(<%= ($station->[2]{rt_dep} || $station->[2]{sched_dep})->strftime('%H:%M') %>)
 							% }
-							% elsif ($station->[2] and $station->[2] eq 'additional') {
+							% elsif ($station->[2]{isAdditional}) {
 								Zusatzhalt
 							% }
 							</span>
@@ -335,26 +335,26 @@
 					<a class="action-checkout tablerow" style="<%= $is_dest? 'font-weight: bold;' : '' %>" data-station="<%= $station->[0] %>">
 						<span><%= $station->[0] %></span>
 						<span>
-						% if ($station->[1]{load}{SECOND}) {
-							% my ($first, $second) = load_icon($station->[1]{load});
+						% if ($station->[2]{load}{SECOND}) {
+							% my ($first, $second) = load_icon($station->[2]{load});
 							<i class="material-icons tiny" aria-hidden="true"><%= $first %></i> <i class="material-icons tiny" aria-hidden="true"><%= $second %></i>
 						% }
-						% if ($station->[2] and $station->[2] eq 'cancelled') {
+						% if ($station->[2]{isCancelled}) {
 							entfällt
 						% }
-						% elsif ($station->[1]{rt_arr} or $station->[1]{sched_arr}) {
-							%= ($station->[1]{rt_arr} || $station->[1]{sched_arr})->strftime('%H:%M')
+						% elsif ($station->[2]{rt_arr} or $station->[2]{sched_arr}) {
+							%= ($station->[2]{rt_arr} || $station->[2]{sched_arr})->strftime('%H:%M')
 						% }
-						% elsif ($station->[1]{rt_dep} or $station->[1]{sched_dep}) {
-							(<%= ($station->[1]{rt_dep} || $station->[1]{sched_dep})->strftime('%H:%M') %>)
+						% elsif ($station->[2]{rt_dep} or $station->[2]{sched_dep}) {
+							(<%= ($station->[2]{rt_dep} || $station->[2]{sched_dep})->strftime('%H:%M') %>)
 						% }
-						% elsif ($station->[2] and $station->[2] eq 'additional') {
+						% elsif ($station->[2]{isAdditional}) {
 							Zusatzhalt
 						% }
 						</span>
 					</a>
 					% if ($user->{sb_template}) {
-						<a class="nonflex" href="<%= resolve_sb_template($user->{sb_template}, name => $station->[0], eva => $station->[1]{eva}, tt => $journey->{train_type} // q{x}, tn => $journey->{train_no}, id => $journey->{train_id}) %>"><i class="material-icons tiny">train</i></a>
+						<a class="nonflex" href="<%= resolve_sb_template($user->{sb_template}, name => $station->[0], eva => $station->[1], tt => $journey->{train_type} // q{x}, tn => $journey->{train_no}, id => $journey->{train_id}) %>"><i class="material-icons tiny">train</i></a>
 					% }
 				% }
 				% if ($user->{sb_template}) {

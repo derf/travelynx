@@ -679,7 +679,7 @@ sub startup {
 					@{ $journey->{route} }
 				  )
 				{
-					$station_data = $station_data->[1];
+					$station_data = $station_data->[2];
 					if ( $station_data->{sched_arr} ) {
 						my $sched_arr
 						  = epoch_to_dt( $station_data->{sched_arr} );
@@ -1040,10 +1040,19 @@ sub startup {
 							my $eva = $1;
 							if ( $route_data->{$eva} ) {
 								$station->[0] = $route_data->{$eva}{name};
+								$station->[1] = $route_data->{$eva}{eva};
 							}
 						}
-						$station->[1]
-						  = $route_data->{ $station->[0] };
+						if ( my $sd = $route_data->{ $station->[0] } ) {
+							$station->[1] = $sd->{eva};
+							if ( $station->[2]{isAdditional} ) {
+								$sd->{isAdditional} = 1;
+							}
+							if ( $station->[2]{isCancelled} ) {
+								$sd->{isCancelled} = 1;
+							}
+							$station->[2] = $sd;
+						}
 					}
 
 					my @messages;
@@ -1338,13 +1347,13 @@ sub startup {
 
 			for my $station ( @{ $journey->{route_after} } ) {
 				my $station_desc = $station->[0];
-				if ( $station->[1]{rt_arr} ) {
-					$station_desc .= $station->[1]{sched_arr}->strftime(';%s');
-					$station_desc .= $station->[1]{rt_arr}->strftime(';%s');
-					if ( $station->[1]{rt_dep} ) {
+				if ( $station->[2]{rt_arr} ) {
+					$station_desc .= $station->[2]{sched_arr}->strftime(';%s');
+					$station_desc .= $station->[2]{rt_arr}->strftime(';%s');
+					if ( $station->[2]{rt_dep} ) {
 						$station_desc
-						  .= $station->[1]{sched_dep}->strftime(';%s');
-						$station_desc .= $station->[1]{rt_dep}->strftime(';%s');
+						  .= $station->[2]{sched_dep}->strftime(';%s');
+						$station_desc .= $station->[2]{rt_dep}->strftime(';%s');
 					}
 					else {
 						$station_desc .= ';0;0';
@@ -1414,7 +1423,7 @@ sub startup {
 					{
 						$is_after = 1;
 						if ( @{$station} > 1 and not $dep_info ) {
-							$dep_info = $station->[1];
+							$dep_info = $station->[2];
 						}
 					}
 				}
@@ -1499,11 +1508,11 @@ sub startup {
 				for my $station (@route_after) {
 					if ( @{$station} > 1 ) {
 
-                     # Note: $station->[1]{sched_arr} may already have been
+                     # Note: $station->[2]{sched_arr} may already have been
                      # converted to a DateTime object. This can happen when a
                      # station is present several times in a train's route, e.g.
                      # for Frankfurt Flughafen in some nightly connections.
-						my $times = $station->[1];
+						my $times = $station->[2] // {};
 						if ( $times->{sched_arr}
 							and ref( $times->{sched_arr} ) ne 'DateTime' )
 						{
@@ -1753,17 +1762,17 @@ sub startup {
 					@{ $ret->{intermediateStops} },
 					{
 						name             => $stop->[0],
-						scheduledArrival => $stop->[1]{sched_arr}
-						? $stop->[1]{sched_arr}->epoch
+						scheduledArrival => $stop->[2]{sched_arr}
+						? $stop->[2]{sched_arr}->epoch
 						: undef,
-						realArrival => $stop->[1]{rt_arr}
-						? $stop->[1]{rt_arr}->epoch
+						realArrival => $stop->[2]{rt_arr}
+						? $stop->[2]{rt_arr}->epoch
 						: undef,
-						scheduledDeparture => $stop->[1]{sched_dep}
-						? $stop->[1]{sched_dep}->epoch
+						scheduledDeparture => $stop->[2]{sched_dep}
+						? $stop->[2]{sched_dep}->epoch
 						: undef,
-						realDeparture => $stop->[1]{rt_dep}
-						? $stop->[1]{rt_dep}->epoch
+						realDeparture => $stop->[2]{rt_dep}
+						? $stop->[2]{rt_dep}->epoch
 						: undef,
 					}
 				);

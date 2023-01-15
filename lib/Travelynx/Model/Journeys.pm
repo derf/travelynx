@@ -162,7 +162,7 @@ sub add {
 	my @route;
 
 	if ( not $route_has_start ) {
-		push( @route, [ $dep_station->{name}, {}, undef ] );
+		push( @route, [ $dep_station->{name}, $dep_station->{eva}, {} ] );
 	}
 
 	if ( $opt{route} ) {
@@ -170,10 +170,11 @@ sub add {
 		for my $station ( @{ $opt{route} } ) {
 			my $station_info = $self->{stations}->search($station);
 			if ($station_info) {
-				push( @route, [ $station_info->{name}, {}, undef ] );
+				push( @route,
+					[ $station_info->{name}, $station_info->{eva}, {} ] );
 			}
 			else {
-				push( @route,            [ $station, {}, undef ] );
+				push( @route,            [ $station, undef, {} ] );
 				push( @unknown_stations, $station );
 			}
 		}
@@ -192,7 +193,7 @@ sub add {
 	}
 
 	if ( not $route_has_stop ) {
-		push( @route, [ $arr_station->{name}, {}, undef ] );
+		push( @route, [ $arr_station->{name}, $arr_station->{eva}, {} ] );
 	}
 
 	my $entry = {
@@ -358,7 +359,7 @@ sub update {
 			)->rows;
 		}
 		if ( exists $opt{route} ) {
-			my @new_route = map { [ $_, {}, undef ] } @{ $opt{route} };
+			my @new_route = map { [ $_, undef, {} ] } @{ $opt{route} };
 			$rows = $db->update(
 				'journeys',
 				{

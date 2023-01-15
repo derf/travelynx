@@ -1212,6 +1212,82 @@ my @migrations = (
 			}
 		);
 	},
+
+# v29 -> v30
+# change layout of stops in in_transit and journeys "route" lists.
+# Old layout: A mixture of [name, {data}, undef/"additional"/"cancelled"], [name, timestamp, timestamp], and [name]
+# New layout: [name, eva, {data including isAdditional/isCancelled}]
+# Combined with a maintenance task that adds eva IDs to past stops, this will allow for more resilience against station name changes.
+# It will also help increase the performance of distance and map calculation
+	sub {
+		my ($db) = @_;
+		my $json = JSON->new;
+
+		say 'Adjusting route schema, this may take a while ...';
+
+		my $res = $db->select( 'in_transit_str', '*' );
+		while ( my $row = $res->expand->hash ) {
+			my @new_route;
+			for my $stop ( @{ $row->{route} } ) {
+				push( @new_route, [ $stop->[0], undef, {} ] );
+			}
+			$db->update(
+				'in_transit',
+				{ route   => $json->encode( \@new_route ) },
+				{ user_id => $row->{user_id} }
+			);
+		}
+
+		my $total
+		  = $db->select( 'journeys', 'count(*) as count' )->hash->{count};
+		my $count = 0;
+
+		$res = $db->select( 'journeys_str', '*' );
+		while ( my $row = $res->expand->hash ) {
+			my $id = $row->{journey_id};
+			my @new_route;
+
+			for my $stop ( @{ $row->{route} } ) {
+				if ( @{$stop} == 1 ) {
+					push( @new_route, [ $stop->[0], undef, {} ] );
+				}
+				elsif (
+					( not defined $stop->[1] or $stop->[1] =~ m{ ^ \d+ $ }x )
+					and
+					( not defined $stop->[2] or $stop->[2] =~ m{ ^ \d+ $ }x )
+				  )
+				{
+					push( @new_route, [ $stop->[0], undef, {} ] );
+				}
+				else {
+					my $attr = $stop->[1] // {};
+					if ( $stop->[2] and $stop->[2] eq 'additional' ) {
+						$attr->{isAdditional} = 1;
+					}
+					elsif ( $stop->[2] and $stop->[2] eq 'cancelled' ) {
+						$attr->{isCancelled} = 1;
+					}
+					push( @new_route, [ $stop->[0], undef, $attr ] );
+				}
+			}
+
+			$db->update(
+				'journeys',
+				{ route => $json->encode( \@new_route ) },
+				{ id    => $row->{journey_id} }
+			);
+
+			if ( $count++ % 10000 == 0 ) {
+				printf( "    %2.0f%% complete\n", $count * 100 / $total );
+			}
+		}
+		say '    done';
+		$db->query(
+			qq{
+				update schema_version set version = 30;
+			}
+		);
+	},
 );
 
 sub sync_stations {
