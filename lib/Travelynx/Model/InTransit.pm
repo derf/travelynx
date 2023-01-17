@@ -17,6 +17,31 @@ sub new {
 	return bless( \%opt, $class );
 }
 
+# merge [name, eva, data] from old_route into [name, undef, undef] from new_route.
+# If new_route already has eva/data, it is kept as-is.
+# changes new_route.
+sub _merge_old_route {
+	my ( $self, %opt ) = @_;
+	my $db        = $opt{db};
+	my $uid       = $opt{uid};
+	my $new_route = $opt{route};
+
+	my $res_h = $db->select( 'in_transit', ['route'], { user_id => $uid } )
+	  ->expand->hash;
+	my $old_route = $res_h ? $res_h->{route} : [];
+
+	for my $i ( 0 .. $#{$new_route} ) {
+		if ( $old_route->[$i] and $old_route->[$i][0] eq $new_route->[$i][0] ) {
+			$new_route->[$i][1] //= $old_route->[$i][1];
+			if ( not keys %{ $new_route->[$i][2] // {} } ) {
+				$new_route->[$i][2] = $old_route->[$i][2];
+			}
+		}
+	}
+
+	return $new_route;
+}
+
 sub add {
 	my ( $self, %opt ) = @_;
 
@@ -157,6 +182,12 @@ sub set_arrival {
 	my $train = $opt{train};
 	my $route = $opt{route};
 
+	$route = $self->_merge_old_route(
+		db    => $db,
+		uid   => $uid,
+		route => $route
+	);
+
 	my $json = JSON->new;
 
 	$db->update(
@@ -242,6 +273,7 @@ sub set_route_data {
 	$data->{qos_msg}   = $opt{qos_messages};
 	$data->{him_msg}   = $opt{him_messages};
 
+	# no need to merge $route, it already contains HAFAS data
 	$db->update(
 		'in_transit',
 		{
@@ -274,7 +306,14 @@ sub update_departure {
 	my $uid   = $opt{uid};
 	my $db    = $opt{db} // $self->{pg}->db;
 	my $train = $opt{train};
+	my $route = $opt{route};
 	my $json  = JSON->new;
+
+	$route = $self->_merge_old_route(
+		db    => $db,
+		uid   => $uid,
+		route => $route
+	);
 
 	# selecting on user_id and train_no avoids a race condition if a user checks
 	# into a new train while we are fetching data for their previous journey. In
@@ -284,7 +323,7 @@ sub update_departure {
 		{
 			dep_platform   => $train->platform,
 			real_departure => $train->departure,
-			route          => $json->encode( $opt{route} ),
+			route          => $json->encode($route),
 			messages       => $json->encode(
 				[ map { [ $_->[0]->epoch, $_->[1] ] } $train->messages ]
 			),
@@ -330,7 +369,14 @@ sub update_arrival {
 	my $db      = $opt{db} // $self->{pg}->db;
 	my $arr_eva = $opt{arr_eva};
 	my $train   = $opt{train};
+	my $route   = $opt{route};
 	my $json    = JSON->new;
+
+	$route = $self->_merge_old_route(
+		db    => $db,
+		uid   => $uid,
+		route => $route
+	);
 
 	# selecting on user_id, train_no and checkout_station_id avoids a
 	# race condition when a user checks into a new train or changes
@@ -342,7 +388,7 @@ sub update_arrival {
 			arr_platform  => $train->platform,
 			sched_arrival => $train->sched_arrival,
 			real_arrival  => $train->arrival,
-			route         => $json->encode( $opt{route} ),
+			route         => $json->encode($route),
 			messages      => $json->encode(
 				[ map { [ $_->[0]->epoch, $_->[1] ] } $train->messages ]
 			),
