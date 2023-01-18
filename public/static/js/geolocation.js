@@ -4,23 +4,36 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 $(document).ready(function() {
-	function getPlaceholder() {
+	const getPlaceholder = function() {
 		return $('div.geolocation div.progress');
 	}
-	var showError = function(header, message, code) {
-		getPlaceholder().remove();
-		var errnode = $(document.createElement('div'));
+	const showError = function(header, message, code) {
+		const errnode = $(document.createElement('div'));
 		errnode.attr('class', 'error');
 		errnode.text(message);
 
-		var headnode = $(document.createElement('strong'));
-		headnode.text(header);
+		const headnode = $(document.createElement('strong'));
+		headnode.text(header + ' ');
 		errnode.prepend(headnode);
 
 		$('div.geolocation').append(errnode);
+
+		const recent = $('div.geolocation').data('recent');
+		if (recent) {
+			const stops = recent.split('|');
+			const res = $(document.createElement('p'));
+			$.each(stops, function(i, stop) {
+				const parts = stop.split(';');
+				res.append($('<a class="tablerow" href="/s/' + parts[0] + '"><span>' + parts[1] + '</span></a>'));
+			});
+			$('p.geolocationhint').text('Letzte Ziele:');
+			getPlaceholder().replaceWith(res);
+		} else {
+			getPlaceholder().remove();
+		}
 	};
 
-	var processResult = function(data) {
+	const processResult = function(data) {
 		if (data.error) {
 			showError('Backend-Fehler:', data.error, null);
 		} else if (data.candidates.length == 0) {
@@ -39,11 +52,11 @@ $(document).ready(function() {
 		}
 	};
 
-	var processLocation = function(loc) {
+	const processLocation = function(loc) {
 		$.post('/geolocation', {lon: loc.coords.longitude, lat: loc.coords.latitude}, processResult);
 	};
 
-	var processError = function(error) {
+	const processError = function(error) {
 		if (error.code == error.PERMISSION_DENIED) {
 			showError('Standortanfrage nicht möglich.', 'Vermutlich fehlen die Rechte im Browser oder der Android Location Service ist deaktiviert.', 'geolocation.error.PERMISSION_DENIED');
 		} else if (error.code == error.POSITION_UNAVAILABLE) {
@@ -55,8 +68,9 @@ $(document).ready(function() {
 		}
 	};
 
-	var geoLocationButton = $('div.geolocation > button');
-	var getGeoLocation = function() {
+	const geoLocationButton = $('div.geolocation > button');
+	const recentStops = geoLocationButton.data('recent');
+	const getGeoLocation = function() {
 		geoLocationButton.replaceWith($('<p class="geolocationhint">Stationen in der Umgebung:</p><div class="progress"><div class="indeterminate"></div></div>'));
 		navigator.geolocation.getCurrentPosition(processLocation, processError);
 	}

@@ -376,6 +376,7 @@ sub homepage {
 	my ($self) = @_;
 	if ( $self->is_user_authenticated ) {
 		my $status = $self->get_user_status;
+		my @recent_targets;
 		if ( $status->{checked_in} ) {
 			if ( defined $status->{arrival_countdown}
 				and $status->{arrival_countdown} < ( 40 * 60 ) )
@@ -414,10 +415,15 @@ sub homepage {
 				return;
 			}
 		}
+		else {
+			@recent_targets = $self->journeys->get_latest_checkout_stations(
+				uid => $self->current_user->{id} );
+		}
 		$self->render(
 			'landingpage',
 			version           => $self->app->config->{version} // 'UNKNOWN',
 			user_status       => $status,
+			recent_targets    => \@recent_targets,
 			with_autocomplete => 1,
 			with_geolocation  => 1
 		);

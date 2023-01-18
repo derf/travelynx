@@ -739,6 +739,44 @@ sub get_latest_checkout_station_id {
 	return $res_h->{checkout_station_id};
 }
 
+sub get_latest_checkout_stations {
+	my ( $self, %opt ) = @_;
+	my $uid   = $opt{uid};
+	my $db    = $opt{db}    // $self->{pg}->db;
+	my $limit = $opt{limit} // 5;
+
+	my $res = $db->select(
+		'journeys_str',
+		[ 'arr_name', 'arr_eva' ],
+		{
+			user_id   => $uid,
+			cancelled => 0
+		},
+		{
+			limit    => $limit,
+			order_by => { -desc => 'real_arr_ts' }
+		}
+	);
+
+	if ( not $res ) {
+		return;
+	}
+
+	my @ret;
+
+	while ( my $row = $res->hash ) {
+		push(
+			@ret,
+			{
+				name => $row->{arr_name},
+				eva  => $row->{arr_eva}
+			}
+		);
+	}
+
+	return @ret;
+}
+
 sub get_nav_years {
 	my ( $self, %opt ) = @_;
 
