@@ -1225,7 +1225,7 @@ my @migrations = (
 
 		say 'Adjusting route schema, this may take a while ...';
 
-		my $res = $db->select( 'in_transit_str', '*' );
+		my $res = $db->select( 'in_transit_str', [ 'route', 'user_id' ] );
 		while ( my $row = $res->expand->hash ) {
 			my @new_route;
 			for my $stop ( @{ $row->{route} } ) {
@@ -1242,9 +1242,8 @@ my @migrations = (
 		  = $db->select( 'journeys', 'count(*) as count' )->hash->{count};
 		my $count = 0;
 
-		$res = $db->select( 'journeys_str', '*' );
+		$res = $db->select( 'journeys_str', [ 'route', 'journey_id' ] );
 		while ( my $row = $res->expand->hash ) {
-			my $id = $row->{journey_id};
 			my @new_route;
 
 			for my $stop ( @{ $row->{route} } ) {
