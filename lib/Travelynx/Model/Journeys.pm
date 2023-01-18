@@ -754,7 +754,7 @@ sub get_latest_checkout_stations {
 		},
 		{
 			limit    => $limit,
-			order_by => { -desc => 'real_arr_ts' }
+			order_by => { -desc => 'journey_id' }
 		}
 	);
 
