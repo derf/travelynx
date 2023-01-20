@@ -263,17 +263,21 @@
 					</a>
 			% }
 			% elsif ($journey->{arr_name}) {
-				% my $attrib = 'im';
+				% my $attrib = 'in';
 				% if ($journey->{train_type} =~ m{ ^ (?: S | RB ) $ }x) {
 					% $attrib = 'in der';
 				% }
 				<a class="action-share blue-text right"
 					style="margin-right: 0;"
+					% my $arr_text = q{};
+					% if ($journey->{real_arrival}->epoch and not $user->{is_public} & 0x02) {
+						% $arr_text = $journey->{real_arrival}->strftime(' – Ankunft gegen %H:%M Uhr');
+					% }
 					% if ($user->{is_public} & 0x04 and $journey->{comment}) {
 						data-text="<%= $journey->{comment} %> (@ <%= $journey->{train_type} %> <%= $journey->{train_no} %> → <%= $journey->{arr_name} %>) #travelynx"
 					% }
 					% else {
-						data-text="Ich bin gerade <%= $attrib %> <%= $journey->{train_type} %> <%= $journey->{train_no} %> nach <%= $journey->{arr_name} %> #travelynx"
+						data-text="Ich bin gerade <%= $attrib %> <%= $journey->{train_type} %> <%= $journey->{train_no} %> nach <%= $journey->{arr_name} . $arr_text %> #travelynx"
 					% }
 					% if ($user->{is_public} & 0x02) {
 						data-url="<%= url_for('/status')->to_abs->scheme('https') %>/<%= $user->{name} %>/<%= $journey->{sched_departure}->epoch %>"
