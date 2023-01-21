@@ -34,7 +34,16 @@ sub sanitize {
 sub documentation {
 	my ($self) = @_;
 
-	$self->render('api_documentation');
+	if ( $self->is_user_authenticated ) {
+		$self->render(
+			'api_documentation',
+			uid       => $self->current_user->{id},
+			api_token => $self->get_api_token,
+		);
+	}
+	else {
+		$self->render('api_documentation');
+	}
 }
 
 sub get_v1 {

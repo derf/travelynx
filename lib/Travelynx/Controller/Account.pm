@@ -389,7 +389,11 @@ sub verify {
 sub delete {
 	my ($self) = @_;
 	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
-		$self->render( 'account', invalid => 'csrf' );
+		$self->render(
+			'account',
+			api_token => $self->get_api_token,
+			invalid   => 'csrf',
+		);
 		return;
 	}
 
@@ -401,7 +405,11 @@ sub delete {
 			)
 		  )
 		{
-			$self->render( 'account', invalid => 'deletion password' );
+			$self->render(
+				'account',
+				api_token => $self->get_api_token,
+				invalid   => 'deletion password'
+			);
 			return;
 		}
 		$self->users->flag_deletion( uid => $self->current_user->{id} );
@@ -943,7 +951,7 @@ sub confirm_mail {
 sub account {
 	my ($self) = @_;
 
-	$self->render('account');
+	$self->render( 'account', api_token => $self->get_api_token );
 	$self->users->mark_seen( uid => $self->current_user->{id} );
 }
 

@@ -1,10 +1,6 @@
 % my $api_root = $self->url_for('/api/v1')->to_abs->scheme('https');
-% my $token = {};
-% my $uid;
-% if (is_user_authenticated()) {
-	% $uid = current_user()->{id};
-	% $token = get_api_token();
-% }
+% my $token = stash('api_token') // {};
+% my $uid = stash('uid') // q{};
 
 <h1>API</h1>
 
