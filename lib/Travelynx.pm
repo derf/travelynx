@@ -169,11 +169,6 @@ sub startup {
 			};
 		}
 	);
-	$self->attr(
-		token_types => sub {
-			return [qw(status history travel import)];
-		}
-	);
 
 	$self->attr(
 		account_public_mask => sub {
@@ -836,27 +831,6 @@ sub startup {
 			$uid //= $self->current_user->{id};
 
 			return $self->users->get_data( uid => $uid );
-		}
-	);
-
-	$self->helper(
-		'get_api_token' => sub {
-			my ( $self, $uid ) = @_;
-			$uid //= $self->current_user->{id};
-
-			my $token = {};
-			my $res   = $self->pg->db->select(
-				'tokens',
-				[ 'type', 'token' ],
-				{ user_id => $uid }
-			);
-
-			for my $entry ( $res->hashes->each ) {
-				$token->{ $self->app->token_types->[ $entry->{type} - 1 ] }
-				  = $entry->{token};
-			}
-
-			return $token;
 		}
 	);
 

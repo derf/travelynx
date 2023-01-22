@@ -35,10 +35,11 @@ sub documentation {
 	my ($self) = @_;
 
 	if ( $self->is_user_authenticated ) {
+		my $uid = $self->current_user->{id};
 		$self->render(
 			'api_documentation',
-			uid       => $self->current_user->{id},
-			api_token => $self->get_api_token,
+			uid       => $uid,
+			api_token => $self->users->get_api_token( uid => $uid ),
 		);
 	}
 	else {
@@ -79,7 +80,7 @@ sub get_v1 {
 		return;
 	}
 
-	my $token = $self->get_api_token($uid);
+	my $token = $self->users->get_api_token( uid => $uid );
 	if (   not $api_token
 		or not $token->{$api_action}
 		or $api_token ne $token->{$api_action} )
@@ -145,7 +146,7 @@ sub travel_v1 {
 		return;
 	}
 
-	my $token = $self->get_api_token($uid);
+	my $token = $self->users->get_api_token( uid => $uid );
 	if ( not $token->{'travel'} or $api_token ne $token->{'travel'} ) {
 		$self->render(
 			json => {
@@ -411,7 +412,7 @@ sub import_v1 {
 		return;
 	}
 
-	my $token = $self->get_api_token($uid);
+	my $token = $self->users->get_api_token($uid);
 	if ( not $token->{'import'} or $api_token ne $token->{'import'} ) {
 		$self->render(
 			json => {

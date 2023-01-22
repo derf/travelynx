@@ -388,10 +388,11 @@ sub verify {
 
 sub delete {
 	my ($self) = @_;
+	my $uid = $self->current_user->{id};
 	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
 		$self->render(
 			'account',
-			api_token => $self->get_api_token,
+			api_token => $self->users->get_api_token( uid => $uid ),
 			invalid   => 'csrf',
 		);
 		return;
@@ -407,15 +408,15 @@ sub delete {
 		{
 			$self->render(
 				'account',
-				api_token => $self->get_api_token,
+				api_token => $self->users->get_api_token( uid => $uid ),
 				invalid   => 'deletion password'
 			);
 			return;
 		}
-		$self->users->flag_deletion( uid => $self->current_user->{id} );
+		$self->users->flag_deletion( uid => $uid );
 	}
 	else {
-		$self->users->unflag_deletion( uid => $self->current_user->{id} );
+		$self->users->unflag_deletion( uid => $uid );
 	}
 	$self->redirect_to('account');
 }
@@ -950,9 +951,11 @@ sub confirm_mail {
 
 sub account {
 	my ($self) = @_;
+	my $uid = $self->current_user->{id};
 
-	$self->render( 'account', api_token => $self->get_api_token );
-	$self->users->mark_seen( uid => $self->current_user->{id} );
+	$self->render( 'account',
+		api_token => $self->users->get_api_token( uid => $uid ) );
+	$self->users->mark_seen( uid => $uid );
 }
 
 sub json_export {

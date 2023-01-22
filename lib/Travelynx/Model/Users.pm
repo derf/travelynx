@@ -19,6 +19,8 @@ my @sb_templates = (
 	[ 'bahn.expert/regional', 'https://bahn.expert/regional/{name}#{id}' ],
 );
 
+my @token_types = (qw(status history travel import));
+
 sub new {
 	my ( $class, %opt ) = @_;
 
@@ -84,6 +86,22 @@ sub verify_registration_token {
 		return 1;
 	}
 	return;
+}
+
+sub get_api_token {
+	my ( $self, %opt ) = @_;
+	my $db  = $opt{db} // $self->{pg}->db;
+	my $uid = $opt{uid};
+
+	my $token = {};
+	my $res = $db->select( 'tokens', [ 'type', 'token' ], { user_id => $uid } );
+
+	for my $entry ( $res->hashes->each ) {
+		$token->{ $token_types[ $entry->{type} - 1 ] }
+		  = $entry->{token};
+	}
+
+	return $token;
 }
 
 sub get_uid_by_name_and_mail {
