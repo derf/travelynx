@@ -416,7 +416,8 @@ sub homepage {
 			}
 		}
 		else {
-			@recent_targets = $self->journeys->get_latest_checkout_stations(
+			@recent_targets = uniq_by { $_->{eva} }
+			$self->journeys->get_latest_checkout_stations(
 				uid => $self->current_user->{id} );
 		}
 		$self->render(
