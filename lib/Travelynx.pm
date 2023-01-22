@@ -160,17 +160,6 @@ sub startup {
 	);
 
 	$self->attr(
-		token_type => sub {
-			return {
-				status  => 1,
-				history => 2,
-				travel  => 3,
-				import  => 4,
-			};
-		}
-	);
-
-	$self->attr(
 		account_public_mask => sub {
 			return {
 				status_intern  => 0x01,

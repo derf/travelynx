@@ -571,7 +571,7 @@ sub set_token {
 		return;
 	}
 	my $token    = make_token();
-	my $token_id = $self->app->token_type->{ $self->param('token') };
+	my $token_id = $self->users->get_token_id( $self->param('token') );
 
 	if ( not $token_id ) {
 		$self->redirect_to('account');

@@ -19,12 +19,24 @@ my @sb_templates = (
 	[ 'bahn.expert/regional', 'https://bahn.expert/regional/{name}#{id}' ],
 );
 
+my %token_id = (
+	status  => 1,
+	history => 2,
+	travel  => 3,
+	import  => 4,
+);
 my @token_types = (qw(status history travel import));
 
 sub new {
 	my ( $class, %opt ) = @_;
 
 	return bless( \%opt, $class );
+}
+
+sub get_token_id {
+	my ( $self, $type ) = @_;
+
+	return $token_id{$type};
 }
 
 sub mark_seen {
