@@ -159,6 +159,7 @@ sub startup {
 		}
 	);
 
+	# TODO unused
 	$self->attr(
 		account_public_mask => sub {
 			return {
@@ -172,6 +173,7 @@ sub startup {
 		}
 	);
 
+	# TODO unused
 	$self->attr(
 		journey_edit_mask => sub {
 			return {
