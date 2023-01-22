@@ -451,6 +451,44 @@ sub unflag_deletion {
 	);
 }
 
+sub delete {
+	my ( $self, %opt ) = @_;
+
+	my $db  = $opt{db} // $self->{pg}->db;
+	my $uid = $opt{uid};
+	my $tx;
+
+	if ( not $opt{in_transaction} ) {
+		$tx = $db->begin;
+	}
+
+	my %res;
+
+	$res{tokens}   = $db->delete( 'tokens',            { user_id => $uid } );
+	$res{stats}    = $db->delete( 'journey_stats',     { user_id => $uid } );
+	$res{journeys} = $db->delete( 'journeys',          { user_id => $uid } );
+	$res{transit}  = $db->delete( 'in_transit',        { user_id => $uid } );
+	$res{hooks}    = $db->delete( 'webhooks',          { user_id => $uid } );
+	$res{trwl}     = $db->delete( 'traewelling',       { user_id => $uid } );
+	$res{lt}       = $db->delete( 'localtransit',      { user_id => $uid } );
+	$res{password} = $db->delete( 'pending_passwords', { user_id => $uid } );
+	$res{users}    = $db->delete( 'users',             { id      => $uid } );
+
+	for my $key ( keys %res ) {
+		$res{$key} = $res{$key}->rows;
+	}
+
+	if ( $res{users} != 1 ) {
+		die("Deleted $res{users} rows from users, expected 1. Rolling back.\n");
+	}
+
+	if ( not $opt{in_transaction} ) {
+		$tx->commit;
+	}
+
+	return \%res;
+}
+
 sub set_password_hash {
 	my ( $self, %opt ) = @_;
 	my $db       = $opt{db} // $self->{pg}->db;

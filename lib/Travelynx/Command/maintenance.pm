@@ -143,27 +143,13 @@ sub run {
 
 	for my $uid (@uids_to_delete) {
 		say "Deleting uid ${uid}...";
-		my $tokens_res   = $db->delete( 'tokens',        { user_id => $uid } );
-		my $stats_res    = $db->delete( 'journey_stats', { user_id => $uid } );
-		my $journeys_res = $db->delete( 'journeys',      { user_id => $uid } );
-		my $transit_res  = $db->delete( 'in_transit',    { user_id => $uid } );
-		my $hooks_res    = $db->delete( 'webhooks',      { user_id => $uid } );
-		my $trwl_res     = $db->delete( 'traewelling',   { user_id => $uid } );
-		my $lt_res       = $db->delete( 'localtransit',  { user_id => $uid } );
-		my $password_res
-		  = $db->delete( 'pending_passwords', { user_id => $uid } );
-		my $user_res = $db->delete( 'users', { id => $uid } );
-
+		my $count = $self->app->users->delete(
+			uid            => $uid,
+			db             => $db,
+			in_transaction => 1
+		);
 		printf( "    %d tokens, %d monthly stats, %d journeys\n",
-			$tokens_res->rows, $stats_res->rows, $journeys_res->rows );
-
-		if ( $user_res->rows != 1 ) {
-			printf STDERR (
-				"Deleted %d rows from users, expected 1. Rollback and abort.\n",
-				$user_res->rows
-			);
-			exit(1);
-		}
+			$count->{tokens}, $count->{stats}, $count->{journeys} );
 	}
 
 	$tx->commit;
