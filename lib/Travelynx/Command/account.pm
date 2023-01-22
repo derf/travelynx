@@ -81,7 +81,11 @@ sub really_delete_user {
 		return;
 	}
 
-	say "Immediate deletion is not implemented yet.";
+	my $count = $self->app->users->delete( uid => $uid );
+
+	printf( "Deleted %s -- %d tokens, %d monthly stats, %d journeys\n",
+		$name, $count->{tokens}, $count->{stats}, $count->{journeys} );
+
 	return;
 }
 
