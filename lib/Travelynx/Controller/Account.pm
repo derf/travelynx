@@ -337,7 +337,7 @@ sub register {
 	my $pw_hash = hash_password($password);
 	my $db      = $self->pg->db;
 	my $tx      = $db->begin;
-	my $user_id = $self->users->add_user(
+	my $user_id = $self->users->add(
 		db            => $db,
 		name          => $user,
 		email         => $email,

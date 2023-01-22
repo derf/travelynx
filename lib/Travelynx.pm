@@ -821,7 +821,7 @@ sub startup {
 
 			$uid //= $self->current_user->{id};
 
-			return $self->users->get_data( uid => $uid );
+			return $self->users->get( uid => $uid );
 		}
 	);
 

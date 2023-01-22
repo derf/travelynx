@@ -5,7 +5,7 @@ package Travelynx::Command::account;
 # SPDX-License-Identifier: AGPL-3.0-or-later
 use Mojo::Base 'Mojolicious::Command';
 use Crypt::Eksblowfish::Bcrypt qw(bcrypt en_base64);
-use UUID::Tiny qw(:std);
+use UUID::Tiny                 qw(:std);
 
 has description => 'Add or remove user accounts';
 
@@ -34,7 +34,7 @@ sub add_user {
 	my $password_hash = hash_password($password);
 
 	my $tx      = $db->begin;
-	my $user_id = $self->app->users->add_user(
+	my $user_id = $self->app->users->add(
 		db            => $db,
 		name          => $name,
 		email         => $email,
@@ -58,7 +58,7 @@ sub add_user {
 sub delete_user {
 	my ( $self, $uid ) = @_;
 
-	my $user_data = $self->app->users->get_data( uid => $uid );
+	my $user_data = $self->app->users->get( uid => $uid );
 
 	if ( not $user_data ) {
 		say "UID $uid does not exist.";
@@ -73,7 +73,7 @@ sub delete_user {
 sub really_delete_user {
 	my ( $self, $uid, $name ) = @_;
 
-	my $user_data = $self->app->users->get_data( uid => $uid );
+	my $user_data = $self->app->users->get( uid => $uid );
 
 	if ( $user_data->{name} ne $name ) {
 		say

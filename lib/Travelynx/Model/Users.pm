@@ -318,7 +318,7 @@ sub remove_password_token {
 	);
 }
 
-sub get_data {
+sub get {
 	my ( $self, %opt ) = @_;
 	my $db  = $opt{db} // $self->{pg}->db;
 	my $uid = $opt{uid};
@@ -377,7 +377,7 @@ sub get_login_data {
 	return $res_h;
 }
 
-sub add_user {
+sub add {
 	my ( $self, %opt ) = @_;
 	my $db        = $opt{db} // $self->{pg}->db;
 	my $user_name = $opt{name};
