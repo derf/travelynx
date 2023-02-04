@@ -10,8 +10,8 @@
 						vorherigen Zugfahrt und wurden bei der Wartezeitberechnung
 						ignoriert.
 						<ul>
-							% for my $date (@{$stats->{inconsistencies}}) {
-								<li><%= $date %></li>
+							% for my $field (@{$stats->{inconsistencies}}) {
+								<li><a href="/journey/<%= $field->[1] %>"><%= $field->[0] %></a></li>
 							% }
 						</ul>
 					</p>

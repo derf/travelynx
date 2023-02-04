@@ -1486,8 +1486,14 @@ sub compute_stats {
 			and $next_departure - $journey->{rt_arr_ts} < ( 60 * 60 ) )
 		{
 			if ( $next_departure - $journey->{rt_arr_ts} < 0 ) {
-				push( @inconsistencies,
-					epoch_to_dt($next_departure)->strftime('%d.%m.%Y %H:%M') );
+				push(
+					@inconsistencies,
+					[
+						epoch_to_dt($next_departure)
+						  ->strftime('%d.%m.%Y %H:%M'),
+						$journey->{id}
+					]
+				);
 			}
 			else {
 				$interchange_real

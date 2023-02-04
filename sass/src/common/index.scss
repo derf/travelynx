@@ -22,6 +22,10 @@ a.unmarked {
   color: $off-black;
 }
 
+.white-text a {
+  color: #eeeeff;
+}
+
 div.targetlist {
   display: grid;
   grid-template-columns: 1fr max-content;

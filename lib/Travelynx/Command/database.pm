@@ -1287,6 +1287,19 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v30 -> v31
+	# travelynx v1.29.17 introduces links to conflicting journeys.
+	# These require changes to statistics data.
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				truncate journey_stats;
+				update schema_version set version = 31;
+			}
+		);
+	},
 );
 
 sub sync_stations {
