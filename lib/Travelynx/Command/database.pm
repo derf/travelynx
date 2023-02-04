@@ -1300,6 +1300,18 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v31 -> v32
+	# travelynx v1.29.18 improves above-mentioned conflict links.
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				truncate journey_stats;
+				update schema_version set version = 32;
+			}
+		);
+	},
 );
 
 sub sync_stations {

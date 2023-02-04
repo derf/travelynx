@@ -6,12 +6,15 @@
 					<i class="material-icons small right">warning</i>
 					<span class="card-title">Inkonsistente Reisedaten</span>
 					<p>
-						Die folgenden Abfahrtszeiten liegen vor der Ankunftszeit der
-						vorherigen Zugfahrt und wurden bei der Wartezeitberechnung
-						ignoriert.
+						Die folgenden Zugfahrten wurden bei der Wartezeitberechnung
+						ignoriert, da ihre Abfahrtszeit vor der Ankunftszeit der
+						vorherigen Zugfahrt liegt. Bei den restlichen Statistken
+						wurden sie mitberücksichtigt.
 						<ul>
 							% for my $field (@{$stats->{inconsistencies}}) {
-								<li><a href="/journey/<%= $field->[1] %>"><%= $field->[0] %></a></li>
+								<li><a href="/journey/<%= $field->{ignored}{id} %>"><%= $field->{ignored}{train} %> ab <%= $field->{ignored}{dep} %></a>
+									(Konflikt: <a href="/journey/<%= $field->{conflict}{id} %>"><%= $field->{conflict}{train} %> an <%= $field->{conflict}{arr} %>)</a>
+</li>
 							% }
 						</ul>
 					</p>

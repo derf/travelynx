@@ -1458,6 +1458,8 @@ sub compute_stats {
 	my @inconsistencies;
 
 	my $next_departure = 0;
+	my $next_id;
+	my $next_train;
 
 	for my $journey (@journeys) {
 		$num_trains++;
@@ -1488,11 +1490,21 @@ sub compute_stats {
 			if ( $next_departure - $journey->{rt_arr_ts} < 0 ) {
 				push(
 					@inconsistencies,
-					[
-						epoch_to_dt($next_departure)
-						  ->strftime('%d.%m.%Y %H:%M'),
-						$journey->{id}
-					]
+					{
+						conflict => {
+							train => $journey->{type} . ' '
+							  . ( $journey->{line} // $journey->{no} ),
+							arr => epoch_to_dt( $journey->{rt_arr_ts} )
+							  ->strftime('%d.%m.%Y %H:%M'),
+							id => $journey->{id},
+						},
+						ignored => {
+							train => $next_train,
+							dep   => epoch_to_dt($next_departure)
+							  ->strftime('%d.%m.%Y %H:%M'),
+							id => $next_id,
+						},
+					}
 				);
 			}
 			else {
@@ -1504,6 +1516,9 @@ sub compute_stats {
 			$num_journeys++;
 		}
 		$next_departure = $journey->{rt_dep_ts};
+		$next_id        = $journey->{id};
+		$next_train
+		  = $journey->{type} . ' ' . ( $journey->{line} // $journey->{no} ),;
 	}
 	my $ret = {
 		km_route             => $km_route,
