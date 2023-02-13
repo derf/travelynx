@@ -2444,12 +2444,12 @@ DISTRIBUTIONS
       TimeDate 1.21
     requirements:
       ExtUtils::MakeMaker 0
-  Travel-Status-DE-DBWagenreihung-0.07
-    pathname: D/DE/DERF/Travel-Status-DE-DBWagenreihung-0.07.tar.gz
+  Travel-Status-DE-DBWagenreihung-0.08
+    pathname: D/DE/DERF/Travel-Status-DE-DBWagenreihung-0.08.tar.gz
     provides:
-      Travel::Status::DE::DBWagenreihung 0.07
-      Travel::Status::DE::DBWagenreihung::Section 0.07
-      Travel::Status::DE::DBWagenreihung::Wagon 0.07
+      Travel::Status::DE::DBWagenreihung 0.08
+      Travel::Status::DE::DBWagenreihung::Section 0.08
+      Travel::Status::DE::DBWagenreihung::Wagon 0.08
     requirements:
       Carp 0
       Class::Accessor 0
@@ -2463,15 +2463,15 @@ DISTRIBUTIONS
       Test::Pod 0
       Travel::Status::DE::IRIS 1.2
       perl v5.20.0
-  Travel-Status-DE-DeutscheBahn-4.07
-    pathname: D/DE/DERF/Travel-Status-DE-DeutscheBahn-4.07.tar.gz
+  Travel-Status-DE-DeutscheBahn-4.08
+    pathname: D/DE/DERF/Travel-Status-DE-DeutscheBahn-4.08.tar.gz
     provides:
-      Travel::Status::DE::DeutscheBahn 4.07
-      Travel::Status::DE::HAFAS 4.07
-      Travel::Status::DE::HAFAS::Journey 4.07
-      Travel::Status::DE::HAFAS::Message 4.07
-      Travel::Status::DE::HAFAS::Polyline 4.07
-      Travel::Status::DE::HAFAS::StopFinder 4.07
+      Travel::Status::DE::DeutscheBahn 4.08
+      Travel::Status::DE::HAFAS 4.08
+      Travel::Status::DE::HAFAS::Journey 4.08
+      Travel::Status::DE::HAFAS::Message 4.08
+      Travel::Status::DE::HAFAS::Polyline 4.08
+      Travel::Status::DE::HAFAS::StopFinder 4.08
     requirements:
       Carp 0
       Class::Accessor 0.16
