@@ -669,9 +669,24 @@ sub public_journey_details {
 			my $title = sprintf( 'Fahrt von %s nach %s am %s',
 				$journey->{from_name}, $journey->{to_name},
 				$journey->{rt_arrival}->strftime('%d.%m.%Y') );
+			my $delay = 'pünktlich ';
+			if ( $journey->{rt_arrival} != $journey->{sched_arrival} ) {
+				$delay = sprintf(
+					'mit %+d ',
+					(
+						    $journey->{rt_arrival}->epoch
+						  - $journey->{sched_arrival}->epoch
+					) / 60
+				);
+			}
 			my $description = sprintf( 'Ankunft mit %s %s %s',
 				$journey->{type}, $journey->{no},
 				$journey->{rt_arrival}->strftime('um %H:%M') );
+			if ( $journey->{km_route} > 0.1 ) {
+				$description = sprintf( '%.0f km mit %s %s – Ankunft %sum %s',
+					$journey->{km_route}, $journey->{type}, $journey->{no},
+					$delay, $journey->{rt_arrival}->strftime('%H:%M') );
+			}
 			my %tw_data = (
 				card  => 'summary',
 				site  => '@derfnull',
