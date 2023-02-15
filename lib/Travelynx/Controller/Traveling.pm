@@ -1677,7 +1677,8 @@ sub journey_details {
 	my ($self) = @_;
 	my $journey_id = $self->stash('id');
 
-	my $uid = $self->current_user->{id};
+	my $user = $self->current_user;
+	my $uid  = $user->{id};
 
 	$self->param( journey_id => $journey_id );
 
@@ -1704,11 +1705,41 @@ sub journey_details {
 			journeys       => [$journey],
 			include_manual => 1,
 		);
+		my $share_text;
+		my $with_share = $user->{is_public} & 0x40 ? 1 : 0;
+		if ( not $with_share and $user->{is_public} & 0x20 ) {
+			my $month_ago = DateTime->now( time_zone => 'Europe/Berlin' )
+			  ->subtract( weeks => 4 )->epoch;
+			$with_share = $journey->{rt_dep_ts} > $month_ago ? 1 : 0;
+		}
+
+		if ($with_share) {
+			my $delay = 'pünktlich ';
+			if ( $journey->{rt_arrival} != $journey->{sched_arrival} ) {
+				$delay = sprintf(
+					'mit %+d ',
+					(
+						    $journey->{rt_arrival}->epoch
+						  - $journey->{sched_arrival}->epoch
+					) / 60
+				);
+			}
+			$share_text
+			  = $journey->{km_route}
+			  ? sprintf( '%.0f km', $journey->{km_route} )
+			  : 'Fahrt';
+			$share_text .= sprintf( ' mit %s %s – Ankunft %sum %s',
+				$journey->{type}, $journey->{no},
+				$delay,           $journey->{rt_arrival}->strftime('%H:%M') );
+		}
+
 		$self->render(
 			'journey',
-			error    => undef,
-			journey  => $journey,
-			with_map => 1,
+			error      => undef,
+			journey    => $journey,
+			with_map   => 1,
+			with_share => $with_share,
+			share_text => $share_text,
 			%{$map_data},
 		);
 	}
