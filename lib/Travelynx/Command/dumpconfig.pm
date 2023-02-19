@@ -1,5 +1,5 @@
 package Travelynx::Command::dumpconfig;
-# Copyright (C) 2020 Daniel Friesel
+# Copyright (C) 2020-2023 Daniel Friesel
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 use Mojo::Base 'Mojolicious::Command';
