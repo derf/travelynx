@@ -15,6 +15,22 @@ use utf8;
 use DateTime;
 use JSON;
 
+my %visibility_itoa = (
+	100 => 'public',
+	80  => 'travelynx',
+	60  => 'followers',
+	30  => 'unlisted',
+	10  => 'private',
+);
+
+my %visibility_atoi = (
+	public    => 100,
+	travelynx => 80,
+	followers => 60,
+	unlisted  => 30,
+	private   => 10,
+);
+
 my @month_name
   = (
 	qw(Januar Februar März April Mai Juni Juli August September Oktober November Dezember)
@@ -509,7 +525,7 @@ sub get {
 
 	my @select
 	  = (
-		qw(journey_id train_type train_line train_no checkin_ts sched_dep_ts real_dep_ts dep_eva dep_ds100 dep_name dep_lat dep_lon checkout_ts sched_arr_ts real_arr_ts arr_eva arr_ds100 arr_name arr_lat arr_lon cancelled edited route messages user_data)
+		qw(journey_id train_type train_line train_no checkin_ts sched_dep_ts real_dep_ts dep_eva dep_ds100 dep_name dep_lat dep_lon checkout_ts sched_arr_ts real_arr_ts arr_eva arr_ds100 arr_name arr_lat arr_lon cancelled edited route messages user_data visibility)
 	  );
 	my %where = (
 		user_id   => $uid,
@@ -548,6 +564,24 @@ sub get {
 		push( @select, 'polyline' );
 	}
 
+	if ( $opt{min_visibility} ) {
+		if ( $visibility_atoi{ $opt{min_visibility} } ) {
+			$opt{min_visibility} = $visibility_atoi{ $opt{min_visibility} };
+		}
+		if ( $opt{with_default_visibility} ) {
+			$where{visibility} = [
+				-or => { '=', undef },
+				{ '>=', $opt{min_visibility} }
+			];
+		}
+		else {
+			$where{visibility} = [
+				-and => { '!=', undef },
+				{ '>=', $opt{min_visibility} }
+			];
+		}
+	}
+
 	my @travels;
 
 	my $res = $db->select( 'journeys_str', \@select, \%where, \%order );
@@ -577,7 +611,15 @@ sub get {
 			route        => $entry->{route},
 			edited       => $entry->{edited},
 			user_data    => $entry->{user_data},
+			visibility   => $entry->{visibility},
 		};
+
+		if ( $opt{with_visibility} ) {
+			$ref->{visibility_str}
+			  = $ref->{visibility}
+			  ? $visibility_itoa{ $ref->{visibility} }
+			  : 'default';
+		}
 
 		if ( $opt{with_polyline} ) {
 			$ref->{polyline} = $entry->{polyline};
@@ -1701,6 +1743,28 @@ sub get_connection_targets {
 	@destinations = $self->{stations}->get_by_evas(@destinations);
 	@destinations = map { $_->{name} } @destinations;
 	return @destinations;
+}
+
+sub update_visibility {
+	my ( $self, %opt ) = @_;
+
+	my $uid = $opt{uid};
+	my $db  = $opt{db} // $self->{pg}->db;
+
+	my $visibility;
+
+	if ( $opt{visibility} and $visibility_atoi{ $opt{visibility} } ) {
+		$visibility = $visibility_atoi{ $opt{visibility} };
+	}
+
+	$db->update(
+		'journeys',
+		{ visibility => $visibility },
+		{
+			user_id => $uid,
+			id      => $opt{id}
+		}
+	);
 }
 
 1;

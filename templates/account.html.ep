@@ -70,36 +70,10 @@
 				</td>
 			</tr>
 			<tr>
-				<th scope="row">Öffentliche Daten</th>
+				<th scope="row">Sichtbarkeit</th>
 				<td>
 					<a href="/account/privacy"><i class="material-icons">edit</i></a>
-					% if ($acc->{is_public} == 0) {
-						<span style="color: #999999;">Keine</span>
-					% }
-					% if ($acc->{is_public} & 0x01) {
-						Aktueller Status (nur mit Anmeldung)
-					% }
-					% elsif ($acc->{is_public} & 0x02) {
-						Aktueller Status
-					% }
-					% if ($acc->{is_public} & 0x0f and $acc->{is_public} & 0xf0) {
-						<br/>
-					% }
-					% if ($acc->{is_public} & 0x30) {
-						% if ($acc->{is_public} & 0x40) {
-							Vergangene Fahrten
-						% }
-						% else {
-							Fahrten der letzten vier Wochen
-						% }
-						% if ($acc->{is_public} & 0x10) {
-							(nur mit Anmeldung)
-						% }
-					% }
-					% if ($acc->{is_public} & 0x04) {
-						<br/>
-						Kommentare
-					% }
+					<span><i class="material-icons"><%= visibility_icon($acc->{default_visibility_str}) %></i></span>
 				</td>
 			</tr>
 			<tr>

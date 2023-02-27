@@ -1,10 +1,11 @@
 <h1>Öffentliche Daten</h1>
 <div class="row">
 	<div class="col s12">
-		Hier kannst du auswählen, welche Aspekte deines Accounts bzw. deiner
-		Bahnfahrten öffentlich einsehbar sind. Öffentliche Daten sind
-		grundsätzlich für <i>alle</i> einsehbar, die die (leicht erratbare) URL
-		kennen.
+		Hier kannst du auswählen, welche Personengruppen deine Fahrten bei
+		travelynx einsehen können und ob dies auch für vergangene Fahrten
+		gelten soll. Nach dem Einchecken in einen Zug hast du im
+		Checkin-Fenster die Möglichkeit, für die aktuelle Fahrt eine
+		abweichende Sichtbarkeit einzustellen.
 	</div>
 </div>
 %= form_for '/account/privacy' => (method => 'POST') => begin
@@ -13,33 +14,62 @@
 	<div class="row">
 		<div class="input-field col s12">
 			<div>
-			<label>
-				%= radio_button status_level => 'private'
-				<span>Nicht sichtbar</span>
-			</label>
-			</div><div>
-			<label>
-				%= radio_button status_level => 'intern'
-				<span>Nur mit Anmeldung</span>
-			</label>
-			</div><div>
-			<label>
-				%= radio_button status_level => 'extern'
-				<span>Öffentlich</span>
-			</label>
+				<label>
+					%= radio_button status_level => 'public'
+					<span><i class="material-icons left"><%= visibility_icon('public') %></i>Öffentlich: Im Profil verlinkt und beliebig zugänglich.</span>
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			<div>
+				<label>
+					%= radio_button status_level => 'travelynx'
+					<span><i class="material-icons left"><%= visibility_icon('travelynx') %></i>Lokal: Nur für<!-- Personen, die dir folgen oder auf dieser Seite angemeldet sind --> auf dieser Seite angemeldete Acounts sowie nicht angemeldete Personen, denen du mithilfe der Teilen-Funktion einen Link schickst.</span>
+				</label>
+			</div>
+		</div>
+	</div>
+	<!--
+	<div class="row">
+		<div class="input-field col s12">
+			<div>
+				<label>
+					%= radio_button status_level => 'fedi'
+					<span><i class="material-icons left"><%= visibility_icon('fedi') %></i>Fedi: nur für Personen, die deinem Account folgen.</span>
+				</label>
+			</div>
+		</div>
+	</div>
+	-->
+	<div class="row">
+		<div class="input-field col s12">
+			<div>
+				<label>
+					%= radio_button status_level => 'unlisted'
+					<span><i class="material-icons left"><%= visibility_icon('unlisted') %></i>Verlinkbar: Nur für Personen zugänglich, denen du mithilfe der Teilen-Funktion einen Link schickst.</span>
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			<div>
+				<label>
+					%= radio_button status_level => 'private'
+					<span><i class="material-icons left"><%= visibility_icon('private') %></i>Privat: nur für dich sichtbar.</span>
+				</label>
 			</div>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col s12">
-			Hier kannst du auswählen, ob dein aktueller Status unter <a
-			href="/status/<%= $name %>">/status/<%= $name %></a> sowie <a
-			href="/p/<%= $name %>">/p/<%= $name %></a> abrufbar ist.
-			Wenn du eingecheckt bist, werden dort Zug, Start- und Zielstation
-			sowie Abfahrts- und Ankunftszeit gezeigt, andernfalls lediglich der
-			Zielbahnhof der letzten Reise.  Wann die letzte Reise beendet wurde,
-			wird nur angegeben, wenn deine vergangenen Zugfahrten sichtbar sind
-			(siehe unten).
+			Wenn du (mit passender Sichtbarkeit) eingecheckt bist, werden unter
+			<a href="/status/<%= $name %>">/status/<%= $name %></a> sowie <a
+			href="/p/<%= $name %>">/p/<%= $name %></a> Zug, Start- und
+			Zielstation sowie Abfahrts- und Ankunftszeit gezeigt. Andernfalls
+			wird angegeben, dass du gerade nicht eingecheckt seist.
 		</div>
 	</div>
 <h2>Vergangene Zugfahrten</h2>
@@ -85,7 +115,10 @@
 			dort nicht eingetragene Fahrten sind jedoch weiterhin über /p/<%=
 			$name %>/j/ID zugänglich. Da die ID (mit Lücken) aufsteigend vergeben
 			wird, sind effektiv alle deiner vergangenen Fahrten (oder alle Fahrten
-			der letzten vier Wochen) öffentlich.
+			der letzten vier Wochen) öffentlich. Auch hier besteht die
+			Möglichkeit, für einzelne Fahrten eine abweichende Sichtbarkeit
+			einzustellen. Sofern die Sichtbarkeit auf die letzten vier Wochen
+			beschränkt ist, hat dies jedoch Vorrang.
 		</div>
 	</div>
 <h2>Sonstiges</h2>
@@ -101,6 +134,7 @@
 		<div class="col s12">
 			Wenn aktiv, sind von dir eingetragene Freitext-Kommentare in deinem
 			aktuellen Status sowie bei deinen vergangenen Zugfahrten sichtbar.
+			Diese Einstellung kann nicht pro Fahrt verändert werden.
 		</div>
 	</div>
 	<div class="row">

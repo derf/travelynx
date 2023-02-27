@@ -244,13 +244,16 @@
 		</div>
 		<div class="card-action">
 			% if ($journey->{arr_name}) {
-				<a style="margin-right: 0;" href="/journey/comment">
-					<i class="material-icons left" aria-hidden="true">comment</i> Kommentar
+				<a href="/journey/comment">
+					<i class="material-icons">comment</i>
+				</a>
+				<a style="margin-right: 0;" href="/journey/visibility">
+					<i class="material-icons"><%= visibility_icon($journey_visibility) %></i>
 				</a>
 			% }
 			% else {
 				<a class="action-undo blue-text" data-id="in_transit" data-checkints="<%= $journey->{timestamp}->epoch %>" style="margin-right: 0;">
-					<i class="material-icons left" aria-hidden="true">undo</i> Checkin Rückgängig
+					<i class="material-icons left" aria-hidden="true">undo</i> Rückgängig
 				</a>
 			% }
 			% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} <= 0) {
@@ -259,7 +262,7 @@
 					style="margin-right: 0;"
 					data-station="<%= $journey->{arr_name}%>">
 						<i class="material-icons left">done</i>
-						Jetzt auschecken
+						Auschecken
 					</a>
 			% }
 			% elsif ($journey->{arr_name}) {
@@ -270,7 +273,7 @@
 				<a class="action-share blue-text right"
 					style="margin-right: 0;"
 					% my $arr_text = q{};
-					% if ($journey->{real_arrival}->epoch and not $user->{is_public} & 0x02) {
+					% if ($journey->{real_arrival}->epoch and $journey_visibility eq 'private') {
 						% $arr_text = $journey->{real_arrival}->strftime(' – Ankunft gegen %H:%M Uhr');
 					% }
 					% if ($user->{is_public} & 0x04 and $journey->{comment}) {
@@ -279,11 +282,19 @@
 					% else {
 						data-text="Ich bin gerade <%= $attrib %> <%= $journey->{train_type} %> <%= $journey->{train_no} %> nach <%= $journey->{arr_name} . $arr_text %> #travelynx"
 					% }
-					% if ($user->{is_public} & 0x02) {
+					% if ($journey_visibility eq 'public') {
 						data-url="<%= url_for('/status')->to_abs->scheme('https') %>/<%= $user->{name} %>/<%= $journey->{sched_departure}->epoch %>"
+					% }
+					% elsif ($journey_visibility eq 'travelynx' or $journey_visibility eq 'unlisted') {
+						data-url="<%= url_for('/status')->to_abs->scheme('https') %>/<%= $user->{name} %>/<%= $journey->{sched_departure}->epoch %>?token=<%= $journey->{dep_eva} %>-<%= $journey->{timestamp}->epoch %>"
 					% }
 					>
 					<i class="material-icons left" aria-hidden="true">share</i> Teilen
+				</a>
+			% }
+			% else {
+				<a class="right" href="/journey/visibility">
+					<i class="material-icons left"><%= visibility_icon($journey_visibility) %></i> Sichtbarkeit
 				</a>
 			% }
 		</div>

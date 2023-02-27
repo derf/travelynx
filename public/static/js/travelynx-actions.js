@@ -8,8 +8,13 @@ var j_duration = 0;
 var j_arrival = 0;
 var j_dest = '';
 var j_stops = [];
+var j_token = '';
 function upd_journey_data() {
 	$('.countdown').each(function() {
+		const journey_token = $(this).data('token');
+		if (journey_token) {
+			j_token = journey_token;
+		}
 		var journey_data = $(this).data('journey');
 		if (journey_data) {
 			journey_data = journey_data.split(';');
@@ -105,7 +110,7 @@ function tvly_update_public() {
 	$('.publicstatuscol').each(function() {
 		user_name = $(this).data('user');
 	});
-	$.get('/ajax/status/' + user_name + '.html', function(data) {
+	$.get('/ajax/status/' + user_name + '.html', {token: j_token}, function(data) {
 		$('.publicstatuscol').html(data);
 		upd_journey_data();
 		setTimeout(tvly_update_public, 40000);

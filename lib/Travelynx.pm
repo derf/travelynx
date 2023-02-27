@@ -421,6 +421,25 @@ sub startup {
 	);
 
 	$self->helper(
+		'visibility_icon' => sub {
+			my ( $self, $visibility ) = @_;
+			if ( $visibility eq 'public' ) {
+				return 'language';
+			}
+			if ( $visibility eq 'travelynx' ) {
+				return 'lock_open';
+			}
+			if ( $visibility eq 'unlisted' ) {
+				return 'lock_outline';
+			}
+			if ( $visibility eq 'private' ) {
+				return 'lock';
+			}
+			return 'help_outline';
+		}
+	);
+
+	$self->helper(
 		'checkin' => sub {
 			my ( $self, %opt ) = @_;
 
@@ -1348,7 +1367,8 @@ sub startup {
 				uid             => $uid,
 				db              => $db,
 				with_data       => 1,
-				with_timestamps => 1
+				with_timestamps => 1,
+				with_visibility => 1,
 			);
 
 			if ($in_transit) {
@@ -1425,6 +1445,8 @@ sub startup {
 					messages      => $in_transit->{messages},
 					extra_data    => $in_transit->{data},
 					comment       => $in_transit->{user_data}{comment},
+					visibility    => $in_transit->{visibility},
+					visibility_str => $in_transit->{visibility_str},
 				};
 
 				my $traewelling = $self->traewelling->get(
@@ -2205,6 +2227,7 @@ sub startup {
 	$authed_r->get('/history/:year/:month')->to('traveling#monthly_history');
 	$authed_r->get('/journey/add')->to('traveling#add_journey_form');
 	$authed_r->get('/journey/comment')->to('traveling#comment_form');
+	$authed_r->get('/journey/visibility')->to('traveling#visibility_form');
 	$authed_r->get('/journey/:id')->to('traveling#journey_details');
 	$authed_r->get('/s/*station')->to('traveling#station');
 	$authed_r->get('/confirm_mail/:token')->to('account#confirm_mail');
@@ -2215,6 +2238,7 @@ sub startup {
 	$authed_r->post('/account/services')->to('account#services');
 	$authed_r->post('/journey/add')->to('traveling#add_journey_form');
 	$authed_r->post('/journey/comment')->to('traveling#comment_form');
+	$authed_r->post('/journey/visibility')->to('traveling#visibility_form');
 	$authed_r->post('/journey/edit')->to('traveling#edit_journey');
 	$authed_r->post('/journey/passenger_rights/*filename')
 	  ->to('passengerrights#generate');

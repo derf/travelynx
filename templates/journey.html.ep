@@ -38,6 +38,16 @@
 				% }
 				am
 				<b><%= $journey->{sched_departure}->strftime('%d.%m.%Y') %></b>
+				% if ($journey_visibility) {
+					% if (stash('username')) {
+						<i class="material-icons right"><%= visibility_icon($journey_visibility) %></i>
+					% }
+					% else {
+						<a class="right" href="/journey/visibility?id=<%= $journey->{id} %>">
+							<i class="material-icons"><%= visibility_icon($journey_visibility) %></i>
+						</a>
+					% }
+				% }
 			</p>
 			% if ($journey->{edited}) {
 				<p>

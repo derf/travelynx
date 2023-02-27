@@ -11,6 +11,22 @@ use 5.020;
 use DateTime;
 use JSON;
 
+my %visibility_itoa = (
+	100 => 'public',
+	80  => 'travelynx',
+	60  => 'followers',
+	30  => 'unlisted',
+	10  => 'private',
+);
+
+my %visibility_atoi = (
+	public    => 100,
+	travelynx => 80,
+	followers => 60,
+	unlisted  => 30,
+	private   => 10,
+);
+
 my @sb_templates = (
 	undef,
 	[ 'DBF',         'https://dbf.finalrewind.org/{name}?rt=1#{tt}{tn}' ],
@@ -153,7 +169,16 @@ sub get_privacy_by_name {
 	);
 
 	if ( my $user = $res->hash ) {
-		return $user;
+		return {
+			id                 => $user->{id},
+			public_level       => $user->{public_level},          # todo remove?
+			default_visibility => $user->{public_level} & 0x7f,
+			default_visibility_str =>
+			  $visibility_itoa{ $user->{public_level} & 0x7f },
+			comments_visible => $user->{public_level} & 0x80 ? 1 : 0,
+			past_visible     => ( $user->{public_level} & 0x300 ) >> 8,
+			past_all         => $user->{public_level} & 0x400 ? 1 : 0,
+		};
 	}
 	return;
 }
@@ -163,6 +188,14 @@ sub set_privacy {
 	my $db           = $opt{db} // $self->{pg}->db;
 	my $uid          = $opt{uid};
 	my $public_level = $opt{level};
+
+	if ( not defined $public_level and defined $opt{default_visibility} ) {
+		$public_level
+		  = ( $opt{default_visibility} & 0x7f )
+		  | ( $opt{comments_visible} ? 0x80 : 0x00 )
+		  | ( ( ( $opt{past_visible} // 0 ) << 8 ) & 0x300 )
+		  | ( $opt{past_all} ? 0x400 : 0 );
+	}
 
 	$db->update( 'users', { public_level => $public_level }, { id => $uid } );
 }
@@ -333,12 +366,18 @@ sub get {
 	)->hash;
 	if ($user) {
 		return {
-			id        => $user->{id},
-			name      => $user->{name},
-			status    => $user->{status},
-			is_public => $user->{public_level},
-			email     => $user->{email},
-			sb_name   => $user->{external_services}
+			id                     => $user->{id},
+			name                   => $user->{name},
+			status                 => $user->{status},
+			is_public              => $user->{public_level},
+			default_visibility     => $user->{public_level} & 0x7f,
+			default_visibility_str =>
+			  $visibility_itoa{ $user->{public_level} & 0x7f },
+			comments_visible => $user->{public_level} & 0x80 ? 1 : 0,
+			past_visible     => ( $user->{public_level} & 0x300 ) >> 8,
+			past_all         => $user->{public_level} & 0x400 ? 1 : 0,
+			email            => $user->{email},
+			sb_name          => $user->{external_services}
 			? $sb_templates[ $user->{external_services} & 0x07 ][0]
 			: undef,
 			sb_template => $user->{external_services}

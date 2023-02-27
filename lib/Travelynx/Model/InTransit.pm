@@ -11,6 +11,22 @@ use 5.020;
 use DateTime;
 use JSON;
 
+my %visibility_itoa = (
+	100 => 'public',
+	80  => 'travelynx',
+	60  => 'followers',
+	30  => 'unlisted',
+	10  => 'private',
+);
+
+my %visibility_atoi = (
+	public    => 100,
+	travelynx => 80,
+	followers => 60,
+	unlisted  => 30,
+	private   => 10,
+);
+
 sub new {
 	my ( $class, %opt ) = @_;
 
@@ -117,11 +133,23 @@ sub get {
 	}
 
 	my $res = $db->select( $table, '*', { user_id => $uid } );
+	my $ret;
 
 	if ( $opt{with_data} ) {
-		return $res->expand->hash;
+		$ret = $res->expand->hash;
 	}
-	return $res->hash;
+	else {
+		$ret = $res->hash;
+	}
+
+	if ( $opt{with_visibility} and $ret ) {
+		$ret->{visibility_str}
+		  = $ret->{visibility}
+		  ? $visibility_itoa{ $ret->{visibility} }
+		  : 'default';
+	}
+
+	return $ret;
 }
 
 sub get_all_active {
@@ -446,6 +474,25 @@ sub update_user_data {
 		'in_transit',
 		{ user_data => JSON->new->encode($data) },
 		{ user_id   => $uid }
+	);
+}
+
+sub update_visibility {
+	my ( $self, %opt ) = @_;
+
+	my $uid = $opt{uid};
+	my $db  = $opt{db} // $self->{pg}->db;
+
+	my $visibility;
+
+	if ( $opt{visibility} and $visibility_atoi{ $opt{visibility} } ) {
+		$visibility = $visibility_atoi{ $opt{visibility} };
+	}
+
+	$db->update(
+		'in_transit',
+		{ visibility => $visibility },
+		{ user_id    => $uid }
 	);
 }
 

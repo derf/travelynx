@@ -10,14 +10,12 @@
 		</div>
 	</div>
 % }
-% if ($public_level & 0x02 or ($public_level & 0x01 and is_user_authenticated())) {
-	<div class="row">
-		<div class="col s12 publicstatuscol" data-user="<%= $name %>">
-			%= include '_public_status_card', name => $name, public_level => $public_level, journey => $journey
-		</div>
+<div class="row">
+	<div class="col s12 publicstatuscol" data-user="<%= $name %>">
+		%= include '_public_status_card', name => $name, public_level => $public_level, journey => $journey, journey_visibility => $journey_visibility
 	</div>
-% }
-% if ($public_level & 0x20 or ($public_level & 0x10 and is_user_authenticated())) {
+</div>
+% if ($journeys and @{$journeys}) {
 	<div class="row">
 		<div class="col s12">
 			<h2>Letzte Fahrten von <%= $name %></h1>

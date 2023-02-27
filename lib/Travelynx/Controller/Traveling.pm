@@ -370,6 +370,14 @@ sub get_connecting_trains_p {
 	return $promise;
 }
 
+sub compute_effective_visibility {
+	my ( $self, $default_visibility, $journey_visibility ) = @_;
+	if ( $journey_visibility eq 'default' ) {
+		return $default_visibility;
+	}
+	return $journey_visibility;
+}
+
 # Controllers
 
 sub homepage {
@@ -378,6 +386,10 @@ sub homepage {
 		my $status = $self->get_user_status;
 		my @recent_targets;
 		if ( $status->{checked_in} ) {
+			my $journey_visibility
+			  = $self->compute_effective_visibility(
+				$self->current_user->{default_visibility_str},
+				$status->{visibility_str} );
 			if ( defined $status->{arrival_countdown}
 				and $status->{arrival_countdown} < ( 40 * 60 ) )
 			{
@@ -389,11 +401,10 @@ sub homepage {
 							'landingpage',
 							version => $self->app->config->{version}
 							  // 'UNKNOWN',
-							user_status       => $status,
-							connections       => $connecting_trains,
-							transit_fyi       => $transit_fyi,
-							with_autocomplete => 1,
-							with_geolocation  => 1
+							user_status        => $status,
+							journey_visibility => $journey_visibility,
+							connections        => $connecting_trains,
+							transit_fyi        => $transit_fyi,
 						);
 						$self->users->mark_seen(
 							uid => $self->current_user->{id} );
@@ -404,14 +415,23 @@ sub homepage {
 							'landingpage',
 							version => $self->app->config->{version}
 							  // 'UNKNOWN',
-							user_status       => $status,
-							with_autocomplete => 1,
-							with_geolocation  => 1
+							user_status        => $status,
+							journey_visibility => $journey_visibility,
 						);
 						$self->users->mark_seen(
 							uid => $self->current_user->{id} );
 					}
 				)->wait;
+				return;
+			}
+			else {
+				$self->render(
+					'landingpage',
+					version     => $self->app->config->{version} // 'UNKNOWN',
+					user_status => $status,
+					journey_visibility => $journey_visibility,
+				);
+				$self->users->mark_seen( uid => $self->current_user->{id} );
 				return;
 			}
 		}
@@ -439,6 +459,26 @@ sub homepage {
 	}
 }
 
+sub status_token_ok {
+	my ( $self, $status, $ts2_ext ) = @_;
+	my $token = $self->param('token') // q{};
+
+	my ( $eva, $ts, $ts2 ) = split( qr{-}, $token );
+	if ( not $ts ) {
+		return;
+	}
+
+	$ts2 //= $ts2_ext;
+
+	if (    $eva == $status->{dep_eva}
+		and $ts == $status->{timestamp}->epoch
+		and $ts2 == $status->{sched_departure}->epoch )
+	{
+		return 1;
+	}
+	return;
+}
+
 sub user_status {
 	my ($self) = @_;
 
@@ -446,47 +486,33 @@ sub user_status {
 	my $ts   = $self->stash('ts') // 0;
 	my $user = $self->users->get_privacy_by_name( name => $name );
 
-	if ( not $user or not $user->{public_level} & 0x03 ) {
+	if ( not $user ) {
 		$self->render('not_found');
 		return;
 	}
 
-	if ( $user->{public_level} & 0x01 and not $self->is_user_authenticated ) {
-		$self->render( 'login', redirect_to => $self->req->url );
-		return;
-	}
-
 	my $status = $self->get_user_status( $user->{id} );
-	my $journey;
 
 	if (
 		$ts
 		and ( not $status->{checked_in}
 			or $status->{sched_departure}->epoch != $ts )
-		and (
-			$user->{public_level} & 0x20
-			or (    $user->{public_level} & 0x10
-				and $self->is_user_authenticated )
-		)
 	  )
 	{
 		for my $candidate (
 			$self->journeys->get(
 				uid   => $user->{id},
-				limit => 10,
+				limit => 20,
 			)
 		  )
 		{
 			if ( $candidate->{sched_dep_ts} eq $ts ) {
-				$journey = $self->journeys->get_single(
-					uid           => $user->{id},
-					journey_id    => $candidate->{id},
-					verbose       => 1,
-					with_datetime => 1,
-					with_polyline => 1,
-				);
+				$self->redirect_to("/p/${name}/j/$candidate->{id}");
+				return;
 			}
 		}
+		$self->render('not_found');
+		return;
 	}
 
 	my %tw_data = (
@@ -502,24 +528,30 @@ sub user_status {
 		site_name => 'travelynx',
 	);
 
-	if ($journey) {
-		$og_data{title} = $tw_data{title} = sprintf( 'Fahrt von %s nach %s',
-			$journey->{from_name}, $journey->{to_name} );
-		$og_data{description} = $tw_data{description}
-		  = $journey->{rt_arrival}->strftime('Ankunft am %d.%m.%Y um %H:%M');
-		$og_data{url} .= "/${ts}";
+	my $visibility;
+	if ( $status->{checked_in} ) {
+		$visibility
+		  = $self->compute_effective_visibility(
+			$user->{default_visibility_str},
+			$status->{visibility_str} );
+		if (
+			not(
+				$visibility eq 'public'
+				or (    $visibility eq 'unlisted'
+					and $self->status_token_ok( $status, $ts ) )
+				or (
+					$visibility eq 'travelynx'
+					and (  $self->is_user_authenticated
+						or $self->status_token_ok( $status, $ts ) )
+				)
+			)
+		  )
+		{
+			$status->{checked_in} = 0;
+		}
 	}
-	elsif (
-		$ts
-		and ( not $status->{checked_in}
-			or $status->{sched_departure}->epoch != $ts )
-	  )
-	{
-		$og_data{title}       = $tw_data{title} = "Bahnfahrt beendet";
-		$og_data{description} = $tw_data{description}
-		  = "${name} hat das Ziel erreicht";
-	}
-	elsif ( $status->{checked_in} ) {
+
+	if ( $status->{checked_in} ) {
 		$og_data{url} .= '/' . $status->{sched_departure}->epoch;
 		$og_data{title}       = $tw_data{title}       = "${name} ist unterwegs";
 		$og_data{description} = $tw_data{description} = sprintf(
@@ -537,39 +569,18 @@ sub user_status {
 	else {
 		$og_data{title} = $tw_data{title}
 		  = "${name} ist gerade nicht eingecheckt";
-		$og_data{description} = $tw_data{description}
-		  = "Letztes Fahrtziel: $status->{arr_name}";
+		$og_data{description} = $tw_data{description} = q{};
 	}
 
-	if ($journey) {
-		if ( not $user->{public_level} & 0x04 ) {
-			delete $journey->{user_data}{comment};
-		}
-		my $map_data = $self->journeys_to_map_data(
-			journeys       => [$journey],
-			include_manual => 1,
-		);
-		$self->render(
-			'journey',
-			error     => undef,
-			with_map  => 1,
-			readonly  => 1,
-			journey   => $journey,
-			twitter   => \%tw_data,
-			opengraph => \%og_data,
-			%{$map_data},
-		);
-	}
-	else {
-		$self->render(
-			'user_status',
-			name         => $name,
-			public_level => $user->{public_level},
-			journey      => $status,
-			twitter      => \%tw_data,
-			opengraph    => \%og_data,
-		);
-	}
+	$self->render(
+		'user_status',
+		name               => $name,
+		public_level       => $user->{public_level},
+		journey            => $status,
+		journey_visibility => $visibility,
+		twitter            => \%tw_data,
+		opengraph          => \%og_data,
+	);
 }
 
 sub public_profile {
@@ -578,48 +589,77 @@ sub public_profile {
 	my $name = $self->stash('name');
 	my $user = $self->users->get_privacy_by_name( name => $name );
 
-	if (
-		$user
-		and (
-			$user->{public_level} & 0x22
-			or (    $user->{public_level} & 0x11
-				and $self->is_user_authenticated )
-		)
-	  )
-	{
-		my $status = $self->get_user_status( $user->{id} );
-		my @journeys;
-		if ( $user->{public_level} & 0x40 ) {
-			@journeys = $self->journeys->get(
-				uid           => $user->{id},
-				limit         => 10,
-				with_datetime => 1
-			);
-		}
-		else {
-			my $now       = DateTime->now( time_zone => 'Europe/Berlin' );
-			my $month_ago = $now->clone->subtract( weeks => 4 );
-			@journeys = $self->journeys->get(
-				uid           => $user->{id},
-				limit         => 10,
-				with_datetime => 1,
-				after         => $month_ago,
-				before        => $now
-			);
-		}
-		$self->render(
-			'profile',
-			name         => $name,
-			uid          => $user->{id},
-			public_level => $user->{public_level},
-			journey      => $status,
-			journeys     => [@journeys],
-			version      => $self->app->config->{version} // 'UNKNOWN',
-		);
-	}
-	else {
+	if ( not $user ) {
 		$self->render('not_found');
 	}
+
+	my $status = $self->get_user_status( $user->{id} );
+	my $visibility;
+	if ( $status->{checked_in} ) {
+		$visibility
+		  = $self->compute_effective_visibility(
+			$user->{default_visibility_str},
+			$status->{visibility_str} );
+		if (
+			not(
+				$visibility eq 'public'
+				or (    $visibility eq 'unlisted'
+					and $self->status_token_ok($status) )
+				or (
+					$visibility eq 'travelynx'
+					and (  $self->is_user_authenticated
+						or $self->status_token_ok($status) )
+				)
+			)
+		  )
+		{
+			$status->{checked_in} = 0;
+		}
+	}
+
+	my %opt = (
+		uid           => $user->{id},
+		limit         => 10,
+		with_datetime => 1
+	);
+
+	if ( not $user->{past_all} ) {
+		my $now = DateTime->now( time_zone => 'Europe/Berlin' );
+		$opt{before} = DateTime->now( time_zone => 'Europe/Berlin' );
+		$opt{after}  = $now->clone->subtract( weeks => 4 );
+	}
+
+	if (
+		$user->{default_visibility_str} eq 'public'
+		or (    $user->{default_visibility_str} eq 'travelynx'
+			and $self->is_user_authenticated )
+	  )
+	{
+		$opt{with_default_visibility} = 1;
+	}
+	else {
+		$opt{with_default_visibility} = 0;
+	}
+
+	if ( $self->is_user_authenticated ) {
+		$opt{min_visibility} = 'travelynx';
+	}
+	else {
+		$opt{min_visibility} = 'public';
+	}
+
+	my @journeys = $self->journeys->get(%opt);
+
+	$self->render(
+		'profile',
+		name               => $name,
+		uid                => $user->{id},
+		public_level       => $user->{public_level},
+		journey            => $status,
+		journey_visibility => $visibility,
+		journeys           => [@journeys],
+		version            => $self->app->config->{version} // 'UNKNOWN',
+	);
 }
 
 sub public_journey_details {
@@ -630,7 +670,7 @@ sub public_journey_details {
 
 	$self->param( journey_id => $journey_id );
 
-	if ( not( $journey_id and $journey_id =~ m{ ^ \d+ $ }x ) ) {
+	if ( not( $user and $journey_id and $journey_id =~ m{ ^ \d+ $ }x ) ) {
 		$self->render(
 			'journey',
 			status  => 404,
@@ -640,98 +680,112 @@ sub public_journey_details {
 		return;
 	}
 
+	my $journey = $self->journeys->get_single(
+		uid             => $user->{id},
+		journey_id      => $journey_id,
+		verbose         => 1,
+		with_datetime   => 1,
+		with_polyline   => 1,
+		with_visibility => 1,
+	);
+
+	if ( not $journey ) {
+		$self->render(
+			'journey',
+			status  => 404,
+			error   => 'notfound',
+			journey => {}
+		);
+		return;
+	}
+
+	my $visibility
+	  = $self->compute_effective_visibility( $user->{default_visibility_str},
+		$journey->{visibility_str} );
+
 	if (
-		$user
-		and (
-			$user->{public_level} & 0x20
-			or (    $user->{public_level} & 0x10
-				and $self->is_user_authenticated )
+		not(
+			$visibility eq 'public'
+			or (    $visibility eq 'unlisted'
+				and $self->status_token_ok($journey) )
+			or (
+				$visibility eq 'travelynx'
+				and (  $self->is_user_authenticated
+					or $self->status_token_ok($journey) )
+			)
 		)
 	  )
 	{
-		my $journey = $self->journeys->get_single(
-			uid           => $user->{id},
-			journey_id    => $journey_id,
-			verbose       => 1,
-			with_datetime => 1,
-			with_polyline => 1,
+		$self->render(
+			'journey',
+			status  => 404,
+			error   => 'notfound',
+			journey => {}
 		);
-
-		if ( not( $user->{public_level} & 0x40 ) ) {
-			my $month_ago = DateTime->now( time_zone => 'Europe/Berlin' )
-			  ->subtract( weeks => 4 )->epoch;
-			if ( $journey and $journey->{rt_dep_ts} < $month_ago ) {
-				$journey = undef;
-			}
-		}
-
-		if ($journey) {
-			my $title = sprintf( 'Fahrt von %s nach %s am %s',
-				$journey->{from_name}, $journey->{to_name},
-				$journey->{rt_arrival}->strftime('%d.%m.%Y') );
-			my $delay = 'pünktlich ';
-			if ( $journey->{rt_arrival} != $journey->{sched_arrival} ) {
-				$delay = sprintf(
-					'mit %+d ',
-					(
-						    $journey->{rt_arrival}->epoch
-						  - $journey->{sched_arrival}->epoch
-					) / 60
-				);
-			}
-			my $description = sprintf( 'Ankunft mit %s %s %s',
-				$journey->{type}, $journey->{no},
-				$journey->{rt_arrival}->strftime('um %H:%M') );
-			if ( $journey->{km_route} > 0.1 ) {
-				$description = sprintf( '%.0f km mit %s %s – Ankunft %sum %s',
-					$journey->{km_route}, $journey->{type}, $journey->{no},
-					$delay, $journey->{rt_arrival}->strftime('%H:%M') );
-			}
-			my %tw_data = (
-				card  => 'summary',
-				site  => '@derfnull',
-				image => $self->url_for('/static/icons/icon-512x512.png')
-				  ->to_abs->scheme('https'),
-				title       => $title,
-				description => $description,
-			);
-			my %og_data = (
-				type        => 'article',
-				image       => $tw_data{image},
-				url         => $self->url_for->to_abs,
-				site_name   => 'travelynx',
-				title       => $title,
-				description => $description,
-			);
-
-			my $map_data = $self->journeys_to_map_data(
-				journeys       => [$journey],
-				include_manual => 1,
-			);
-			if ( $journey->{user_data}{comment}
-				and not $user->{public_level} & 0x04 )
-			{
-				delete $journey->{user_data}{comment};
-			}
-			$self->render(
-				'journey',
-				error     => undef,
-				journey   => $journey,
-				with_map  => 1,
-				username  => $name,
-				readonly  => 1,
-				twitter   => \%tw_data,
-				opengraph => \%og_data,
-				%{$map_data},
-			);
-		}
-		else {
-			$self->render('not_found');
-		}
+		return;
 	}
-	else {
-		$self->render('not_found');
+
+	# TODO re-add age check unless status_token_ok (helper function?)
+
+	my $title = sprintf( 'Fahrt von %s nach %s am %s',
+		$journey->{from_name}, $journey->{to_name},
+		$journey->{rt_arrival}->strftime('%d.%m.%Y') );
+	my $delay = 'pünktlich ';
+	if ( $journey->{rt_arrival} != $journey->{sched_arrival} ) {
+		$delay = sprintf(
+			'mit %+d ',
+			(
+				    $journey->{rt_arrival}->epoch
+				  - $journey->{sched_arrival}->epoch
+			) / 60
+		);
 	}
+	my $description = sprintf( 'Ankunft mit %s %s %s',
+		$journey->{type}, $journey->{no},
+		$journey->{rt_arrival}->strftime('um %H:%M') );
+	if ( $journey->{km_route} > 0.1 ) {
+		$description = sprintf( '%.0f km mit %s %s – Ankunft %sum %s',
+			$journey->{km_route}, $journey->{type}, $journey->{no},
+			$delay, $journey->{rt_arrival}->strftime('%H:%M') );
+	}
+	my %tw_data = (
+		card  => 'summary',
+		site  => '@derfnull',
+		image => $self->url_for('/static/icons/icon-512x512.png')
+		  ->to_abs->scheme('https'),
+		title       => $title,
+		description => $description,
+	);
+	my %og_data = (
+		type        => 'article',
+		image       => $tw_data{image},
+		url         => $self->url_for->to_abs,
+		site_name   => 'travelynx',
+		title       => $title,
+		description => $description,
+	);
+
+	my $map_data = $self->journeys_to_map_data(
+		journeys       => [$journey],
+		include_manual => 1,
+	);
+	if ( $journey->{user_data}{comment}
+		and not $user->{public_level} & 0x04 )
+	{
+		delete $journey->{user_data}{comment};
+	}
+	$self->render(
+		'journey',
+		error              => undef,
+		journey            => $journey,
+		with_map           => 1,
+		username           => $name,
+		readonly           => 1,
+		twitter            => \%tw_data,
+		opengraph          => \%og_data,
+		journey_visibility => $visibility,
+		%{$map_data},
+	);
 }
 
 sub public_status_card {
@@ -743,26 +797,42 @@ sub public_status_card {
 
 	delete $self->stash->{layout};
 
-	if (
-		$user
-		and (
-			$user->{public_level} & 0x02
-			or (    $user->{public_level} & 0x01
-				and $self->is_user_authenticated )
-		)
-	  )
-	{
-		my $status = $self->get_user_status( $user->{id} );
-		$self->render(
-			'_public_status_card',
-			name         => $name,
-			public_level => $user->{public_level},
-			journey      => $status
-		);
-	}
-	else {
+	if ( not $user ) {
 		$self->render('not_found');
+		return;
 	}
+
+	my $status = $self->get_user_status( $user->{id} );
+	my $visibility;
+	if ( $status->{checked_in} ) {
+		$visibility
+		  = $self->compute_effective_visibility(
+			$user->{default_visibility_str},
+			$status->{visibility_str} );
+		if (
+			not(
+				$visibility eq 'public'
+				or (    $visibility eq 'unlisted'
+					and $self->status_token_ok($status) )
+				or (
+					$visibility eq 'travelynx'
+					and (  $self->is_user_authenticated
+						or $self->status_token_ok($status) )
+				)
+			)
+		  )
+		{
+			$status->{checked_in} = 0;
+		}
+	}
+
+	$self->render(
+		'_public_status_card',
+		name               => $name,
+		public_level       => $user->{public_level},
+		journey            => $status,
+		journey_visibility => $visibility,
+	);
 }
 
 sub status_card {
@@ -772,6 +842,10 @@ sub status_card {
 	delete $self->stash->{layout};
 
 	if ( $status->{checked_in} ) {
+		my $journey_visibility
+		  = $self->compute_effective_visibility(
+			$self->current_user->{default_visibility_str},
+			$status->{visibility_str} );
 		if ( defined $status->{arrival_countdown}
 			and $status->{arrival_countdown} < ( 40 * 60 ) )
 		{
@@ -781,19 +855,28 @@ sub status_card {
 					my ( $connecting_trains, $transit_fyi ) = @_;
 					$self->render(
 						'_checked_in',
-						journey     => $status,
-						connections => $connecting_trains,
-						transit_fyi => $transit_fyi
+						journey            => $status,
+						journey_visibility => $journey_visibility,
+						connections        => $connecting_trains,
+						transit_fyi        => $transit_fyi
 					);
 				}
 			)->catch(
 				sub {
-					$self->render( '_checked_in', journey => $status );
+					$self->render(
+						'_checked_in',
+						journey            => $status,
+						journey_visibility => $journey_visibility,
+					);
 				}
 			)->wait;
 			return;
 		}
-		$self->render( '_checked_in', journey => $status );
+		$self->render(
+			'_checked_in',
+			journey            => $status,
+			journey_visibility => $journey_visibility,
+		);
 	}
 	elsif ( $status->{cancellation} ) {
 		$self->render_later;
@@ -1693,11 +1776,12 @@ sub journey_details {
 	}
 
 	my $journey = $self->journeys->get_single(
-		uid           => $uid,
-		journey_id    => $journey_id,
-		verbose       => 1,
-		with_datetime => 1,
-		with_polyline => 1,
+		uid             => $uid,
+		journey_id      => $journey_id,
+		verbose         => 1,
+		with_datetime   => 1,
+		with_polyline   => 1,
+		with_visibility => 1,
 	);
 
 	if ($journey) {
@@ -1705,15 +1789,18 @@ sub journey_details {
 			journeys       => [$journey],
 			include_manual => 1,
 		);
+		my $with_share;
 		my $share_text;
-		my $with_share = $user->{is_public} & 0x40 ? 1 : 0;
-		if ( not $with_share and $user->{is_public} & 0x20 ) {
-			my $month_ago = DateTime->now( time_zone => 'Europe/Berlin' )
-			  ->subtract( weeks => 4 )->epoch;
-			$with_share = $journey->{rt_dep_ts} > $month_ago ? 1 : 0;
-		}
 
-		if ($with_share) {
+		my $visibility
+		  = $self->compute_effective_visibility(
+			$user->{default_visibility_str},
+			$journey->{visibility_str} );
+
+		if (   $visibility eq 'public'
+			or $visibility eq 'travelynx'
+			or $visibility eq 'unlisted' )
+		{
 			my $delay = 'pünktlich ';
 			if ( $journey->{rt_arrival} != $journey->{sched_arrival} ) {
 				$delay = sprintf(
@@ -1724,6 +1811,7 @@ sub journey_details {
 					) / 60
 				);
 			}
+			$with_share = 1;
 			$share_text
 			  = $journey->{km_route}
 			  ? sprintf( '%.0f km', $journey->{km_route} )
@@ -1733,13 +1821,15 @@ sub journey_details {
 				$delay,           $journey->{rt_arrival}->strftime('%H:%M') );
 		}
 
+		# TODO add token if visibility != public
 		$self->render(
 			'journey',
-			error      => undef,
-			journey    => $journey,
-			with_map   => 1,
-			with_share => $with_share,
-			share_text => $share_text,
+			error              => undef,
+			journey            => $journey,
+			journey_visibility => $visibility,
+			with_map           => 1,
+			with_share         => $with_share,
+			share_text         => $share_text,
 			%{$map_data},
 		);
 	}
@@ -1752,6 +1842,112 @@ sub journey_details {
 		);
 	}
 
+}
+
+sub visibility_form {
+	my ($self)     = @_;
+	my $dep_ts     = $self->param('dep_ts');
+	my $journey_id = $self->param('id');
+	my $action     = $self->param('action') // 'none';
+	my $user       = $self->current_user;
+	my $user_level = $user->{default_visibility_str};
+	my $uid        = $user->{id};
+	my $status     = $self->get_user_status;
+	my $visibility = $status->{visibility};
+	my $journey;
+
+	if ($journey_id) {
+		$journey = $self->journeys->get_single(
+			uid             => $uid,
+			journey_id      => $journey_id,
+			with_datetime   => 1,
+			with_visibility => 1,
+		);
+		$visibility = $journey->{visibility};
+	}
+
+	if ( $action eq 'save' ) {
+		if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
+			$self->render(
+				'edit_visibility',
+				error      => 'csrf',
+				user_level => $user_level,
+				journey    => {}
+			);
+		}
+		elsif ( $dep_ts and $dep_ts != $status->{sched_departure}->epoch ) {
+
+			# TODO find and update appropriate past journey (if it exists)
+			$self->render(
+				'edit_visibility',
+				error      => 'old',
+				user_level => $user_level,
+				journey    => {}
+			);
+		}
+		else {
+			$self->app->log->debug("set visibility");
+			if ($dep_ts) {
+				$self->in_transit->update_visibility(
+					uid        => $uid,
+					visibility => $self->param('status_level'),
+				);
+				$self->redirect_to('/');
+			}
+			elsif ($journey_id) {
+				$self->journeys->update_visibility(
+					uid        => $uid,
+					id         => $journey_id,
+					visibility => $self->param('status_level'),
+				);
+				$self->redirect_to( '/journey/' . $journey_id );
+			}
+		}
+		return;
+	}
+
+	# todo use visibility_str
+	if ( not defined $visibility ) {
+		$self->param( status_level => 'default' );
+	}
+	elsif ( $visibility == 100 ) {
+		$self->param( status_level => 'public' );
+	}
+	elsif ( $visibility == 80 ) {
+		$self->param( status_level => 'travelynx' );
+	}
+	elsif ( $visibility == 30 ) {
+		$self->param( status_level => 'unlisted' );
+	}
+	elsif ( $visibility == 10 ) {
+		$self->param( status_level => 'private' );
+	}
+
+	if ($journey_id) {
+		$self->render(
+			'edit_visibility',
+			error      => undef,
+			user_level => $user_level,
+			journey    => $journey
+		);
+	}
+	elsif ( $status->{checked_in} ) {
+		$self->param( dep_ts => $status->{sched_departure}->epoch );
+		$self->render(
+			'edit_visibility',
+			error      => undef,
+			user_level => $user_level,
+			journey    => $status
+		);
+	}
+	else {
+		$self->render(
+			'edit_visibility',
+			error      => 'notfound',
+			user_level => $user_level,
+			journey    => {}
+		);
+	}
 }
 
 sub comment_form {

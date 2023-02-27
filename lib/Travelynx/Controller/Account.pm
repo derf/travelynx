@@ -9,6 +9,22 @@ use Crypt::Eksblowfish::Bcrypt qw(bcrypt en_base64);
 use JSON;
 use UUID::Tiny qw(:std);
 
+my %visibility_itoa = (
+	100 => 'public',
+	80  => 'travelynx',
+	60  => 'followers',
+	30  => 'unlisted',
+	10  => 'private',
+);
+
+my %visibility_atoi = (
+	public    => 100,
+	travelynx => 80,
+	followers => 60,
+	unlisted  => 30,
+	private   => 10,
+);
+
 # Internal Helpers
 
 sub hash_password {
@@ -438,50 +454,30 @@ sub privacy {
 	my $public_level = $user->{is_public};
 
 	if ( $self->param('action') and $self->param('action') eq 'save' ) {
-		if ( $self->param('status_level') eq 'intern' ) {
-			$public_level |= 0x01;
-			$public_level &= ~0x02;
-		}
-		elsif ( $self->param('status_level') eq 'extern' ) {
-			$public_level |= 0x02;
-			$public_level &= ~0x01;
-		}
-		else {
-			$public_level &= ~0x03;
+		my %opt;
+		my $default_visibility
+		  = $visibility_atoi{ $self->param('status_level') };
+		if ( defined $default_visibility ) {
+			$opt{default_visibility} = $default_visibility;
 		}
 
-		# public comment with non-public status does not make sense
-		if (    $self->param('public_comment')
-			and $self->param('status_level') ne 'private' )
-		{
-			$public_level |= 0x04;
-		}
-		else {
-			$public_level &= ~0x04;
-		}
+		$opt{comments_visible} = $self->param('public_comment') ? 1 : 0;
+
+		$opt{past_all} = $self->param('history_age') eq 'infinite' ? 1 : 0;
 
 		if ( $self->param('history_level') eq 'intern' ) {
-			$public_level |= 0x10;
-			$public_level &= ~0x20;
+			$opt{past_visible} = 1;
 		}
 		elsif ( $self->param('history_level') eq 'extern' ) {
-			$public_level |= 0x20;
-			$public_level &= ~0x10;
+			$opt{past_visible} = 2;
 		}
 		else {
-			$public_level &= ~0x30;
-		}
-
-		if ( $self->param('history_age') eq 'infinite' ) {
-			$public_level |= 0x40;
-		}
-		else {
-			$public_level &= ~0x40;
+			$opt{past_visible} = 0;
 		}
 
 		$self->users->set_privacy(
-			uid   => $user->{id},
-			level => $public_level
+			uid => $user->{id},
+			%opt
 		);
 
 		$self->flash( success => 'privacy' );
@@ -489,18 +485,14 @@ sub privacy {
 	}
 	else {
 		$self->param(
-			  status_level => $public_level & 0x01 ? 'intern'
-			: $public_level & 0x02 ? 'extern'
-			:                        'private'
-		);
-		$self->param( public_comment => $public_level & 0x04 ? 1 : 0 );
+			status_level => $visibility_itoa{ $user->{default_visibility} } );
+		$self->param( public_comment => $user->{comments_visible} );
 		$self->param(
-			  history_level => $public_level & 0x10 ? 'intern'
-			: $public_level & 0x20 ? 'extern'
-			:                        'private'
+			  history_level => $user->{past_visible} & 0x01 ? 'intern'
+			: $user->{past_visible} & 0x02 ? 'extern'
+			:                                'private'
 		);
-		$self->param(
-			history_age => $public_level & 0x40 ? 'infinite' : 'month' );
+		$self->param( history_age => $user->{past_all} ? 'infinite' : 'month' );
 		$self->render( 'privacy', name => $user->{name} );
 	}
 }

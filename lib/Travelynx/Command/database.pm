@@ -1312,6 +1312,120 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v32 -> v33
+	# add optional per-status visibility that overrides global visibility
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				alter table journeys add column visibility smallint;
+				alter table in_transit add column visibility smallint;
+				drop view journeys_str;
+				drop view in_transit_str;
+				create view journeys_str as select
+					journeys.id as journey_id, user_id,
+					train_type, train_line, train_no, train_id,
+					extract(epoch from checkin_time) as checkin_ts,
+					extract(epoch from sched_departure) as sched_dep_ts,
+					extract(epoch from real_departure) as real_dep_ts,
+					checkin_station_id as dep_eva,
+					dep_station.ds100 as dep_ds100,
+					dep_station.name as dep_name,
+					dep_station.lat as dep_lat,
+					dep_station.lon as dep_lon,
+					extract(epoch from checkout_time) as checkout_ts,
+					extract(epoch from sched_arrival) as sched_arr_ts,
+					extract(epoch from real_arrival) as real_arr_ts,
+					checkout_station_id as arr_eva,
+					arr_station.ds100 as arr_ds100,
+					arr_station.name as arr_name,
+					arr_station.lat as arr_lat,
+					arr_station.lon as arr_lon,
+					polylines.polyline as polyline,
+					visibility,
+					cancelled, edited, route, messages, user_data,
+					dep_platform, arr_platform
+					from journeys
+					left join polylines on polylines.id = polyline_id
+					left join stations as dep_station on checkin_station_id = dep_station.eva
+					left join stations as arr_station on checkout_station_id = arr_station.eva
+					;
+				create view in_transit_str as select
+					user_id,
+					train_type, train_line, train_no, train_id,
+					extract(epoch from checkin_time) as checkin_ts,
+					extract(epoch from sched_departure) as sched_dep_ts,
+					extract(epoch from real_departure) as real_dep_ts,
+					checkin_station_id as dep_eva,
+					dep_station.ds100 as dep_ds100,
+					dep_station.name as dep_name,
+					dep_station.lat as dep_lat,
+					dep_station.lon as dep_lon,
+					extract(epoch from checkout_time) as checkout_ts,
+					extract(epoch from sched_arrival) as sched_arr_ts,
+					extract(epoch from real_arrival) as real_arr_ts,
+					checkout_station_id as arr_eva,
+					arr_station.ds100 as arr_ds100,
+					arr_station.name as arr_name,
+					arr_station.lat as arr_lat,
+					arr_station.lon as arr_lon,
+					polylines.polyline as polyline,
+					visibility,
+					cancelled, route, messages, user_data,
+					dep_platform, arr_platform, data
+					from in_transit
+					left join polylines on polylines.id = polyline_id
+					left join stations as dep_station on checkin_station_id = dep_station.eva
+					left join stations as arr_station on checkout_station_id = arr_station.eva
+					;
+			}
+		);
+		my $res = $db->select( 'users', [ 'id', 'public_level' ] );
+		while ( my $row = $res->hash ) {
+			my $old_level = $row->{public_level};
+			my $new_level = 0;
+			if ( $old_level & 0x01 ) {
+
+				# status: account required
+				$new_level = 80;
+			}
+			if ( $old_level & 0x02 ) {
+
+				# status: public
+				$new_level = 100;
+			}
+			if ( $old_level & 0x04 ) {
+
+				# comment public
+				$new_level |= 0x80;
+			}
+			if ( $old_level & 0x10 ) {
+
+				# past: account required
+				$new_level |= 0x100;
+			}
+			if ( $old_level & 0x20 ) {
+
+				# past: public
+				$new_level |= 0x200;
+			}
+			if ( $old_level & 0x40 ) {
+
+				# past: infinite (default is 4 weeks)
+				$new_level |= 0x400;
+			}
+			my $r = $db->update(
+				'users',
+				{ public_level => $new_level },
+				{ id           => $row->{id} }
+			)->rows;
+			if ( $r != 1 ) {
+				die("oh no");
+			}
+		}
+		$db->update( 'schema_version', { version => 33 } );
+	},
 );
 
 sub sync_stations {

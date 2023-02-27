@@ -1,5 +1,5 @@
 <div class="row">
 	<div class="col s12 publicstatuscol" data-user="<%= $name %>">
-		%= include '_public_status_card', name => $name, public_level => $public_level, journey => $journey
+		%= include '_public_status_card', name => $name, public_level => $public_level, journey => $journey, journey_visibility => $journey_visibility
 	</div>
 </div>
