@@ -1,0 +1,122 @@
+<h1>Sichtbarkeit ändern</h1>
+% if ($error) {
+	<div class="row">
+		<div class="col s12">
+			<div class="card caution-color">
+				<div class="card-content white-text">
+					<span class="card-title">Fehler</span>
+					<p><%= $error // 'Du bist gerade nicht eingecheckt' %></p>
+				</div>
+			</div>
+		</div>
+	</div>
+% }
+% else {
+	%= form_for '/journey/visibility' => (method => 'POST') => begin
+		%= csrf_field
+		%= hidden_field 'dep_ts' => param('dep_ts')
+		%= hidden_field 'id' => param('id')
+		<div class="row">
+			<div class="col s12">
+				<p>
+					Fahrt mit
+					<b><%= $journey->{train_type} // $journey->{type} %> <%= $journey->{train_no} // $journey->{no} %></b>
+					von
+					<b><%= $journey->{dep_name} // $journey->{from_name} %></b>
+					nach
+					<b><%= $journey->{arr_name} // $journey->{to_name} // 'irgendwo' %></b>
+					am
+					<b><%= $journey->{sched_departure}->strftime('%d.%m.%Y') %></b>
+				</p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="input-field col s12">
+				<div>
+					<label>
+						%= radio_button status_level => 'default'
+						<span>Einstellung aus dem Profil verwenden: <strong>
+						% if ($user_level eq 'public') {
+							Die Fahrt ist öffentlich sichtbar.
+						% }
+						% elsif ($user_level eq 'travelynx') {
+							Die Fahrt ist nur für auf dieser Seite angemeldete Personen oder mit Link sichtbar.
+						% }
+						% elsif ($user_level eq 'unlisted') {
+							Die Fahrt ist nur mit Link sichtbar.
+						% }
+						% else {
+							Die Fahrt ist nur für dich sichtbar.
+						% }
+						</strong> Änderungen der Profil-Einstellung werden auch nachträglich für diese Fahrt wirksam.</span>
+					</label>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="input-field col s12">
+				<div>
+					<label>
+						%= radio_button status_level => 'public'
+						<span><i class="material-icons left"><%= visibility_icon('public') %></i>Öffentlich: Im Profil verlinkt und beliebig zugänglich.</span>
+					</label>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="input-field col s12">
+				<div>
+					<label>
+						%= radio_button status_level => 'travelynx'
+						<span><i class="material-icons left"><%= visibility_icon('travelynx') %></i>Lokal: Nur für<!-- Personen, die dir folgen oder auf dieser Seite angemeldet sind --> auf dieser Seite angemeldete Acounts sowie nicht angemeldete Personen, denen du mithilfe der Teilen-Funktion einen Link schickst.</span>
+					</label>
+				</div>
+			</div>
+		</div>
+		<!--
+		<div class="row">
+			<div class="input-field col s12">
+				<div>
+					<label>
+						%= radio_button status_level => 'fedi'
+						<span><i class="material-icons left"><%= visibility_icon('fedi') %></i>Fedi: nur für Personen, die deinem Account folgen.</span>
+					</label>
+				</div>
+			</div>
+		</div>
+		-->
+		<div class="row">
+			<div class="input-field col s12">
+				<div>
+					<label>
+						%= radio_button status_level => 'unlisted'
+						<span><i class="material-icons left"><%= visibility_icon('unlisted') %></i>Fast privat: Nur für Personen zugänglich, denen du mithilfe der Teilen-Funktion einen Link schickst.</span>
+					</label>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="input-field col s12">
+				<div>
+					<label>
+						%= radio_button status_level => 'private'
+						<span><i class="material-icons left"><%= visibility_icon('private') %></i>Privat: nur für dich sichtbar.</span>
+					</label>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col s6 m6 l6 center-align">
+				<a href="/" class="waves-effect waves-light btn">
+					Abbrechen
+				</a>
+			</div>
+			<div class="col s6 m6 l6 center-align">
+				<button class="btn waves-effect waves-light" type="submit" name="action" value="save">
+					Speichern
+					<i class="material-icons right">send</i>
+				</button>
+			</div>
+		</div>
+	%= end
+% }
