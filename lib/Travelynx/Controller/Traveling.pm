@@ -479,6 +479,26 @@ sub status_token_ok {
 	return;
 }
 
+sub journey_token_ok {
+	my ( $self, $journey, $ts2_ext ) = @_;
+	my $token = $self->param('token') // q{};
+
+	my ( $eva, $ts, $ts2 ) = split( qr{-}, $token );
+	if ( not $ts ) {
+		return;
+	}
+
+	$ts2 //= $ts2_ext;
+
+	if (    $eva == $journey->{from_eva}
+		and $ts == $journey->{checkin_ts}
+		and $ts2 == $journey->{sched_dep_ts} )
+	{
+		return 1;
+	}
+	return;
+}
+
 sub user_status {
 	my ($self) = @_;
 
@@ -507,6 +527,8 @@ sub user_status {
 		  )
 		{
 			if ( $candidate->{sched_dep_ts} eq $ts ) {
+
+				# TODO pass token
 				$self->redirect_to("/p/${name}/j/$candidate->{id}");
 				return;
 			}
@@ -707,11 +729,11 @@ sub public_journey_details {
 		not(
 			$visibility eq 'public'
 			or (    $visibility eq 'unlisted'
-				and $self->status_token_ok($journey) )
+				and $self->journey_token_ok($journey) )
 			or (
 				$visibility eq 'travelynx'
 				and (  $self->is_user_authenticated
-					or $self->status_token_ok($journey) )
+					or $self->journey_token_ok($journey) )
 			)
 		)
 	  )

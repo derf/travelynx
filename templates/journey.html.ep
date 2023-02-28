@@ -246,7 +246,12 @@
 				</div>
 				<div class="col s12 m6 l6 center-align">
 					<a class="btn waves-effect waves-light action-share"
-						data-url="<%= url_for('public_journey', name => current_user()->{name}, id => $journey->{id} )->to_abs->scheme('https'); %>"
+						% if ($journey_visibility eq 'public') {
+							data-url="<%= url_for('public_journey', name => current_user()->{name}, id => $journey->{id} )->to_abs->scheme('https'); %>"
+						% }
+						% else {
+							data-url="<%= url_for('public_journey', name => current_user()->{name}, id => $journey->{id} )->to_abs->scheme('https'); %>?token=<%= $journey->{from_eva} %>-<%= $journey->{checkin_ts} %>-<%= $journey->{sched_dep_ts} %>"
+						% }
 						data-text="<%= stash('share_text') %>"
 						>
 						<i class="material-icons left" aria-hidden="true">share</i> Teilen
