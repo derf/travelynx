@@ -437,7 +437,7 @@ sub add {
 		{
 			name          => $user_name,
 			status        => 0,
-			public_level  => 0,
+			public_level  => $visibility_atoi{private},
 			email         => $email,
 			password      => $password,
 			registered_at => $now,
