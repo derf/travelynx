@@ -545,6 +545,10 @@ sub get {
 		$order{limit} = $opt{limit};
 	}
 
+	if ( $opt{sched_dep_ts} ) {
+		$where{sched_dep_ts} = $opt{sched_dep_ts};
+	}
+
 	if ( $opt{journey_id} ) {
 		$where{journey_id} = $opt{journey_id};
 		delete $where{cancelled};
