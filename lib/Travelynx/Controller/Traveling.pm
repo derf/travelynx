@@ -521,17 +521,21 @@ sub user_status {
 	{
 		for my $candidate (
 			$self->journeys->get(
-				uid   => $user->{id},
-				limit => 20,
+				uid          => $user->{id},
+				sched_dep_ts => $ts,
+				limit        => 1,
 			)
 		  )
 		{
-			if ( $candidate->{sched_dep_ts} eq $ts ) {
-
-				# TODO pass token
-				$self->redirect_to("/p/${name}/j/$candidate->{id}");
-				return;
+			my $token = $self->param('token');
+			if ($token) {
+				$self->redirect_to(
+					"/p/${name}/j/$candidate->{id}?token=${token}-${ts}");
 			}
+			else {
+				$self->redirect_to("/p/${name}/j/$candidate->{id}");
+			}
+			return;
 		}
 		$self->render('not_found');
 		return;
