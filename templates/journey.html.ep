@@ -38,13 +38,13 @@
 				% }
 				am
 				<b><%= $journey->{sched_departure}->strftime('%d.%m.%Y') %></b>
-				% if ($journey_visibility) {
+				% if (my $v = stash('journey_visibility')) {
 					% if (stash('username')) {
-						<i class="material-icons right"><%= visibility_icon($journey_visibility) %></i>
+						<i class="material-icons right"><%= visibility_icon($v) %></i>
 					% }
 					% else {
 						<a class="right" href="/journey/visibility?id=<%= $journey->{id} %>">
-							<i class="material-icons"><%= visibility_icon($journey_visibility) %></i>
+							<i class="material-icons"><%= visibility_icon($v) %></i>
 						</a>
 					% }
 				% }
@@ -130,8 +130,8 @@
 							<%= numify_skipped_stations($journey->{skip_route}) %><br/>
 						% }
 						% if ($journey->{km_route} > 0.1) {
-							ca. <%= sprintf('%.f', $journey->{km_route}) %> km
-							(Luftlinie: <%= sprintf('%.f', $journey->{km_beeline}) %> km)
+							ca. <%= sprintf('%.1f', $journey->{km_route}) %> km
+							(Luftlinie: <%= sprintf('%.1f', $journey->{km_beeline}) %> km)
 						% }
 						% else {
 							?
@@ -246,7 +246,7 @@
 				</div>
 				<div class="col s12 m6 l6 center-align">
 					<a class="btn waves-effect waves-light action-share"
-						% if ($journey_visibility eq 'public') {
+						% if (stash('journey_visibility') eq 'public') {
 							data-url="<%= url_for('public_journey', name => current_user()->{name}, id => $journey->{id} )->to_abs->scheme('https'); %>"
 						% }
 						% else {
