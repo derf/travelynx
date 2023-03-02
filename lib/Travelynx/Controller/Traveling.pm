@@ -519,21 +519,41 @@ sub user_status {
 			or $status->{sched_departure}->epoch != $ts )
 	  )
 	{
-		for my $candidate (
+		for my $journey (
 			$self->journeys->get(
-				uid          => $user->{id},
-				sched_dep_ts => $ts,
-				limit        => 1,
+				uid             => $user->{id},
+				sched_dep_ts    => $ts,
+				limit           => 1,
+				with_visibility => 1,
 			)
 		  )
 		{
 			my $token = $self->param('token');
 			if ($token) {
-				$self->redirect_to(
-					"/p/${name}/j/$candidate->{id}?token=${token}-${ts}");
+				my $visibility = $self->compute_effective_visibility(
+					$user->{default_visibility_str},
+					$journey->{visibility_str}
+				);
+				if (
+					$visibility eq 'public'
+					or (    $visibility eq 'unlisted'
+						and $self->journey_token_ok( $journey, $ts ) )
+					or (
+						$visibility eq 'travelynx'
+						and (  $self->is_user_authenticated
+							or $self->journey_token_ok( $journey, $ts ) )
+					)
+				  )
+				{
+					$self->redirect_to(
+						"/p/${name}/j/$journey->{id}?token=${token}-${ts}");
+				}
+				else {
+					$self->render('not_found');
+				}
 			}
 			else {
-				$self->redirect_to("/p/${name}/j/$candidate->{id}");
+				$self->redirect_to("/p/${name}/j/$journey->{id}");
 			}
 			return;
 		}
