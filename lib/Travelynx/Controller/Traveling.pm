@@ -822,7 +822,7 @@ sub public_journey_details {
 		include_manual => 1,
 	);
 	if ( $journey->{user_data}{comment}
-		and not $user->{public_level} & 0x04 )
+		and not $user->{comments_visible} )
 	{
 		delete $journey->{user_data}{comment};
 	}
