@@ -1909,7 +1909,7 @@ sub visibility_form {
 	my $user_level = $user->{default_visibility_str};
 	my $uid        = $user->{id};
 	my $status     = $self->get_user_status;
-	my $visibility = $status->{visibility};
+	my $visibility = $status->{visibility_str};
 	my $journey;
 
 	if ($journey_id) {
@@ -1919,7 +1919,7 @@ sub visibility_form {
 			with_datetime   => 1,
 			with_visibility => 1,
 		);
-		$visibility = $journey->{visibility};
+		$visibility = $journey->{visibility_str};
 	}
 
 	if ( $action eq 'save' ) {
@@ -1932,8 +1932,6 @@ sub visibility_form {
 			);
 		}
 		elsif ( $dep_ts and $dep_ts != $status->{sched_departure}->epoch ) {
-
-			# TODO find and update appropriate past journey (if it exists)
 			$self->render(
 				'edit_visibility',
 				error      => 'old',
@@ -1942,7 +1940,6 @@ sub visibility_form {
 			);
 		}
 		else {
-			$self->app->log->debug("set visibility");
 			if ($dep_ts) {
 				$self->in_transit->update_visibility(
 					uid        => $uid,
@@ -1962,22 +1959,7 @@ sub visibility_form {
 		return;
 	}
 
-	# todo use visibility_str
-	if ( not defined $visibility ) {
-		$self->param( status_level => 'default' );
-	}
-	elsif ( $visibility == 100 ) {
-		$self->param( status_level => 'public' );
-	}
-	elsif ( $visibility == 80 ) {
-		$self->param( status_level => 'travelynx' );
-	}
-	elsif ( $visibility == 30 ) {
-		$self->param( status_level => 'unlisted' );
-	}
-	elsif ( $visibility == 10 ) {
-		$self->param( status_level => 'private' );
-	}
+	$self->param( status_level => $visibility );
 
 	if ($journey_id) {
 		$self->render(
