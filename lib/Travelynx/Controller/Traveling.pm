@@ -635,8 +635,12 @@ sub public_profile {
 	my $name = $self->stash('name');
 	my $user = $self->users->get_privacy_by_name( name => $name );
 
-	if ( not $user ) {
+	if (   not $user
+		or $user->{past_visible} == 0
+		or ( $user->{past_visible} == 1 and not $self->is_user_authenticated ) )
+	{
 		$self->render('not_found');
+		return;
 	}
 
 	my $status = $self->get_user_status( $user->{id} );
