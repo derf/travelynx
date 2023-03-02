@@ -745,18 +745,26 @@ sub public_journey_details {
 		return;
 	}
 
+	my $is_past;
+	if ( not $user->{past_all} ) {
+		my $now = DateTime->now( time_zone => 'Europe/Berlin' );
+		if ( $journey->{sched_dep_ts} < $now->subtract( weeks => 4 )->epoch ) {
+			$is_past = 1;
+		}
+	}
+
 	my $visibility
 	  = $self->compute_effective_visibility( $user->{default_visibility_str},
 		$journey->{visibility_str} );
 
 	if (
 		not(
-			$visibility eq 'public'
+			( $visibility eq 'public' and not $is_past )
 			or (    $visibility eq 'unlisted'
 				and $self->journey_token_ok($journey) )
 			or (
 				$visibility eq 'travelynx'
-				and (  $self->is_user_authenticated
+				and ( ( $self->is_user_authenticated and not $is_past )
 					or $self->journey_token_ok($journey) )
 			)
 		)
@@ -770,8 +778,6 @@ sub public_journey_details {
 		);
 		return;
 	}
-
-	# TODO re-add age check unless status_token_ok (helper function?)
 
 	my $title = sprintf( 'Fahrt von %s nach %s am %s',
 		$journey->{from_name}, $journey->{to_name},
