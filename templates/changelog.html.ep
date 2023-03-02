@@ -2,6 +2,20 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		1.30
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left" aria-label="Neues Feature">add</i>
+			Individuelle Sichtbarkeit für jede Fahrt. Optional können Fahrten
+			und Check-Ins nur mit einem explizit geteilten Link für andere
+			Personen sichtbar sein.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		1.29
 	</div>
 	<div class="col s12 m11 l11">
