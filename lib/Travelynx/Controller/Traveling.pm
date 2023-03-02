@@ -528,32 +528,27 @@ sub user_status {
 			)
 		  )
 		{
-			my $token = $self->param('token');
-			if ($token) {
-				my $visibility = $self->compute_effective_visibility(
-					$user->{default_visibility_str},
-					$journey->{visibility_str}
-				);
-				if (
-					$visibility eq 'public'
-					or (    $visibility eq 'unlisted'
-						and $self->journey_token_ok( $journey, $ts ) )
-					or (
-						$visibility eq 'travelynx'
-						and (  $self->is_user_authenticated
-							or $self->journey_token_ok( $journey, $ts ) )
-					)
-				  )
-				{
-					$self->redirect_to(
-						"/p/${name}/j/$journey->{id}?token=${token}-${ts}");
-				}
-				else {
-					$self->render('not_found');
-				}
+			my $visibility
+			  = $self->compute_effective_visibility(
+				$user->{default_visibility_str},
+				$journey->{visibility_str} );
+			if (
+				$visibility eq 'public'
+				or (    $visibility eq 'unlisted'
+					and $self->journey_token_ok( $journey, $ts ) )
+				or (
+					$visibility eq 'travelynx'
+					and (  $self->is_user_authenticated
+						or $self->journey_token_ok( $journey, $ts ) )
+				)
+			  )
+			{
+				my $token = $self->param('token') // q{};
+				$self->redirect_to(
+					"/p/${name}/j/$journey->{id}?token=${token}-${ts}");
 			}
 			else {
-				$self->redirect_to("/p/${name}/j/$journey->{id}");
+				$self->render('not_found');
 			}
 			return;
 		}
