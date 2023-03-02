@@ -1,22 +1,23 @@
 <h1>Öffentliche Daten</h1>
 <div class="row">
 	<div class="col s12">
-		Hier kannst du auswählen, welche Personengruppen deine Fahrten bei
-		travelynx einsehen können und ob dies auch für vergangene Fahrten
-		gelten soll. Nach dem Einchecken in einen Zug hast du im
-		Checkin-Fenster die Möglichkeit, für die aktuelle Fahrt eine
-		abweichende Sichtbarkeit einzustellen.
+		Hier kannst du auswählen, welche Personengruppen deine Fahrten sowie dein
+		Profil bei travelynx einsehen können. Zusätzlich kannst du die
+		Sichtbarkeit vergangener Fahrten auf die letzten vier Wochen
+		einschränken. Nach dem Einchecken in einen Zug hast du im Checkin-Fenster
+		die Möglichkeit, für die aktuelle Fahrt eine abweichende Sichtbarkeit
+		einzustellen.
 	</div>
 </div>
 %= form_for '/account/privacy' => (method => 'POST') => begin
 %= csrf_field
-<h2>Aktueller Status</h2>
+<h2>Fahrten</h2>
 	<div class="row">
 		<div class="input-field col s12">
 			<div>
 				<label>
 					%= radio_button status_level => 'public'
-					<span><i class="material-icons left"><%= visibility_icon('public') %></i>Öffentlich: Im Profil verlinkt und beliebig zugänglich.</span>
+					<span><i class="material-icons left"><%= visibility_icon('public') %></i>Öffentlich: Im Profil und auf der Statusseite eingebunden und beliebig zugänglich.</span>
 				</label>
 			</div>
 		</div>
@@ -72,9 +73,9 @@
 			wird angegeben, dass du gerade nicht eingecheckt seist.
 		</div>
 	</div>
-<h2>Vergangene Zugfahrten</h2>
+<h2>Profil</h2>
 	<div class="row">
-		<div class="input-field col s12 m6 l6">
+		<div class="input-field col s12">
 			<div>
 			<label>
 				%= radio_button history_level => 'private'
@@ -92,7 +93,19 @@
 			</label>
 			</div>
 		</div>
-		<div class="input-field col s12 m6 l6">
+	</div>
+	<div class="row">
+		<div class="col s12">
+			Diese Einstellung bestimmt die Sichtbarkeit deines Profils unter <a
+			href="/p/<%= $name %>">/p/<%= $name %></a>. Bis zu zehn Fahrten, die
+			über die Standardeinstellung (siehe oben) oder per individueller
+			Einstellung für die aufrufende Person sichtbar sind, werden hier
+			verlinkt.
+		</div>
+	</div>
+<h2>Vergangenheit</h2>
+	<div class="row">
+		<div class="input-field col s12">
 			<div>
 			<label>
 				%= radio_button history_age => 'month'
@@ -108,17 +121,11 @@
 	</div>
 	<div class="row">
 		<div class="col s12">
-			Diese Einstellung bestimmt die Sichtbarkeit deiner vergangenen
-			Zugfahrten mit allen dazu bekannten Details (Abfahrt, Ankunft,
-			Wagenreihung u.a.).  Bis zu zehn deiner Fahrten werden unter <a
-			href="/p/<%= $name %>">/p/<%= $name %></a> aufgelistet und verlinkt,
-			dort nicht eingetragene Fahrten sind jedoch weiterhin über /p/<%=
-			$name %>/j/ID zugänglich. Da die ID (mit Lücken) aufsteigend vergeben
-			wird, sind effektiv alle deiner vergangenen Fahrten (oder alle Fahrten
-			der letzten vier Wochen) öffentlich. Auch hier besteht die
-			Möglichkeit, für einzelne Fahrten eine abweichende Sichtbarkeit
-			einzustellen. Sofern die Sichtbarkeit auf die letzten vier Wochen
-			beschränkt ist, hat dies jedoch Vorrang.
+			Hier kannst du auswählen, ob alle deiner vergangenen Fahrten für
+			Profil und Detailseiten in Frage kommen, oder nur die letzten vier
+			Wochen zugänglich sein sollen. Sofern du sie auf die letzten vier
+			Wochen beschränkst, sind ältere Fahrten nur über einen mit
+			Hilfe des „Teilen“-Knopfs erstellten Links zugänglich.
 		</div>
 	</div>
 <h2>Sonstiges</h2>
