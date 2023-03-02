@@ -1872,7 +1872,6 @@ sub journey_details {
 				$delay,           $journey->{rt_arrival}->strftime('%H:%M') );
 		}
 
-		# TODO add token if visibility != public
 		$self->render(
 			'journey',
 			error              => undef,
