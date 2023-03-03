@@ -1384,7 +1384,9 @@ my @migrations = (
 		my $res = $db->select( 'users', [ 'id', 'public_level' ] );
 		while ( my $row = $res->hash ) {
 			my $old_level = $row->{public_level};
-			my $new_level = 0;
+
+			# status default: unlisted
+			my $new_level = 30;
 			if ( $old_level & 0x01 ) {
 
 				# status: account required
