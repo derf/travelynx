@@ -471,7 +471,7 @@ sub status_token_ok {
 	$ts2 //= $ts2_ext;
 
 	if (    $eva == $status->{dep_eva}
-		and $ts == $status->{timestamp}->epoch
+		and $ts == $status->{timestamp}->epoch % 337
 		and $ts2 == $status->{sched_departure}->epoch )
 	{
 		return 1;
@@ -491,7 +491,7 @@ sub journey_token_ok {
 	$ts2 //= $ts2_ext;
 
 	if (    $eva == $journey->{from_eva}
-		and $ts == $journey->{checkin_ts}
+		and $ts == $journey->{checkin_ts} % 337
 		and $ts2 == $journey->{sched_dep_ts} )
 	{
 		return 1;

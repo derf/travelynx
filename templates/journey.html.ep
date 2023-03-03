@@ -250,7 +250,7 @@
 							data-url="<%= url_for('public_journey', name => current_user()->{name}, id => $journey->{id} )->to_abs->scheme('https'); %>"
 						% }
 						% else {
-							data-url="<%= url_for('public_journey', name => current_user()->{name}, id => $journey->{id} )->to_abs->scheme('https'); %>?token=<%= $journey->{from_eva} %>-<%= $journey->{checkin_ts} %>-<%= $journey->{sched_dep_ts} %>"
+							data-url="<%= url_for('public_journey', name => current_user()->{name}, id => $journey->{id} )->to_abs->scheme('https'); %>?token=<%= $journey->{from_eva} %>-<%= $journey->{checkin_ts} % 337 %>-<%= $journey->{sched_dep_ts} %>"
 						% }
 						data-text="<%= stash('share_text') %>"
 						>
