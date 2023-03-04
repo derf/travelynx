@@ -69,7 +69,7 @@
 			<div>
 				<label>
 					%= check_box past_status => 1
-					<span>Wenn nicht eingecheckt: letztes Fahrtziel unter <a href="/status/<%= $name %>">/status/<%= $name %></a>  zeigen, sofern die zugehörige Reise für die aufrufende Person sichtbar ist. Caveat: Die derzeitige Implementierung dieses Features gibt preis, ob deine letzte Fahrt öffentlich / lokal sichtbar war (→ Ziel angegeben) oder nicht (→ kein Ziel angegeben).</span>
+					<span>Wenn nicht eingecheckt: letztes Fahrtziel anzeigen, sofern die zugehörige Reise für die aufrufende Person sichtbar ist. Caveat: Die derzeitige Implementierung dieses Features gibt preis, ob deine letzte Fahrt öffentlich / lokal sichtbar war (→ Ziel angegeben) oder nicht (→ kein Ziel angegeben).</span>
 				</label>
 			</div>
 		</div>
@@ -106,11 +106,12 @@
 	</div>
 	<div class="row">
 		<div class="col s12">
-			Diese Einstellung bestimmt die Sichtbarkeit deines Profils unter <a
-			href="/p/<%= $name %>">/p/<%= $name %></a>. Bis zu zehn Fahrten, die
-			über die Standardeinstellung (siehe oben) oder per individueller
-			Einstellung für die aufrufende Person sichtbar sind, werden hier
-			verlinkt.
+			Diese Einstellung bestimmt die Sichtbarkeit vergangener Zugfahrten
+			unter <a href="/p/<%= $name %>">/p/<%= $name %></a>. Vergangene
+			Fahrten, die über die Standardeinstellung (siehe oben) oder per
+			individueller Einstellung für die aufrufende Person sichtbar sind,
+			werden hier verlinkt. Derzeit werden nur die letzten zehn Fahrten
+			angezeigt; dies kann sich in Zukunft ändern.
 		</div>
 	</div>
 <h2>Vergangenheit</h2>

@@ -638,10 +638,7 @@ sub public_profile {
 	my $name = $self->stash('name');
 	my $user = $self->users->get_privacy_by_name( name => $name );
 
-	if (   not $user
-		or $user->{past_visible} == 0
-		or ( $user->{past_visible} == 1 and not $self->is_user_authenticated ) )
-	{
+	if ( not $user ) {
 		$self->render('not_found');
 		return;
 	}
@@ -677,38 +674,45 @@ sub public_profile {
 		$status->{arr_name} = undef;
 	}
 
-	my %opt = (
-		uid           => $user->{id},
-		limit         => 10,
-		with_datetime => 1
-	);
+	my @journeys;
 
-	if ( not $user->{past_all} ) {
-		my $now = DateTime->now( time_zone => 'Europe/Berlin' );
-		$opt{before} = DateTime->now( time_zone => 'Europe/Berlin' );
-		$opt{after}  = $now->clone->subtract( weeks => 4 );
-	}
-
-	if (
-		$user->{default_visibility_str} eq 'public'
-		or (    $user->{default_visibility_str} eq 'travelynx'
-			and $self->is_user_authenticated )
-	  )
+	if ( $user->{past_visible} == 2
+		or ( $user->{past_visible} == 1 and $self->is_user_authenticated ) )
 	{
-		$opt{with_default_visibility} = 1;
-	}
-	else {
-		$opt{with_default_visibility} = 0;
-	}
 
-	if ( $self->is_user_authenticated ) {
-		$opt{min_visibility} = 'travelynx';
-	}
-	else {
-		$opt{min_visibility} = 'public';
-	}
+		my %opt = (
+			uid           => $user->{id},
+			limit         => 10,
+			with_datetime => 1
+		);
 
-	my @journeys = $self->journeys->get(%opt);
+		if ( not $user->{past_all} ) {
+			my $now = DateTime->now( time_zone => 'Europe/Berlin' );
+			$opt{before} = DateTime->now( time_zone => 'Europe/Berlin' );
+			$opt{after}  = $now->clone->subtract( weeks => 4 );
+		}
+
+		if (
+			$user->{default_visibility_str} eq 'public'
+			or (    $user->{default_visibility_str} eq 'travelynx'
+				and $self->is_user_authenticated )
+		  )
+		{
+			$opt{with_default_visibility} = 1;
+		}
+		else {
+			$opt{with_default_visibility} = 0;
+		}
+
+		if ( $self->is_user_authenticated ) {
+			$opt{min_visibility} = 'travelynx';
+		}
+		else {
+			$opt{min_visibility} = 'public';
+		}
+
+		@journeys = $self->journeys->get(%opt);
+	}
 
 	$self->render(
 		'profile',
