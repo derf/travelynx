@@ -51,8 +51,8 @@
 		<div class="input-field col s12">
 			<div>
 				<label>
-					%= radio_button stationboard => '4'
-					<span><a href="https://bahn.expert/regional">bahn.expert/regional</a> (Nahverkehr)</span>
+					%= radio_button stationboard => '3'
+					<span><a href="https://dbf.finalrewind.org/?hafas=1">DBF</a> (Nahverkehr)</span>
 				</label>
 			</div>
 		</div>
@@ -61,8 +61,8 @@
 		<div class="input-field col s12">
 			<div>
 				<label>
-					%= radio_button stationboard => '3'
-					<span><a href="https://nvm.finalrewind.org/">NVM</a> (Nahverkehr)</span>
+					%= radio_button stationboard => '4'
+					<span><a href="https://bahn.expert/regional">bahn.expert/regional</a> (Nahverkehr)</span>
 				</label>
 			</div>
 		</div>
