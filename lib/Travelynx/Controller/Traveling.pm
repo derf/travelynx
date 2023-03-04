@@ -570,7 +570,7 @@ sub user_status {
 	);
 
 	my $visibility;
-	if ( $status->{checked_in} ) {
+	if ( $status->{checked_in} or $status->{arr_name} ) {
 		$visibility
 		  = $self->compute_effective_visibility(
 			$user->{default_visibility_str},
@@ -589,7 +589,14 @@ sub user_status {
 		  )
 		{
 			$status->{checked_in} = 0;
+			$status->{arr_name}   = undef;
 		}
+	}
+	if (    not $status->{checked_in}
+		and $status->{arr_name}
+		and not $user->{past_status} )
+	{
+		$status->{arr_name} = undef;
 	}
 
 	if ( $status->{checked_in} ) {
@@ -640,7 +647,7 @@ sub public_profile {
 
 	my $status = $self->get_user_status( $user->{id} );
 	my $visibility;
-	if ( $status->{checked_in} ) {
+	if ( $status->{checked_in} or $status->{arr_name} ) {
 		$visibility
 		  = $self->compute_effective_visibility(
 			$user->{default_visibility_str},
@@ -659,7 +666,14 @@ sub public_profile {
 		  )
 		{
 			$status->{checked_in} = 0;
+			$status->{arr_name}   = undef;
 		}
+	}
+	if (    not $status->{checked_in}
+		and $status->{arr_name}
+		and not $user->{past_status} )
+	{
+		$status->{arr_name} = undef;
 	}
 
 	my %opt = (
@@ -855,7 +869,7 @@ sub public_status_card {
 
 	my $status = $self->get_user_status( $user->{id} );
 	my $visibility;
-	if ( $status->{checked_in} ) {
+	if ( $status->{checked_in} or $status->{arr_name} ) {
 		$visibility
 		  = $self->compute_effective_visibility(
 			$user->{default_visibility_str},
@@ -874,7 +888,14 @@ sub public_status_card {
 		  )
 		{
 			$status->{checked_in} = 0;
+			$status->{arr_name}   = undef;
 		}
+	}
+	if (    not $status->{checked_in}
+		and $status->{arr_name}
+		and not $user->{past_status} )
+	{
+		$status->{arr_name} = undef;
 	}
 
 	$self->render(

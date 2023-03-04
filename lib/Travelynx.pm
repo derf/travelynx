@@ -1609,7 +1609,7 @@ sub startup {
 
 			my ( $latest, $latest_cancellation ) = $self->journeys->get_latest(
 				uid => $uid,
-				db  => $db
+				db  => $db,
 			);
 
 			if ( $latest_cancellation and $latest_cancellation->{cancelled} ) {
@@ -1675,6 +1675,8 @@ sub startup {
 					arr_name        => $latest->{arr_name},
 					arr_platform    => $latest->{arr_platform},
 					comment         => $latest->{user_data}{comment},
+					visibility      => $latest->{visibility},
+					visibility_str  => $latest->{visibility_str},
 				};
 			}
 

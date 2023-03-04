@@ -720,6 +720,11 @@ sub get_latest {
 		}
 	)->expand->hash;
 
+	$latest_successful->{visibility_str}
+	  = $latest_successful->{visibility}
+	  ? $visibility_itoa{ $latest_successful->{visibility} }
+	  : 'default';
+
 	my $latest = $db->select(
 		'journeys_str',
 		'*',
@@ -731,6 +736,11 @@ sub get_latest {
 			limit    => 1
 		}
 	)->expand->hash;
+
+	$latest->{visibility_str}
+	  = $latest->{visibility}
+	  ? $visibility_itoa{ $latest->{visibility} }
+	  : 'default';
 
 	return ( $latest_successful, $latest );
 }

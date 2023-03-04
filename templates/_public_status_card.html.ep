@@ -173,6 +173,17 @@
 			<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 			<span class="card-title"><%= $name %> ist gerade nicht eingecheckt</span>
 			<p>
+			% if ($journey->{arr_name}) {
+				Zuletzt gesehen
+				% if ($journey->{real_arrival}->epoch and ($public_level & 0x20 or ($public_level & 0x10 and is_user_authenticated()))) {
+					%= $journey->{real_arrival}->strftime('am %d.%m.%Y')
+					in <b><%= $journey->{arr_name} %></b>
+					%= $journey->{real_arrival}->strftime('(Ankunft um %H:%M Uhr)')
+				% }
+				% else {
+					in <b><%= $journey->{arr_name} %></b>
+				% }
+			% }
 			</p>
 		</div>
 	</div>

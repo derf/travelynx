@@ -463,7 +463,8 @@ sub privacy {
 
 		$opt{comments_visible} = $self->param('public_comment') ? 1 : 0;
 
-		$opt{past_all} = $self->param('history_age') eq 'infinite' ? 1 : 0;
+		$opt{past_all}    = $self->param('history_age') eq 'infinite' ? 1 : 0;
+		$opt{past_status} = $self->param('past_status')               ? 1 : 0;
 
 		if ( $self->param('history_level') eq 'intern' ) {
 			$opt{past_visible} = 1;
@@ -493,6 +494,7 @@ sub privacy {
 			:                                'private'
 		);
 		$self->param( history_age => $user->{past_all} ? 'infinite' : 'month' );
+		$self->param( past_status => $user->{past_status} );
 		$self->render( 'privacy', name => $user->{name} );
 	}
 }

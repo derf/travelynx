@@ -178,6 +178,7 @@ sub get_privacy_by_name {
 			comments_visible => $user->{public_level} & 0x80 ? 1 : 0,
 			past_visible     => ( $user->{public_level} & 0x300 ) >> 8,
 			past_all         => $user->{public_level} & 0x400 ? 1 : 0,
+			past_status      => $user->{public_level} & 0x800 ? 1 : 0,
 		};
 	}
 	return;
@@ -194,7 +195,7 @@ sub set_privacy {
 		  = ( $opt{default_visibility} & 0x7f )
 		  | ( $opt{comments_visible} ? 0x80 : 0x00 )
 		  | ( ( ( $opt{past_visible} // 0 ) << 8 ) & 0x300 )
-		  | ( $opt{past_all} ? 0x400 : 0 );
+		  | ( $opt{past_all} ? 0x400 : 0 ) | ( $opt{past_status} ? 0x800 : 0 );
 	}
 
 	$db->update( 'users', { public_level => $public_level }, { id => $uid } );
@@ -376,6 +377,7 @@ sub get {
 			comments_visible => $user->{public_level} & 0x80 ? 1 : 0,
 			past_visible     => ( $user->{public_level} & 0x300 ) >> 8,
 			past_all         => $user->{public_level} & 0x400 ? 1 : 0,
+			past_status      => $user->{public_level} & 0x800 ? 1 : 0,
 			email            => $user->{email},
 			sb_name          => $user->{external_services}
 			? $sb_templates[ $user->{external_services} & 0x07 ][0]
