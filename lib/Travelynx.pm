@@ -1257,9 +1257,10 @@ sub startup {
 	$self->helper(
 		'resolve_sb_template' => sub {
 			my ( $self, $template, %opt ) = @_;
-			my $ret = $template;
+			my $ret  = $template;
+			my $name = $opt{name} =~ s{/}{%2F}gr;
 			$ret =~ s{[{]eva[}]}{$opt{eva}}g;
-			$ret =~ s{[{]name[}]}{$opt{name}}g;
+			$ret =~ s{[{]name[}]}{$name}g;
 			$ret =~ s{[{]tt[}]}{$opt{tt}}g;
 			$ret =~ s{[{]tn[}]}{$opt{tn}}g;
 			$ret =~ s{[{]id[}]}{$opt{id}}g;
