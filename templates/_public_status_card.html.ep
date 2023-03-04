@@ -21,7 +21,7 @@
 				<div class="center-align countdown"
 					data-duration="<%= $journey->{journey_duration} // 0 %>"
 					% if (param('token')) {
-						data-token="<%= $journey->{dep_eva} %>-<%= $journey->{timestamp}->epoch %>-<%= $journey->{sched_departure}->epoch %>"
+						data-token="<%= $journey->{dep_eva} %>-<%= $journey->{timestamp}->epoch % 337 %>-<%= $journey->{sched_departure}->epoch %>"
 					% }
 					data-arrival="<%= $journey->{real_arrival}->epoch %>">
 					% if ($journey->{departure_countdown} > 120) {
