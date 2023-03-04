@@ -628,6 +628,7 @@ sub user_status {
 		journey_visibility => $visibility,
 		twitter            => \%tw_data,
 		opengraph          => \%og_data,
+		version            => $self->app->config->{version} // 'UNKNOWN',
 	);
 }
 

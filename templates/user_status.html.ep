@@ -3,3 +3,5 @@
 		%= include '_public_status_card', name => $name, public_level => $public_level, journey => $journey, journey_visibility => $journey_visibility
 	</div>
 </div>
+
+%= include '_footer', version => stash('version')
