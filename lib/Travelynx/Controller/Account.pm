@@ -986,7 +986,8 @@ sub webfinger {
 	my $root_url = $self->base_url_for('/')->to_abs->host;
 
 	if (   not $root_url
-		or not $resource =~ m{ ^ acct: (?<name> [^@]+ ) [@] $root_url $ }x )
+		or not $resource
+		=~ m{ ^ acct: [@]? (?<name> [^@]+ ) [@] $root_url $ }x )
 	{
 		$self->render( 'not_found', status => 404 );
 		return;
@@ -995,7 +996,7 @@ sub webfinger {
 	my $name = $+{name};
 	my $user = $self->users->get_privacy_by_name( name => $name );
 
-	if ( not $user or not $user->{public_level} & 0x22 ) {
+	if ( not $user ) {
 		$self->render( 'not_found', status => 404 );
 		return;
 	}
