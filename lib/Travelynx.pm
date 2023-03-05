@@ -161,20 +161,6 @@ sub startup {
 
 	# TODO unused
 	$self->attr(
-		account_public_mask => sub {
-			return {
-				status_intern  => 0x01,
-				status_extern  => 0x02,
-				status_comment => 0x04,
-				history_intern => 0x10,
-				history_latest => 0x20,
-				history_full   => 0x40,
-			};
-		}
-	);
-
-	# TODO unused
-	$self->attr(
 		journey_edit_mask => sub {
 			return {
 				sched_departure => 0x0001,
