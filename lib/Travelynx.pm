@@ -159,22 +159,6 @@ sub startup {
 		}
 	);
 
-	# TODO unused
-	$self->attr(
-		journey_edit_mask => sub {
-			return {
-				sched_departure => 0x0001,
-				real_departure  => 0x0002,
-				from_station    => 0x0004,
-				route           => 0x0010,
-				is_cancelled    => 0x0020,
-				sched_arrival   => 0x0100,
-				real_arrival    => 0x0200,
-				to_station      => 0x0400,
-			};
-		}
-	);
-
 	$self->attr(
 		coordinates_by_station => sub {
 			my $legacy_names = $self->app->renamed_station;

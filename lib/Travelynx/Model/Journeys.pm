@@ -101,17 +101,6 @@ sub min_to_human {
 sub new {
 	my ( $class, %opt ) = @_;
 
-	$opt{journey_edit_mask} = {
-		sched_departure => 0x0001,
-		real_departure  => 0x0002,
-		from_station    => 0x0004,
-		route           => 0x0010,
-		is_cancelled    => 0x0020,
-		sched_arrival   => 0x0100,
-		real_arrival    => 0x0200,
-		to_station      => 0x0400,
-	};
-
 	return bless( \%opt, $class );
 }
 
