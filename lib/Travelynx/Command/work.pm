@@ -91,6 +91,8 @@ sub run {
 						$self->app->checkout(
 							station => $arr,
 							force   => 1,
+							dep_eva => $dep,
+							arr_eva => $arr,
 							uid     => $uid
 						);
 					}
@@ -156,6 +158,8 @@ sub run {
 					$self->app->checkout(
 						station => $arr,
 						force   => 0,
+						dep_eva => $dep,
+						arr_eva => $arr,
 						uid     => $uid
 					);
 				}
@@ -167,6 +171,8 @@ sub run {
 				my ( undef, $error ) = $self->app->checkout(
 					station => $arr,
 					force   => 1,
+					dep_eva => $dep,
+					arr_eva => $arr,
 					uid     => $uid
 				);
 				if ($error) {

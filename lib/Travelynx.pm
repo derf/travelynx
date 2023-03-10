@@ -553,6 +553,8 @@ sub startup {
 			my ( $self, %opt ) = @_;
 
 			my $station = $opt{station};
+			my $dep_eva = $opt{dep_eva};
+			my $arr_eva = $opt{arr_eva};
 			my $force   = $opt{force};
 			my $uid     = $opt{uid};
 			my $db      = $opt{db} // $self->pg->db;
@@ -575,6 +577,12 @@ sub startup {
 			}
 			if ( $status->{errstr} and not $force ) {
 				return ( 1, $status->{errstr} );
+			}
+			if ( $dep_eva and $dep_eva != $user->{dep_eva} ) {
+				return ( 0, 'race condition' );
+			}
+			if ( $arr_eva and $arr_eva != $user->{arr_eva} ) {
+				return ( 0, 'race condition' );
 			}
 
 			my $now     = DateTime->now( time_zone => 'Europe/Berlin' );
