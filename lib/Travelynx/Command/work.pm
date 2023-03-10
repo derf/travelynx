@@ -64,9 +64,11 @@ sub run {
 				}
 
 				$self->app->in_transit->update_departure(
-					uid   => $uid,
-					train => $train,
-					route => [ $self->app->iris->route_diff($train) ]
+					uid     => $uid,
+					train   => $train,
+					dep_eva => $dep,
+					arr_eva => $arr,
+					route   => [ $self->app->iris->route_diff($train) ]
 				);
 
 				if ( $train->departure_is_cancelled and $arr ) {
@@ -143,6 +145,7 @@ sub run {
 					uid     => $uid,
 					train   => $train,
 					route   => [ $self->app->iris->route_diff($train) ],
+					dep_eva => $dep,
 					arr_eva => $arr,
 				);
 

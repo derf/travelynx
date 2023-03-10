@@ -333,6 +333,8 @@ sub update_departure {
 	my ( $self, %opt ) = @_;
 	my $uid   = $opt{uid};
 	my $db    = $opt{db} // $self->{pg}->db;
+	my $dep_eva = $opt{dep_eva};
+	my $arr_eva = $opt{arr_eva};
 	my $train = $opt{train};
 	my $route = $opt{route};
 	my $json  = JSON->new;
@@ -358,7 +360,9 @@ sub update_departure {
 		},
 		{
 			user_id  => $uid,
-			train_no => $train->train_no
+			train_no => $train->train_no,
+			checkin_station_id  => $dep_eva,
+			checkout_station_id => $arr_eva,
 		}
 	);
 }
@@ -395,6 +399,7 @@ sub update_arrival {
 	my ( $self, %opt ) = @_;
 	my $uid     = $opt{uid};
 	my $db      = $opt{db} // $self->{pg}->db;
+	my $dep_eva = $opt{dep_eva};
 	my $arr_eva = $opt{arr_eva};
 	my $train   = $opt{train};
 	my $route   = $opt{route};
@@ -424,6 +429,7 @@ sub update_arrival {
 		{
 			user_id             => $uid,
 			train_no            => $train->train_no,
+			checkin_station_id  => $dep_eva,
 			checkout_station_id => $arr_eva,
 		}
 	)->rows;
