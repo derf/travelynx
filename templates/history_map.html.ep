@@ -17,34 +17,42 @@
 	</p>
 	<div class="row">
 		<div class="input-field col s12">
-			<label>
-				%= radio_button route_type => 'polyline'
-				<span>Nur Zugfahrten mit bekanntem Streckenverlauf eintragen</span>
-			</label>
+			<div>
+				<label>
+					%= radio_button route_type => 'polyline'
+					<span>Nur Zugfahrten mit bekanntem Streckenverlauf eintragen</span>
+				</label>
+			</div>
 		</div>
 	</div>
 	<div class="row">
 		<div class="input-field col s12">
-			<label>
-				%= radio_button route_type => 'polybee'
-				<span>Streckenverlauf wenn bekannt, sonst Luftlinie zwischen Unterweghalten</span>
-			</label>
+			<div>
+				<label>
+					%= radio_button route_type => 'polybee'
+					<span>Streckenverlauf wenn bekannt, sonst Luftlinie zwischen Unterweghalten</span>
+				</label>
+			</div>
 		</div>
 	</div>
 	<div class="row">
 		<div class="input-field col s12">
-			<label>
-				%= radio_button route_type => 'beeline'
-				<span>Immer Luftlinie zwischen Unterwegshalten zeigen</span>
-			</label>
+			<div>
+				<label>
+					%= radio_button route_type => 'beeline'
+					<span>Immer Luftlinie zwischen Unterwegshalten zeigen</span>
+				</label>
+			</div>
 		</div>
 	</div>
 	<div class="row">
 		<div class="input-field col s12">
-			<label>
-				%= check_box include_manual => 1
-				<span>Manuelle Einträge ohne Unterwegshalte mitberücksichtigen</span>
-			</label>
+			<div>
+				<label>
+					%= check_box include_manual => 1
+					<span>Manuelle Einträge ohne Unterwegshalte mitberücksichtigen</span>
+				</label>
+			</div>
 		</div>
 	</div>
 	<div class="row">
