@@ -2153,13 +2153,13 @@ sub startup {
 	$r->get('/recover')->to('account#request_password_reset');
 	$r->get('/recover/:id/:token')->to('account#recover_password');
 	$r->get('/reg/:id/:token')->to('account#verify');
-	$r->get('/status/:name')->to('traveling#user_status');
-	$r->get('/status/:name/:ts')->to('traveling#user_status');
-	$r->get('/ajax/status/#name')->to('traveling#public_status_card');
-	$r->get('/ajax/status/:name/:ts')->to('traveling#public_status_card');
-	$r->get('/p/:name')->to('traveling#public_profile');
+	$r->get('/status/:name')->to('profile#user_status');
+	$r->get('/status/:name/:ts')->to('profile#user_status');
+	$r->get('/ajax/status/#name')->to('profile#status_card');
+	$r->get('/ajax/status/:name/:ts')->to('profile#status_card');
+	$r->get('/p/:name')->to('profile#profile');
 	$r->get( '/p/:name/j/:id' => 'public_journey' )
-	  ->to('traveling#public_journey_details');
+	  ->to('profile#journey_details');
 	$r->get('/.well-known/webfinger')->to('account#webfinger');
 	$r->post('/api/v1/import')->to('api#import_v1');
 	$r->post('/api/v1/travel')->to('api#travel_v1');
