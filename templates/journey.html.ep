@@ -54,7 +54,7 @@
 					∗ Daten wurden manuell eingetragen
 				</p>
 			% }
-			% if ($journey->{cancelled} or ($journey->{rt_arrival} and ($journey->{rt_arrival}->epoch - $journey->{sched_arrival}->epoch) >= 3600)) {
+			% if (not stash('readonly') and ($journey->{cancelled} or ($journey->{rt_arrival} and ($journey->{rt_arrival}->epoch - $journey->{sched_arrival}->epoch) >= 3600))) {
 				<div style="text-align: center; margin-bottom: 1em;">
 					% my $form_target = sprintf('/journey/passenger_rights/FGR %s %s %s.pdf', $journey->{sched_departure}->ymd, $journey->{type}, $journey->{no});
 					%= form_for $form_target => (method => 'POST') => begin
