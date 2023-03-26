@@ -412,7 +412,7 @@ sub import_v1 {
 		return;
 	}
 
-	my $token = $self->users->get_api_token($uid);
+	my $token = $self->users->get_api_token( uid => $uid );
 	if ( not $token->{'import'} or $api_token ne $token->{'import'} ) {
 		$self->render(
 			json => {
