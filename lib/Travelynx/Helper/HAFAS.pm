@@ -91,7 +91,7 @@ sub get_departures_p {
 		station    => $opt{eva},
 		datetime   => $when,
 		duration   => $opt{lookahead},
-		results    => 120,
+		results    => 300,
 		cache      => $self->{realtime_cache},
 		promise    => 'Mojo::Promise',
 		user_agent => $self->{user_agent}->request_timeout(5),

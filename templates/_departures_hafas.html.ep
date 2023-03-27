@@ -1,0 +1,44 @@
+<table class="striped">
+<tbody>
+% my $orientation_bar_shown = param('train');
+% my $now_epoch = now()->epoch;
+% for my $result (@{$results}) {
+	% my $td_class = '';
+	% my $link_class = 'action-checkin';
+	% if ($result->is_cancelled) {
+		% $td_class = "cancelled";
+		% $link_class = 'action-cancelled-from';
+	% }
+	% if (not $orientation_bar_shown and $result->datetime->epoch < $now_epoch) {
+		% $orientation_bar_shown = 1;
+		<tr>
+			<td>
+			</td>
+			<td>
+				— Anfragezeitpunkt —
+			</td>
+			<td>
+			</td>
+		</tr>
+	% }
+	<tr class="<%= $link_class %>" data-station="<%= $result->station_eva %>" data-train="<%= $result->id %>" data-tr="3">
+		<td>
+			<a>
+				<%= $result->line %>
+			</a>
+		</td>
+		<td class="<%= $td_class %>">
+			<a>
+				<%= $result->destination %>
+			</a>
+		</td>
+		<td class="<%= $td_class %>">
+			%= $result->datetime->strftime('%H:%M')
+			% if ($result->delay) {
+				(<%= sprintf('%+d', $result->delay) %>)
+			% }
+		</td>
+	</tr>
+% }
+</tbody>
+</table>

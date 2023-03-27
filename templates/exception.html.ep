@@ -21,7 +21,7 @@
 			%= DateTime->now(time_zone => 'Europe/Berlin')->strftime("%d/%b/%Y:%H:%M:%S %z")
 			<br/><br/>
 			Message:
-			%= (split(qr{\n}, $exception->message))[0]
+			%= ref($exception) ? (split(qr{\n}, $exception->message))[0] : $exception
 		</p>
 	</div>
 </div>

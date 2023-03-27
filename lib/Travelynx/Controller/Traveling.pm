@@ -795,22 +795,56 @@ sub station {
 	my $train   = $self->param('train');
 
 	$self->render_later;
-	$self->iris->get_departures_p(
-		station      => $station,
-		lookbehind   => 120,
-		lookahead    => 30,
-		with_related => 1
-	)->then(
+
+	my $use_hafas = $self->param('hafas');
+	my $promise;
+	if ($use_hafas) {
+		$promise = $self->hafas->get_departures_p(
+			eva        => $station,
+			lookbehind => 120,
+			lookahead  => 30,
+		);
+	}
+	else {
+		$promise = $self->iris->get_departures_p(
+			station      => $station,
+			lookbehind   => 120,
+			lookahead    => 30,
+			with_related => 1,
+		);
+	}
+	$promise->then(
 		sub {
 			my ($status) = @_;
 
-			# You can't check into a train which terminates here
-			my @results = grep { $_->departure } @{ $status->{results} };
+			my @results;
+			if ($use_hafas) {
+				my $now = $self->now->epoch;
+				@results = map { $_->[0] }
+				  sort { $b->[1] <=> $a->[1] }
+				  map  { [ $_, $_->datetime->epoch ] }
+				  grep {
+					( $_->datetime // $_->sched_datetime )->epoch
+					  < $now + 30 * 60
+				  } $status->results;
+				$status = {
+					station_eva  => $status->station->{eva},
+					station_name =>
+					  List::Util::reduce { length($a) < length($b) ? $a : $b }
+					@{ $status->station->{names} },
+					related_stations => [],
+				};
+			}
+			else {
+				# You can't check into a train which terminates here
+				@results = grep { $_->departure } @{ $status->{results} };
 
-			@results = map { $_->[0] }
-			  sort { $b->[1] <=> $a->[1] }
-			  map { [ $_, $_->departure->epoch // $_->sched_departure->epoch ] }
-			  @results;
+				@results = map { $_->[0] }
+				  sort { $b->[1] <=> $a->[1] }
+				  map {
+					[ $_, $_->departure->epoch // $_->sched_departure->epoch ]
+				  } @results;
+			}
 
 			my $connections_p;
 			if ($train) {
@@ -842,6 +876,7 @@ sub station {
 							'departures',
 							eva              => $status->{station_eva},
 							results          => \@results,
+							hafas            => $use_hafas,
 							station          => $status->{station_name},
 							related_stations => $status->{related_stations},
 							connections      => $connecting_trains,
@@ -856,6 +891,7 @@ sub station {
 							'departures',
 							eva              => $status->{station_eva},
 							results          => \@results,
+							hafas            => $use_hafas,
 							station          => $status->{station_name},
 							related_stations => $status->{related_stations},
 							title   => "travelynx: $status->{station_name}",
@@ -870,6 +906,7 @@ sub station {
 					'departures',
 					eva              => $status->{station_eva},
 					results          => \@results,
+					hafas            => $use_hafas,
 					station          => $status->{station_name},
 					related_stations => $status->{related_stations},
 					title            => "travelynx: $status->{station_name}",

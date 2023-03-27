@@ -63,58 +63,12 @@
 				und maximal 120 Minuten nach Abfahrt möglich.
 			% }
 		</p>
-		<table class="striped">
-			<tbody>
-				% my $orientation_bar_shown = param('train');
-				% my $now_epoch = now()->epoch;
-				% for my $result (@{$results}) {
-					% my $td_class = '';
-					% my $link_class = 'action-checkin';
-					% if ($result->departure_is_cancelled) {
-						% $td_class = "cancelled";
-						% $link_class = 'action-cancelled-from';
-					% }
-					% if (not $orientation_bar_shown and $result->departure->epoch < $now_epoch) {
-						% $orientation_bar_shown = 1;
-						<tr>
-							<td>
-							</td>
-							<td>
-								— Anfragezeitpunkt —
-							</td>
-							<td>
-							</td>
-						</tr>
-					% }
-					<tr class="<%= $link_class %>" data-station="<%= $result->station_uic %>" data-train="<%= $result->train_id %>" data-tr="3">
-						<td>
-							<a>
-								<%= $result->line %>
-							</a>
-						</td>
-						<td class="<%= $td_class %>">
-							<a>
-								<%= $result->destination %>
-							</a>
-						</td>
-						<td class="<%= $td_class %>">
-							% if ($result->departure_hidden) {
-								(<%= $result->departure->strftime('%H:%M') %>)
-							% }
-							% else {
-								%= $result->departure->strftime('%H:%M')
-							% }
-							% if ($result->departure_delay) {
-								(<%= sprintf('%+d', $result->departure_delay) %>)
-							% }
-							% elsif (not $result->has_realtime and $result->start->epoch < $now_epoch) {
-								<i class="material-icons" aria-label="Keine Echtzeitdaten vorhanden" style="font-size: 16px;">gps_off</i>
-							% }
-						</td>
-					</tr>
-				% }
-			</tbody>
-		</table>
+		% if ($hafas) {
+			%= include '_departures_hafas', results => $results;
+		% }
+		% else {
+			%= include '_departures_iris', results => $results;
+		% }
 	</div>
 </div>
 
