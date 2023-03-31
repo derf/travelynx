@@ -5,7 +5,6 @@ const FILES_TO_CACHE = [
   '/static/v51/css/light.min.css',
   '/static/v51/css/dark.min.css',
   '/static/v51/css/material-icons.css',
-  '/static/v51/css/local.css',
   '/static/v51/fonts/MaterialIcons-Regular.woff2',
   '/static/v51/fonts/MaterialIcons-Regular.woff',
   '/static/v51/fonts/MaterialIcons-Regular.ttf',

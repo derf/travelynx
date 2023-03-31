@@ -1,8 +1,3 @@
-/*
- * Copyright (C) 2020 Daniel Friesel
- *
- * SPDX-License-Identifier: MIT
- */
 .action-checkin,
 .action-checkout,
 .action-undo,
@@ -18,12 +13,12 @@
 
 .brand-logo:hover .ca,
 .brand-logo:hover .ce {
-	color: #a8e3fa;
+	color: #a8e3fa !important;
 }
 
 .brand-logo:hover .cb,
 .brand-logo:hover .cd {
-	color: #f5c4ce;
+	color: #f5c4ce !important;
 }
 
 td.cancelled {

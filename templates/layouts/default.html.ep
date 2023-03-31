@@ -54,7 +54,6 @@
 		}
 	</script>
 	%= stylesheet "/static/${av}/css/material-icons.css"
-	%= stylesheet "/static/${av}/css/local.css"
 	% if (stash('with_map')) {
 		%= stylesheet "/static/${av}/leaflet/leaflet.css"
 	% }

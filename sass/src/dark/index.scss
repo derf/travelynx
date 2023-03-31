@@ -2,6 +2,7 @@
 @import 'variables.scss';
 @import '../../materialize.scss';
 @import '../common/index.scss';
+@import '../common/local.scss';
 
 .progress {
   background-color: color('grey', 'darken-3');
