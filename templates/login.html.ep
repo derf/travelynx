@@ -55,7 +55,7 @@
 	<div class="row">
 		<div class="input-field col s12">
 			<i class="material-icons prefix">account_circle</i>
-			%= text_field 'user', id => 'user', class => 'validate', required => undef, maxlength => 60, autocomplete => 'username'
+			%= text_field 'user', id => 'user', class => 'validate', required => undef, pattern => '[0-9a-zA-Z_-]+', maxlength => 60, autocomplete => 'username'
 			<label for="user">Account</label>
 		</div>
 		<div class="input-field col s12">
