@@ -1428,6 +1428,48 @@ my @migrations = (
 		}
 		$db->update( 'schema_version', { version => 33 } );
 	},
+
+	# v33 -> v34
+	# add polyline_id to in_transit_str
+	# (https://github.com/derf/travelynx/issues/66)
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				drop view in_transit_str;
+				create view in_transit_str as select
+					user_id,
+					train_type, train_line, train_no, train_id,
+					extract(epoch from checkin_time) as checkin_ts,
+					extract(epoch from sched_departure) as sched_dep_ts,
+					extract(epoch from real_departure) as real_dep_ts,
+					checkin_station_id as dep_eva,
+					dep_station.ds100 as dep_ds100,
+					dep_station.name as dep_name,
+					dep_station.lat as dep_lat,
+					dep_station.lon as dep_lon,
+					extract(epoch from checkout_time) as checkout_ts,
+					extract(epoch from sched_arrival) as sched_arr_ts,
+					extract(epoch from real_arrival) as real_arr_ts,
+					checkout_station_id as arr_eva,
+					arr_station.ds100 as arr_ds100,
+					arr_station.name as arr_name,
+					arr_station.lat as arr_lat,
+					arr_station.lon as arr_lon,
+					polyline_id,
+					polylines.polyline as polyline,
+					visibility,
+					cancelled, route, messages, user_data,
+					dep_platform, arr_platform, data
+					from in_transit
+					left join polylines on polylines.id = polyline_id
+					left join stations as dep_station on checkin_station_id = dep_station.eva
+					left join stations as arr_station on checkout_station_id = arr_station.eva
+					;
+				update schema_version set version = 34;
+			}
+		);
+	},
 );
 
 sub sync_stations {

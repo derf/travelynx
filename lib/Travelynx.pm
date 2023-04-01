@@ -803,7 +803,7 @@ sub startup {
 			}
 			if ( not $opt{in_transaction} ) {
 				$self->run_hook( $uid, 'update' );
-				$self->add_route_timestamps( $uid, $train, 0 );
+				$self->add_route_timestamps( $uid, $train, 0, 1 );
 			}
 			return ( 1, undef );
 		}
@@ -901,7 +901,7 @@ sub startup {
 
 	$self->helper(
 		'add_route_timestamps' => sub {
-			my ( $self, $uid, $train, $is_departure ) = @_;
+			my ( $self, $uid, $train, $is_departure, $update_polyline ) = @_;
 
 			$uid //= $self->current_user->{id};
 
@@ -909,20 +909,20 @@ sub startup {
 
 # TODO "with_timestamps" is misleading, there are more differences between in_transit and in_transit_str
 # Here it's only needed because of dep_eva / arr_eva names
-			my $journey = $self->in_transit->get(
+			my $in_transit = $self->in_transit->get(
 				db              => $db,
 				uid             => $uid,
 				with_data       => 1,
 				with_timestamps => 1
 			);
 
-			if ( not $journey ) {
+			if ( not $in_transit ) {
 				return;
 			}
 
 			my ($platform) = ( ( $train->platform // 0 ) =~ m{(\d+)} );
 
-			my $route = $journey->{route};
+			my $route = $in_transit->{route};
 
 			my $base
 			  = 'https://reiseauskunft.bahn.de/bin/trainsearch.exe/dn?L=vs_json.vs_hap&start=yes&rt=1';
@@ -988,7 +988,10 @@ sub startup {
 					return $self->hafas->get_route_timestamps_p(
 						train         => $train,
 						trip_id       => $trip_id,
-						with_polyline => not $journey->{polyline}
+						with_polyline => (
+							$update_polyline
+							  or not $in_transit->{polyline}
+						) ? 1 : 0,
 					);
 				}
 			)->then(
@@ -1085,7 +1088,12 @@ sub startup {
 								);
 							}
 						}
-						if ($polyline_id) {
+						if (
+							$polyline_id
+							and ( not $in_transit->{polyline_id}
+								or $polyline_id != $in_transit->{polyline_id} )
+						  )
+						{
 							$self->in_transit->set_polyline_id(
 								uid         => $uid,
 								db          => $db,
@@ -1189,7 +1197,7 @@ sub startup {
 			}
 
 			if ($is_departure) {
-				$self->dbdb->get_stationinfo_p( $journey->{dep_eva} )->then(
+				$self->dbdb->get_stationinfo_p( $in_transit->{dep_eva} )->then(
 					sub {
 						my ($station_info) = @_;
 						my $data = { stationinfo_dep => $station_info };
@@ -1209,8 +1217,8 @@ sub startup {
 				)->wait;
 			}
 
-			if ( $journey->{arr_eva} and not $is_departure ) {
-				$self->dbdb->get_stationinfo_p( $journey->{arr_eva} )->then(
+			if ( $in_transit->{arr_eva} and not $is_departure ) {
+				$self->dbdb->get_stationinfo_p( $in_transit->{arr_eva} )->then(
 					sub {
 						my ($station_info) = @_;
 						my $data = { stationinfo_arr => $station_info };
