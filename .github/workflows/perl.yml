@@ -45,6 +45,6 @@ jobs:
       - name: Install PostgreSQL Client Library
         run: apt install libpq-dev
       - name: Install Perl Dependencies
-        run: curl -sL https://git.io/cpm | perl - install -g --show-build-log-on-failure
+        run: curl -sL https://raw.githubusercontent.com/skaji/cpm/master/cpm | perl - install -g --show-build-log-on-failure
       - name: Run Tests
         run: prove -l t
