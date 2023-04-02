@@ -165,7 +165,8 @@ sub run {
 				}
 				else {
 					$self->app->add_route_timestamps( $uid, $train, 0,
-						$now->epoch > $entry->{real_arr_ts} );
+						defined $entry->{real_arr_ts}
+						  and $now->epoch > $entry->{real_arr_ts} );
 				}
 			}
 			elsif ( $entry->{real_arr_ts} ) {
