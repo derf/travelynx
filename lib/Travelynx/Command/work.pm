@@ -164,9 +164,13 @@ sub run {
 					);
 				}
 				else {
-					$self->app->add_route_timestamps( $uid, $train, 0,
-						defined $entry->{real_arr_ts}
-						  and $now->epoch > $entry->{real_arr_ts} );
+					$self->app->add_route_timestamps(
+						$uid, $train, 0,
+						(
+							defined $entry->{real_arr_ts}
+							  and $now->epoch > $entry->{real_arr_ts}
+						) ? 1 : 0
+					);
 				}
 			}
 			elsif ( $entry->{real_arr_ts} ) {
