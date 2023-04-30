@@ -1016,7 +1016,16 @@ sub startup {
 							if ( $station->[2]{isCancelled} ) {
 								$sd->{isCancelled} = 1;
 							}
+
+							# keep rt_dep / rt_arr if they are no longer present
+							my %old;
+							for my $k (qw(rt_arr rt_dep arr_delay dep_delay)) {
+								$old{$k} = $station->[2]{$k};
+							}
 							$station->[2] = $sd;
+							for my $k (qw(rt_arr rt_dep arr_delay dep_delay)) {
+								$station->[2]{$k} ||= $old{$k};
+							}
 						}
 					}
 
