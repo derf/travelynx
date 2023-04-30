@@ -551,15 +551,15 @@ DISTRIBUTIONS
       parent 0
       strict 0
       warnings 0
-  DateTime-Locale-1.37
-    pathname: D/DR/DROLSKY/DateTime-Locale-1.37.tar.gz
+  DateTime-Locale-1.38
+    pathname: D/DR/DROLSKY/DateTime-Locale-1.38.tar.gz
     provides:
-      DateTime::Locale 1.37
-      DateTime::Locale::Base 1.37
-      DateTime::Locale::Catalog 1.37
-      DateTime::Locale::Data 1.37
-      DateTime::Locale::FromData 1.37
-      DateTime::Locale::Util 1.37
+      DateTime::Locale 1.38
+      DateTime::Locale::Base 1.38
+      DateTime::Locale::Catalog 1.38
+      DateTime::Locale::Data 1.38
+      DateTime::Locale::FromData 1.38
+      DateTime::Locale::Util 1.38
     requirements:
       Carp 0
       Dist::CheckConflicts 0.02
@@ -1639,28 +1639,28 @@ DISTRIBUTIONS
       Net::Domain 1.05
       Net::SMTP 1.03
       Test::More 0
-  Module-Build-0.4232
-    pathname: L/LE/LEONT/Module-Build-0.4232.tar.gz
+  Module-Build-0.4234
+    pathname: L/LE/LEONT/Module-Build-0.4234.tar.gz
     provides:
-      Module::Build 0.4232
-      Module::Build::Base 0.4232
-      Module::Build::Compat 0.4232
-      Module::Build::Config 0.4232
-      Module::Build::Cookbook 0.4232
-      Module::Build::Dumper 0.4232
-      Module::Build::Notes 0.4232
-      Module::Build::PPMMaker 0.4232
-      Module::Build::Platform::Default 0.4232
-      Module::Build::Platform::MacOS 0.4232
-      Module::Build::Platform::Unix 0.4232
-      Module::Build::Platform::VMS 0.4232
-      Module::Build::Platform::VOS 0.4232
-      Module::Build::Platform::Windows 0.4232
-      Module::Build::Platform::aix 0.4232
-      Module::Build::Platform::cygwin 0.4232
-      Module::Build::Platform::darwin 0.4232
-      Module::Build::Platform::os2 0.4232
-      Module::Build::PodParser 0.4232
+      Module::Build 0.4234
+      Module::Build::Base 0.4234
+      Module::Build::Compat 0.4234
+      Module::Build::Config 0.4234
+      Module::Build::Cookbook 0.4234
+      Module::Build::Dumper 0.4234
+      Module::Build::Notes 0.4234
+      Module::Build::PPMMaker 0.4234
+      Module::Build::Platform::Default 0.4234
+      Module::Build::Platform::MacOS 0.4234
+      Module::Build::Platform::Unix 0.4234
+      Module::Build::Platform::VMS 0.4234
+      Module::Build::Platform::VOS 0.4234
+      Module::Build::Platform::Windows 0.4234
+      Module::Build::Platform::aix 0.4234
+      Module::Build::Platform::cygwin 0.4234
+      Module::Build::Platform::darwin 0.4234
+      Module::Build::Platform::os2 0.4234
+      Module::Build::PodParser 0.4234
     requirements:
       CPAN::Meta 2.142060
       Cwd 0
@@ -1684,10 +1684,10 @@ DISTRIBUTIONS
       Text::ParseWords 0
       perl 5.006001
       version 0.87
-  Module-Build-Tiny-0.039
-    pathname: L/LE/LEONT/Module-Build-Tiny-0.039.tar.gz
+  Module-Build-Tiny-0.044
+    pathname: L/LE/LEONT/Module-Build-Tiny-0.044.tar.gz
     provides:
-      Module::Build::Tiny 0.039
+      Module::Build::Tiny 0.044
     requirements:
       CPAN::Meta 0
       DynaLoader 0
@@ -2462,16 +2462,16 @@ DISTRIBUTIONS
       Test::Pod 0
       Travel::Status::DE::IRIS 1.2
       perl v5.20.0
-  Travel-Status-DE-DeutscheBahn-4.09
-    pathname: D/DE/DERF/Travel-Status-DE-DeutscheBahn-4.09.tar.gz
+  Travel-Status-DE-DeutscheBahn-4.10
+    pathname: D/DE/DERF/Travel-Status-DE-DeutscheBahn-4.10.tar.gz
     provides:
-      Travel::Status::DE::DeutscheBahn 4.09
-      Travel::Status::DE::HAFAS 4.09
-      Travel::Status::DE::HAFAS::Journey 4.09
-      Travel::Status::DE::HAFAS::Message 4.09
-      Travel::Status::DE::HAFAS::Polyline 4.09
-      Travel::Status::DE::HAFAS::Stop 4.09
-      Travel::Status::DE::HAFAS::StopFinder 4.09
+      Travel::Status::DE::DeutscheBahn 4.10
+      Travel::Status::DE::HAFAS 4.10
+      Travel::Status::DE::HAFAS::Journey 4.10
+      Travel::Status::DE::HAFAS::Message 4.10
+      Travel::Status::DE::HAFAS::Polyline 4.10
+      Travel::Status::DE::HAFAS::Stop 4.10
+      Travel::Status::DE::HAFAS::StopFinder 4.10
     requirements:
       Carp 0
       Class::Accessor 0.16
@@ -2489,12 +2489,12 @@ DISTRIBUTIONS
       Test::More 0
       Test::Pod 0
       perl v5.14.0
-  Travel-Status-DE-IRIS-1.83
-    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.83.tar.gz
+  Travel-Status-DE-IRIS-1.84
+    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.84.tar.gz
     provides:
-      Travel::Status::DE::IRIS 1.83
-      Travel::Status::DE::IRIS::Result 1.83
-      Travel::Status::DE::IRIS::Stations 1.83
+      Travel::Status::DE::IRIS 1.84
+      Travel::Status::DE::IRIS::Result 1.84
+      Travel::Status::DE::IRIS::Stations 1.84
     requirements:
       Carp 0
       Class::Accessor 0
@@ -2543,53 +2543,53 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       common::sense 0
-  URI-5.17
-    pathname: O/OA/OALDERS/URI-5.17.tar.gz
+  URI-5.18
+    pathname: S/SI/SIMBABQUE/URI-5.18.tar.gz
     provides:
-      URI 5.17
-      URI::Escape 5.17
-      URI::Heuristic 5.17
-      URI::IRI 5.17
-      URI::QueryParam 5.17
-      URI::Split 5.17
-      URI::URL 5.17
-      URI::WithBase 5.17
-      URI::data 5.17
-      URI::file 5.17
-      URI::file::Base 5.17
-      URI::file::FAT 5.17
-      URI::file::Mac 5.17
-      URI::file::OS2 5.17
-      URI::file::QNX 5.17
-      URI::file::Unix 5.17
-      URI::file::Win32 5.17
-      URI::ftp 5.17
-      URI::gopher 5.17
-      URI::http 5.17
-      URI::https 5.17
-      URI::ldap 5.17
-      URI::ldapi 5.17
-      URI::ldaps 5.17
-      URI::mailto 5.17
-      URI::mms 5.17
-      URI::news 5.17
-      URI::nntp 5.17
-      URI::nntps 5.17
-      URI::pop 5.17
-      URI::rlogin 5.17
-      URI::rsync 5.17
-      URI::rtsp 5.17
-      URI::rtspu 5.17
-      URI::sftp 5.17
-      URI::sip 5.17
-      URI::sips 5.17
-      URI::snews 5.17
-      URI::ssh 5.17
-      URI::telnet 5.17
-      URI::tn3270 5.17
-      URI::urn 5.17
-      URI::urn::isbn 5.17
-      URI::urn::oid 5.17
+      URI 5.18
+      URI::Escape 5.18
+      URI::Heuristic 5.18
+      URI::IRI 5.18
+      URI::QueryParam 5.18
+      URI::Split 5.18
+      URI::URL 5.18
+      URI::WithBase 5.18
+      URI::data 5.18
+      URI::file 5.18
+      URI::file::Base 5.18
+      URI::file::FAT 5.18
+      URI::file::Mac 5.18
+      URI::file::OS2 5.18
+      URI::file::QNX 5.18
+      URI::file::Unix 5.18
+      URI::file::Win32 5.18
+      URI::ftp 5.18
+      URI::gopher 5.18
+      URI::http 5.18
+      URI::https 5.18
+      URI::ldap 5.18
+      URI::ldapi 5.18
+      URI::ldaps 5.18
+      URI::mailto 5.18
+      URI::mms 5.18
+      URI::news 5.18
+      URI::nntp 5.18
+      URI::nntps 5.18
+      URI::pop 5.18
+      URI::rlogin 5.18
+      URI::rsync 5.18
+      URI::rtsp 5.18
+      URI::rtspu 5.18
+      URI::sftp 5.18
+      URI::sip 5.18
+      URI::sips 5.18
+      URI::snews 5.18
+      URI::ssh 5.18
+      URI::telnet 5.18
+      URI::tn3270 5.18
+      URI::urn 5.18
+      URI::urn::isbn 5.18
+      URI::urn::oid 5.18
     requirements:
       Carp 0
       Cwd 0
