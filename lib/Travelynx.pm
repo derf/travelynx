@@ -1023,8 +1023,13 @@ sub startup {
 								$old{$k} = $station->[2]{$k};
 							}
 							$station->[2] = $sd;
-							for my $k (qw(rt_arr rt_dep arr_delay dep_delay)) {
-								$station->[2]{$k} ||= $old{$k};
+							if ( not $station->[2]{rt_arr} ) {
+								$station->[2]{rt_arr}    = $old{rt_arr};
+								$station->[2]{arr_delay} = $old{arr_delay};
+							}
+							if ( not $station->[2]{rt_dep} ) {
+								$station->[2]{rt_dep}    = $old{rt_dep};
+								$station->[2]{dep_delay} = $old{dep_delay};
 							}
 						}
 					}
