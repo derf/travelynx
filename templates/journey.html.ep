@@ -123,7 +123,7 @@
 					</td>
 				</tr>
 				<tr>
-					<th scope="row">Entfernung</th>
+					<th scope="row">Strecke</th>
 					<td>
 						% if ($journey->{skip_route}) {
 							<i class="material-icons right">location_off</i>
@@ -142,7 +142,7 @@
 					</td>
 				</tr>
 				<tr>
-					<th scope="row">Geschwindigkeit</th>
+					<th scope="row">Tempo</th>
 					<td>
 						% if ($journey->{skip_route}) {
 							<i class="material-icons right">location_off</i>
@@ -241,10 +241,10 @@
 							% if ($within or $at_startstop) {
 								<span style="color: #808080;">
 									% if ($before and $station->[2]{rt_dep} and $station->[2]{dep_delay}) {
-										%= sprintf('%+d → %s', $station->[2]{dep_delay}, $station->[2]{rt_dep}->strftime('%H:%M'))
+										%= sprintf('%+d', $station->[2]{dep_delay})
 									% }
 									% elsif (not $before and $station->[2]{rt_arr} and $station->[2]{arr_delay}) {
-										%= sprintf('%+d → %s', $station->[2]{arr_delay}, $station->[2]{rt_arr}->strftime('%H:%M'))
+										%= sprintf('%+d', $station->[2]{arr_delay})
 									% }
 								</span>
 							% }
