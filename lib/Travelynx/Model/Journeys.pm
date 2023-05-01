@@ -626,6 +626,13 @@ sub get {
 			$ref->{checkout}      = epoch_to_dt( $ref->{checkout_ts} );
 			$ref->{sched_arrival} = epoch_to_dt( $ref->{sched_arr_ts} );
 			$ref->{rt_arrival}    = epoch_to_dt( $ref->{rt_arr_ts} );
+			for my $stop ( @{ $ref->{route} } ) {
+				for my $k (qw(rt_arr rt_dep sched_arr sched_dep)) {
+					if ( $stop->[2]{$k} ) {
+						$stop->[2]{$k} = epoch_to_dt( $stop->[2]{$k} );
+					}
+				}
+			}
 		}
 
 		if ( $opt{verbose} ) {

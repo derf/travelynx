@@ -208,6 +208,7 @@
 				<tr>
 					<th scope="row">Route</th>
 					<td>
+						% my $before = 1;
 						% my $within = 0;
 						% my $at_startstop = 0;
 						% for my $station (@{$journey->{route}}) {
@@ -220,14 +221,35 @@
 							% else {
 								% $at_startstop = 0;
 							% }
+							<span style="color: #808080;">
+								% if ($before and $station->[2]{sched_dep}) {
+									%= $station->[2]{sched_dep}->strftime('%H:%M')
+								% }
+								% elsif (not $before and $station->[2]{sched_arr}) {
+									%= $station->[2]{sched_arr}->strftime('%H:%M')
+								% }
+							</span>
 							% if ($at_startstop or $within) {
-								<%= $station->[0] %>
+								%= $station->[0]
 							% }
 							% else {
 								<span style="color: #808080;"><%= $station->[0] %></span>
 							% }
 							% if ($journey->{edited} & 0x0010) {
 								∗
+							% }
+							% if ($within or $at_startstop) {
+								<span style="color: #808080;">
+									% if ($before and $station->[2]{rt_dep} and $station->[2]{dep_delay}) {
+										%= sprintf('%+d → %s', $station->[2]{dep_delay}, $station->[2]{rt_dep}->strftime('%H:%M'))
+									% }
+									% elsif (not $before and $station->[2]{rt_arr} and $station->[2]{arr_delay}) {
+										%= sprintf('%+d → %s', $station->[2]{arr_delay}, $station->[2]{rt_arr}->strftime('%H:%M'))
+									% }
+								</span>
+							% }
+							% if ($station->[0] eq $journey->{from_name}) {
+								% $before = 0;
 							% }
 							<br/>
 						% }
