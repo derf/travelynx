@@ -24,7 +24,11 @@ $(document).ready(function() {
 			const res = $(document.createElement('p'));
 			$.each(stops, function(i, stop) {
 				const parts = stop.split(';');
-				res.append($('<a class="tablerow" href="/s/' + parts[0] + '"><span>' + parts[1] + '</span></a>'));
+				const node = $('<a class="tablerow" href="/s/' + parts[0] + '"><span>' + parts[1] + '</span></a>');
+				node.click(function() {
+					$('nav .preloader-wrapper').addClass('active');
+				});
+				res.append(node);
 			});
 			$('p.geolocationhint').text('Letzte Ziele:');
 			getPlaceholder().replaceWith(res);
@@ -46,7 +50,11 @@ $(document).ready(function() {
 					name = candidate.name,
 					distance = candidate.distance.toFixed(1);
 
-				res.append($('<a class="tablerow" href="/s/' + ds100 + '"><span>' + name + '</span></a>'));
+				const node = $('<a class="tablerow" href="/s/' + ds100 + '"><span>' + name + '</span></a>');
+				node.click(function() {
+					$('nav .preloader-wrapper').addClass('active');
+				});
+				res.append(node);
 			});
 			getPlaceholder().replaceWith(res);
 		}
