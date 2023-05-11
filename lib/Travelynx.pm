@@ -1332,10 +1332,10 @@ sub startup {
 
 			for my $station ( @{ $journey->{route_after} } ) {
 				my $station_desc = $station->[0];
-				if ( $station->[2]{rt_arr} ) {
+				if ( $station->[2]{sched_arr} and $station->[2]{rt_arr} ) {
 					$station_desc .= $station->[2]{sched_arr}->strftime(';%s');
 					$station_desc .= $station->[2]{rt_arr}->strftime(';%s');
-					if ( $station->[2]{rt_dep} ) {
+					if ( $station->[2]{sched_dep} and $station->[2]{rt_dep} ) {
 						$station_desc
 						  .= $station->[2]{sched_dep}->strftime(';%s');
 						$station_desc .= $station->[2]{rt_dep}->strftime(';%s');
