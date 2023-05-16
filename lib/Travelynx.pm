@@ -1421,12 +1421,16 @@ sub startup {
 					dep_ds100      => $in_transit->{dep_ds100},
 					dep_eva        => $in_transit->{dep_eva},
 					dep_name       => $in_transit->{dep_name},
+					dep_lat        => $in_transit->{dep_lat},
+					dep_lon        => $in_transit->{dep_lon},
 					dep_platform   => $in_transit->{dep_platform},
 					sched_arrival => epoch_to_dt( $in_transit->{sched_arr_ts} ),
 					real_arrival  => epoch_to_dt( $in_transit->{real_arr_ts} ),
 					arr_ds100     => $in_transit->{arr_ds100},
 					arr_eva       => $in_transit->{arr_eva},
 					arr_name      => $in_transit->{arr_name},
+					arr_lat       => $in_transit->{arr_lat},
+					arr_lon       => $in_transit->{arr_lon},
 					arr_platform  => $in_transit->{arr_platform},
 					route_after   => \@route_after,
 					messages      => $in_transit->{messages},
@@ -1654,12 +1658,16 @@ sub startup {
 					dep_ds100       => $latest->{dep_ds100},
 					dep_eva         => $latest->{dep_eva},
 					dep_name        => $latest->{dep_name},
+					dep_lat         => $latest->{dep_lat},
+					dep_lon         => $latest->{dep_lon},
 					dep_platform    => $latest->{dep_platform},
 					sched_arrival   => epoch_to_dt( $latest->{sched_arr_ts} ),
 					real_arrival    => epoch_to_dt( $latest->{real_arr_ts} ),
 					arr_ds100       => $latest->{arr_ds100},
 					arr_eva         => $latest->{arr_eva},
 					arr_name        => $latest->{arr_name},
+					arr_lat         => $latest->{arr_lat},
+					arr_lon         => $latest->{arr_lon},
 					arr_platform    => $latest->{arr_platform},
 					comment         => $latest->{user_data}{comment},
 					visibility      => $latest->{visibility},
@@ -1695,8 +1703,8 @@ sub startup {
 					ds100         => $status->{dep_ds100},
 					name          => $status->{dep_name},
 					uic           => $status->{dep_eva},
-					longitude     => undef,
-					latitude      => undef,
+					longitude     => $status->{dep_lon},
+					latitude      => $status->{dep_lat},
 					scheduledTime => $status->{sched_departure}
 					? $status->{sched_departure}->epoch
 					: undef,
@@ -1708,8 +1716,8 @@ sub startup {
 					ds100         => $status->{arr_ds100},
 					name          => $status->{arr_name},
 					uic           => $status->{arr_eva},
-					longitude     => undef,
-					latitude      => undef,
+					longitude     => $status->{arr_lon},
+					latitude      => $status->{arr_lat},
 					scheduledTime => $status->{sched_arrival}
 					? $status->{sched_arrival}->epoch
 					: undef,
@@ -1752,22 +1760,6 @@ sub startup {
 						: undef,
 					}
 				);
-			}
-
-			if ( $status->{dep_eva} ) {
-				if ( my $s = $self->stations->get_by_eva( $status->{dep_eva} ) )
-				{
-					$ret->{fromStation}{longitude} = $s->{lon};
-					$ret->{fromStation}{latitude}  = $s->{lat};
-				}
-			}
-
-			if ( $status->{arr_eva} ) {
-				if ( my $s = $self->stations->get_by_eva( $status->{arr_eva} ) )
-				{
-					$ret->{toStation}{longitude} = $s->{lon};
-					$ret->{toStation}{latitude}  = $s->{lat};
-				}
 			}
 
 			return $ret;
