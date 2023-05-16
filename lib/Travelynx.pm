@@ -1374,20 +1374,6 @@ sub startup {
 
 			if ($in_transit) {
 
-				if ( my $station
-					= $self->stations->get_by_eva( $in_transit->{dep_eva} ) )
-				{
-					$in_transit->{dep_ds100} = $station->{ds100};
-					$in_transit->{dep_name}  = $station->{name};
-				}
-				if ( $in_transit->{arr_eva}
-					and my $station
-					= $self->stations->get_by_eva( $in_transit->{arr_eva} ) )
-				{
-					$in_transit->{arr_ds100} = $station->{ds100};
-					$in_transit->{arr_name}  = $station->{name};
-				}
-
 				my @route = @{ $in_transit->{route} // [] };
 				my @route_after;
 				my $dep_info;
