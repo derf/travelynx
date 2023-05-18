@@ -1178,6 +1178,12 @@ sub startup {
 										wagons => [@wagons],
 									}
 								);
+								if (    $group->{fahrzeuggruppebezeichnung}
+									and $group->{fahrzeuggruppebezeichnung} eq
+									'ICE0304' )
+								{
+									$data->{wagonorder_pride} = 1;
+								}
 							}
 							$self->in_transit->update_data(
 								uid  => $uid,

@@ -12,12 +12,17 @@
 				<p>„<%= $journey->{comment} %>“</p>
 			% }
 			<p>
-				% if ($journey->{train_line}) {
-					<div class="center-align"><b><%= $journey->{train_type} %> <%= $journey->{train_line} %></b> <%= $journey->{train_no} %></div>
-				% }
-				% else {
-					<div class="center-align"><b><%= $journey->{train_type} %> <%= $journey->{train_no} %></b></div>
-				% }
+				<div class="center-align">
+					% if ($journey->{train_line}) {
+						<b><%= $journey->{train_type} %> <%= $journey->{train_line} %></b> <%= $journey->{train_no} %>
+					% }
+					% else {
+						<b><%= $journey->{train_type} %> <%= $journey->{train_no} %></b>
+					% }
+					% if ($journey->{extra_data}{wagonorder_pride}) {
+						🏳️‍🌈
+					% }
+				</div>
 				<div class="center-align countdown"
 					data-duration="<%= $journey->{journey_duration} // 0 %>"
 					% if (param('token')) {
