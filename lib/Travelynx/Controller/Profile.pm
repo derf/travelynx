@@ -374,15 +374,14 @@ sub user_status {
 			)
 		  )
 		{
-			$status->{checked_in} = 0;
-			$status->{arr_name}   = undef;
+			$status = {};
 		}
 	}
 	if (    not $status->{checked_in}
 		and $status->{arr_name}
 		and not $user->{past_status} )
 	{
-		$status->{arr_name} = undef;
+		$status = {};
 	}
 
 	if ( $status->{checked_in} ) {
