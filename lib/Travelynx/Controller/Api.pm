@@ -93,7 +93,7 @@ sub get_v1 {
 		return;
 	}
 	if ( $api_action eq 'status' ) {
-		$self->render( json => $self->get_user_status_json_v1($uid) );
+		$self->render( json => $self->get_user_status_json_v1( uid => $uid ) );
 	}
 	else {
 		$self->render(
@@ -166,7 +166,7 @@ sub travel_v1 {
 				success    => \0,
 				deprecated => \0,
 				error      => 'Missing or invalid action',
-				status     => $self->get_user_status_json_v1($uid)
+				status     => $self->get_user_status_json_v1( uid => $uid )
 			},
 		);
 		return;
@@ -190,7 +190,7 @@ sub travel_v1 {
 					success    => \0,
 					deprecated => \0,
 					error      => 'Missing fromStation or train data',
-					status     => $self->get_user_status_json_v1($uid)
+					status     => $self->get_user_status_json_v1( uid => $uid )
 				},
 			);
 			return;
@@ -202,7 +202,7 @@ sub travel_v1 {
 					success    => \0,
 					deprecated => \0,
 					error      => 'Unknown fromStation',
-					status     => $self->get_user_status_json_v1($uid)
+					status     => $self->get_user_status_json_v1( uid => $uid )
 				},
 			);
 			return;
@@ -214,7 +214,7 @@ sub travel_v1 {
 					success    => \0,
 					deprecated => \0,
 					error      => 'Unknown toStation',
-					status     => $self->get_user_status_json_v1($uid)
+					status     => $self->get_user_status_json_v1( uid => $uid )
 				},
 			);
 			return;
@@ -238,7 +238,7 @@ sub travel_v1 {
 						error   =>
 						  'Error requesting departures from fromStation: '
 						  . $status->{errstr},
-						status => $self->get_user_status_json_v1($uid)
+						status => $self->get_user_status_json_v1( uid => $uid )
 					}
 				);
 				return;
@@ -253,7 +253,7 @@ sub travel_v1 {
 						success    => \0,
 						deprecated => \0,
 						error      => 'Train not found at fromStation',
-						status     => $self->get_user_status_json_v1($uid)
+						status => $self->get_user_status_json_v1( uid => $uid )
 					}
 				);
 				return;
@@ -285,7 +285,7 @@ sub travel_v1 {
 					success    => \0,
 					deprecated => \0,
 					error      => 'Checkin/Checkout error: ' . $error,
-					status     => $self->get_user_status_json_v1($uid)
+					status     => $self->get_user_status_json_v1( uid => $uid )
 				}
 			);
 		}
@@ -294,7 +294,7 @@ sub travel_v1 {
 				json => {
 					success    => \1,
 					deprecated => \0,
-					status     => $self->get_user_status_json_v1($uid)
+					status     => $self->get_user_status_json_v1( uid => $uid )
 				}
 			);
 		}
@@ -308,7 +308,7 @@ sub travel_v1 {
 					success    => \0,
 					deprecated => \0,
 					error      => 'Missing toStation',
-					status     => $self->get_user_status_json_v1($uid)
+					status     => $self->get_user_status_json_v1( uid => $uid )
 				},
 			);
 			return;
@@ -332,7 +332,7 @@ sub travel_v1 {
 					success    => \0,
 					deprecated => \0,
 					error      => 'Checkout error: ' . $error,
-					status     => $self->get_user_status_json_v1($uid)
+					status     => $self->get_user_status_json_v1( uid => $uid )
 				}
 			);
 		}
@@ -341,7 +341,7 @@ sub travel_v1 {
 				json => {
 					success    => \1,
 					deprecated => \0,
-					status     => $self->get_user_status_json_v1($uid)
+					status     => $self->get_user_status_json_v1( uid => $uid )
 				}
 			);
 		}
@@ -354,7 +354,7 @@ sub travel_v1 {
 					success    => \0,
 					deprecated => \0,
 					error      => $error,
-					status     => $self->get_user_status_json_v1($uid)
+					status     => $self->get_user_status_json_v1( uid => $uid )
 				}
 			);
 		}
@@ -363,7 +363,7 @@ sub travel_v1 {
 				json => {
 					success    => \1,
 					deprecated => \0,
-					status     => $self->get_user_status_json_v1($uid)
+					status     => $self->get_user_status_json_v1( uid => $uid )
 				}
 			);
 		}

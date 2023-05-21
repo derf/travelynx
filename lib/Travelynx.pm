@@ -836,7 +836,7 @@ sub startup {
 				return;
 			}
 
-			my $status    = $self->get_user_status_json_v1($uid);
+			my $status    = $self->get_user_status_json_v1( uid => $uid );
 			my $header    = {};
 			my $hook_body = {
 				reason => $reason,
@@ -1694,10 +1694,9 @@ sub startup {
 
 	$self->helper(
 		'get_user_status_json_v1' => sub {
-			my ( $self, $uid ) = @_;
+			my ( $self, %opt ) = @_;
+			my $uid    = $opt{uid};
 			my $status = $self->get_user_status($uid);
-
-			# TODO simplify lon/lat (can be returned from get_user_status)
 
 			my $ret = {
 				deprecated => \0,
@@ -1737,11 +1736,15 @@ sub startup {
 					no   => $status->{train_no},
 					id   => $status->{train_id},
 				},
-				actionTime => $status->{timestamp}
-				? $status->{timestamp}->epoch
-				: undef,
 				intermediateStops => [],
 			};
+
+			if ( not $opt{public} ) {
+				$ret->{actionTime}
+				  = $status->{timestamp}
+				  ? $status->{timestamp}->epoch
+				  : undef;
+			}
 
 			for my $stop ( @{ $status->{route_after} // [] } ) {
 				if ( $status->{arr_name} and $stop->[0] eq $status->{arr_name} )
