@@ -1696,7 +1696,7 @@ sub startup {
 		'get_user_status_json_v1' => sub {
 			my ( $self, %opt ) = @_;
 			my $uid    = $opt{uid};
-			my $status = $self->get_user_status($uid);
+			my $status = $opt{status} // $self->get_user_status($uid);
 
 			my $ret = {
 				deprecated => \0,

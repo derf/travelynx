@@ -405,15 +405,24 @@ sub user_status {
 		$og_data{description} = $tw_data{description} = q{};
 	}
 
-	$self->render(
-		'user_status',
-		name               => $name,
-		public_level       => $user->{public_level},
-		journey            => $status,
-		journey_visibility => $visibility,
-		twitter            => \%tw_data,
-		opengraph          => \%og_data,
-		version            => $self->app->config->{version} // 'UNKNOWN',
+	$self->respond_to(
+		json => {
+			json => {
+				name    => $name,
+				status  => $self->get_user_status_json_v1( status => $status ),
+				version => $self->app->config->{version} // 'UNKNOWN',
+			},
+		},
+		any => {
+			template           => 'user_status',
+			name               => $name,
+			public_level       => $user->{public_level},
+			journey            => $status,
+			journey_visibility => $visibility,
+			twitter            => \%tw_data,
+			opengraph          => \%og_data,
+			version            => $self->app->config->{version} // 'UNKNOWN',
+		},
 	);
 }
 
