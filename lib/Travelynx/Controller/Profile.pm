@@ -408,8 +408,11 @@ sub user_status {
 	$self->respond_to(
 		json => {
 			json => {
-				name    => $name,
-				status  => $self->get_user_status_json_v1( status => $status ),
+				name   => $name,
+				status => $self->get_user_status_json_v1(
+					status => $status,
+					public => 1
+				),
 				version => $self->app->config->{version} // 'UNKNOWN',
 			},
 		},
