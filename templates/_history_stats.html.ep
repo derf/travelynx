@@ -39,7 +39,7 @@
 			<tr>
 				<th scope="row">Fahrtzeit</th>
 				<td><%= $stats->{min_travel_real_strf} %> Stunden
-					(nach Fahrplan: <%= $stats->{min_travel_sched_strf} %>)<td>
+					(nach Fahrplan: <%= $stats->{min_travel_sched_strf} %>)</td>
 			</tr>
 			<tr>
 				<th scope="row">Wartezeit (nur Umstiege)</th>
