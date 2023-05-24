@@ -994,7 +994,7 @@ sub webfinger {
 	}
 
 	my $name = $+{name};
-	my $user = $self->users->get_privacy_by_name( name => $name );
+	my $user = $self->users->get_privacy_by( name => $name );
 
 	if ( not $user ) {
 		$self->render( 'not_found', status => 404 );

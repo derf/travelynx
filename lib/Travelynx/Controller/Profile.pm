@@ -63,7 +63,7 @@ sub profile {
 	my ($self) = @_;
 
 	my $name = $self->stash('name');
-	my $user = $self->users->get_privacy_by_name( name => $name );
+	my $user = $self->users->get_privacy_by( name => $name );
 
 	if ( not $user ) {
 		$self->render('not_found');
@@ -157,7 +157,7 @@ sub journey_details {
 	my ($self)     = @_;
 	my $name       = $self->stash('name');
 	my $journey_id = $self->stash('id');
-	my $user       = $self->users->get_privacy_by_name( name => $name );
+	my $user       = $self->users->get_privacy_by( name => $name );
 
 	$self->param( journey_id => $journey_id );
 
@@ -290,7 +290,7 @@ sub user_status {
 
 	my $name = $self->stash('name');
 	my $ts   = $self->stash('ts') // 0;
-	my $user = $self->users->get_privacy_by_name( name => $name );
+	my $user = $self->users->get_privacy_by( name => $name );
 
 	if ( not $user ) {
 		$self->render('not_found');
@@ -434,7 +434,7 @@ sub status_card {
 
 	my $name = $self->stash('name');
 	$name =~ s{[.]html$}{};
-	my $user = $self->users->get_privacy_by_name( name => $name );
+	my $user = $self->users->get_privacy_by( name => $name );
 
 	delete $self->stash->{layout};
 

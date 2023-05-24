@@ -154,19 +154,21 @@ sub get_uid_by_name_and_mail {
 	return;
 }
 
-sub get_privacy_by_name {
+sub get_privacy_by {
 	my ( $self, %opt ) = @_;
-	my $db   = $opt{db} // $self->{pg}->db;
-	my $name = $opt{name};
+	my $db = $opt{db} // $self->{pg}->db;
 
-	my $res = $db->select(
-		'users',
-		[ 'id', 'public_level' ],
-		{
-			name   => $name,
-			status => 1
-		}
-	);
+	my %where;
+
+	if ( $opt{name} ) {
+		$where{name} = $opt{name};
+	}
+	else {
+		$where{id} = $opt{uid};
+	}
+
+	my $res = $db->select( 'users', [ 'id', 'public_level' ],
+		{ %where, status => 1 } );
 
 	if ( my $user = $res->hash ) {
 		return {
