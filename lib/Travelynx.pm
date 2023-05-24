@@ -1695,7 +1695,9 @@ sub startup {
 	$self->helper(
 		'get_user_status_json_v1' => sub {
 			my ( $self, %opt ) = @_;
-			my $uid    = $opt{uid};
+			my $uid     = $opt{uid};
+			my $privacy = $opt{privacy}
+			  // $self->users->get_privacy_by( uid => $uid );
 			my $status = $opt{status} // $self->get_user_status($uid);
 
 			my $ret = {
@@ -1737,6 +1739,15 @@ sub startup {
 					id   => $status->{train_id},
 				},
 				intermediateStops => [],
+				visibility        => {
+					level => $status->{visibility}
+					  // $privacy->{default_visibility},
+					desc => (
+						  $status->{visibility_str} eq 'default'
+						? $privacy->{default_visibility_str}
+						: $status->{visibility_str}
+					),
+				}
 			};
 
 			if ( not $opt{public} ) {

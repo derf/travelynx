@@ -410,8 +410,9 @@ sub user_status {
 			json => {
 				name   => $name,
 				status => $self->get_user_status_json_v1(
-					status => $status,
-					public => 1
+					status  => $status,
+					privacy => $user,
+					public  => 1
 				),
 				version => $self->app->config->{version} // 'UNKNOWN',
 			},
