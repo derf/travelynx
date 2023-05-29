@@ -1,87 +1,87 @@
 # carton snapshot format: version 1.0
 DISTRIBUTIONS
-  Alien-Build-2.78
-    pathname: P/PL/PLICEASE/Alien-Build-2.78.tar.gz
+  Alien-Build-2.80
+    pathname: P/PL/PLICEASE/Alien-Build-2.80.tar.gz
     provides:
-      Alien::Base 2.78
-      Alien::Base::PkgConfig 2.78
-      Alien::Base::Wrapper 2.78
-      Alien::Build 2.78
-      Alien::Build::CommandSequence 2.78
-      Alien::Build::Helper 2.78
-      Alien::Build::Interpolate 2.78
-      Alien::Build::Interpolate::Default 2.78
-      Alien::Build::Interpolate::Helper 2.78
-      Alien::Build::Log 2.78
-      Alien::Build::Log::Abbreviate 2.78
-      Alien::Build::Log::Default 2.78
-      Alien::Build::MM 2.78
-      Alien::Build::Meta 2.78
-      Alien::Build::Plugin 2.78
-      Alien::Build::Plugin::Build::Autoconf 2.78
-      Alien::Build::Plugin::Build::CMake 2.78
-      Alien::Build::Plugin::Build::Copy 2.78
-      Alien::Build::Plugin::Build::MSYS 2.78
-      Alien::Build::Plugin::Build::Make 2.78
-      Alien::Build::Plugin::Build::SearchDep 2.78
-      Alien::Build::Plugin::Core::CleanInstall 2.78
-      Alien::Build::Plugin::Core::Download 2.78
-      Alien::Build::Plugin::Core::FFI 2.78
-      Alien::Build::Plugin::Core::Gather 2.78
-      Alien::Build::Plugin::Core::Legacy 2.78
-      Alien::Build::Plugin::Core::Override 2.78
-      Alien::Build::Plugin::Core::Setup 2.78
-      Alien::Build::Plugin::Core::Tail 2.78
-      Alien::Build::Plugin::Decode::DirListing 2.78
-      Alien::Build::Plugin::Decode::DirListingFtpcopy 2.78
-      Alien::Build::Plugin::Decode::HTML 2.78
-      Alien::Build::Plugin::Decode::Mojo 2.78
-      Alien::Build::Plugin::Digest::Negotiate 2.78
-      Alien::Build::Plugin::Digest::SHA 2.78
-      Alien::Build::Plugin::Digest::SHAPP 2.78
-      Alien::Build::Plugin::Download::Negotiate 2.78
-      Alien::Build::Plugin::Extract::ArchiveTar 2.78
-      Alien::Build::Plugin::Extract::ArchiveZip 2.78
-      Alien::Build::Plugin::Extract::CommandLine 2.78
-      Alien::Build::Plugin::Extract::Directory 2.78
-      Alien::Build::Plugin::Extract::File 2.78
-      Alien::Build::Plugin::Extract::Negotiate 2.78
-      Alien::Build::Plugin::Fetch::CurlCommand 2.78
-      Alien::Build::Plugin::Fetch::HTTPTiny 2.78
-      Alien::Build::Plugin::Fetch::LWP 2.78
-      Alien::Build::Plugin::Fetch::Local 2.78
-      Alien::Build::Plugin::Fetch::LocalDir 2.78
-      Alien::Build::Plugin::Fetch::NetFTP 2.78
-      Alien::Build::Plugin::Fetch::Wget 2.78
-      Alien::Build::Plugin::Gather::IsolateDynamic 2.78
-      Alien::Build::Plugin::PkgConfig::CommandLine 2.78
-      Alien::Build::Plugin::PkgConfig::LibPkgConf 2.78
-      Alien::Build::Plugin::PkgConfig::MakeStatic 2.78
-      Alien::Build::Plugin::PkgConfig::Negotiate 2.78
-      Alien::Build::Plugin::PkgConfig::PP 2.78
-      Alien::Build::Plugin::Prefer::BadVersion 2.78
-      Alien::Build::Plugin::Prefer::GoodVersion 2.78
-      Alien::Build::Plugin::Prefer::SortVersions 2.78
-      Alien::Build::Plugin::Probe::CBuilder 2.78
-      Alien::Build::Plugin::Probe::CommandLine 2.78
-      Alien::Build::Plugin::Probe::Vcpkg 2.78
-      Alien::Build::Plugin::Test::Mock 2.78
-      Alien::Build::PluginMeta 2.78
-      Alien::Build::Temp 2.78
-      Alien::Build::TempDir 2.78
-      Alien::Build::Util 2.78
-      Alien::Build::Version::Basic 2.78
-      Alien::Build::rc 2.78
-      Alien::Role 2.78
-      Alien::Util 2.78
-      Test::Alien 2.78
-      Test::Alien::Build 2.78
-      Test::Alien::CanCompile 2.78
-      Test::Alien::CanPlatypus 2.78
-      Test::Alien::Diag 2.78
-      Test::Alien::Run 2.78
-      Test::Alien::Synthetic 2.78
-      alienfile 2.78
+      Alien::Base 2.80
+      Alien::Base::PkgConfig 2.80
+      Alien::Base::Wrapper 2.80
+      Alien::Build 2.80
+      Alien::Build::CommandSequence 2.80
+      Alien::Build::Helper 2.80
+      Alien::Build::Interpolate 2.80
+      Alien::Build::Interpolate::Default 2.80
+      Alien::Build::Interpolate::Helper 2.80
+      Alien::Build::Log 2.80
+      Alien::Build::Log::Abbreviate 2.80
+      Alien::Build::Log::Default 2.80
+      Alien::Build::MM 2.80
+      Alien::Build::Meta 2.80
+      Alien::Build::Plugin 2.80
+      Alien::Build::Plugin::Build::Autoconf 2.80
+      Alien::Build::Plugin::Build::CMake 2.80
+      Alien::Build::Plugin::Build::Copy 2.80
+      Alien::Build::Plugin::Build::MSYS 2.80
+      Alien::Build::Plugin::Build::Make 2.80
+      Alien::Build::Plugin::Build::SearchDep 2.80
+      Alien::Build::Plugin::Core::CleanInstall 2.80
+      Alien::Build::Plugin::Core::Download 2.80
+      Alien::Build::Plugin::Core::FFI 2.80
+      Alien::Build::Plugin::Core::Gather 2.80
+      Alien::Build::Plugin::Core::Legacy 2.80
+      Alien::Build::Plugin::Core::Override 2.80
+      Alien::Build::Plugin::Core::Setup 2.80
+      Alien::Build::Plugin::Core::Tail 2.80
+      Alien::Build::Plugin::Decode::DirListing 2.80
+      Alien::Build::Plugin::Decode::DirListingFtpcopy 2.80
+      Alien::Build::Plugin::Decode::HTML 2.80
+      Alien::Build::Plugin::Decode::Mojo 2.80
+      Alien::Build::Plugin::Digest::Negotiate 2.80
+      Alien::Build::Plugin::Digest::SHA 2.80
+      Alien::Build::Plugin::Digest::SHAPP 2.80
+      Alien::Build::Plugin::Download::Negotiate 2.80
+      Alien::Build::Plugin::Extract::ArchiveTar 2.80
+      Alien::Build::Plugin::Extract::ArchiveZip 2.80
+      Alien::Build::Plugin::Extract::CommandLine 2.80
+      Alien::Build::Plugin::Extract::Directory 2.80
+      Alien::Build::Plugin::Extract::File 2.80
+      Alien::Build::Plugin::Extract::Negotiate 2.80
+      Alien::Build::Plugin::Fetch::CurlCommand 2.80
+      Alien::Build::Plugin::Fetch::HTTPTiny 2.80
+      Alien::Build::Plugin::Fetch::LWP 2.80
+      Alien::Build::Plugin::Fetch::Local 2.80
+      Alien::Build::Plugin::Fetch::LocalDir 2.80
+      Alien::Build::Plugin::Fetch::NetFTP 2.80
+      Alien::Build::Plugin::Fetch::Wget 2.80
+      Alien::Build::Plugin::Gather::IsolateDynamic 2.80
+      Alien::Build::Plugin::PkgConfig::CommandLine 2.80
+      Alien::Build::Plugin::PkgConfig::LibPkgConf 2.80
+      Alien::Build::Plugin::PkgConfig::MakeStatic 2.80
+      Alien::Build::Plugin::PkgConfig::Negotiate 2.80
+      Alien::Build::Plugin::PkgConfig::PP 2.80
+      Alien::Build::Plugin::Prefer::BadVersion 2.80
+      Alien::Build::Plugin::Prefer::GoodVersion 2.80
+      Alien::Build::Plugin::Prefer::SortVersions 2.80
+      Alien::Build::Plugin::Probe::CBuilder 2.80
+      Alien::Build::Plugin::Probe::CommandLine 2.80
+      Alien::Build::Plugin::Probe::Vcpkg 2.80
+      Alien::Build::Plugin::Test::Mock 2.80
+      Alien::Build::PluginMeta 2.80
+      Alien::Build::Temp 2.80
+      Alien::Build::TempDir 2.80
+      Alien::Build::Util 2.80
+      Alien::Build::Version::Basic 2.80
+      Alien::Build::rc 2.80
+      Alien::Role 2.80
+      Alien::Util 2.80
+      Test::Alien 2.80
+      Test::Alien::Build 2.80
+      Test::Alien::CanCompile 2.80
+      Test::Alien::CanPlatypus 2.80
+      Test::Alien::Diag 2.80
+      Test::Alien::Run 2.80
+      Test::Alien::Synthetic 2.80
+      alienfile 2.80
     requirements:
       Capture::Tiny 0.17
       Digest::SHA 0
@@ -94,6 +94,7 @@ DISTRIBUTIONS
       JSON::PP 0
       List::Util 1.33
       Path::Tiny 0.077
+      PkgConfig 0.14026
       Test2::API 1.302096
       Text::ParseWords 3.26
       parent 0
@@ -476,15 +477,16 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 6.48
       Test::Simple 0.90
       perl 5.008001
-  Data-OptList-0.113
-    pathname: R/RJ/RJBS/Data-OptList-0.113.tar.gz
+  Data-OptList-0.114
+    pathname: R/RJ/RJBS/Data-OptList-0.114.tar.gz
     provides:
-      Data::OptList 0.113
+      Data::OptList 0.114
     requirements:
       ExtUtils::MakeMaker 6.78
       List::Util 0
       Params::Util 0
       Sub::Install 0.921
+      perl 5.012
       strict 0
       warnings 0
   DateTime-1.59
@@ -551,15 +553,15 @@ DISTRIBUTIONS
       parent 0
       strict 0
       warnings 0
-  DateTime-Locale-1.38
-    pathname: D/DR/DROLSKY/DateTime-Locale-1.38.tar.gz
+  DateTime-Locale-1.39
+    pathname: D/DR/DROLSKY/DateTime-Locale-1.39.tar.gz
     provides:
-      DateTime::Locale 1.38
-      DateTime::Locale::Base 1.38
-      DateTime::Locale::Catalog 1.38
-      DateTime::Locale::Data 1.38
-      DateTime::Locale::FromData 1.38
-      DateTime::Locale::Util 1.38
+      DateTime::Locale 1.39
+      DateTime::Locale::Base 1.39
+      DateTime::Locale::Catalog 1.39
+      DateTime::Locale::Data 1.39
+      DateTime::Locale::FromData 1.39
+      DateTime::Locale::Util 1.39
     requirements:
       Carp 0
       Dist::CheckConflicts 0.02
@@ -1334,6 +1336,20 @@ DISTRIBUTIONS
       HTML::Tagset 3.20
     requirements:
       ExtUtils::MakeMaker 0
+  HTTP-CookieJar-0.014
+    pathname: D/DA/DAGOLDEN/HTTP-CookieJar-0.014.tar.gz
+    provides:
+      HTTP::CookieJar 0.014
+      HTTP::CookieJar::LWP 0.014
+    requirements:
+      Carp 0
+      ExtUtils::MakeMaker 6.17
+      HTTP::Date 0
+      Time::Local 1.1901
+      parent 0
+      perl 5.008001
+      strict 0
+      warnings 0
   HTTP-Cookies-6.10
     pathname: O/OA/OALDERS/HTTP-Cookies-6.10.tar.gz
     provides:
@@ -1442,18 +1458,18 @@ DISTRIBUTIONS
       Exporter 5.57
       ExtUtils::MakeMaker 0
       perl 5.008
-  IO-Socket-SSL-2.081
-    pathname: S/SU/SULLR/IO-Socket-SSL-2.081.tar.gz
+  IO-Socket-SSL-2.083
+    pathname: S/SU/SULLR/IO-Socket-SSL-2.083.tar.gz
     provides:
-      IO::Socket::SSL 2.081
+      IO::Socket::SSL 2.083
       IO::Socket::SSL::Intercept 2.056
-      IO::Socket::SSL::OCSP_Cache 2.081
-      IO::Socket::SSL::OCSP_Resolver 2.081
+      IO::Socket::SSL::OCSP_Cache 2.083
+      IO::Socket::SSL::OCSP_Resolver 2.083
       IO::Socket::SSL::PublicSuffix undef
-      IO::Socket::SSL::SSL_Context 2.081
-      IO::Socket::SSL::SSL_HANDLE 2.081
-      IO::Socket::SSL::Session_Cache 2.081
-      IO::Socket::SSL::Trace 2.081
+      IO::Socket::SSL::SSL_Context 2.083
+      IO::Socket::SSL::SSL_HANDLE 2.083
+      IO::Socket::SSL::Session_Cache 2.083
+      IO::Socket::SSL::Trace 2.083
       IO::Socket::SSL::Utils 2.015
     requirements:
       ExtUtils::MakeMaker 0
@@ -1684,10 +1700,10 @@ DISTRIBUTIONS
       Text::ParseWords 0
       perl 5.006001
       version 0.87
-  Module-Build-Tiny-0.044
-    pathname: L/LE/LEONT/Module-Build-Tiny-0.044.tar.gz
+  Module-Build-Tiny-0.045
+    pathname: L/LE/LEONT/Module-Build-Tiny-0.045.tar.gz
     provides:
-      Module::Build::Tiny 0.044
+      Module::Build::Tiny 0.045
     requirements:
       CPAN::Meta 0
       DynaLoader 0
@@ -1761,8 +1777,8 @@ DISTRIBUTIONS
       Mojolicious 8.50
       SQL::Abstract::Pg 1.0
       perl 5.016
-  Mojolicious-9.31
-    pathname: S/SR/SRI/Mojolicious-9.31.tar.gz
+  Mojolicious-9.32
+    pathname: S/SR/SRI/Mojolicious-9.32.tar.gz
     provides:
       Mojo undef
       Mojo::Asset undef
@@ -1830,7 +1846,7 @@ DISTRIBUTIONS
       Mojo::UserAgent::Transactor undef
       Mojo::Util undef
       Mojo::WebSocket undef
-      Mojolicious 9.31
+      Mojolicious 9.32
       Mojolicious::Command undef
       Mojolicious::Command::Author::cpanify undef
       Mojolicious::Command::Author::generate undef
@@ -2065,6 +2081,14 @@ DISTRIBUTIONS
       strict 0
       warnings 0
       warnings::register 0
+  PkgConfig-0.25026
+    pathname: P/PL/PLICEASE/PkgConfig-0.25026.tar.gz
+    provides:
+      PkgConfig 0.25026
+    requirements:
+      ExtUtils::MakeMaker 6.56
+      Test::More 0.94
+      perl 5.006000
   Role-Tiny-2.002004
     pathname: H/HA/HAARG/Role-Tiny-2.002004.tar.gz
     provides:
@@ -2462,16 +2486,16 @@ DISTRIBUTIONS
       Test::Pod 0
       Travel::Status::DE::IRIS 1.2
       perl v5.20.0
-  Travel-Status-DE-DeutscheBahn-4.10
-    pathname: D/DE/DERF/Travel-Status-DE-DeutscheBahn-4.10.tar.gz
+  Travel-Status-DE-DeutscheBahn-4.12
+    pathname: D/DE/DERF/Travel-Status-DE-DeutscheBahn-4.12.tar.gz
     provides:
-      Travel::Status::DE::DeutscheBahn 4.10
-      Travel::Status::DE::HAFAS 4.10
-      Travel::Status::DE::HAFAS::Journey 4.10
-      Travel::Status::DE::HAFAS::Message 4.10
-      Travel::Status::DE::HAFAS::Polyline 4.10
-      Travel::Status::DE::HAFAS::Stop 4.10
-      Travel::Status::DE::HAFAS::StopFinder 4.10
+      Travel::Status::DE::DeutscheBahn 4.12
+      Travel::Status::DE::HAFAS 4.12
+      Travel::Status::DE::HAFAS::Journey 4.12
+      Travel::Status::DE::HAFAS::Message 4.12
+      Travel::Status::DE::HAFAS::Polyline 4.12
+      Travel::Status::DE::HAFAS::Stop 4.12
+      Travel::Status::DE::HAFAS::StopFinder 4.12
     requirements:
       Carp 0
       Class::Accessor 0.16
@@ -2489,12 +2513,12 @@ DISTRIBUTIONS
       Test::More 0
       Test::Pod 0
       perl v5.14.0
-  Travel-Status-DE-IRIS-1.84
-    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.84.tar.gz
+  Travel-Status-DE-IRIS-1.85
+    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.85.tar.gz
     provides:
-      Travel::Status::DE::IRIS 1.84
-      Travel::Status::DE::IRIS::Result 1.84
-      Travel::Status::DE::IRIS::Stations 1.84
+      Travel::Status::DE::IRIS 1.85
+      Travel::Status::DE::IRIS::Result 1.85
+      Travel::Status::DE::IRIS::Stations 1.85
     requirements:
       Carp 0
       Class::Accessor 0
@@ -2543,53 +2567,53 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       common::sense 0
-  URI-5.18
-    pathname: S/SI/SIMBABQUE/URI-5.18.tar.gz
+  URI-5.19
+    pathname: S/SI/SIMBABQUE/URI-5.19.tar.gz
     provides:
-      URI 5.18
-      URI::Escape 5.18
-      URI::Heuristic 5.18
-      URI::IRI 5.18
-      URI::QueryParam 5.18
-      URI::Split 5.18
-      URI::URL 5.18
-      URI::WithBase 5.18
-      URI::data 5.18
-      URI::file 5.18
-      URI::file::Base 5.18
-      URI::file::FAT 5.18
-      URI::file::Mac 5.18
-      URI::file::OS2 5.18
-      URI::file::QNX 5.18
-      URI::file::Unix 5.18
-      URI::file::Win32 5.18
-      URI::ftp 5.18
-      URI::gopher 5.18
-      URI::http 5.18
-      URI::https 5.18
-      URI::ldap 5.18
-      URI::ldapi 5.18
-      URI::ldaps 5.18
-      URI::mailto 5.18
-      URI::mms 5.18
-      URI::news 5.18
-      URI::nntp 5.18
-      URI::nntps 5.18
-      URI::pop 5.18
-      URI::rlogin 5.18
-      URI::rsync 5.18
-      URI::rtsp 5.18
-      URI::rtspu 5.18
-      URI::sftp 5.18
-      URI::sip 5.18
-      URI::sips 5.18
-      URI::snews 5.18
-      URI::ssh 5.18
-      URI::telnet 5.18
-      URI::tn3270 5.18
-      URI::urn 5.18
-      URI::urn::isbn 5.18
-      URI::urn::oid 5.18
+      URI 5.19
+      URI::Escape 5.19
+      URI::Heuristic 5.19
+      URI::IRI 5.19
+      URI::QueryParam 5.19
+      URI::Split 5.19
+      URI::URL 5.19
+      URI::WithBase 5.19
+      URI::data 5.19
+      URI::file 5.19
+      URI::file::Base 5.19
+      URI::file::FAT 5.19
+      URI::file::Mac 5.19
+      URI::file::OS2 5.19
+      URI::file::QNX 5.19
+      URI::file::Unix 5.19
+      URI::file::Win32 5.19
+      URI::ftp 5.19
+      URI::gopher 5.19
+      URI::http 5.19
+      URI::https 5.19
+      URI::ldap 5.19
+      URI::ldapi 5.19
+      URI::ldaps 5.19
+      URI::mailto 5.19
+      URI::mms 5.19
+      URI::news 5.19
+      URI::nntp 5.19
+      URI::nntps 5.19
+      URI::pop 5.19
+      URI::rlogin 5.19
+      URI::rsync 5.19
+      URI::rtsp 5.19
+      URI::rtspu 5.19
+      URI::sftp 5.19
+      URI::sip 5.19
+      URI::sips 5.19
+      URI::snews 5.19
+      URI::ssh 5.19
+      URI::telnet 5.19
+      URI::tn3270 5.19
+      URI::urn 5.19
+      URI::urn::isbn 5.19
+      URI::urn::oid 5.19
     requirements:
       Carp 0
       Cwd 0
@@ -2800,32 +2824,32 @@ DISTRIBUTIONS
       XSLoader 0
       lib 0
       perl 5.008001
-  libwww-perl-6.68
-    pathname: O/OA/OALDERS/libwww-perl-6.68.tar.gz
+  libwww-perl-6.70
+    pathname: S/SI/SIMBABQUE/libwww-perl-6.70.tar.gz
     provides:
-      LWP 6.68
-      LWP::Authen::Basic 6.68
-      LWP::Authen::Digest 6.68
-      LWP::Authen::Ntlm 6.68
-      LWP::ConnCache 6.68
-      LWP::Debug 6.68
-      LWP::Debug::TraceHTTP 6.68
-      LWP::DebugFile 6.68
-      LWP::MemberMixin 6.68
-      LWP::Protocol 6.68
-      LWP::Protocol::cpan 6.68
-      LWP::Protocol::data 6.68
-      LWP::Protocol::file 6.68
-      LWP::Protocol::ftp 6.68
-      LWP::Protocol::gopher 6.68
-      LWP::Protocol::http 6.68
-      LWP::Protocol::loopback 6.68
-      LWP::Protocol::mailto 6.68
-      LWP::Protocol::nntp 6.68
-      LWP::Protocol::nogo 6.68
-      LWP::RobotUA 6.68
-      LWP::Simple 6.68
-      LWP::UserAgent 6.68
+      LWP 6.70
+      LWP::Authen::Basic 6.70
+      LWP::Authen::Digest 6.70
+      LWP::Authen::Ntlm 6.70
+      LWP::ConnCache 6.70
+      LWP::Debug 6.70
+      LWP::Debug::TraceHTTP 6.70
+      LWP::DebugFile 6.70
+      LWP::MemberMixin 6.70
+      LWP::Protocol 6.70
+      LWP::Protocol::cpan 6.70
+      LWP::Protocol::data 6.70
+      LWP::Protocol::file 6.70
+      LWP::Protocol::ftp 6.70
+      LWP::Protocol::gopher 6.70
+      LWP::Protocol::http 6.70
+      LWP::Protocol::loopback 6.70
+      LWP::Protocol::mailto 6.70
+      LWP::Protocol::nntp 6.70
+      LWP::Protocol::nogo 6.70
+      LWP::RobotUA 6.70
+      LWP::Simple 6.70
+      LWP::UserAgent 6.70
     requirements:
       Digest::MD5 0
       Encode 2.12
@@ -2837,6 +2861,7 @@ DISTRIBUTIONS
       Getopt::Long 0
       HTML::Entities 0
       HTML::HeadParser 3.71
+      HTTP::CookieJar::LWP 0
       HTTP::Cookies 6
       HTTP::Date 6
       HTTP::Negotiate 6
@@ -2848,6 +2873,7 @@ DISTRIBUTIONS
       IO::Socket 0
       LWP::MediaTypes 6
       MIME::Base64 2.1
+      Module::Load 0
       Net::FTP 2.58
       Net::HTTP 6.18
       Scalar::Util 0
