@@ -278,7 +278,7 @@
 					% if ($journey->{real_arrival}->epoch and $journey_visibility eq 'private') {
 						% $arr_text = $journey->{real_arrival}->strftime(' – Ankunft gegen %H:%M Uhr');
 					% }
-					% if ($user->{is_public} & 0x80 and $journey->{comment}) {
+					% if ($user->{comments_visible} and $journey->{comment}) {
 						data-text="<%= $journey->{comment} %> (@ <%= $journey->{train_type} %> <%= $journey->{train_no} %> → <%= $journey->{arr_name} %>) #travelynx"
 					% }
 					% else {

@@ -29,7 +29,7 @@
 					am
 					<b><%= $journey->{sched_departure}->strftime('%d.%m.%Y') %></b>
 				</p>
-				% if (current_user()->{is_public} & 0x04) {
+				% if (current_user()->{comments_visible}) {
 					<p>
 						Der hier eingetragene Text ist als Teil deines Nutzerstatus
 						öffentlich sichtbar.
