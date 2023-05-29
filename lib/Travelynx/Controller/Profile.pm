@@ -408,7 +408,9 @@ sub user_status {
 	$self->respond_to(
 		json => {
 			json => {
-				name   => $name,
+				account => {
+					name => $name,
+				},
 				status => $self->get_user_status_json_v1(
 					status  => $status,
 					privacy => $user,
