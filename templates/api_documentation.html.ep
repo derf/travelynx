@@ -27,7 +27,9 @@
 		<p style="font-family: Monospace;">
 		{<br/>
 			"deprecated" : true / false, (falls true: Diese API-Version wird irgendwann abgeschaltet, bitte auf eine neue umsteigen)<br/>
+			"actionTime" : 1234567, (UNIX-Timestamp des letzten Checkin/Checkout)<br/>
 			"checkedIn" : true / false,<br/>
+			"comment": "Kommentar",<br/>
 			"fromStation" : { (letzter Checkin)<br/>
 				"name" : "Essen Hbf",<br/>
 				"ds100" : "EE",<br/>
@@ -57,12 +59,15 @@
 			…<br/>
 			],<br/>
 			"train" : {<br/>
-			"type" : "S", (aktueller / letzter Zugtyp)<br/>
-			"line" : "6", (Linie als String, nicht immer numerisch, ggf. null)<br/>
-			"no" : "30634", (Zugnummer als String)<br/>
-			"id" : "7512500863736016593", (IRIS-spezifische Zug-ID)<br/>
+				"type" : "S", (aktueller / letzter Zugtyp)<br/>
+				"line" : "6", (Linie als String, nicht immer numerisch, ggf. null)<br/>
+				"no" : "30634", (Zugnummer als String)<br/>
+				"id" : "7512500863736016593" (IRIS-spezifische Zug-ID)<br/>
 			},<br/>
-			"actionTime" : 1234567, (UNIX-Timestamp des letzten Checkin/Checkout)<br/>
+			"visibility" : {<br/>
+				"desc": "private" / "unlisted" / "followers" / "travelynx" / "public",<br/>
+				"level": 10 / 30 / 60 / 80 / 100<br/>
+			}<br/>
 		}
 		</p>
 		<p>
