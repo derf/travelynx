@@ -1706,6 +1706,7 @@ sub startup {
 					     $status->{checked_in}
 					  or $status->{cancelled}
 				) ? \1 : \0,
+				comment     => $status->{comment},
 				fromStation => {
 					ds100         => $status->{dep_ds100},
 					name          => $status->{dep_name},
@@ -1750,7 +1751,12 @@ sub startup {
 				}
 			};
 
-			if ( not $opt{public} ) {
+			if ( $opt{public} ) {
+				if ( not $privacy->{comments_visible} ) {
+					delete $ret->{comment};
+				}
+			}
+			else {
 				$ret->{actionTime}
 				  = $status->{timestamp}
 				  ? $status->{timestamp}->epoch
