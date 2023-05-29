@@ -7,7 +7,6 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use DateTime;
 use DateTime::Format::Strptime;
-use JSON;
 use List::Util      qw(uniq min max);
 use List::UtilsBy   qw(max_by uniq_by);
 use List::MoreUtils qw(first_index);
