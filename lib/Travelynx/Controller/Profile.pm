@@ -293,7 +293,7 @@ sub user_status {
 	my $user = $self->users->get_privacy_by( name => $name );
 
 	if ( not $user ) {
-		$self->render('not_found');
+		$self->render( 'not_found', status => 404 );
 		return;
 	}
 
