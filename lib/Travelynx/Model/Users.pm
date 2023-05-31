@@ -27,6 +27,18 @@ my %visibility_atoi = (
 	private   => 10,
 );
 
+my %predicate_itoa = (
+	1 => 'follows',
+	2 => 'requests_follow',
+	3 => 'is_blocked_by',
+);
+
+my %predicate_atoi = (
+	follows         => 1,
+	requests_follow => 2,
+	is_blocked_by   => 3,
+);
+
 my @sb_templates = (
 	undef,
 	[ 'DBF',         'https://dbf.finalrewind.org/{name}?rt=1#{tt}{tn}' ],
@@ -708,6 +720,188 @@ sub update_webhook_status {
 			url     => $url
 		}
 	);
+}
+
+# TODO irgendwo muss auch noch ne einstellung rein, um follows / follow requests global zu deaktivieren
+
+sub get_relation {
+	my ( $self, %opt ) = @_;
+
+	my $db     = $opt{db} // $self->{pg}->db;
+	my $uid    = $opt{uid};
+	my $target = $opt{target};
+
+	my $res_h = $db->select(
+		'relations',
+		['predicate'],
+		{
+			subject_id => $uid,
+			object_id  => $target
+		}
+	)->hash;
+
+	if ($res_h) {
+		return $predicate_itoa{ $res_h->{predicate} };
+	}
+	return;
+
+   #my $res_h = $db->select( 'relations', ['subject_id', 'predicate'],
+   #	{ subject_id => [$uid, $target], object_id => [$target, $target] } )->hash;
+}
+
+sub request_follow {
+	my ( $self, %opt ) = @_;
+
+	my $db     = $opt{db} // $self->{pg}->db;
+	my $uid    = $opt{uid};
+	my $target = $opt{target};
+
+	$db->insert(
+		'relations',
+		{
+			subject_id => $uid,
+			predicate  => $predicate_atoi{requests_follow},
+			object_id  => $target,
+		}
+	);
+}
+
+sub accept_follow_request {
+	my ( $self, %opt ) = @_;
+
+	my $db        = $opt{db} // $self->{pg}->db;
+	my $uid       = $opt{uid};
+	my $applicant = $opt{applicant};
+
+	$db->update(
+		'relations',
+		{
+			predicate => $predicate_atoi{follows},
+		},
+		{
+			subject_id => $applicant,
+			predicate  => $predicate_atoi{requests_follow},
+			object_id  => $uid
+		}
+	);
+}
+
+sub reject_follow_request {
+	my ( $self, %opt ) = @_;
+
+	my $db        = $opt{db} // $self->{pg}->db;
+	my $uid       = $opt{uid};
+	my $applicant = $opt{applicant};
+
+	$db->delete(
+		'relations',
+		{
+			subject_id => $applicant,
+			predicate  => $predicate_atoi{requests_follow},
+			object_id  => $uid
+		}
+	);
+}
+
+sub remove_follower {
+	my ( $self, %opt ) = @_;
+
+	my $db       = $opt{db} // $self->{pg}->db;
+	my $uid      = $opt{uid};
+	my $follower = $opt{follower};
+
+	$db->delete(
+		'relations',
+		{
+			subject_id => $follower,
+			predicate  => $predicate_atoi{follows},
+			object_id  => $uid
+		}
+	);
+}
+
+sub block {
+	my ( $self, %opt ) = @_;
+
+	my $db     = $opt{db} // $self->{pg}->db;
+	my $uid    = $opt{uid};
+	my $target = $opt{target};
+
+	$db->insert(
+		'relations',
+		{
+			subject_id => $target,
+			predicate  => $predicate_atoi{is_blocked_by},
+			object_id  => $uid
+		},
+		{
+			on_conflict => \
+'(subject_id, object_id) do update set predicate = EXCLUDED.predicate'
+		},
+	);
+}
+
+sub unblock {
+	my ( $self, %opt ) = @_;
+
+	my $db     = $opt{db} // $self->{pg}->db;
+	my $uid    = $opt{uid};
+	my $target = $opt{target};
+
+	$db->delete(
+		'relations',
+		{
+			subject_id => $target,
+			predicate  => $predicate_atoi{is_blocked_by},
+			object_id  => $uid
+		},
+	);
+}
+
+sub get_followers {
+	my ( $self, %opt ) = @_;
+
+	my $db  = $opt{db} // $self->{pg}->db;
+	my $uid = $opt{uid};
+
+	my $res = $db->select( 'followers', [ 'id', 'name' ], { self_id => $uid } );
+
+	return $res->hashes->each;
+}
+
+sub get_follow_requests {
+	my ( $self, %opt ) = @_;
+
+	my $db  = $opt{db} // $self->{pg}->db;
+	my $uid = $opt{uid};
+
+	my $res
+	  = $db->select( 'follow_requests', [ 'id', 'name' ], { self_id => $uid } );
+
+	return $res->hashes->each;
+}
+
+sub get_followees {
+	my ( $self, %opt ) = @_;
+
+	my $db  = $opt{db} // $self->{pg}->db;
+	my $uid = $opt{uid};
+
+	my $res = $db->select( 'followees', [ 'id', 'name' ], { self_id => $uid } );
+
+	return $res->hashes->each;
+}
+
+sub get_blocked_users {
+	my ( $self, %opt ) = @_;
+
+	my $db  = $opt{db} // $self->{pg}->db;
+	my $uid = $opt{uid};
+
+	my $res
+	  = $db->select( 'blocked_users', [ 'id', 'name' ], { self_id => $uid } );
+
+	return $res->hashes->each;
 }
 
 1;

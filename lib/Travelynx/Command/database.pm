@@ -1470,6 +1470,54 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v34 -> v35
+	sub {
+		my ($db) = @_;
+
+		# 1 : follows
+		# 2 : follow requested
+		# 3 : is blocked by
+		$db->query(
+			qq{
+				create table relations (
+					subject_id integer not null references users (id),
+					predicate smallint not null,
+					object_id integer not null references users (id),
+					primary key (subject_id, object_id)
+				);
+				create view followers as select
+					relations.object_id as self_id,
+					users.id as id,
+					users.name as name
+					from relations
+					join users on relations.subject_id = users.id
+					where predicate = 1;
+				create view followees as select
+					relations.subject_id as self_id,
+					users.id as id,
+					users.name as name
+					from relations
+					join users on relations.object_id = users.id
+					where predicate = 1;
+				create view follow_requests as select
+					relations.object_id as self_id,
+					users.id as id,
+					users.name as name
+					from relations
+					join users on relations.subject_id = users.id
+					where predicate = 2;
+				create view blocked_users as select
+					relations.object_id as self_id,
+					users.id as id,
+					users.name as name
+					from relations
+					join users on relations.subject_id = users.id
+					where predicate = 3;
+				update schema_version set version = 35;
+			}
+		);
+	},
 );
 
 sub sync_stations {
