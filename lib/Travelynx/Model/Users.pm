@@ -803,20 +803,30 @@ sub reject_follow_request {
 	);
 }
 
-sub remove_follower {
+sub unfollow {
 	my ( $self, %opt ) = @_;
 
-	my $db       = $opt{db} // $self->{pg}->db;
-	my $uid      = $opt{uid};
-	my $follower = $opt{follower};
+	my $db     = $opt{db} // $self->{pg}->db;
+	my $uid    = $opt{uid};
+	my $target = $opt{target};
 
 	$db->delete(
 		'relations',
 		{
-			subject_id => $follower,
+			subject_id => $uid,
 			predicate  => $predicate_atoi{follows},
-			object_id  => $uid
+			object_id  => $target
 		}
+	);
+}
+
+sub remove_follower {
+	my ( $self, %opt ) = @_;
+
+	$self->unfollow(
+		db     => $opt{db},
+		uid    => $opt{follower},
+		target => $opt{uid},
 	);
 }
 

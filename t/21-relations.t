@@ -370,6 +370,82 @@ is(
 	),
 	undef
 );
+is( scalar $u->get_followers( uid => $uid1 ),       0 );
+is( scalar $u->get_followers( uid => $uid2 ),       0 );
+is( scalar $u->get_followees( uid => $uid1 ),       0 );
+is( scalar $u->get_followees( uid => $uid2 ),       0 );
+is( scalar $u->get_follow_requests( uid => $uid1 ), 0 );
+is( scalar $u->get_follow_requests( uid => $uid2 ), 0 );
+is( scalar $u->get_blocked_users( uid => $uid1 ),   0 );
+is( scalar $u->get_blocked_users( uid => $uid2 ),   0 );
+
+$u->request_follow(
+	uid    => $uid1,
+	target => $uid2
+);
+$u->accept_follow_request(
+	uid       => $uid2,
+	applicant => $uid1
+);
+
+is(
+	$u->get_relation(
+		uid    => $uid1,
+		target => $uid2
+	),
+	'follows'
+);
+is(
+	$u->get_relation(
+		uid    => $uid2,
+		target => $uid1
+	),
+	undef
+);
+is( scalar $u->get_followers( uid => $uid1 ),       0 );
+is( scalar $u->get_followers( uid => $uid2 ),       1 );
+is( scalar $u->get_followees( uid => $uid1 ),       1 );
+is( scalar $u->get_followees( uid => $uid2 ),       0 );
+is( scalar $u->get_follow_requests( uid => $uid1 ), 0 );
+is( scalar $u->get_follow_requests( uid => $uid2 ), 0 );
+is( scalar $u->get_blocked_users( uid => $uid1 ),   0 );
+is( scalar $u->get_blocked_users( uid => $uid2 ),   0 );
+is_deeply(
+	[ $u->get_followers( uid => $uid2 ) ],
+	[ { id => $uid1, name => 'test1' } ]
+);
+is_deeply(
+	[ $u->get_followees( uid => $uid1 ) ],
+	[ { id => $uid2, name => 'test2' } ]
+);
+
+$u->unfollow(
+	uid    => $uid1,
+	target => $uid2
+);
+
+is(
+	$u->get_relation(
+		uid    => $uid1,
+		target => $uid2
+	),
+	undef
+);
+is(
+	$u->get_relation(
+		uid    => $uid2,
+		target => $uid1
+	),
+	undef
+);
+is( scalar $u->get_followers( uid => $uid1 ),       0 );
+is( scalar $u->get_followers( uid => $uid2 ),       0 );
+is( scalar $u->get_followees( uid => $uid1 ),       0 );
+is( scalar $u->get_followees( uid => $uid2 ),       0 );
+is( scalar $u->get_follow_requests( uid => $uid1 ), 0 );
+is( scalar $u->get_follow_requests( uid => $uid2 ), 0 );
+is( scalar $u->get_blocked_users( uid => $uid1 ),   0 );
+is( scalar $u->get_blocked_users( uid => $uid2 ),   0 );
 
 $t->app->pg->db->query('drop schema travelynx_test_21 cascade');
 done_testing();
