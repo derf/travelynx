@@ -103,7 +103,6 @@ sub verify_registration_token {
 	my $db    = $opt{db} // $self->{pg}->db;
 
 	my $tx;
-
 	if ( not $opt{in_transaction} ) {
 		$tx = $db->begin;
 	}
@@ -120,7 +119,7 @@ sub verify_registration_token {
 	if ( $res->hash->{count} ) {
 		$db->update( 'users', { status => 1 }, { id => $uid } );
 		$db->delete( 'pending_registrations', { user_id => $uid } );
-		if ( not $opt{in_transaction} ) {
+		if ($tx) {
 			$tx->commit;
 		}
 		return 1;
@@ -179,8 +178,11 @@ sub get_privacy_by {
 		$where{id} = $opt{uid};
 	}
 
-	my $res = $db->select( 'users', [ 'id', 'public_level' ],
-		{ %where, status => 1 } );
+	my $res = $db->select(
+		'users',
+		[ 'id', 'public_level', 'accept_follows' ],
+		{ %where, status => 1 }
+	);
 
 	if ( my $user = $res->hash ) {
 		return {
@@ -189,10 +191,12 @@ sub get_privacy_by {
 			default_visibility => $user->{public_level} & 0x7f,
 			default_visibility_str =>
 			  $visibility_itoa{ $user->{public_level} & 0x7f },
-			comments_visible => $user->{public_level} & 0x80 ? 1 : 0,
-			past_visible     => ( $user->{public_level} & 0x300 ) >> 8,
-			past_all         => $user->{public_level} & 0x400 ? 1 : 0,
-			past_status      => $user->{public_level} & 0x800 ? 1 : 0,
+			comments_visible       => $user->{public_level} & 0x80 ? 1 : 0,
+			past_visible           => ( $user->{public_level} & 0x300 ) >> 8,
+			past_all               => $user->{public_level} & 0x400 ? 1 : 0,
+			past_status            => $user->{public_level} & 0x800 ? 1 : 0,
+			accept_follows         => $user->{accept_follows} == 2  ? 1 : 0,
+			accept_follow_requests => $user->{accept_follows} == 1  ? 1 : 0,
 		};
 	}
 	return;
@@ -213,6 +217,27 @@ sub set_privacy {
 	}
 
 	$db->update( 'users', { public_level => $public_level }, { id => $uid } );
+}
+
+sub set_social {
+	my ( $self, %opt ) = @_;
+	my $db  = $opt{db} // $self->{pg}->db;
+	my $uid = $opt{uid};
+
+	my $accept_follows = 0;
+
+	if ( $opt{accept_follows} ) {
+		$accept_follows = 2;
+	}
+	elsif ( $opt{accept_follow_requests} ) {
+		$accept_follows = 1;
+	}
+
+	$db->update(
+		'users',
+		{ accept_follows => $accept_follows },
+		{ id             => $uid }
+	);
 }
 
 sub mark_for_password_reset {
@@ -373,7 +398,8 @@ sub get {
 
 	my $user = $db->select(
 		'users',
-		'id, name, status, public_level, email, external_services, '
+		'id, name, status, public_level, email, '
+		  . 'external_services, accept_follows, notifications, '
 		  . 'extract(epoch from registered_at) as registered_at_ts, '
 		  . 'extract(epoch from last_seen) as last_seen_ts, '
 		  . 'extract(epoch from deletion_requested) as deletion_requested_ts',
@@ -384,6 +410,9 @@ sub get {
 			id                     => $user->{id},
 			name                   => $user->{name},
 			status                 => $user->{status},
+			notifications          => $user->{notifications},
+			accept_follows         => $user->{accept_follows} == 2 ? 1 : 0,
+			accept_follow_requests => $user->{accept_follows} == 1 ? 1 : 0,
 			is_public              => $user->{public_level},
 			default_visibility     => $user->{public_level} & 0x7f,
 			default_visibility_str =>
@@ -512,7 +541,6 @@ sub delete {
 	my $db  = $opt{db} // $self->{pg}->db;
 	my $uid = $opt{uid};
 	my $tx;
-
 	if ( not $opt{in_transaction} ) {
 		$tx = $db->begin;
 	}
@@ -537,7 +565,7 @@ sub delete {
 		die("Deleted $res{users} rows from users, expected 1. Rolling back.\n");
 	}
 
-	if ( not $opt{in_transaction} ) {
+	if ($tx) {
 		$tx->commit;
 	}
 
@@ -722,8 +750,6 @@ sub update_webhook_status {
 	);
 }
 
-# TODO irgendwo muss auch noch ne einstellung rein, um follows / follow requests global zu deaktivieren
-
 sub get_relation {
 	my ( $self, %opt ) = @_;
 
@@ -749,6 +775,31 @@ sub get_relation {
    #	{ subject_id => [$uid, $target], object_id => [$target, $target] } )->hash;
 }
 
+sub update_notifications {
+	my ( $self, %opt ) = @_;
+
+	# must be called inside a transaction, so $opt{db} is mandatory.
+	my $db  = $opt{db};
+	my $uid = $opt{uid};
+
+	my $has_follow_requests = $opt{has_follow_requests}
+	  // $self->has_follow_requests(
+		db  => $db,
+		uid => $uid
+	  );
+
+	my $notifications
+	  = $db->select( 'users', ['notifications'], { id => $uid } )
+	  ->hash->{notifications};
+	if ($has_follow_requests) {
+		$notifications |= 0x01;
+	}
+	else {
+		$notifications &= ~0x01;
+	}
+	$db->update( 'users', { notifications => $notifications }, { id => $uid } );
+}
+
 sub request_follow {
 	my ( $self, %opt ) = @_;
 
@@ -756,14 +807,29 @@ sub request_follow {
 	my $uid    = $opt{uid};
 	my $target = $opt{target};
 
+	my $tx;
+	if ( not $opt{in_transaction} ) {
+		$tx = $db->begin;
+	}
+
 	$db->insert(
 		'relations',
 		{
 			subject_id => $uid,
 			predicate  => $predicate_atoi{requests_follow},
 			object_id  => $target,
+			ts         => DateTime->now( time_zone => 'Europe/Berlin' ),
 		}
 	);
+	$self->update_notifications(
+		db                  => $db,
+		uid                 => $target,
+		has_follow_requests => 1,
+	);
+
+	if ($tx) {
+		$tx->commit;
+	}
 }
 
 sub accept_follow_request {
@@ -773,10 +839,16 @@ sub accept_follow_request {
 	my $uid       = $opt{uid};
 	my $applicant = $opt{applicant};
 
+	my $tx;
+	if ( not $opt{in_transaction} ) {
+		$tx = $db->begin;
+	}
+
 	$db->update(
 		'relations',
 		{
 			predicate => $predicate_atoi{follows},
+			ts        => DateTime->now( time_zone => 'Europe/Berlin' ),
 		},
 		{
 			subject_id => $applicant,
@@ -784,6 +856,14 @@ sub accept_follow_request {
 			object_id  => $uid
 		}
 	);
+	$self->update_notifications(
+		db  => $db,
+		uid => $uid
+	);
+
+	if ($tx) {
+		$tx->commit;
+	}
 }
 
 sub reject_follow_request {
@@ -793,6 +873,11 @@ sub reject_follow_request {
 	my $uid       = $opt{uid};
 	my $applicant = $opt{applicant};
 
+	my $tx;
+	if ( not $opt{in_transaction} ) {
+		$tx = $db->begin;
+	}
+
 	$db->delete(
 		'relations',
 		{
@@ -801,6 +886,14 @@ sub reject_follow_request {
 			object_id  => $uid
 		}
 	);
+	$self->update_notifications(
+		db  => $db,
+		uid => $uid
+	);
+
+	if ($tx) {
+		$tx->commit;
+	}
 }
 
 sub unfollow {
@@ -837,18 +930,32 @@ sub block {
 	my $uid    = $opt{uid};
 	my $target = $opt{target};
 
+	my $tx;
+	if ( not $opt{in_transaction} ) {
+		$tx = $db->begin;
+	}
+
 	$db->insert(
 		'relations',
 		{
 			subject_id => $target,
 			predicate  => $predicate_atoi{is_blocked_by},
-			object_id  => $uid
+			object_id  => $uid,
+			ts         => DateTime->now( time_zone => 'Europe/Berlin' ),
 		},
 		{
 			on_conflict => \
 '(subject_id, object_id) do update set predicate = EXCLUDED.predicate'
 		},
 	);
+	$self->update_notifications(
+		db  => $db,
+		uid => $uid
+	);
+
+	if ($tx) {
+		$tx->commit;
+	}
 }
 
 sub unblock {
@@ -889,6 +996,16 @@ sub get_follow_requests {
 	  = $db->select( 'follow_requests', [ 'id', 'name' ], { self_id => $uid } );
 
 	return $res->hashes->each;
+}
+
+sub has_follow_requests {
+	my ( $self, %opt ) = @_;
+
+	my $db  = $opt{db} // $self->{pg}->db;
+	my $uid = $opt{uid};
+
+	return $db->select( 'follow_requests', 'count(*) as count',
+		{ self_id => $uid } )->hash->{count};
 }
 
 sub get_followees {

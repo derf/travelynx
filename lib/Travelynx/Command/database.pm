@@ -1518,7 +1518,36 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v35 -> v36
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				alter table relations
+					add column ts timestamptz not null;
+				alter table users
+					add column accept_follows smallint default 1;
+				update schema_version set version = 36;
+			}
+		);
+	},
+
+	# v36 -> v37
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				alter table users
+					add column notifications smallint default 0,
+					add column profile jsonb;
+				update schema_version set version = 37;
+			}
+		);
+	},
 );
+
+# TODO add 'hafas' column to in_transit (and maybe journeys? undo/redo needs something to work with...)
 
 sub sync_stations {
 	my ( $db, $iris_version ) = @_;

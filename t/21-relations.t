@@ -82,6 +82,10 @@ is( scalar $u->get_follow_requests( uid => $uid1 ), 0 );
 is( scalar $u->get_follow_requests( uid => $uid2 ), 0 );
 is( scalar $u->get_blocked_users( uid => $uid1 ),   0 );
 is( scalar $u->get_blocked_users( uid => $uid2 ),   0 );
+is( $u->has_follow_requests( uid => $uid1 ),        0 );
+is( $u->has_follow_requests( uid => $uid2 ),        0 );
+is( $u->get( uid => $uid1 )->{notifications},       0 );
+is( $u->get( uid => $uid2 )->{notifications},       0 );
 
 $u->request_follow(
 	uid    => $uid1,
@@ -110,6 +114,10 @@ is( scalar $u->get_follow_requests( uid => $uid1 ), 0 );
 is( scalar $u->get_follow_requests( uid => $uid2 ), 1 );
 is( scalar $u->get_blocked_users( uid => $uid1 ),   0 );
 is( scalar $u->get_blocked_users( uid => $uid2 ),   0 );
+is( $u->has_follow_requests( uid => $uid1 ),        0 );
+is( $u->has_follow_requests( uid => $uid2 ),        1 );
+is( $u->get( uid => $uid1 )->{notifications},       0 );
+is( $u->get( uid => $uid2 )->{notifications},       1 );
 is_deeply(
 	[ $u->get_follow_requests( uid => $uid2 ) ],
 	[ { id => $uid1, name => 'test1' } ]
@@ -142,6 +150,8 @@ is( scalar $u->get_follow_requests( uid => $uid1 ), 0 );
 is( scalar $u->get_follow_requests( uid => $uid2 ), 0 );
 is( scalar $u->get_blocked_users( uid => $uid1 ),   0 );
 is( scalar $u->get_blocked_users( uid => $uid2 ),   0 );
+is( $u->get( uid => $uid1 )->{notifications},       0 );
+is( $u->get( uid => $uid2 )->{notifications},       0 );
 
 $u->request_follow(
 	uid    => $uid1,
@@ -170,6 +180,10 @@ is( scalar $u->get_follow_requests( uid => $uid1 ), 0 );
 is( scalar $u->get_follow_requests( uid => $uid2 ), 1 );
 is( scalar $u->get_blocked_users( uid => $uid1 ),   0 );
 is( scalar $u->get_blocked_users( uid => $uid2 ),   0 );
+is( $u->has_follow_requests( uid => $uid1 ),        0 );
+is( $u->has_follow_requests( uid => $uid2 ),        1 );
+is( $u->get( uid => $uid1 )->{notifications},       0 );
+is( $u->get( uid => $uid2 )->{notifications},       1 );
 is_deeply(
 	[ $u->get_follow_requests( uid => $uid2 ) ],
 	[ { id => $uid1, name => 'test1' } ]
@@ -202,6 +216,10 @@ is( scalar $u->get_follow_requests( uid => $uid1 ), 0 );
 is( scalar $u->get_follow_requests( uid => $uid2 ), 0 );
 is( scalar $u->get_blocked_users( uid => $uid1 ),   0 );
 is( scalar $u->get_blocked_users( uid => $uid2 ),   0 );
+is( $u->has_follow_requests( uid => $uid1 ),        0 );
+is( $u->has_follow_requests( uid => $uid2 ),        0 );
+is( $u->get( uid => $uid1 )->{notifications},       0 );
+is( $u->get( uid => $uid2 )->{notifications},       0 );
 is_deeply(
 	[ $u->get_followers( uid => $uid2 ) ],
 	[ { id => $uid1, name => 'test1' } ]
@@ -238,6 +256,10 @@ is( scalar $u->get_follow_requests( uid => $uid1 ), 0 );
 is( scalar $u->get_follow_requests( uid => $uid2 ), 0 );
 is( scalar $u->get_blocked_users( uid => $uid1 ),   0 );
 is( scalar $u->get_blocked_users( uid => $uid2 ),   0 );
+is( $u->has_follow_requests( uid => $uid1 ),        0 );
+is( $u->has_follow_requests( uid => $uid2 ),        0 );
+is( $u->get( uid => $uid1 )->{notifications},       0 );
+is( $u->get( uid => $uid2 )->{notifications},       0 );
 
 $u->request_follow(
 	uid    => $uid1,
@@ -286,6 +308,10 @@ is( scalar $u->get_follow_requests( uid => $uid1 ), 0 );
 is( scalar $u->get_follow_requests( uid => $uid2 ), 0 );
 is( scalar $u->get_blocked_users( uid => $uid1 ),   0 );
 is( scalar $u->get_blocked_users( uid => $uid2 ),   1 );
+is( $u->has_follow_requests( uid => $uid1 ),        0 );
+is( $u->has_follow_requests( uid => $uid2 ),        0 );
+is( $u->get( uid => $uid1 )->{notifications},       0 );
+is( $u->get( uid => $uid2 )->{notifications},       0 );
 is_deeply(
 	[ $u->get_blocked_users( uid => $uid2 ) ],
 	[ { id => $uid1, name => 'test1' } ]
@@ -318,6 +344,10 @@ is( scalar $u->get_follow_requests( uid => $uid1 ), 0 );
 is( scalar $u->get_follow_requests( uid => $uid2 ), 0 );
 is( scalar $u->get_blocked_users( uid => $uid1 ),   0 );
 is( scalar $u->get_blocked_users( uid => $uid2 ),   0 );
+is( $u->has_follow_requests( uid => $uid1 ),        0 );
+is( $u->has_follow_requests( uid => $uid2 ),        0 );
+is( $u->get( uid => $uid1 )->{notifications},       0 );
+is( $u->get( uid => $uid2 )->{notifications},       0 );
 
 $u->block(
 	uid    => $uid2,
@@ -346,6 +376,10 @@ is( scalar $u->get_follow_requests( uid => $uid1 ), 0 );
 is( scalar $u->get_follow_requests( uid => $uid2 ), 0 );
 is( scalar $u->get_blocked_users( uid => $uid1 ),   0 );
 is( scalar $u->get_blocked_users( uid => $uid2 ),   1 );
+is( $u->has_follow_requests( uid => $uid1 ),        0 );
+is( $u->has_follow_requests( uid => $uid2 ),        0 );
+is( $u->get( uid => $uid1 )->{notifications},       0 );
+is( $u->get( uid => $uid2 )->{notifications},       0 );
 is_deeply(
 	[ $u->get_blocked_users( uid => $uid2 ) ],
 	[ { id => $uid1, name => 'test1' } ]
@@ -378,6 +412,10 @@ is( scalar $u->get_follow_requests( uid => $uid1 ), 0 );
 is( scalar $u->get_follow_requests( uid => $uid2 ), 0 );
 is( scalar $u->get_blocked_users( uid => $uid1 ),   0 );
 is( scalar $u->get_blocked_users( uid => $uid2 ),   0 );
+is( $u->has_follow_requests( uid => $uid1 ),        0 );
+is( $u->has_follow_requests( uid => $uid2 ),        0 );
+is( $u->get( uid => $uid1 )->{notifications},       0 );
+is( $u->get( uid => $uid2 )->{notifications},       0 );
 
 $u->request_follow(
 	uid    => $uid1,
@@ -410,6 +448,10 @@ is( scalar $u->get_follow_requests( uid => $uid1 ), 0 );
 is( scalar $u->get_follow_requests( uid => $uid2 ), 0 );
 is( scalar $u->get_blocked_users( uid => $uid1 ),   0 );
 is( scalar $u->get_blocked_users( uid => $uid2 ),   0 );
+is( $u->has_follow_requests( uid => $uid1 ),        0 );
+is( $u->has_follow_requests( uid => $uid2 ),        0 );
+is( $u->get( uid => $uid1 )->{notifications},       0 );
+is( $u->get( uid => $uid2 )->{notifications},       0 );
 is_deeply(
 	[ $u->get_followers( uid => $uid2 ) ],
 	[ { id => $uid1, name => 'test1' } ]
@@ -446,6 +488,10 @@ is( scalar $u->get_follow_requests( uid => $uid1 ), 0 );
 is( scalar $u->get_follow_requests( uid => $uid2 ), 0 );
 is( scalar $u->get_blocked_users( uid => $uid1 ),   0 );
 is( scalar $u->get_blocked_users( uid => $uid2 ),   0 );
+is( $u->has_follow_requests( uid => $uid1 ),        0 );
+is( $u->has_follow_requests( uid => $uid2 ),        0 );
+is( $u->get( uid => $uid1 )->{notifications},       0 );
+is( $u->get( uid => $uid2 )->{notifications},       0 );
 
 $t->app->pg->db->query('drop schema travelynx_test_21 cascade');
 done_testing();
