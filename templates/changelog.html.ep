@@ -2,6 +2,38 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		1.32
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left" aria-label="Neues Feature">add</i>
+			Angabe von Kommentaren und Sichtbarkeit in der JSON-API
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Neues Feature">add</i>
+			Editierbare Beschreibung und optionale Links auf der Profilseite.
+			Hier können beispielsweise Träwelling oder andere Social
+			Media-Accounts eingetragen werden.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Neues Feature">add</i>
+			Folgen von Accounts. Die Sichtbarkeit von Checkins und vergangenen
+			Fahrten kann somit auf Follower eingeschränkt werden. Eine
+			Übersichtsseite mit aktuellen Checkins gefolgter Accounts (ähnlich
+			zur Timeline im Fediverse) folgt in einem späteren Release.<br/>
+			Für jeden Account kann individuell eingestellt werden, ob Accounts
+			ihm folgen können, ob Folge-Anfragen zunächst angenommen werden
+			müssen oder ob Folgen grundszätzlich nicht möglich ist. Falls
+			notwendig, können einzelne Accounts blockiert und dadurch am Folgen
+			und am Stellen von Folge-Anfragen gehindert werden.
+		</p>
+	</div>
+</div>
+
+
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		1.31
 	</div>
 	<div class="col s12 m11 l11">
