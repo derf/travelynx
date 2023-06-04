@@ -752,7 +752,7 @@ sub profile {
 				}
 				my $html_value
 				  = ( $value
-					  =~ s{ \[ ([^]]+) \]\( ([^)]+) \) }{'<a href="' . xml_escape($2) . '">' . xml_escape($1) .'</a>' }egrx
+					  =~ s{ \[ ([^]]+) \]\( ([^)]+) \) }{'<a href="' . xml_escape($2) . '" rel="me">' . xml_escape($1) .'</a>' }egrx
 				  );
 				$profile->{metadata}[$i] = {
 					key   => $key,
