@@ -1529,10 +1529,9 @@ sub visibility_form {
 	if ( $action eq 'save' ) {
 		if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
 			$self->render(
-				'edit_visibility',
-				error      => 'csrf',
-				user_level => $user_level,
-				journey    => {}
+				'bad_request',
+				csrf   => 1,
+				status => 400
 			);
 		}
 		elsif ( $dep_ts and $dep_ts != $status->{sched_departure}->epoch ) {

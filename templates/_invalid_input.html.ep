@@ -2,14 +2,7 @@
 	<div class="col s12">
 		<div class="card caution-color">
 			<div class="card-content white-text">
-				% if ($invalid eq 'csrf') {
-					<span class="card-title">Ungültiger CSRF-Token</span>
-					<p>Sind Cookies aktiviert? Ansonsten könnte es sich um einen
-					Fall von <a
-					href="https://de.wikipedia.org/wiki/Cross-Site-Request-Forgery">CSRF</a>
-					handeln.</p>
-				% }
-				% elsif ($invalid eq 'credentials') {
+				% if ($invalid eq 'credentials') {
 					<span class="card-title">Ungültige Logindaten</span>
 					<p>Falscher Account oder falsches Passwort.</p>
 				% }

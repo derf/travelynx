@@ -247,8 +247,9 @@ sub do_login {
 
 	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
 		$self->render(
-			'login',
-			invalid => 'csrf',
+			'bad_request',
+			csrf   => 1,
+			status => 400
 		);
 	}
 	else {
@@ -288,8 +289,9 @@ sub register {
 
 	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
 		$self->render(
-			'register',
-			invalid => 'csrf',
+			'bad_request',
+			csrf   => 1,
+			status => 400
 		);
 		return;
 	}
@@ -345,8 +347,9 @@ sub register {
 		# a human user should take at least five seconds to fill out the form.
 		# Throw a CSRF error at presumed spammers.
 		$self->render(
-			'register',
-			invalid => 'csrf',
+			'bad_request',
+			csrf   => 1,
+			status => 400
 		);
 		return;
 	}
@@ -408,8 +411,11 @@ sub delete {
 	my ($self) = @_;
 	my $uid = $self->current_user->{id};
 	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
-		$self->flash( invalid => 'csrf' );
-		$self->redirect_to('account');
+		$self->render(
+			'bad_request',
+			csrf   => 1,
+			status => 400
+		);
 		return;
 	}
 
@@ -436,7 +442,11 @@ sub delete {
 sub do_logout {
 	my ($self) = @_;
 	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
-		$self->render( 'login', invalid => 'csrf' );
+		$self->render(
+			'bad_request',
+			csrf   => 1,
+			status => 400
+		);
 		return;
 	}
 	$self->logout;
@@ -503,8 +513,9 @@ sub social {
 	if ( $self->param('action') and $self->param('action') eq 'save' ) {
 		if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
 			$self->render(
-				'social',
-				invalid => 'csrf',
+				'bad_request',
+				csrf   => 1,
+				status => 400
 			);
 			return;
 		}
@@ -724,8 +735,9 @@ sub profile {
 	if ( $self->param('action') and $self->param('action') eq 'save' ) {
 		if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
 			$self->render(
-				'edit_profile',
-				invalid => 'csrf',
+				'bad_request',
+				csrf   => 1,
+				status => 400
 			);
 			return;
 		}
@@ -908,8 +920,9 @@ sub change_mail {
 	if ( $action and $action eq 'update_mail' ) {
 		if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
 			$self->render(
-				'change_mail',
-				invalid => 'csrf',
+				'bad_request',
+				csrf   => 1,
+				status => 400
 			);
 			return;
 		}
@@ -967,9 +980,9 @@ sub change_name {
 	if ( $action and $action eq 'update_name' ) {
 		if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
 			$self->render(
-				'change_name',
-				name    => $old_name,
-				invalid => 'csrf',
+				'bad_request',
+				csrf   => 1,
+				status => 400
 			);
 			return;
 		}
@@ -1033,7 +1046,11 @@ sub change_password {
 	my $password2    = $self->req->param('newpw2');
 
 	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
-		$self->render( 'change_password', invalid => 'csrf' );
+		$self->render(
+			'bad_request',
+			csrf   => 1,
+			status => 400
+		);
 		return;
 	}
 
@@ -1074,7 +1091,11 @@ sub request_password_reset {
 
 	if ( $self->param('action') and $self->param('action') eq 'initiate' ) {
 		if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
-			$self->render( 'recover_password', invalid => 'csrf' );
+			$self->render(
+				'bad_request',
+				csrf   => 1,
+				status => 400
+			);
 			return;
 		}
 
@@ -1131,7 +1152,11 @@ sub request_password_reset {
 		my $password2 = $self->param('newpw2');
 
 		if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
-			$self->render( 'set_password', invalid => 'csrf' );
+			$self->render(
+				'bad_request',
+				csrf   => 1,
+				status => 400
+			);
 			return;
 		}
 		if (

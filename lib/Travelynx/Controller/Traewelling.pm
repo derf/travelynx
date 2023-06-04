@@ -15,8 +15,9 @@ sub settings {
 		and $self->validation->csrf_protect->has_error('csrf_token') )
 	{
 		$self->render(
-			'traewelling',
-			invalid => 'csrf',
+			'bad_request',
+			csrf   => 1,
+			status => 400
 		);
 		return;
 	}

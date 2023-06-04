@@ -1,0 +1,19 @@
+<div class="row">
+	<div class="col s12">
+		<div class="card caution-color">
+			<div class="card-content white-text">
+				<span class="card-title">400 Bad Request</span>
+				% if (stash('csrf')) {
+					<p>Ungültiger CSRF-Token. Dieser dient zum Schutz vor Cross-Site Request Forgery.</p>
+					<p>Falls du von einer externen Seite hierhin geleitet wurdest, wurde möglicherweise (erfolglos) versucht, deinen Account anzugreifen. Falls du von travelynx selbst aus hier angekommen bist, kann es sich um eine fehlerhafte Cookie-Konfiguration im Browser, eine abgelaufene Session (→ bitte nochmal versuchen) oder du einen Bug in travelynx handeln (→ bitte melden).</p>
+				% }
+				% elsif (my $m = stash('message')) {
+					<p><%= $m %></p>
+				% }
+				% else {
+					<p>Diese Anfrage ist ungültig. Ursache kann z.B. eine abgelaufene Session oder ein Bug in travelynx sein.</p>
+				% }
+			</div>
+		</div>
+	</div>
+</div>

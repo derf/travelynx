@@ -567,7 +567,11 @@ sub import_v1 {
 sub set_token {
 	my ($self) = @_;
 	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
-		$self->render( 'account', invalid => 'csrf' );
+		$self->render(
+			'bad_request',
+			csrf   => 1,
+			status => 400
+		);
 		return;
 	}
 	my $token    = make_token();
