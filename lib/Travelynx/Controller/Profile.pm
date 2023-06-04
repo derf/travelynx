@@ -113,7 +113,8 @@ sub profile {
 				)
 				or (
 					$visibility eq 'followers'
-					and ( ( $relation and $relation eq 'follows' )
+					and (  ( $relation and $relation eq 'follows' )
+						or $is_self
 						or $self->status_token_ok($status) )
 				)
 			)
@@ -289,7 +290,8 @@ sub journey_details {
 			)
 			or (
 				$visibility eq 'followers'
-				and ( ( $relation and $relation eq 'follows' )
+				and (  ( $relation and $relation eq 'follows' )
+					or $is_self
 					or $self->journey_token_ok($journey) )
 			)
 		)
@@ -427,7 +429,8 @@ sub user_status {
 				)
 				or (
 					$visibility eq 'followers'
-					and ( ( $relation and $relation eq 'follows' )
+					and (  ( $relation and $relation eq 'follows' )
+						or $is_self
 						or $self->journey_token_ok( $journey, $ts ) )
 				)
 			  )
@@ -476,7 +479,8 @@ sub user_status {
 				)
 				or (
 					$visibility eq 'followers'
-					and ( ( $relation and $relation eq 'follows' )
+					and (  ( $relation and $relation eq 'follows' )
+						or $is_self
 						or $self->status_token_ok( $status, $ts ) )
 				)
 			)
@@ -591,7 +595,8 @@ sub status_card {
 				)
 				or (
 					$visibility eq 'followers'
-					and ( ( $relation and $relation eq 'follows' )
+					and (  ( $relation and $relation eq 'follows' )
+						or $is_self
 						or $self->status_token_ok($status) )
 				)
 			)
