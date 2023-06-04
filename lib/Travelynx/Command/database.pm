@@ -1527,7 +1527,7 @@ my @migrations = (
 				alter table relations
 					add column ts timestamptz not null;
 				alter table users
-					add column accept_follows smallint default 1;
+					add column accept_follows smallint default 0;
 				update schema_version set version = 36;
 			}
 		);

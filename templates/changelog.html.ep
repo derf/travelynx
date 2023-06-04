@@ -17,14 +17,16 @@
 		</p>
 		<p>
 			<i class="material-icons left" aria-label="Neues Feature">add</i>
-			Folgen von Accounts. Die Sichtbarkeit von Checkins und vergangenen
+			Optional: folgen von Accounts. Die Sichtbarkeit von Checkins und vergangenen
 			Fahrten kann somit auf Follower eingeschränkt werden. Eine
 			Übersichtsseite mit aktuellen Checkins gefolgter Accounts (ähnlich
 			zur Timeline im Fediverse) folgt in einem späteren Release.<br/>
 			Für jeden Account kann individuell eingestellt werden, ob Accounts
 			ihm folgen können, ob Folge-Anfragen zunächst angenommen werden
-			müssen oder ob Folgen grundszätzlich nicht möglich ist. Falls
-			notwendig, können einzelne Accounts blockiert und dadurch am Folgen
+			müssen oder ob Folgen grundszätzlich nicht möglich ist.
+			Standardmäßig ist dieses Feature inaktiv: Folge(anfrage)n müssen
+			zunächst in den Einstellung aktiviert werden.  Falls notwendig,
+			können einzelne Accounts blockiert und dadurch am Folgen
 			und am Stellen von Folge-Anfragen gehindert werden.
 		</p>
 	</div>
