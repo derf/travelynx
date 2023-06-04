@@ -12,6 +12,7 @@ requires 'Mojolicious';
 requires 'Mojolicious::Plugin::Authentication';
 requires 'Mojo::Pg';
 requires 'Text::CSV';
+requires 'Text::Markdown';
 requires 'Travel::Status::DE::DBWagenreihung';
 requires 'Travel::Status::DE::HAFAS';
 requires 'Travel::Status::DE::IRIS';
