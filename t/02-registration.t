@@ -62,7 +62,7 @@ $t->post_ok(
 		password2  => 'foofoofoo',
 	}
 );
-$t->status_is(200)->content_like(qr{CSRF});
+$t->status_is(400)->content_like(qr{CSRF});
 
 # Failed registration (user name not available)
 $t->post_ok(
