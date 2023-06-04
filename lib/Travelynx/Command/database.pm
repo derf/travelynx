@@ -1566,6 +1566,29 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v38 -> v39
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				drop view followers;
+				create view followers as select
+					relations.object_id as self_id,
+					users.id as id,
+					users.name as name,
+					users.accept_follows as accept_follows,
+					r2.predicate as inverse_predicate
+					from relations
+					join users on relations.subject_id = users.id
+					left join relations as r2
+					on relations.subject_id = r2.object_id
+					and relations.object_id = r2.subject_id
+					where relations.predicate = 1;
+				update schema_version set version = 39;
+			}
+		);
+	},
 );
 
 # TODO add 'hafas' column to in_transit (and maybe journeys? undo/redo needs something to work with...)
