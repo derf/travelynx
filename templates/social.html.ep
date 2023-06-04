@@ -1,0 +1,66 @@
+<h1>Interaktion</h1>
+<div class="row">
+	<div class="col s12">
+		Hier kannst du einstellen, ob und wie dir Accounts folgen können.
+		Ebenfalls kannst du bestehende Verbindungen und Folge-Anfragen
+		bearbeiten. Die hier vorgenommenen Einstellungen haben keinen Einfluss
+		darauf, ob/wie du anderen Accounts folgen kannst.
+	</div>
+</div>
+%= form_for '/account/social' => (method => 'POST') => begin
+%= csrf_field
+<h2>Folgen</h2>
+	<div class="row">
+		<div class="input-field col s12">
+			<p>
+				Accounts die dir folgen können alle Checkins sehen, die nicht als privat oder nur mit Link zugänglich vermerkt sind.
+				Später werden sie zusätzlich die Möglichkeit haben, deinen aktuellen Checkin (sofern sichtbar) als Teil einer Übersicht über die Checkins aller gefolgten Accounts direkt anzusehen (analog zur Timeline im Fediverse).
+			</p>
+			<p>
+				Du hast jederzeit die Möglichkeit, Accounts aus deiner Followerliste zu entfernen, Folge-Anfragen abzulehnen oder Accounts zu blockieren, so dass sie dir weder folgen noch neue Folge-Anfragen stellen können.
+			</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			<div>
+				<label>
+					%= radio_button accept_follow => 'yes'
+					<span>Andere Accounts können dir direkt (ohne eine Anfrage zu stellen) folgen.</span>
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			<div>
+				<label>
+					%= radio_button accept_follow => 'request'
+					<span>Andere Accounts können dir Folge-Anfragen stellen. Du musst sie explizit annehmen, bevor sie dir folgen.</span>
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			<div>
+				<label>
+					%= radio_button accept_follow => 'no'
+					<span>Accounts können dir nicht folgen. Accounts, die dir bereits folgen, werden hiervon nicht berührt.</span>
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s3 m3 l3">
+		</div>
+		<div class="col s6 m6 l6 center-align">
+			<button class="btn waves-effect waves-light" type="submit" name="action" value="save">
+				Speichern
+				<i class="material-icons right">send</i>
+			</button>
+		</div>
+		<div class="col s3 m3 l3">
+		</div>
+	</div>
+%= end

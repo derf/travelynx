@@ -399,6 +399,9 @@ sub startup {
 			if ( $visibility eq 'travelynx' ) {
 				return 'lock_open';
 			}
+			if ( $visibility eq 'followers' ) {
+				return 'group';
+			}
 			if ( $visibility eq 'unlisted' ) {
 				return 'lock_outline';
 			}
@@ -2213,6 +2216,8 @@ sub startup {
 
 	$authed_r->get('/account')->to('account#account');
 	$authed_r->get('/account/privacy')->to('account#privacy');
+	$authed_r->get('/account/social')->to('account#social');
+	$authed_r->get('/account/social/:kind')->to('account#social_list');
 	$authed_r->get('/account/profile')->to('account#profile');
 	$authed_r->get('/account/hooks')->to('account#webhook');
 	$authed_r->get('/account/traewelling')->to('traewelling#settings');
@@ -2240,6 +2245,7 @@ sub startup {
 	$authed_r->get('/s/*station')->to('traveling#station');
 	$authed_r->get('/confirm_mail/:token')->to('account#confirm_mail');
 	$authed_r->post('/account/privacy')->to('account#privacy');
+	$authed_r->post('/account/social')->to('account#social');
 	$authed_r->post('/account/profile')->to('account#profile');
 	$authed_r->post('/account/hooks')->to('account#webhook');
 	$authed_r->post('/account/traewelling')->to('traewelling#settings');
@@ -2254,6 +2260,7 @@ sub startup {
 	$authed_r->post('/account/password')->to('account#change_password');
 	$authed_r->post('/account/mail')->to('account#change_mail');
 	$authed_r->post('/account/name')->to('account#change_name');
+	$authed_r->post('/social-action')->to('account#social_action');
 	$authed_r->post('/delete')->to('account#delete');
 	$authed_r->post('/logout')->to('account#do_logout');
 	$authed_r->post('/set_token')->to('api#set_token');

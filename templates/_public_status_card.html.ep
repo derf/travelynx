@@ -1,28 +1,28 @@
-<div class="autorefresh">
+<div class="autorefresh" data-from-profile="<%= stash('from_profile') ? 1 : 0 %>">
 % if ($journey->{checked_in}) {
 	<div class="card">
 		<div class="card-content">
 			<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
-			<span class="card-title"><%= $name %> ist unterwegs
-			% if ($journey_visibility) {
-				<i class="material-icons right"><%= visibility_icon($journey_visibility) %></i>
-			% }
+			<span class="card-title">
+				% if (stash('from_profile')) {
+					Unterwegs mit <%= include '_format_train', journey => $journey %>
+				% }
+				% else {
+					<a href="/p/<%= $name %>"><%= $name %></a> ist unterwegs
+				% }
+				% if ($journey_visibility) {
+					<i class="material-icons right"><%= visibility_icon($journey_visibility) %></i>
+				% }
 			</span>
 			% if ($public_level & 0x04 and $journey->{comment}) {
 				<p>„<%= $journey->{comment} %>“</p>
 			% }
 			<p>
-				<div class="center-align">
-					% if ($journey->{train_line}) {
-						<b><%= $journey->{train_type} %> <%= $journey->{train_line} %></b> <%= $journey->{train_no} %>
-					% }
-					% else {
-						<b><%= $journey->{train_type} %> <%= $journey->{train_no} %></b>
-					% }
-					% if ($journey->{extra_data}{wagonorder_pride}) {
-						🏳️‍🌈
-					% }
-				</div>
+				% if (not stash('from_profile')) {
+					<div class="center-align">
+						%= include '_format_train', journey => $journey
+					</div>
+				% }
 				<div class="center-align countdown"
 					data-duration="<%= $journey->{journey_duration} // 0 %>"
 					% if (param('token')) {
@@ -176,7 +176,12 @@
 	<div class="card">
 		<div class="card-content">
 			<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
-			<span class="card-title"><%= $name %> ist gerade nicht eingecheckt</span>
+			% if (stash('from_profile')) {
+				<span class="card-title">Aktuell nicht eingecheckt</span>
+			% }
+			% else {
+				<span class="card-title"><a href="/p/<%= $name %>"><%= $name %></a> ist gerade nicht eingecheckt</span>
+			% }
 			<p>
 			% if ($journey->{arr_name}) {
 				Zuletzt gesehen

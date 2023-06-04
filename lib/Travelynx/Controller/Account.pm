@@ -408,11 +408,8 @@ sub delete {
 	my ($self) = @_;
 	my $uid = $self->current_user->{id};
 	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
-		$self->render(
-			'account',
-			api_token => $self->users->get_api_token( uid => $uid ),
-			invalid   => 'csrf',
-		);
+		$self->flash( invalid => 'csrf' );
+		$self->redirect_to('account');
 		return;
 	}
 
@@ -424,11 +421,8 @@ sub delete {
 			)
 		  )
 		{
-			$self->render(
-				'account',
-				api_token => $self->users->get_api_token( uid => $uid ),
-				invalid   => 'deletion password'
-			);
+			$self->flash( invalid => 'deletion password' );
+			$self->redirect_to('account');
 			return;
 		}
 		$self->users->flag_deletion( uid => $uid );
@@ -499,6 +493,228 @@ sub privacy {
 		$self->param( past_status => $user->{past_status} );
 		$self->render( 'privacy', name => $user->{name} );
 	}
+}
+
+sub social {
+	my ($self) = @_;
+
+	my $user = $self->current_user;
+
+	if ( $self->param('action') and $self->param('action') eq 'save' ) {
+		if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
+			$self->render(
+				'social',
+				invalid => 'csrf',
+			);
+			return;
+		}
+
+		my %opt;
+		my $accept_follow = $self->param('accept_follow');
+
+		if ( $accept_follow eq 'yes' ) {
+			$opt{accept_follows} = 1;
+		}
+		elsif ( $accept_follow eq 'request' ) {
+			$opt{accept_follow_requests} = 1;
+		}
+
+		$self->users->set_social(
+			uid => $user->{id},
+			%opt
+		);
+
+		$self->flash( success => 'social' );
+		$self->redirect_to('account');
+	}
+	else {
+		if ( $user->{accept_follows} ) {
+			$self->param( accept_follow => 'yes' );
+		}
+		elsif ( $user->{accept_follow_requests} ) {
+			$self->param( accept_follow => 'request' );
+		}
+		else {
+			$self->param( accept_follow => 'no' );
+		}
+		$self->render( 'social', name => $user->{name} );
+	}
+}
+
+sub social_list {
+	my ($self) = @_;
+
+	my $kind = $self->stash('kind');
+	my $user = $self->current_user;
+
+	if ( $kind eq 'follow-requests' ) {
+		my @follow_reqs
+		  = $self->users->get_follow_requests( uid => $user->{id} );
+		$self->render(
+			'social_list',
+			type          => 'follow-requests',
+			entries       => [@follow_reqs],
+			notifications => $user->{notifications},
+		);
+	}
+	elsif ( $kind eq 'followers' ) {
+		my @followers = $self->users->get_followers( uid => $user->{id} );
+		$self->render(
+			'social_list',
+			type          => 'followers',
+			entries       => [@followers],
+			notifications => $user->{notifications},
+		);
+	}
+	elsif ( $kind eq 'follows' ) {
+		my @following = $self->users->get_followees( uid => $user->{id} );
+		$self->render(
+			'social_list',
+			type          => 'follows',
+			entries       => [@following],
+			notifications => $user->{notifications},
+		);
+	}
+	elsif ( $kind eq 'blocks' ) {
+		my @blocked = $self->users->get_blocked_users( uid => $user->{id} );
+		$self->render(
+			'social_list',
+			type          => 'blocks',
+			entries       => [@blocked],
+			notifications => $user->{notifications},
+		);
+	}
+	else {
+		$self->render( 'not_found', status => 404 );
+	}
+}
+
+sub social_action {
+	my ($self) = @_;
+
+	my $user        = $self->current_user;
+	my $action      = $self->param('action');
+	my $target_ids  = $self->param('target');
+	my $redirect_to = $self->param('redirect_to');
+
+	for my $key (
+		qw(follow request_follow follow_or_request unfollow remove_follower cancel_follow_request accept_follow_request reject_follow_request block unblock)
+	  )
+	{
+		if ( $self->param($key) ) {
+			$action     = $key;
+			$target_ids = $self->param($key);
+		}
+	}
+
+	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
+		$self->redirect_to('/');
+		return;
+	}
+
+	if ( $action and $action eq 'clear_notifications' ) {
+		$self->users->update_notifications(
+			db                  => $self->pg->db,
+			uid                 => $user->{id},
+			has_follow_requests => 0
+		);
+		$self->flash( success => 'clear_notifications' );
+		$self->redirect_to('account');
+		return;
+	}
+
+	if ( not( $action and $target_ids and $redirect_to ) ) {
+		$self->redirect_to('/');
+		return;
+	}
+
+	for my $target_id ( split( qr{,}, $target_ids ) ) {
+		my $target = $self->users->get_privacy_by( uid => $target_id );
+
+		if ( not $target ) {
+			next;
+		}
+
+		if ( $action eq 'follow' and $target->{accept_follows} ) {
+			$self->users->follow(
+				uid    => $user->{id},
+				target => $target->{id}
+			);
+		}
+		elsif ( $action eq 'request_follow'
+			and $target->{accept_follow_requests} )
+		{
+			$self->users->request_follow(
+				uid    => $user->{id},
+				target => $target->{id}
+			);
+		}
+		elsif ( $action eq 'follow_or_request' ) {
+			if ( $target->{accept_follows} ) {
+				$self->users->follow(
+					uid    => $user->{id},
+					target => $target->{id}
+				);
+			}
+			elsif ( $target->{accept_follow_requests} ) {
+				$self->users->request_follow(
+					uid    => $user->{id},
+					target => $target->{id}
+				);
+			}
+		}
+		elsif ( $action eq 'unfollow' ) {
+			$self->users->unfollow(
+				uid    => $user->{id},
+				target => $target->{id}
+			);
+		}
+		elsif ( $action eq 'remove_follower' ) {
+			$self->users->remove_follower(
+				uid      => $user->{id},
+				follower => $target->{id}
+			);
+		}
+		elsif ( $action eq 'cancel_follow_request' ) {
+			$self->users->cancel_follow_request(
+				uid    => $user->{id},
+				target => $target->{id}
+			);
+		}
+		elsif ( $action eq 'accept_follow_request' ) {
+			$self->users->accept_follow_request(
+				uid       => $user->{id},
+				applicant => $target->{id}
+			);
+		}
+		elsif ( $action eq 'reject_follow_request' ) {
+			$self->users->reject_follow_request(
+				uid       => $user->{id},
+				applicant => $target->{id}
+			);
+		}
+		elsif ( $action eq 'block' ) {
+			$self->users->block(
+				uid    => $user->{id},
+				target => $target->{id}
+			);
+		}
+		elsif ( $action eq 'unblock' ) {
+			$self->users->unblock(
+				uid    => $user->{id},
+				target => $target->{id}
+			);
+		}
+
+		if ( $redirect_to eq 'profile' ) {
+
+			# profile links do not perform bulk actions
+			$self->redirect_to( '/p/' . $target->{name} );
+			return;
+		}
+	}
+
+	$self->redirect_to($redirect_to);
 }
 
 sub profile {
@@ -1012,11 +1228,21 @@ sub confirm_mail {
 }
 
 sub account {
-	my ($self) = @_;
-	my $uid = $self->current_user->{id};
+	my ($self)          = @_;
+	my $uid             = $self->current_user->{id};
+	my $follow_requests = $self->users->has_follow_requests( uid => $uid );
+	my $followers       = $self->users->has_followers( uid => $uid );
+	my $following       = $self->users->has_followees( uid => $uid );
+	my $blocked         = $self->users->has_blocked_users( uid => $uid );
 
-	$self->render( 'account',
-		api_token => $self->users->get_api_token( uid => $uid ) );
+	$self->render(
+		'account',
+		api_token           => $self->users->get_api_token( uid => $uid ),
+		num_follow_requests => $follow_requests,
+		num_followers       => $followers,
+		num_following       => $following,
+		num_blocked         => $blocked,
+	);
 	$self->users->mark_seen( uid => $uid );
 }
 

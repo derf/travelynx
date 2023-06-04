@@ -70,6 +70,7 @@
 		%= javascript "/static/${av}/leaflet/leaflet.js"
 	% }
 </head>
+% my $acc = is_user_authenticated() && current_user();
 <body>
 
 <div class="navbar-fixed">
@@ -93,9 +94,9 @@
 				<li class="waves-effect waves-light">
 					<a onClick="javascript:toggleTheme()" title="Farbschema invertieren"><i class="material-icons" aria-label="Farbschema invertieren">invert_colors</i></a>
 				</li>
-				% if (is_user_authenticated()) {
+				% if ($acc) {
 					<li class="<%= navbar_class('/history') %>"><a href='/history' title="Vergangene Zugfahrten"><i class="material-icons" aria-label="Vergangene Zugfahrten">history</i></a></li>
-					<li class="<%= navbar_class('/account') %>"><a href="/account" title="Account"><i class="material-icons" aria-label="Account">account_circle</i></a></li>
+					<li class="<%= navbar_class('/account') %>"><a href="/account" title="Account"><i class="material-icons" aria-label="Account"><%= $acc->{notifications} ? 'notifications' : 'account_circle' %></i></a></li>
 				% }
 				% else {
 					<li class="<%= navbar_class('/about') %>"><a href='/about' title="Über Travelynx"><i class="material-icons" aria-label="Über Travelynx">info_outline</i></a></li>
@@ -127,11 +128,8 @@
 % }
 
 <div class="container">
-	% if (is_user_authenticated()) {
-		% my $acc = current_user();
-		% if ($acc and $acc->{deletion_requested}) {
-			%= include '_deletion_note', timestamp => $acc->{deletion_requested}
-		% }
+	% if ($acc and $acc->{deletion_requested}) {
+		%= include '_deletion_note', timestamp => $acc->{deletion_requested}
 	% }
 	%= content
 </div>

@@ -186,6 +186,23 @@ sub profile {
 		metadata         => $profile->{metadata},
 		public_level     => $user->{public_level},
 		is_self          => $is_self,
+		following        => ( $relation and $relation eq 'follows' ) ? 1 : 0,
+		follow_requested => ( $relation and $relation eq 'requests_follow' )
+		? 1
+		: 0,
+		can_follow => ( $my_user and $user->{accept_follows} and not $relation )
+		? 1
+		: 0,
+		can_request_follow =>
+		  ( $my_user and $user->{accept_follow_requests} and not $relation )
+		? 1
+		: 0,
+		follows_me => ( $inverse_relation and $inverse_relation eq 'follows' )
+		? 1
+		: 0,
+		follow_reqs_me =>
+		  ( $inverse_relation and $inverse_relation eq 'requests_follow' ) ? 1
+		: 0,
 		journey            => $status,
 		journey_visibility => $visibility,
 		journeys           => [@journeys],
@@ -200,6 +217,24 @@ sub journey_details {
 	my $user       = $self->users->get_privacy_by( name => $name );
 
 	$self->param( journey_id => $journey_id );
+
+	my $my_user;
+	my $relation;
+	my $inverse_relation;
+	my $is_self;
+	if ( $self->is_user_authenticated ) {
+		$my_user = $self->current_user;
+		if ( $my_user->{id} == $user->{id} ) {
+			$is_self = 1;
+			$my_user = undef;
+		}
+		else {
+			$relation = $self->users->get_relation(
+				subject => $my_user->{id},
+				object  => $user->{id}
+			);
+		}
+	}
 
 	if ( not( $user and $journey_id and $journey_id =~ m{ ^ \d+ $ }x ) ) {
 		$self->render(
@@ -249,7 +284,12 @@ sub journey_details {
 				and $self->journey_token_ok($journey) )
 			or (
 				$visibility eq 'travelynx'
-				and ( ( $self->is_user_authenticated and not $is_past )
+				and ( ( $my_user and not $is_past )
+					or $self->journey_token_ok($journey) )
+			)
+			or (
+				$visibility eq 'followers'
+				and ( ( $relation and $relation eq 'follows' )
 					or $self->journey_token_ok($journey) )
 			)
 		)
@@ -337,6 +377,24 @@ sub user_status {
 		return;
 	}
 
+	my $my_user;
+	my $relation;
+	my $inverse_relation;
+	my $is_self;
+	if ( $self->is_user_authenticated ) {
+		$my_user = $self->current_user;
+		if ( $my_user->{id} == $user->{id} ) {
+			$is_self = 1;
+			$my_user = undef;
+		}
+		else {
+			$relation = $self->users->get_relation(
+				subject => $my_user->{id},
+				object  => $user->{id}
+			);
+		}
+	}
+
 	my $status = $self->get_user_status( $user->{id} );
 
 	if (
@@ -364,7 +422,12 @@ sub user_status {
 					and $self->journey_token_ok( $journey, $ts ) )
 				or (
 					$visibility eq 'travelynx'
-					and (  $self->is_user_authenticated
+					and (  $my_user
+						or $self->journey_token_ok( $journey, $ts ) )
+				)
+				or (
+					$visibility eq 'followers'
+					and ( ( $relation and $relation eq 'follows' )
 						or $self->journey_token_ok( $journey, $ts ) )
 				)
 			  )
@@ -408,7 +471,12 @@ sub user_status {
 					and $self->status_token_ok( $status, $ts ) )
 				or (
 					$visibility eq 'travelynx'
-					and (  $self->is_user_authenticated
+					and (  $my_user
+						or $self->status_token_ok( $status, $ts ) )
+				)
+				or (
+					$visibility eq 'followers'
+					and ( ( $relation and $relation eq 'follows' )
 						or $self->status_token_ok( $status, $ts ) )
 				)
 			)
@@ -486,6 +554,24 @@ sub status_card {
 		return;
 	}
 
+	my $my_user;
+	my $relation;
+	my $inverse_relation;
+	my $is_self;
+	if ( $self->is_user_authenticated ) {
+		$my_user = $self->current_user;
+		if ( $my_user->{id} == $user->{id} ) {
+			$is_self = 1;
+			$my_user = undef;
+		}
+		else {
+			$relation = $self->users->get_relation(
+				subject => $my_user->{id},
+				object  => $user->{id}
+			);
+		}
+	}
+
 	my $status = $self->get_user_status( $user->{id} );
 	my $visibility;
 	if ( $status->{checked_in} or $status->{arr_name} ) {
@@ -500,7 +586,12 @@ sub status_card {
 					and $self->status_token_ok($status) )
 				or (
 					$visibility eq 'travelynx'
-					and (  $self->is_user_authenticated
+					and (  $my_user
+						or $self->status_token_ok($status) )
+				)
+				or (
+					$visibility eq 'followers'
+					and ( ( $relation and $relation eq 'follows' )
 						or $self->status_token_ok($status) )
 				)
 			)
@@ -523,6 +614,7 @@ sub status_card {
 		public_level       => $user->{public_level},
 		journey            => $status,
 		journey_visibility => $visibility,
+		from_profile       => $self->param('profile') ? 1 : 0,
 	);
 }
 

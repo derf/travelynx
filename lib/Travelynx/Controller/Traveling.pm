@@ -1459,6 +1459,7 @@ sub journey_details {
 
 		if (   $visibility eq 'public'
 			or $visibility eq 'travelynx'
+			or $visibility eq 'followers'
 			or $visibility eq 'unlisted' )
 		{
 			my $delay = 'pünktlich ';

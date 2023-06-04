@@ -11,14 +11,81 @@
 	</div>
 % }
 <div class="row">
-	<div class="col s12 publicstatuscol" data-user="<%= $name %>">
-		%= include '_public_status_card', name => $name, public_level => $public_level, journey => $journey, journey_visibility => $journey_visibility
+	<div class="col s12">
+		<div class="card">
+			<div class="card-content">
+				<span class="card-title"><%= $name %>
+					% if ($following and $follows_me) {
+						<i class="material-icons right">group</i>
+					% }
+					% elsif ($follow_reqs_me) {
+						<span class="right">
+							<a href="/account/social/follow-requests"><i class="material-icons right">notifications</i></a>
+						</span>
+					% }
+					% elsif ($is_self) {
+						<a href="/account/profile"><i class="material-icons right">edit</i></a>
+					% }
+				</span>
+				% if ($bio) {
+					%== $bio
+				% }
+				% if (@{$metadata // []}) {
+					<table class="striped">
+						% for my $entry (@{$metadata}) {
+							<tr>
+								<th scope="row"><%= $entry->{key} %></th>
+								<td scope="row"><%== $entry->{value}{html} %></td>
+							</tr>
+						% }
+					</table>
+				% }
+			</div>
+			% if ($following or $follow_requested or $can_follow or $can_request_follow) {
+				<div class="card-action <%= ($can_follow or $can_request_follow) ? 'right-align' : q{} %>">
+					%= form_for "/social-action" => (method => 'POST') => begin
+						%= csrf_field
+						%= hidden_field target => $uid
+						%= hidden_field redirect_to => 'profile'
+						% if ($following) {
+							<button class="btn-flat waves-effect waves-light" type="submit" name="action" value="unfollow">
+								Nicht mehr folgen
+							</button>
+						% }
+						% elsif ($follow_requested) {
+							<button class="btn-flat waves-effect waves-light" type="submit" name="action" value="cancel_follow_request">
+								Folge-Anfrage zurücknehmen
+							</button>
+						% }
+						% elsif ($can_follow or $can_request_follow) {
+							<button class="btn-flat waves-effect waves-light" type="submit" name="action" value="follow_or_request">
+								<i class="material-icons left" aria-hidden="true">person_add</i>
+								% if ($follows_me) {
+									Zurückfolgen
+								% }
+								% else {
+									Folgen
+								% }
+								% if ($can_request_follow) {
+									anfragen
+								% }
+							</button>
+						% }
+					%= end
+				</div>
+			% }
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col s12 publicstatuscol" data-user="<%= $name %>" data-profile="1">
+		%= include '_public_status_card', name => $name, public_level => $public_level, journey => $journey, journey_visibility => $journey_visibility, from_profile => 1
 	</div>
 </div>
 % if ($journeys and @{$journeys}) {
 	<div class="row">
 		<div class="col s12">
-			<h2>Letzte Fahrten von <%= $name %></h1>
+			<h2>Vergangene Fahrten</h2>
 		</div>
 	</div>
 	%= include '_history_trains', date_format => '%d.%m.%Y', link_prefix => "/p/${name}/j/", journeys => $journeys;

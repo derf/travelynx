@@ -1,8 +1,8 @@
 <h1>Öffentliche Daten</h1>
 <div class="row">
 	<div class="col s12">
-		Hier kannst du auswählen, welche Personengruppen deine Fahrten sowie dein
-		Profil bei travelynx einsehen können. Zusätzlich kannst du die
+		Hier kannst du auswählen, welche Personengruppen deine Fahrten
+		bei travelynx einsehen können. Zusätzlich kannst du die
 		Sichtbarkeit vergangener Fahrten auf die letzten vier Wochen
 		einschränken. Nach dem Einchecken in einen Zug hast du im Checkin-Fenster
 		die Möglichkeit, für die aktuelle Fahrt eine abweichende Sichtbarkeit
@@ -27,29 +27,27 @@
 			<div>
 				<label>
 					%= radio_button status_level => 'travelynx'
-					<span><i class="material-icons left"><%= visibility_icon('travelynx') %></i>Lokal: Nur für<!-- Personen, die dir folgen oder auf dieser Seite angemeldet sind --> auf dieser Seite angemeldete Acounts sowie nicht angemeldete Personen, denen du mithilfe der Teilen-Funktion einen Link schickst.</span>
+					<span><i class="material-icons left"><%= visibility_icon('travelynx') %></i>Intern: Personen, die dir folgen, die auf dieser Seite angemeldet sind oder denen du mithilfe der Teilen-Funktion einen Link schickst.</span>
 				</label>
 			</div>
 		</div>
 	</div>
-	<!--
 	<div class="row">
 		<div class="input-field col s12">
 			<div>
 				<label>
-					%= radio_button status_level => 'fedi'
-					<span><i class="material-icons left"><%= visibility_icon('fedi') %></i>Fedi: nur für Personen, die deinem Account folgen.</span>
+					%= radio_button status_level => 'followers'
+					<span><i class="material-icons left"><%= visibility_icon('followers') %></i>Follower: Personen, die dir folgen oder denen du mithilfe der Teilen-Funktion einen Link schickst.</span>
 				</label>
 			</div>
 		</div>
 	</div>
-	-->
 	<div class="row">
 		<div class="input-field col s12">
 			<div>
 				<label>
 					%= radio_button status_level => 'unlisted'
-					<span><i class="material-icons left"><%= visibility_icon('unlisted') %></i>Verlinkbar: Nur für Personen zugänglich, denen du mithilfe der Teilen-Funktion einen Link schickst.</span>
+					<span><i class="material-icons left"><%= visibility_icon('unlisted') %></i>Verlinkbar: Personen, denen du mithilfe der Teilen-Funktion einen Link schickst.</span>
 				</label>
 			</div>
 		</div>
@@ -83,7 +81,7 @@
 			wird angegeben, dass du gerade nicht eingecheckt seist.
 		</div>
 	</div>
-<h2>Profil</h2>
+<h2>Vergangene Fahrten</h2>
 	<div class="row">
 		<div class="input-field col s12">
 			<div>
@@ -111,10 +109,10 @@
 			Fahrten, die über die Standardeinstellung (siehe oben) oder per
 			individueller Einstellung für die aufrufende Person sichtbar sind,
 			werden hier verlinkt. Derzeit werden nur die letzten zehn Fahrten
-			angezeigt; dies kann sich in Zukunft ändern.
+			angezeigt; in Zukunft wird dies ggf. auf sämtliche Fahrten im
+			gewählten Zeitraum erweitert.
 		</div>
 	</div>
-<h2>Vergangenheit</h2>
 	<div class="row">
 		<div class="input-field col s12">
 			<div>
@@ -133,7 +131,7 @@
 	<div class="row">
 		<div class="col s12">
 			Hier kannst du auswählen, ob alle deiner vergangenen Fahrten für
-			Profil und Detailseiten in Frage kommen, oder nur die letzten vier
+			Profil und Detailseiten in Frage kommen oder nur die letzten vier
 			Wochen zugänglich sein sollen. Sofern du sie auf die letzten vier
 			Wochen beschränkst, sind ältere Fahrten nur über einen mit
 			Hilfe des „Teilen“-Knopfs erstellten Links zugänglich.

@@ -1,0 +1,230 @@
+%= form_for "/social-action" => (method => 'POST') => begin
+%= csrf_field
+%= hidden_field redirect_to => '/account'
+% my $count = scalar @{$entries};
+% if ($type eq 'follow-requests') {
+	<div class="row">
+		<div class="col s12">
+			<h2>Folge-Anfragen</h2>
+		</div>
+	</div>
+	<div class="row center-align">
+		<div class="col s4">
+			<i class="material-icons">block</i><br/> Blockieren
+		</div>
+		<div class="col s4">
+			<i class="material-icons">cancel</i><br/> Ablehnen
+		</div>
+		<div class="col s4">
+			<i class="material-icons">check</i><br/> Annehmen
+		</div>
+	</div>
+	% if ($notifications) {
+		<div class="row center-align">
+			<div class="col s12">
+				<button class="btn waves-effect waves-light" type="submit" name="action" value="clear_notifications">
+					<i class="material-icons left" aria-hidden="true">notifications_off</i> Als gelesen markieren
+				</button>
+			</div>
+		</div>
+	% }
+	<!--
+	<div class="row center-align">
+		<div class="col s6">
+			<button class="btn grey waves-effect waves-light" type="submit" name="reject_follow_request" value="<%= join(q{,}, map { $_->{id} } @{$entries}) %>">
+				<i class="material-icons left" aria-hidden="true">cancel</i> Alle ablehnen
+			</button>
+		</div>
+		<div class="col s6">
+			<button class="btn waves-effect waves-light" type="submit" name="accept_follow_request" value="<%= join(q{,}, map { $_->{id} } @{$entries}) %>">
+				<i class="material-icons left" aria-hidden="true">check</i> Alle annehmen
+			</button>
+		</div>
+	</div>
+	<div class="row center-align">
+		<div class="col s6">
+			<button class="btn red waves-effect waves-light" type="submit" name="block" value="<%= join(q{,}, map { $_->{id} } @{$entries}) %>">
+				<i class="material-icons left" aria-hidden="true">block</i> Alle blockieren
+			</button>
+		</div>
+	</div>
+	-->
+% }
+% elsif ($type eq 'followers') {
+	<div class="row">
+		<div class="col s12">
+			% if ($count == 1) {
+				<h2>Dir folgt ein Account</h2>
+			% }
+			% else {
+				<h2>Dir folgen <%= $count %> Accounts</h2>
+			% }
+		</div>
+	</div>
+	<div class="row center-align">
+		<div class="col s4">
+			<i class="material-icons">block</i><br/> Blockieren
+		</div>
+		<div class="col s4">
+			<i class="material-icons">remove</i><br/> Entfernen
+		</div>
+		<div class="col s4">
+			<i class="material-icons">person_add</i><br/> Zurückfolgen
+		</div>
+	</div>
+	<div class="row center-align">
+		<div class="col s4">
+		</div>
+		<div class="col s4">
+			<i class="material-icons">access_time</i><br/> Folgen angefragt
+		</div>
+		<div class="col s4">
+			<i class="material-icons">group</i><br/> Du folgst diesem Account
+		</div>
+	</div>
+	<!--
+	<div class="row center-align">
+		<div class="col s6">
+			<button class="btn grey waves-effect waves-light" type="submit" name="remove_follower" value="<%= join(q{,}, map { $_->{id} } @{$entries}) %>">
+				<i class="material-icons left" aria-hidden="true">remove</i> Alle entfernen
+			</button>
+		</div>
+		<div class="col s6">
+			<button class="btn waves-effect waves-light" type="submit" name="follow_or_request" value="<%= join(q{,}, map { $_->{id} } @{$entries}) %>">
+				<i class="material-icons left" aria-hidden="true">group_add</i> Allen zurückfolgen
+			</button>
+		</div>
+	</div>
+	<div class="row center-align">
+		<div class="col s6">
+			<button class="btn red waves-effect waves-light" type="submit" name="block" value="<%= join(q{,}, map { $_->{id} } @{$entries}) %>">
+				<i class="material-icons left" aria-hidden="true">block</i> Alle blockieren
+			</button>
+		</div>
+	</div>
+	-->
+% }
+% elsif ($type eq 'follows') {
+	<div class="row">
+		<div class="col s12">
+			% if ($count == 1) {
+				<h2>Du folgst einem Account</h2>
+			% }
+			% else {
+				<h2>Du folgst <%= $count %> Accounts</h2>
+			% }
+		</div>
+	</div>
+	<div class="row center-align">
+		<div class="col s12">
+			<i class="material-icons">remove</i><br/> Nicht mehr folgen
+		</div>
+	</div>
+	<!--
+	<div class="row center-align">
+		<div class="col s12">
+			<button class="btn grey waves-effect waves-light" type="submit" name="unfollow" value="<%= join(q{,}, map { $_->{id} } @{$entries}) %>">
+				<i class="material-icons left" aria-hidden="true">remove</i> Alle entfernen
+			</button>
+		</div>
+	</div>
+	-->
+% }
+% elsif ($type eq 'blocks') {
+	<div class="row">
+		<div class="col s12">
+			<h2>Blockierte Accounts</h2>
+			<p>
+				Blockierte Accounts können dir nicht folgen und keine Folge-Anfragen stellen.
+				Sie haben weiterhin Zugriff auf deine als öffentlich oder travelynx-intern markierten Checkins.
+			</p>
+		</div>
+	</div>
+	<div class="row center-align">
+		<div class="col s12">
+			<i class="material-icons">remove</i><br/>Entblockieren
+		</div>
+	</div>
+	<!--
+	<div class="row center-align">
+		<div class="col s12">
+			<button class="btn grey waves-effect waves-light" type="submit" name="unblock" value="<%= join(q{,}, map { $_->{id} } @{$entries}) %>">
+				<i class="material-icons left" aria-hidden="true">remove</i> Alle entblockieren
+			</button>
+		</div>
+	</div>
+	-->
+% }
+%= end
+
+<div class="row">
+	<div class="col s12">
+		%= form_for "/social-action" => (method => 'POST') => begin
+			%= csrf_field
+			%= hidden_field redirect_to => "/account/social/$type"
+			<table class="striped">
+				% for my $entry (@{$entries}) {
+					<tr>
+						<td><a href="/p/<%= $entry->{name} %>"><%= $entry->{name} %></a></td>
+						% if ($type eq 'follow-requests') {
+							<td class="right-align">
+								<button class="btn-flat waves-effect waves-light" type="submit" name="block" value="<%= $entry->{id} %>">
+									<i class="material-icons" aria-label="blockieren">block</i>
+								</button>
+							</td>
+							<td class="right-align">
+								<button class="btn-flat waves-effect waves-light" type="submit" name="reject_follow_request" value="<%= $entry->{id} %>">
+									<i class="material-icons" aria-label="ablehnen">cancel</i>
+								</button>
+							</td>
+							<td class="right-align">
+								<button class="btn-flat waves-effect waves-light" type="submit" name="accept_follow_request" value="<%= $entry->{id} %>">
+									<i class="material-icons" aria-label="annehmen">check</i>
+								</button>
+							</td>
+						% }
+						% elsif ($type eq 'followers') {
+							<td class="right-align">
+								<button class="btn-flat waves-effect waves-light" type="submit" name="block" value="<%= $entry->{id} %>">
+									<i class="material-icons" aria-label="blockieren">block</i>
+								</button>
+							</td>
+							<td class="right-align">
+								<button class="btn-flat waves-effect waves-light" type="submit" name="remove_follower" value="<%= $entry->{id} %>">
+									<i class="material-icons" aria-label="entfernen">remove</i>
+								</button>
+							</td>
+							<td class="right-align">
+								% if ($entry->{following_back}) {
+									<i class="material-icons" aria-label="ihr folgt euch gegenseitig">group</i>
+								% }
+								% elsif ($entry->{followback_requested}) {
+									<i class="material-icons" aria-label="Zurückfolgen angefragt">access_time</i>
+								% }
+								% elsif ($entry->{can_follow_back} or $entry->{can_request_follow_back}) {
+									<button class="btn-flat waves-effect waves-light" type="submit" name="follow_or_request" value="<%= $entry->{id} %>">
+										<i class="material-icons" aria-label="zurückfolgen">person_add</i>
+									</button>
+								% }
+							</td>
+						% }
+						% elsif ($type eq 'follows') {
+							<td class="right-align">
+								<button class="btn-flat waves-effect waves-light" type="submit" name="unfollow" value="<%= $entry->{id} %>">
+									<i class="material-icons" aria-label="entfolgen">remove</i>
+								</button>
+							</td>
+						% }
+						% elsif ($type eq 'blocks') {
+							<td class="right-align">
+								<button class="btn-flat waves-effect waves-light" type="submit" name="unblock" value="<%= $entry->{id} %>">
+									<i class="material-icons" aria-label="von Blockliste entefrnen">remove</i>
+								</button>
+							</td>
+						% }
+					</tr>
+				% }
+			</table>
+		%= end
+	</div>
+</div>

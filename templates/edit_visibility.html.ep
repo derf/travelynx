@@ -40,7 +40,10 @@
 							Die Fahrt ist öffentlich sichtbar.
 						% }
 						% elsif ($user_level eq 'travelynx') {
-							Die Fahrt ist nur für auf dieser Seite angemeldete Personen oder mit Link sichtbar.
+							Die Fahrt ist nur für auf dieser Seite angemeldete Accounts oder mit Link sichtbar.
+						% }
+						% elsif ($user_level eq 'followers') {
+							Die Fahrt ist nur für dir folgende Accounts oder mit Link sichtbar.
 						% }
 						% elsif ($user_level eq 'unlisted') {
 							Die Fahrt ist nur mit Link sichtbar.
@@ -68,29 +71,27 @@
 				<div>
 					<label>
 						%= radio_button status_level => 'travelynx'
-						<span><i class="material-icons left"><%= visibility_icon('travelynx') %></i>Lokal: Nur für<!-- Personen, die dir folgen oder auf dieser Seite angemeldet sind --> auf dieser Seite angemeldete Acounts sowie nicht angemeldete Personen, denen du mithilfe der Teilen-Funktion einen Link schickst.</span>
+						<span><i class="material-icons left"><%= visibility_icon('travelynx') %></i>Intern: Personen, die dir folgen, die auf dieser Seite angemeldet sind oder denen du mithilfe der Teilen-Funktion einen Link schickst.</span>
 					</label>
 				</div>
 			</div>
 		</div>
-		<!--
 		<div class="row">
 			<div class="input-field col s12">
 				<div>
 					<label>
-						%= radio_button status_level => 'fedi'
-						<span><i class="material-icons left"><%= visibility_icon('fedi') %></i>Fedi: nur für Personen, die deinem Account folgen.</span>
+						%= radio_button status_level => 'followers'
+						<span><i class="material-icons left"><%= visibility_icon('followers') %></i>Follower: Personen, die dir folgen oder denen du mithilfe der Teilen-Funktion einen Link schickst.</span>
 					</label>
 				</div>
 			</div>
 		</div>
-		-->
 		<div class="row">
 			<div class="input-field col s12">
 				<div>
 					<label>
 						%= radio_button status_level => 'unlisted'
-						<span><i class="material-icons left"><%= visibility_icon('unlisted') %></i>Fast privat: Nur für Personen zugänglich, denen du mithilfe der Teilen-Funktion einen Link schickst.</span>
+						<span><i class="material-icons left"><%= visibility_icon('unlisted') %></i>Verlinkbar: Personen, denen du mithilfe der Teilen-Funktion einen Link schickst.</span>
 					</label>
 				</div>
 			</div>

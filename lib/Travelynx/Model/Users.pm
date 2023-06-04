@@ -180,13 +180,14 @@ sub get_privacy_by {
 
 	my $res = $db->select(
 		'users',
-		[ 'id', 'public_level', 'accept_follows' ],
+		[ 'id', 'name', 'public_level', 'accept_follows' ],
 		{ %where, status => 1 }
 	);
 
 	if ( my $user = $res->hash ) {
 		return {
 			id                 => $user->{id},
+			name               => $user->{name},
 			public_level       => $user->{public_level},          # todo remove?
 			default_visibility => $user->{public_level} & 0x7f,
 			default_visibility_str =>
@@ -777,16 +778,16 @@ sub get_profile {
 sub get_relation {
 	my ( $self, %opt ) = @_;
 
-	my $db     = $opt{db} // $self->{pg}->db;
-	my $uid    = $opt{uid};
-	my $target = $opt{target};
+	my $db      = $opt{db} // $self->{pg}->db;
+	my $subject = $opt{subject};
+	my $object  = $opt{object};
 
 	my $res_h = $db->select(
 		'relations',
 		['predicate'],
 		{
-			subject_id => $uid,
-			object_id  => $target
+			subject_id => $subject,
+			object_id  => $object,
 		}
 	)->hash;
 
@@ -822,6 +823,24 @@ sub update_notifications {
 		$notifications &= ~0x01;
 	}
 	$db->update( 'users', { notifications => $notifications }, { id => $uid } );
+}
+
+sub follow {
+	my ( $self, %opt ) = @_;
+
+	my $db     = $opt{db} // $self->{pg}->db;
+	my $uid    = $opt{uid};
+	my $target = $opt{target};
+
+	$db->insert(
+		'relations',
+		{
+			subject_id => $uid,
+			predicate  => $predicate_atoi{follows},
+			object_id  => $target,
+			ts         => DateTime->now( time_zone => 'Europe/Berlin' ),
+		}
+	);
 }
 
 sub request_follow {
@@ -920,6 +939,16 @@ sub reject_follow_request {
 	}
 }
 
+sub cancel_follow_request {
+	my ( $self, %opt ) = @_;
+
+	$self->reject_follow_request(
+		db        => $opt{db},
+		uid       => $opt{target},
+		applicant => $opt{uid},
+	);
+}
+
 sub unfollow {
 	my ( $self, %opt ) = @_;
 
@@ -1005,9 +1034,50 @@ sub get_followers {
 	my $db  = $opt{db} // $self->{pg}->db;
 	my $uid = $opt{uid};
 
-	my $res = $db->select( 'followers', [ 'id', 'name' ], { self_id => $uid } );
+	my $res = $db->select(
+		'followers',
+		[ 'id', 'name', 'accept_follows', 'inverse_predicate' ],
+		{ self_id => $uid }
+	);
 
-	return $res->hashes->each;
+	my @ret;
+	while ( my $row = $res->hash ) {
+		push(
+			@ret,
+			{
+				id             => $row->{id},
+				name           => $row->{name},
+				following_back => (
+					      $row->{inverse_predicate}
+					  and $row->{inverse_predicate} == $predicate_atoi{follows}
+				) ? 1 : 0,
+				followback_requested => (
+					      $row->{inverse_predicate}
+					  and $row->{inverse_predicate}
+					  == $predicate_atoi{requests_follow}
+				) ? 1 : 0,
+				can_follow_back => (
+					not $row->{inverse_predicate}
+					  and $row->{accept_follows} == 2
+				) ? 1 : 0,
+				can_request_follow_back => (
+					not $row->{inverse_predicate}
+					  and $row->{accept_follows} == 1
+				) ? 1 : 0,
+			}
+		);
+	}
+	return @ret;
+}
+
+sub has_followers {
+	my ( $self, %opt ) = @_;
+
+	my $db  = $opt{db} // $self->{pg}->db;
+	my $uid = $opt{uid};
+
+	return $db->select( 'followers', 'count(*) as count', { self_id => $uid } )
+	  ->hash->{count};
 }
 
 sub get_follow_requests {
@@ -1043,6 +1113,16 @@ sub get_followees {
 	return $res->hashes->each;
 }
 
+sub has_followees {
+	my ( $self, %opt ) = @_;
+
+	my $db  = $opt{db} // $self->{pg}->db;
+	my $uid = $opt{uid};
+
+	return $db->select( 'followees', 'count(*) as count', { self_id => $uid } )
+	  ->hash->{count};
+}
+
 sub get_blocked_users {
 	my ( $self, %opt ) = @_;
 
@@ -1053,6 +1133,16 @@ sub get_blocked_users {
 	  = $db->select( 'blocked_users', [ 'id', 'name' ], { self_id => $uid } );
 
 	return $res->hashes->each;
+}
+
+sub has_blocked_users {
+	my ( $self, %opt ) = @_;
+
+	my $db  = $opt{db} // $self->{pg}->db;
+	my $uid = $opt{uid};
+
+	return $db->select( 'blocked_users', 'count(*) as count',
+		{ self_id => $uid } )->hash->{count};
 }
 
 1;
