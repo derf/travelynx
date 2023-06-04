@@ -60,6 +60,15 @@ $u->verify_registration_token(
 	token => 'efgh'
 );
 
+$u->set_social(
+	uid                    => $uid1,
+	accept_follow_requests => 1
+);
+$u->set_social(
+	uid                    => $uid2,
+	accept_follow_requests => 1
+);
+
 is(
 	$u->get_relation(
 		uid    => $uid1,
@@ -94,15 +103,15 @@ $u->request_follow(
 
 is(
 	$u->get_relation(
-		uid    => $uid1,
-		target => $uid2
+		subject => $uid1,
+		object  => $uid2
 	),
 	'requests_follow'
 );
 is(
 	$u->get_relation(
-		uid    => $uid2,
-		target => $uid1
+		subject => $uid2,
+		object  => $uid1
 	),
 	undef
 );
@@ -130,15 +139,15 @@ $u->reject_follow_request(
 
 is(
 	$u->get_relation(
-		uid    => $uid1,
-		target => $uid2
+		subject => $uid1,
+		object  => $uid2
 	),
 	undef
 );
 is(
 	$u->get_relation(
-		uid    => $uid2,
-		target => $uid1
+		subject => $uid2,
+		object  => $uid1
 	),
 	undef
 );
@@ -160,15 +169,15 @@ $u->request_follow(
 
 is(
 	$u->get_relation(
-		uid    => $uid1,
-		target => $uid2
+		subject => $uid1,
+		object  => $uid2
 	),
 	'requests_follow'
 );
 is(
 	$u->get_relation(
-		uid    => $uid2,
-		target => $uid1
+		subject => $uid2,
+		object  => $uid1
 	),
 	undef
 );
@@ -196,15 +205,15 @@ $u->accept_follow_request(
 
 is(
 	$u->get_relation(
-		uid    => $uid1,
-		target => $uid2
+		subject => $uid1,
+		object  => $uid2
 	),
 	'follows'
 );
 is(
 	$u->get_relation(
-		uid    => $uid2,
-		target => $uid1
+		subject => $uid2,
+		object  => $uid1
 	),
 	undef
 );
@@ -222,7 +231,16 @@ is( $u->get( uid => $uid1 )->{notifications},       0 );
 is( $u->get( uid => $uid2 )->{notifications},       0 );
 is_deeply(
 	[ $u->get_followers( uid => $uid2 ) ],
-	[ { id => $uid1, name => 'test1' } ]
+	[
+		{
+			id                      => $uid1,
+			name                    => 'test1',
+			following_back          => 0,
+			followback_requested    => 0,
+			can_follow_back         => 0,
+			can_request_follow_back => 1
+		}
+	]
 );
 is_deeply(
 	[ $u->get_followees( uid => $uid1 ) ],
@@ -236,15 +254,15 @@ $u->remove_follower(
 
 is(
 	$u->get_relation(
-		uid    => $uid1,
-		target => $uid2
+		subject => $uid1,
+		object  => $uid2
 	),
 	undef
 );
 is(
 	$u->get_relation(
-		uid    => $uid2,
-		target => $uid1
+		subject => $uid2,
+		object  => $uid1
 	),
 	undef
 );
@@ -268,15 +286,15 @@ $u->request_follow(
 
 is(
 	$u->get_relation(
-		uid    => $uid1,
-		target => $uid2
+		subject => $uid1,
+		object  => $uid2
 	),
 	'requests_follow'
 );
 is(
 	$u->get_relation(
-		uid    => $uid2,
-		target => $uid1
+		subject => $uid2,
+		object  => $uid1
 	),
 	undef
 );
@@ -288,15 +306,15 @@ $u->block(
 
 is(
 	$u->get_relation(
-		uid    => $uid1,
-		target => $uid2
+		subject => $uid1,
+		object  => $uid2
 	),
 	'is_blocked_by'
 );
 is(
 	$u->get_relation(
-		uid    => $uid2,
-		target => $uid1
+		subject => $uid2,
+		object  => $uid1
 	),
 	undef
 );
@@ -324,15 +342,15 @@ $u->unblock(
 
 is(
 	$u->get_relation(
-		uid    => $uid1,
-		target => $uid2
+		subject => $uid1,
+		object  => $uid2
 	),
 	undef
 );
 is(
 	$u->get_relation(
-		uid    => $uid2,
-		target => $uid1
+		subject => $uid2,
+		object  => $uid1
 	),
 	undef
 );
@@ -356,15 +374,15 @@ $u->block(
 
 is(
 	$u->get_relation(
-		uid    => $uid1,
-		target => $uid2
+		subject => $uid1,
+		object  => $uid2
 	),
 	'is_blocked_by'
 );
 is(
 	$u->get_relation(
-		uid    => $uid2,
-		target => $uid1
+		subject => $uid2,
+		object  => $uid1
 	),
 	undef
 );
@@ -392,15 +410,15 @@ $u->unblock(
 
 is(
 	$u->get_relation(
-		uid    => $uid1,
-		target => $uid2
+		subject => $uid1,
+		object  => $uid2
 	),
 	undef
 );
 is(
 	$u->get_relation(
-		uid    => $uid2,
-		target => $uid1
+		subject => $uid2,
+		object  => $uid1
 	),
 	undef
 );
@@ -428,15 +446,15 @@ $u->accept_follow_request(
 
 is(
 	$u->get_relation(
-		uid    => $uid1,
-		target => $uid2
+		subject => $uid1,
+		object  => $uid2
 	),
 	'follows'
 );
 is(
 	$u->get_relation(
-		uid    => $uid2,
-		target => $uid1
+		subject => $uid2,
+		object  => $uid1
 	),
 	undef
 );
@@ -454,7 +472,16 @@ is( $u->get( uid => $uid1 )->{notifications},       0 );
 is( $u->get( uid => $uid2 )->{notifications},       0 );
 is_deeply(
 	[ $u->get_followers( uid => $uid2 ) ],
-	[ { id => $uid1, name => 'test1' } ]
+	[
+		{
+			id                      => $uid1,
+			name                    => 'test1',
+			following_back          => 0,
+			followback_requested    => 0,
+			can_follow_back         => 0,
+			can_request_follow_back => 1
+		}
+	]
 );
 is_deeply(
 	[ $u->get_followees( uid => $uid1 ) ],
@@ -468,15 +495,15 @@ $u->unfollow(
 
 is(
 	$u->get_relation(
-		uid    => $uid1,
-		target => $uid2
+		subject => $uid1,
+		object  => $uid2
 	),
 	undef
 );
 is(
 	$u->get_relation(
-		uid    => $uid2,
-		target => $uid1
+		subject => $uid2,
+		object  => $uid1
 	),
 	undef
 );
