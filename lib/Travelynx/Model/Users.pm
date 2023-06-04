@@ -750,6 +750,30 @@ sub update_webhook_status {
 	);
 }
 
+sub set_profile {
+	my ( $self, %opt ) = @_;
+
+	my $db      = $opt{db} // $self->{pg}->db;
+	my $uid     = $opt{uid};
+	my $profile = $opt{profile};
+
+	$db->update(
+		'users',
+		{ profile => JSON->new->encode($profile) },
+		{ id      => $uid }
+	);
+}
+
+sub get_profile {
+	my ( $self, %opt ) = @_;
+
+	my $db  = $opt{db} // $self->{pg}->db;
+	my $uid = $opt{uid};
+
+	return $db->select( 'users', ['profile'], { id => $uid } )
+	  ->expand->hash->{profile};
+}
+
 sub get_relation {
 	my ( $self, %opt ) = @_;
 

@@ -70,6 +70,30 @@ sub profile {
 		return;
 	}
 
+	my $profile = $self->users->get_profile( uid => $user->{id} );
+
+	my $my_user;
+	my $relation;
+	my $inverse_relation;
+	my $is_self;
+	if ( $self->is_user_authenticated ) {
+		$my_user = $self->current_user;
+		if ( $my_user->{id} == $user->{id} ) {
+			$is_self = 1;
+			$my_user = undef;
+		}
+		else {
+			$relation = $self->users->get_relation(
+				subject => $my_user->{id},
+				object  => $user->{id}
+			);
+			$inverse_relation = $self->users->get_relation(
+				subject => $user->{id},
+				object  => $my_user->{id}
+			);
+		}
+	}
+
 	my $status = $self->get_user_status( $user->{id} );
 	my $visibility;
 	if ( $status->{checked_in} or $status->{arr_name} ) {
@@ -84,7 +108,12 @@ sub profile {
 					and $self->status_token_ok($status) )
 				or (
 					$visibility eq 'travelynx'
-					and (  $self->is_user_authenticated
+					and (  $my_user
+						or $self->status_token_ok($status) )
+				)
+				or (
+					$visibility eq 'followers'
+					and ( ( $relation and $relation eq 'follows' )
 						or $self->status_token_ok($status) )
 				)
 			)
@@ -104,7 +133,7 @@ sub profile {
 	my @journeys;
 
 	if ( $user->{past_visible} == 2
-		or ( $user->{past_visible} == 1 and $self->is_user_authenticated ) )
+		or ( $user->{past_visible} == 1 and $my_user ) )
 	{
 
 		my %opt = (
@@ -122,7 +151,10 @@ sub profile {
 		if (
 			$user->{default_visibility_str} eq 'public'
 			or (    $user->{default_visibility_str} eq 'travelynx'
-				and $self->is_user_authenticated )
+				and $my_user )
+			or (    $user->{default_visibility_str} eq 'followers'
+				and $relation
+				and $relation eq 'follows' )
 		  )
 		{
 			$opt{with_default_visibility} = 1;
@@ -131,8 +163,13 @@ sub profile {
 			$opt{with_default_visibility} = 0;
 		}
 
-		if ( $self->is_user_authenticated ) {
-			$opt{min_visibility} = 'travelynx';
+		if ($my_user) {
+			if ( $relation and $relation eq 'follows' ) {
+				$opt{min_visibility} = 'followers';
+			}
+			else {
+				$opt{min_visibility} = 'travelynx';
+			}
 		}
 		else {
 			$opt{min_visibility} = 'public';
@@ -143,9 +180,12 @@ sub profile {
 
 	$self->render(
 		'profile',
-		name               => $name,
-		uid                => $user->{id},
-		public_level       => $user->{public_level},
+		name             => $name,
+		uid              => $user->{id},
+		bio              => $profile->{bio}{html},
+		metadata         => $profile->{metadata},
+		public_level     => $user->{public_level},
+		is_self          => $is_self,
 		journey            => $status,
 		journey_visibility => $visibility,
 		journeys           => [@journeys],

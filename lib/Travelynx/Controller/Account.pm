@@ -7,6 +7,8 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use Crypt::Eksblowfish::Bcrypt qw(bcrypt en_base64);
 use JSON;
+use Mojo::Util qw(xml_escape);
+use Text::Markdown;
 use UUID::Tiny qw(:std);
 
 my %visibility_itoa = (
@@ -497,6 +499,72 @@ sub privacy {
 		$self->param( past_status => $user->{past_status} );
 		$self->render( 'privacy', name => $user->{name} );
 	}
+}
+
+sub profile {
+	my ($self) = @_;
+	my $user = $self->current_user;
+
+	if ( $self->param('action') and $self->param('action') eq 'save' ) {
+		if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
+			$self->render(
+				'edit_profile',
+				invalid => 'csrf',
+			);
+			return;
+		}
+		my $md  = Text::Markdown->new;
+		my $bio = $self->param('bio');
+
+		if ( length($bio) > 2000 ) {
+			$bio = substr( $bio, 0, 2000 ) . '…';
+		}
+
+		my $profile = {
+			bio => {
+				markdown => $bio,
+				html     => $md->markdown( xml_escape($bio) ),
+			},
+			metadata => [],
+		};
+		for my $i ( 0 .. 20 ) {
+			my $key   = $self->param("key_$i");
+			my $value = $self->param("value_$i");
+			if ($key) {
+				if ( length($value) > 500 ) {
+					$value = substr( $value, 0, 500 ) . '…';
+				}
+				my $html_value
+				  = ( $value
+					  =~ s{ \[ ([^]]+) \]\( ([^)]+) \) }{'<a href="' . xml_escape($2) . '">' . xml_escape($1) .'</a>' }egrx
+				  );
+				$profile->{metadata}[$i] = {
+					key   => $key,
+					value => {
+						markdown => $value,
+						html     => $html_value,
+					},
+				};
+			}
+			else {
+				last;
+			}
+		}
+		$self->users->set_profile(
+			uid     => $user->{id},
+			profile => $profile
+		);
+		$self->redirect_to( '/p/' . $user->{name} );
+	}
+
+	my $profile = $self->users->get_profile( uid => $user->{id} );
+	$self->param( bio => $profile->{bio}{markdown} );
+	for my $i ( 0 .. $#{ $profile->{metadata} } ) {
+		$self->param( "key_$i"   => $profile->{metadata}[$i]{key} );
+		$self->param( "value_$i" => $profile->{metadata}[$i]{value}{markdown} );
+	}
+
+	$self->render( 'edit_profile', name => $user->{name} );
 }
 
 sub insight {

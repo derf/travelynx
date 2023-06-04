@@ -1,0 +1,60 @@
+<div class="row">
+	<div class="col s12">
+		<h1>Profil bearbeiten</h1>
+	</div>
+</div>
+%= form_for '/account/profile' => (method => 'POST') => begin
+	%= csrf_field
+	<div class="row">
+		<div class="col s12">
+			<div class="card">
+				<div class="card-content">
+					<span class="card-title"><%= $name %></span>
+					<p>
+						Markdown möglich, maximal 2000 Zeichen.
+						%= text_area 'bio', id => 'bio', class => 'materialize-textarea'
+					</p>
+				</div>
+				<div class="card-action">
+					<a href="/p/<%= $name %>" class="waves-effect waves-light btn">
+						Abbrechen
+					</a>
+					<button class="btn waves-effect waves-light right" type="submit" name="action" value="save">
+						Speichern
+						<i class="material-icons right">send</i>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s12">
+			Metadaten: Markdown-Links im Inhalt erlaubt, jeweils maximal 500 Zeichen
+		</div>
+	</div>
+	% for my $i (0 .. 10) {
+		<div class="row">
+			<div class="input-field col l3 m12 s12">
+				%= text_field "key_$i", id => "key_$i", maxlength => 50
+				<label for="key_<%= $i %>">Attribut</label>
+			</div>
+			<div class="input-field col l9 m12 s12">
+				%= text_field "value_$i", id => "value_$i", maxlength => 500
+				<label for="value_<%= $i %>">Inhalt</label>
+			</div>
+		</div>
+	% }
+	<div class="row center-align">
+		<div class="col s6">
+			<a href="/p/<%= $name %>" class="waves-effect waves-light btn">
+				Abbrechen
+			</a>
+		</div>
+		<div class="col s6">
+			<button class="btn waves-effect waves-light" type="submit" name="action" value="save">
+				Speichern
+				<i class="material-icons right">send</i>
+			</button>
+		</div>
+	</div>
+%= end

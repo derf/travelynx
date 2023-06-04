@@ -2213,6 +2213,7 @@ sub startup {
 
 	$authed_r->get('/account')->to('account#account');
 	$authed_r->get('/account/privacy')->to('account#privacy');
+	$authed_r->get('/account/profile')->to('account#profile');
 	$authed_r->get('/account/hooks')->to('account#webhook');
 	$authed_r->get('/account/traewelling')->to('traewelling#settings');
 	$authed_r->get('/account/insight')->to('account#insight');
@@ -2239,6 +2240,7 @@ sub startup {
 	$authed_r->get('/s/*station')->to('traveling#station');
 	$authed_r->get('/confirm_mail/:token')->to('account#confirm_mail');
 	$authed_r->post('/account/privacy')->to('account#privacy');
+	$authed_r->post('/account/profile')->to('account#profile');
 	$authed_r->post('/account/hooks')->to('account#webhook');
 	$authed_r->post('/account/traewelling')->to('traewelling#settings');
 	$authed_r->post('/account/insight')->to('account#insight');
