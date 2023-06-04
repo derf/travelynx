@@ -1222,7 +1222,7 @@ sub year_in_review {
 	# -> Limit time range to avoid accidental DoS.
 	if ( not( $year =~ m{ ^ [0-9]{4} $ }x and $year > 1990 and $year < 2100 ) )
 	{
-		$self->render('not_found');
+		$self->render( 'not_found', status => 404 );
 		return;
 	}
 
@@ -1244,8 +1244,11 @@ sub year_in_review {
 	);
 
 	if ( not @journeys ) {
-		$self->render( 'not_found',
-			message => 'Keine Zugfahrten im angefragten Jahr gefunden.' );
+		$self->render(
+			'not_found',
+			message => 'Keine Zugfahrten im angefragten Jahr gefunden.',
+			status  => 404
+		);
 		return;
 	}
 
@@ -1253,9 +1256,11 @@ sub year_in_review {
 	if (
 		not( $year < $now->year or ( $now->month == 12 and $now->day == 31 ) ) )
 	{
-		$self->render( 'not_found',
+		$self->render(
+			'not_found',
 			message =>
-'Der aktuelle Jahresrückblick wird erst zum Jahresende (am 31.12.) freigeschaltet'
+'Der aktuelle Jahresrückblick wird erst zum Jahresende (am 31.12.) freigeschaltet',
+			status => 404
 		);
 		return;
 	}
@@ -1287,7 +1292,7 @@ sub yearly_history {
 	# -> Limit time range to avoid accidental DoS.
 	if ( not( $year =~ m{ ^ [0-9]{4} $ }x and $year > 1990 and $year < 2100 ) )
 	{
-		$self->render('not_found');
+		$self->render( 'not_found', status => 404 );
 		return;
 	}
 	my $interval_start = DateTime->new(
@@ -1312,8 +1317,11 @@ sub yearly_history {
 	}
 
 	if ( not @journeys ) {
-		$self->render( 'not_found',
-			message => 'Keine Zugfahrten im angefragten Jahr gefunden.' );
+		$self->render(
+			'not_found',
+			status  => 404,
+			message => 'Keine Zugfahrten im angefragten Jahr gefunden.'
+		);
 		return;
 	}
 
@@ -1365,7 +1373,7 @@ sub monthly_history {
 			and $month < 13 )
 	  )
 	{
-		$self->render('not_found');
+		$self->render( 'not_found', status => 404 );
 		return;
 	}
 	my $interval_start = DateTime->new(
@@ -1386,8 +1394,11 @@ sub monthly_history {
 	);
 
 	if ( not @journeys ) {
-		$self->render( 'not_found',
-			message => 'Keine Zugfahrten im angefragten Monat gefunden.' );
+		$self->render(
+			'not_found',
+			message => 'Keine Zugfahrten im angefragten Monat gefunden.',
+			status  => 404
+		);
 		return;
 	}
 
