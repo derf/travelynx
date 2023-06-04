@@ -107,10 +107,12 @@ function tvly_update() {
 }
 function tvly_update_public() {
 	var user_name;
+	var profile_status = 0;
 	$('.publicstatuscol').each(function() {
 		user_name = $(this).data('user');
+		profile_status = $(this).data('profile');
 	});
-	$.get('/ajax/status/' + user_name + '.html', {token: j_token}, function(data) {
+	$.get('/ajax/status/' + user_name + '.html', {token: j_token, profile: profile_status}, function(data) {
 		$('.publicstatuscol').html(data);
 		upd_journey_data();
 		setTimeout(tvly_update_public, 40000);
