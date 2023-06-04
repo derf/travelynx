@@ -8,6 +8,15 @@
 			<h2>Folge-Anfragen</h2>
 		</div>
 	</div>
+	% if ($notifications) {
+		<div class="row center-align">
+			<div class="col s12">
+				<button class="btn waves-effect waves-light" type="submit" name="action" value="clear_notifications">
+					<i class="material-icons left" aria-hidden="true">notifications_off</i> Als gelesen markieren
+				</button>
+			</div>
+		</div>
+	% }
 	<div class="row center-align">
 		<div class="col s4">
 			<i class="material-icons">block</i><br/> Blockieren
@@ -19,28 +28,21 @@
 			<i class="material-icons">check</i><br/> Annehmen
 		</div>
 	</div>
-	% if ($notifications) {
-		<div class="row center-align">
-			<div class="col s12">
-				<button class="btn waves-effect waves-light" type="submit" name="action" value="clear_notifications">
-					<i class="material-icons left" aria-hidden="true">notifications_off</i> Als gelesen markieren
-				</button>
-			</div>
-		</div>
-	% }
-	<!--
 	<div class="row center-align">
-		<div class="col s6">
-			<button class="btn grey waves-effect waves-light" type="submit" name="reject_follow_request" value="<%= join(q{,}, map { $_->{id} } @{$entries}) %>">
+		<div class="col s12">
+			<button class="btn red waves-effect waves-light" type="submit" name="reject_follow_request" value="<%= join(q{,}, map { $_->{id} } @{$entries}) %>">
 				<i class="material-icons left" aria-hidden="true">cancel</i> Alle ablehnen
 			</button>
 		</div>
-		<div class="col s6">
+	</div>
+	<div class="row center-align">
+		<div class="col s12">
 			<button class="btn waves-effect waves-light" type="submit" name="accept_follow_request" value="<%= join(q{,}, map { $_->{id} } @{$entries}) %>">
 				<i class="material-icons left" aria-hidden="true">check</i> Alle annehmen
 			</button>
 		</div>
 	</div>
+	<!--
 	<div class="row center-align">
 		<div class="col s6">
 			<button class="btn red waves-effect waves-light" type="submit" name="block" value="<%= join(q{,}, map { $_->{id} } @{$entries}) %>">
