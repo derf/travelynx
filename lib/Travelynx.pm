@@ -519,6 +519,26 @@ sub startup {
 				delete $journey->{edited};
 				delete $journey->{id};
 
+				# users may force checkouts at stations that are not part of
+				# the train's scheduled (or real-time) route. re-adding those
+				# to in-transit violates the assumption that each train has
+				# a valid destination. Remove the target in this case.
+				my $route = JSON->new->decode( $journey->{route} );
+				my $found_checkout_id;
+				for my $stop ( @{$route} ) {
+					if ( $stop->[1] == $journey->{checkout_station_id} ) {
+						$found_checkout_id = 1;
+						last;
+					}
+				}
+				if ( not $found_checkout_id ) {
+					$journey->{checkout_station_id} = undef;
+					$journey->{checkout_time}       = undef;
+					$journey->{arr_platform}        = undef;
+					$journey->{sched_arrival}       = undef;
+					$journey->{real_arrival}        = undef;
+				}
+
 				$self->in_transit->add_from_journey(
 					db      => $db,
 					journey => $journey
