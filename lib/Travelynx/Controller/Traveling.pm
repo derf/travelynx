@@ -845,20 +845,37 @@ sub station {
 				  } @results;
 			}
 
+			my $user_status = $self->get_user_status;
+
+			my $can_check_out = 0;
+			if ( $user_status->{checked_in} ) {
+				for my $stop ( @{ $user_status->{route_after} } ) {
+					if (
+						$stop->[1] eq $status->{station_eva}
+						or List::Util::any { $stop->[1] eq $_->{uic} }
+						@{ $status->{related_stations} }
+					  )
+					{
+						$can_check_out = 1;
+						last;
+					}
+				}
+			}
+
 			my $connections_p;
 			if ($train) {
 				@results
 				  = grep { $_->type . ' ' . $_->train_no eq $train } @results;
 			}
 			else {
-				my $user = $self->get_user_status;
-				if (    $user->{cancellation}
+				if (    $user_status->{cancellation}
 					and $status->{station_eva} eq
-					$user->{cancellation}{dep_eva} )
+					$user_status->{cancellation}{dep_eva} )
 				{
 					$connections_p = $self->get_connecting_trains_p(
-						eva              => $user->{cancellation}{dep_eva},
-						destination_name => $user->{cancellation}{arr_name}
+						eva => $user_status->{cancellation}{dep_eva},
+						destination_name =>
+						  $user_status->{cancellation}{arr_name}
 					);
 				}
 				else {
@@ -878,6 +895,8 @@ sub station {
 							hafas            => $use_hafas,
 							station          => $status->{station_name},
 							related_stations => $status->{related_stations},
+							user_status      => $user_status,
+							can_check_out    => $can_check_out,
 							connections      => $connecting_trains,
 							title   => "travelynx: $status->{station_name}",
 							version => $self->app->config->{version}
@@ -893,6 +912,8 @@ sub station {
 							hafas            => $use_hafas,
 							station          => $status->{station_name},
 							related_stations => $status->{related_stations},
+							user_status      => $user_status,
+							can_check_out    => $can_check_out,
 							title   => "travelynx: $status->{station_name}",
 							version => $self->app->config->{version}
 							  // 'UNKNOWN',
@@ -908,6 +929,8 @@ sub station {
 					hafas            => $use_hafas,
 					station          => $status->{station_name},
 					related_stations => $status->{related_stations},
+					user_status      => $user_status,
+					can_check_out    => $can_check_out,
 					title            => "travelynx: $status->{station_name}",
 					version => $self->app->config->{version} // 'UNKNOWN',
 				);

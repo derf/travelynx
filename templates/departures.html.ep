@@ -6,37 +6,50 @@
 		% }
 	</div>
 </div>
-% my $status = $self->get_user_status;
 % my $have_connections = 0;
-% if ($status->{checked_in}) {
+% if ($user_status->{checked_in}) {
 	<div class="row">
 		<div class="col s12">
 			<div class="card">
 				<div class="card-content">
 					<span class="card-title">Aktuell eingecheckt</span>
-					<p>In <%= $status->{train_type} %> <%= $status->{train_no} %>
-						ab <%= $status->{dep_name} %></p>
+					<p>In <%= $user_status->{train_type} %> <%= $user_status->{train_no} %>
+						ab <%= $user_status->{dep_name} %></p>
 				</div>
 				<div class="card-action">
-					<a class="action-checkout" data-station="<%= $eva %>" data-force="1">
-						Hier auschecken
-					</a>
+					% if ($can_check_out) {
+						<a class="action-undo" data-id="in_transit" data-checkints="<%= $user_status->{timestamp}->epoch %>"  style="margin-right: 0;">
+							<i class="material-icons left" aria-hidden="true">undo</i> Rückgängig
+						</a>
+						<a class="action-checkout right" data-station="<%= $eva %>" data-force="1">
+							Hier auschecken
+						</a>
+					% }
+					% else {
+						<a class="action-undo" data-id="in_transit" data-checkints="<%= $user_status->{timestamp}->epoch %>"  style="margin-right: 0;">
+							<i class="material-icons left" aria-hidden="true">undo</i> Rückgängig
+						</a>
+						<a class="action-checkout right" data-station="<%= $eva %>" data-force="1">
+							<i class="material-icons left">gps_off</i>
+							Hier auschecken
+						</a>
+					% }
 				</div>
 			</div>
 		</div>
 	</div>
 % }
-% elsif ($status->{cancellation} and $station eq $status->{cancellation}{dep_name}) {
+% elsif ($user_status->{cancellation} and $station eq $user_status->{cancellation}{dep_name}) {
 	<div class="row">
 		<div class="col s12">
-			%= include '_cancelled_departure', journey => $status->{cancellation};
+			%= include '_cancelled_departure', journey => $user_status->{cancellation};
 		</div>
 	</div>
 % }
-% elsif ($status->{timestamp_delta} < 180) {
+% elsif ($user_status->{timestamp_delta} < 180) {
 	<div class="row">
 		<div class="col s12">
-			%= include '_checked_out', journey => $status;
+			%= include '_checked_out', journey => $user_status;
 		</div>
 	</div>
 % }
@@ -55,7 +68,13 @@
 			% if ($have_connections) {
 				Alle Abfahrten –
 			% }
-			% if (@{$results}) {
+			% if ($user_status->{checked_in} and not $can_check_out) {
+				Diese Station liegt nicht auf der Route deines aktuellen Checkins.
+				Falls du aktuell nicht mit <b><%= $user_status->{train_type} %> <%= $user_status->{train_no} %></b> unterwegs bist, kannst du den Checkin rückgängig machen.
+				Falls es sich bei <b><%= $station %></b> um einen nicht in den Echtzeitdaten abgebildeten Zusatzhalt handelt, kannst du hier auchecken.
+				Da travelynx nicht weiß, welcher der beiden Fälle zutrifft, sind bis dahin keine neuen Checkins möglich.
+			% }
+			% elsif (@{$results}) {
 				Zug auswählen zum Einchecken.
 			% }
 			% else {
@@ -63,11 +82,13 @@
 				und maximal 120 Minuten nach Abfahrt möglich.
 			% }
 		</p>
-		% if ($hafas) {
-			%= include '_departures_hafas', results => $results;
-		% }
-		% else {
-			%= include '_departures_iris', results => $results;
+		% if (not ($user_status->{checked_in} and not $can_check_out)) {
+			% if ($hafas) {
+				%= include '_departures_hafas', results => $results;
+			% }
+			% else {
+				%= include '_departures_iris', results => $results;
+			% }
 		% }
 	</div>
 </div>
