@@ -171,7 +171,7 @@ sub startup {
 	);
 
 # https://de.wikipedia.org/wiki/Liste_nach_Gemeinden_und_Regionen_benannter_IC/ICE-Fahrzeuge#Namensgebung_ICE-Triebz%C3%BCge_nach_Gemeinden
-# via https://github.com/marudor/BahnhofsAbfahrten/blob/master/src/server/Reihung/ICENaming.ts
+# via https://github.com/marudor/bahn.expert/blob/main/src/server/coachSequence/TrainNames.ts
 	$self->attr(
 		ice_name => sub {
 			my $id_to_name = JSON->new->utf8->decode(
