@@ -2229,7 +2229,11 @@ sub startup {
 			if ( $self->is_user_authenticated ) {
 				return 1;
 			}
-			$self->render( 'login', redirect_to => $self->req->url );
+			$self->render(
+				'login',
+				redirect_to => $self->req->url,
+				from        => 'auth_required'
+			);
 			return undef;
 		}
 	);

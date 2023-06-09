@@ -44,6 +44,15 @@
 					</div>
 				</div>
 			% }
+			% elsif ($from eq 'auth_required') {
+				<div class="card">
+					<div class="card-content">
+						<span class="card-title">Login notwendig</span>
+						<p>Die aufgerufene Seite ist nur mit travelynx-Account zugänglich.</p>
+						<p><a href="/">Über travelynx</a> · <a href="/register">Registrieren</a></p>
+					</div>
+				</div>
+			% }
 		</div>
 	</div>
 % }
