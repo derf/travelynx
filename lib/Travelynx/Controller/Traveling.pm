@@ -398,8 +398,6 @@ sub homepage {
 						my ( $connecting_trains, $transit_fyi ) = @_;
 						$self->render(
 							'landingpage',
-							version => $self->app->config->{version}
-							  // 'UNKNOWN',
 							user_status        => $status,
 							journey_visibility => $journey_visibility,
 							connections        => $connecting_trains,
@@ -412,8 +410,6 @@ sub homepage {
 					sub {
 						$self->render(
 							'landingpage',
-							version => $self->app->config->{version}
-							  // 'UNKNOWN',
 							user_status        => $status,
 							journey_visibility => $journey_visibility,
 						);
@@ -426,7 +422,6 @@ sub homepage {
 			else {
 				$self->render(
 					'landingpage',
-					version     => $self->app->config->{version} // 'UNKNOWN',
 					user_status => $status,
 					journey_visibility => $journey_visibility,
 				);
@@ -441,7 +436,6 @@ sub homepage {
 		}
 		$self->render(
 			'landingpage',
-			version           => $self->app->config->{version} // 'UNKNOWN',
 			user_status       => $status,
 			recent_targets    => \@recent_targets,
 			with_autocomplete => 1,
@@ -452,7 +446,6 @@ sub homepage {
 	else {
 		$self->render(
 			'landingpage',
-			version => $self->app->config->{version} // 'UNKNOWN',
 			intro   => 1
 		);
 	}
@@ -899,8 +892,6 @@ sub station {
 							can_check_out    => $can_check_out,
 							connections      => $connecting_trains,
 							title   => "travelynx: $status->{station_name}",
-							version => $self->app->config->{version}
-							  // 'UNKNOWN',
 						);
 					}
 				)->catch(
@@ -915,8 +906,6 @@ sub station {
 							user_status      => $user_status,
 							can_check_out    => $can_check_out,
 							title   => "travelynx: $status->{station_name}",
-							version => $self->app->config->{version}
-							  // 'UNKNOWN',
 						);
 					}
 				)->wait;
@@ -932,7 +921,6 @@ sub station {
 					user_status      => $user_status,
 					can_check_out    => $can_check_out,
 					title            => "travelynx: $status->{station_name}",
-					version => $self->app->config->{version} // 'UNKNOWN',
 				);
 			}
 		}
@@ -942,7 +930,6 @@ sub station {
 			if ( ref($err) eq 'HASH' ) {
 				$self->render(
 					'landingpage',
-					version => $self->app->config->{version} // 'UNKNOWN',
 					with_autocomplete => 1,
 					with_geolocation  => 1,
 					error             => $err->{errstr},
@@ -1296,7 +1283,6 @@ sub year_in_review {
 
 	$self->render(
 		'year_in_review',
-		version => $self->app->config->{version} // 'UNKNOWN',
 		title   => "travelynx Jahresrückblick $year",
 		year    => $year,
 		stats   => $stats,

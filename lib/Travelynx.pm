@@ -72,6 +72,7 @@ sub startup {
 	}
 
 	chomp $self->config->{version};
+	$self->defaults(version => $self->config->{version} // 'UNKNOWN');
 
 	$self->plugin(
 		authentication => {

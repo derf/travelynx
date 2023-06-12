@@ -207,7 +207,6 @@ sub profile {
 		journey            => $status,
 		journey_visibility => $visibility,
 		journeys           => [@journeys],
-		version            => $self->app->config->{version} // 'UNKNOWN',
 	);
 }
 

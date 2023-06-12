@@ -8,15 +8,13 @@ use Mojo::Base 'Mojolicious::Controller';
 sub about {
 	my ($self) = @_;
 
-	$self->render( 'about',
-		version => $self->app->config->{version} // 'UNKNOWN' );
+	$self->render('about');
 }
 
 sub changelog {
 	my ($self) = @_;
 
-	$self->render( 'changelog',
-		version => $self->app->config->{version} // 'UNKNOWN' );
+	$self->render('changelog');
 }
 
 sub imprint {
