@@ -292,7 +292,7 @@
 					% if ($journey_visibility eq 'public') {
 						data-url="<%= url_for('/status')->to_abs->scheme('https') %>/<%= $user->{name} %>/<%= $journey->{sched_departure}->epoch %>"
 					% }
-					% elsif ($journey_visibility eq 'travelynx' or $journey_visibility eq 'unlisted') {
+					% elsif ($journey_visibility eq 'travelynx' or $journey_visibility eq 'followers' or $journey_visibility eq 'unlisted') {
 						data-url="<%= url_for('/status')->to_abs->scheme('https') %>/<%= $user->{name} %>/<%= $journey->{sched_departure}->epoch %>?token=<%= $journey->{dep_eva} %>-<%= $journey->{timestamp}->epoch % 337 %>"
 					% }
 					>
