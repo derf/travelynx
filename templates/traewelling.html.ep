@@ -189,7 +189,11 @@
 					</label>
 				</div>
 				<p>Die Synchronisierung erfolgt spätestens drei Minuten nach der
-					Zielwahl.  Träwelling-Checkins können von travelynx noch nicht
+					Zielwahl. Beachte, dass die Synchronisierung travelynx
+					→ Träwelling unabhängig von der eingestellten Sichtbarkeit
+					des Checkins erfolgt und Träwelling-Sichtbarkeiten
+					derzeit ebenfalls nicht von travelynx übernommen werden.
+					Träwelling-Checkins können von travelynx aktuell nicht
 					rückgängig gemacht werden. Eine nachträgliche Änderung der
 					Zielstation wird nicht übernommen. Mastodon und Twitter beziehen
 					sich auf die in den <a
