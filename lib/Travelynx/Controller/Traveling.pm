@@ -1569,6 +1569,7 @@ sub visibility_form {
 					visibility => $self->param('status_level'),
 				);
 				$self->redirect_to('/');
+				$self->run_hook( $uid, 'update' );
 			}
 			elsif ($journey_id) {
 				$self->journeys->update_visibility(
@@ -1651,11 +1652,13 @@ sub comment_form {
 	}
 	else {
 		$self->app->log->debug("set comment");
+		my $uid = $self->current_user->{id};
 		$self->in_transit->update_user_data(
-			uid       => $self->current_user->{id},
+			uid       => $uid,
 			user_data => { comment => $self->param('comment') }
 		);
 		$self->redirect_to('/');
+		$self->run_hook( $uid, 'update' );
 	}
 }
 

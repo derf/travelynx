@@ -89,7 +89,7 @@
 			<ul>
 				<li><b>ping</b> (nach jeder gespeicherten Änderung in diesem Formular)</li>
 				<li><b>checkin</b> (in einen Zug eingecheckt – Zielstation ist noch nicht bekannt)</li>
-				<li><b>update</b> (eingecheckt und Ziel gewählt oder geändert)</li>
+				<li><b>update</b> (eingecheckt und Ziel/Kommentar/Sichtbarkeit geändert)</li>
 				<li><b>checkout</b> (aus einem Zug ausgecheckt)</li>
 				<li><b>undo</b> (checkin oder checkout wurde rückgängig gemacht)</li>
 			</ul>
