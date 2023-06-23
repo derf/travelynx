@@ -186,10 +186,9 @@ sub get_privacy_by {
 
 	if ( my $user = $res->hash ) {
 		return {
-			id                 => $user->{id},
-			name               => $user->{name},
-			public_level       => $user->{public_level},          # todo remove?
-			default_visibility => $user->{public_level} & 0x7f,
+			id                     => $user->{id},
+			name                   => $user->{name},
+			default_visibility     => $user->{public_level} & 0x7f,
 			default_visibility_str =>
 			  $visibility_itoa{ $user->{public_level} & 0x7f },
 			comments_visible       => $user->{public_level} & 0x80 ? 1 : 0,
@@ -414,7 +413,6 @@ sub get {
 			notifications          => $user->{notifications},
 			accept_follows         => $user->{accept_follows} == 2 ? 1 : 0,
 			accept_follow_requests => $user->{accept_follows} == 1 ? 1 : 0,
-			is_public              => $user->{public_level},
 			default_visibility     => $user->{public_level} & 0x7f,
 			default_visibility_str =>
 			  $visibility_itoa{ $user->{public_level} & 0x7f },

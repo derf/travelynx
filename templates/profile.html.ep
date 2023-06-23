@@ -79,7 +79,7 @@
 </div>
 <div class="row">
 	<div class="col s12 publicstatuscol" data-user="<%= $name %>" data-profile="1">
-		%= include '_public_status_card', name => $name, public_level => $public_level, journey => $journey, journey_visibility => $journey_visibility, from_profile => 1
+		%= include '_public_status_card', name => $name, privacy => $privacy, journey => $journey, journey_visibility => $journey_visibility, from_profile => 1
 	</div>
 </div>
 % if ($journeys and @{$journeys}) {

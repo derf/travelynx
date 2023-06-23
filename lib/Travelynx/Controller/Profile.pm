@@ -183,9 +183,9 @@ sub profile {
 		'profile',
 		name             => $name,
 		uid              => $user->{id},
+		privacy          => $user,
 		bio              => $profile->{bio}{html},
 		metadata         => $profile->{metadata},
-		public_level     => $user->{public_level},
 		is_self          => $is_self,
 		following        => ( $relation and $relation eq 'follows' ) ? 1 : 0,
 		follow_requested => ( $relation and $relation eq 'requests_follow' )
@@ -533,7 +533,7 @@ sub user_status {
 		any => {
 			template           => 'user_status',
 			name               => $name,
-			public_level       => $user->{public_level},
+			privacy            => $user,
 			journey            => $status,
 			journey_visibility => $visibility,
 			twitter            => \%tw_data,
@@ -615,7 +615,7 @@ sub status_card {
 	$self->render(
 		'_public_status_card',
 		name               => $name,
-		public_level       => $user->{public_level},
+		privacy            => $user,
 		journey            => $status,
 		journey_visibility => $visibility,
 		from_profile       => $self->param('profile') ? 1 : 0,

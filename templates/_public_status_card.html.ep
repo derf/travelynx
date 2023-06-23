@@ -14,7 +14,7 @@
 					<i class="material-icons right"><%= visibility_icon($journey_visibility) %></i>
 				% }
 			</span>
-			% if ($public_level & 0x04 and $journey->{comment}) {
+			% if ($privacy->{comments_visible} and $journey->{comment}) {
 				<p>„<%= $journey->{comment} %>“</p>
 			% }
 			<p>
