@@ -109,6 +109,7 @@ sub profile {
 				or (
 					$visibility eq 'travelynx'
 					and (  $my_user
+						or $is_self
 						or $self->status_token_ok($status) )
 				)
 				or (
@@ -134,7 +135,7 @@ sub profile {
 	my @journeys;
 
 	if ( $user->{past_visible} == 2
-		or ( $user->{past_visible} == 1 and $my_user ) )
+		or ( $user->{past_visible} == 1 and ( $my_user or $is_self ) ) )
 	{
 
 		my %opt = (
@@ -151,8 +152,8 @@ sub profile {
 
 		if (
 			$user->{default_visibility_str} eq 'public'
-			or (    $user->{default_visibility_str} eq 'travelynx'
-				and $my_user )
+			or ( $user->{default_visibility_str} eq 'travelynx'
+				and ( $my_user or $is_self ) )
 			or (    $user->{default_visibility_str} eq 'followers'
 				and $relation
 				and $relation eq 'follows' )
@@ -424,6 +425,7 @@ sub user_status {
 				or (
 					$visibility eq 'travelynx'
 					and (  $my_user
+						or $is_self
 						or $self->journey_token_ok( $journey, $ts ) )
 				)
 				or (
@@ -474,6 +476,7 @@ sub user_status {
 				or (
 					$visibility eq 'travelynx'
 					and (  $my_user
+						or $is_self
 						or $self->status_token_ok( $status, $ts ) )
 				)
 				or (
@@ -590,6 +593,7 @@ sub status_card {
 				or (
 					$visibility eq 'travelynx'
 					and (  $my_user
+						or $is_self
 						or $self->status_token_ok($status) )
 				)
 				or (
