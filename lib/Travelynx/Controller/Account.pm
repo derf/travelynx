@@ -456,8 +456,7 @@ sub do_logout {
 sub privacy {
 	my ($self) = @_;
 
-	my $user         = $self->current_user;
-	my $public_level = $user->{is_public};
+	my $user = $self->current_user;
 
 	if ( $self->param('action') and $self->param('action') eq 'save' ) {
 		my %opt;
@@ -467,20 +466,15 @@ sub privacy {
 			$opt{default_visibility} = $default_visibility;
 		}
 
+		my $past_visibility = $visibility_atoi{ $self->param('history_level') };
+		if ( defined $past_visibility ) {
+			$opt{past_visibility} = $past_visibility;
+		}
+
 		$opt{comments_visible} = $self->param('public_comment') ? 1 : 0;
 
 		$opt{past_all}    = $self->param('history_age') eq 'infinite' ? 1 : 0;
 		$opt{past_status} = $self->param('past_status')               ? 1 : 0;
-
-		if ( $self->param('history_level') eq 'intern' ) {
-			$opt{past_visible} = 1;
-		}
-		elsif ( $self->param('history_level') eq 'extern' ) {
-			$opt{past_visible} = 2;
-		}
-		else {
-			$opt{past_visible} = 0;
-		}
 
 		$self->users->set_privacy(
 			uid => $user->{id},
@@ -495,10 +489,7 @@ sub privacy {
 			status_level => $visibility_itoa{ $user->{default_visibility} } );
 		$self->param( public_comment => $user->{comments_visible} );
 		$self->param(
-			  history_level => $user->{past_visible} & 0x01 ? 'intern'
-			: $user->{past_visible} & 0x02 ? 'extern'
-			:                                'private'
-		);
+			history_level => $visibility_itoa{ $user->{past_visibility} } );
 		$self->param( history_age => $user->{past_all} ? 'infinite' : 'month' );
 		$self->param( past_status => $user->{past_status} );
 		$self->render( 'privacy', name => $user->{name} );

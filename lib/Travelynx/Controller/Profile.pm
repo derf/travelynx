@@ -134,8 +134,13 @@ sub profile {
 
 	my @journeys;
 
-	if ( $user->{past_visible} == 2
-		or ( $user->{past_visible} == 1 and ( $my_user or $is_self ) ) )
+	if (
+		$user->{past_visibility_str} eq 'public'
+		or ( $user->{past_visibility_str} eq 'travelynx'
+			and ( $my_user or $is_self ) )
+		or ( $user->{past_visibility_str} eq 'followers'
+			and ( ( $relation and $relation eq 'follows' ) or $is_self ) )
+	  )
 	{
 
 		my %opt = (

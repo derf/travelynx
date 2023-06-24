@@ -80,6 +80,7 @@
 				<td>
 					<a href="/account/privacy"><i class="material-icons">edit</i></a>
 					<i class="material-icons"><%= visibility_icon($acc->{default_visibility_str}) %></i>
+					• <i class="material-icons"><%= visibility_icon($acc->{past_visibility_str}) %></i>
 					• <a href="/p/<%= $acc->{name} %>">Öffentliches Profil</a>
 				</td>
 			</tr>

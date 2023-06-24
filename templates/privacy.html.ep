@@ -85,20 +85,40 @@
 	<div class="row">
 		<div class="input-field col s12">
 			<div>
-			<label>
-				%= radio_button history_level => 'private'
-				<span>Nicht sichtbar</span>
-			</label>
-			</div><div>
-			<label>
-				%= radio_button history_level => 'intern'
-				<span>Nur mit Anmeldung</span>
-			</label>
-			</div><div>
-			<label>
-				%= radio_button history_level => 'extern'
-				<span>Öffentlich</span>
-			</label>
+				<label>
+					%= radio_button history_level => 'public'
+					<span><i class="material-icons left"><%= visibility_icon('public') %></i>Öffentlich: Beliebig zugänglich.</span>
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			<div>
+				<label>
+					%= radio_button history_level => 'travelynx'
+					<span><i class="material-icons left"><%= visibility_icon('travelynx') %></i>Intern: Personen, die dir folgen oder die auf dieser Seite angemeldet sind.</span>
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			<div>
+				<label>
+					%= radio_button history_level => 'followers'
+					<span><i class="material-icons left"><%= visibility_icon('followers') %></i>Follower: Personen, die dir folgen.</span>
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			<div>
+				<label>
+					%= radio_button history_level => 'private'
+					<span><i class="material-icons left"><%= visibility_icon('private') %></i>Privat: nur für dich sichtbar.</span>
+				</label>
 			</div>
 		</div>
 	</div>

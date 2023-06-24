@@ -1589,6 +1589,60 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v39 -> v40
+	# distinguish between public / travelynx / followers / private visibility
+	# for the history page, just like status visibility.
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				alter table users alter public_level type integer;
+			}
+		);
+		my $res = $db->select( 'users', [ 'id', 'public_level' ] );
+		while ( my $row = $res->hash ) {
+			my $old_level = $row->{public_level};
+
+			# checkin and comment visibility remain unchanged
+			my $new_level = $old_level & 0x00ff;
+
+			# past: account required
+			if ( $old_level & 0x100 ) {
+				$new_level |= 80 << 8;
+			}
+
+			# past: public
+			elsif ( $old_level & 0x200 ) {
+				$new_level |= 100 << 8;
+			}
+
+			# past: private
+			else {
+				$new_level |= 10 << 8;
+			}
+
+			# past: infinite (default is 4 weeks)
+			if ( $old_level & 0x400 ) {
+				$new_level |= 0x10000;
+			}
+
+			# show past journey on status page
+			if ( $old_level & 0x800 ) {
+				$new_level |= 0x8000;
+			}
+
+			my $r = $db->update(
+				'users',
+				{ public_level => $new_level },
+				{ id           => $row->{id} }
+			)->rows;
+			if ( $r != 1 ) {
+				die("oh no");
+			}
+		}
+		$db->update( 'schema_version', { version => 40 } );
+	},
 );
 
 # TODO add 'hafas' column to in_transit (and maybe journeys? undo/redo needs something to work with...)
