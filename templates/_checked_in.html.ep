@@ -385,13 +385,6 @@
 				% else {
 					</p>
 				% }
-				<p>
-					Falls das Backend ausgefallen ist oder der Zug aus anderen
-					Gründen verloren ging: <a class="action-checkout"
-					data-force="1" data-station="<%= $journey->{arr_name}
-					%>">Ohne Echtzeitdaten in <%= $journey->{arr_name} %>
-					auschecken</a>.
-				</p>
 			</div>
 			<div class="card-action">
 				<a class="action-undo blue-text" data-id="in_transit" data-checkints="<%= $journey->{timestamp}->epoch %>"  style="margin-right: 0;">
@@ -399,5 +392,14 @@
 				</a>
 			</div>
 		</div>
+		<p>
+			Falls das Backend ausgefallen ist oder der Zug aus anderen
+			Gründen verloren ging:
+		</p>
+		<p class="center-align">
+			<a class="action-checkout waves-light btn"
+			data-force="1" data-station="<%= $journey->{arr_name}
+			%>">Ohne Echtzeitdaten auschecken</a>
+		</p>
 	% }
 </div>
