@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2020 DB Station&Service AG, Europaplatz 1, 10557 Berlin
- * Copyright (C) 2020 Daniel Friesel
+ * Copyright (C) 2020 Birthe Friesel
  *
  * SPDX-License-Identifier: CC-BY-4.0
  */

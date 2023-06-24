@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # Copyright (C) Markus Witt
-# Copyright (C) Daniel Friesel
+# Copyright (C) Birthe Friesel
 #
 # SPDX-License-Identifier: CC0-1.0
 

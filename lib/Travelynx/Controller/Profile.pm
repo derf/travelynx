@@ -1,6 +1,6 @@
 package Travelynx::Controller::Profile;
 
-# Copyright (C) 2020-2023 Daniel Friesel
+# Copyright (C) 2020-2023 Birthe Friesel
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 use Mojo::Base 'Mojolicious::Controller';
