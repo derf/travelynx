@@ -260,10 +260,18 @@ sub do_login {
 		else {
 			my $data = $self->users->get_login_data( name => $user );
 			if ( $data and $data->{status} == 0 ) {
-				$self->render( 'login', invalid => 'confirmation' );
+				$self->render(
+					'login',
+					status  => 400,
+					invalid => 'confirmation'
+				);
 			}
 			else {
-				$self->render( 'login', invalid => 'credentials' );
+				$self->render(
+					'login',
+					status  => 400,
+					invalid => 'credentials'
+				);
 			}
 		}
 	}

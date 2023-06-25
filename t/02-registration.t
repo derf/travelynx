@@ -88,7 +88,7 @@ $t->post_ok(
 		password   => 'foofoofoo',
 	}
 );
-$t->status_is(200)->content_like(qr{nicht freigeschaltet});
+$t->status_is(400)->content_like(qr{nicht freigeschaltet});
 
 my $res = $t->app->pg->db->select( 'users', ['id'], { name => 'someone' } );
 my $uid = $res->hash->{id};
@@ -108,7 +108,7 @@ $t->post_ok(
 		password   => 'definitely invalid',
 	}
 );
-$t->status_is(200)->content_like(qr{falsches Passwort});
+$t->status_is(400)->content_like(qr{falsches Passwort});
 
 # Successful login
 $t->post_ok(
