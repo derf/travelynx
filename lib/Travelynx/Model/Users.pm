@@ -484,9 +484,10 @@ sub add {
 	my $res = $db->insert(
 		'users',
 		{
-			name          => $user_name,
-			status        => 0,
-			public_level  => $visibility_atoi{unlisted},
+			name         => $user_name,
+			status       => 0,
+			public_level => $visibility_atoi{unlisted}
+			  | ( $visibility_atoi{unlisted} << 8 ),
 			email         => $email,
 			password      => $password,
 			registered_at => $now,
