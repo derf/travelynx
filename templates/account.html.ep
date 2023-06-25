@@ -79,9 +79,8 @@
 				<th scope="row">Sichtbarkeit</th>
 				<td>
 					<a href="/account/privacy"><i class="material-icons">edit</i></a>
-					<i class="material-icons"><%= visibility_icon($acc->{default_visibility_str}) %></i>
-					• <i class="material-icons"><%= visibility_icon($acc->{past_visibility_str}) %></i>
-					• <a href="/p/<%= $acc->{name} %>">Öffentliches Profil</a>
+					<i class="material-icons">check</i><i class="material-icons"><%= visibility_icon($acc->{default_visibility_str}) %></i>
+					• <i class="material-icons">history</i><i class="material-icons"><%= visibility_icon($acc->{past_visibility_str}) %></i>
 				</td>
 			</tr>
 			<tr>
@@ -184,6 +183,9 @@
 	<div class="row">
 		<div class="col s12">
 			<h2>Interaktion</h2>
+			<p>
+				<a href="/p/<%= $acc->{name} %>">Öffentliches Profil</a>
+			</p>
 			<table class="striped">
 				<tr>
 					<th scope="row">Anfragen</th>
@@ -242,6 +244,13 @@
 					</td>
 				</tr>
 			</table>
+		</div>
+	</div>
+% }
+% else {
+	<div class="row">
+		<div class="col s12">
+			<a href="/p/<%= $acc->{name} %>">Öffentliches Profil</a>
 		</div>
 	</div>
 % }
