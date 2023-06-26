@@ -4,20 +4,11 @@ package Travelynx::Command::account;
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 use Mojo::Base 'Mojolicious::Command';
-use Crypt::Eksblowfish::Bcrypt qw(bcrypt en_base64);
-use UUID::Tiny                 qw(:std);
+use UUID::Tiny qw(:std);
 
 has description => 'Add or remove user accounts';
 
 has usage => sub { shift->extract_usage };
-
-sub hash_password {
-	my ($password) = @_;
-	my @salt_bytes = map { int( rand(255) ) + 1 } ( 1 .. 16 );
-	my $salt       = en_base64( pack( 'C[16]', @salt_bytes ) );
-
-	return bcrypt( $password, '$2a$12$' . $salt );
-}
 
 sub add_user {
 	my ( $self, $name, $email ) = @_;
@@ -29,17 +20,16 @@ sub add_user {
 		die;
 	}
 
-	my $token         = "tmp";
-	my $password      = substr( create_uuid_as_string(UUID_V4), 0, 18 );
-	my $password_hash = hash_password($password);
+	my $token    = "tmp";
+	my $password = substr( create_uuid_as_string(UUID_V4), 0, 18 );
 
 	my $tx      = $db->begin;
 	my $user_id = $self->app->users->add(
-		db            => $db,
-		name          => $name,
-		email         => $email,
-		token         => $token,
-		password_hash => $password_hash,
+		db       => $db,
+		name     => $name,
+		email    => $email,
+		token    => $token,
+		password => $password,
 	);
 	my $success = $self->app->users->verify_registration_token(
 		db             => $db,

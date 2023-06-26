@@ -5,7 +5,6 @@ package Travelynx::Controller::Account;
 # SPDX-License-Identifier: AGPL-3.0-or-later
 use Mojo::Base 'Mojolicious::Controller';
 
-use Crypt::Eksblowfish::Bcrypt qw(bcrypt en_base64);
 use JSON;
 use Mojo::Util qw(xml_escape);
 use Text::Markdown;
@@ -28,14 +27,6 @@ my %visibility_atoi = (
 );
 
 # Internal Helpers
-
-sub hash_password {
-	my ($password) = @_;
-	my @salt_bytes = map { int( rand(255) ) + 1 } ( 1 .. 16 );
-	my $salt       = en_base64( pack( 'C[16]', @salt_bytes ) );
-
-	return bcrypt( substr( $password, 0, 10000 ), '$2a$12$' . $salt );
-}
 
 sub make_token {
 	return create_uuid_as_string(UUID_V4);
@@ -363,15 +354,14 @@ sub register {
 	}
 
 	my $token   = make_token();
-	my $pw_hash = hash_password($password);
 	my $db      = $self->pg->db;
 	my $tx      = $db->begin;
 	my $user_id = $self->users->add(
-		db            => $db,
-		name          => $user,
-		email         => $email,
-		token         => $token,
-		password_hash => $pw_hash
+		db       => $db,
+		name     => $user,
+		email    => $email,
+		token    => $token,
+		password => $password,
 	);
 
 	my $success = $self->send_registration_mail(
@@ -1074,10 +1064,9 @@ sub change_password {
 		return;
 	}
 
-	my $pw_hash = hash_password($password);
-	$self->users->set_password_hash(
-		uid           => $self->current_user->{id},
-		password_hash => $pw_hash
+	$self->users->set_password(
+		uid      => $self->current_user->{id},
+		password => $password
 	);
 
 	$self->flash( success => 'password' );
@@ -1178,10 +1167,9 @@ sub request_password_reset {
 			return;
 		}
 
-		my $pw_hash = hash_password($password);
-		$self->users->set_password_hash(
-			uid           => $id,
-			password_hash => $pw_hash
+		$self->users->set_password(
+			uid      => $id,
+			password => $password
 		);
 
 		my $account = $self->get_user_data($id);

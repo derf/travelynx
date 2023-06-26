@@ -11,7 +11,6 @@ use Mojo::Base -strict;
 use Test::More;
 use Test::Mojo;
 
-use Crypt::Eksblowfish::Bcrypt qw(bcrypt en_base64);
 use DateTime;
 use Travel::Status::DE::IRIS::Result;
 
@@ -40,14 +39,6 @@ $t->app->config->{mail}->{disabled} = 1;
 $t->app->start( 'database', 'migrate' );
 
 my $u = $t->app->users;
-
-sub hash_password {
-	my ($password) = @_;
-	my @salt_bytes = map { int( rand(255) ) + 1 } ( 1 .. 16 );
-	my $salt       = en_base64( pack( 'C[16]', @salt_bytes ) );
-
-	return bcrypt( substr( $password, 0, 10000 ), '$2a$12$' . $salt );
-}
 
 sub login {
 	my %opt = @_;
@@ -202,24 +193,24 @@ sub test_visibility {
 }
 
 my $uid1 = $u->add(
-	name          => 'test1',
-	email         => 'test1@example.org',
-	token         => 'abcd',
-	password_hash => hash_password('password1'),
+	name     => 'test1',
+	email    => 'test1@example.org',
+	token    => 'abcd',
+	password => 'password1',
 );
 
 my $uid2 = $u->add(
-	name          => 'test2',
-	email         => 'test2@example.org',
-	token         => 'efgh',
-	password_hash => hash_password('password2'),
+	name     => 'test2',
+	email    => 'test2@example.org',
+	token    => 'efgh',
+	password => 'password2',
 );
 
 my $uid3 = $u->add(
-	name          => 'test3',
-	email         => 'test3@example.org',
-	token         => 'ijkl',
-	password_hash => hash_password('password3'),
+	name     => 'test3',
+	email    => 'test3@example.org',
+	token    => 'ijkl',
+	password => 'password3',
 );
 
 $u->verify_registration_token(

@@ -8,6 +8,7 @@ use strict;
 use warnings;
 use 5.020;
 
+use Crypt::Eksblowfish::Bcrypt qw(bcrypt en_base64);
 use DateTime;
 use JSON;
 
@@ -59,6 +60,14 @@ sub new {
 	my ( $class, %opt ) = @_;
 
 	return bless( \%opt, $class );
+}
+
+sub hash_password {
+	my ( $self, $password ) = @_;
+	my @salt_bytes = map { int( rand(255) ) + 1 } ( 1 .. 16 );
+	my $salt       = en_base64( pack( 'C[16]', @salt_bytes ) );
+
+	return bcrypt( substr( $password, 0, 10000 ), '$2a$12$' . $salt );
 }
 
 sub get_token_id {
@@ -471,7 +480,7 @@ sub add {
 	my $user_name = $opt{name};
 	my $email     = $opt{email};
 	my $token     = $opt{token};
-	my $password  = $opt{password_hash};
+	my $password  = $self->hash_password( $opt{password} );
 
 	# This helper must be called during a transaction, as user creation
 	# may fail even after the database entry has been generated, e.g.  if
@@ -577,11 +586,11 @@ sub delete {
 	return \%res;
 }
 
-sub set_password_hash {
+sub set_password {
 	my ( $self, %opt ) = @_;
 	my $db       = $opt{db} // $self->{pg}->db;
 	my $uid      = $opt{uid};
-	my $password = $opt{password_hash};
+	my $password = $self->hash_password( $opt{password} );
 
 	$db->update( 'users', { password => $password }, { id => $uid } );
 }
