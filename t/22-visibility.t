@@ -93,6 +93,10 @@ sub test_visibility {
 	  . q{?token=}
 	  . $status->{dep_eva} . q{-}
 	  . $status->{timestamp}->epoch % 337;
+	my $j_token
+	  = $status->{dep_eva} . q{-}
+	  . $status->{timestamp}->epoch % 337 . q{-}
+	  . $status->{sched_departure}->epoch;
 
 	is( $status->{visibility},               $opt{visibility} );
 	is( $status->{visibility_str},           $opt{visibility_str} );
@@ -101,18 +105,29 @@ sub test_visibility {
 
 	if ( $opt{public} ) {
 		$t->get_ok('/status/test1')->status_is(200)->content_like(qr{DPN 667});
+		$t->get_ok('/ajax/status/test1.html')->status_is(200)
+		  ->content_like(qr{DPN 667});
+		$t->get_ok('/p/test1')->status_is(200)->content_like(qr{DPN 667});
 	}
 	else {
 		$t->get_ok('/status/test1')->status_is(200)
+		  ->content_like(qr{nicht eingecheckt});
+		$t->get_ok('/ajax/status/test1.html')->status_is(200)
+		  ->content_like(qr{nicht eingecheckt});
+		$t->get_ok('/p/test1')->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
 	}
 
 	if ( $opt{with_token} ) {
 		$t->get_ok("/status/test1/$token")->status_is(200)
 		  ->content_like(qr{DPN 667});
+		$t->get_ok("/ajax/status/test1.html?token=$j_token")->status_is(200)
+		  ->content_like(qr{DPN 667});
 	}
 	else {
 		$t->get_ok("/status/test1/$token")->status_is(200)
+		  ->content_like(qr{nicht eingecheckt});
+		$t->get_ok("/ajax/status/test1.html?token=$j_token")->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
 	}
 
@@ -124,9 +139,16 @@ sub test_visibility {
 	# users can see their own status if visibility is >= followrs
 	if ( $opt{effective_visibility} >= 60 ) {
 		$t->get_ok('/status/test1')->status_is(200)->content_like(qr{DPN 667});
+		$t->get_ok('/ajax/status/test1.html')->status_is(200)
+		  ->content_like(qr{DPN 667});
+		$t->get_ok('/p/test1')->status_is(200)->content_like(qr{DPN 667});
 	}
 	else {
 		$t->get_ok('/status/test1')->status_is(200)
+		  ->content_like(qr{nicht eingecheckt});
+		$t->get_ok('/ajax/status/test1.html')->status_is(200)
+		  ->content_like(qr{nicht eingecheckt});
+		$t->get_ok('/p/test1')->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
 	}
 
@@ -134,9 +156,13 @@ sub test_visibility {
 	if ( $opt{effective_visibility} >= 30 ) {
 		$t->get_ok("/status/test1/$token")->status_is(200)
 		  ->content_like(qr{DPN 667});
+		$t->get_ok("/ajax/status/test1.html?token=$j_token")->status_is(200)
+		  ->content_like(qr{DPN 667});
 	}
 	else {
 		$t->get_ok("/status/test1/$token")->status_is(200)
+		  ->content_like(qr{nicht eingecheckt});
+		$t->get_ok("/ajax/status/test1.html?token=$j_token")->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
 	}
 
@@ -149,9 +175,16 @@ sub test_visibility {
 	# uid2 can see uid1 if visibility is >= followers
 	if ( $opt{effective_visibility} >= 60 ) {
 		$t->get_ok('/status/test1')->status_is(200)->content_like(qr{DPN 667});
+		$t->get_ok('/ajax/status/test1.html')->status_is(200)
+		  ->content_like(qr{DPN 667});
+		$t->get_ok('/p/test1')->status_is(200)->content_like(qr{DPN 667});
 	}
 	else {
 		$t->get_ok('/status/test1')->status_is(200)
+		  ->content_like(qr{nicht eingecheckt});
+		$t->get_ok('/ajax/status/test1.html')->status_is(200)
+		  ->content_like(qr{nicht eingecheckt});
+		$t->get_ok('/p/test1')->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
 	}
 
@@ -159,9 +192,13 @@ sub test_visibility {
 	if ( $opt{effective_visibility} >= 30 ) {
 		$t->get_ok("/status/test1/$token")->status_is(200)
 		  ->content_like(qr{DPN 667});
+		$t->get_ok("/ajax/status/test1.html?token=$j_token")->status_is(200)
+		  ->content_like(qr{DPN 667});
 	}
 	else {
 		$t->get_ok("/status/test1/$token")->status_is(200)
+		  ->content_like(qr{nicht eingecheckt});
+		$t->get_ok("/ajax/status/test1.html?token=$j_token")->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
 	}
 
@@ -174,9 +211,16 @@ sub test_visibility {
 	# uid3 can see uid1 if visibility is >= travelynx
 	if ( $opt{effective_visibility} >= 80 ) {
 		$t->get_ok('/status/test1')->status_is(200)->content_like(qr{DPN 667});
+		$t->get_ok('/ajax/status/test1.html')->status_is(200)
+		  ->content_like(qr{DPN 667});
+		$t->get_ok('/p/test1')->status_is(200)->content_like(qr{DPN 667});
 	}
 	else {
 		$t->get_ok('/status/test1')->status_is(200)
+		  ->content_like(qr{nicht eingecheckt});
+		$t->get_ok('/ajax/status/test1.html')->status_is(200)
+		  ->content_like(qr{nicht eingecheckt});
+		$t->get_ok('/p/test1')->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
 	}
 
@@ -184,9 +228,13 @@ sub test_visibility {
 	if ( $opt{effective_visibility} >= 30 ) {
 		$t->get_ok("/status/test1/$token")->status_is(200)
 		  ->content_like(qr{DPN 667});
+		$t->get_ok("/ajax/status/test1.html?token=$j_token")->status_is(200)
+		  ->content_like(qr{DPN 667});
 	}
 	else {
 		$t->get_ok("/status/test1/$token")->status_is(200)
+		  ->content_like(qr{nicht eingecheckt});
+		$t->get_ok("/ajax/status/test1.html?token=$j_token")->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
 	}
 
