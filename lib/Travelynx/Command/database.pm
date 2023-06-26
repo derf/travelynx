@@ -1658,6 +1658,11 @@ sub sync_stations {
 	my $count = 0;
 	for my $s ( Travel::Status::DE::IRIS::Stations::get_stations() ) {
 		my ( $ds100, $name, $eva, $lon, $lat ) = @{$s};
+		if ( $ENV{__TRAVELYNX_TEST_MINI_IRIS}
+			and ( $eva < 8000000 or $eva > 8000100 ) )
+		{
+			next;
+		}
 		$db->insert(
 			'stations',
 			{
@@ -1708,6 +1713,9 @@ sub sync_stations {
 	say 'Updating archived stations ...';
 	my $old_stations
 	  = JSON->new->utf8->decode( scalar read_file('share/old_stations.json') );
+	if ( $ENV{__TRAVELYNX_TEST_MINI_IRIS} ) {
+		$old_stations = [];
+	}
 	for my $s ( @{$old_stations} ) {
 		$db->insert(
 			'stations',

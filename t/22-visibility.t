@@ -36,6 +36,7 @@ $t->app->pg->on(
 
 $t->app->config->{mail}->{disabled} = 1;
 
+$ENV{__TRAVELYNX_TEST_MINI_IRIS} = 1;
 $t->app->start( 'database', 'migrate' );
 
 my $u = $t->app->users;

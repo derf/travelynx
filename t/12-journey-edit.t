@@ -35,6 +35,7 @@ $t->app->pg->on(
 
 $t->app->config->{mail}->{disabled} = 1;
 
+$ENV{__TRAVELYNX_TEST_MINI_IRIS} = 0;
 $t->app->start( 'database', 'migrate' );
 
 my $csrf_token
