@@ -1467,7 +1467,10 @@ sub startup {
 					extra_data    => $in_transit->{data},
 					comment       => $in_transit->{user_data}{comment},
 					visibility    => $in_transit->{visibility},
-					visibility_str => $in_transit->{visibility_str},
+					visibility_str       => $in_transit->{visibility_str},
+					effective_visibility => $in_transit->{effective_visibility},
+					effective_visibility_str =>
+					  $in_transit->{effective_visibility_str},
 				};
 
 				my $traewelling = $self->traewelling->get(
@@ -1702,6 +1705,9 @@ sub startup {
 					comment         => $latest->{user_data}{comment},
 					visibility      => $latest->{visibility},
 					visibility_str  => $latest->{visibility_str},
+					effective_visibility     => $latest->{effective_visibility},
+					effective_visibility_str =>
+					  $latest->{effective_visibility_str},
 				};
 			}
 
@@ -1765,13 +1771,8 @@ sub startup {
 				},
 				intermediateStops => [],
 				visibility        => {
-					level => $status->{visibility}
-					  // $privacy->{default_visibility},
-					desc => (
-						  $status->{visibility_str} eq 'default'
-						? $privacy->{default_visibility_str}
-						: $status->{visibility_str}
-					),
+					level => $status->{effective_visibility},
+					desc  => $status->{effective_visibility_str},
 				}
 			};
 

@@ -147,6 +147,8 @@ sub get {
 		  = $ret->{visibility}
 		  ? $visibility_itoa{ $ret->{visibility} }
 		  : 'default';
+		$ret->{effective_visibility_str}
+		  = $visibility_itoa{ $ret->{effective_visibility} };
 	}
 
 	return $ret;
@@ -331,13 +333,13 @@ sub unset_arrival_data {
 
 sub update_departure {
 	my ( $self, %opt ) = @_;
-	my $uid   = $opt{uid};
-	my $db    = $opt{db} // $self->{pg}->db;
+	my $uid     = $opt{uid};
+	my $db      = $opt{db} // $self->{pg}->db;
 	my $dep_eva = $opt{dep_eva};
 	my $arr_eva = $opt{arr_eva};
-	my $train = $opt{train};
-	my $route = $opt{route};
-	my $json  = JSON->new;
+	my $train   = $opt{train};
+	my $route   = $opt{route};
+	my $json    = JSON->new;
 
 	$route = $self->_merge_old_route(
 		db    => $db,
@@ -359,8 +361,8 @@ sub update_departure {
 			),
 		},
 		{
-			user_id  => $uid,
-			train_no => $train->train_no,
+			user_id             => $uid,
+			train_no            => $train->train_no,
 			checkin_station_id  => $dep_eva,
 			checkout_station_id => $arr_eva,
 		}
