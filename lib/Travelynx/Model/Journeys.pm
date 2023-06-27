@@ -514,7 +514,7 @@ sub get {
 
 	my @select
 	  = (
-		qw(journey_id train_type train_line train_no checkin_ts sched_dep_ts real_dep_ts dep_eva dep_ds100 dep_name dep_lat dep_lon checkout_ts sched_arr_ts real_arr_ts arr_eva arr_ds100 arr_name arr_lat arr_lon cancelled edited route messages user_data visibility)
+		qw(journey_id train_type train_line train_no checkin_ts sched_dep_ts real_dep_ts dep_eva dep_ds100 dep_name dep_lat dep_lon checkout_ts sched_arr_ts real_arr_ts arr_eva arr_ds100 arr_name arr_lat arr_lon cancelled edited route messages user_data visibility effective_visibility)
 	  );
 	my %where = (
 		user_id   => $uid,
@@ -582,29 +582,30 @@ sub get {
 	for my $entry ( $res->expand->hashes->each ) {
 
 		my $ref = {
-			id           => $entry->{journey_id},
-			type         => $entry->{train_type},
-			line         => $entry->{train_line},
-			no           => $entry->{train_no},
-			from_eva     => $entry->{dep_eva},
-			from_ds100   => $entry->{dep_ds100},
-			from_name    => $entry->{dep_name},
-			from_latlon  => [ $entry->{dep_lat}, $entry->{dep_lon} ],
-			checkin_ts   => $entry->{checkin_ts},
-			sched_dep_ts => $entry->{sched_dep_ts},
-			rt_dep_ts    => $entry->{real_dep_ts},
-			to_eva       => $entry->{arr_eva},
-			to_ds100     => $entry->{arr_ds100},
-			to_name      => $entry->{arr_name},
-			to_latlon    => [ $entry->{arr_lat}, $entry->{arr_lon} ],
-			checkout_ts  => $entry->{checkout_ts},
-			sched_arr_ts => $entry->{sched_arr_ts},
-			rt_arr_ts    => $entry->{real_arr_ts},
-			messages     => $entry->{messages},
-			route        => $entry->{route},
-			edited       => $entry->{edited},
-			user_data    => $entry->{user_data},
-			visibility   => $entry->{visibility},
+			id                   => $entry->{journey_id},
+			type                 => $entry->{train_type},
+			line                 => $entry->{train_line},
+			no                   => $entry->{train_no},
+			from_eva             => $entry->{dep_eva},
+			from_ds100           => $entry->{dep_ds100},
+			from_name            => $entry->{dep_name},
+			from_latlon          => [ $entry->{dep_lat}, $entry->{dep_lon} ],
+			checkin_ts           => $entry->{checkin_ts},
+			sched_dep_ts         => $entry->{sched_dep_ts},
+			rt_dep_ts            => $entry->{real_dep_ts},
+			to_eva               => $entry->{arr_eva},
+			to_ds100             => $entry->{arr_ds100},
+			to_name              => $entry->{arr_name},
+			to_latlon            => [ $entry->{arr_lat}, $entry->{arr_lon} ],
+			checkout_ts          => $entry->{checkout_ts},
+			sched_arr_ts         => $entry->{sched_arr_ts},
+			rt_arr_ts            => $entry->{real_arr_ts},
+			messages             => $entry->{messages},
+			route                => $entry->{route},
+			edited               => $entry->{edited},
+			user_data            => $entry->{user_data},
+			visibility           => $entry->{visibility},
+			effective_visibility => $entry->{effective_visibility},
 		};
 
 		if ( $opt{with_visibility} ) {
@@ -612,6 +613,8 @@ sub get {
 			  = $ref->{visibility}
 			  ? $visibility_itoa{ $ref->{visibility} }
 			  : 'default';
+			$ref->{effective_visibility_str}
+			  = $visibility_itoa{ $ref->{effective_visibility} };
 		}
 
 		if ( $opt{with_polyline} ) {
@@ -720,6 +723,8 @@ sub get_latest {
 	  = $latest_successful->{visibility}
 	  ? $visibility_itoa{ $latest_successful->{visibility} }
 	  : 'default';
+	$latest_successful->{effective_visibility_str}
+	  = $visibility_itoa{ $latest_successful->{effective_visibility} };
 
 	my $latest = $db->select(
 		'journeys_str',
@@ -737,6 +742,8 @@ sub get_latest {
 	  = $latest->{visibility}
 	  ? $visibility_itoa{ $latest->{visibility} }
 	  : 'default';
+	$latest->{effective_visibility_str}
+	  = $visibility_itoa{ $latest->{effective_visibility} };
 
 	return ( $latest_successful, $latest );
 }
