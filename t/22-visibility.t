@@ -98,10 +98,13 @@ sub test_visibility {
 	  . $status->{timestamp}->epoch % 337 . q{-}
 	  . $status->{sched_departure}->epoch;
 
-	is( $status->{visibility},               $opt{visibility} );
-	is( $status->{visibility_str},           $opt{visibility_str} );
-	is( $status->{effective_visibility},     $opt{effective_visibility} );
-	is( $status->{effective_visibility_str}, $opt{effective_visibility_str} );
+	my $desc = "vis=$opt{effective_visibility_str} (from $opt{visibility_str})";
+
+	is( $status->{visibility},           $opt{visibility},           $desc );
+	is( $status->{visibility_str},       $opt{visibility_str},       $desc );
+	is( $status->{effective_visibility}, $opt{effective_visibility}, $desc );
+	is( $status->{effective_visibility_str},
+		$opt{effective_visibility_str}, $desc );
 
 	if ( $opt{public} ) {
 		$t->get_ok('/status/test1')->status_is(200)->content_like(qr{DPN 667});
