@@ -254,7 +254,8 @@ sub add_from_in_transit {
 	$journey->{edited}        = 0;
 	$journey->{checkout_time} = DateTime->now( time_zone => 'Europe/Berlin' );
 
-	$db->insert( 'journeys', $journey );
+	return $db->insert( 'journeys', $journey, { returning => 'id' } )
+	  ->hash->{id};
 }
 
 sub update {
