@@ -68,7 +68,7 @@ sub logout {
 	$t->status_is(302)->header_is( location => '/login' );
 }
 
-sub test_visibility {
+sub test_intransit_visibility {
 	my %opt = @_;
 
 	if ( $opt{set_default_visibility} ) {
@@ -98,7 +98,8 @@ sub test_visibility {
 	  . $status->{timestamp}->epoch % 337 . q{-}
 	  . $status->{sched_departure}->epoch;
 
-	my $desc = "vis=$opt{effective_visibility_str} (from $opt{visibility_str})";
+	my $desc
+	  = "in_transit vis=$opt{effective_visibility_str} (from $opt{visibility_str})";
 
 	is( $status->{visibility},           $opt{visibility},           $desc );
 	is( $status->{visibility_str},       $opt{visibility_str},       $desc );
@@ -244,6 +245,145 @@ sub test_visibility {
 	logout();
 }
 
+sub test_journey_visibility {
+	my %opt = @_;
+	my $jid = $opt{journey_id};
+
+	if ( $opt{set_default_visibility} ) {
+		my %p = %{ $u->get_privacy_by( uid => $opt{uid} ) };
+		$p{default_visibility} = $opt{set_default_visibility};
+		$u->set_privacy(
+			uid => $opt{uid},
+			%p
+		);
+	}
+
+	if ( $opt{set_visibility} ) {
+		$t->app->journeys->update_visibility(
+			uid        => $opt{uid},
+			id         => $jid,
+			visibility => $opt{set_visibility}
+		);
+	}
+
+	my $status  = $t->app->get_user_status( $opt{uid} );
+	my $journey = $t->app->journeys->get_single(
+		uid        => $opt{uid},
+		journey_id => $jid
+	);
+	my $token
+	  = q{?token=}
+	  . $status->{dep_eva} . q{-}
+	  . $journey->{checkin_ts} % 337 . q{-}
+	  . $status->{sched_departure}->epoch;
+
+	my $desc
+	  = "journey=$jid vis=$opt{effective_visibility_str} (from $opt{visibility_str})";
+
+	is( $status->{visibility},           $opt{visibility},           $desc );
+	is( $status->{visibility_str},       $opt{visibility_str},       $desc );
+	is( $status->{effective_visibility}, $opt{effective_visibility}, $desc );
+	is( $status->{effective_visibility_str},
+		$opt{effective_visibility_str}, $desc );
+
+	if ( $opt{public} ) {
+		$t->get_ok("/p/test1/j/$jid")->status_is(200)
+		  ->content_like(qr{DPN 667});
+	}
+	else {
+		$t->get_ok("/p/test1/j/$jid")->status_is(404)
+		  ->content_like(qr{Zugfahrt nicht gefunden.});
+	}
+
+	if ( $opt{with_token} ) {
+		$t->get_ok("/p/test1/j/$jid$token")->status_is(200)
+		  ->content_like(qr{DPN 667});
+	}
+	else {
+		$t->get_ok("/p/test1/j/$jid$token")->status_is(404)
+		  ->content_like(qr{Zugfahrt nicht gefunden.});
+	}
+
+	login(
+		user     => 'test1',
+		password => 'password1'
+	);
+
+	# users can see their own status if visibility is >= followrs
+	if ( $opt{effective_visibility} >= 60 ) {
+		$t->get_ok("/p/test1/j/$jid")->status_is(200)
+		  ->content_like(qr{DPN 667});
+	}
+	else {
+		$t->get_ok("/p/test1/j/$jid")->status_is(404)
+		  ->content_like(qr{Zugfahrt nicht gefunden.});
+	}
+
+	# users can see their own status with token if visibility is >= unlisted
+	if ( $opt{effective_visibility} >= 30 ) {
+		$t->get_ok("/p/test1/j/$jid$token")->status_is(200)
+		  ->content_like(qr{DPN 667});
+	}
+	else {
+		$t->get_ok("/p/test1/j/$jid$token")->status_is(404)
+		  ->content_like(qr{Zugfahrt nicht gefunden.});
+	}
+
+	logout();
+	login(
+		user     => 'test2',
+		password => 'password2'
+	);
+
+	# uid2 can see uid1 if visibility is >= followers
+	if ( $opt{effective_visibility} >= 60 ) {
+		$t->get_ok("/p/test1/j/$jid")->status_is(200)
+		  ->content_like(qr{DPN 667});
+	}
+	else {
+		$t->get_ok("/p/test1/j/$jid")->status_is(404)
+		  ->content_like(qr{Zugfahrt nicht gefunden.});
+	}
+
+	# uid2 can see uid1 with token if visibility is >= unlisted
+	if ( $opt{effective_visibility} >= 30 ) {
+		$t->get_ok("/p/test1/j/$jid$token")->status_is(200)
+		  ->content_like(qr{DPN 667});
+	}
+	else {
+		$t->get_ok("/p/test1/j/$jid$token")->status_is(404)
+		  ->content_like(qr{Zugfahrt nicht gefunden.});
+	}
+
+	logout();
+	login(
+		user     => 'test3',
+		password => 'password3'
+	);
+
+	# uid3 can see uid1 if visibility is >= travelynx
+	if ( $opt{effective_visibility} >= 80 ) {
+		$t->get_ok("/p/test1/j/$jid")->status_is(200)
+		  ->content_like(qr{DPN 667});
+	}
+	else {
+		$t->get_ok("/p/test1/j/$jid")->status_is(404)
+		  ->content_like(qr{Zugfahrt nicht gefunden.});
+	}
+
+	# uid3 can see uid1 with token if visibility is >= unlisted
+	if ( $opt{effective_visibility} >= 30 ) {
+		$t->get_ok("/p/test1/j/$jid$token")->status_is(200)
+		  ->content_like(qr{DPN 667});
+	}
+	else {
+		$t->get_ok("/p/test1/j/$jid$token")->status_is(404)
+		  ->content_like(qr{Zugfahrt nicht gefunden.});
+	}
+
+	logout();
+}
+
 my $uid1 = $u->add(
 	name     => 'test1',
 	email    => 'test1@example.org',
@@ -346,7 +486,7 @@ $t->app->in_transit->set_arrival_eva(
 	arrival_eva => 8000002,
 );
 
-test_visibility(
+test_intransit_visibility(
 	uid                      => $uid1,
 	visibility               => undef,
 	visibility_str           => 'default',
@@ -356,7 +496,7 @@ test_visibility(
 	with_token               => 1,
 );
 
-test_visibility(
+test_intransit_visibility(
 	uid                      => $uid1,
 	set_default_visibility   => 10,
 	visibility               => undef,
@@ -367,7 +507,7 @@ test_visibility(
 	with_token               => 0,
 );
 
-test_visibility(
+test_intransit_visibility(
 	uid                      => $uid1,
 	set_default_visibility   => 30,
 	visibility               => undef,
@@ -378,7 +518,7 @@ test_visibility(
 	with_token               => 1,
 );
 
-test_visibility(
+test_intransit_visibility(
 	uid                      => $uid1,
 	set_default_visibility   => 60,
 	visibility               => undef,
@@ -389,7 +529,7 @@ test_visibility(
 	with_token               => 1,
 );
 
-test_visibility(
+test_intransit_visibility(
 	uid                      => $uid1,
 	set_default_visibility   => 80,
 	visibility               => undef,
@@ -400,7 +540,7 @@ test_visibility(
 	with_token               => 1,
 );
 
-test_visibility(
+test_intransit_visibility(
 	uid                      => $uid1,
 	set_default_visibility   => 100,
 	visibility               => undef,
@@ -411,7 +551,7 @@ test_visibility(
 	with_token               => 1,
 );
 
-test_visibility(
+test_intransit_visibility(
 	uid                      => $uid1,
 	set_visibility           => 'private',
 	visibility               => 10,
@@ -422,7 +562,7 @@ test_visibility(
 	with_token               => 0,
 );
 
-test_visibility(
+test_intransit_visibility(
 	uid                      => $uid1,
 	set_visibility           => 'unlisted',
 	visibility               => 30,
@@ -433,7 +573,7 @@ test_visibility(
 	with_token               => 1,
 );
 
-test_visibility(
+test_intransit_visibility(
 	uid                      => $uid1,
 	set_visibility           => 'followers',
 	visibility               => 60,
@@ -444,7 +584,7 @@ test_visibility(
 	with_token               => 1,
 );
 
-test_visibility(
+test_intransit_visibility(
 	uid                      => $uid1,
 	set_visibility           => 'travelynx',
 	visibility               => 80,
@@ -455,8 +595,160 @@ test_visibility(
 	with_token               => 1,
 );
 
-test_visibility(
+test_intransit_visibility(
 	uid                      => $uid1,
+	set_visibility           => 'public',
+	visibility               => 100,
+	visibility_str           => 'public',
+	effective_visibility     => 100,
+	effective_visibility_str => 'public',
+	public                   => 1,
+	with_token               => 1,
+);
+
+$t->app->in_transit->update_visibility(
+	uid        => $uid1,
+	visibility => undef,
+);
+
+test_intransit_visibility(
+	uid                      => $uid1,
+	set_default_visibility   => 10,
+	visibility               => undef,
+	visibility_str           => 'default',
+	effective_visibility     => 10,
+	effective_visibility_str => 'private',
+	public                   => 0,
+	with_token               => 0,
+);
+
+my $db = $t->app->pg->db;
+my $tx = $db->begin;
+
+my $journey = $t->app->in_transit->get(
+	uid => $uid1,
+	db  => $db,
+);
+my $jid = $t->app->journeys->add_from_in_transit(
+	journey => $journey,
+	db      => $db
+);
+$t->app->in_transit->delete(
+	uid => $uid1,
+	db  => $db
+);
+$tx->commit;
+
+test_journey_visibility(
+	uid                      => $uid1,
+	journey_id               => $jid,
+	visibility               => undef,
+	visibility_str           => 'default',
+	effective_visibility     => 10,
+	effective_visibility_str => 'private',
+	public                   => 0,
+	with_token               => 0,
+);
+
+test_journey_visibility(
+	uid                      => $uid1,
+	journey_id               => $jid,
+	set_default_visibility   => 30,
+	visibility               => undef,
+	visibility_str           => 'default',
+	effective_visibility     => 30,
+	effective_visibility_str => 'unlisted',
+	public                   => 0,
+	with_token               => 1,
+);
+
+test_journey_visibility(
+	uid                      => $uid1,
+	journey_id               => $jid,
+	set_default_visibility   => 60,
+	visibility               => undef,
+	visibility_str           => 'default',
+	effective_visibility     => 60,
+	effective_visibility_str => 'followers',
+	public                   => 0,
+	with_token               => 1,
+);
+
+test_journey_visibility(
+	uid                      => $uid1,
+	journey_id               => $jid,
+	set_default_visibility   => 80,
+	visibility               => undef,
+	visibility_str           => 'default',
+	effective_visibility     => 80,
+	effective_visibility_str => 'travelynx',
+	public                   => 0,
+	with_token               => 1,
+);
+
+test_journey_visibility(
+	uid                      => $uid1,
+	journey_id               => $jid,
+	set_default_visibility   => 100,
+	visibility               => undef,
+	visibility_str           => 'default',
+	effective_visibility     => 100,
+	effective_visibility_str => 'public',
+	public                   => 1,
+	with_token               => 1,
+);
+
+test_journey_visibility(
+	uid                      => $uid1,
+	journey_id               => $jid,
+	set_visibility           => 'private',
+	visibility               => 10,
+	visibility_str           => 'private',
+	effective_visibility     => 10,
+	effective_visibility_str => 'private',
+	public                   => 0,
+	with_token               => 0,
+);
+
+test_journey_visibility(
+	uid                      => $uid1,
+	journey_id               => $jid,
+	set_visibility           => 'unlisted',
+	visibility               => 30,
+	visibility_str           => 'unlisted',
+	effective_visibility     => 30,
+	effective_visibility_str => 'unlisted',
+	public                   => 0,
+	with_token               => 1,
+);
+
+test_journey_visibility(
+	uid                      => $uid1,
+	journey_id               => $jid,
+	set_visibility           => 'followers',
+	visibility               => 60,
+	visibility_str           => 'followers',
+	effective_visibility     => 60,
+	effective_visibility_str => 'followers',
+	public                   => 0,
+	with_token               => 1,
+);
+
+test_journey_visibility(
+	uid                      => $uid1,
+	journey_id               => $jid,
+	set_visibility           => 'travelynx',
+	visibility               => 80,
+	visibility_str           => 'travelynx',
+	effective_visibility     => 80,
+	effective_visibility_str => 'travelynx',
+	public                   => 0,
+	with_token               => 1,
+);
+
+test_journey_visibility(
+	uid                      => $uid1,
+	journey_id               => $jid,
 	set_visibility           => 'public',
 	visibility               => 100,
 	visibility_str           => 'public',
