@@ -213,9 +213,8 @@ sub profile {
 		follow_reqs_me =>
 		  ( $inverse_relation and $inverse_relation eq 'requests_follow' ) ? 1
 		: 0,
-		journey            => $status,
-		journey_visibility => $visibility,
-		journeys           => [@journeys],
+		journey  => $status,
+		journeys => [@journeys],
 	);
 }
 
@@ -363,14 +362,13 @@ sub journey_details {
 	}
 	$self->render(
 		'journey',
-		error              => undef,
-		journey            => $journey,
-		with_map           => 1,
-		username           => $name,
-		readonly           => 1,
-		twitter            => \%tw_data,
-		opengraph          => \%og_data,
-		journey_visibility => $visibility,
+		error     => undef,
+		journey   => $journey,
+		with_map  => 1,
+		username  => $name,
+		readonly  => 1,
+		twitter   => \%tw_data,
+		opengraph => \%og_data,
 		%{$map_data},
 	);
 }
@@ -542,14 +540,13 @@ sub user_status {
 			},
 		},
 		any => {
-			template           => 'user_status',
-			name               => $name,
-			privacy            => $user,
-			journey            => $status,
-			journey_visibility => $visibility,
-			twitter            => \%tw_data,
-			opengraph          => \%og_data,
-			version            => $self->app->config->{version} // 'UNKNOWN',
+			template  => 'user_status',
+			name      => $name,
+			privacy   => $user,
+			journey   => $status,
+			twitter   => \%tw_data,
+			opengraph => \%og_data,
+			version   => $self->app->config->{version} // 'UNKNOWN',
 		},
 	);
 }
@@ -626,11 +623,10 @@ sub status_card {
 
 	$self->render(
 		'_public_status_card',
-		name               => $name,
-		privacy            => $user,
-		journey            => $status,
-		journey_visibility => $visibility,
-		from_profile       => $self->param('profile') ? 1 : 0,
+		name         => $name,
+		privacy      => $user,
+		journey      => $status,
+		from_profile => $self->param('profile') ? 1 : 0,
 	);
 }
 

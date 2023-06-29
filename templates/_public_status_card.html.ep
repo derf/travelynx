@@ -10,9 +10,7 @@
 				% else {
 					<a href="/p/<%= $name %>"><%= $name %></a> ist unterwegs
 				% }
-				% if ($journey_visibility) {
-					<i class="material-icons right"><%= visibility_icon($journey_visibility) %></i>
-				% }
+				<i class="material-icons right"><%= visibility_icon($journey->{effective_visibility_str}) %></i>
 			</span>
 			% if ($privacy->{comments_visible} and $journey->{comment}) {
 				<p>„<%= $journey->{comment} %>“</p>
