@@ -170,7 +170,10 @@ sub profile {
 			$opt{with_default_visibility} = 0;
 		}
 
-		if ($my_user) {
+		if ($is_self) {
+			$opt{min_visibility} = 'followers';
+		}
+		elsif ($my_user) {
 			if ( $relation and $relation eq 'follows' ) {
 				$opt{min_visibility} = 'followers';
 			}
