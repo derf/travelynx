@@ -95,29 +95,16 @@ sub profile {
 	}
 
 	my $status = $self->get_user_status( $user->{id} );
-	my $visibility;
 	if ( $status->{checked_in} or $status->{arr_name} ) {
-		$visibility
-		  = $self->compute_effective_visibility(
-			$user->{default_visibility_str},
-			$status->{visibility_str} );
+		my $visibility = $status->{effective_visibility};
 		if (
 			not(
-				$visibility eq 'public'
-				or (    $visibility eq 'unlisted'
-					and $self->status_token_ok($status) )
-				or (
-					$visibility eq 'travelynx'
-					and (  $my_user
-						or $is_self
-						or $self->status_token_ok($status) )
-				)
-				or (
-					$visibility eq 'followers'
-					and (  ( $relation and $relation eq 'follows' )
-						or $is_self
-						or $self->status_token_ok($status) )
-				)
+				   $visibility == 100
+				or ( $visibility >= 80 and $my_user )
+				or
+				( $visibility >= 60 and $relation and $relation eq 'follows' )
+				or ( $visibility >= 60 and $is_self )
+				or ( $visibility >= 30 and $self->status_token_ok($status) )
 			)
 		  )
 		{
@@ -281,27 +268,14 @@ sub journey_details {
 		}
 	}
 
-	my $visibility
-	  = $self->compute_effective_visibility( $user->{default_visibility_str},
-		$journey->{visibility_str} );
+	my $visibility = $journey->{effective_visibility};
 
 	if (
-		not(
-			( $visibility eq 'public' and not $is_past )
-			or (    $visibility eq 'unlisted'
-				and $self->journey_token_ok($journey) )
-			or (
-				$visibility eq 'travelynx'
-				and ( ( $my_user and not $is_past )
-					or $self->journey_token_ok($journey) )
-			)
-			or (
-				$visibility eq 'followers'
-				and (  ( $relation and $relation eq 'follows' )
-					or $is_self
-					or $self->journey_token_ok($journey) )
-			)
-		)
+		not(   ( $visibility == 100 and not $is_past )
+			or ( $visibility >= 80 and $my_user  and not $is_past )
+			or ( $visibility >= 60 and $relation and $relation eq 'follows' )
+			or ( $visibility >= 60 and $is_self )
+			or ( $visibility >= 30 and $self->journey_token_ok($journey) ) )
 	  )
 	{
 		$self->render(
@@ -420,26 +394,15 @@ sub user_status {
 			)
 		  )
 		{
-			my $visibility
-			  = $self->compute_effective_visibility(
-				$user->{default_visibility_str},
-				$journey->{visibility_str} );
+			my $visibility = $journey->{effective_visibility};
 			if (
-				$visibility eq 'public'
-				or (    $visibility eq 'unlisted'
+				   $visibility == 100
+				or ( $visibility >= 80 and $my_user )
+				or
+				( $visibility >= 60 and $relation and $relation eq 'follows' )
+				or ( $visibility >= 60 and $is_self )
+				or (    $visibility >= 30
 					and $self->journey_token_ok( $journey, $ts ) )
-				or (
-					$visibility eq 'travelynx'
-					and (  $my_user
-						or $is_self
-						or $self->journey_token_ok( $journey, $ts ) )
-				)
-				or (
-					$visibility eq 'followers'
-					and (  ( $relation and $relation eq 'follows' )
-						or $is_self
-						or $self->journey_token_ok( $journey, $ts ) )
-				)
 			  )
 			{
 				my $token = $self->param('token') // q{};
@@ -468,29 +431,17 @@ sub user_status {
 		site_name => 'travelynx',
 	);
 
-	my $visibility;
 	if ( $status->{checked_in} or $status->{arr_name} ) {
-		$visibility
-		  = $self->compute_effective_visibility(
-			$user->{default_visibility_str},
-			$status->{visibility_str} );
+		my $visibility = $status->{effective_visibility};
 		if (
 			not(
-				$visibility eq 'public'
-				or (    $visibility eq 'unlisted'
-					and $self->status_token_ok( $status, $ts ) )
-				or (
-					$visibility eq 'travelynx'
-					and (  $my_user
-						or $is_self
-						or $self->status_token_ok( $status, $ts ) )
-				)
-				or (
-					$visibility eq 'followers'
-					and (  ( $relation and $relation eq 'follows' )
-						or $is_self
-						or $self->status_token_ok( $status, $ts ) )
-				)
+				   $visibility == 100
+				or ( $visibility >= 80 and $my_user )
+				or
+				( $visibility >= 60 and $relation and $relation eq 'follows' )
+				or ( $visibility >= 60 and $is_self )
+				or
+				( $visibility >= 30 and $self->status_token_ok( $status, $ts ) )
 			)
 		  )
 		{
@@ -586,27 +537,15 @@ sub status_card {
 	my $status = $self->get_user_status( $user->{id} );
 	my $visibility;
 	if ( $status->{checked_in} or $status->{arr_name} ) {
-		$visibility
-		  = $self->compute_effective_visibility(
-			$user->{default_visibility_str},
-			$status->{visibility_str} );
+		my $visibility = $status->{effective_visibility};
 		if (
 			not(
-				$visibility eq 'public'
-				or (    $visibility eq 'unlisted'
-					and $self->status_token_ok($status) )
-				or (
-					$visibility eq 'travelynx'
-					and (  $my_user
-						or $is_self
-						or $self->status_token_ok($status) )
-				)
-				or (
-					$visibility eq 'followers'
-					and (  ( $relation and $relation eq 'follows' )
-						or $is_self
-						or $self->status_token_ok($status) )
-				)
+				   $visibility == 100
+				or ( $visibility >= 80 and $my_user )
+				or
+				( $visibility >= 60 and $relation and $relation eq 'follows' )
+				or ( $visibility >= 60 and $is_self )
+				or ( $visibility >= 30 and $self->status_token_ok($status) )
 			)
 		  )
 		{
