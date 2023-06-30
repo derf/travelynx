@@ -9,14 +9,6 @@ use DateTime;
 
 # Internal Helpers
 
-sub compute_effective_visibility {
-	my ( $self, $default_visibility, $journey_visibility ) = @_;
-	if ( $journey_visibility eq 'default' ) {
-		return $default_visibility;
-	}
-	return $journey_visibility;
-}
-
 sub status_token_ok {
 	my ( $self, $status, $ts2_ext ) = @_;
 	my $token = $self->param('token') // q{};
