@@ -40,8 +40,7 @@
 					% }
 					% elsif (defined $journey->{arrival_countdown}) {
 						% if ($journey->{arrival_countdown} > 60) {
-							Ankunft in <%= sprintf('%.f', $journey->{arrival_countdown} / 60) %>
-							Minute<%= sprintf('%.f', $journey->{arrival_countdown} / 60) == 1 ? '' : 'n' %>
+							Ankunft in <%= journeys->min_to_human(int($journey->{arrival_countdown} / 60)) %>
 						% }
 						% elsif ($journey->{arrival_countdown} > 0) {
 							Ankunft in weniger als einer Minute

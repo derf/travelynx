@@ -51,7 +51,7 @@ sub epoch_to_dt {
 }
 
 sub min_to_human {
-	my ($minutes) = @_;
+	my ( $self, $minutes ) = @_;
 
 	my @ret;
 
@@ -1320,7 +1320,7 @@ sub compute_review {
 	$review{traveling_percentage_year}
 	  = sprintf( "%.1f%%", $min_total * 100 / 525948.77 );
 	$review{traveling_percentage_year} =~ tr{.}{,};
-	$review{traveling_time_year} = min_to_human($min_total);
+	$review{traveling_time_year} = $self->min_to_human($min_total);
 
 	if (@linetypes) {
 		$review{typical_type_1} = $linetypes[0][0];
@@ -1336,21 +1336,23 @@ sub compute_review {
 		$review{typical_stops_2} = [ $stops[0][0], $stops[1][0] ];
 	}
 	$review{typical_time}
-	  = min_to_human( $stats->{min_travel_real} / $stats->{num_trains} );
+	  = $self->min_to_human( $stats->{min_travel_real} / $stats->{num_trains} );
 	$review{typical_km}
 	  = sprintf( '%.0f', $stats->{km_route} / $stats->{num_trains} );
 	$review{typical_kmh} = sprintf( '%.0f',
 		$stats->{km_route} / ( $stats->{min_travel_real} / 60 ) );
 	$review{typical_delay_dep}
 	  = sprintf( '%.0f', $stats->{delay_dep} / $stats->{num_trains} );
-	$review{typical_delay_dep_h} = min_to_human( $review{typical_delay_dep} );
+	$review{typical_delay_dep_h}
+	  = $self->min_to_human( $review{typical_delay_dep} );
 	$review{typical_delay_arr}
 	  = sprintf( '%.0f', $stats->{delay_arr} / $stats->{num_trains} );
-	$review{typical_delay_arr_h} = min_to_human( $review{typical_delay_arr} );
+	$review{typical_delay_arr_h}
+	  = $self->min_to_human( $review{typical_delay_arr} );
 
 	if ($longest_t) {
 		$review{longest_t_time}
-		  = min_to_human( $longest_t->{rt_duration} / 60 );
+		  = $self->min_to_human( $longest_t->{rt_duration} / 60 );
 		$review{longest_t_type}   = $longest_t->{type};
 		$review{longest_t_lineno} = $longest_t->{line} // $longest_t->{no};
 		$review{longest_t_from}   = $longest_t->{from_name};
@@ -1369,7 +1371,7 @@ sub compute_review {
 
 	if ($shortest_t) {
 		$review{shortest_t_time}
-		  = min_to_human( $shortest_t->{rt_duration} / 60 );
+		  = $self->min_to_human( $shortest_t->{rt_duration} / 60 );
 		$review{shortest_t_type}   = $shortest_t->{type};
 		$review{shortest_t_lineno} = $shortest_t->{line} // $shortest_t->{no};
 		$review{shortest_t_from}   = $shortest_t->{from_name};
@@ -1391,9 +1393,9 @@ sub compute_review {
 	if ($most_delayed) {
 		$review{most_delayed_type} = $most_delayed->{type};
 		$review{most_delayed_delay_dep}
-		  = min_to_human( $most_delayed->{delay_dep} );
+		  = $self->min_to_human( $most_delayed->{delay_dep} );
 		$review{most_delayed_delay_arr}
-		  = min_to_human( $most_delayed->{delay_arr} );
+		  = $self->min_to_human( $most_delayed->{delay_arr} );
 		$review{most_delayed_lineno} = $most_delayed->{line}
 		  // $most_delayed->{no};
 		$review{most_delayed_from} = $most_delayed->{from_name};
@@ -1406,11 +1408,11 @@ sub compute_review {
 		$review{most_delay_delay_dep} = $most_delay->{delay_dep};
 		$review{most_delay_delay_arr} = $most_delay->{delay_arr};
 		$review{most_delay_sched_time}
-		  = min_to_human( $most_delay->{sched_duration} / 60 );
+		  = $self->min_to_human( $most_delay->{sched_duration} / 60 );
 		$review{most_delay_real_time}
-		  = min_to_human( $most_delay->{rt_duration} / 60 );
+		  = $self->min_to_human( $most_delay->{rt_duration} / 60 );
 		$review{most_delay_delta}
-		  = min_to_human(
+		  = $self->min_to_human(
 			( $most_delay->{rt_duration} - $most_delay->{sched_duration} )
 			/ 60 );
 		$review{most_delay_lineno} = $most_delay->{line} // $most_delay->{no};
@@ -1424,11 +1426,11 @@ sub compute_review {
 		$review{most_undelay_delay_dep} = $most_undelay->{delay_dep};
 		$review{most_undelay_delay_arr} = $most_undelay->{delay_arr};
 		$review{most_undelay_sched_time}
-		  = min_to_human( $most_undelay->{sched_duration} / 60 );
+		  = $self->min_to_human( $most_undelay->{sched_duration} / 60 );
 		$review{most_undelay_real_time}
-		  = min_to_human( $most_undelay->{rt_duration} / 60 );
+		  = $self->min_to_human( $most_undelay->{rt_duration} / 60 );
 		$review{most_undelay_delta}
-		  = min_to_human(
+		  = $self->min_to_human(
 			( $most_undelay->{sched_duration} - $most_undelay->{rt_duration} )
 			/ 60 );
 		$review{most_undelay_lineno} = $most_undelay->{line}

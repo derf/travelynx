@@ -41,12 +41,19 @@ function upd_journey_data() {
 	});
 }
 function upd_countdown() {
-	var now = Date.now() / 1000;
+	const now = Date.now() / 1000;
 	if (j_departure > now) {
 			$('.countdown').text('Abfahrt in ' + Math.round((j_departure - now)/60) + ' Minuten');
 	} else if (j_arrival > 0) {
 		if (j_arrival > now) {
-			$('.countdown').text('Ankunft in ' + Math.round((j_arrival - now)/60) + ' Minuten');
+			var diff = Math.round((j_arrival - now)/60);
+			if (diff >= 120) {
+				$('.countdown').text('Ankunft in ' + Math.floor(diff/60) + ' Stunden und ' + (diff%60) + ' Minuten');
+			} else if (diff >= 60) {
+				$('.countdown').text('Ankunft in 1 Stunde und ' + (diff%60) + ' Minuten');
+			} else {
+				$('.countdown').text('Ankunft in ' + diff + ' Minuten');
+			}
 		} else {
 			$('.countdown').text('Ziel erreicht');
 		}
