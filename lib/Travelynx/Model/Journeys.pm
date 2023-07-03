@@ -562,18 +562,7 @@ sub get {
 		if ( $visibility_atoi{ $opt{min_visibility} } ) {
 			$opt{min_visibility} = $visibility_atoi{ $opt{min_visibility} };
 		}
-		if ( $opt{with_default_visibility} ) {
-			$where{visibility} = [
-				-or => { '=', undef },
-				{ '>=', $opt{min_visibility} }
-			];
-		}
-		else {
-			$where{visibility} = [
-				-and => { '!=', undef },
-				{ '>=', $opt{min_visibility} }
-			];
-		}
+		$where{effective_visibility} = { '>=', $opt{min_visibility} };
 	}
 
 	my @travels;

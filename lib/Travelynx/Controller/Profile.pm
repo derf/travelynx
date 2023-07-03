@@ -134,21 +134,6 @@ sub profile {
 			$opt{after}  = $now->clone->subtract( weeks => 4 );
 		}
 
-		if (
-			$user->{default_visibility_str} eq 'public'
-			or ( $user->{default_visibility_str} eq 'travelynx'
-				and ( $my_user or $is_self ) )
-			or (    $user->{default_visibility_str} eq 'followers'
-				and $relation
-				and $relation eq 'follows' )
-		  )
-		{
-			$opt{with_default_visibility} = 1;
-		}
-		else {
-			$opt{with_default_visibility} = 0;
-		}
-
 		if ($is_self) {
 			$opt{min_visibility} = 'followers';
 		}
