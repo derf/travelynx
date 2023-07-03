@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Birthe Friesel
+ * Copyright (C) 2020 Birte Kristina Friesel
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */

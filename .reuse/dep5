@@ -1,15 +1,15 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 
 Files: .dockerignore .github/* .github/*/* .gitignore
-Copyright: 2020 Daniel Friesel
+Copyright: 2020 Birte Kristina Friesel
 License: CC0-1.0
 
 Files: Dockerfile README.md cpanfile cpanfile.snapshot
-Copyright: 2020 Daniel Friesel
+Copyright: 2020 Birte Kristina Friesel
 License: CC0-1.0
 
 Files: examples/*
-Copyright: 2020 Daniel Friesel
+Copyright: 2020 Birte Kristina Friesel
 License: CC0-1.0
 
 Files: public/static/css/material-icons.css public/static/fonts/MaterialIcons-*
@@ -26,11 +26,11 @@ License: Apache-2.0
 
 Files: public/static/js/autocomplete.min.js
 Copyright: 2020 DB Station&Service AG, Europaplatz 1, 10557 Berlin
-   2020 Daniel Friesel
+   2020 Birte Kristina Friesel
 License: CC-BY-4.0
 
 Files: public/static/js/geolocation.min.js public/static/js/travelynx-actions.js
-Copyright: 2020 Daniel Friesel
+Copyright: 2020 Birte Kristina Friesel
 License: MIT
 
 Files: public/static/js/jquery-3.4.1.min.js
@@ -47,11 +47,11 @@ Copyright: 2010-2019 Vladimir Agafonkin
 License: BSD-2-Clause
 
 Files: public/static/manifest.json
-Copyright: 2020 Daniel Friesel
+Copyright: 2020 Birte Kristina Friesel
 License: CC0-1.0
 
 Files: templates/*
-Copyright: 2020 Daniel Friesel
+Copyright: 2020 Birte Kristina Friesel
 License: MIT
 
 Files: sass/materialize.scss sass/components/*
@@ -60,7 +60,7 @@ License: MIT
 
 Files: sass/src/*
 Copyright: 2019 marudor
-   2020 Daniel Friesel
+   2020 Birte Kristina Friesel
 License: MIT
 
 Files: share/ice_names.json
@@ -68,5 +68,5 @@ Copyright: 2017 marudor
 License: MIT
 
 Files: share/old_station_names.json
-Copyright: 2020 Daniel Friesel
+Copyright: 2020 Birte Kristina Friesel
 License: CC0-1.0

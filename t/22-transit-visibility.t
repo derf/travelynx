@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2023 Birthe Friesel <derf@finalrewind.org>
+# Copyright (C) 2023 Birte Kristina Friesel <derf@finalrewind.org>
 #
 # SPDX-License-Identifier: MIT
 

@@ -1,6 +1,6 @@
 package Travelynx::Command::influxdb;
 
-# Copyright (C) 2022 Birthe Friesel
+# Copyright (C) 2022 Birte Kristina Friesel
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 use Mojo::Base 'Mojolicious::Command';

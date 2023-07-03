@@ -1,6 +1,6 @@
 package Travelynx::Command::account;
 
-# Copyright (C) 2021 Birthe Friesel
+# Copyright (C) 2021 Birte Kristina Friesel
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 use Mojo::Base 'Mojolicious::Command';
