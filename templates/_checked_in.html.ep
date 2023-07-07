@@ -20,20 +20,14 @@
 					data-route="<%= journey_to_ajax_route($journey) %>"
 					data-dest="<%= $journey->{arr_name} %>"
 					>
-					% if ($journey->{boarding_countdown} > 120) {
-						Einfahrt in <%= sprintf('%.f', $journey->{boarding_countdown} / 60) %> Minuten<br/>
-					% }
-					% elsif ($journey->{boarding_countdown} > 60) {
-						Einfahrt in einer Minute<br/>
+					% if ($journey->{boarding_countdown} > 60) {
+						Einfahrt in <%= journeys->min_to_human(int($journey->{boarding_countdown} / 60)) %><br/>
 					% }
 					% elsif ($journey->{boarding_countdown} > 0) {
 						Zug fährt ein<br/>
 					% }
-					% if ($journey->{departure_countdown} > 120) {
-						Abfahrt in <%= sprintf('%.f', $journey->{departure_countdown} / 60) %> Minuten
-					% }
-					% elsif ($journey->{departure_countdown} > 60) {
-						Abfahrt in einer Minute
+					% if ($journey->{departure_countdown} > 60) {
+						Abfahrt in <%= journeys->min_to_human(int($journey->{departure_countdown} / 60)) %>
 					% }
 					% elsif ($journey->{departure_countdown} > 0) {
 						Abfahrt in weniger als einer Minute
