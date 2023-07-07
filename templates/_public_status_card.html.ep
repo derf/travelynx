@@ -27,19 +27,15 @@
 						data-token="<%= $journey->{dep_eva} %>-<%= $journey->{timestamp}->epoch % 337 %>-<%= $journey->{sched_departure}->epoch %>"
 					% }
 					data-arrival="<%= $journey->{real_arrival}->epoch %>">
-					% if ($journey->{departure_countdown} > 120) {
-						Abfahrt in <%= sprintf('%.f', $journey->{departure_countdown} / 60) %> Minuten
-					% }
-					% elsif ($journey->{departure_countdown} > 60) {
-						Abfahrt in einer Minute
+					% if ($journey->{departure_countdown} > 60) {
+						Abfahrt in <%= journeys->min_to_human(int($journey->{departure_countdown} / 60)) %>
 					% }
 					% elsif ($journey->{departure_countdown} > 0) {
 						Abfahrt in weniger als einer Minute
 					% }
 					% elsif (defined $journey->{arrival_countdown}) {
 						% if ($journey->{arrival_countdown} > 60) {
-							Ankunft in <%= sprintf('%.f', $journey->{arrival_countdown} / 60) %>
-							Minute<%= sprintf('%.f', $journey->{arrival_countdown} / 60) == 1 ? '' : 'n' %>
+							Ankunft in <%= journeys->min_to_human(int($journey->{arrival_countdown} / 60)) %>
 						% }
 						% elsif ($journey->{arrival_countdown} > 0) {
 							Ankunft in weniger als einer Minute
