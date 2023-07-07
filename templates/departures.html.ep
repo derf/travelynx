@@ -92,5 +92,3 @@
 		% }
 	</div>
 </div>
-
-%= include '_footer', version => stash('version')
