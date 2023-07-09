@@ -821,9 +821,10 @@ sub station {
 				  } $status->results;
 				$status = {
 					station_eva  => $status->station->{eva},
-					station_name =>
-					  List::Util::reduce { length($a) < length($b) ? $a : $b }
-					@{ $status->station->{names} },
+					station_name => (
+						List::Util::reduce { length($a) < length($b) ? $a : $b }
+						@{ $status->station->{names} }
+					),
 					related_stations => [],
 				};
 			}
