@@ -430,56 +430,52 @@ sub startup {
 			if ( $status->{errstr} ) {
 				return ( undef, $status->{errstr} );
 			}
-			else {
-				my ($train) = List::Util::first { $_->train_id eq $train_id }
-				@{ $status->{results} };
-				if ( not defined $train ) {
-					return ( undef, "Train ${train_id} not found" );
-				}
-				else {
 
-					my $user = $self->get_user_status( $uid, $db );
-					if ( $user->{checked_in} or $user->{cancelled} ) {
+			my ($train) = List::Util::first { $_->train_id eq $train_id }
+			@{ $status->{results} };
+			if ( not defined $train ) {
+				return ( undef, "Train ${train_id} not found" );
+			}
 
-						if (    $user->{train_id} eq $train_id
-							and $user->{dep_eva} eq $status->{station_eva} )
-						{
-							# checking in twice is harmless
-							return ( $train, undef );
-						}
+			my $user = $self->get_user_status( $uid, $db );
+			if ( $user->{checked_in} or $user->{cancelled} ) {
 
-						# Otherwise, someone forgot to check out first
-						$self->checkout(
-							station => $station,
-							force   => 1,
-							uid     => $uid,
-							db      => $db
-						);
-					}
-
-					eval {
-						$self->in_transit->add(
-							uid           => $uid,
-							db            => $db,
-							departure_eva => $status->{station_eva},
-							train         => $train,
-							route => [ $self->iris->route_diff($train) ],
-						);
-					};
-					if ($@) {
-						$self->app->log->error(
-							"Checkin($uid): INSERT failed: $@");
-						return ( undef, 'INSERT failed: ' . $@ );
-					}
-					if ( not $opt{in_transaction} ) {
-
-						# mustn't be called during a transaction
-						$self->add_route_timestamps( $uid, $train, 1 );
-						$self->run_hook( $uid, 'checkin' );
-					}
+				if (    $user->{train_id} eq $train_id
+					and $user->{dep_eva} eq $status->{station_eva} )
+				{
+					# checking in twice is harmless
 					return ( $train, undef );
 				}
+
+				# Otherwise, someone forgot to check out first
+				$self->checkout(
+					station => $station,
+					force   => 1,
+					uid     => $uid,
+					db      => $db
+				);
 			}
+
+			eval {
+				$self->in_transit->add(
+					uid           => $uid,
+					db            => $db,
+					departure_eva => $status->{station_eva},
+					train         => $train,
+					route         => [ $self->iris->route_diff($train) ],
+				);
+			};
+			if ($@) {
+				$self->app->log->error("Checkin($uid): INSERT failed: $@");
+				return ( undef, 'INSERT failed: ' . $@ );
+			}
+			if ( not $opt{in_transaction} ) {
+
+				# mustn't be called during a transaction
+				$self->add_route_timestamps( $uid, $train, 1 );
+				$self->run_hook( $uid, 'checkin' );
+			}
+			return ( $train, undef );
 		}
 	);
 
