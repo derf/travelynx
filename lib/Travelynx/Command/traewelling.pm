@@ -50,7 +50,7 @@ sub pull_sync {
 			sub {
 				my ($traewelling) = @_;
 				$pull_result{ $traewelling->{http} } += 1;
-				$self->app->traewelling_to_travelynx(
+				return $self->app->traewelling_to_travelynx_p(
 					traewelling => $traewelling,
 					user_data   => $account_data
 				);

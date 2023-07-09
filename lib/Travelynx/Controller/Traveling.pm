@@ -615,43 +615,48 @@ sub travel_action {
 
 	if ( $params->{action} eq 'checkin' ) {
 
-		my ( $train, $error ) = $self->checkin(
+		$self->render_later;
+		$self->checkin_p(
 			station  => $params->{station},
 			train_id => $params->{train}
-		);
-		my $destination = $params->{dest};
+		)->then(
+			sub {
+				my $destination = $params->{dest};
+				if ( not $destination ) {
+					$self->render(
+						json => {
+							success     => 1,
+							redirect_to => '/',
+						},
+					);
+					return;
+				}
 
-		if ($error) {
-			$self->render(
-				json => {
-					success => 0,
-					error   => $error,
-				},
-			);
-		}
-		elsif ( not $destination ) {
-			$self->render(
-				json => {
-					success     => 1,
-					redirect_to => '/',
-				},
-			);
-		}
-		else {
-			# Silently ignore errors -- if they are permanent, the user will see
-			# them when selecting the destination manually.
-			my ( $still_checked_in, undef ) = $self->checkout(
-				station => $destination,
-				force   => 0
-			);
-			my $station_link = '/s/' . $destination;
-			$self->render(
-				json => {
-					success     => 1,
-					redirect_to => $still_checked_in ? '/' : $station_link,
-				},
-			);
-		}
+            # Silently ignore errors -- if they are permanent, the user will see
+            # them when selecting the destination manually.
+				my ( $still_checked_in, undef ) = $self->checkout(
+					station => $destination,
+					force   => 0
+				);
+				my $station_link = '/s/' . $destination;
+				$self->render(
+					json => {
+						success     => 1,
+						redirect_to => $still_checked_in ? '/' : $station_link,
+					},
+				);
+			}
+		)->catch(
+			sub {
+				my ($error) = @_;
+				$self->render(
+					json => {
+						success => 0,
+						error   => $error,
+					},
+				);
+			}
+		)->wait;
 	}
 	elsif ( $params->{action} eq 'checkout' ) {
 		my ( $still_checked_in, $error ) = $self->checkout(
@@ -702,27 +707,30 @@ sub travel_action {
 		}
 	}
 	elsif ( $params->{action} eq 'cancelled_from' ) {
-		my ( undef, $error ) = $self->checkin(
+		$self->render_later;
+		$self->checkin_p(
 			station  => $params->{station},
 			train_id => $params->{train}
-		);
-
-		if ($error) {
-			$self->render(
-				json => {
-					success => 0,
-					error   => $error,
-				},
-			);
-		}
-		else {
-			$self->render(
-				json => {
-					success     => 1,
-					redirect_to => '/',
-				},
-			);
-		}
+		)->then(
+			sub {
+				$self->render(
+					json => {
+						success     => 1,
+						redirect_to => '/',
+					},
+				);
+			}
+		)->catch(
+			sub {
+				my ($error) = @_;
+				$self->render(
+					json => {
+						success => 0,
+						error   => $error,
+					},
+				);
+			}
+		)->wait;
 	}
 	elsif ( $params->{action} eq 'cancelled_to' ) {
 		my ( undef, $error ) = $self->checkout(

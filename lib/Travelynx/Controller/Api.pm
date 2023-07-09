@@ -261,43 +261,53 @@ sub travel_v1 {
 			$train_id = $train->train_id;
 		}
 
-		my ( $train, $error ) = $self->checkin(
+		$self->render_later;
+
+		$self->checkin_p(
 			station  => $from_station,
 			train_id => $train_id,
 			uid      => $uid
-		);
-		if ( $payload->{comment} and not $error ) {
-			$self->in_transit->update_user_data(
-				uid       => $uid,
-				user_data => { comment => sanitize( q{}, $payload->{comment} ) }
-			);
-		}
-		if ( $to_station and not $error ) {
-			( $train, $error ) = $self->checkout(
-				station => $to_station,
-				force   => 0,
-				uid     => $uid
-			);
-		}
-		if ($error) {
-			$self->render(
-				json => {
-					success    => \0,
-					deprecated => \0,
-					error      => 'Checkin/Checkout error: ' . $error,
-					status     => $self->get_user_status_json_v1( uid => $uid )
+		)->then(
+			sub {
+				my ($train) = @_;
+				if ( $payload->{comment} ) {
+					$self->in_transit->update_user_data(
+						uid       => $uid,
+						user_data =>
+						  { comment => sanitize( q{}, $payload->{comment} ) }
+					);
 				}
-			);
-		}
-		else {
-			$self->render(
-				json => {
-					success    => \1,
-					deprecated => \0,
-					status     => $self->get_user_status_json_v1( uid => $uid )
+				if ($to_station) {
+					my ( $train2, $error ) = $self->checkout(
+						station => $to_station,
+						force   => 0,
+						uid     => $uid
+					);
+					if ($error) {
+						return Mojo::Promise->reject($error);
+					}
 				}
-			);
-		}
+				$self->render(
+					json => {
+						success    => \1,
+						deprecated => \0,
+						status => $self->get_user_status_json_v1( uid => $uid )
+					}
+				);
+			}
+		)->catch(
+			sub {
+				my ($error) = @_;
+				$self->render(
+					json => {
+						success    => \0,
+						deprecated => \0,
+						error      => 'Checkin/Checkout error: ' . $error,
+						status => $self->get_user_status_json_v1( uid => $uid )
+					}
+				);
+			}
+		)->wait;
 	}
 	elsif ( $payload->{action} eq 'checkout' ) {
 		my $to_station = sanitize( q{}, $payload->{toStation} );
