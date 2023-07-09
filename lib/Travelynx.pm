@@ -488,7 +488,7 @@ sub startup {
 				}
 			)->catch(
 				sub {
-					my ($status) = @_;
+					my ( $err, $status ) = @_;
 					$promise->reject( $status->{errstr} );
 					return;
 				}
@@ -2009,7 +2009,7 @@ sub startup {
 				}
 			)->catch(
 				sub {
-					my ($dep) = @_;
+					my ( $err, $dep ) = @_;
 					$self->traewelling->log(
 						uid     => $uid,
 						message =>

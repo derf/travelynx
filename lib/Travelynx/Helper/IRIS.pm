@@ -138,6 +138,7 @@ sub get_departures_p {
 			sub {
 				my ($err) = @_;
 				$promise->reject(
+					$err,
 					{
 						results => [],
 						errstr  => "Error in promise: $err",
@@ -150,6 +151,7 @@ sub get_departures_p {
 	}
 	elsif ( @station_matches > 1 ) {
 		return Mojo::Promise->reject(
+			'ambiguous station name',
 			{
 				results => [],
 				errstr  =>
@@ -160,6 +162,7 @@ sub get_departures_p {
 	}
 	else {
 		return Mojo::Promise->reject(
+			'unknown station',
 			{
 				results => [],
 				errstr  => 'Unbekannte Station',
