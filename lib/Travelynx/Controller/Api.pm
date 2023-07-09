@@ -220,53 +220,52 @@ sub travel_v1 {
 			return;
 		}
 
+		my $train_p;
+
 		if ( exists $payload->{train}{id} ) {
-			$train_id = sanitize( 0, $payload->{train}{id} );
+			$train_p
+			  = Mojo::Promise->resolve( sanitize( 0, $payload->{train}{id} ) );
 		}
 		else {
 			my $train_type = sanitize( q{}, $payload->{train}{type} );
 			my $train_no   = sanitize( q{}, $payload->{train}{no} );
-			my $status     = $self->iris->get_departures(
+
+			$train_p = $self->iris->get_departures_p(
 				station    => $from_station,
 				lookbehind => 140,
 				lookahead  => 40
+			)->then(
+				sub {
+					my ($status) = @_;
+					if ( $status->{errstr} ) {
+						return Mojo::Promise->reject(
+							'Error requesting departures from fromStation: '
+							  . $status->{errstr} );
+					}
+					my ($train) = List::Util::first {
+						$_->type eq $train_type and $_->train_no eq $train_no
+					}
+					@{ $status->{results} };
+					if ( not defined $train ) {
+						return Mojo::Promise->reject(
+							'Train not found at fromStation');
+					}
+					return Mojo::Promise->resolve( $train->train_id );
+				}
 			);
-			if ( $status->{errstr} ) {
-				$self->render(
-					json => {
-						success => \0,
-						error   =>
-						  'Error requesting departures from fromStation: '
-						  . $status->{errstr},
-						status => $self->get_user_status_json_v1( uid => $uid )
-					}
-				);
-				return;
-			}
-			my ($train) = List::Util::first {
-				$_->type eq $train_type and $_->train_no eq $train_no
-			}
-			@{ $status->{results} };
-			if ( not defined $train ) {
-				$self->render(
-					json => {
-						success    => \0,
-						deprecated => \0,
-						error      => 'Train not found at fromStation',
-						status => $self->get_user_status_json_v1( uid => $uid )
-					}
-				);
-				return;
-			}
-			$train_id = $train->train_id;
 		}
 
 		$self->render_later;
 
-		$self->checkin_p(
-			station  => $from_station,
-			train_id => $train_id,
-			uid      => $uid
+		$train_p->then(
+			sub {
+				my ($train_id) = @_;
+				return $self->checkin_p(
+					station  => $from_station,
+					train_id => $train_id,
+					uid      => $uid
+				);
+			}
 		)->then(
 			sub {
 				my ($train) = @_;
