@@ -935,17 +935,22 @@ sub station {
 		}
 	)->catch(
 		sub {
-			my ($err) = @_;
-			if ( ref($err) eq 'HASH' ) {
+			my ( $err, $status ) = @_;
+			if ($status) {
 				$self->render(
 					'landingpage',
 					with_autocomplete => 1,
 					with_geolocation  => 1,
-					error             => $err->{errstr},
+					error             => $status->{errstr},
+					status            => 400,
 				);
 			}
 			else {
-				$self->render( 'exception', exception => $err );
+				$self->render(
+					'exception',
+					exception => $err,
+					status    => 500
+				);
 			}
 		}
 	)->wait;
