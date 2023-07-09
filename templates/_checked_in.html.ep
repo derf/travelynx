@@ -3,6 +3,9 @@
 	<div class="card">
 		<div class="card-content">
 			<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
+			% if (not $journey->{arr_name}) {
+				<span class="card-title center-align">Ziel wählen</span>
+			% }
 			<span class="card-title center-align">
 					% if ($journey->{train_line}) {
 						<b><%= $journey->{train_type} %> <%= $journey->{train_line} %></b> <%= $journey->{train_no} %>
@@ -214,7 +217,6 @@
 				</p>
 			% }
 			% elsif (not $journey->{arr_name}) {
-				<p>Ziel wählen:</p>
 				<p>
 					% for my $station (@{$journey->{route_after}}) {
 						<a class="tablerow action-checkout" data-station="<%= $station->[0] %>">
