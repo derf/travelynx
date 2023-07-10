@@ -266,11 +266,11 @@ DISTRIBUTIONS
       File::Spec 0.80
       base 0
       perl 5.008
-  Class-Measure-0.09
-    pathname: B/BL/BLUEFEET/Class-Measure-0.09.tar.gz
+  Class-Measure-0.10
+    pathname: B/BL/BLUEFEET/Class-Measure-0.10.tar.gz
     provides:
-      Class::Measure 0.09
-      Class::Measure::Length 0.09
+      Class::Measure 0.10
+      Class::Measure::Length 0.10
     requirements:
       Carp 0
       Module::Build::Tiny 0.035
@@ -1273,20 +1273,20 @@ DISTRIBUTIONS
       perl 5.006
       strict 0
       vars 0
-  GIS-Distance-0.19
-    pathname: B/BL/BLUEFEET/GIS-Distance-0.19.tar.gz
+  GIS-Distance-0.20
+    pathname: B/BL/BLUEFEET/GIS-Distance-0.20.tar.gz
     provides:
-      GIS::Distance 0.19
-      GIS::Distance::ALT 0.19
-      GIS::Distance::Constants 0.19
-      GIS::Distance::Cosine 0.19
-      GIS::Distance::Formula 0.19
-      GIS::Distance::GreatCircle 0.19
-      GIS::Distance::Haversine 0.19
-      GIS::Distance::MathTrig 0.19
-      GIS::Distance::Null 0.19
-      GIS::Distance::Polar 0.19
-      GIS::Distance::Vincenty 0.19
+      GIS::Distance 0.20
+      GIS::Distance::ALT 0.20
+      GIS::Distance::Constants 0.20
+      GIS::Distance::Cosine 0.20
+      GIS::Distance::Formula 0.20
+      GIS::Distance::GreatCircle 0.20
+      GIS::Distance::Haversine 0.20
+      GIS::Distance::MathTrig 0.20
+      GIS::Distance::Null 0.20
+      GIS::Distance::Polar 0.20
+      GIS::Distance::Vincenty 0.20
     requirements:
       Carp 0
       Class::Measure::Length 0
@@ -1298,17 +1298,17 @@ DISTRIBUTIONS
       parent 0
       perl 5.008001
       strictures 2.000000
-  GIS-Distance-Fast-0.15
-    pathname: B/BL/BLUEFEET/GIS-Distance-Fast-0.15.tar.gz
+  GIS-Distance-Fast-0.16
+    pathname: B/BL/BLUEFEET/GIS-Distance-Fast-0.16.tar.gz
     provides:
-      GIS::Distance::Fast 0.15
-      GIS::Distance::Fast::ALT 0.15
-      GIS::Distance::Fast::Cosine 0.15
-      GIS::Distance::Fast::GreatCircle 0.15
-      GIS::Distance::Fast::Haversine 0.15
-      GIS::Distance::Fast::Null 0.15
-      GIS::Distance::Fast::Polar 0.15
-      GIS::Distance::Fast::Vincenty 0.15
+      GIS::Distance::Fast 0.16
+      GIS::Distance::Fast::ALT 0.16
+      GIS::Distance::Fast::Cosine 0.16
+      GIS::Distance::Fast::GreatCircle 0.16
+      GIS::Distance::Fast::Haversine 0.16
+      GIS::Distance::Fast::Null 0.16
+      GIS::Distance::Fast::Polar 0.16
+      GIS::Distance::Fast::Vincenty 0.16
     requirements:
       GIS::Distance::Formula 0.17
       Module::Build::Tiny 0.035
@@ -1372,10 +1372,10 @@ DISTRIBUTIONS
       locale 0
       perl 5.008001
       strict 0
-  HTTP-Date-6.05
-    pathname: O/OA/OALDERS/HTTP-Date-6.05.tar.gz
+  HTTP-Date-6.06
+    pathname: O/OA/OALDERS/HTTP-Date-6.06.tar.gz
     provides:
-      HTTP::Date 6.05
+      HTTP::Date 6.06
     requirements:
       Exporter 0
       ExtUtils::MakeMaker 0
@@ -1518,17 +1518,16 @@ DISTRIBUTIONS
       Scalar::Util 0
       perl 5.006002
       strict 0
-  LWP-Protocol-https-6.10
-    pathname: O/OA/OALDERS/LWP-Protocol-https-6.10.tar.gz
+  LWP-Protocol-https-6.11
+    pathname: O/OA/OALDERS/LWP-Protocol-https-6.11.tar.gz
     provides:
-      LWP::Protocol::https 6.10
-      LWP::Protocol::https::Socket 6.10
+      LWP::Protocol::https 6.11
+      LWP::Protocol::https::Socket 6.11
     requirements:
       ExtUtils::MakeMaker 0
-      IO::Socket::SSL 1.54
+      IO::Socket::SSL 1.970
       LWP::Protocol::http 0
       LWP::UserAgent 6.06
-      Mozilla::CA 20180117
       Net::HTTPS 6
       base 0
       perl 5.008001
@@ -1784,8 +1783,8 @@ DISTRIBUTIONS
       Mojolicious 8.50
       SQL::Abstract::Pg 1.0
       perl 5.016
-  Mojolicious-9.32
-    pathname: S/SR/SRI/Mojolicious-9.32.tar.gz
+  Mojolicious-9.33
+    pathname: S/SR/SRI/Mojolicious-9.33.tar.gz
     provides:
       Mojo undef
       Mojo::Asset undef
@@ -1853,7 +1852,7 @@ DISTRIBUTIONS
       Mojo::UserAgent::Transactor undef
       Mojo::Util undef
       Mojo::WebSocket undef
-      Mojolicious 9.32
+      Mojolicious 9.33
       Mojolicious::Command undef
       Mojolicious::Command::Author::cpanify undef
       Mojolicious::Command::Author::generate undef
@@ -1953,13 +1952,13 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       perl 5.006
-  Net-HTTP-6.22
-    pathname: O/OA/OALDERS/Net-HTTP-6.22.tar.gz
+  Net-HTTP-6.23
+    pathname: O/OA/OALDERS/Net-HTTP-6.23.tar.gz
     provides:
-      Net::HTTP 6.22
-      Net::HTTP::Methods 6.22
-      Net::HTTP::NB 6.22
-      Net::HTTPS 6.22
+      Net::HTTP 6.23
+      Net::HTTP::Methods 6.23
+      Net::HTTP::NB 6.23
+      Net::HTTPS 6.23
     requirements:
       Carp 0
       Compress::Raw::Zlib 0
@@ -2340,10 +2339,10 @@ DISTRIBUTIONS
       Test::Builder 0
       Test::More 0.96
       perl 5.012
-  Test-Differences-0.69
-    pathname: D/DC/DCANTRELL/Test-Differences-0.69.tar.gz
+  Test-Differences-0.70
+    pathname: D/DC/DCANTRELL/Test-Differences-0.70.tar.gz
     provides:
-      Test::Differences 0.69
+      Test::Differences 0.70
     requirements:
       Capture::Tiny 0.24
       Data::Dumper 2.126
@@ -2583,12 +2582,12 @@ DISTRIBUTIONS
       Test::More 0
       Test::Pod 0
       perl v5.14.0
-  Travel-Status-DE-IRIS-1.86
-    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.86.tar.gz
+  Travel-Status-DE-IRIS-1.87
+    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.87.tar.gz
     provides:
-      Travel::Status::DE::IRIS 1.86
-      Travel::Status::DE::IRIS::Result 1.86
-      Travel::Status::DE::IRIS::Stations 1.86
+      Travel::Status::DE::IRIS 1.87
+      Travel::Status::DE::IRIS::Result 1.87
+      Travel::Status::DE::IRIS::Stations 1.87
     requirements:
       Carp 0
       Class::Accessor 0
@@ -2894,32 +2893,32 @@ DISTRIBUTIONS
       XSLoader 0
       lib 0
       perl 5.008001
-  libwww-perl-6.70
-    pathname: S/SI/SIMBABQUE/libwww-perl-6.70.tar.gz
+  libwww-perl-6.71
+    pathname: O/OA/OALDERS/libwww-perl-6.71.tar.gz
     provides:
-      LWP 6.70
-      LWP::Authen::Basic 6.70
-      LWP::Authen::Digest 6.70
-      LWP::Authen::Ntlm 6.70
-      LWP::ConnCache 6.70
-      LWP::Debug 6.70
-      LWP::Debug::TraceHTTP 6.70
-      LWP::DebugFile 6.70
-      LWP::MemberMixin 6.70
-      LWP::Protocol 6.70
-      LWP::Protocol::cpan 6.70
-      LWP::Protocol::data 6.70
-      LWP::Protocol::file 6.70
-      LWP::Protocol::ftp 6.70
-      LWP::Protocol::gopher 6.70
-      LWP::Protocol::http 6.70
-      LWP::Protocol::loopback 6.70
-      LWP::Protocol::mailto 6.70
-      LWP::Protocol::nntp 6.70
-      LWP::Protocol::nogo 6.70
-      LWP::RobotUA 6.70
-      LWP::Simple 6.70
-      LWP::UserAgent 6.70
+      LWP 6.71
+      LWP::Authen::Basic 6.71
+      LWP::Authen::Digest 6.71
+      LWP::Authen::Ntlm 6.71
+      LWP::ConnCache 6.71
+      LWP::Debug 6.71
+      LWP::Debug::TraceHTTP 6.71
+      LWP::DebugFile 6.71
+      LWP::MemberMixin 6.71
+      LWP::Protocol 6.71
+      LWP::Protocol::cpan 6.71
+      LWP::Protocol::data 6.71
+      LWP::Protocol::file 6.71
+      LWP::Protocol::ftp 6.71
+      LWP::Protocol::gopher 6.71
+      LWP::Protocol::http 6.71
+      LWP::Protocol::loopback 6.71
+      LWP::Protocol::mailto 6.71
+      LWP::Protocol::nntp 6.71
+      LWP::Protocol::nogo 6.71
+      LWP::RobotUA 6.71
+      LWP::Simple 6.71
+      LWP::UserAgent 6.71
     requirements:
       Digest::MD5 0
       Encode 2.12
