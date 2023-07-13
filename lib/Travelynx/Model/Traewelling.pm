@@ -218,9 +218,11 @@ sub get_pushable_accounts {
 			i.train_line as train_line, i.train_no as train_no,
 			extract(epoch from i.checkin_time) as checkin_ts,
 			extract(epoch from i.sched_departure) as dep_ts,
-			extract(epoch from i.sched_arrival) as arr_ts
+			extract(epoch from i.sched_arrival) as arr_ts,
+			i_str.effective_visibility as visibility
 			from traewelling as t
 			join in_transit as i on t.user_id = i.user_id
+			join in_transit_str as i_str on t.user_id = i_str.user_id
 			where t.push_sync = True
 			and i.checkout_station_id is not null
 			and i.cancelled = False
