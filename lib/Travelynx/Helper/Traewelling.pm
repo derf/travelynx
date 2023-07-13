@@ -324,14 +324,27 @@ sub logout_p {
 }
 
 sub convert_travelynx_to_traewelling_visibility {
-	my ( $travelynx_visibility ) = @_;
+	my ($travelynx_visibility) = @_;
 
 	my %visibilities = (
-		100 => 0, # public      => StatusVisibility::PUBLIC
-		80  => 4, # travelynx   => StatusVisibility::AUTHENTICATED (only visible for logged in users)
-		60  => 2, # followers   => StatusVisibility::FOLLOWERS
-		30  => 3, # unlisted    => StatusVisibility::PRIVATE (there is no träwelling equivalent to unlisted, their StatusVisibility::UNLISTED shows the journey on the profile)
-		10  => 3, # private     => StatusVisibility::PRIVATE
+
+		# public    => StatusVisibility::PUBLIC
+		100 => 0,
+
+		# travelynx => StatusVisibility::AUTHENTICATED
+		# (only visible for logged in users)
+		80 => 4,
+
+		# followers => StatusVisibility::FOLLOWERS
+		60 => 2,
+
+		# unlisted  => StatusVisibility::PRIVATE
+		# (there is no träwelling equivalent to unlisted, their
+		# StatusVisibility::UNLISTED shows the journey on the profile)
+		30 => 3,
+
+		# private   => StatusVisibility::PRIVATE
+		10 => 3,
 	);
 
 	return $visibilities{$travelynx_visibility};
@@ -367,7 +380,8 @@ sub checkin_p {
 		arrival     => $arrival_ts,
 		toot        => $opt{data}{toot}  ? \1 : \0,
 		tweet       => $opt{data}{tweet} ? \1 : \0,
-		visibility  => convert_travelynx_to_traewelling_visibility($opt{visibility})
+		visibility  =>
+		  convert_travelynx_to_traewelling_visibility( $opt{visibility} )
 	};
 
 	if ( $opt{user_data}{comment} ) {
