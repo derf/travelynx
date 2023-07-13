@@ -191,8 +191,8 @@
 				<p>Die Synchronisierung erfolgt spätestens drei Minuten nach der
 					Zielwahl. Beachte, dass die Synchronisierung travelynx
 					→ Träwelling unabhängig von der eingestellten Sichtbarkeit
-					des Checkins erfolgt und Träwelling-Sichtbarkeiten
-					derzeit ebenfalls nicht von travelynx übernommen werden.
+					des Checkins erfolgt. travelynx reicht die Sichtbarkeit
+					aber an Träwelling weiter.
 					Träwelling-Checkins können von travelynx aktuell nicht
 					rückgängig gemacht werden. Eine nachträgliche Änderung der
 					Zielstation wird nicht übernommen. Mastodon und Twitter beziehen
@@ -211,7 +211,8 @@
 					Falls du gerade in einen Zug eingecheckt bist, wird dieser von
 					travelynx übernommen.  Träwelling-Checkins in Nahverkehrsmittel
 					und Züge außerhalb des deutschen Schienennetzes werden nicht
-					unterstützt.</p>
+					unterstützt. Die Sichtbarkeit von Träwelling-Checkins wird
+					derzeit von travelynx nicht berücksichtigt.</p>
 			</div>
 		</div>
 		<div class="row hide-on-small-only">

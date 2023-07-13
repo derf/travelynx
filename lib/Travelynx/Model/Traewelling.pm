@@ -213,16 +213,17 @@ sub get_pushable_accounts {
 	my $res = $self->{pg}->db->query(
 		qq{select t.user_id as uid, t.token as token, t.data as data,
 			i.user_data as user_data,
-			i.checkin_station_id as dep_eva, i.checkout_station_id as arr_eva,
+			i.dep_eva as dep_eva, i.arr_eva as arr_eva,
 			i.data as journey_data, i.train_type as train_type,
 			i.train_line as train_line, i.train_no as train_no,
-			extract(epoch from i.checkin_time) as checkin_ts,
-			extract(epoch from i.sched_departure) as dep_ts,
-			extract(epoch from i.sched_arrival) as arr_ts
+			i.checkin_ts as checkin_ts,
+			i.sched_dep_ts as dep_ts,
+			i.sched_arr_ts as arr_ts,
+			i.effective_visibility as visibility
 			from traewelling as t
-			join in_transit as i on t.user_id = i.user_id
+			join in_transit_str as i on t.user_id = i.user_id
 			where t.push_sync = True
-			and i.checkout_station_id is not null
+			and i.arr_eva is not null
 			and i.cancelled = False
 		}
 	);
