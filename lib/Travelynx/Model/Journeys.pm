@@ -709,12 +709,14 @@ sub get_latest {
 		}
 	)->expand->hash;
 
-	$latest_successful->{visibility_str}
-	  = $latest_successful->{visibility}
-	  ? $visibility_itoa{ $latest_successful->{visibility} }
-	  : 'default';
-	$latest_successful->{effective_visibility_str}
-	  = $visibility_itoa{ $latest_successful->{effective_visibility} };
+	if ($latest_successful) {
+		$latest_successful->{visibility_str}
+		  = $latest_successful->{visibility}
+		  ? $visibility_itoa{ $latest_successful->{visibility} }
+		  : 'default';
+		$latest_successful->{effective_visibility_str}
+		  = $visibility_itoa{ $latest_successful->{effective_visibility} };
+	}
 
 	my $latest = $db->select(
 		'journeys_str',
@@ -728,12 +730,14 @@ sub get_latest {
 		}
 	)->expand->hash;
 
-	$latest->{visibility_str}
-	  = $latest->{visibility}
-	  ? $visibility_itoa{ $latest->{visibility} }
-	  : 'default';
-	$latest->{effective_visibility_str}
-	  = $visibility_itoa{ $latest->{effective_visibility} };
+	if ($latest) {
+		$latest->{visibility_str}
+		  = $latest->{visibility}
+		  ? $visibility_itoa{ $latest->{visibility} }
+		  : 'default';
+		$latest->{effective_visibility_str}
+		  = $visibility_itoa{ $latest->{effective_visibility} };
+	}
 
 	return ( $latest_successful, $latest );
 }
