@@ -1446,10 +1446,18 @@ sub startup {
 				  = scalar @{ $ret->{route_after} }
 				  ? $ret->{route_after}[0][0]
 				  : undef;
-				my $stop_before_dest
-				  = scalar @{ $ret->{route_after} }
-				  ? $ret->{route_after}[-1][0]
-				  : undef;
+				my $stop_before_dest;
+				for my $i ( 1 .. $#{ $ret->{route_after} } ) {
+					if (    $ret->{arr_name}
+						and $ret->{route_after}[$i][0] eq $ret->{arr_name} )
+					{
+						$stop_before_dest = $ret->{route_after}[ $i - 1 ][0];
+						last;
+					}
+				}
+
+				say $stop_after_dep;
+				say $stop_before_dest;
 
 				my ($dep_platform_number)
 				  = ( ( $ret->{dep_platform} // 0 ) =~ m{(\d+)} );
