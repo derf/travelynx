@@ -134,6 +134,135 @@ sub delete_incomplete_checkins {
 		{ checkin_time => { '<', $opt{earlier_than} } } )->rows;
 }
 
+sub postprocess {
+	my ( $self, $ret ) = @_;
+	my $now   = DateTime->now( time_zone => 'Europe/Berlin' );
+	my $epoch = $now->epoch;
+	my @route = @{ $ret->{route} // [] };
+	my @route_after;
+	my $dep_info;
+	my $is_after = 0;
+
+	for my $station (@route) {
+		if ($is_after) {
+			push( @route_after, $station );
+		}
+		if (    $ret->{dep_name}
+			and $station->[0] eq $ret->{dep_name} )
+		{
+			$is_after = 1;
+			if ( @{$station} > 1 and not $dep_info ) {
+				$dep_info = $station->[2];
+			}
+		}
+	}
+
+	my $ts          = $ret->{checkout_ts} // $ret->{checkin_ts};
+	my $action_time = epoch_to_dt($ts);
+
+	$ret->{checked_in}         = !$ret->{cancelled};
+	$ret->{timestamp}          = $action_time;
+	$ret->{timestamp_delta}    = $now->epoch - $action_time->epoch;
+	$ret->{boarding_countdown} = -1;
+	$ret->{sched_departure}    = epoch_to_dt( $ret->{sched_dep_ts} );
+	$ret->{real_departure}     = epoch_to_dt( $ret->{real_dep_ts} );
+	$ret->{sched_arrival}      = epoch_to_dt( $ret->{sched_arr_ts} );
+	$ret->{real_arrival}       = epoch_to_dt( $ret->{real_arr_ts} );
+	$ret->{route_after}        = \@route_after;
+	$ret->{extra_data}         = $ret->{data};
+	$ret->{comment}            = $ret->{user_data}{comment};
+
+	$ret->{visibility_str}
+	  = $ret->{visibility}
+	  ? $visibility_itoa{ $ret->{visibility} }
+	  : 'default';
+	$ret->{effective_visibility_str}
+	  = $visibility_itoa{ $ret->{effective_visibility} };
+
+	my @parsed_messages;
+	for my $message ( @{ $ret->{messages} // [] } ) {
+		my ( $ts, $msg ) = @{$message};
+		push( @parsed_messages, [ epoch_to_dt($ts), $msg ] );
+	}
+	$ret->{messages} = [ reverse @parsed_messages ];
+
+	@parsed_messages = ();
+	for my $message ( @{ $ret->{extra_data}{qos_msg} // [] } ) {
+		my ( $ts, $msg ) = @{$message};
+		push( @parsed_messages, [ epoch_to_dt($ts), $msg ] );
+	}
+	$ret->{extra_data}{qos_msg} = [@parsed_messages];
+
+	if ( $dep_info and $dep_info->{sched_arr} ) {
+		$dep_info->{sched_arr}
+		  = epoch_to_dt( $dep_info->{sched_arr} );
+		$dep_info->{rt_arr}           = epoch_to_dt( $dep_info->{rt_arr} );
+		$dep_info->{rt_arr_countdown} = $ret->{boarding_countdown}
+		  = $dep_info->{rt_arr}->epoch - $epoch;
+	}
+
+	for my $station (@route_after) {
+		if ( @{$station} > 1 ) {
+
+			# Note: $station->[2]{sched_arr} may already have been
+			# converted to a DateTime object. This can happen when a
+			# station is present several times in a train's route, e.g.
+			# for Frankfurt Flughafen in some nightly connections.
+			my $times = $station->[2] // {};
+			if ( $times->{sched_arr}
+				and ref( $times->{sched_arr} ) ne 'DateTime' )
+			{
+				$times->{sched_arr}
+				  = epoch_to_dt( $times->{sched_arr} );
+				if ( $times->{rt_arr} ) {
+					$times->{rt_arr}
+					  = epoch_to_dt( $times->{rt_arr} );
+					$times->{rt_arr_countdown}
+					  = $times->{rt_arr}->epoch - $epoch;
+				}
+			}
+			if ( $times->{sched_dep}
+				and ref( $times->{sched_dep} ) ne 'DateTime' )
+			{
+				$times->{sched_dep}
+				  = epoch_to_dt( $times->{sched_dep} );
+				if ( $times->{rt_dep} ) {
+					$times->{rt_dep}
+					  = epoch_to_dt( $times->{rt_dep} );
+					$times->{rt_dep_countdown}
+					  = $times->{rt_dep}->epoch - $epoch;
+				}
+			}
+		}
+	}
+
+	$ret->{departure_countdown} = $ret->{real_departure}->epoch - $now->epoch;
+
+	if ( $ret->{real_arr_ts} ) {
+		$ret->{arrival_countdown} = $ret->{real_arrival}->epoch - $now->epoch;
+		$ret->{journey_duration}
+		  = $ret->{real_arrival}->epoch - $ret->{real_departure}->epoch;
+		$ret->{journey_completion}
+		  = $ret->{journey_duration}
+		  ? 1 - ( $ret->{arrival_countdown} / $ret->{journey_duration} )
+		  : 1;
+		if ( $ret->{journey_completion} > 1 ) {
+			$ret->{journey_completion} = 1;
+		}
+		elsif ( $ret->{journey_completion} < 0 ) {
+			$ret->{journey_completion} = 0;
+		}
+
+	}
+	else {
+		$ret->{arrival_countdown}  = undef;
+		$ret->{journey_duration}   = undef;
+		$ret->{journey_completion} = undef;
+	}
+
+	return $ret;
+}
+
 sub get {
 	my ( $self, %opt ) = @_;
 
@@ -166,157 +295,7 @@ sub get {
 	}
 
 	if ( $opt{postprocess} and $ret ) {
-		my $now   = DateTime->now( time_zone => 'Europe/Berlin' );
-		my $epoch = $now->epoch;
-		my @route = @{ $ret->{route} // [] };
-		my @route_after;
-		my $dep_info;
-		my $stop_before_dest;
-		my $is_after = 0;
-		for my $station (@route) {
-
-			if (    $ret->{arr_name}
-				and @route_after
-				and $station->[0] eq $ret->{arr_name} )
-			{
-				$stop_before_dest = $route_after[-1][0];
-			}
-			if ($is_after) {
-				push( @route_after, $station );
-			}
-			if (    $ret->{dep_name}
-				and $station->[0] eq $ret->{dep_name} )
-			{
-				$is_after = 1;
-				if ( @{$station} > 1 and not $dep_info ) {
-					$dep_info = $station->[2];
-				}
-			}
-		}
-		my $stop_after_dep = @route_after ? $route_after[0][0] : undef;
-
-		my $ts          = $ret->{checkout_ts} // $ret->{checkin_ts};
-		my $action_time = epoch_to_dt($ts);
-
-		$ret->{checked_in}         = !$ret->{cancelled};
-		$ret->{timestamp}          = $action_time;
-		$ret->{timestamp_delta}    = $now->epoch - $action_time->epoch;
-		$ret->{boarding_countdown} = -1;
-		$ret->{sched_departure}    = epoch_to_dt( $ret->{sched_dep_ts} );
-		$ret->{real_departure}     = epoch_to_dt( $ret->{real_dep_ts} );
-		$ret->{sched_arrival}      = epoch_to_dt( $ret->{sched_arr_ts} );
-		$ret->{real_arrival}       = epoch_to_dt( $ret->{real_arr_ts} );
-		$ret->{route_after}        = \@route_after;
-		$ret->{extra_data}         = $ret->{data};
-		$ret->{comment}            = $ret->{user_data}{comment};
-
-		my @parsed_messages;
-		for my $message ( @{ $ret->{messages} // [] } ) {
-			my ( $ts, $msg ) = @{$message};
-			push( @parsed_messages, [ epoch_to_dt($ts), $msg ] );
-		}
-		$ret->{messages} = [ reverse @parsed_messages ];
-
-		@parsed_messages = ();
-		for my $message ( @{ $ret->{extra_data}{qos_msg} // [] } ) {
-			my ( $ts, $msg ) = @{$message};
-			push( @parsed_messages, [ epoch_to_dt($ts), $msg ] );
-		}
-		$ret->{extra_data}{qos_msg} = [@parsed_messages];
-
-		if ( $dep_info and $dep_info->{sched_arr} ) {
-			$dep_info->{sched_arr}
-			  = epoch_to_dt( $dep_info->{sched_arr} );
-			$dep_info->{rt_arr}           = epoch_to_dt( $dep_info->{rt_arr} );
-			$dep_info->{rt_arr_countdown} = $ret->{boarding_countdown}
-			  = $dep_info->{rt_arr}->epoch - $epoch;
-		}
-
-		for my $station (@route_after) {
-			if ( @{$station} > 1 ) {
-
-				# Note: $station->[2]{sched_arr} may already have been
-				# converted to a DateTime object. This can happen when a
-				# station is present several times in a train's route, e.g.
-				# for Frankfurt Flughafen in some nightly connections.
-				my $times = $station->[2] // {};
-				if ( $times->{sched_arr}
-					and ref( $times->{sched_arr} ) ne 'DateTime' )
-				{
-					$times->{sched_arr}
-					  = epoch_to_dt( $times->{sched_arr} );
-					if ( $times->{rt_arr} ) {
-						$times->{rt_arr}
-						  = epoch_to_dt( $times->{rt_arr} );
-						$times->{rt_arr_countdown}
-						  = $times->{rt_arr}->epoch - $epoch;
-					}
-				}
-				if ( $times->{sched_dep}
-					and ref( $times->{sched_dep} ) ne 'DateTime' )
-				{
-					$times->{sched_dep}
-					  = epoch_to_dt( $times->{sched_dep} );
-					if ( $times->{rt_dep} ) {
-						$times->{rt_dep}
-						  = epoch_to_dt( $times->{rt_dep} );
-						$times->{rt_dep_countdown}
-						  = $times->{rt_dep}->epoch - $epoch;
-					}
-				}
-			}
-		}
-
-		$ret->{departure_countdown}
-		  = $ret->{real_departure}->epoch - $now->epoch;
-
-		if ( $ret->{real_arr_ts} ) {
-			$ret->{arrival_countdown}
-			  = $ret->{real_arrival}->epoch - $now->epoch;
-			$ret->{journey_duration}
-			  = $ret->{real_arrival}->epoch - $ret->{real_departure}->epoch;
-			$ret->{journey_completion}
-			  = $ret->{journey_duration}
-			  ? 1 - ( $ret->{arrival_countdown} / $ret->{journey_duration} )
-			  : 1;
-			if ( $ret->{journey_completion} > 1 ) {
-				$ret->{journey_completion} = 1;
-			}
-			elsif ( $ret->{journey_completion} < 0 ) {
-				$ret->{journey_completion} = 0;
-			}
-
-			my ($dep_platform_number)
-			  = ( ( $ret->{dep_platform} // 0 ) =~ m{(\d+)} );
-			if ( $dep_platform_number
-				and exists $ret->{data}{stationinfo_dep}{$dep_platform_number} )
-			{
-				$ret->{dep_direction} = $self->stationinfo_to_direction(
-					$ret->{data}{stationinfo_dep}{$dep_platform_number},
-					$ret->{data}{wagonorder_dep},
-					undef, $stop_after_dep
-				);
-			}
-
-			my ($arr_platform_number)
-			  = ( ( $ret->{arr_platform} // 0 ) =~ m{(\d+)} );
-			if ( $arr_platform_number
-				and exists $ret->{data}{stationinfo_arr}{$arr_platform_number} )
-			{
-				$ret->{arr_direction} = $self->stationinfo_to_direction(
-					$ret->{data}{stationinfo_arr}{$arr_platform_number},
-					$ret->{data}{wagonorder_arr},
-					$stop_before_dest, undef
-				);
-			}
-
-		}
-		else {
-			$ret->{arrival_countdown}  = undef;
-			$ret->{journey_duration}   = undef;
-			$ret->{journey_completion} = undef;
-		}
-
+		return $self->postprocess($ret);
 	}
 
 	return $ret;
@@ -347,7 +326,7 @@ sub get_timeline {
 	my $ret;
 
 	if ( $opt{with_data} ) {
-		return $res->expand->hashes->each;
+		return map { $self->postprocess($_) } $res->expand->hashes->each;
 	}
 	else {
 		return $res->hashes->each;

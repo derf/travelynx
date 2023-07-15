@@ -1442,6 +1442,42 @@ sub startup {
 					}
 				}
 
+				my $stop_after_dep
+				  = scalar @{ $ret->{route_after} }
+				  ? $ret->{route_after}[0][0]
+				  : undef;
+				my $stop_before_dest
+				  = scalar @{ $ret->{route_after} }
+				  ? $ret->{route_after}[-1][0]
+				  : undef;
+
+				my ($dep_platform_number)
+				  = ( ( $ret->{dep_platform} // 0 ) =~ m{(\d+)} );
+				if ( $dep_platform_number
+					and
+					exists $ret->{data}{stationinfo_dep}{$dep_platform_number} )
+				{
+					$ret->{dep_direction} = $self->stationinfo_to_direction(
+						$ret->{data}{stationinfo_dep}{$dep_platform_number},
+						$ret->{data}{wagonorder_dep},
+						undef, $stop_after_dep
+					);
+				}
+
+				my ($arr_platform_number)
+				  = ( ( $ret->{arr_platform} // 0 ) =~ m{(\d+)} );
+				if ( $arr_platform_number
+					and
+					exists $ret->{data}{stationinfo_arr}{$arr_platform_number} )
+				{
+					$ret->{arr_direction} = $self->stationinfo_to_direction(
+						$ret->{data}{stationinfo_arr}{$arr_platform_number},
+						$ret->{data}{wagonorder_arr},
+						$stop_before_dest,
+						undef
+					);
+				}
+
 				if (    $ret->{departure_countdown} > 0
 					and $in_transit->{data}{wagonorder_dep} )
 				{
