@@ -2201,6 +2201,7 @@ sub startup {
 	$authed_r->post('/delete')->to('account#delete');
 	$authed_r->post('/logout')->to('account#do_logout');
 	$authed_r->post('/set_token')->to('api#set_token');
+	$authed_r->get('/timeline/in-transit')->to('profile#checked_in');
 
 }
 

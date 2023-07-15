@@ -382,7 +382,13 @@ sub compute_effective_visibility {
 sub homepage {
 	my ($self) = @_;
 	if ( $self->is_user_authenticated ) {
-		my $status = $self->get_user_status;
+		my $uid      = $self->current_user->{id};
+		my $status   = $self->get_user_status;
+		my @timeline = $self->in_transit->get_timeline(
+			uid   => $uid,
+			short => 1
+		);
+		$self->stash( timeline => [@timeline] );
 		my @recent_targets;
 		if ( $status->{checked_in} ) {
 			my $journey_visibility
@@ -456,6 +462,12 @@ sub status_card {
 	my $status = $self->get_user_status;
 
 	delete $self->stash->{layout};
+
+	my @timeline = $self->in_transit->get_timeline(
+		uid   => $self->current_user->{id},
+		short => 1
+	);
+	$self->stash( timeline => [@timeline] );
 
 	if ( $status->{checked_in} ) {
 		my $journey_visibility

@@ -1,0 +1,16 @@
+<div>
+	<a href="/timeline/in-transit">
+	% if (@{$timeline} <= 2) {
+		<strong><%= $timeline->[0]->{followee_name} %></strong>
+	% }
+	% if (@{$timeline} == 1) {
+		ist gerade unterwegs
+	% }
+	% elsif (@{$timeline} == 2) {
+		und <strong><%= $timeline->[1]->{followee_name} %></strong> sind gerade unterwegs
+	% }
+	% else {
+		<strong><%= scalar @{$timeline} %></strong> Accounts sind gerade unterwegs
+	% }
+	</a>
+</div>

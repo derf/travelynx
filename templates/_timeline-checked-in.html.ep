@@ -1,0 +1,7 @@
+% for my $journey (@{$journeys}) {
+	<div class="row">
+		<div class="col s12 autorefresh">
+			%= include '_public_status_card', name => $journey->{followee_name}, privacy => {}, journey => $journey, from_timeline => 1
+		</div>
+	</div>
+% }

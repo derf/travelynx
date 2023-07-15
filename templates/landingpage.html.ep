@@ -18,6 +18,9 @@
 				%= include '_checked_in', journey => $status, journey_visibility => stash('journey_visibility');
 			% }
 			% elsif ($status->{cancelled}) {
+				% if ( @{stash('timeline') // [] } ) {
+					%= include '_timeline_link', timeline => stash('timeline')
+				% }
 				<div class="card info-color">
 					<div class="card-content">
 						<span class="card-title">Zugausfall dokumentieren</span>
@@ -45,6 +48,9 @@
 				</div>
 			% }
 			% else {
+				% if ( @{stash('timeline') // [] } ) {
+					%= include '_timeline_link', timeline => stash('timeline')
+				% }
 				<div class="card">
 					<div class="card-content">
 						<span class="card-title">Hallo, <%= current_user->{name} %>!</span>

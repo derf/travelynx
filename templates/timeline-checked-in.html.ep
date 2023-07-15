@@ -1,0 +1,3 @@
+<div class="timeline-in-transit">
+	%= include '_timeline-checked-in', journeys => $journeys
+</div>

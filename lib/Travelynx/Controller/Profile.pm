@@ -546,4 +546,28 @@ sub status_card {
 	);
 }
 
+sub checked_in {
+	my ($self) = @_;
+
+	my $uid      = $self->current_user->{id};
+	my @journeys = $self->in_transit->get_timeline(
+		uid       => $uid,
+		with_data => 1
+	);
+
+	if ( $self->param('ajax') ) {
+		delete $self->stash->{layout};
+		$self->render(
+			'_timeline-checked-in',
+			journeys => [@journeys],
+		);
+	}
+	else {
+		$self->render(
+			'timeline-checked-in',
+			journeys => [@journeys],
+		);
+	}
+}
+
 1;

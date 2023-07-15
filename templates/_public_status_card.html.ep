@@ -7,6 +7,9 @@
 				% if (stash('from_profile')) {
 					Unterwegs mit <%= include '_format_train', journey => $journey %>
 				% }
+				% elsif (stash('from_timeline')) {
+					<a href="/p/<%= $name %>"><%= $name %></a>: <%= include '_format_train', journey => $journey %>
+				% }
 				% else {
 					<a href="/p/<%= $name %>"><%= $name %></a> ist unterwegs
 				% }
@@ -16,7 +19,7 @@
 				<p>„<%= $journey->{comment} %>“</p>
 			% }
 			<p>
-				% if (not stash('from_profile')) {
+				% if (not stash('from_profile') and not stash('from_timeline')) {
 					<div class="center-align">
 						%= include '_format_train', journey => $journey
 					</div>

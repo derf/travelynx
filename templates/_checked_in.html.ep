@@ -1,4 +1,7 @@
 % my $user = current_user();
+% if (@{stash('timeline') // []}) {
+	%= include '_timeline_link', timeline => stash('timeline')
+% }
 <div class="autorefresh">
 	<div class="card">
 		<div class="card-content">
