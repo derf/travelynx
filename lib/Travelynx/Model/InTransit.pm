@@ -154,6 +154,38 @@ sub get {
 	return $ret;
 }
 
+sub get_timeline {
+	my ( $self, %opt ) = @_;
+
+	my $uid = $opt{uid};
+	my $db  = $opt{db} // $self->{pg}->db;
+
+	my $where = {
+		follower_id          => $uid,
+		effective_visibility => { '>=', 30 }
+	};
+
+	if ( $opt{short} ) {
+		return $db->select(
+			'follows_in_transit',
+			[
+				qw(followee_name train_type train_line train_no dep_eva dep_name arr_eva arr_name)
+			],
+			$where
+		)->hashes->each;
+	}
+
+	my $res = $db->select( 'follows_in_transit', '*', $where );
+	my $ret;
+
+	if ( $opt{with_data} ) {
+		return $res->expand->hashes->each;
+	}
+	else {
+		return $res->hashes->each;
+	}
+}
+
 sub get_all_active {
 	my ( $self, %opt ) = @_;
 	my $db = $opt{db} // $self->{pg}->db;
