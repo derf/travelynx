@@ -330,7 +330,7 @@ sub get_timeline {
 
 	my $where = {
 		follower_id          => $uid,
-		effective_visibility => { '>=', 30 }
+		effective_visibility => { '>=', 60 }
 	};
 
 	if ( $opt{short} ) {
