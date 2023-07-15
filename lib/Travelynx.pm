@@ -123,10 +123,10 @@ sub startup {
 		before_dispatch => sub {
 			my ($self) = @_;
 
-           # The "theme" cookie is set client-side if the theme we delivered was
-           # changed by dark mode detection or by using the theme switcher. It's
-           # not part of Mojolicious' session data (and can't be, due to
-           # signing and HTTPOnly), so we need to add it here.
+			# The "theme" cookie is set client-side if the theme we delivered was
+			# changed by dark mode detection or by using the theme switcher. It's
+			# not part of Mojolicious' session data (and can't be, due to
+			# signing and HTTPOnly), so we need to add it here.
 			for my $cookie ( @{ $self->req->cookies } ) {
 				if ( $cookie->name eq 'theme' ) {
 					$self->session( theme => $cookie->value );
@@ -171,8 +171,8 @@ sub startup {
 		}
 	);
 
-# https://de.wikipedia.org/wiki/Liste_nach_Gemeinden_und_Regionen_benannter_IC/ICE-Fahrzeuge#Namensgebung_ICE-Triebz%C3%BCge_nach_Gemeinden
-# via https://github.com/marudor/bahn.expert/blob/main/src/server/coachSequence/TrainNames.ts
+	# https://de.wikipedia.org/wiki/Liste_nach_Gemeinden_und_Regionen_benannter_IC/ICE-Fahrzeuge#Namensgebung_ICE-Triebz%C3%BCge_nach_Gemeinden
+	# via https://github.com/marudor/bahn.expert/blob/main/src/server/coachSequence/TrainNames.ts
 	$self->attr(
 		ice_name => sub {
 			my $id_to_name = JSON->new->utf8->decode(
@@ -645,15 +645,15 @@ sub startup {
 
 			my $new_checkout_station_id = $status->{station_eva};
 
-          # When a checkout is triggered by a checkin, there is an edge case
-          # with related stations.
-          # Assume a user travels from A to B1, then from B2 to C. B1 and B2 are
-          # relatd stations (e.g. "Frankfurt Hbf" and "Frankfurt Hbf(tief)").
-          # Now, if they check in for the journey from B2 to C, and have not yet
-          # checked out of the previous train, $train is undef as B2 is not B1.
-          # Redo the request with with_related => 1 to avoid this case.
-          # While at it, we increase the lookahead to handle long journeys as
-          # well.
+			# When a checkout is triggered by a checkin, there is an edge case
+			# with related stations.
+			# Assume a user travels from A to B1, then from B2 to C. B1 and B2 are
+			# relatd stations (e.g. "Frankfurt Hbf" and "Frankfurt Hbf(tief)").
+			# Now, if they check in for the journey from B2 to C, and have not yet
+			# checked out of the previous train, $train is undef as B2 is not B1.
+			# Redo the request with with_related => 1 to avoid this case.
+			# While at it, we increase the lookahead to handle long journeys as
+			# well.
 			if ( not $train ) {
 				$status = $self->iris->get_departures(
 					station      => $station,
@@ -692,9 +692,9 @@ sub startup {
 
 			if ( not defined $train ) {
 
-               # Arrival time via IRIS is unknown, so the train probably has not
-               # arrived yet. Fall back to HAFAS.
-               # TODO support cases where $station is EVA or DS100 code
+				# Arrival time via IRIS is unknown, so the train probably has not
+				# arrived yet. Fall back to HAFAS.
+				# TODO support cases where $station is EVA or DS100 code
 				if (
 					my $station_data
 					= List::Util::first { $_->[0] eq $station }
@@ -805,13 +805,13 @@ sub startup {
 				}
 				elsif ( defined $train and $train->arrival_is_cancelled ) {
 
-               # This branch is only taken if the deparure was not cancelled,
-               # i.e., if the train was supposed to go here but got
-               # redirected or cancelled on the way and not from the start on.
-               # If the departure itself was cancelled, the user route is
-               # cancelled_from action -> 'cancelled journey' panel on main page
-               # -> cancelled_to action -> force checkout (causing the
-               # previous branch to be taken due to $force)
+					# This branch is only taken if the deparure was not cancelled,
+					# i.e., if the train was supposed to go here but got
+					# redirected or cancelled on the way and not from the start on.
+					# If the departure itself was cancelled, the user route is
+					# cancelled_from action -> 'cancelled journey' panel on main page
+					# -> cancelled_to action -> force checkout (causing the
+					# previous branch to be taken due to $force)
 					$journey->{cancelled} = 1;
 					$self->journeys->add_from_in_transit(
 						db      => $db,
@@ -946,8 +946,8 @@ sub startup {
 
 			my $db = $self->pg->db;
 
-# TODO "with_timestamps" is misleading, there are more differences between in_transit and in_transit_str
-# Here it's only needed because of dep_eva / arr_eva names
+			# TODO "with_timestamps" is misleading, there are more differences between in_transit and in_transit_str
+			# Here it's only needed because of dep_eva / arr_eva names
 			my $in_transit = $self->in_transit->get(
 				db              => $db,
 				uid             => $uid,
@@ -982,19 +982,19 @@ sub startup {
 					  my $suggestion ( @{ $trainsearch->{suggestions} // [] } )
 					{
 
-       # Drunken API, sail with care. Both date formats are used interchangeably
+						# Drunken API, sail with care. Both date formats are used interchangeably
 						if (
 							$suggestion->{depDate}
 							and (  $suggestion->{depDate} eq $date_yy
 								or $suggestion->{depDate} eq $date_yyyy )
 						  )
 						{
-            # Train numbers are not unique, e.g. IC 149 refers both to the
-            # InterCity service Amsterdam -> Berlin and to the InterCity service
-            # Koebenhavns Lufthavn st -> Aarhus.  One workaround is making
-            # requests with the stationFilter=80 parameter.  Checking the origin
-            # station seems to be the more generic solution, so we do that
-            # instead.
+							# Train numbers are not unique, e.g. IC 149 refers both to the
+							# InterCity service Amsterdam -> Berlin and to the InterCity service
+							# Koebenhavns Lufthavn st -> Aarhus.  One workaround is making
+							# requests with the stationFilter=80 parameter.  Checking the origin
+							# station seems to be the more generic solution, so we do that
+							# instead.
 							if ( $suggestion->{dep} eq $train->origin ) {
 								$result = $suggestion;
 								last;
@@ -1007,11 +1007,11 @@ sub startup {
 						return Mojo::Promise->reject("trainlink not found");
 					}
 
-                 # Calculate and store trip_id.
-                 # The trip_id's date part doesn't seem to matter -- so far,
-                 # HAFAS is happy as long as the date part starts with a number.
-                 # HAFAS-internal tripIDs use this format (withouth leading zero
-                 # for day of month < 10) though, so let's stick with it.
+					# Calculate and store trip_id.
+					# The trip_id's date part doesn't seem to matter -- so far,
+					# HAFAS is happy as long as the date part starts with a number.
+					# HAFAS-internal tripIDs use this format (withouth leading zero
+					# for day of month < 10) though, so let's stick with it.
 					my $date_map = $date_yyyy;
 					$date_map =~ tr{.}{}d;
 					my $trip_id = sprintf( '1|%d|%d|%d|%s',
@@ -1965,16 +1965,16 @@ sub startup {
 					next;
 				}
 
-          # Manual journey entries are only included if one of the following
-          # conditions is satisfied:
-          # * their route has more than two elements (-> probably more than just
-          #   start and stop station), or
-          # * $include_manual is true (-> user wants to see incomplete routes)
-          # This avoids messing up the map in case an A -> B connection has been
-          # tracked both with a regular checkin (-> detailed route shown on map)
-          # and entered manually (-> beeline also shown on map, typically
-          # significantly differs from detailed route) -- unless the user
-          # sets include_manual, of course.
+				# Manual journey entries are only included if one of the following
+				# conditions is satisfied:
+				# * their route has more than two elements (-> probably more than just
+				#   start and stop station), or
+				# * $include_manual is true (-> user wants to see incomplete routes)
+				# This avoids messing up the map in case an A -> B connection has been
+				# tracked both with a regular checkin (-> detailed route shown on map)
+				# and entered manually (-> beeline also shown on map, typically
+				# significantly differs from detailed route) -- unless the user
+				# sets include_manual, of course.
 				if (    $journey->{edited} & 0x0010
 					and @route <= 2
 					and not $include_manual )

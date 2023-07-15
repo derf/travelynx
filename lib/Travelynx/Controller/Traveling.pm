@@ -123,21 +123,21 @@ sub get_connecting_trains_p {
 						next;
 					}
 
-             # In general, this function is meant to return feasible
-             # connections. However, cancelled connections may also be of
-             # interest and are also useful for logging cancellations.
-             # To satisfy both demands with (hopefully) little confusion and
-             # UI clutter, this function returns two concatenated arrays:
-             # actual connections (ordered by actual departure time) followed
-             # by cancelled connections (ordered by scheduled departure time).
-             # This is easiest to achieve in two separate loops.
-             #
-             # Note that a cancelled train may still have a matching destination
-             # in its route_post, e.g. if it leaves out $eva due to
-             # unscheduled route changes but continues on schedule afterwards
-             # -- so it is only cancelled at $eva, not on the remainder of
-             # the route. Also note that this specific case is not yet handled
-             # properly by the cancellation logic etc.
+					# In general, this function is meant to return feasible
+					# connections. However, cancelled connections may also be of
+					# interest and are also useful for logging cancellations.
+					# To satisfy both demands with (hopefully) little confusion and
+					# UI clutter, this function returns two concatenated arrays:
+					# actual connections (ordered by actual departure time) followed
+					# by cancelled connections (ordered by scheduled departure time).
+					# This is easiest to achieve in two separate loops.
+					#
+					# Note that a cancelled train may still have a matching destination
+					# in its route_post, e.g. if it leaves out $eva due to
+					# unscheduled route changes but continues on schedule afterwards
+					# -- so it is only cancelled at $eva, not on the remainder of
+					# the route. Also note that this specific case is not yet handled
+					# properly by the cancellation logic etc.
 
 					if ( $train->departure_is_cancelled ) {
 						my @via = (
@@ -158,7 +158,7 @@ sub get_connecting_trains_p {
 							{
 								push( @results, [ $train, $dest ] );
 
-                 # Show all past and up to two future departures per destination
+								# Show all past and up to two future departures per destination
 								if ( not $train->departure
 									or $train->departure->epoch >= $now )
 								{
@@ -360,7 +360,7 @@ sub get_connecting_trains_p {
 		sub {
 			my ($err) = @_;
 
-# TODO logging. HAFAS errors should never happen, IRIS errors are noteworthy too.
+			# TODO logging. HAFAS errors should never happen, IRIS errors are noteworthy too.
 			$promise->reject($err);
 			return;
 		}
@@ -632,8 +632,8 @@ sub travel_action {
 					return;
 				}
 
-            # Silently ignore errors -- if they are permanent, the user will see
-            # them when selecting the destination manually.
+				# Silently ignore errors -- if they are permanent, the user will see
+				# them when selecting the destination manually.
 				my ( $still_checked_in, undef ) = $self->checkout(
 					station => $destination,
 					force   => 0
@@ -1035,10 +1035,10 @@ sub commute {
 				$candidate_count{ $journey->{from_name} }++;
 			}
 			else {
-               # Avoid selecting an intermediate station for multi-leg commutes.
-               # Assumption: The intermediate station is also used for private
-               # travels -> penalize stations which are used on weekends or at
-               # unexpected times.
+				# Avoid selecting an intermediate station for multi-leg commutes.
+				# Assumption: The intermediate station is also used for private
+				# travels -> penalize stations which are used on weekends or at
+				# unexpected times.
 				$candidate_count{ $journey->{from_name} }--;
 				$candidate_count{ $journey->{to_name} }--;
 			}
