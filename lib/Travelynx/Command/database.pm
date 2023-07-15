@@ -1132,8 +1132,8 @@ my @migrations = (
 		);
 	},
 
-# v27 -> v28
-# add ds100, name, and lat/lon from stations table to journeys_str / in_transit_str
+	# v27 -> v28
+	# add ds100, name, and lat/lon from stations table to journeys_str / in_transit_str
 	sub {
 		my ($db) = @_;
 		$db->query(
@@ -1213,12 +1213,12 @@ my @migrations = (
 		);
 	},
 
-# v29 -> v30
-# change layout of stops in in_transit and journeys "route" lists.
-# Old layout: A mixture of [name, {data}, undef/"additional"/"cancelled"], [name, timestamp, timestamp], and [name]
-# New layout: [name, eva, {data including isAdditional/isCancelled}]
-# Combined with a maintenance task that adds eva IDs to past stops, this will allow for more resilience against station name changes.
-# It will also help increase the performance of distance and map calculation
+	# v29 -> v30
+	# change layout of stops in in_transit and journeys "route" lists.
+	# Old layout: A mixture of [name, {data}, undef/"additional"/"cancelled"], [name, timestamp, timestamp], and [name]
+	# New layout: [name, eva, {data including isAdditional/isCancelled}]
+	# Combined with a maintenance task that adds eva IDs to past stops, this will allow for more resilience against station name changes.
+	# It will also help increase the performance of distance and map calculation
 	sub {
 		my ($db) = @_;
 		my $json = JSON->new;
