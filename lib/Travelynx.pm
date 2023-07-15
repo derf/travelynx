@@ -1456,9 +1456,6 @@ sub startup {
 					}
 				}
 
-				say $stop_after_dep;
-				say $stop_before_dest;
-
 				my ($dep_platform_number)
 				  = ( ( $ret->{dep_platform} // 0 ) =~ m{(\d+)} );
 				if ( $dep_platform_number
