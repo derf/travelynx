@@ -129,6 +129,15 @@ function tvly_update_public() {
 		setTimeout(tvly_update_public, 5000);
 	});
 }
+function tvly_update_timeline() {
+	$.get('/timeline/in-transit', {ajax: 1}, function(data) {
+		$('.timeline-in-transit').html(data);
+		setTimeout(tvly_update_timeline, 60000);
+	}).fail(function() {
+		$('.sync-failed-marker').css('display', 'block');
+		setTimeout(tvly_update_timeline, 10000);
+	});
+}
 function tvly_journey_progress() {
 	var now = Date.now() / 1000;
 	var progress = 0;
@@ -276,6 +285,9 @@ $(document).ready(function() {
 		upd_journey_data();
 		setTimeout(tvly_update_public, 40000);
 		setTimeout(tvly_journey_progress, 5000);
+	}
+	if ($('.timeline-in-transit .autorefresh').length) {
+		setTimeout(tvly_update_timeline, 60000);
 	}
 	$('a[href]').click(function() {
 		$('nav .preloader-wrapper').addClass('active');
