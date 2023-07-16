@@ -5,3 +5,10 @@
 		</div>
 	</div>
 % }
+% if (not @{$journeys}) {
+	<div class="row">
+		<div class="col s12 autorefresh center-align">
+			<i>Gerade sind keine Accounts mit für dich sichtbaren Checkins unterwegs</i>
+		</div>
+	</div>
+% }
