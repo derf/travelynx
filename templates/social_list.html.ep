@@ -2,10 +2,10 @@
 %= csrf_field
 %= hidden_field redirect_to => '/account'
 % my $count = scalar @{$entries};
-% if ($type eq 'follow-requests') {
+% if ($type eq 'follow-requests-received') {
 	<div class="row">
 		<div class="col s12">
-			<h2>Folge-Anfragen</h2>
+			<h2>Erhaltene Folge-Anfragen</h2>
 		</div>
 	</div>
 	% if ($notifications) {
@@ -51,6 +51,18 @@
 		</div>
 	</div>
 	-->
+% }
+% elsif ($type eq 'follow-requests-sent') {
+	<div class="row">
+		<div class="col s12">
+			<h2>Gestellte Folge-Anfragen</h2>
+		</div>
+	</div>
+	<div class="row center-align">
+		<div class="col s12">
+			<i class="material-icons">cancel</i><br/> Zurücknehmen
+		</div>
+	</div>
 % }
 % elsif ($type eq 'followers') {
 	<div class="row">
@@ -168,7 +180,7 @@
 				% for my $entry (@{$entries}) {
 					<tr>
 						<td><a href="/p/<%= $entry->{name} %>"><%= $entry->{name} %></a></td>
-						% if ($type eq 'follow-requests') {
+						% if ($type eq 'follow-requests-received') {
 							<td class="right-align">
 								<button class="btn-flat waves-effect waves-light" type="submit" name="block" value="<%= $entry->{id} %>">
 									<i class="material-icons" aria-label="blockieren">block</i>
@@ -182,6 +194,13 @@
 							<td class="right-align">
 								<button class="btn-flat waves-effect waves-light" type="submit" name="accept_follow_request" value="<%= $entry->{id} %>">
 									<i class="material-icons" aria-label="annehmen">check</i>
+								</button>
+							</td>
+						% }
+						% elsif ($type eq 'follow-requests-sent') {
+							<td class="right-align">
+								<button class="btn-flat waves-effect waves-light" type="submit" name="cancel_follow_request" value="<%= $entry->{id} %>">
+									<i class="material-icons" aria-label="zurücknehmen">cancel</i>
 								</button>
 							</td>
 						% }

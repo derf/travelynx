@@ -809,8 +809,8 @@ sub get_relation {
 	}
 	return;
 
-   #my $res_h = $db->select( 'relations', ['subject_id', 'predicate'],
-   #	{ subject_id => [$uid, $target], object_id => [$target, $target] } )->hash;
+	#my $res_h = $db->select( 'relations', ['subject_id', 'predicate'],
+	#	{ subject_id => [$uid, $target], object_id => [$target, $target] } )->hash;
 }
 
 sub update_notifications {
@@ -1096,11 +1096,12 @@ sub has_followers {
 sub get_follow_requests {
 	my ( $self, %opt ) = @_;
 
-	my $db  = $opt{db} // $self->{pg}->db;
-	my $uid = $opt{uid};
+	my $db    = $opt{db} // $self->{pg}->db;
+	my $uid   = $opt{uid};
+	my $table = $opt{sent} ? 'tx_follow_requests' : 'rx_follow_requests';
 
 	my $res
-	  = $db->select( 'follow_requests', [ 'id', 'name' ], { self_id => $uid } );
+	  = $db->select( $table, [ 'id', 'name' ], { self_id => $uid } );
 
 	return $res->hashes->each;
 }
@@ -1108,11 +1109,12 @@ sub get_follow_requests {
 sub has_follow_requests {
 	my ( $self, %opt ) = @_;
 
-	my $db  = $opt{db} // $self->{pg}->db;
-	my $uid = $opt{uid};
+	my $db    = $opt{db} // $self->{pg}->db;
+	my $uid   = $opt{uid};
+	my $table = $opt{sent} ? 'tx_follow_requests' : 'rx_follow_requests';
 
-	return $db->select( 'follow_requests', 'count(*) as count',
-		{ self_id => $uid } )->hash->{count};
+	return $db->select( $table, 'count(*) as count', { self_id => $uid } )
+	  ->hash->{count};
 }
 
 sub get_followees {

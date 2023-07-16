@@ -1761,6 +1761,25 @@ my @migrations = (
 		}
 		);
 	},
+
+	# v42 -> v43
+	# list sent and received follow requests
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				alter view follow_requests rename to rx_follow_requests;
+				create view tx_follow_requests as select
+					relations.subject_id as self_id,
+					users.id as id,
+					users.name as name
+					from relations
+					join users on relations.object_id = users.id
+					where predicate = 2;
+				update schema_version set version = 43;
+			}
+		);
+	},
 );
 
 # TODO add 'hafas' column to in_transit (and maybe journeys? undo/redo needs something to work with...)

@@ -547,12 +547,24 @@ sub social_list {
 	my $kind = $self->stash('kind');
 	my $user = $self->current_user;
 
-	if ( $kind eq 'follow-requests' ) {
+	if ( $kind eq 'follow-requests-received' ) {
 		my @follow_reqs
 		  = $self->users->get_follow_requests( uid => $user->{id} );
 		$self->render(
 			'social_list',
-			type          => 'follow-requests',
+			type          => 'follow-requests-received',
+			entries       => [@follow_reqs],
+			notifications => $user->{notifications},
+		);
+	}
+	elsif ( $kind eq 'follow-requests-sent' ) {
+		my @follow_reqs = $self->users->get_follow_requests(
+			uid  => $user->{id},
+			sent => 1
+		);
+		$self->render(
+			'social_list',
+			type          => 'follow-requests-sent',
 			entries       => [@follow_reqs],
 			notifications => $user->{notifications},
 		);
@@ -994,10 +1006,10 @@ sub change_name {
 			return;
 		}
 
-       # The users table has a unique constraint on the "name" column, so having
-       # two users with the same name is not possible. The race condition
-       # between the user_name_exists check in is_name_invalid and this
-       # change_name call is harmless.
+		# The users table has a unique constraint on the "name" column, so having
+		# two users with the same name is not possible. The race condition
+		# between the user_name_exists check in is_name_invalid and this
+		# change_name call is harmless.
 		my $success = $self->users->change_name(
 			uid  => $self->current_user->{id},
 			name => $new_name
@@ -1240,20 +1252,25 @@ sub confirm_mail {
 }
 
 sub account {
-	my ($self)          = @_;
-	my $uid             = $self->current_user->{id};
-	my $follow_requests = $self->users->has_follow_requests( uid => $uid );
-	my $followers       = $self->users->has_followers( uid => $uid );
-	my $following       = $self->users->has_followees( uid => $uid );
-	my $blocked         = $self->users->has_blocked_users( uid => $uid );
+	my ($self)             = @_;
+	my $uid                = $self->current_user->{id};
+	my $rx_follow_requests = $self->users->has_follow_requests( uid => $uid );
+	my $tx_follow_requests = $self->users->has_follow_requests(
+		uid  => $uid,
+		sent => 1
+	);
+	my $followers = $self->users->has_followers( uid => $uid );
+	my $following = $self->users->has_followees( uid => $uid );
+	my $blocked   = $self->users->has_blocked_users( uid => $uid );
 
 	$self->render(
 		'account',
-		api_token           => $self->users->get_api_token( uid => $uid ),
-		num_follow_requests => $follow_requests,
-		num_followers       => $followers,
-		num_following       => $following,
-		num_blocked         => $blocked,
+		api_token              => $self->users->get_api_token( uid => $uid ),
+		num_rx_follow_requests => $rx_follow_requests,
+		num_tx_follow_requests => $tx_follow_requests,
+		num_followers          => $followers,
+		num_following          => $following,
+		num_blocked            => $blocked,
 	);
 	$self->users->mark_seen( uid => $uid );
 }

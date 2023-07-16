@@ -92,10 +92,10 @@
 					% }
 					% elsif ($acc->{accept_follow_requests}) {
 						<span>Accounts können dir auf Anfrage folgen
-						% if ($num_follow_requests == 1) {
+						% if ($num_rx_follow_requests == 1) {
 							– <a href="/account/social/follow-requests"><strong>eine</strong> offene Anfrage</a>
-						% } elsif ($num_follow_requests) {
-							– <a href="/account/social/follow-requests"><strong><%= $num_follow_requests %></strong> offene Anfragen</a>
+						% } elsif ($num_rx_follow_requests) {
+							– <a href="/account/social/follow-requests"><strong><%= $num_rx_follow_requests %></strong> offene Anfragen</a>
 						% }
 						</span>
 					% }
@@ -179,7 +179,7 @@
 	</div>
 </div>
 
-% if ($num_follow_requests or $num_followers or $num_following or $num_blocked) {
+% if ($num_rx_follow_requests or $num_tx_follow_requests or $num_followers or $num_following or $num_blocked) {
 	<div class="row">
 		<div class="col s12">
 			<h2>Interaktion</h2>
@@ -190,14 +190,24 @@
 				<tr>
 					<th scope="row">Anfragen</th>
 					<td>
-						% if ($num_follow_requests == 0) {
-							<span style="color: #999999;">keine offen</span>
+						% if ($num_rx_follow_requests == 0) {
+							<span style="color: #999999;">keine eingehend</span>
 						% }
-						% elsif ($num_follow_requests == 1) {
-							<a href="/account/social/follow-requests"><strong>ein</strong> Account</a>
+						% elsif ($num_rx_follow_requests == 1) {
+							<a href="/account/social/follow-requests-received"><strong>eine</strong> eingehend</a>
 						% }
 						% else {
-							<a href="/account/social/follow-requests"><strong><%= $num_follow_requests %></strong> Accounts</a>
+							<a href="/account/social/follow-requests-received"><strong><%= $num_rx_follow_requests %></strong> eingehend</a>
+						% }
+						<br/>
+						% if ($num_tx_follow_requests == 0) {
+							<span style="color: #999999;">keine ausgehend</span>
+						% }
+						% elsif ($num_tx_follow_requests == 1) {
+							<a href="/account/social/follow-requests-sent"><strong>eine</strong> ausgehend</a>
+						% }
+						% else {
+							<a href="/account/social/follow-requests-sent"><strong><%= $num_tx_follow_requests %></strong> ausgehend</a>
 						% }
 					</td>
 				</tr>
