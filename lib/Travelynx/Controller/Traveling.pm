@@ -621,6 +621,14 @@ sub travel_action {
 
 	if ( $params->{action} eq 'checkin' ) {
 
+		my $status = $self->get_user_status;
+		if (    $status->{checked_in}
+			and $status->{arr_eva}
+			and $status->{arrival_countdown} <= 0 )
+		{
+			$self->checkout( station => $status->{arr_eva} );
+		}
+
 		$self->render_later;
 		$self->checkin_p(
 			station  => $params->{station},
