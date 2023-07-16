@@ -409,8 +409,7 @@ sub homepage {
 							connections        => $connecting_trains,
 							transit_fyi        => $transit_fyi,
 						);
-						$self->users->mark_seen(
-							uid => $self->current_user->{id} );
+						$self->users->mark_seen( uid => $uid );
 					}
 				)->catch(
 					sub {
@@ -419,8 +418,7 @@ sub homepage {
 							user_status        => $status,
 							journey_visibility => $journey_visibility,
 						);
-						$self->users->mark_seen(
-							uid => $self->current_user->{id} );
+						$self->users->mark_seen( uid => $uid );
 					}
 				)->wait;
 				return;
@@ -428,17 +426,16 @@ sub homepage {
 			else {
 				$self->render(
 					'landingpage',
-					user_status => $status,
+					user_status        => $status,
 					journey_visibility => $journey_visibility,
 				);
-				$self->users->mark_seen( uid => $self->current_user->{id} );
+				$self->users->mark_seen( uid => $uid );
 				return;
 			}
 		}
 		else {
 			@recent_targets = uniq_by { $_->{eva} }
-			$self->journeys->get_latest_checkout_stations(
-				uid => $self->current_user->{id} );
+			$self->journeys->get_latest_checkout_stations( uid => $uid );
 		}
 		$self->render(
 			'landingpage',
@@ -447,13 +444,10 @@ sub homepage {
 			with_autocomplete => 1,
 			with_geolocation  => 1
 		);
-		$self->users->mark_seen( uid => $self->current_user->{id} );
+		$self->users->mark_seen( uid => $uid );
 	}
 	else {
-		$self->render(
-			'landingpage',
-			intro   => 1
-		);
+		$self->render( 'landingpage', intro => 1 );
 	}
 }
 
@@ -912,7 +906,7 @@ sub station {
 							user_status      => $user_status,
 							can_check_out    => $can_check_out,
 							connections      => $connecting_trains,
-							title   => "travelynx: $status->{station_name}",
+							title => "travelynx: $status->{station_name}",
 						);
 					}
 				)->catch(
@@ -926,7 +920,7 @@ sub station {
 							related_stations => $status->{related_stations},
 							user_status      => $user_status,
 							can_check_out    => $can_check_out,
-							title   => "travelynx: $status->{station_name}",
+							title => "travelynx: $status->{station_name}",
 						);
 					}
 				)->wait;
@@ -966,7 +960,7 @@ sub station {
 			}
 		}
 	)->wait;
-	$self->users->mark_seen( uid => $self->current_user->{id} );
+	$self->users->mark_seen( uid => $uid );
 }
 
 sub redirect_to_station {
@@ -1309,10 +1303,10 @@ sub year_in_review {
 
 	$self->render(
 		'year_in_review',
-		title   => "travelynx Jahresrückblick $year",
-		year    => $year,
-		stats   => $stats,
-		review  => $review,
+		title  => "travelynx Jahresrückblick $year",
+		year   => $year,
+		stats  => $stats,
+		review => $review,
 	);
 
 }
