@@ -1,7 +1,4 @@
 % my $user = current_user();
-% if (@{stash('timeline') // []}) {
-	%= include '_timeline_link', timeline => stash('timeline')
-% }
 <div class="autorefresh">
 	<div class="card">
 		<div class="card-content">
@@ -304,6 +301,9 @@
 			% }
 		</div>
 	</div>
+	% if (@{stash('timeline') // []}) {
+		%= include '_timeline_link', timeline => stash('timeline'), from_checkin => 1
+	% }
 	% if ($journey->{arr_name}) {
 		<div class="card" style="margin-top: 3em;">
 			<div class="card-content">

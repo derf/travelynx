@@ -4,13 +4,13 @@
 		<strong><%= $timeline->[0]->{followee_name} %></strong>
 	% }
 	% if (@{$timeline} == 1) {
-		ist gerade unterwegs
+		ist gerade <%= stash('from_checkin') ? 'auch' : q{} %> unterwegs
 	% }
 	% elsif (@{$timeline} == 2) {
-		und <strong><%= $timeline->[1]->{followee_name} %></strong> sind gerade unterwegs
+		und <strong><%= $timeline->[1]->{followee_name} %></strong> sind gerade <%= stash('from_checkin') ? 'auch' : q{} %>unterwegs
 	% }
 	% else {
-		<strong><%= scalar @{$timeline} %></strong> Accounts sind gerade unterwegs
+		<strong><%= scalar @{$timeline} %></strong> Accounts sind gerade <%= stash('from_checkin') ? 'auch' : q{} %>unterwegs
 	% }
 	</a>
 </div>
