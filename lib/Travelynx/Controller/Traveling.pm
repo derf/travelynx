@@ -799,6 +799,18 @@ sub station {
 	my ($self)  = @_;
 	my $station = $self->stash('station');
 	my $train   = $self->param('train');
+	my $uid     = $self->current_user->{id};
+
+	my @timeline = $self->in_transit->get_timeline(
+		uid   => $uid,
+		short => 1
+	);
+	my %checkin_by_train;
+	for my $checkin (@timeline) {
+		say $checkin->{train_id};
+		push( @{ $checkin_by_train{ $checkin->{train_id} } }, $checkin );
+	}
+	$self->stash( checkin_by_train => \%checkin_by_train );
 
 	$self->render_later;
 

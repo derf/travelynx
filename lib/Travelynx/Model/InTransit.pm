@@ -316,7 +316,7 @@ sub get_timeline {
 		return $db->select(
 			'follows_in_transit',
 			[
-				qw(followee_name train_type train_line train_no dep_eva dep_name arr_eva arr_name)
+				qw(followee_name train_type train_line train_no train_id dep_eva dep_name arr_eva arr_name)
 			],
 			$where
 		)->hashes->each;

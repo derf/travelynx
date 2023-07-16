@@ -31,6 +31,9 @@
 			<a>
 				<%= $result->destination %>
 			</a>
+			% for my $checkin (@{$checkin_by_train->{$result->train_id} // []}) {
+				<br/>(<%= $checkin->{followee_name} %> → <%= $checkin->{arr_name} // '???' %>)
+			% }
 		</td>
 		<td class="<%= $td_class %>">
 			% if ($result->departure_hidden) {
