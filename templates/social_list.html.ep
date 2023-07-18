@@ -130,7 +130,10 @@
 		</div>
 	</div>
 	<div class="row center-align">
-		<div class="col s12">
+		<div class="col s6">
+			<i class="material-icons">group</i><br/> Folgt dir
+		</div>
+		<div class="col s6">
 			<i class="material-icons">remove</i><br/> Nicht mehr folgen
 		</div>
 	</div>
@@ -230,6 +233,11 @@
 							</td>
 						% }
 						% elsif ($type eq 'follows') {
+							<td class="right-align">
+								% if ($entry->{following_back}) {
+									<i class="material-icons" aria-label="ihr folgt euch gegenseitig">group</i>
+								% }
+							</td>
 							<td class="right-align">
 								<button class="btn-flat waves-effect waves-light" type="submit" name="unfollow" value="<%= $entry->{id} %>">
 									<i class="material-icons" aria-label="entfolgen">remove</i>

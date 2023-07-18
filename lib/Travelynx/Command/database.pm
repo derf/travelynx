@@ -1780,6 +1780,29 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v43 -> v44
+	# show inverse relation in followees as well
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				drop view followees;
+				create view followees as select
+					relations.subject_id as self_id,
+					users.id as id,
+					users.name as name,
+					r2.predicate as inverse_predicate
+					from relations
+					join users on relations.object_id = users.id
+					left join relations as r2
+					on relations.subject_id = r2.object_id
+					and relations.object_id = r2.subject_id
+					where relations.predicate = 1;
+				update schema_version set version = 44;
+			}
+		);
+	},
 );
 
 # TODO add 'hafas' column to in_transit (and maybe journeys? undo/redo needs something to work with...)

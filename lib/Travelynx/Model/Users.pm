@@ -1123,9 +1123,27 @@ sub get_followees {
 	my $db  = $opt{db} // $self->{pg}->db;
 	my $uid = $opt{uid};
 
-	my $res = $db->select( 'followees', [ 'id', 'name' ], { self_id => $uid } );
+	my $res = $db->select(
+		'followees',
+		[ 'id', 'name', 'inverse_predicate' ],
+		{ self_id => $uid }
+	);
 
-	return $res->hashes->each;
+	my @ret;
+	while ( my $row = $res->hash ) {
+		push(
+			@ret,
+			{
+				id             => $row->{id},
+				name           => $row->{name},
+				following_back => (
+					      $row->{inverse_predicate}
+					  and $row->{inverse_predicate} == $predicate_atoi{follows}
+				) ? 1 : 0,
+			}
+		);
+	}
+	return @ret;
 }
 
 sub has_followees {
