@@ -379,7 +379,7 @@ is_deeply(
 );
 is_deeply(
 	[ $u->get_followees( uid => $uid1 ) ],
-	[ { id => $uid2, name => 'test2' } ]
+	[ { id => $uid2, name => 'test2', following_back => 0 } ]
 );
 
 $u->remove_follower(
@@ -788,7 +788,7 @@ is_deeply(
 );
 is_deeply(
 	[ $u->get_followees( uid => $uid1 ) ],
-	[ { id => $uid2, name => 'test2' } ]
+	[ { id => $uid2, name => 'test2', following_back => 0 } ]
 );
 
 $u->unfollow(
