@@ -20,7 +20,7 @@
 					% }
 					% elsif ($follow_reqs_me) {
 						<span class="right">
-							<a href="/account/social/follow-requests"><i class="material-icons right">notifications</i></a>
+							<a href="/account/social/follow-requests-received"><i class="material-icons right">notifications</i></a>
 						</span>
 					% }
 					% elsif ($is_self) {

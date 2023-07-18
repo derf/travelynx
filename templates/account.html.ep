@@ -93,9 +93,9 @@
 					% elsif ($acc->{accept_follow_requests}) {
 						<span>Accounts können dir auf Anfrage folgen
 						% if ($num_rx_follow_requests == 1) {
-							– <a href="/account/social/follow-requests"><strong>eine</strong> offene Anfrage</a>
+							– <a href="/account/social/follow-requests-received"><strong>eine</strong> offene Anfrage</a>
 						% } elsif ($num_rx_follow_requests) {
-							– <a href="/account/social/follow-requests"><strong><%= $num_rx_follow_requests %></strong> offene Anfragen</a>
+							– <a href="/account/social/follow-requests-received"><strong><%= $num_rx_follow_requests %></strong> offene Anfragen</a>
 						% }
 						</span>
 					% }
