@@ -561,15 +561,17 @@ sub delete {
 
 	my %res;
 
-	$res{tokens}   = $db->delete( 'tokens',            { user_id => $uid } );
-	$res{stats}    = $db->delete( 'journey_stats',     { user_id => $uid } );
-	$res{journeys} = $db->delete( 'journeys',          { user_id => $uid } );
-	$res{transit}  = $db->delete( 'in_transit',        { user_id => $uid } );
-	$res{hooks}    = $db->delete( 'webhooks',          { user_id => $uid } );
-	$res{trwl}     = $db->delete( 'traewelling',       { user_id => $uid } );
-	$res{lt}       = $db->delete( 'localtransit',      { user_id => $uid } );
-	$res{password} = $db->delete( 'pending_passwords', { user_id => $uid } );
-	$res{users}    = $db->delete( 'users',             { id      => $uid } );
+	$res{tokens}    = $db->delete( 'tokens',            { user_id => $uid } );
+	$res{stats}     = $db->delete( 'journey_stats',     { user_id => $uid } );
+	$res{journeys}  = $db->delete( 'journeys',          { user_id => $uid } );
+	$res{transit}   = $db->delete( 'in_transit',        { user_id => $uid } );
+	$res{hooks}     = $db->delete( 'webhooks',          { user_id => $uid } );
+	$res{trwl}      = $db->delete( 'traewelling',       { user_id => $uid } );
+	$res{lt}        = $db->delete( 'localtransit',      { user_id => $uid } );
+	$res{password}  = $db->delete( 'pending_passwords', { user_id => $uid } );
+	$res{relations} = $db->delete( 'relations',
+		[ { subject_id => $uid }, { object_id => $uid } ] );
+	$res{users} = $db->delete( 'users', { id => $uid } );
 
 	for my $key ( keys %res ) {
 		$res{$key} = $res{$key}->rows;
