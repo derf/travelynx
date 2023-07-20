@@ -185,36 +185,36 @@
 						<td><a href="/p/<%= $entry->{name} %>"><%= $entry->{name} %></a></td>
 						% if ($type eq 'follow-requests-received') {
 							<td class="right-align">
-								<button class="btn-flat waves-effect waves-light" type="submit" name="block" value="<%= $entry->{id} %>">
+								<button class="btn-flat blue-text waves-effect waves-light" type="submit" name="block" value="<%= $entry->{id} %>">
 									<i class="material-icons" aria-label="blockieren">block</i>
 								</button>
 							</td>
 							<td class="right-align">
-								<button class="btn-flat waves-effect waves-light" type="submit" name="reject_follow_request" value="<%= $entry->{id} %>">
+								<button class="btn-flat blue-text waves-effect waves-light" type="submit" name="reject_follow_request" value="<%= $entry->{id} %>">
 									<i class="material-icons" aria-label="ablehnen">cancel</i>
 								</button>
 							</td>
 							<td class="right-align">
-								<button class="btn-flat waves-effect waves-light" type="submit" name="accept_follow_request" value="<%= $entry->{id} %>">
+								<button class="btn-flat blue-text waves-effect waves-light" type="submit" name="accept_follow_request" value="<%= $entry->{id} %>">
 									<i class="material-icons" aria-label="annehmen">check</i>
 								</button>
 							</td>
 						% }
 						% elsif ($type eq 'follow-requests-sent') {
 							<td class="right-align">
-								<button class="btn-flat waves-effect waves-light" type="submit" name="cancel_follow_request" value="<%= $entry->{id} %>">
+								<button class="btn-flat blue-text waves-effect waves-light" type="submit" name="cancel_follow_request" value="<%= $entry->{id} %>">
 									<i class="material-icons" aria-label="zurücknehmen">cancel</i>
 								</button>
 							</td>
 						% }
 						% elsif ($type eq 'followers') {
 							<td class="right-align">
-								<button class="btn-flat waves-effect waves-light" type="submit" name="block" value="<%= $entry->{id} %>">
+								<button class="btn-flat blue-text waves-effect waves-light" type="submit" name="block" value="<%= $entry->{id} %>">
 									<i class="material-icons" aria-label="blockieren">block</i>
 								</button>
 							</td>
 							<td class="right-align">
-								<button class="btn-flat waves-effect waves-light" type="submit" name="remove_follower" value="<%= $entry->{id} %>">
+								<button class="btn-flat blue-text waves-effect waves-light" type="submit" name="remove_follower" value="<%= $entry->{id} %>">
 									<i class="material-icons" aria-label="entfernen">remove</i>
 								</button>
 							</td>
@@ -226,7 +226,7 @@
 									<i class="material-icons" aria-label="Zurückfolgen angefragt">access_time</i>
 								% }
 								% elsif ($entry->{can_follow_back} or $entry->{can_request_follow_back}) {
-									<button class="btn-flat waves-effect waves-light" type="submit" name="follow_or_request" value="<%= $entry->{id} %>">
+									<button class="btn-flat blue-text waves-effect waves-light" type="submit" name="follow_or_request" value="<%= $entry->{id} %>">
 										<i class="material-icons" aria-label="zurückfolgen">person_add</i>
 									</button>
 								% }
@@ -239,14 +239,14 @@
 								% }
 							</td>
 							<td class="right-align">
-								<button class="btn-flat waves-effect waves-light" type="submit" name="unfollow" value="<%= $entry->{id} %>">
+								<button class="btn-flat blue-text waves-effect waves-light" type="submit" name="unfollow" value="<%= $entry->{id} %>">
 									<i class="material-icons" aria-label="entfolgen">remove</i>
 								</button>
 							</td>
 						% }
 						% elsif ($type eq 'blocks') {
 							<td class="right-align">
-								<button class="btn-flat waves-effect waves-light" type="submit" name="unblock" value="<%= $entry->{id} %>">
+								<button class="btn-flat blue-text waves-effect waves-light" type="submit" name="unblock" value="<%= $entry->{id} %>">
 									<i class="material-icons" aria-label="von Blockliste entefrnen">remove</i>
 								</button>
 							</td>
