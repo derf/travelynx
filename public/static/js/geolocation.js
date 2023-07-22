@@ -95,8 +95,20 @@ document.addEventListener('DOMContentLoaded', () => {
 	};
 
 	const geolocationButton = document.querySelector('.geolocation > button');
-	const getGeoLocation = function() {
-		geolocationButton.replaceWith('<p class="geolocationhint">Stationen in der Umgebung:</p><div class="progress"><div class="indeterminate"></div></div>');
+	const getGeoLocation = function () {
+		const intro = document.createElement('p');
+		intro.classList.add('geolocationhint');
+		intro.innerText = 'Stationen in der Umgebung:';
+
+		const progdiv = document.createElement('div');
+		progdiv.classList.add('progress');
+
+		const indet = document.createElement('div');
+		indet.classList.add('indeterminate');
+
+		progdiv.appendChild(indet);
+		intro.append(progdiv);
+		geolocationButton.replaceWith(intro);
 		navigator.geolocation.getCurrentPosition(processLocation, processError);
 	};
 
