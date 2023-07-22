@@ -3,66 +3,83 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-$(document).ready(function() {
-	const getPlaceholder = function() {
-		return $('div.geolocation div.progress');
-	}
-	const showError = function(header, message, code) {
-		const errnode = $(document.createElement('div'));
-		errnode.attr('class', 'error');
-		errnode.text(message);
+document.addEventListener('DOMContentLoaded', () => {
+	const getPlaceholder = () => document.querySelector('div.geolocation div.progress');
 
-		const headnode = $(document.createElement('strong'));
-		headnode.text(header + ' ');
+	const createTableRow = (ds100, name, hafas) => {
+		const node = document.createElement('a');
+		node.classList.add('tablerow');
+		node.setAttribute('href', `/s/${ds100}?hafas=${hafas}`);
+
+		const icon = (parseInt(hafas)) ? "directions" : "train";
+		node.innerHTML = `<span><i class="material-icons" aria-hidden="true">${icon}</i>${name}</span>`;
+
+		node.addEventListener('click', () => document.querySelector("nav .preloader-wrapper").classList.add('active'));
+
+		return node;
+	};
+	const showError = (header, message, code) => {
+		const errnode = document.createElement('div');
+		errnode.classList.add('error');
+		errnode.innerText = message;
+
+		const headnode = document.createElement('strong');
+		headnode.innerText = header + ' ';
 		errnode.prepend(headnode);
 
-		$('div.geolocation').append(errnode);
+		document.querySelector('.geolocation').append(errnode);
 
-		const recent = $('div.geolocation').data('recent');
-		if (recent) {
-			const stops = recent.split('|');
-			const res = $(document.createElement('p'));
-			$.each(stops, function(i, stop) {
-				const parts = stop.split(';');
-				const node = $('<a class="tablerow" href="/s/' + parts[0] + '?hafas=' + parts[2] + '"><span><i class="material-icons" aria-hidden="true">' + (parseInt(parts[2]) ? 'directions' : 'train') + '</i>' + parts[1] + '</span></a>');
-				node.click(function() {
-					$('nav .preloader-wrapper').addClass('active');
-				});
-				res.append(node);
-			});
-			$('p.geolocationhint').text('Letzte Ziele:');
-			getPlaceholder().replaceWith(res);
-		} else {
+		const recent = document.querySelector('.geolocation').dataset.recent;
+		if (!recent) {
 			getPlaceholder().remove();
+			return;
 		}
+
+		const stops = recent.split('|');
+		const res = document.createElement('p');
+		for (const stop of stops) {
+			const [ds100, name, hafas] = stop.split(';');
+			const node = createTableRow(ds100, name, hafas);
+			res.append(node);
+		}
+
+		document.querySelector('p.geolocationhint').innerText = 'Letzte Ziele:';
+		getPlaceholder().replaceWith(res);
 	};
 
-	const processResult = function(data) {
-		if (data.error) {
-			showError('Backend-Fehler:', data.error, null);
-		} else if (data.candidates.length == 0) {
+	const processResult = ({ error, candidates }) => {
+		if (error) {
+			showError('Backend-Fehler:', error, null);
+			return;
+		}
+
+		if (!candidates.length) {
 			showError('Keine Bahnhöfe in 70km Umkreis gefunden', '', null);
-		} else {
-			const res = $(document.createElement('p'));
-			$.each(data.candidates, function(i, candidate) {
-
-				const eva = candidate.eva,
-					name = candidate.name,
-					hafas = candidate.hafas,
-					distance = candidate.distance.toFixed(1);
-
-				const node = $('<a class="tablerow" href="/s/' + eva + '?hafas=' + hafas + '"><span><i class="material-icons" aria-hidden="true">' + (parseInt(hafas) ? 'directions' : 'train') + '</i>' + name + '</span></a>');
-				node.click(function() {
-					$('nav .preloader-wrapper').addClass('active');
-				});
-				res.append(node);
-			});
-			getPlaceholder().replaceWith(res);
+			return;
 		}
+
+		const res = document.createElement('p');
+		for (const candidate of candidates) {
+			const { eva, name, hafas } = candidate;
+			const node = createTableRow(eva, name, hafas);
+			res.appendChild(node);
+		}
+		getPlaceholder().replaceWith(res);
 	};
 
-	const processLocation = function(loc) {
-		$.post('/geolocation', {lon: loc.coords.longitude, lat: loc.coords.latitude}, processResult);
+	const processLocation = ({ coords }) => {
+		fetch('/geolocation', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				lon: coords.longitude,
+				lat: coords.latitude,
+			}),
+		})
+			.then((resp) => resp.json())
+			.then(processResult);
 	};
 
 	const processError = function(error) {
@@ -77,29 +94,31 @@ $(document).ready(function() {
 		}
 	};
 
-	const geoLocationButton = $('div.geolocation > button');
-	const recentStops = geoLocationButton.data('recent');
+	const geolocationButton = document.querySelector('.geolocation > button');
 	const getGeoLocation = function() {
-		geoLocationButton.replaceWith($('<p class="geolocationhint">Stationen in der Umgebung:</p><div class="progress"><div class="indeterminate"></div></div>'));
+		geolocationButton.replaceWith('<p class="geolocationhint">Stationen in der Umgebung:</p><div class="progress"><div class="indeterminate"></div></div>');
 		navigator.geolocation.getCurrentPosition(processLocation, processError);
+	};
+
+	if (!navigator.geolocation) {
+		showError('Standortanfragen werden von diesem Browser nicht unterstützt', '', null);
+		return;
 	}
 
-	if (geoLocationButton.length) {
-		if (navigator.geolocation) {
-			if (navigator.permissions) {
-				navigator.permissions.query({ name:'geolocation' }).then(function(value) {
-					if (value.state === 'prompt') {
-						geoLocationButton.on('click', getGeoLocation);
-					} else {
-						// User either rejected or granted permission. User wont get prompted and we can show stations/error
-						getGeoLocation();
-					}
-				});
-			} else {
-				geoLocationButton.on('click', getGeoLocation);
-			}
-		} else {
-			showError('Standortanfragen werden von diesem Browser nicht unterstützt', '', null);
-		}
+	// We have the geolocation feature, but without the permissions.
+	// That means, we can just fetch the location on the button click.
+	if (!navigator.permissions) {
+		geolocationButton.addEventListener('click', getGeoLocation);
+		return;
 	}
+
+	navigator.permissions.query({ name: 'geolocation' }).then(({ state }) => {
+		if (state === 'prompt') {
+			geolocationButton.addEventListener('click', getGeoLocation);
+			return;
+		}
+
+		// User either rejected or granted permissions. Therefore they won't get prompted and we can show stations/error.
+		getGeoLocation();
+	});
 });
