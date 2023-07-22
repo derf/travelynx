@@ -1803,6 +1803,18 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v44 -> v45
+	# prepare for HAFAS support: many HAFAS stations do not have DS100 codes
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				alter table stations alter column ds100 drop not null;
+				update schema_version set version = 45;
+			}
+		);
+	},
 );
 
 # TODO add 'hafas' column to in_transit (and maybe journeys? undo/redo needs something to work with...)
