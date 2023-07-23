@@ -14,7 +14,13 @@
 				<div class="card-content">
 					<span class="card-title">Aktuell eingecheckt</span>
 					<p>In <%= $user_status->{train_type} %> <%= $user_status->{train_no} %>
-						ab <%= $user_status->{dep_name} %></p>
+						% if ( $user_status->{arr_name}) {
+							von <%= $user_status->{dep_name} %> nach <%= $user_status->{arr_name} %>
+						% }
+						% else {
+							ab <%= $user_status->{dep_name} %>
+						% }
+					</p>
 				</div>
 				<div class="card-action">
 					% if ($can_check_out) {
@@ -69,10 +75,19 @@
 				Alle Abfahrten –
 			% }
 			% if ($user_status->{checked_in} and not $can_check_out) {
-				Diese Station liegt nicht auf der Route deines aktuellen Checkins.
+				Diese Station liegt nicht auf der Route deines <a href="/">aktuellen Checkins</a>.
 				Falls du aktuell nicht mit <b><%= $user_status->{train_type} %> <%= $user_status->{train_no} %></b> unterwegs bist, kannst du den Checkin rückgängig machen.
 				Falls es sich bei <b><%= $station %></b> um einen nicht in den Echtzeitdaten abgebildeten Zusatzhalt handelt, kannst du hier auchecken.
 				Da travelynx nicht weiß, welcher der beiden Fälle zutrifft, sind bis dahin keine neuen Checkins möglich.
+			% }
+			% elsif ($user_status->{checked_in} and not $user_status->{arr_eva}) {
+				Du bist bereits eingecheckt und hast noch kein Fahrtziel angegeben.
+				Bitte <a href="/">wähle zunächst ein Ziel</a>.
+				Neue Checkins sind erst nach Ankunft der aktuellen Fahrt möglich.
+			% }
+			% elsif ($user_status->{checked_in} and $user_status->{arrival_countdown} > 0) {
+				Deine aktuelle Fahrt ist <a href="/">noch unterwegs</a>.
+				Ein neuer Checkin ist erst nach Ankunft am ausgewählten Ziel möglich.
 			% }
 			% elsif (@{$results}) {
 				Zug auswählen zum Einchecken.
@@ -82,7 +97,7 @@
 				und maximal 120 Minuten nach Abfahrt möglich.
 			% }
 		</p>
-		% if (not ($user_status->{checked_in} and not $can_check_out)) {
+		% if (not $user_status->{checked_in} or ($can_check_out and $user_status->{arr_eva} and $user_status->{arrival_countdown} <= 0)) {
 			% if ($hafas) {
 				%= include '_departures_hafas', results => $results;
 			% }
