@@ -591,16 +591,18 @@ sub startup {
 		'checkout' => sub {
 			my ( $self, %opt ) = @_;
 
-			my $station = $opt{station};
-			my $dep_eva = $opt{dep_eva};
-			my $arr_eva = $opt{arr_eva};
-			my $force   = $opt{force};
-			my $uid     = $opt{uid};
-			my $db      = $opt{db} // $self->pg->db;
-			my $status  = $self->iris->get_departures(
-				station    => $station,
-				lookbehind => 120,
-				lookahead  => 120
+			my $station      = $opt{station};
+			my $dep_eva      = $opt{dep_eva};
+			my $arr_eva      = $opt{arr_eva};
+			my $with_related = $opt{with_related} // 0;
+			my $force        = $opt{force};
+			my $uid          = $opt{uid};
+			my $db           = $opt{db} // $self->pg->db;
+			my $status       = $self->iris->get_departures(
+				station      => $station,
+				lookbehind   => 120,
+				lookahead    => 180,
+				with_related => $with_related,
 			);
 			$uid //= $self->current_user->{id};
 			my $user     = $self->get_user_status( $uid, $db );
@@ -644,31 +646,6 @@ sub startup {
 			@{ $status->{results} };
 
 			my $new_checkout_station_id = $status->{station_eva};
-
-			# When a checkout is triggered by a checkin, there is an edge case
-			# with related stations.
-			# Assume a user travels from A to B1, then from B2 to C. B1 and B2 are
-			# relatd stations (e.g. "Frankfurt Hbf" and "Frankfurt Hbf(tief)").
-			# Now, if they check in for the journey from B2 to C, and have not yet
-			# checked out of the previous train, $train is undef as B2 is not B1.
-			# Redo the request with with_related => 1 to avoid this case.
-			# While at it, we increase the lookahead to handle long journeys as
-			# well.
-			if ( not $train ) {
-				$status = $self->iris->get_departures(
-					station      => $station,
-					lookbehind   => 120,
-					lookahead    => 180,
-					with_related => 1
-				);
-				($train) = List::Util::first { $_->train_id eq $train_id }
-				@{ $status->{results} };
-				if (    $train
-					and $self->stations->get_by_eva( $train->station_uic ) )
-				{
-					$new_checkout_station_id = $train->station_uic;
-				}
-			}
 
 			# Store the intended checkout station regardless of this operation's
 			# success.

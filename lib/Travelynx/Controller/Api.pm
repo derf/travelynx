@@ -277,10 +277,14 @@ sub travel_v1 {
 					);
 				}
 				if ($to_station) {
+
+					# the user may not have provided the correct to_station, so
+					# request related stations for checkout.
 					my ( $train2, $error ) = $self->checkout(
-						station => $to_station,
-						force   => 0,
-						uid     => $uid
+						station      => $to_station,
+						force        => 0,
+						uid          => $uid,
+						with_related => 1,
 					);
 					if ($error) {
 						return Mojo::Promise->reject($error);
@@ -330,10 +334,13 @@ sub travel_v1 {
 			);
 		}
 
+		# the user may not have provided the correct to_station, so
+		# request related stations for checkout.
 		my ( $train, $error ) = $self->checkout(
-			station => $to_station,
-			force   => $payload->{force} ? 1 : 0,
-			uid     => $uid
+			station      => $to_station,
+			force        => $payload->{force} ? 1 : 0,
+			uid          => $uid,
+			with_related => 1,
 		);
 		if ($error) {
 			$self->render(
