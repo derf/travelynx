@@ -86,15 +86,15 @@ sub run {
 					# train.
 					if ($checked_in) {
 
-                  # check out (adds a cancelled journey and resets journey state
-                  # to checkin
-						$self->app->checkout(
+						# check out (adds a cancelled journey and resets journey state
+						# to checkin
+						$self->app->checkout_p(
 							station => $arr,
-							force   => 1,
+							force   => 2,
 							dep_eva => $dep,
 							arr_eva => $arr,
 							uid     => $uid
-						);
+						)->wait;
 					}
 				}
 				else {
@@ -153,15 +153,15 @@ sub run {
 
 				if ( $checked_in and $train->arrival_is_cancelled ) {
 
-                  # check out (adds a cancelled journey and resets journey state
-                  # to destination selection)
-					$self->app->checkout(
+					# check out (adds a cancelled journey and resets journey state
+					# to destination selection)
+					$self->app->checkout_p(
 						station => $arr,
 						force   => 0,
 						dep_eva => $dep,
 						arr_eva => $arr,
 						uid     => $uid
-					);
+					)->wait;
 				}
 				else {
 					$self->app->add_route_timestamps(
@@ -174,21 +174,24 @@ sub run {
 				}
 			}
 			elsif ( $entry->{real_arr_ts} ) {
-				my ( undef, $error ) = $self->app->checkout(
+				my ( undef, $error ) = $self->app->checkout_p(
 					station => $arr,
-					force   => 1,
+					force   => 2,
 					dep_eva => $dep,
 					arr_eva => $arr,
 					uid     => $uid
-				);
-				if ($error) {
-					die("${error}\n");
-				}
+				)->catch(
+					sub {
+						my ($error) = @_;
+						$self->app->log->error("work($uid)/arrival: $@");
+						$errors += 1;
+					}
+				)->wait;
 			}
 		};
 		if ($@) {
-			$errors += 1;
 			$self->app->log->error("work($uid)/arrival: $@");
+			$errors += 1;
 		}
 
 		eval { }

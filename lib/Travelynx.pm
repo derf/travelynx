@@ -588,7 +588,7 @@ sub startup {
 	);
 
 	$self->helper(
-		'checkout' => sub {
+		'checkout_p' => sub {
 			my ( $self, %opt ) = @_;
 
 			my $station      = $opt{station};
@@ -596,34 +596,29 @@ sub startup {
 			my $arr_eva      = $opt{arr_eva};
 			my $with_related = $opt{with_related} // 0;
 			my $force        = $opt{force};
-			my $uid          = $opt{uid};
-			my $db           = $opt{db} // $self->pg->db;
-			my $status       = $self->iris->get_departures(
-				station      => $station,
-				lookbehind   => 120,
-				lookahead    => 180,
-				with_related => $with_related,
-			);
-			$uid //= $self->current_user->{id};
-			my $user     = $self->get_user_status( $uid, $db );
-			my $train_id = $user->{train_id};
+			my $uid          = $opt{uid} // $self->current_user->{id};
+			my $db           = $opt{db}  // $self->pg->db;
+			my $user         = $self->get_user_status( $uid, $db );
+			my $train_id     = $user->{train_id};
+
+			my $promise = Mojo::Promise->new;
 
 			if ( not $station ) {
 				$self->app->log->error("Checkout($uid): station is empty");
-				return ( 1, 'BUG: Checkout station is empty.' );
+				return $promise->resolve( 1,
+					'BUG: Checkout station is empty.' );
 			}
 
 			if ( not $user->{checked_in} and not $user->{cancelled} ) {
-				return ( 0, 'You are not checked into any train' );
+				return $promise->resolve( 0,
+					'You are not checked into any train' );
 			}
-			if ( $status->{errstr} and not $force ) {
-				return ( 1, $status->{errstr} );
-			}
+
 			if ( $dep_eva and $dep_eva != $user->{dep_eva} ) {
-				return ( 0, 'race condition' );
+				return $promise->resolve( 0, 'race condition' );
 			}
 			if ( $arr_eva and $arr_eva != $user->{arr_eva} ) {
-				return ( 0, 'race condition' );
+				return $promise->resolve( 0, 'race condition' );
 			}
 
 			my $now     = DateTime->now( time_zone => 'Europe/Berlin' );
@@ -632,196 +627,232 @@ sub startup {
 				with_data => 1
 			);
 
-			# Note that a train may pass the same station several times.
-			# Notable example: S41 / S42 ("Ringbahn") both starts and
-			# terminates at Berlin Südkreuz
-			my ($train) = List::Util::first {
-				$_->train_id eq $train_id
-				  and $_->sched_arrival
-				  and $_->sched_arrival->epoch > $user->{sched_departure}->epoch
-			}
-			@{ $status->{results} };
+			$self->iris->get_departures_p(
+				station      => $station,
+				lookbehind   => 120,
+				lookahead    => 180,
+				with_related => $with_related,
+			)->then(
+				sub {
+					my ($status) = @_;
 
-			$train //= List::Util::first { $_->train_id eq $train_id }
-			@{ $status->{results} };
+					my $new_checkout_station_id = $status->{station_eva};
 
-			my $new_checkout_station_id = $status->{station_eva};
+					# Store the intended checkout station regardless of this operation's
+					# success.
+					# TODO for with_related == 1, the correct EVA may be different
+					# and should be fetched from $train later on
+					$self->in_transit->set_arrival_eva(
+						uid         => $uid,
+						db          => $db,
+						arrival_eva => $new_checkout_station_id
+					);
 
-			# Store the intended checkout station regardless of this operation's
-			# success.
-			$self->in_transit->set_arrival_eva(
-				uid         => $uid,
-				db          => $db,
-				arrival_eva => $new_checkout_station_id
-			);
+					# If in_transit already contains arrival data for another estimated
+					# destination, we must invalidate it.
+					if ( defined $journey->{checkout_station_id}
+						and $journey->{checkout_station_id}
+						!= $new_checkout_station_id )
+					{
+						$self->in_transit->unset_arrival_data(
+							uid => $uid,
+							db  => $db
+						);
+					}
 
-			# If in_transit already contains arrival data for another estimated
-			# destination, we must invalidate it.
-			if ( defined $journey->{checkout_station_id}
-				and $journey->{checkout_station_id}
-				!= $new_checkout_station_id )
-			{
-				$self->in_transit->unset_arrival_data(
-					uid => $uid,
-					db  => $db
-				);
-			}
+					# Note that a train may pass the same station several times.
+					# Notable example: S41 / S42 ("Ringbahn") both starts and
+					# terminates at Berlin Südkreuz
+					my $train = List::Util::first {
+						$_->train_id eq $train_id
+						  and $_->sched_arrival
+						  and $_->sched_arrival->epoch
+						  > $user->{sched_departure}->epoch
+					}
+					@{ $status->{results} };
 
-			if ( not defined $train ) {
+					$train //= List::Util::first { $_->train_id eq $train_id }
+					@{ $status->{results} };
 
-				# Arrival time via IRIS is unknown, so the train probably has not
-				# arrived yet. Fall back to HAFAS.
-				# TODO support cases where $station is EVA or DS100 code
-				if (
-					my $station_data
-					= List::Util::first { $_->[0] eq $station }
-					@{ $journey->{route} }
-				  )
-				{
-					$station_data = $station_data->[2];
-					if ( $station_data->{sched_arr} ) {
-						my $sched_arr
-						  = epoch_to_dt( $station_data->{sched_arr} );
-						my $rt_arr = epoch_to_dt( $station_data->{rt_arr} );
-						if ( $rt_arr->epoch == 0 ) {
-							$rt_arr = $sched_arr->clone;
-							if (    $station_data->{arr_delay}
-								and $station_data->{arr_delay} =~ m{^\d+$} )
-							{
-								$rt_arr->add(
-									minutes => $station_data->{arr_delay} );
+					if ( not defined $train ) {
+
+						# Arrival time via IRIS is unknown, so the train probably
+						# has not arrived yet. Fall back to HAFAS.
+						# TODO support cases where $station is EVA or DS100 code
+						if (
+							my $station_data
+							= List::Util::first { $_->[0] eq $station }
+							@{ $journey->{route} }
+						  )
+						{
+							$station_data = $station_data->[2];
+							if ( $station_data->{sched_arr} ) {
+								my $sched_arr
+								  = epoch_to_dt( $station_data->{sched_arr} );
+								my $rt_arr
+								  = epoch_to_dt( $station_data->{rt_arr} );
+								if ( $rt_arr->epoch == 0 ) {
+									$rt_arr = $sched_arr->clone;
+									if (    $station_data->{arr_delay}
+										and $station_data->{arr_delay}
+										=~ m{^\d+$} )
+									{
+										$rt_arr->add( minutes =>
+											  $station_data->{arr_delay} );
+									}
+								}
+								$self->in_transit->set_arrival_times(
+									uid           => $uid,
+									db            => $db,
+									sched_arrival => $sched_arr,
+									rt_arrival    => $rt_arr
+								);
 							}
 						}
-						$self->in_transit->set_arrival_times(
-							uid           => $uid,
-							db            => $db,
-							sched_arrival => $sched_arr,
-							rt_arrival    => $rt_arr
-						);
-					}
-				}
-				if ( not $force ) {
+						if ( not $force ) {
 
-					# mustn't be called during a transaction
-					if ( not $opt{in_transaction} ) {
-						$self->run_hook( $uid, 'update' );
-					}
-					return ( 1, undef );
-				}
-			}
-
-			my $has_arrived = 0;
-
-			eval {
-
-				my $tx;
-				if ( not $opt{in_transaction} ) {
-					$tx = $db->begin;
-				}
-
-				if ( defined $train and not $train->arrival and not $force ) {
-					my $train_no = $train->train_no;
-					die("Train ${train_no} has no arrival timestamp\n");
-				}
-				elsif ( defined $train and $train->arrival ) {
-					$self->in_transit->set_arrival(
-						uid   => $uid,
-						db    => $db,
-						train => $train,
-						route => [ $self->iris->route_diff($train) ]
-					);
-
-					$has_arrived = $train->arrival->epoch < $now->epoch ? 1 : 0;
-					if ($has_arrived) {
-						my @unknown_stations
-						  = $self->stations->grep_unknown( $train->route );
-						if (@unknown_stations) {
-							$self->app->log->warn(
-								sprintf(
-'Route of %s %s (%s -> %s) contains unknown stations: %s',
-									$train->type,
-									$train->train_no,
-									$train->origin,
-									$train->destination,
-									join( ', ', @unknown_stations )
-								)
-							);
+							# mustn't be called during a transaction
+							if ( not $opt{in_transaction} ) {
+								$self->run_hook( $uid, 'update' );
+							}
+							$promise->resolve( 1, undef );
+							return;
 						}
 					}
-				}
+					my $has_arrived = 0;
 
-				$journey = $self->in_transit->get(
-					uid => $uid,
-					db  => $db
-				);
+					eval {
 
-				if ( $has_arrived or $force ) {
-					$self->journeys->add_from_in_transit(
-						db      => $db,
-						journey => $journey
-					);
-					$self->in_transit->delete(
-						uid => $uid,
-						db  => $db
-					);
+						my $tx;
+						if ( not $opt{in_transaction} ) {
+							$tx = $db->begin;
+						}
 
-					my $cache_ts = $now->clone;
-					if ( $journey->{real_departure}
-						=~ m{ ^ (?<year> \d{4} ) - (?<month> \d{2} ) }x )
-					{
-						$cache_ts->set(
-							year  => $+{year},
-							month => $+{month}
+						if (    defined $train
+							and not $train->arrival
+							and not $force )
+						{
+							my $train_no = $train->train_no;
+							die("Train ${train_no} has no arrival timestamp\n");
+						}
+						elsif ( defined $train and $train->arrival ) {
+							$self->in_transit->set_arrival(
+								uid   => $uid,
+								db    => $db,
+								train => $train,
+								route => [ $self->iris->route_diff($train) ]
+							);
+
+							$has_arrived
+							  = $train->arrival->epoch < $now->epoch ? 1 : 0;
+							if ($has_arrived) {
+								my @unknown_stations
+								  = $self->stations->grep_unknown(
+									$train->route );
+								if (@unknown_stations) {
+									$self->app->log->warn(
+										sprintf(
+'Route of %s %s (%s -> %s) contains unknown stations: %s',
+											$train->type,
+											$train->train_no,
+											$train->origin,
+											$train->destination,
+											join( ', ', @unknown_stations )
+										)
+									);
+								}
+							}
+						}
+
+						$journey = $self->in_transit->get(
+							uid => $uid,
+							db  => $db
 						);
+
+						if ( $has_arrived or $force ) {
+							$self->journeys->add_from_in_transit(
+								db      => $db,
+								journey => $journey
+							);
+							$self->in_transit->delete(
+								uid => $uid,
+								db  => $db
+							);
+
+							my $cache_ts = $now->clone;
+							if ( $journey->{real_departure}
+								=~ m{ ^ (?<year> \d{4} ) - (?<month> \d{2} ) }x
+							  )
+							{
+								$cache_ts->set(
+									year  => $+{year},
+									month => $+{month}
+								);
+							}
+							$self->journey_stats_cache->invalidate(
+								ts  => $cache_ts,
+								db  => $db,
+								uid => $uid
+							);
+						}
+						elsif ( defined $train
+							and $train->arrival_is_cancelled )
+						{
+
+							# This branch is only taken if the deparure was not cancelled,
+							# i.e., if the train was supposed to go here but got
+							# redirected or cancelled on the way and not from the start on.
+							# If the departure itself was cancelled, the user route is
+							# cancelled_from action -> 'cancelled journey' panel on main page
+							# -> cancelled_to action -> force checkout (causing the
+							# previous branch to be taken due to $force)
+							$journey->{cancelled} = 1;
+							$self->journeys->add_from_in_transit(
+								db      => $db,
+								journey => $journey
+							);
+							$self->in_transit->set_cancelled_destination(
+								uid                   => $uid,
+								db                    => $db,
+								cancelled_destination => $train->station,
+							);
+						}
+
+						if ( not $opt{in_transaction} ) {
+							$tx->commit;
+						}
+					};
+
+					if ($@) {
+						$self->app->log->error("Checkout($uid): $@");
+						$promise->resolve( 1, 'Checkout error: ' . $@ );
+						return;
 					}
-					$self->journey_stats_cache->invalidate(
-						ts  => $cache_ts,
-						db  => $db,
-						uid => $uid
-					);
-				}
-				elsif ( defined $train and $train->arrival_is_cancelled ) {
 
-					# This branch is only taken if the deparure was not cancelled,
-					# i.e., if the train was supposed to go here but got
-					# redirected or cancelled on the way and not from the start on.
-					# If the departure itself was cancelled, the user route is
-					# cancelled_from action -> 'cancelled journey' panel on main page
-					# -> cancelled_to action -> force checkout (causing the
-					# previous branch to be taken due to $force)
-					$journey->{cancelled} = 1;
-					$self->journeys->add_from_in_transit(
-						db      => $db,
-						journey => $journey
-					);
-					$self->in_transit->set_cancelled_destination(
-						uid                   => $uid,
-						db                    => $db,
-						cancelled_destination => $train->station,
-					);
-				}
+					if ( $has_arrived or $force ) {
+						if ( not $opt{in_transaction} ) {
+							$self->run_hook( $uid, 'checkout' );
+						}
+						$promise->resolve( 0, undef );
+						return;
+					}
+					if ( not $opt{in_transaction} ) {
+						$self->run_hook( $uid, 'update' );
+						$self->add_route_timestamps( $uid, $train, 0, 1 );
+					}
+					$promise->resolve( 1, undef );
+					return;
 
-				if ( not $opt{in_transaction} ) {
-					$tx->commit;
 				}
-			};
-
-			if ($@) {
-				$self->app->log->error("Checkout($uid): $@");
-				return ( 1, 'Checkout error: ' . $@ );
-			}
-
-			if ( $has_arrived or $force ) {
-				if ( not $opt{in_transaction} ) {
-					$self->run_hook( $uid, 'checkout' );
+			)->catch(
+				sub {
+					my ($err) = @_;
+					$promise->resolve( 1, $err );
+					return;
 				}
-				return ( 0, undef );
-			}
-			if ( not $opt{in_transaction} ) {
-				$self->run_hook( $uid, 'update' );
-				$self->add_route_timestamps( $uid, $train, 0, 1 );
-			}
-			return ( 1, undef );
+			)->wait;
+
+			return $promise;
 		}
 	);
 
@@ -1788,13 +1819,17 @@ sub startup {
 					)->then(
 						sub {
 							$self->log->debug("... handled origin");
-							my ( undef, $err ) = $self->checkout(
+							return $self->checkout_p(
 								station        => $traewelling->{arr_eva},
 								train_id       => 0,
 								uid            => $uid,
 								in_transaction => 1,
 								db             => $db
 							);
+						}
+					)->then(
+						sub {
+							my ( undef, $err ) = @_;
 							if ($err) {
 								$self->log->debug("... error: $err");
 								return Mojo::Promise->reject($err);

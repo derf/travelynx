@@ -622,17 +622,26 @@ sub travel_action {
 	if ( $params->{action} eq 'checkin' ) {
 
 		my $status = $self->get_user_status;
+		my $promise;
+
 		if (    $status->{checked_in}
 			and $status->{arr_eva}
 			and $status->{arrival_countdown} <= 0 )
 		{
-			$self->checkout( station => $status->{arr_eva} );
+			$promise = $self->checkout_p( station => $status->{arr_eva} );
+		}
+		else {
+			$promise = Mojo::Promise->resolve;
 		}
 
 		$self->render_later;
-		$self->checkin_p(
-			station  => $params->{station},
-			train_id => $params->{train}
+		$promise->then(
+			sub {
+				return $self->checkin_p(
+					station  => $params->{station},
+					train_id => $params->{train}
+				);
+			}
 		)->then(
 			sub {
 				my $destination = $params->{dest};
@@ -648,17 +657,26 @@ sub travel_action {
 
 				# Silently ignore errors -- if they are permanent, the user will see
 				# them when selecting the destination manually.
-				my ( $still_checked_in, undef ) = $self->checkout(
+				return $self->checkout_p(
 					station => $destination,
 					force   => 0
 				);
-				my $station_link = '/s/' . $destination;
-				$self->render(
-					json => {
-						success     => 1,
-						redirect_to => $still_checked_in ? '/' : $station_link,
-					},
-				);
+			}
+		)->then(
+			sub {
+				my ( $still_checked_in, undef ) = @_;
+				if ( my $destination = $params->{dest} ) {
+					my $station_link = '/s/' . $destination;
+					$self->render(
+						json => {
+							success     => 1,
+							redirect_to => $still_checked_in
+							? '/'
+							: $station_link,
+						},
+					);
+				}
+				return;
 			}
 		)->catch(
 			sub {
@@ -673,28 +691,47 @@ sub travel_action {
 		)->wait;
 	}
 	elsif ( $params->{action} eq 'checkout' ) {
-		my ( $still_checked_in, $error ) = $self->checkout(
+		$self->render_later;
+		$self->checkout_p(
 			station => $params->{station},
 			force   => $params->{force}
-		);
-		my $station_link = '/s/' . $params->{station};
+		)->then(
+			sub {
+				my ( $still_checked_in, $error ) = @_;
+				my $station_link = '/s/' . $params->{station};
 
-		if ($error) {
-			$self->render(
-				json => {
-					success => 0,
-					error   => $error,
-				},
-			);
-		}
-		else {
-			$self->render(
-				json => {
-					success     => 1,
-					redirect_to => $still_checked_in ? '/' : $station_link,
-				},
-			);
-		}
+				if ($error) {
+					$self->render(
+						json => {
+							success => 0,
+							error   => $error,
+						},
+					);
+				}
+				else {
+					$self->render(
+						json => {
+							success     => 1,
+							redirect_to => $still_checked_in
+							? '/'
+							: $station_link,
+						},
+					);
+				}
+				return;
+			}
+		)->catch(
+			sub {
+				my ($error) = @_;
+				$self->render(
+					json => {
+						success => 0,
+						error   => $error,
+					},
+				);
+				return;
+			}
+		)->wait;
 	}
 	elsif ( $params->{action} eq 'undo' ) {
 		my $status = $self->get_user_status;
@@ -747,27 +784,43 @@ sub travel_action {
 		)->wait;
 	}
 	elsif ( $params->{action} eq 'cancelled_to' ) {
-		my ( undef, $error ) = $self->checkout(
+		$self->render_later;
+		$self->checkout_p(
 			station => $params->{station},
 			force   => 1
-		);
-
-		if ($error) {
-			$self->render(
-				json => {
-					success => 0,
-					error   => $error,
-				},
-			);
-		}
-		else {
-			$self->render(
-				json => {
-					success     => 1,
-					redirect_to => '/',
-				},
-			);
-		}
+		)->then(
+			sub {
+				my ( undef, $error ) = @_;
+				if ($error) {
+					$self->render(
+						json => {
+							success => 0,
+							error   => $error,
+						},
+					);
+				}
+				else {
+					$self->render(
+						json => {
+							success     => 1,
+							redirect_to => '/',
+						},
+					);
+				}
+				return;
+			}
+		)->catch(
+			sub {
+				my ($error) = @_;
+				$self->render(
+					json => {
+						success => 0,
+						error   => $error,
+					},
+				);
+				return;
+			}
+		)->wait;
 	}
 	elsif ( $params->{action} eq 'delete' ) {
 		my $error = $self->journeys->delete(
