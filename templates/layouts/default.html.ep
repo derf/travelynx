@@ -59,12 +59,16 @@
 	% }
 	%= javascript "/static/${av}/js/jquery-3.4.1.min.js"
 	%= javascript "/static/${av}/js/materialize.min.js"
-	%= javascript "/static/${av}/js/travelynx-actions.min.js"
+	% my $min = ".min";
+	% if (app->mode eq 'development') {
+		% $min = q{};
+	% }
+	%= javascript "/static/${av}/js/travelynx-actions${min}.js"
 	% if (stash('with_geolocation')) {
-		%= javascript "/static/${av}/js/geolocation.min.js"
+		%= javascript "/static/${av}/js/geolocation${min}.js"
 	% }
 	% if (stash('with_autocomplete')) {
-		%= javascript "/static/${av}/js/autocomplete.min.js"
+		%= javascript "/static/${av}/js/autocomplete${min}.js"
 	% }
 	% if (stash('with_map')) {
 		%= javascript "/static/${av}/leaflet/leaflet.js"
