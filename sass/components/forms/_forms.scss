@@ -10,7 +10,7 @@ button:focus {
 
 label {
   font-size: $label-font-size;
-  color: $input-border-color;
+  color: $input-label-color;
 }
 
 @import 'input-fields';
