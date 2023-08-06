@@ -101,7 +101,6 @@ DISTRIBUTIONS
       JSON::PP 0
       List::Util 1.33
       Path::Tiny 0.077
-      PkgConfig 0.14026
       Test2::API 1.302096
       Text::ParseWords 3.26
       parent 0
@@ -130,8 +129,14 @@ DISTRIBUTIONS
       Alien::Build::Plugin::Download::GitLab 0
       Alien::Build::Plugin::Prefer::BadVersion 1.05
       Alien::Build::Plugin::Probe::Vcpkg 0
+      Config 0
       ExtUtils::CBuilder 0
       ExtUtils::MakeMaker 6.52
+      HTTP::Tiny 0.044
+      IO::Socket::SSL 1.56
+      Mozilla::CA 0
+      Net::SSLeay 1.49
+      URI 0
       perl 5.006
   B-Hooks-EndOfScope-0.26
     pathname: E/ET/ETHER/B-Hooks-EndOfScope-0.26.tar.gz
@@ -1187,15 +1192,15 @@ DISTRIBUTIONS
       File::Which 0
       List::Util 1.33
       perl 5.006
-  File-Listing-6.15
-    pathname: P/PL/PLICEASE/File-Listing-6.15.tar.gz
+  File-Listing-6.16
+    pathname: P/PL/PLICEASE/File-Listing-6.16.tar.gz
     provides:
-      File::Listing 6.15
-      File::Listing::apache 6.15
-      File::Listing::dosftp 6.15
-      File::Listing::netware 6.15
-      File::Listing::unix 6.15
-      File::Listing::vms 6.15
+      File::Listing 6.16
+      File::Listing::apache 6.16
+      File::Listing::dosftp 6.16
+      File::Listing::netware 6.16
+      File::Listing::unix 6.16
+      File::Listing::vms 6.16
     requirements:
       Exporter 5.57
       ExtUtils::MakeMaker 0
@@ -1756,7 +1761,7 @@ DISTRIBUTIONS
       File::Spec 3.00
       File::Spec::Functions 0
       if 0
-      perl 5.00503
+      perl 5.005030
       strict 0
   Module-Runtime-0.016
     pathname: Z/ZE/ZEFRAM/Module-Runtime-0.016.tar.gz
@@ -1945,10 +1950,10 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       Module::Runtime 0.014
-  Mozilla-CA-20221114
-    pathname: H/HA/HAARG/Mozilla-CA-20221114.tar.gz
+  Mozilla-CA-20230801
+    pathname: L/LW/LWP/Mozilla-CA-20230801.tar.gz
     provides:
-      Mozilla::CA 20221114
+      Mozilla::CA 20230801
     requirements:
       ExtUtils::MakeMaker 0
       perl 5.006
@@ -2087,14 +2092,6 @@ DISTRIBUTIONS
       strict 0
       warnings 0
       warnings::register 0
-  PkgConfig-0.25026
-    pathname: P/PL/PLICEASE/PkgConfig-0.25026.tar.gz
-    provides:
-      PkgConfig 0.25026
-    requirements:
-      ExtUtils::MakeMaker 6.56
-      Test::More 0.94
-      perl 5.006000
   Role-Tiny-2.002004
     pathname: H/HA/HAARG/Role-Tiny-2.002004.tar.gz
     provides:
@@ -2208,11 +2205,11 @@ DISTRIBUTIONS
       strict 0
       version 0.83
       warnings 0
-  Sub-Exporter-0.989
-    pathname: R/RJ/RJBS/Sub-Exporter-0.989.tar.gz
+  Sub-Exporter-0.990
+    pathname: R/RJ/RJBS/Sub-Exporter-0.990.tar.gz
     provides:
-      Sub::Exporter 0.989
-      Sub::Exporter::Util 0.989
+      Sub::Exporter 0.990
+      Sub::Exporter::Util 0.990
     requirements:
       Carp 0
       Data::OptList 0.100
@@ -2267,11 +2264,11 @@ DISTRIBUTIONS
       perl 5.006
       strict 0
       warnings 0
-  Test-Compile-v3.2.2
-    pathname: E/EG/EGILES/Test-Compile-v3.2.2.tar.gz
+  Test-Compile-v3.3.1
+    pathname: E/EG/EGILES/Test-Compile-v3.3.1.tar.gz
     provides:
-      Test::Compile v3.2.2
-      Test::Compile::Internal v3.2.2
+      Test::Compile v3.3.1
+      Test::Compile::Internal v3.3.1
     requirements:
       Exporter 5.68
       Module::Build 0.38
@@ -2582,12 +2579,12 @@ DISTRIBUTIONS
       Test::More 0
       Test::Pod 0
       perl v5.14.0
-  Travel-Status-DE-IRIS-1.87
-    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.87.tar.gz
+  Travel-Status-DE-IRIS-1.88
+    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.88.tar.gz
     provides:
-      Travel::Status::DE::IRIS 1.87
-      Travel::Status::DE::IRIS::Result 1.87
-      Travel::Status::DE::IRIS::Stations 1.87
+      Travel::Status::DE::IRIS 1.88
+      Travel::Status::DE::IRIS::Result 1.88
+      Travel::Status::DE::IRIS::Stations 1.88
     requirements:
       Carp 0
       Class::Accessor 0
@@ -2745,45 +2742,45 @@ DISTRIBUTIONS
       Fcntl 0
       URI 1.10
       perl 5.008001
-  XML-LibXML-2.0208
-    pathname: S/SH/SHLOMIF/XML-LibXML-2.0208.tar.gz
+  XML-LibXML-2.0209
+    pathname: S/SH/SHLOMIF/XML-LibXML-2.0209.tar.gz
     provides:
-      XML::LibXML 2.0208
-      XML::LibXML::Attr 2.0208
-      XML::LibXML::AttributeHash 2.0208
-      XML::LibXML::Boolean 2.0208
-      XML::LibXML::CDATASection 2.0208
-      XML::LibXML::Comment 2.0208
-      XML::LibXML::Common 2.0208
-      XML::LibXML::Devel 2.0208
-      XML::LibXML::Document 2.0208
-      XML::LibXML::DocumentFragment 2.0208
-      XML::LibXML::Dtd 2.0208
-      XML::LibXML::Element 2.0208
-      XML::LibXML::ErrNo 2.0208
-      XML::LibXML::Error 2.0208
-      XML::LibXML::InputCallback 2.0208
-      XML::LibXML::Literal 2.0208
-      XML::LibXML::NamedNodeMap 2.0208
-      XML::LibXML::Namespace 2.0208
-      XML::LibXML::Node 2.0208
-      XML::LibXML::NodeList 2.0208
-      XML::LibXML::Number 2.0208
-      XML::LibXML::PI 2.0208
-      XML::LibXML::Pattern 2.0208
-      XML::LibXML::Reader 2.0208
-      XML::LibXML::RegExp 2.0208
-      XML::LibXML::RelaxNG 2.0208
-      XML::LibXML::SAX 2.0208
-      XML::LibXML::SAX::AttributeNode 2.0208
-      XML::LibXML::SAX::Builder 2.0208
-      XML::LibXML::SAX::Generator 2.0208
-      XML::LibXML::SAX::Parser 2.0208
-      XML::LibXML::Schema 2.0208
-      XML::LibXML::Text 2.0208
-      XML::LibXML::XPathContext 2.0208
-      XML::LibXML::XPathExpression 2.0208
-      XML::LibXML::_SAXParser 2.0208
+      XML::LibXML 2.0209
+      XML::LibXML::Attr 2.0209
+      XML::LibXML::AttributeHash 2.0209
+      XML::LibXML::Boolean 2.0209
+      XML::LibXML::CDATASection 2.0209
+      XML::LibXML::Comment 2.0209
+      XML::LibXML::Common 2.0209
+      XML::LibXML::Devel 2.0209
+      XML::LibXML::Document 2.0209
+      XML::LibXML::DocumentFragment 2.0209
+      XML::LibXML::Dtd 2.0209
+      XML::LibXML::Element 2.0209
+      XML::LibXML::ErrNo 2.0209
+      XML::LibXML::Error 2.0209
+      XML::LibXML::InputCallback 2.0209
+      XML::LibXML::Literal 2.0209
+      XML::LibXML::NamedNodeMap 2.0209
+      XML::LibXML::Namespace 2.0209
+      XML::LibXML::Node 2.0209
+      XML::LibXML::NodeList 2.0209
+      XML::LibXML::Number 2.0209
+      XML::LibXML::PI 2.0209
+      XML::LibXML::Pattern 2.0209
+      XML::LibXML::Reader 2.0209
+      XML::LibXML::RegExp 2.0209
+      XML::LibXML::RelaxNG 2.0209
+      XML::LibXML::SAX 2.0209
+      XML::LibXML::SAX::AttributeNode 2.0209
+      XML::LibXML::SAX::Builder 2.0209
+      XML::LibXML::SAX::Generator 2.0209
+      XML::LibXML::SAX::Parser 2.0209
+      XML::LibXML::Schema 2.0209
+      XML::LibXML::Text 2.0209
+      XML::LibXML::XPathContext 2.0209
+      XML::LibXML::XPathExpression 2.0209
+      XML::LibXML::_SAXParser 2.0209
     requirements:
       Alien::Base::Wrapper 0
       Alien::Libxml2 0.14
@@ -2893,32 +2890,32 @@ DISTRIBUTIONS
       XSLoader 0
       lib 0
       perl 5.008001
-  libwww-perl-6.71
-    pathname: O/OA/OALDERS/libwww-perl-6.71.tar.gz
+  libwww-perl-6.72
+    pathname: O/OA/OALDERS/libwww-perl-6.72.tar.gz
     provides:
-      LWP 6.71
-      LWP::Authen::Basic 6.71
-      LWP::Authen::Digest 6.71
-      LWP::Authen::Ntlm 6.71
-      LWP::ConnCache 6.71
-      LWP::Debug 6.71
-      LWP::Debug::TraceHTTP 6.71
-      LWP::DebugFile 6.71
-      LWP::MemberMixin 6.71
-      LWP::Protocol 6.71
-      LWP::Protocol::cpan 6.71
-      LWP::Protocol::data 6.71
-      LWP::Protocol::file 6.71
-      LWP::Protocol::ftp 6.71
-      LWP::Protocol::gopher 6.71
-      LWP::Protocol::http 6.71
-      LWP::Protocol::loopback 6.71
-      LWP::Protocol::mailto 6.71
-      LWP::Protocol::nntp 6.71
-      LWP::Protocol::nogo 6.71
-      LWP::RobotUA 6.71
-      LWP::Simple 6.71
-      LWP::UserAgent 6.71
+      LWP 6.72
+      LWP::Authen::Basic 6.72
+      LWP::Authen::Digest 6.72
+      LWP::Authen::Ntlm 6.72
+      LWP::ConnCache 6.72
+      LWP::Debug 6.72
+      LWP::Debug::TraceHTTP 6.72
+      LWP::DebugFile 6.72
+      LWP::MemberMixin 6.72
+      LWP::Protocol 6.72
+      LWP::Protocol::cpan 6.72
+      LWP::Protocol::data 6.72
+      LWP::Protocol::file 6.72
+      LWP::Protocol::ftp 6.72
+      LWP::Protocol::gopher 6.72
+      LWP::Protocol::http 6.72
+      LWP::Protocol::loopback 6.72
+      LWP::Protocol::mailto 6.72
+      LWP::Protocol::nntp 6.72
+      LWP::Protocol::nogo 6.72
+      LWP::RobotUA 6.72
+      LWP::Simple 6.72
+      LWP::UserAgent 6.72
     requirements:
       Digest::MD5 0
       Encode 2.12
