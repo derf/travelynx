@@ -100,6 +100,23 @@ sub startup {
 			},
 		}
 	);
+
+	if ( my $oa = $self->config->{traewelling}{oauth} ) {
+		$self->plugin(
+			OAuth2 => {
+				providers => {
+					traewelling => {
+						key           => $oa->{id},
+						secret        => $oa->{secret},
+						authorize_url =>
+'https://traewelling.de/oauth/authorize?response_type=code',
+						token_url => 'https://traewelling.de/oauth/token',
+					}
+				}
+			}
+		);
+	}
+
 	$self->sessions->default_expiration( 60 * 60 * 24 * 180 );
 
 	# Starting with v8.11, Mojolicious sends SameSite=Lax Cookies by default.
@@ -2139,6 +2156,11 @@ sub startup {
 	$r->post('/list_departures')->to('traveling#redirect_to_station');
 	$r->post('/login')->to('account#do_login');
 	$r->post('/recover')->to('account#request_password_reset');
+
+	if ( $self->config->{traewelling}{oauth} ) {
+		$r->get('/oauth/traewelling')->to('traewelling#oauth');
+		$r->post('/oauth/traewelling')->to('traewelling#oauth');
+	}
 
 	if ( not $self->config->{registration}{disabled} ) {
 		$r->get('/register')->to('account#registration_form');

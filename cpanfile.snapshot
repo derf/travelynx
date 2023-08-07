@@ -1915,6 +1915,15 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       Mojolicious 8.0
       perl 5.016
+  Mojolicious-Plugin-OAuth2-2.02
+    pathname: J/JH/JHTHORSEN/Mojolicious-Plugin-OAuth2-2.02.tar.gz
+    provides:
+      Mojolicious::Plugin::OAuth2 2.02
+      Mojolicious::Plugin::OAuth2::Mock undef
+    requirements:
+      ExtUtils::MakeMaker 0
+      IO::Socket::SSL 1.94
+      Mojolicious 8.25
   Moo-2.005005
     pathname: H/HA/HAARG/Moo-2.005005.tar.gz
     provides:

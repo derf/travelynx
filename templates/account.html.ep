@@ -122,33 +122,35 @@
 					% }
 				</td>
 			</tr>
-			<tr>
-				<th scope="row">Träwelling</th>
-				<td>
-					<a href="/account/traewelling"><i class="material-icons">edit</i></a>
-					% if (not ($traewelling->{token})) {
-						<span style="color: #999999;">Nicht verknüpft</span>
-					% }
-					% elsif ($traewelling->{errored}) {
-						Fehlerhaft <i class="material-icons" aria-hidden="true">error</i>
-					% }
-					% else {
-						Verknüpft mit <%= $traewelling->{data}{user_name} // $traewelling->{email} %>
-						% if ($traewelling->{expired}) {
-							– Login-Token abgelaufen <i class="material-icons" aria-hidden="true">error</i>
+			% if (config->{traewelling}{oauth}) {
+				<tr>
+					<th scope="row">Träwelling</th>
+					<td>
+						<a href="/account/traewelling"><i class="material-icons">edit</i></a>
+						% if (not ($traewelling->{token})) {
+							<span style="color: #999999;">Nicht verknüpft</span>
 						% }
-						% elsif ($traewelling->{expiring}) {
-							– Login-Token läuft bald ab <i class="material-icons" aria-hidden="true">warning</i>
+						% elsif ($traewelling->{errored}) {
+							Fehlerhaft <i class="material-icons" aria-hidden="true">error</i>
 						% }
-						% elsif ($traewelling->{pull_sync}) {
-							– Checkins in Träwelling werden von travelynx übernommen
+						% else {
+							Verknüpft mit <%= $traewelling->{data}{user_name} // $traewelling->{email} %>
+							% if ($traewelling->{expired}) {
+								– Login-Token abgelaufen <i class="material-icons" aria-hidden="true">error</i>
+							% }
+							% elsif ($traewelling->{expiring}) {
+								– Login-Token läuft bald ab <i class="material-icons" aria-hidden="true">warning</i>
+							% }
+							% elsif ($traewelling->{pull_sync}) {
+								– Checkins in Träwelling werden von travelynx übernommen
+							% }
+							% elsif ($traewelling->{push_sync}) {
+								– Checkins in travelynx werden zu Träwelling weitergereicht
+							% }
 						% }
-						% elsif ($traewelling->{push_sync}) {
-							– Checkins in travelynx werden zu Träwelling weitergereicht
-						% }
-					% }
-				</td>
-			</tr>
+					</td>
+				</tr>
+			% }
 			<tr>
 				<th scope="row">Externe Dienste</th>
 				<td>

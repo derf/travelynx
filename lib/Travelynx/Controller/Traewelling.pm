@@ -6,6 +6,65 @@ package Travelynx::Controller::Traewelling;
 use Mojo::Base 'Mojolicious::Controller';
 use Mojo::Promise;
 
+sub oauth {
+	my ($self) = @_;
+
+	if (    $self->param('action')
+		and $self->validation->csrf_protect->has_error('csrf_token') )
+	{
+		$self->render(
+			'bad_request',
+			csrf   => 1,
+			status => 400
+		);
+		return;
+	}
+
+	$self->render_later;
+
+	my $oa = $self->config->{traewelling}{oauth};
+
+	return $self->oauth2->get_token_p(
+		traewelling => { scope => 'read-statuses write-statuses' } )->then(
+		sub {
+			my ($provider) = @_;
+			if ( not defined $provider ) {
+
+				# OAuth2 plugin performed a redirect, no need to render
+				return;
+			}
+			if ( not $provider or not $provider->{access_token} ) {
+				$self->flash( new_traewelling => 1 );
+				$self->flash( login_error     => 'no token received' );
+				$self->redirect_to('/account/traewelling');
+				return;
+			}
+			my $uid   = $self->current_user->{id};
+			my $token = $provider->{access_token};
+			$self->traewelling->link(
+				uid        => $self->current_user->{id},
+				token      => $provider->{access_token},
+				expires_in => $provider->{expires_in},
+			);
+			return $self->traewelling_api->get_user_p( $uid, $token )->then(
+				sub {
+					$self->flash( new_traewelling => 1 );
+					$self->redirect_to('/account/traewelling');
+				}
+			);
+		}
+	)->catch(
+		sub {
+			my ($err) = @_;
+			say "error $err";
+			$self->flash( new_traewelling => 1 );
+			$self->flash( login_error     => $err );
+			$self->redirect_to('/account/traewelling');
+			return;
+		}
+	);
+}
+
 sub settings {
 	my ($self) = @_;
 
@@ -22,38 +81,7 @@ sub settings {
 		return;
 	}
 
-	if ( $self->param('action') and $self->param('action') eq 'login' ) {
-		my $email    = $self->param('email');
-		my $password = $self->param('password');
-		$self->render_later;
-		$self->traewelling_api->login_p(
-			uid      => $uid,
-			email    => $email,
-			password => $password
-		)->then(
-			sub {
-				my $traewelling = $self->traewelling->get( uid => $uid );
-				$self->param( sync_source => 'none' );
-				$self->render(
-					'traewelling',
-					traewelling     => $traewelling,
-					new_traewelling => 1,
-				);
-			}
-		)->catch(
-			sub {
-				my ($err) = @_;
-				$self->render(
-					'traewelling',
-					traewelling     => {},
-					new_traewelling => 1,
-					login_error     => $err,
-				);
-			}
-		)->wait;
-		return;
-	}
-	elsif ( $self->param('action') and $self->param('action') eq 'logout' ) {
+	if ( $self->param('action') and $self->param('action') eq 'logout' ) {
 		$self->render_later;
 		my $traewelling = $self->traewelling->get( uid => $uid );
 		$self->traewelling_api->logout_p(

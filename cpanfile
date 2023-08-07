@@ -10,6 +10,7 @@ requires 'List::UtilsBy';
 requires 'MIME::Entity';
 requires 'Mojolicious';
 requires 'Mojolicious::Plugin::Authentication';
+requires 'Mojolicious::Plugin::OAuth2';
 requires 'Mojo::Pg';
 requires 'Text::CSV';
 requires 'Text::Markdown';

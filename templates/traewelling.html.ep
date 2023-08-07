@@ -4,20 +4,20 @@
 
 <h1>Träwelling</h1>
 
-% if (stash('new_traewelling')) {
+% if (flash('new_traewelling')) {
 	<div class="row">
 		<div class="col s12">
 			% if ($traewelling->{token}) {
 				<div class="card success-color">
 					<div class="card-content white-text">
 						<span class="card-title">Träwelling verknüpft</span>
-						% my $user = $traewelling->{data}{user_name} // $traewelling->{email};
+						% my $user = $traewelling->{data}{user_name} // '???';
 						<p>Dein travelynx-Account hat nun ein Jahr lang Zugriff auf 
 							den Träwelling-Account <b>@<%= $user %></b>.</p>
 					</div>
 				</div>
 			% }
-			% elsif (my $login_err = stash('login_error')) {
+			% elsif (my $login_err = flash('login_error')) {
 				<div class="card caution-color">
 					<div class="card-content white-text">
 						<span class="card-title">Login-Fehler</span>
@@ -30,7 +30,7 @@
 					<div class="card-content white-text">
 						<span class="card-title">Logout-Fehler</span>
 						<p>Der Logout bei Träwelling ist fehlgeschlagen: <%= $logout_err %>.
-							Dein Login-Token bei travelynx wurde dennoch gelöscht, so
+							Dein Token bei travelynx wurde dennoch gelöscht, so
 							dass nun kein Zugriff von travelynx auf Träwelling mehr
 							möglich ist. In den <a
 							href="https://traewelling.de/settings">Träwelling-Einstellungen</a>
@@ -73,10 +73,10 @@
 			<div class="card caution-color">
 				<div class="card-content white-text">
 					% if ($traewelling->{expired}) {
-						<span class="card-title">Login-Token abgelaufen</span>
+						<span class="card-title">Token abgelaufen</span>
 					% }
 					% else {
-						<span class="card-title">Login-Token läuft bald ab</span>
+						<span class="card-title">Token läuft bald ab</span>
 					% }
 					<p>Melde deinen travelynx-Account von Träwelling ab und
 						verbinde ihn mit deinem Träwelling-Passwort erneut,
@@ -105,37 +105,19 @@
 				verknüpfen. Dies erlaubt die automatische Übernahme zukünftiger
 				Checkins zwischen den beiden Diensten. Träwelling-Checkins in
 				Nahverkehrsmittel und Züge außerhalb des deutschen Schienennetzes
-				werden nicht unterstützt und ignoriert. Checkins, die vor dem
-				Verknüpfen der Accounts stattgefunden haben, werden nicht
-				synchronisiert. Bei synchronisierten Checkins wird der zugehörige
-				Träwelling-Status von deiner travelynx-Statusseite aus verlinkt.
-			</p>
-			<p>
-				Mit E-Mail und Passwort wird ein Login über die Träwelling-API
-				durchgeführt. Die E-Mail und das dabei generierte Token werden
-				von travelynx gespeichert. Das Passwort wird ausschließlich für
-				den Login verwendet und nicht gespeichert. Der Login kann jederzeit
-				sowohl auf dieser Seite als auch über die <a
-				href="https://traewelling.de/settings">Träwelling-Einstellungen</a>
-				widerrufen werden. Nach einem Jahr läuft er automatisch ab.
+				werden (noch) nicht unterstützt und ignoriert. Checkins, die
+				vor dem Verknüpfen der Accounts stattgefunden haben, werden
+				nicht synchronisiert. Bei synchronisierten Checkins wird der
+				zugehörige Träwelling-Status von deiner travelynx-Statusseite
+				aus verlinkt.
 			</p>
 		</div>
 	</div>
 	<div class="row">
-		%= form_for '/account/traewelling' => (method => 'POST') => begin
+		%= form_for '/oauth/traewelling' => (method => 'POST') => begin
 			%= csrf_field
-			<div class="input-field col s12">
-				<i class="material-icons prefix">account_circle</i>
-				%= text_field 'email', id => 'email', class => 'validate', required => undef, maxlength => 250
-				<label for="email">Login (Name oder E-Mail)</label>
-			</div>
-			<div class="input-field col s12">
-				<i class="material-icons prefix">lock</i>
-				%= password_field 'password', id => 'password', class => 'validate', required => undef
-				<label for="password">Passwort</label>
-			</div>
 			<div class="col s12 center-align">
-				<button class="btn waves-effect waves-light" type="submit" name="action" value="login">
+				<button class="btn waves-effect waves-light" type="submit" name="action" value="connect">
 					Verknüpfen
 					<i class="material-icons right">send</i>
 				</button>
@@ -154,7 +136,7 @@
 				% else {
 					%= $traewelling->{email}
 				% }
-				verknüpft. Der Login-Token läuft <%= $traewelling->{expires_on}->strftime('am %d.%m.%Y um %H:%M Uhr') %> ab.
+				verknüpft. Der Token läuft <%= $traewelling->{expires_on}->strftime('am %d.%m.%Y um %H:%M Uhr') %> ab.
 			</p>
 		</div>
 	</div>

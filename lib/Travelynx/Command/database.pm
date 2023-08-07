@@ -1815,6 +1815,25 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v45 -> v46
+	# Switch to Traewelling OAuth2 authentication.
+	# E-Mail is no longer needed.
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				drop view traewelling_str;
+				create view traewelling_str as select
+					user_id, push_sync, pull_sync, errored, token, data,
+					extract(epoch from latest_run) as latest_run_ts
+					from traewelling
+				;
+				alter table traewelling drop column email;
+				update schema_version set version = 46;
+			}
+		);
+	},
 );
 
 # TODO add 'hafas' column to in_transit (and maybe journeys? undo/redo needs something to work with...)

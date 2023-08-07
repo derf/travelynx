@@ -38,16 +38,15 @@ sub now {
 sub link {
 	my ( $self, %opt ) = @_;
 
-	my $log = [ [ $self->now->epoch, "Erfolgreich angemeldet" ] ];
+	my $log = [ [ $self->now->epoch, "Erfolgreich mittels OAuth2 verbunden" ] ];
 
 	my $data = {
 		log     => $log,
-		expires => $opt{expires}->epoch,
+		expires => $self->now->epoch + $opt{expires_in},
 	};
 
 	my $user_entry = {
 		user_id   => $opt{uid},
-		email     => $opt{email},
 		push_sync => 0,
 		pull_sync => 0,
 		token     => $opt{token},
@@ -59,7 +58,7 @@ sub link {
 		$user_entry,
 		{
 			on_conflict => \
-'(user_id) do update set email = EXCLUDED.email, token = EXCLUDED.token, push_sync = false, pull_sync = false, data = null, errored = false, latest_run = null'
+'(user_id) do update set token = EXCLUDED.token, push_sync = false, pull_sync = false, data = null, errored = false, latest_run = null'
 		}
 	);
 
