@@ -2,6 +2,37 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		1.34
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left" aria-label="Änderung">build</i>
+			Die Verknüpfung von travelynx zu Träwelling nutzt nun OAuth2
+			anstelle eines passwortbasierten Logins. Einerseits ist OAuth2 eine
+			bedeutend elegantere Lösung; andererseits wird die Träwelling-API
+			für Passwortlogin bald abgeschaltet.  Für bestehende
+			Träwelling-Verknüpfungen ergeben sich keine Veränderungen.
+			Neue Verknüpfungen sind weiterhin möglich und benötigen nun keine
+			Angabe von E-Mail und Passwort mehr. Selbst
+			gehostete travelynx-Instanzen, die die Träwelling-Verknüpfung
+			anbieten möchten, müssen ab soforn bei Träwelling eine eigene <a
+			href="https://traewelling.de/settings/applications">Anwendung
+			anlegen</a> und in travelynx konfigurieren. Bitte auch die neue
+			Dependency Mojolicious::Plugin::OAuth2 im cpanfile beachten.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Ankündigung">announcement</i>
+			Derzeit unterstützt travelynx neben Bahnhofsnamen auch EVA-IDs und
+			DS100/Ril100-Codes. In Zukunft werden in einzelnen Fällen nur noch
+			Bahnhofsnamen und EVA-IDs unterstützt. Im Zuge dessen wird in einem
+			zukünftigen Release eine neue API-Version (v2) mit optionalem
+			statt garantiert befülltem "ds100"-Feld etabliert werden.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		1.33
 	</div>
 	<div class="col s12 m11 l11">
