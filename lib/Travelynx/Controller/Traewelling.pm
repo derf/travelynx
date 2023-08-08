@@ -25,7 +25,12 @@ sub oauth {
 	my $oa = $self->config->{traewelling}{oauth};
 
 	return $self->oauth2->get_token_p(
-		traewelling => { scope => 'read-statuses write-statuses' } )->then(
+		traewelling => {
+			redirect_uri => $self->base_url_for('/oauth/traewelling')
+			  ->to_abs->scheme('https')->to_string,
+			scope => 'read-statuses write-statuses'
+		}
+	)->then(
 		sub {
 			my ($provider) = @_;
 			if ( not defined $provider ) {
