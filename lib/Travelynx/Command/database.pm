@@ -1881,6 +1881,28 @@ my @migrations = (
 		}
 		);
 	},
+
+	# v47 -> v48
+	# Store Traewelling refresh tokens; store expiry as explicit column.
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				alter table traewelling
+					add column refresh_token text,
+					add column expiry timestamptz;
+				drop view traewelling_str;
+				create view traewelling_str as select
+					user_id, push_sync, pull_sync, errored,
+					token, refresh_token, data,
+					extract(epoch from latest_run) as latest_run_ts,
+					extract(epoch from expiry) as expiry_ts
+					from traewelling
+				;
+				update schema_version set version = 48;
+			}
+		);
+	},
 );
 
 # TODO add 'hafas' column to in_transit (and maybe journeys? undo/redo needs something to work with...)

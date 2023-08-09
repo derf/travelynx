@@ -49,9 +49,10 @@ sub oauth {
 			my $uid   = $self->current_user->{id};
 			my $token = $provider->{access_token};
 			$self->traewelling->link(
-				uid        => $self->current_user->{id},
-				token      => $provider->{access_token},
-				expires_in => $provider->{expires_in},
+				uid           => $self->current_user->{id},
+				token         => $provider->{access_token},
+				refresh_token => $provider->{refresh_token},
+				expires_in    => $provider->{expires_in},
 			);
 			return $self->traewelling_api->get_user_p( $uid, $token )->then(
 				sub {

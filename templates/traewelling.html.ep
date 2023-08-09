@@ -12,8 +12,7 @@
 					<div class="card-content white-text">
 						<span class="card-title">Träwelling verknüpft</span>
 						% my $user = $traewelling->{data}{user_name} // '???';
-						<p>Dein travelynx-Account hat nun ein Jahr lang Zugriff auf 
-							den Träwelling-Account <b>@<%= $user %></b>.</p>
+						<p>Dein travelynx-Account ist nun mit dem Träwelling-Account <b>@<%= $user %></b> verbunden.</p>
 					</div>
 				</div>
 			% }
@@ -136,7 +135,7 @@
 				% else {
 					%= $traewelling->{email}
 				% }
-				verknüpft. Der Token läuft <%= $traewelling->{expires_on}->strftime('am %d.%m.%Y um %H:%M Uhr') %> ab.
+				verknüpft. Der aktuelle Token läuft <%= $traewelling->{expires_on}->strftime('am %d.%m.%Y um %H:%M Uhr') %> ab.
 			</p>
 		</div>
 	</div>

@@ -40,17 +40,16 @@ sub link {
 
 	my $log = [ [ $self->now->epoch, "Erfolgreich mittels OAuth2 verbunden" ] ];
 
-	my $data = {
-		log     => $log,
-		expires => $self->now->epoch + $opt{expires_in},
-	};
+	my $data = { log => $log };
 
 	my $user_entry = {
-		user_id   => $opt{uid},
-		push_sync => 0,
-		pull_sync => 0,
-		token     => $opt{token},
-		data      => JSON->new->encode($data),
+		user_id       => $opt{uid},
+		push_sync     => 0,
+		pull_sync     => 0,
+		token         => $opt{token},
+		refresh_token => $opt{refresh_token},
+		expiry        => epoch_to_dt( $self->now->epoch + $opt{expires_in} ),
+		data          => JSON->new->encode($data),
 	};
 
 	$self->{pg}->db->insert(
@@ -58,7 +57,7 @@ sub link {
 		$user_entry,
 		{
 			on_conflict => \
-'(user_id) do update set token = EXCLUDED.token, push_sync = false, pull_sync = false, data = null, errored = false, latest_run = null'
+'(user_id) do update set token = EXCLUDED.token, refresh_token = EXCLUDED.refresh_token, expiry = EXCLUDED.expiry, push_sync = false, pull_sync = false, data = null, errored = false, latest_run = null'
 		}
 	);
 
@@ -106,9 +105,11 @@ sub get {
 	for my $log_entry ( @{ $res_h->{data}{log} // [] } ) {
 		$log_entry->[0] = epoch_to_dt( $log_entry->[0] );
 	}
-	$res_h->{expires_on} = epoch_to_dt( $res_h->{data}{expires} );
+	$res_h->{expires_on}
+	  = epoch_to_dt( $res_h->{expiry_ts} // $res_h->{data}{expires} );
 
-	my $expires_in = ( $res_h->{data}{expires} // 0 ) - $self->now->epoch;
+	my $expires_in = ( $res_h->{expiry_ts} // $res_h->{data}{expires} // 0 )
+	  - $self->now->epoch;
 
 	if ( $expires_in < 0 ) {
 		$res_h->{expired} = 1;
