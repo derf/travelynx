@@ -26,8 +26,10 @@ sub oauth {
 
 	return $self->oauth2->get_token_p(
 		traewelling => {
-			redirect_uri => $self->base_url_for('/oauth/traewelling')
-			  ->to_abs->scheme('https')->to_string,
+			redirect_uri =>
+			  $self->base_url_for('/oauth/traewelling')->to_abs->scheme(
+				$self->app->mode eq 'development' ? 'http' : 'https'
+			)->to_string,
 			scope => 'read-statuses write-statuses'
 		}
 	)->then(
