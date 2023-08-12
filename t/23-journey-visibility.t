@@ -274,14 +274,14 @@ is(
 	undef
 );
 
-my $dep       = DateTime->now;
-my $arr       = $dep->clone->add( hours => 1 );
+my $dep       = DateTime->now->subtract( hours => 2 );
+my $arr       = DateTime->now->subtract( hours => 1 );
 my $train_dep = Travel::Status::DE::IRIS::Result->new(
 	classes      => 'N',
 	type         => 'DPN',
 	train_no     => '667',
 	raw_id       => '1234-2306251312-1',
-	departure_ts => '2306251312',
+	departure_ts => $dep->strftime('%y%m%d%H%M'),
 	platform     => 8,
 	station      => 'Aachen Hbf',
 	station_uic  => 8000001,
@@ -292,7 +292,7 @@ my $train_arr = Travel::Status::DE::IRIS::Result->new(
 	type        => 'DPN',
 	train_no    => '667',
 	raw_id      => '1234-2306251312-3',
-	arrival_ts  => '2306252000',
+	arrival_ts  => $arr->strftime('%y%m%d%H%M'),
 	platform    => 1,
 	station     => 'Aalen Hbf',
 	station_uic => 8000002,
