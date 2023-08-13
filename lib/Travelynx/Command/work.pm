@@ -37,6 +37,70 @@ sub run {
 		my $arr      = $entry->{arr_eva};
 		my $train_id = $entry->{train_id};
 
+		if ( $train_id =~ m{[|]} ) {
+
+			$self->app->hafas->get_journey_p( trip_id => $train_id )->then(
+				sub {
+					my ($journey) = @_;
+
+					my $found_dep;
+					my $found_arr;
+					for my $stop ( $journey->route ) {
+						if ( $stop->eva == $dep ) {
+							$found_dep = $stop;
+						}
+						if ( $arr and $stop->eva == $arr ) {
+							$found_arr = $stop;
+							last;
+						}
+					}
+					if ( not $found_dep ) {
+						return Mojo::Promise->reject(
+							"Did not find $dep within journey $train_id");
+					}
+
+					if ( $found_dep->{rt_dep} ) {
+						$self->app->in_transit->update_departure_hafas(
+							uid     => $uid,
+							journey => $journey,
+							stop    => $found_dep,
+							dep_eva => $dep,
+							arr_eva => $arr
+						);
+					}
+
+					if ( $found_arr and $found_arr->{rt_arr} ) {
+						$self->app->in_transit->update_arrival_hafas(
+							uid     => $uid,
+							journey => $journey,
+							stop    => $found_arr,
+							dep_eva => $dep,
+							arr_eva => $arr
+						);
+					}
+				}
+			)->catch(
+				sub {
+					my ($err) = @_;
+					$self->app->log->error("work($uid)/journey: $err");
+				}
+			)->wait;
+
+			if (    $arr
+				and $entry->{real_arr_ts}
+				and $now->epoch - $entry->{real_arr_ts} > 600 )
+			{
+				$self->app->checkout_p(
+					station => $arr,
+					force   => 2,
+					dep_eva => $dep,
+					arr_eva => $arr,
+					uid     => $uid
+				)->wait;
+			}
+			next;
+		}
+
 		# Note: IRIS data is not always updated in real-time. Both departure and
 		# arrival delays may take several minutes to appear, especially in case
 		# of large-scale disturbances. We work around this by continuing to
@@ -183,7 +247,7 @@ sub run {
 				)->catch(
 					sub {
 						my ($error) = @_;
-						$self->app->log->error("work($uid)/arrival: $@");
+						$self->app->log->error("work($uid)/arrival: $error");
 						$errors += 1;
 					}
 				)->wait;
@@ -194,7 +258,7 @@ sub run {
 			$errors += 1;
 		}
 
-		eval { }
+		eval { };
 	}
 
 	my $started_at       = $now;

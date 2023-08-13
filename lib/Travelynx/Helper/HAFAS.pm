@@ -98,6 +98,43 @@ sub get_departures_p {
 	);
 }
 
+sub get_journey_p {
+	my ( $self, %opt ) = @_;
+
+	my $promise = Mojo::Promise->new;
+	my $now     = DateTime->now( time_zone => 'Europe/Berlin' );
+
+	Travel::Status::DE::HAFAS->new_p(
+		journey => {
+			id => $opt{trip_id},
+		},
+		with_polyline => 0,
+		cache         => $self->{realtime_cache},
+		promise       => 'Mojo::Promise',
+		user_agent    => $self->{user_agent}->request_timeout(10),
+	)->then(
+		sub {
+			my ($hafas) = @_;
+			my $journey = $hafas->result;
+
+			if ($journey) {
+				$promise->resolve($journey);
+				return;
+			}
+			$promise->reject('no journey');
+			return;
+		}
+	)->catch(
+		sub {
+			my ($err) = @_;
+			$promise->reject($err);
+			return;
+		}
+	)->wait;
+
+	return $promise;
+}
+
 sub get_route_timestamps_p {
 	my ( $self, %opt ) = @_;
 
@@ -133,7 +170,6 @@ sub get_route_timestamps_p {
 					rt_dep    => _epoch( $stop->{rt_dep} ),
 					arr_delay => $stop->{arr_delay},
 					dep_delay => $stop->{dep_delay},
-					eva       => $stop->{eva},
 					load      => $stop->{load}
 				};
 				if (    ( $stop->{arr_cancelled} or not $stop->{sched_arr} )

@@ -14,6 +14,42 @@ sub new {
 	return bless( \%opt, $class );
 }
 
+sub add_or_update {
+	my ( $self, %opt ) = @_;
+	my $stop   = $opt{stop};
+	my $source = 1;
+	my $db     = $opt{db} // $self->{pg}->db;
+
+	if ( my $s = $self->get_by_eva( $stop->eva, db => $db ) ) {
+		if ( $source == 1 and $s->{source} == 0 and not $s->{archived} ) {
+			return;
+		}
+		$db->update(
+			'stations',
+			{
+				name     => $stop->name,
+				lat      => $stop->lat,
+				lon      => $stop->lon,
+				source   => $source,
+				archived => 0
+			},
+			{ eva => $stop->eva }
+		);
+		return;
+	}
+	$db->insert(
+		'stations',
+		{
+			eva      => $stop->eva,
+			name     => $stop->name,
+			lat      => $stop->lat,
+			lon      => $stop->lon,
+			source   => $source,
+			archived => 0
+		}
+	);
+}
+
 # Fast
 sub get_by_eva {
 	my ( $self, $eva, %opt ) = @_;

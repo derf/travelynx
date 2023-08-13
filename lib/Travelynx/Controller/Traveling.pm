@@ -747,7 +747,12 @@ sub travel_action {
 		else {
 			my $redir = '/';
 			if ( $status->{checked_in} or $status->{cancelled} ) {
-				$redir = '/s/' . $status->{dep_ds100};
+				if ( $status->{dep_ds100} ) {
+					$redir = '/s/' . $status->{dep_ds100};
+				}
+				else {
+					$redir = '/s/' . $status->{dep_eva} . '?hafas=1';
+				}
 			}
 			$self->render(
 				json => {
@@ -880,7 +885,7 @@ sub station {
 	if ($use_hafas) {
 		$promise = $self->hafas->get_departures_p(
 			eva        => $station,
-			lookbehind => 120,
+			lookbehind => 30,
 			lookahead  => 30,
 		);
 	}

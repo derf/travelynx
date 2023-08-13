@@ -440,18 +440,13 @@ sub startup {
 			my $db       = $opt{db}  // $self->pg->db;
 			my $hafas;
 
-			if ( $train_id =~ m{[|]} ) {
-				$hafas = 1;
-			}
-
-			if ($hafas) {
-				return Mojo::Promise->reject(
-					'HAFAS checkins are not supported yet, sorry');
-			}
-
 			my $user = $self->get_user_status( $uid, $db );
 			if ( $user->{checked_in} or $user->{cancelled} ) {
 				return Mojo::Promise->reject('You are already checked in');
+			}
+
+			if ( $train_id =~ m{[|]} ) {
+				return $self->_checkin_hafas_p(%opt);
 			}
 
 			my $promise = Mojo::Promise->new;
@@ -507,6 +502,73 @@ sub startup {
 				sub {
 					my ( $err, $status ) = @_;
 					$promise->reject( $status->{errstr} );
+					return;
+				}
+			)->wait;
+
+			return $promise;
+		}
+	);
+
+	$self->helper(
+		'_checkin_hafas_p' => sub {
+			my ( $self, %opt ) = @_;
+
+			my $station  = $opt{station};
+			my $train_id = $opt{train_id};
+			my $uid      = $opt{uid} // $self->current_user->{id};
+			my $db       = $opt{db}  // $self->pg->db;
+			my $hafas;
+
+			my $promise = Mojo::Promise->new;
+
+			$self->hafas->get_journey_p( trip_id => $train_id )->then(
+				sub {
+					my ($journey) = @_;
+					my $found;
+					for my $stop ( $journey->route ) {
+						if ( $stop->eva == $station ) {
+							$found = $stop;
+							last;
+						}
+					}
+					if ( not $found ) {
+						$promise->reject(
+							"Did not find journey $train_id at $station");
+						return;
+					}
+					for my $stop ( $journey->route ) {
+						$self->stations->add_or_update(
+							stop => $stop,
+							db   => $db,
+						);
+					}
+					eval {
+						$self->in_transit->add(
+							uid     => $uid,
+							db      => $db,
+							journey => $journey,
+							stop    => $found,
+						);
+					};
+					if ($@) {
+						$self->app->log->error(
+							"Checkin($uid): INSERT failed: $@");
+						$promise->reject( 'INSERT failed: ' . $@ );
+						return;
+					}
+					$self->in_transit->update_data(
+						uid  => $uid,
+						db   => $db,
+						data => { trip_id => $journey->id }
+					);
+
+					$promise->resolve($journey);
+				}
+			)->catch(
+				sub {
+					my ($err) = @_;
+					$promise->reject($err);
 					return;
 				}
 			)->wait;
@@ -636,6 +698,10 @@ sub startup {
 			}
 			if ( $arr_eva and $arr_eva != $user->{arr_eva} ) {
 				return $promise->resolve( 0, 'race condition' );
+			}
+
+			if ( $train_id =~ m{[|]} ) {
+				return $self->_checkout_hafas_p(%opt);
 			}
 
 			my $now     = DateTime->now( time_zone => 'Europe/Berlin' );
@@ -870,6 +936,122 @@ sub startup {
 			)->wait;
 
 			return $promise;
+		}
+	);
+
+	$self->helper(
+		'_checkout_hafas_p' => sub {
+			my ( $self, %opt ) = @_;
+
+			my $station = $opt{station};
+			my $force   = $opt{force};
+			my $uid     = $opt{uid} // $self->current_user->{id};
+			my $db      = $opt{db}  // $self->pg->db;
+
+			my $promise = Mojo::Promise->new;
+
+			my $now     = DateTime->now( time_zone => 'Europe/Berlin' );
+			my $journey = $self->in_transit->get(
+				uid             => $uid,
+				with_data       => 1,
+				with_timestamps => 1,
+				with_visibility => 1,
+				postprocess     => 1,
+			);
+
+			# with_visibility needed due to postprocess
+
+			my $found;
+			my $has_arrived;
+			for my $stop ( @{ $journey->{route_after} } ) {
+				if ( $station eq $stop->[0] or $station eq $stop->[1] ) {
+					$found = 1;
+					$self->in_transit->set_arrival_eva(
+						uid         => $uid,
+						db          => $db,
+						arrival_eva => $stop->[1],
+					);
+					if ( defined $journey->{checkout_station_id}
+						and $journey->{checkout_station_id} != $stop->{eva} )
+					{
+						$self->in_transit->unset_arrival_data(
+							uid => $uid,
+							db  => $db
+						);
+					}
+					$self->in_transit->set_arrival_times(
+						uid           => $uid,
+						db            => $db,
+						sched_arrival => $stop->[2]{sched_arr},
+						rt_arrival    =>
+						  ( $stop->[2]{rt_arr} || $stop->[2]{sched_arr} )
+					);
+					if (
+						$now > ( $stop->[2]{rt_arr} || $stop->[2]{sched_arr} ) )
+					{
+						$has_arrived = 1;
+					}
+					last;
+				}
+			}
+			if ( not $found ) {
+				return $promise->resolve( 1, 'station not found in route' );
+			}
+
+			eval {
+				my $tx;
+				if ( not $opt{in_transaction} ) {
+					$tx = $db->begin;
+				}
+
+				if ( $has_arrived or $force ) {
+					$journey = $self->in_transit->get(
+						uid => $uid,
+						db  => $db
+					);
+					$self->journeys->add_from_in_transit(
+						db      => $db,
+						journey => $journey
+					);
+					$self->in_transit->delete(
+						uid => $uid,
+						db  => $db
+					);
+
+					my $cache_ts = $now->clone;
+					if ( $journey->{real_departure}
+						=~ m{ ^ (?<year> \d{4} ) - (?<month> \d{2} ) }x )
+					{
+						$cache_ts->set(
+							year  => $+{year},
+							month => $+{month}
+						);
+					}
+					$self->journey_stats_cache->invalidate(
+						ts  => $cache_ts,
+						db  => $db,
+						uid => $uid
+					);
+				}
+
+				$tx->commit;
+			};
+
+			if ($@) {
+				$self->app->log->error("Checkout($uid): $@");
+				return $promise->resolve( 1, 'Checkout error: ' . $@ );
+			}
+
+			if ( $has_arrived or $force ) {
+				if ( not $opt{in_transaction} ) {
+					$self->run_hook( $uid, 'checkout' );
+				}
+				return $promise->resolve( 0, undef );
+			}
+			if ( not $opt{in_transaction} ) {
+				$self->run_hook( $uid, 'update' );
+			}
+			return $promise->resolve( 1, undef );
 		}
 	);
 

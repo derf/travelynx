@@ -212,8 +212,8 @@
 			% }
 			% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} <= 0) {
 				<p style="margin-top: 2ex;">
-					Der automatische Checkout erfolgt wegen gelegentlich veralteter
-					IRIS-Daten erst etwa zehn Minuten nach der Ankunft.
+					Der automatische Checkout erfolgt wegen teilweise langsamer
+					Echtzeitdatenupdates erst etwa zehn Minuten nach der Ankunft.
 				</p>
 			% }
 			% elsif (not $journey->{arr_name}) {
@@ -333,8 +333,13 @@
 				% }
 			</div>
 			<div class="card-action">
-				% my $url = 'https://bahn.expert/details/' . $journey->{train_type} . ' ' . $journey->{train_no} . '/' . DateTime->now(time_zone => 'Europe/Berlin')->epoch . '000';
-				<a style="margin-right: 0;" href="<%= $url %>" aria-label="Zuglauf"><i class="material-icons left">timeline</i> Zuglauf</a>
+				% if ($journey->{train_id} =~ m{[|]}) {
+					&nbsp;
+				% }
+				% else {
+					% my $url = 'https://bahn.expert/details/' . $journey->{train_type} . ' ' . $journey->{train_no} . '/' . DateTime->now(time_zone => 'Europe/Berlin')->epoch . '000';
+					<a style="margin-right: 0;" href="<%= $url %>" aria-label="Zuglauf"><i class="material-icons left">timeline</i> Zuglauf</a>
+				% }
 				% if ($journey->{extra_data}{trip_id}) {
 					<a class="right" style="margin-right: 0;" href="https://dbf.finalrewind.org/map/<%= $journey->{extra_data}{trip_id} %>/<%= $journey->{train_line} || 0 %>?from=<%= $journey->{dep_name} %>&amp;to=<%= $journey->{arr_name} %>&amp;dark=<%= (session('theme') and session('theme') eq 'dark') ? 1 : 0 %>"><i class="material-icons left" aria-hidden="true">map</i> Karte</a>
 				% }
@@ -391,7 +396,7 @@
 			</div>
 		</div>
 		<p>
-			Falls das Backend ausgefallen ist oder der Zug aus anderen
+			Falls das Backend ausgefallen ist oder die Fahrt aus anderen
 			Gründen verloren ging:
 		</p>
 		<p class="center-align">
