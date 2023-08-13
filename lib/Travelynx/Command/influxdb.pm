@@ -29,6 +29,7 @@ sub run {
 	my $active = $now->clone->subtract( months => 1 );
 
 	my @stats;
+	my @stations;
 	my @traewelling;
 
 	push(
@@ -83,6 +84,44 @@ sub run {
 			$db->select( 'polylines', 'count(*) as count' )->hash->{count}
 		)
 	);
+
+	push(
+		@stations,
+		query_to_influx(
+			'iris',
+			$db->select(
+				'stations',
+				'count(*) as count',
+				{
+					source   => 0,
+					archived => 0
+				}
+			)->hash->{count}
+		)
+	);
+	push(
+		@stations,
+		query_to_influx(
+			'hafas',
+			$db->select(
+				'stations',
+				'count(*) as count',
+				{
+					source   => 1,
+					archived => 0
+				}
+			)->hash->{count}
+		)
+	);
+	push(
+		@stations,
+		query_to_influx(
+			'archived',
+			$db->select( 'stations', 'count(*) as count', { archived => 1 } )
+			  ->hash->{count}
+		)
+	);
+
 	push(
 		@traewelling,
 		query_to_influx(
@@ -115,10 +154,28 @@ sub run {
 		)
 	);
 
-	if ( $self->app->config->{influxdb}->{url} ) {
+	if ( $self->app->mode eq 'development' ) {
+		$self->app->log->debug( 'POST '
+			  . $self->app->config->{influxdb}->{url}
+			  . ' stats '
+			  . join( ',', @stats ) );
+		$self->app->log->debug( 'POST '
+			  . $self->app->config->{influxdb}->{url}
+			  . ' stations '
+			  . join( ',', @stations ) );
+		$self->app->log->debug( 'POST '
+			  . $self->app->config->{influxdb}->{url}
+			  . ' traewelling '
+			  . join( ',', @traewelling ) );
+	}
+	elsif ( $self->app->config->{influxdb}->{url} ) {
 		$self->app->ua->post_p(
 			$self->app->config->{influxdb}->{url},
 			'stats ' . join( ',', @stats )
+		)->wait;
+		$self->app->ua->post_p(
+			$self->app->config->{influxdb}->{url},
+			'stations ' . join( ',', @stations )
 		)->wait;
 		$self->app->ua->post_p(
 			$self->app->config->{influxdb}->{url},
