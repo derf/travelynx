@@ -667,6 +667,9 @@ sub travel_action {
 				my ( $still_checked_in, undef ) = @_;
 				if ( my $destination = $params->{dest} ) {
 					my $station_link = '/s/' . $destination;
+					if ( $status->{train_id} =~ m{[|]} ) {
+						$station_link .= '?hafas=1';
+					}
 					$self->render(
 						json => {
 							success     => 1,
@@ -692,6 +695,7 @@ sub travel_action {
 	}
 	elsif ( $params->{action} eq 'checkout' ) {
 		$self->render_later;
+		my $status = $self->get_user_status;
 		$self->checkout_p(
 			station => $params->{station},
 			force   => $params->{force}
@@ -699,6 +703,9 @@ sub travel_action {
 			sub {
 				my ( $still_checked_in, $error ) = @_;
 				my $station_link = '/s/' . $params->{station};
+				if ( $status->{train_id} =~ m{[|]} ) {
+					$station_link .= '?hafas=1';
+				}
 
 				if ($error) {
 					$self->render(
@@ -747,11 +754,11 @@ sub travel_action {
 		else {
 			my $redir = '/';
 			if ( $status->{checked_in} or $status->{cancelled} ) {
-				if ( $status->{dep_ds100} ) {
-					$redir = '/s/' . $status->{dep_ds100};
+				if ( $status->{train_id} =~ m{[|]} ) {
+					$redir = '/s/' . $status->{dep_eva} . '?hafas=1';
 				}
 				else {
-					$redir = '/s/' . $status->{dep_eva} . '?hafas=1';
+					$redir = '/s/' . $status->{dep_ds100};
 				}
 			}
 			$self->render(
