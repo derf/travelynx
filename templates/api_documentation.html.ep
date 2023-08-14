@@ -59,10 +59,10 @@
 			…<br/>
 			],<br/>
 			"train" : {<br/>
-				"type" : "S", (aktueller / letzter Zugtyp)<br/>
+				"type" : "S", (aktueller / letzter Fahrttyp)<br/>
 				"line" : "6", (Linie als String, nicht immer numerisch, ggf. null)<br/>
-				"no" : "30634", (Zugnummer als String)<br/>
-				"id" : "7512500863736016593" (IRIS-spezifische Zug-ID)<br/>
+				"no" : "30634", (Fahrtnummer als String, ggf. null oder leer)<br/>
+				"id" : "7512500863736016593" (IRIS- oder HAFAS-spezifische Fahrt-ID)<br/>
 			},<br/>
 			"visibility" : {<br/>
 				"desc": "private" / "unlisted" / "followers" / "travelynx" / "public",<br/>
@@ -83,19 +83,19 @@
 			Checkin per API. Sobald eine Zielstation bekannt ist, erfolgt der
 			Checkout wie beim Webinterface automatisch zehn Minuten nach Ankunft.
 			Bitte beachten: Es wird nicht überprüft, ob die angegebene Zielstation
-			in der vorgesehenen Route des Zugs vorkommt oder nicht.
+			in der vorgesehenen Route der Fahrt vorkommt oder nicht.
 		</p>
 		<p>
-			Falls du zum Checkinzeitpunkt bereits in einen anderen Zug eingecheckt
+			Falls du zum Checkinzeitpunkt bereits in eine andere Fahrt eingecheckt
 			bist, wirst du zunächst am gewählten Startbahnhof aus diesem ausgecheckt.
-			Der Checkout erfolgt unabhängig davon, ob der vorherige Zug an dieser
+			Der Checkout erfolgt unabhängig davon, ob die vorherige Fahrt an dieser
 			Station verkehrt oder nicht. Falls nach einem Checkin ohne Zielwahl
 			innerhalb von 48 Stunden kein Zielbahnhof nachgetragen wird, wird der
 			Checkin automatisch rückgängig gemacht.
 		</p>
 		<p>
-			Das Verhalten des Checkout-Endpunkts hängt vom Zeitpunkt ab. Wenn der
-			Zug den angegebenen Zielbahnhof bereits erreicht hat, wird dort
+			Das Verhalten des Checkout-Endpunkts hängt vom Zeitpunkt ab. Wenn die
+			Fahrt den angegebenen Zielbahnhof bereits erreicht hat, wird dort
 			ausgecheckt. Andernfalls wird das Reiseziel aktualisiert und etwa zehn
 			Minuten nach Ankunft automatisch ausgecheckt.
 		</p>
@@ -161,7 +161,7 @@
 <div class="row">
 	<div class="col s12">
 		<p>
-			Manueller Import vergangener Zugfahrten (eine Fahrt pro API-Aufruf).
+			Manueller Import vergangener Fahrten (eine Fahrt pro API-Aufruf).
 		</p>
 		<p>
 			Bitte beachten: fromStation, toStation und intermediateStops werden
@@ -179,13 +179,13 @@
 		<p style="font-family: Monospace;">
 		{<br/>
 			"token" : "<%= $uid %>-<%= $token->{import} // 'TOKEN' %>",<br/>
-			"dryRun" : true/false, (optional: wenn true, wird die Eingabe validiert, aber keine Zugfahrt angelegt)<br/>
+			"dryRun" : true/false, (optional: wenn true, wird die Eingabe validiert, aber keine Fahrt angelegt)<br/>
 			"lax" : true/false, (optional: wenn true, werden unbekannte Unterwegshalte akzeptiert)<br/>
-			"cancelled" : true/false, (Zugausfall?)<br/>
+			"cancelled" : true/false, (Ausfall?)<br/>
 			"train" : {<br/>
-			"type" : "S", (Zugtyp, z.B. ICE, RE, S)<br/>
+			"type" : "S", (Typ, z.B. ICE, RE, S, U)<br/>
 			"line" : "6", (Linie als String, bei Zügen ohne Linie wie IC/ICE u.ä. null)<br/>
-			"no" : "30634", (Zugnummer als String)<br/>
+			"no" : "30634", (Nummer als String, ggf. null oder leer)<br/>
 			},<br/>
 			"fromStation" : { (Start / Checkin)<br/>
 				"name" : "Essen Hbf", (Name oder DS100)<br/>
@@ -210,7 +210,7 @@
 		{<br/>
 			"success" : true,<br/>
 			"deprecated" : true / false, (falls true: Diese API-Version wird irgendwann abgeschaltet, bitte auf eine neue umsteigen)<br/>
-			"id" : 1234, (ID der eingetragenen Zugfahrt)<br/>
+			"id" : 1234, (ID der eingetragenen Fahrt)<br/>
 			"result" : { ... } (Eingetragene Daten. Das Datenformat kann sich
 			ohne Berücksichtigung der API-Version ändern)<br/>
 		}
