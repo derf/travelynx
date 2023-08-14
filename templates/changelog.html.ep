@@ -24,9 +24,7 @@
 			<i class="material-icons left" aria-label="Ankündigung">announcement</i>
 			Derzeit unterstützt travelynx neben Bahnhofsnamen auch EVA-IDs und
 			DS100/Ril100-Codes. In Zukunft werden in einzelnen Fällen nur noch
-			Bahnhofsnamen und EVA-IDs unterstützt. Im Zuge dessen wird in einem
-			zukünftigen Release eine neue API-Version (v2) mit optionalem
-			statt garantiert befülltem "ds100"-Feld etabliert werden.
+			Bahnhofsnamen und EVA-IDs unterstützt.
 		</p>
 	</div>
 </div>

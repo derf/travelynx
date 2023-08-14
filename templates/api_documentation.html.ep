@@ -32,7 +32,7 @@
 			"comment": "Kommentar",<br/>
 			"fromStation" : { (letzter Checkin)<br/>
 				"name" : "Essen Hbf",<br/>
-				"ds100" : "EE",<br/>
+				"ds100" : "EE", (ggf. null)<br/>
 				"uic" : 8000098,<br/>
 				"latitude" : 51.451355,<br/>
 				"longitude" : 7.014793,<br/>
@@ -41,7 +41,7 @@
 			},<br/>
 			"toStation" : { (zugehöriger Checkout. Wenn noch nicht eingetragen, sind alle Felder null)<br/>
 				"name" : "Essen Stadtwald",<br/>
-				"ds100" : "EESA",<br/>
+				"ds100" : "EESA", (ggf. null)<br/>
 				"uic" : 8001896,<br/>
 				"latitude" : 51.422853,<br/>
 				"longitude" : 7.023296,<br/>
@@ -188,9 +188,9 @@
 			"no" : "30634", (Zugnummer als String)<br/>
 			},<br/>
 			"fromStation" : { (Start / Checkin)<br/>
-			"name" : "Essen Hbf", (Name oder DS100)<br/>
-			"scheduledTime": 1556083680, (UNIX-Timestamp)<br/>
-			"realTime": 1556083680, (UNIX-Timestamp, optional, default == scheduledTime)<br/>
+				"name" : "Essen Hbf", (Name oder DS100)<br/>
+				"scheduledTime": 1556083680, (UNIX-Timestamp)<br/>
+				"realTime": 1556083680, (UNIX-Timestamp, optional, default == scheduledTime)<br/>
 			},<br/>
 			"toStation" : { (Ziel / Checkout)<br/>
 				"name" : "Essen Stadtwald", (Name oder DS100)<br/>
