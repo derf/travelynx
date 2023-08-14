@@ -1,11 +1,11 @@
-<h1>Zugfahrt kommentieren</h1>
+<h1>Fahrt kommentieren</h1>
 % if ($error or not $journey->{checked_in}) {
 	<div class="row">
 		<div class="col s12">
 			<div class="card caution-color">
 				<div class="card-content white-text">
 					<span class="card-title">Fehler</span>
-					<p>Du bist gerade nicht eingecheckt. Vergangene Zugfahrten
+					<p>Du bist gerade nicht eingecheckt. Vergangene Fahrten
 						kannst du über die Editierfunktion in der History
 						kommentieren.</p>
 				</div>

@@ -20,7 +20,7 @@
 			<tbody>
 				<tr>
 					<td><i class="material-icons">directions_run</i></td>
-					<td>Knapper Umstieg. Zug wird möglicherweise nicht erreicht.</td>
+					<td>Knapper Umstieg. Anschluss wird möglicherweise nicht erreicht.</td>
 				</tr>
 				<tr>
 					<td><i class="material-icons">warning</i></td>
@@ -45,7 +45,7 @@
 			</tbody>
 		</table>
 		<h3>Auslastung</h3>
-		<p>Die erwartete Auslastung der ersten und zweiten Wagenklasse wird bei Anschluss-Vorschlägen sowie bei Unterwegshalten des aktuellen Zuges angegeben, sofern verfügbar.</p>
+		<p>Die erwartete Auslastung der ersten und zweiten Wagenklasse wird bei Anschlussvorschlägen sowie bei Unterwegshalten des aktuellen Zuges angegeben, sofern verfügbar.</p>
 		<table class="striped">
 			<tbody>
 				<tr>

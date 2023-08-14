@@ -88,12 +88,12 @@
 			Gültige Werte für reason sind derzeit:
 			<ul>
 				<li><b>ping</b> (nach jeder gespeicherten Änderung in diesem Formular)</li>
-				<li><b>checkin</b> (in einen Zug eingecheckt – Zielstation ist noch nicht bekannt)</li>
+				<li><b>checkin</b> (eingecheckt – Zielstation ist noch nicht bekannt)</li>
 				<li><b>update</b> (eingecheckt und Ziel/Kommentar/Sichtbarkeit geändert)</li>
-				<li><b>checkout</b> (aus einem Zug ausgecheckt)</li>
+				<li><b>checkout</b> (ausgecheckt)</li>
 				<li><b>undo</b> (checkin oder checkout wurde rückgängig gemacht)</li>
 			</ul>
-			Falls der Zug das Ziel bei der Zielwahl schon erreicht hat, wird ohne
+			Falls die Fahrt das Ziel bei der Zielwahl schon erreicht hat, wird ohne
 			<b>update</b> direkt ein <b>checkout</b> abgeschickt.
 		</p>
 	</div>

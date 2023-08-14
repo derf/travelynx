@@ -4,7 +4,7 @@
 		Hier kannst du auswählen, welche Personengruppen deine Fahrten
 		bei travelynx einsehen können. Zusätzlich kannst du die
 		Sichtbarkeit vergangener Fahrten auf die letzten vier Wochen
-		einschränken. Nach dem Einchecken in einen Zug hast du im Checkin-Fenster
+		einschränken. Nach dem Einchecken hast du im Checkin-Fenster
 		die Möglichkeit, für die aktuelle Fahrt eine abweichende Sichtbarkeit
 		einzustellen.
 	</div>
@@ -76,7 +76,7 @@
 		<div class="col s12">
 			Wenn du (mit passender Sichtbarkeit) eingecheckt bist, werden unter
 			<a href="/status/<%= $name %>">/status/<%= $name %></a> sowie <a
-			href="/p/<%= $name %>">/p/<%= $name %></a> Zug, Start- und
+			href="/p/<%= $name %>">/p/<%= $name %></a> Fahrt, Start- und
 			Zielstation sowie Abfahrts- und Ankunftszeit gezeigt. Andernfalls
 			wird angegeben, dass du gerade nicht eingecheckt seist.
 		</div>
@@ -124,7 +124,7 @@
 	</div>
 	<div class="row">
 		<div class="col s12">
-			Diese Einstellung bestimmt die Sichtbarkeit vergangener Zugfahrten
+			Diese Einstellung bestimmt die Sichtbarkeit vergangener Fahrten
 			unter <a href="/p/<%= $name %>">/p/<%= $name %></a>. Vergangene
 			Fahrten, die über die Standardeinstellung (siehe oben) oder per
 			individueller Einstellung für die aufrufende Person sichtbar sind,
@@ -169,7 +169,7 @@
 	<div class="row">
 		<div class="col s12">
 			Wenn aktiv, sind von dir eingetragene Freitext-Kommentare in deinem
-			aktuellen Status sowie bei deinen vergangenen Zugfahrten sichtbar.
+			aktuellen Status sowie bei deinen vergangenen Fahrten sichtbar.
 			Diese Einstellung kann nicht pro Fahrt verändert werden.
 		</div>
 	</div>

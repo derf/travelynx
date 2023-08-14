@@ -4,7 +4,7 @@
 			<thead>
 				<tr>
 					<th>Datum</th>
-					<th>Zug</th>
+					<th>Fahrt</th>
 					<th>Von</th>
 					<th>Nach</th>
 				</tr>

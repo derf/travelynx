@@ -1,7 +1,7 @@
 <div class="row">
 	<div class="col s12">
 		<p>
-			Hier werden nur Zugfahrten angezeigt, deren Start- oder Zielstation
+			Hier werden nur Fahrten angezeigt, deren Start- oder Zielstation
 			den angegebenen Kriterien entpricht.  Diese Daten können zum Beispiel für
 			die Angaben zur Pendlerpauschale bei der Steuererklärung genutzt
 			werden.
@@ -57,7 +57,7 @@
 	<div class="col s12 m12 l12">
 		<p>
 			An <b><%= $total_journeys %></b> Tagen im Jahr wurde mindestens
-			eine Zugfahrt von oder zu
+			eine Fahrt von oder zu
 			% if (param('filter_type') eq 'exact') {
 				der ausgewählten Station
 			% }

@@ -4,8 +4,8 @@
 		<p>
 			Travelynx kann anhand deiner vergangenen Fahrten Verbindungen zum
 			Einchecken vorschlagen. Fährst zu z.B regelmäßig von Dortmund Hbf
-			nach Essen Hbf, werden dir in Dortmund bevorzugt Züge angezeigt, die über
-			Essen fahren.  Bei Auswahl dieser wird nicht nur in den Zug eingecheckt,
+			nach Essen Hbf, werden dir in Dortmund bevorzugt Fahrten angezeigt, die
+			Essen passieren.  Bei Auswahl dieser wird nicht nur in die Fahrt eingecheckt,
 			sondern auch direkt Essen Hbf als Ziel eingetragen.
 		<p/>
 <!--		<p>

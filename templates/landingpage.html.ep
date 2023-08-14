@@ -23,14 +23,14 @@
 				% }
 				<div class="card info-color">
 					<div class="card-content">
-						<span class="card-title">Zugausfall dokumentieren</span>
+						<span class="card-title">Ausfall dokumentieren</span>
 						<p>Prinzipiell wärest du nun eingecheckt in
 							<%= $status->{train_type} %> <%= $status->{train_no} %>
-							ab <%= $status->{dep_name} %>, doch dieser Zug fällt aus.
+							ab <%= $status->{dep_name} %>, doch diese Fahrt fällt aus.
 							</p>
-						<p>Falls du den Zugausfall z.B. für ein Fahrgastrechteformular
-							dokumentieren möchtest, wähle bitte jetzt die geplante
-							Zielstation aus.</p>
+						<p>Falls du den Ausfall z.B. für Fahrgastrechte
+							dokumentieren möchtest, wähle bitte jetzt das
+							vorgesehene Ziel aus.</p>
 						<table>
 							<tbody>
 								% my $is_after = 0;
@@ -85,8 +85,8 @@
 				Travelynx erlaubt das Einchecken in Züge im Netz der Deutschen
 				Bahn. So können die eigenen Fahrten später inklusive Echtzeitdaten
 				und eingetragenen Servicemeldungen nachvollzogen und brennende
-				Fragen wie „Wie viele Stunden habe ich letzten Monat im Zug
-				verbracht?“ beantwortet werden.
+				Fragen wie „Wie viele Stunden war ich letzten Monat unterwegs?“
+				beantwortet werden.
 			</p>
 			<p>
 				Die Idee dazu kommt von <a

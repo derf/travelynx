@@ -6,9 +6,9 @@
 					<i class="material-icons small right">warning</i>
 					<span class="card-title">Inkonsistente Reisedaten</span>
 					<p>
-						Die folgenden Zugfahrten wurden bei der Wartezeitberechnung
+						Die folgenden Fahrten wurden bei der Wartezeitberechnung
 						ignoriert, da ihre Abfahrtszeit vor der Ankunftszeit der
-						vorherigen Zugfahrt liegt. Bei den restlichen Statistken
+						vorherigen Fahrt liegt. Bei den restlichen Statistken
 						wurden sie mitberücksichtigt.
 						<ul>
 							% for my $field (@{$stats->{inconsistencies}}) {

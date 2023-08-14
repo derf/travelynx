@@ -1,11 +1,11 @@
-<h1>Zugfahrt bearbeiten</h1>
+<h1>Fahrt bearbeiten</h1>
 % if ($error and $error eq 'notfound') {
 	<div class="row">
 		<div class="col s12">
 			<div class="card caution-color">
 				<div class="card-content white-text">
 					<span class="card-title">Fehler</span>
-					<p>Zugfahrt nicht gefunden.</p>
+					<p>Fahrt nicht gefunden.</p>
 				</div>
 			</div>
 		</div>
@@ -43,7 +43,7 @@
 				</p>
 				<table class="striped">
 					<tr>
-						<th scope="row">Zug</th>
+						<th scope="row">Fahrt</th>
 						<td>
 							<%= $journey->{type} %> <%= $journey->{no} %>
 							% if ($journey->{line}) {

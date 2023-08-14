@@ -48,11 +48,11 @@
 				<span class="card-title">Eingeschränkte Synchronisierung</span>
 				<p>
 					Träwelling und travelynx setzen unterschiedliche Schwerpunkte und haben unterschiedliche Features.
-					Kombiniert mit der Vielzahl an möglichen Randfällen bei Checkins und im Zugbetrieb heißt das, dass die Synchronisierung nicht immer funktioniert.
+					Kombiniert mit der Vielzahl an möglichen Randfällen heißt das, dass die Synchronisierung nicht immer funktioniert.
 					Diese Einschränkung ist bekannt und wird voraussichtlich bestehen bleiben.
 				</p>
 				<p>
-					Bei hohen Verspätungen, Zugausfällen und nachträglichen Checkin-Änderungen ist die Synchronisierung u.U. nicht möglich und muss von Hand vorgenommen werden.
+					Bei hohen Verspätungen, Ausfällen und nachträglichen Checkin-Änderungen ist die Synchronisierung u.U. nicht möglich und muss von Hand vorgenommen werden.
 					Träwelling-Checkins in Nahverkehrsmittel und Züge außerhalb von Deutschland werden von travelynx nicht unterstützt.
 					Ebenso werden travelynx-Hooks bei via Träwelling vorgenommenen Checkins nicht ausgelöst.
 				</p>
@@ -189,9 +189,9 @@
 					</label>
 				</div>
 				<p>Alle fünf Minuten wird dein Status auf Träwelling abgefragt.
-					Falls du gerade in einen Zug eingecheckt bist, wird dieser von
-					travelynx übernommen.  Träwelling-Checkins in Nahverkehrsmittel
-					und Züge außerhalb des deutschen Schienennetzes werden nicht
+					Falls du gerade in eingecheckt bist, wird der Checkin von
+					travelynx übernommen.  Träwelling-Checkins in Züge
+					außerhalb des deutschen Schienennetzes werden noch nicht
 					unterstützt. Die Sichtbarkeit von Träwelling-Checkins wird
 					derzeit von travelynx nicht berücksichtigt.</p>
 			</div>
