@@ -907,9 +907,17 @@ sub station {
 	$promise->then(
 		sub {
 			my ($status) = @_;
-
+			my $api_link;
 			my @results;
+
 			if ($use_hafas) {
+
+				my $iris_eva = List::Util::min grep { $_ >= 1000000 }
+				  @{ $status->station->{evas} // [] };
+				if ($iris_eva) {
+					$api_link = '/s/' . $iris_eva;
+				}
+
 				my $now = $self->now->epoch;
 				@results = map { $_->[0] }
 				  sort { $b->[1] <=> $a->[1] }
@@ -928,6 +936,9 @@ sub station {
 				};
 			}
 			else {
+
+				$api_link = '/s/' . $status->{station_eva} . '?hafas=1';
+
 				# You can't check into a train which terminates here
 				@results = grep { $_->departure } @{ $status->{results} };
 
@@ -991,6 +1002,7 @@ sub station {
 							user_status      => $user_status,
 							can_check_out    => $can_check_out,
 							connections      => $connecting_trains,
+							api_link         => $api_link,
 							title => "travelynx: $status->{station_name}",
 						);
 					}
@@ -1005,6 +1017,7 @@ sub station {
 							related_stations => $status->{related_stations},
 							user_status      => $user_status,
 							can_check_out    => $can_check_out,
+							api_link         => $api_link,
 							title => "travelynx: $status->{station_name}",
 						);
 					}
@@ -1020,6 +1033,7 @@ sub station {
 					related_stations => $status->{related_stations},
 					user_status      => $user_status,
 					can_check_out    => $can_check_out,
+					api_link         => $api_link,
 					title            => "travelynx: $status->{station_name}",
 				);
 			}

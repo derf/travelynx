@@ -6,6 +6,26 @@
 		% }
 	</div>
 </div>
+% if ($api_link) {
+	<div class="row">
+		% if (param('hafas')) {
+			<div class="col s12 center-align">
+				<a href="<%= $api_link %>">Schienenverkehr</a>
+			</div>
+			<div class="col s12 center-align">
+				→ Nahverkehr ←
+			</div>
+		% }
+		% else {
+			<div class="col s12 center-align">
+				→ Schienenverkehr ←
+			</div>
+			<div class="col s12 center-align">
+				<a href="<%= $api_link %>">Nahverkehr</a>
+			</div>
+		% }
+	</div>
+% }
 % my $have_connections = 0;
 % if ($user_status->{checked_in}) {
 	<div class="row">
