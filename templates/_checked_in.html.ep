@@ -219,7 +219,7 @@
 			% elsif (not $journey->{arr_name}) {
 				<p>
 					% for my $station (@{$journey->{route_after}}) {
-						<a class="tablerow action-checkout" data-station="<%= $station->[0] %>">
+						<a class="tablerow action-checkout" data-station="<%= $station->[1] // $station->[0] %>">
 							<span><%= $station->[0] %></span>
 							<span>
 							% if ($station->[2]{load}{SECOND}) {
@@ -357,7 +357,7 @@
 				% }
 				% for my $station (@{$journey->{route_after}}) {
 					% my $is_dest = ($journey->{arr_name} and $station->[0] eq $journey->{arr_name});
-					<a class="action-checkout tablerow" style="<%= $is_dest? 'font-weight: bold;' : '' %>" data-station="<%= $station->[0] %>">
+					<a class="action-checkout tablerow" style="<%= $is_dest? 'font-weight: bold;' : '' %>" data-station="<%= $station->[1] // $station->[0] %>">
 						<span><%= $station->[0] %></span>
 						<span>
 						% if ($station->[2]{load}{SECOND}) {
