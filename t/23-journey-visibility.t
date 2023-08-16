@@ -115,7 +115,7 @@ sub test_journey_visibility {
 	}
 	else {
 		$t->get_ok("/p/test1/j/$jid")->status_is(404)
-		  ->content_like(qr{Zugfahrt nicht gefunden.});
+		  ->content_like(qr{Fahrt nicht gefunden.});
 	}
 
 	if ( $opt{with_token} ) {
@@ -124,7 +124,7 @@ sub test_journey_visibility {
 	}
 	else {
 		$t->get_ok("/p/test1/j/$jid$token")->status_is(404)
-		  ->content_like(qr{Zugfahrt nicht gefunden.});
+		  ->content_like(qr{Fahrt nicht gefunden.});
 	}
 
 	login(
@@ -139,7 +139,7 @@ sub test_journey_visibility {
 	}
 	else {
 		$t->get_ok("/p/test1/j/$jid")->status_is(404)
-		  ->content_like(qr{Zugfahrt nicht gefunden.});
+		  ->content_like(qr{Fahrt nicht gefunden.});
 	}
 
 	# users can see their own status with token if visibility is >= unlisted
@@ -149,7 +149,7 @@ sub test_journey_visibility {
 	}
 	else {
 		$t->get_ok("/p/test1/j/$jid$token")->status_is(404)
-		  ->content_like(qr{Zugfahrt nicht gefunden.});
+		  ->content_like(qr{Fahrt nicht gefunden.});
 	}
 
 	logout();
@@ -165,7 +165,7 @@ sub test_journey_visibility {
 	}
 	else {
 		$t->get_ok("/p/test1/j/$jid")->status_is(404)
-		  ->content_like(qr{Zugfahrt nicht gefunden.});
+		  ->content_like(qr{Fahrt nicht gefunden.});
 	}
 
 	# uid2 can see uid1 with token if visibility is >= unlisted
@@ -175,7 +175,7 @@ sub test_journey_visibility {
 	}
 	else {
 		$t->get_ok("/p/test1/j/$jid$token")->status_is(404)
-		  ->content_like(qr{Zugfahrt nicht gefunden.});
+		  ->content_like(qr{Fahrt nicht gefunden.});
 	}
 
 	logout();
@@ -191,7 +191,7 @@ sub test_journey_visibility {
 	}
 	else {
 		$t->get_ok("/p/test1/j/$jid")->status_is(404)
-		  ->content_like(qr{Zugfahrt nicht gefunden.});
+		  ->content_like(qr{Fahrt nicht gefunden.});
 	}
 
 	# uid3 can see uid1 with token if visibility is >= unlisted
@@ -201,7 +201,7 @@ sub test_journey_visibility {
 	}
 	else {
 		$t->get_ok("/p/test1/j/$jid$token")->status_is(404)
-		  ->content_like(qr{Zugfahrt nicht gefunden.});
+		  ->content_like(qr{Fahrt nicht gefunden.});
 	}
 
 	logout();
