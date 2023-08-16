@@ -800,7 +800,7 @@ sub get_latest_checkout_stations {
 
 	my $res = $db->select(
 		'journeys_str',
-		[ 'arr_name', 'arr_eva' ],
+		[ 'arr_name', 'arr_eva', 'train_id' ],
 		{
 			user_id   => $uid,
 			cancelled => 0
@@ -821,8 +821,9 @@ sub get_latest_checkout_stations {
 		push(
 			@ret,
 			{
-				name => $row->{arr_name},
-				eva  => $row->{arr_eva}
+				name  => $row->{arr_name},
+				eva   => $row->{arr_eva},
+				hafas => ( $row->{train_id} =~ m{[|]} ? 1 : 0 ),
 			}
 		);
 	}
