@@ -555,35 +555,64 @@ sub geolocation {
 
 	if ( not $lon or not $lat ) {
 		$self->render( json => { error => 'Invalid lon/lat received' } );
+		return;
 	}
-	else {
-		my @candidates = map {
-			{
-				ds100    => $_->[0][0],
-				name     => $_->[0][1],
-				eva      => $_->[0][2],
-				lon      => $_->[0][3],
-				lat      => $_->[0][4],
-				distance => $_->[1],
+	$self->render_later;
+
+	my @iris = map {
+		{
+			ds100    => $_->[0][0],
+			name     => $_->[0][1],
+			eva      => $_->[0][2],
+			lon      => $_->[0][3],
+			lat      => $_->[0][4],
+			distance => $_->[1],
+		}
+	} Travel::Status::DE::IRIS::Stations::get_station_by_location( $lon,
+		$lat, 10 );
+	@iris = uniq_by { $_->{name} } @iris;
+	if ( @iris > 5 ) {
+		@iris = @iris[ 0 .. 4 ];
+	}
+
+	Travel::Status::DE::HAFAS->new_p(
+		promise    => 'Mojo::Promise',
+		user_agent => $self->ua,
+		geoSearch  => {
+			lat => $lat,
+			lon => $lon
+		}
+	)->then(
+		sub {
+			my ($hafas) = @_;
+			my @hafas = map {
+				{
+					name     => $_->name,
+					eva      => $_->eva,
+					distance => $_->distance_m / 1000,
+					hafas    => 1
+				}
+			} $hafas->results;
+			if ( @hafas > 5 ) {
+				@hafas = @hafas[ 0 .. 4 ];
 			}
-		} Travel::Status::DE::IRIS::Stations::get_station_by_location( $lon,
-			$lat, 10 );
-		@candidates = uniq_by { $_->{name} } @candidates;
-		if ( @candidates > 5 ) {
 			$self->render(
 				json => {
-					candidates => [ @candidates[ 0 .. 4 ] ],
+					candidates => [ @iris, @hafas ],
 				}
 			);
 		}
-		else {
+	)->catch(
+		sub {
+			my ($err) = @_;
 			$self->render(
 				json => {
-					candidates => [@candidates],
+					candidates => [@iris],
+					warning    => $err,
 				}
 			);
 		}
-	}
+	)->wait;
 }
 
 sub travel_action {

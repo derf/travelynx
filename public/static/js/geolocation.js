@@ -46,11 +46,12 @@ $(document).ready(function() {
 			const res = $(document.createElement('p'));
 			$.each(data.candidates, function(i, candidate) {
 
-				const ds100 = candidate.ds100,
+				const eva = candidate.eva,
 					name = candidate.name,
+					hafas = candidate.hafas,
 					distance = candidate.distance.toFixed(1);
 
-				const node = $('<a class="tablerow" href="/s/' + ds100 + '"><span>' + name + '</span></a>');
+				const node = $('<a class="tablerow" href="/s/' + eva + '?hafas=' + hafas + '"><span>' + name + '</span></a>');
 				node.click(function() {
 					$('nav .preloader-wrapper').addClass('active');
 				});
