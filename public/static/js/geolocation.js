@@ -24,7 +24,7 @@ $(document).ready(function() {
 			const res = $(document.createElement('p'));
 			$.each(stops, function(i, stop) {
 				const parts = stop.split(';');
-				const node = $('<a class="tablerow" href="/s/' + parts[0] + '?hafas=' + parts[2] + '"><span><i class="material-icons" aria-hidden="true">' + (parseInt(parts[2]) ? 'directions_bus' : 'train') + '</i>' + parts[1] + '</span></a>');
+				const node = $('<a class="tablerow" href="/s/' + parts[0] + '?hafas=' + parts[2] + '"><span><i class="material-icons" aria-hidden="true">' + (parseInt(parts[2]) ? 'directions' : 'train') + '</i>' + parts[1] + '</span></a>');
 				node.click(function() {
 					$('nav .preloader-wrapper').addClass('active');
 				});
@@ -51,7 +51,7 @@ $(document).ready(function() {
 					hafas = candidate.hafas,
 					distance = candidate.distance.toFixed(1);
 
-				const node = $('<a class="tablerow" href="/s/' + eva + '?hafas=' + hafas + '"><span><i class="material-icons" aria-hidden="true">' + (parseInt(hafas) ? 'directions_bus' : 'train') + '</i>' + name + '</span></a>');
+				const node = $('<a class="tablerow" href="/s/' + eva + '?hafas=' + hafas + '"><span><i class="material-icons" aria-hidden="true">' + (parseInt(hafas) ? 'directions' : 'train') + '</i>' + name + '</span></a>');
 				node.click(function() {
 					$('nav .preloader-wrapper').addClass('active');
 				});

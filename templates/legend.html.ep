@@ -13,6 +13,14 @@
 					<td>(HH:MM)</td>
 					<td>Ein Einstieg (Abfahrtstafel) bzw. Ausstieg (Route) ist an dieser Station möglicherweise nicht vorgesehen.</td>
 				</tr>
+				<tr>
+					<td><i class="material-icons">train</i></td>
+					<td>Backend: DB IRIS. Bevorzugte Datenquelle für (mindestens teilweise) innerdeutsche Zugfahrten.</td>
+				</tr>
+				<tr>
+					<td><i class="material-icons">directions</i></td>
+					<td>Backend: DB HAFAS. Bevorzugte Datenquelle für Nahverkehr und vollständig außerdeutsche Zugfahrten. Weniger detailliert als IRIS.</td>
+				</tr>
 			</tbody>
 		</table>
 		<h3>Anschlusszüge</h3>
