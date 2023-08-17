@@ -1,29 +1,22 @@
 <div class="row">
 	<div class="col s12 center-align">
+		<i class="tiny material-icons "><%= param('hafas') ? 'directions' : 'train' %></i>
 		<b><%= $station %></b>
 		% for my $related_station (sort { $a->{name} cmp $b->{name} } @{$related_stations}) {
-			<br/><%= $related_station->{name} %>
+			<br/>+ <%= $related_station->{name} %>
 		% }
 	</div>
 </div>
 % if ($api_link) {
 	<div class="row">
-		% if (param('hafas')) {
-			<div class="col s12 center-align">
-				<a href="<%= $api_link %>">Schienenverkehr</a>
-			</div>
-			<div class="col s12 center-align">
-				→ Nahverkehr ←
-			</div>
-		% }
-		% else {
-			<div class="col s12 center-align">
-				→ Schienenverkehr ←
-			</div>
-			<div class="col s12 center-align">
-				<a href="<%= $api_link %>">Nahverkehr</a>
-			</div>
-		% }
+		<div class="col s12 center-align">
+			% if (param('hafas')) {
+				<a href="<%= $api_link %>">zum Schienenverkehr</a>
+			% }
+			% else {
+				<a href="<%= $api_link %>">zum Nahverkehr</a>
+			% }
+		</div>
 	</div>
 % }
 % my $have_connections = 0;
