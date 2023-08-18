@@ -61,7 +61,7 @@
 						%= form_for 'list_departures' => begin
 							<div class="input-field">
 								%= text_field 'station', id => 'station', class => 'autocomplete contrast-color-text', autocomplete => 'off', required => undef
-								<label for="station">Manuelle Eingabe (Name oder DS100)</label>
+								<label for="station">Manuelle Eingabe</label>
 							</div>
 							<div class="center-align">
 								<button class="btn waves-effect waves-light btn-flat" type="submit" name="action" value="departures">

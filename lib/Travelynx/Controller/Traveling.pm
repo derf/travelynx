@@ -1095,7 +1095,17 @@ sub redirect_to_station {
 	my ($self) = @_;
 	my $station = $self->param('station');
 
-	$self->redirect_to("/s/${station}");
+	if ( my $s = $self->app->stations->search($station) ) {
+		if ( $s->{hafas} ) {
+			$self->redirect_to("/s/${station}?hafas=1");
+		}
+		else {
+			$self->redirect_to("/s/${station}");
+		}
+	}
+	else {
+		$self->redirect_to("/s/${station}?hafas=1");
+	}
 }
 
 sub cancelled {
