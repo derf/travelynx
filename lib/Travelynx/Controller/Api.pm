@@ -280,15 +280,20 @@ sub travel_v1 {
 
 					# the user may not have provided the correct to_station, so
 					# request related stations for checkout.
-					my ( $train2, $error ) = $self->checkout(
+					return $self->checkout_p(
 						station      => $to_station,
 						force        => 0,
 						uid          => $uid,
 						with_related => 1,
 					);
-					if ($error) {
-						return Mojo::Promise->reject($error);
-					}
+				}
+				return Mojo::Promise->resolve;
+			}
+		)->then(
+			sub {
+				my ( undef, $error ) = @_;
+				if ($error) {
+					return Mojo::Promise->reject($error);
 				}
 				$self->render(
 					json => {
@@ -334,33 +339,43 @@ sub travel_v1 {
 			);
 		}
 
+		$self->render_later;
+
 		# the user may not have provided the correct to_station, so
 		# request related stations for checkout.
-		my ( $train, $error ) = $self->checkout(
+		$self->checkout_p(
 			station      => $to_station,
 			force        => $payload->{force} ? 1 : 0,
 			uid          => $uid,
 			with_related => 1,
-		);
-		if ($error) {
-			$self->render(
-				json => {
-					success    => \0,
-					deprecated => \0,
-					error      => 'Checkout error: ' . $error,
-					status     => $self->get_user_status_json_v1( uid => $uid )
+		)->then(
+			sub {
+				my ( $train, $error ) = @_;
+				if ($error) {
+					return Mojo::Promise->reject($error);
 				}
-			);
-		}
-		else {
-			$self->render(
-				json => {
-					success    => \1,
-					deprecated => \0,
-					status     => $self->get_user_status_json_v1( uid => $uid )
-				}
-			);
-		}
+				$self->render(
+					json => {
+						success    => \1,
+						deprecated => \0,
+						status => $self->get_user_status_json_v1( uid => $uid )
+					}
+				);
+				return;
+			}
+		)->catch(
+			sub {
+				my ($err) = @_;
+				$self->render(
+					json => {
+						success    => \0,
+						deprecated => \0,
+						error      => 'Checkout error: ' . $err,
+						status => $self->get_user_status_json_v1( uid => $uid )
+					}
+				);
+			}
+		)->wait;
 	}
 	elsif ( $payload->{action} eq 'undo' ) {
 		my $error = $self->undo( 'in_transit', $uid );
