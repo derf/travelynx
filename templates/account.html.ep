@@ -275,7 +275,7 @@
 			Die folgenden API-Token erlauben den passwortlosen automatisierten Zugriff auf
 			API-Endpunkte.  Bitte umsichtig behandeln – sobald ein Token gesetzt
 			ist, können damit ohne Logindaten alle zugehörigen API-Aktionen
-			ausgeführt werden.
+			ausgeführt werden. <a href="/api">Dokumentation</a>.
 		</p>
 		<table class="striped">
 			<tr>
@@ -373,14 +373,6 @@
 		</table>
 	</div>
 </div>
-
-<div class="row">
-	<div class="col s12">
-		<a href="/api">Dokumentation</a>
-	</div>
-</div>
-
-
 
 <div class="row">
 	<div class="col s12">
