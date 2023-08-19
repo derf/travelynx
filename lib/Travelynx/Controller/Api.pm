@@ -176,12 +176,14 @@ sub travel_v1 {
 		my $from_station = sanitize( q{}, $payload->{fromStation} );
 		my $to_station   = sanitize( q{}, $payload->{toStation} );
 		my $train_id;
+		my $hafas = exists $payload->{train}{journeyID} ? 1 : 0;
 
 		if (
 			not(
 				$from_station
-				and ( ( $payload->{train}{type} and $payload->{train}{no} )
-					or $payload->{train}{id} )
+				and (  ( $payload->{train}{type} and $payload->{train}{no} )
+					or $payload->{train}{id}
+					or $payload->{train}{journeyID} )
 			)
 		  )
 		{
@@ -196,7 +198,7 @@ sub travel_v1 {
 			return;
 		}
 
-		if ( not $self->stations->search($from_station) ) {
+		if ( not $hafas and not $self->stations->search($from_station) ) {
 			$self->render(
 				json => {
 					success    => \0,
@@ -208,7 +210,10 @@ sub travel_v1 {
 			return;
 		}
 
-		if ( $to_station and not $self->stations->search($to_station) ) {
+		if (    $to_station
+			and not $hafas
+			and not $self->stations->search($to_station) )
+		{
 			$self->render(
 				json => {
 					success    => \0,
@@ -222,7 +227,11 @@ sub travel_v1 {
 
 		my $train_p;
 
-		if ( exists $payload->{train}{id} ) {
+		if ( exists $payload->{train}{journeyID} ) {
+			$train_p = Mojo::Promise->resolve(
+				sanitize( q{}, $payload->{train}{journeyID} ) );
+		}
+		elsif ( exists $payload->{train}{id} ) {
 			$train_p
 			  = Mojo::Promise->resolve( sanitize( 0, $payload->{train}{id} ) );
 		}

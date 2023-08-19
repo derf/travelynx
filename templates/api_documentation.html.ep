@@ -102,7 +102,7 @@
 		<p style="font-family: Monospace;">
 			curl -X POST -H "Content-Type: application/json" -d '{"token":"<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>"}' <%= $api_root %>/travel
 		</p>
-		<p>Payload zum Einchecken, optional mit Zielwahl:</p>
+		<p>Payload zum Einchecken per IRIS-Backend (Schienenverkehr DE/DB), optional mit Zielwahl:</p>
 		<p style="font-family: Monospace;">
 		{<br/>
 			"token" : "<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>",<br/>
@@ -113,6 +113,19 @@
 			}<br/>
 			"fromStation" : "Essen Hbf", (DS100 oder EVA-Nummer sind ebenfalls möglich)<br/>
 			"toStation" : "Berlin Hbf", (optional, DS100 oder EVA-Nummer sind ebenfalls möglich)<br/>
+			"comment" : "Beliebiger Text" (optional, überschreibt vorherigen Kommentar)<br/>
+		}
+		</p>
+		<p>Payload zum Einchecken per HAFAS-Backend (Nahverkehr und außerhalb DE/DB), optional mit Zielwahl. fromStation und toStation müssen mit den Unterwegshalten übereinstimmen, z.B. "Hauptbahnhof (U Gleis 2+4), Essen (Ruhr)" statt "Essen Hbf".</p>
+		<p style="font-family: Monospace;">
+		{<br/>
+			"token" : "<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>",<br/>
+			"action" : "checkin",<br/>
+			"train" : {<br/>
+				"journeyID" : "1|1426396|4|80|19082023",<br/>
+			}<br/>
+			"fromStation" : 651806, (Name oder EVA-Nummer)<br/>
+			"toStation" : 654645, (optional, Name oder EVA-Nummer)<br/>
 			"comment" : "Beliebiger Text" (optional, überschreibt vorherigen Kommentar)<br/>
 		}
 		</p>

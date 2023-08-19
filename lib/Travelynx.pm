@@ -527,7 +527,8 @@ sub startup {
 					my ($journey) = @_;
 					my $found;
 					for my $stop ( $journey->route ) {
-						if ( $stop->eva == $station ) {
+						if ( $stop->name eq $station or $stop->eva == $station )
+						{
 							$found = $stop;
 							last;
 						}
