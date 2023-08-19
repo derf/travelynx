@@ -7,7 +7,9 @@
 					<span class="card-title">Hinweis</span>
 					<p>travelynx ist darauf ausgelegt, über die Hauptseite in
 						Echtzeit in Verkehrsmittel ein- und auszuchecken. Die manuelle
-						Eingabe von Fahrten ist nur als Notlösung vorgesehen.</p>
+						Eingabe von Fahrten ist nur als Notlösung vorgesehen.
+						Hier werden derzeit nur Zugfahrten im DB-Netz
+						(IRIS-Backend) unterstützt.</p>
 				</div>
 			</div>
 		</div>
