@@ -1,4 +1,3 @@
-<p>+++ Testbetrieb +++</p>
 <table class="striped">
 <tbody>
 % my $orientation_bar_shown = param('train');
