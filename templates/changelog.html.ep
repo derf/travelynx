@@ -2,6 +2,43 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		2.0
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left" aria-label="Neues Feature">add</i>
+			Checkins in Nahverkehrsmittel (Bus und Bahn) und Züge außerhalb
+			des DB-Netzes per HAFAS-Backend. Die verfügbaren Backends werden
+			per Icon Identifiziert: <i class="material-icons">train</i> IRIS
+			und <i class="material-icons">directions</i> HAFAS.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Ankündigung">announcement</i>
+			Aktuell beschränkt die HAFAS-Anbindung auf Stationssuche, Checkins
+			und Träwelling-Synchronisierung.
+			Eine Einbindung in die Verbindungssuche und das manuelle Nachtragen
+			von HAFAS-Fahrten folgen zu einem späteren Zeitpunkt.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Nicht Rückwärtskompatibel">warning</i>
+			Stationsangaben (z.B. auf der Hauptseite, beim Import oder in der
+			API) müssen nun genau mit der gewünschten Station übereinstimmen.
+			Unbekannte Stationen werden an das HAFAS weitergereicht, welches
+			meist weniger Details bereitstellt als das IRIS.
+			Fuzzy Matching wird nicht mehr in der bisherigen Form unterstützt.
+			Sofern eine Station sowohl via IRIS als auch via HAFAS bekannt ist,
+			wird die IRIS-Version bevorzugt.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Ankündigung">warning</i>
+			Das ds100-Feld in API und Web Hook ist nun optional und bei
+			HAFAS-Checkins null.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		1.34
 	</div>
 	<div class="col s12 m11 l11">
