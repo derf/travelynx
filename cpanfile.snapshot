@@ -1959,13 +1959,12 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       Module::Runtime 0.014
-  Mozilla-CA-20230801
-    pathname: L/LW/LWP/Mozilla-CA-20230801.tar.gz
+  Mozilla-CA-20230807
+    pathname: L/LW/LWP/Mozilla-CA-20230807.tar.gz
     provides:
-      Mozilla::CA 20230801
+      Mozilla::CA 20230807
     requirements:
       ExtUtils::MakeMaker 0
-      perl 5.006
   Net-HTTP-6.23
     pathname: O/OA/OALDERS/Net-HTTP-6.23.tar.gz
     provides:
@@ -2407,12 +2406,12 @@ DISTRIBUTIONS
       Test::Builder::Tester 1.02
       Test::More 0.62
       perl 5.008
-  Text-CSV-2.02
-    pathname: I/IS/ISHIGAKI/Text-CSV-2.02.tar.gz
+  Text-CSV-2.03
+    pathname: I/IS/ISHIGAKI/Text-CSV-2.03.tar.gz
     provides:
-      Text::CSV 2.02
-      Text::CSV::ErrorDiag 2.02
-      Text::CSV_PP 2.02
+      Text::CSV 2.03
+      Text::CSV::ErrorDiag 2.03
+      Text::CSV_PP 2.03
     requirements:
       ExtUtils::MakeMaker 0
       IO::Handle 0
@@ -2588,12 +2587,12 @@ DISTRIBUTIONS
       Test::More 0
       Test::Pod 0
       perl v5.14.0
-  Travel-Status-DE-IRIS-1.88
-    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.88.tar.gz
+  Travel-Status-DE-IRIS-1.89
+    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.89.tar.gz
     provides:
-      Travel::Status::DE::IRIS 1.88
-      Travel::Status::DE::IRIS::Result 1.88
-      Travel::Status::DE::IRIS::Stations 1.88
+      Travel::Status::DE::IRIS 1.89
+      Travel::Status::DE::IRIS::Result 1.89
+      Travel::Status::DE::IRIS::Stations 1.89
     requirements:
       Carp 0
       Class::Accessor 0
