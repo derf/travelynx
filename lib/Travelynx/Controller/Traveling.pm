@@ -593,12 +593,15 @@ sub geolocation {
 					hafas    => 1
 				}
 			} $hafas->results;
-			if ( @hafas > 5 ) {
-				@hafas = @hafas[ 0 .. 4 ];
+			if ( @hafas > 10 ) {
+				@hafas = @hafas[ 0 .. 9 ];
 			}
+			my @results = map { $_->[0] }
+			  sort { $a->[1] <=> $b->[1] }
+			  map { [ $_, $_->{distance} ] } ( @iris, @hafas );
 			$self->render(
 				json => {
-					candidates => [ @iris, @hafas ],
+					candidates => [@results],
 				}
 			);
 		}
