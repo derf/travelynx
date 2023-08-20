@@ -53,8 +53,7 @@
 				</p>
 				<p>
 					Bei hohen Verspätungen, Ausfällen und nachträglichen Checkin-Änderungen ist die Synchronisierung u.U. nicht möglich und muss von Hand vorgenommen werden.
-					Träwelling-Checkins in Nahverkehrsmittel und Züge außerhalb von Deutschland werden von travelynx nicht unterstützt.
-					Ebenso werden travelynx-Hooks bei via Träwelling vorgenommenen Checkins nicht ausgelöst.
+					travelynx-Hooks werden bei via Träwelling vorgenommenen Checkins nicht ausgelöst.
 				</p>
 			</div>
 			<div class="card-action">
@@ -102,9 +101,7 @@
 				Hier hast du die Möglichkeit, deinen travelynx-Account mit einem
 				Account bei <a href="https://traewelling.de">Träwelling</a> zu
 				verknüpfen. Dies erlaubt die automatische Übernahme zukünftiger
-				Checkins zwischen den beiden Diensten. Träwelling-Checkins in
-				Nahverkehrsmittel und Züge außerhalb des deutschen Schienennetzes
-				werden (noch) nicht unterstützt und ignoriert. Checkins, die
+				Checkins zwischen den beiden Diensten. Checkins, die
 				vor dem Verknüpfen der Accounts stattgefunden haben, werden
 				nicht synchronisiert. Bei synchronisierten Checkins wird der
 				zugehörige Träwelling-Status von deiner travelynx-Statusseite
