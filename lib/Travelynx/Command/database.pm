@@ -1903,9 +1903,19 @@ my @migrations = (
 			}
 		);
 	},
-);
 
-# TODO add 'hafas' column to in_transit (and maybe journeys? undo/redo needs something to work with...)
+	# v48 -> v49
+	# create indexes for common queries
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				create index uid_real_departure_idx on journeys (user_id, real_departure);
+				update schema_version set version = 49;
+			}
+		);
+	},
+);
 
 sub sync_stations {
 	my ( $db, $iris_version ) = @_;
