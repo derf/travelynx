@@ -704,7 +704,7 @@ sub get_latest {
 			cancelled => 0
 		},
 		{
-			order_by => { -desc => 'journey_id' },
+			order_by => { -desc => 'real_dep_ts' },
 			limit    => 1
 		}
 	)->expand->hash;
