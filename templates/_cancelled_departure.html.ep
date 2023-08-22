@@ -2,12 +2,12 @@
 	<div class="card-content">
 		<span class="card-title">Zugausfall</span>
 		<p>Die Abfahrt von <%= $journey->{train_type} %> <%= $journey->{train_no} %>
-			in <a href="/s/<%= $journey->{dep_ds100} %>"><%= $journey->{dep_name} %></a>
+			in <a href="/s/<%= $journey->{dep_eva} %>"><%= $journey->{dep_name} %></a>
 			entfällt. Der Zugausfall auf der Fahrt nach <%= $journey->{arr_name} %> wurde bereits dokumentiert.
 		</p>
 		% if (my @connections = @{stash('connections') // []}) {
 			<p>Alternative Reisemöglichkeiten:</p>
-			%= include '_connections', connections => \@connections, checkin_from => $journey->{dep_ds100};
+			%= include '_connections', connections => \@connections, checkin_from => $journey->{dep_eva};
 		% }
 	</div>
 </div>
