@@ -129,14 +129,8 @@ DISTRIBUTIONS
       Alien::Build::Plugin::Download::GitLab 0
       Alien::Build::Plugin::Prefer::BadVersion 1.05
       Alien::Build::Plugin::Probe::Vcpkg 0
-      Config 0
       ExtUtils::CBuilder 0
       ExtUtils::MakeMaker 6.52
-      HTTP::Tiny 0.044
-      IO::Socket::SSL 1.56
-      Mozilla::CA 0
-      Net::SSLeay 1.49
-      URI 0
       perl 5.006
   B-Hooks-EndOfScope-0.26
     pathname: E/ET/ETHER/B-Hooks-EndOfScope-0.26.tar.gz
@@ -1959,10 +1953,10 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       Module::Runtime 0.014
-  Mozilla-CA-20230807
-    pathname: L/LW/LWP/Mozilla-CA-20230807.tar.gz
+  Mozilla-CA-20230821
+    pathname: L/LW/LWP/Mozilla-CA-20230821.tar.gz
     provides:
-      Mozilla::CA 20230807
+      Mozilla::CA 20230821
     requirements:
       ExtUtils::MakeMaker 0
   Net-HTTP-6.23
@@ -2560,16 +2554,16 @@ DISTRIBUTIONS
       Test::Pod 0
       Travel::Status::DE::IRIS 1.2
       perl v5.20.0
-  Travel-Status-DE-DeutscheBahn-4.12
-    pathname: D/DE/DERF/Travel-Status-DE-DeutscheBahn-4.12.tar.gz
+  Travel-Status-DE-DeutscheBahn-4.14
+    pathname: D/DE/DERF/Travel-Status-DE-DeutscheBahn-4.14.tar.gz
     provides:
-      Travel::Status::DE::DeutscheBahn 4.12
-      Travel::Status::DE::HAFAS 4.12
-      Travel::Status::DE::HAFAS::Journey 4.12
-      Travel::Status::DE::HAFAS::Message 4.12
-      Travel::Status::DE::HAFAS::Polyline 4.12
-      Travel::Status::DE::HAFAS::Stop 4.12
-      Travel::Status::DE::HAFAS::StopFinder 4.12
+      Travel::Status::DE::DeutscheBahn 4.14
+      Travel::Status::DE::HAFAS 4.14
+      Travel::Status::DE::HAFAS::Journey 4.14
+      Travel::Status::DE::HAFAS::Message 4.14
+      Travel::Status::DE::HAFAS::Polyline 4.14
+      Travel::Status::DE::HAFAS::Stop 4.14
+      Travel::Status::DE::HAFAS::StopFinder 4.14
     requirements:
       Carp 0
       Class::Accessor 0.16
