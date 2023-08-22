@@ -71,6 +71,9 @@
 				<tr>
 					<th scope="row">Fahrt</th>
 					<td>
+						% if ($journey->{wagonorder_pride}) {
+							🏳️‍🌈
+						% }
 						<%= $journey->{type} %> <%= $journey->{no} %>
 						% if ($journey->{line}) {
 							(Linie <%= $journey->{line} %>)

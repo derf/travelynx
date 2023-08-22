@@ -1,4 +1,7 @@
 % for my $wagongroup (@{$wagongroups // []}) {
+	% if ($wagongroup->{name} eq 'ICE0304') {
+		🏳️‍🌈
+	% }
 	<%= $wagongroup->{name} %>
 	% my ($wagon_number) = ($wagongroup->{name} =~ m{ ^ ICE 0* (\d+) $ }x);
 	% if ($wagon_number and my $group_name = app->ice_name->{$wagon_number}) {
