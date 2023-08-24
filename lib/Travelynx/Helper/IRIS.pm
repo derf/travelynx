@@ -153,10 +153,12 @@ sub get_departures_p {
 		return Mojo::Promise->reject(
 			'ambiguous station name',
 			{
-				results => [],
-				errstr  =>
-				  "Mehrdeutiger Stationsname: '$station'. Mögliche Eingaben: "
-				  . join( q{, }, map { $_->[1] } @station_matches ),
+				results     => [],
+				errstr      => "Mehrdeutiger Stationsname: '$station'",
+				suggestions => [
+					map { { name => $_->[1], eva => $_->[2] } }
+					  @station_matches
+				],
 			}
 		);
 	}

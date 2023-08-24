@@ -1074,20 +1074,54 @@ sub station {
 	)->catch(
 		sub {
 			my ( $err, $status ) = @_;
-			if ($status) {
+			if ( $status and $status->{suggestions} ) {
 				$self->render(
-					'landingpage',
-					with_autocomplete => 1,
-					with_geolocation  => 1,
-					error             => $status->{errstr},
-					status            => 400,
+					'disambiguation',
+					suggestions => $status->{suggestions},
+					status      => 300,
 				);
+			}
+			elsif ( $use_hafas and $status and $status->errcode eq 'LOCATION' )
+			{
+				$status->similar_stops_p->then(
+					sub {
+						my @suggestions = @_;
+						if ( @suggestions == 1 ) {
+							$self->redirect_to(
+								'/s/' . $suggestions[0]->{id} . '?hafas=1' );
+						}
+						else {
+							$self->render(
+								'disambiguation',
+								suggestions => [
+									map {
+										{
+											name => $_->{name},
+											eva  => $_->{id}
+										}
+									} @suggestions
+								],
+								status => 300,
+							);
+						}
+					}
+				)->catch(
+					sub {
+						my ($err2) = @_;
+						$self->render(
+							'exception',
+							exception =>
+							  "StopFinder threw '$err2' when handling '$err'",
+							status => 502
+						);
+					}
+				)->wait;
 			}
 			else {
 				$self->render(
 					'exception',
 					exception => $err,
-					status    => 500
+					status    => 502
 				);
 			}
 		}
