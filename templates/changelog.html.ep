@@ -2,6 +2,32 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		2.1
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left" aria-label="Neues Feature">add</i>
+			Vorschlag geeigneter Stationen bei Eingabe eines uneindeutigen
+			Namens auf der Startseite.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Bugfix">build</i>
+			Fahrten, die vor Mitternacht begannen, zeigen nun auch nach
+			Mitternacht korrekte Echtzeitdaten an und gehen nicht fälschlich
+			von 24 Stunden Verspätung aus.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Bugfix">build</i>
+			Vergangene Fahrten und letzte Fahrtziele werden nun anhand der
+			Abfahrtszeit und nicht anhand der Nummer des Eintrags ausgewählt.
+			Somit können manuelle Einträge für weit in der Vergangenheit
+			liegende Fahrten keine vor kurzem geloggten Fahrten mehr verdecken.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		2.0
 	</div>
 	<div class="col s12 m11 l11">
