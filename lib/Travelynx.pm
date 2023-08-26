@@ -2397,6 +2397,7 @@ sub startup {
 	$r->get( '/p/:name/j/:id' => 'public_journey' )
 	  ->to('profile#journey_details');
 	$r->get('/.well-known/webfinger')->to('account#webfinger');
+	$r->get('/dyn/:av/autocomplete.js')->to('api#autocomplete');
 	$r->post('/api/v1/import')->to('api#import_v1');
 	$r->post('/api/v1/travel')->to('api#travel_v1');
 	$r->post('/action')->to('traveling#travel_action');

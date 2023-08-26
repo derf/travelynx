@@ -7,6 +7,7 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use DateTime;
 use List::Util;
+use Mojo::JSON qw(encode_json);
 use UUID::Tiny qw(:std);
 
 # Internal Helpers
@@ -646,6 +647,23 @@ sub set_token {
 		);
 	}
 	$self->redirect_to('account');
+}
+
+sub autocomplete {
+	my ($self) = @_;
+
+	$self->res->headers->cache_control('max-age=86400, immutable');
+
+	my $output
+	  = "document.addEventListener('DOMContentLoaded',function(){M.Autocomplete.init(document.querySelectorAll('.autocomplete'),{\n";
+	$output .= 'minLength:3,limit:50,data:';
+	$output .= encode_json( $self->stations->get_for_autocomplete );
+	$output .= "\n});});\n";
+
+	$self->render(
+		format => 'js',
+		data   => $output
+	);
 }
 
 1;

@@ -50,6 +50,19 @@ sub add_or_update {
 	);
 }
 
+sub get_for_autocomplete {
+	my ($self) = @_;
+
+	my $res = $self->{pg}->db->select( 'stations', ['name'] );
+	my %ret;
+
+	while ( my $row = $res->hash ) {
+		$ret{ $row->{name} } = undef;
+	}
+
+	return \%ret;
+}
+
 # Fast
 sub get_by_eva {
 	my ( $self, $eva, %opt ) = @_;
