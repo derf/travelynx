@@ -1134,7 +1134,7 @@ sub redirect_to_station {
 	my $station = $self->param('station');
 
 	if ( my $s = $self->app->stations->search($station) ) {
-		if ( $s->{hafas} ) {
+		if ( $s->{source} == 1 ) {
 			$self->redirect_to("/s/${station}?hafas=1");
 		}
 		else {
