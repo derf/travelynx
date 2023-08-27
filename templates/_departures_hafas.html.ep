@@ -1,4 +1,4 @@
-<table class="striped">
+<table class="striped departures">
 <tbody>
 % my $orientation_bar_shown = param('train');
 % my $now_epoch = now()->epoch;
@@ -11,7 +11,7 @@
 	% }
 	% if (not $orientation_bar_shown and $result->datetime->epoch < $now_epoch) {
 		% $orientation_bar_shown = 1;
-		<tr>
+		<tr class="now">
 			<td>
 			</td>
 			<td>
