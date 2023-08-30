@@ -63,6 +63,7 @@
 				"line" : "6", (Linie als String, nicht immer numerisch, ggf. null)<br/>
 				"no" : "30634", (Fahrtnummer als String, ggf. null oder leer)<br/>
 				"id" : "7512500863736016593" (IRIS- oder HAFAS-spezifische Fahrt-ID)<br/>
+				"hafasId" : "1|224479|0|80|30082023" (HAFAS-spezifische Fahrt-ID falls bekannt, ggf. null)<br/>
 			},<br/>
 			"visibility" : {<br/>
 				"desc": "private" / "unlisted" / "followers" / "travelynx" / "public",<br/>

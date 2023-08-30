@@ -1852,10 +1852,11 @@ sub startup {
 					: undef,
 				},
 				train => {
-					type => $status->{train_type},
-					line => $status->{train_line},
-					no   => $status->{train_no},
-					id   => $status->{train_id},
+					type    => $status->{train_type},
+					line    => $status->{train_line},
+					no      => $status->{train_no},
+					id      => $status->{train_id},
+					hafasId => $status->{extra_data}{trip_id},
 				},
 				intermediateStops => [],
 				visibility        => {
