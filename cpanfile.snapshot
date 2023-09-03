@@ -969,16 +969,16 @@ DISTRIBUTIONS
       base 0
       strict 0
       warnings 0
-  Email-Abstract-3.009
-    pathname: R/RJ/RJBS/Email-Abstract-3.009.tar.gz
+  Email-Abstract-3.010
+    pathname: R/RJ/RJBS/Email-Abstract-3.010.tar.gz
     provides:
-      Email::Abstract 3.009
-      Email::Abstract::EmailMIME 3.009
-      Email::Abstract::EmailSimple 3.009
-      Email::Abstract::MIMEEntity 3.009
-      Email::Abstract::MailInternet 3.009
-      Email::Abstract::MailMessage 3.009
-      Email::Abstract::Plugin 3.009
+      Email::Abstract 3.010
+      Email::Abstract::EmailMIME 3.010
+      Email::Abstract::EmailSimple 3.010
+      Email::Abstract::MIMEEntity 3.010
+      Email::Abstract::MailInternet 3.010
+      Email::Abstract::MailMessage 3.010
+      Email::Abstract::Plugin 3.010
     requirements:
       Carp 0
       Email::Simple 1.998
@@ -2554,16 +2554,16 @@ DISTRIBUTIONS
       Test::Pod 0
       Travel::Status::DE::IRIS 1.2
       perl v5.20.0
-  Travel-Status-DE-DeutscheBahn-4.15
-    pathname: D/DE/DERF/Travel-Status-DE-DeutscheBahn-4.15.tar.gz
+  Travel-Status-DE-DeutscheBahn-4.16
+    pathname: D/DE/DERF/Travel-Status-DE-DeutscheBahn-4.16.tar.gz
     provides:
-      Travel::Status::DE::DeutscheBahn 4.15
-      Travel::Status::DE::HAFAS 4.15
-      Travel::Status::DE::HAFAS::Journey 4.15
-      Travel::Status::DE::HAFAS::Message 4.15
-      Travel::Status::DE::HAFAS::Polyline 4.15
-      Travel::Status::DE::HAFAS::Stop 4.15
-      Travel::Status::DE::HAFAS::StopFinder 4.15
+      Travel::Status::DE::DeutscheBahn 4.16
+      Travel::Status::DE::HAFAS 4.16
+      Travel::Status::DE::HAFAS::Journey 4.16
+      Travel::Status::DE::HAFAS::Message 4.16
+      Travel::Status::DE::HAFAS::Polyline 4.16
+      Travel::Status::DE::HAFAS::Stop 4.16
+      Travel::Status::DE::HAFAS::StopFinder 4.16
     requirements:
       Carp 0
       Class::Accessor 0.16
