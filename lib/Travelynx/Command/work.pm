@@ -55,7 +55,8 @@ sub run {
 						}
 					}
 					if ( not $found_dep ) {
-						$self->app->log->debug("Did not find $dep within journey $train_id");
+						$self->app->log->debug(
+							"Did not find $dep within journey $train_id");
 						return;
 					}
 

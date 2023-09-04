@@ -192,27 +192,23 @@ sub route_diff {
 		# this branch is inefficient, but won't be taken frequently
 		elsif ( not( grep { $_ eq $route[$route_idx] } @sched_route ) ) {
 			push( @json_route,
-				[ $route[$route_idx], undef, { isAdditional => 1 } ],
-			);
+				[ $route[$route_idx], undef, { isAdditional => 1 } ], );
 			$route_idx++;
 		}
 		else {
 			push( @json_route,
-				[ $sched_route[$sched_idx], undef, { isCancelled => 1 } ],
-			);
+				[ $sched_route[$sched_idx], undef, { isCancelled => 1 } ], );
 			$sched_idx++;
 		}
 	}
 	while ( $route_idx <= $#route ) {
 		push( @json_route,
-			[ $route[$route_idx], undef, { isAdditional => 1 } ],
-		);
+			[ $route[$route_idx], undef, { isAdditional => 1 } ], );
 		$route_idx++;
 	}
 	while ( $sched_idx <= $#sched_route ) {
 		push( @json_route,
-			[ $sched_route[$sched_idx], undef, { isCancelled => 1 } ],
-		);
+			[ $sched_route[$sched_idx], undef, { isCancelled => 1 } ], );
 		$sched_idx++;
 	}
 	return @json_route;
