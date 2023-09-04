@@ -78,5 +78,34 @@
 				<tr>
 			</tbody>
 		</table>
+		<h3>Profil und Timeline</h3>
+		<table class="striped">
+			<tbody>
+				<tr>
+					<td><i class="material-icons"><%= visibility_icon('public') %></i></td>
+					<td>Öffentlicher Checkin</td>
+				</tr>
+				<tr>
+					<td><i class="material-icons"><%= visibility_icon('travelynx') %></i></td>
+					<td>Nur für Angemeldete</td>
+				</tr>
+				<tr>
+					<td><i class="material-icons"><%= visibility_icon('followers') %></i></td>
+					<td>Nur für Follower</td>
+				</tr>
+				<tr>
+					<td><i class="material-icons"><%= visibility_icon('unlisted') %></i></td>
+					<td>Nur mit Link / Token</td>
+				</tr>
+				<tr>
+					<td><i class="material-icons"><%= visibility_icon('private') %></i></td>
+					<td>Privater Checkin</td>
+				</tr>
+				<!-- <tr>
+					<td><i class="material-icons">person_add</i></td>
+					<td>Mitfahren (Checkin übernehmen)</td>
+				<tr> -->
+			</tbody>
+		</table>
 	</div>
 </div>
