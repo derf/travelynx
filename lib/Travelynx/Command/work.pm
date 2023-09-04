@@ -55,8 +55,8 @@ sub run {
 						}
 					}
 					if ( not $found_dep ) {
-						return Mojo::Promise->reject(
-							"Did not find $dep within journey $train_id");
+						$self->app->log->debug("Did not find $dep within journey $train_id");
+						return;
 					}
 
 					if ( $found_dep->{rt_dep} ) {
@@ -122,7 +122,7 @@ sub run {
 				@{ $status->{results} };
 
 				if ( not $train ) {
-					$self->app->log->info(
+					$self->app->log->debug(
 						"could not find train $train_id at $dep\n");
 					return;
 				}
