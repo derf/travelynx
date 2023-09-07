@@ -1593,21 +1593,17 @@ sub startup {
 
 			for my $station ( @{ $journey->{route_after} } ) {
 				my $station_desc = $station->[0];
-				if ( $station->[2]{sched_arr} and $station->[2]{rt_arr} ) {
-					$station_desc .= $station->[2]{sched_arr}->strftime(';%s');
-					$station_desc .= $station->[2]{rt_arr}->strftime(';%s');
-					if ( $station->[2]{sched_dep} and $station->[2]{rt_dep} ) {
-						$station_desc
-						  .= $station->[2]{sched_dep}->strftime(';%s');
-						$station_desc .= $station->[2]{rt_dep}->strftime(';%s');
-					}
-					else {
-						$station_desc .= ';0;0';
-					}
-				}
-				else {
-					$station_desc .= ';0;0;0;0';
-				}
+
+				my $sa = $station->[2]{sched_arr};
+				my $ra = $station->[2]{rt_arr} || $station->[2]{sched_arr};
+				my $sd = $station->[2]{sched_dep};
+				my $rd = $station->[2]{rt_dep} || $station->[2]{sched_dep};
+
+				$station_desc .= $sa ? $sa->strftime(';%s') : ';0';
+				$station_desc .= $ra ? $ra->strftime(';%s') : ';0';
+				$station_desc .= $sd ? $sd->strftime(';%s') : ';0';
+				$station_desc .= $rd ? $rd->strftime(';%s') : ';0';
+
 				push( @route, $station_desc );
 			}
 

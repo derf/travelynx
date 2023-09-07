@@ -127,19 +127,19 @@
 							% if ($station->[0] eq $journey->{arr_name}) {
 								% last;
 							% }
-							% if (($station->[2]{rt_arr_countdown} // 0) > 0 and $station->[2]{rt_arr}) {
-								<%= $station->[0] %><br/><%= $station->[2]{rt_arr}->strftime('%H:%M') %>
-								% if ($station->[2]{sched_arr} and $station->[2]{sched_arr}->epoch != $station->[2]{rt_arr}->epoch) {
-									%= sprintf('(%+d)', ($station->[2]{rt_arr}->epoch - $station->[2]{sched_arr}->epoch ) / 60);
+							% if (($station->[2]{arr_countdown} // 0) > 0 and $station->[2]{arr}) {
+								<%= $station->[0] %><br/><%= $station->[2]{arr}->strftime('%H:%M') %>
+								% if ($station->[2]{arr_delay}) {
+									%= sprintf('(%+d)', $station->[2]{arr_delay} / 60);
 								% }
 								% last;
 							% }
-							% if (($station->[2]{rt_dep_countdown} // 0) > 0 and $station->[2]{rt_arr} and $station->[2]{rt_dep}) {
+							% if (($station->[2]{dep_countdown} // 0) > 0 and $station->[2]{arr} and $station->[2]{dep}) {
 								<%= $station->[0] %><br/>
-								<%= $station->[2]{rt_arr}->strftime('%H:%M') %> →
-								<%= $station->[2]{rt_dep}->strftime('%H:%M') %>
-								% if ($station->[2]{sched_dep} and $station->[2]{sched_dep}->epoch != $station->[2]{rt_dep}->epoch) {
-									%= sprintf('(%+d)', ($station->[2]{rt_dep}->epoch - $station->[2]{sched_dep}->epoch ) / 60);
+								<%= $station->[2]{arr}->strftime('%H:%M') %> →
+								<%= $station->[2]{dep}->strftime('%H:%M') %>
+								% if ($station->[2]{dep_delay}) {
+									%= sprintf('(%+d)', $station->[2]{dep_dely} / 60);
 								% }
 								% last;
 							% }
@@ -152,19 +152,19 @@
 							% if ($station->[0] eq $journey->{arr_name}) {
 								% last;
 							% }
-							% if (($station->[2]{rt_arr_countdown} // 0) > 0 and $station->[2]{rt_arr}) {
-								<%= $station->[0] %><br/><%= $station->[2]{rt_arr}->strftime('%H:%M') %>
-								% if ($station->[2]{sched_arr} and $station->[2]{sched_arr}->epoch != $station->[2]{rt_arr}->epoch) {
-									%= sprintf('(%+d)', ($station->[2]{rt_arr}->epoch - $station->[2]{sched_arr}->epoch ) / 60);
+							% if (($station->[2]{arr_countdown} // 0) > 0 and $station->[2]{arr}) {
+								<%= $station->[0] %><br/><%= $station->[2]{arr}->strftime('%H:%M') %>
+								% if ($station->[2]{arr_delay}) {
+									%= sprintf('(%+d)', $station->[2]{arr_delay} / 60);
 								% }
 								% last;
 							% }
-							% if (($station->[2]{rt_dep_countdown} // 0) > 0 and $station->[2]{rt_arr} and $station->[2]{rt_dep}) {
+							% if (($station->[2]{dep_countdown} // 0) > 0 and $station->[2]{arr} and $station->[2]{dep}) {
 								<%= $station->[0] %><br/>
-								<%= $station->[2]{rt_arr}->strftime('%H:%M') %> →
-								<%= $station->[2]{rt_dep}->strftime('%H:%M') %>
-								% if ($station->[2]{sched_dep} and $station->[2]{sched_dep}->epoch != $station->[2]{rt_dep}->epoch) {
-									%= sprintf('(%+d)', ($station->[2]{rt_dep}->epoch - $station->[2]{sched_dep}->epoch ) / 60);
+								<%= $station->[2]{arr}->strftime('%H:%M') %> →
+								<%= $station->[2]{dep}->strftime('%H:%M') %>
+								% if ($station->[2]{dep_delay}) {
+									%= sprintf('(%+d)', $station->[2]{dep_delay} / 60);
 								% }
 								% last;
 							% }

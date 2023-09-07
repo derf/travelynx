@@ -270,9 +270,11 @@ sub postprocess {
 				if ( $times->{rt_arr} ) {
 					$times->{rt_arr}
 					  = epoch_to_dt( $times->{rt_arr} );
-					$times->{rt_arr_countdown}
-					  = $times->{rt_arr}->epoch - $epoch;
+					$times->{arr_delay}
+					  = $times->{rt_arr}->epoch - $times->{sched_arr}->epoch;
 				}
+				$times->{arr} = $times->{rt_arr} || $times->{sched_arr};
+				$times->{arr_countdown} = $times->{arr}->epoch - $epoch;
 			}
 			if ( $times->{sched_dep}
 				and ref( $times->{sched_dep} ) ne 'DateTime' )
@@ -282,9 +284,11 @@ sub postprocess {
 				if ( $times->{rt_dep} ) {
 					$times->{rt_dep}
 					  = epoch_to_dt( $times->{rt_dep} );
-					$times->{rt_dep_countdown}
-					  = $times->{rt_dep}->epoch - $epoch;
+					$times->{dep_delay}
+					  = $times->{rt_dep}->epoch - $times->{sched_dep}->epoch;
 				}
+				$times->{dep} = $times->{rt_dep} || $times->{sched_dep};
+				$times->{dep_countdown} = $times->{dep}->epoch - $epoch;
 			}
 		}
 	}
