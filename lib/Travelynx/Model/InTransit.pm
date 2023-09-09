@@ -96,8 +96,7 @@ sub add {
 			'in_transit',
 			{
 				user_id   => $uid,
-				cancelled => $train->departure_is_cancelled
-				? 1
+				cancelled => $train->departure_is_cancelled ? 1
 				: 0,
 				checkin_station_id => $checkin_station_id,
 				checkin_time => DateTime->now( time_zone => 'Europe/Berlin' ),
@@ -111,7 +110,13 @@ sub add {
 				route           => $json->encode($route),
 				messages        => $json->encode(
 					[ map { [ $_->[0]->epoch, $_->[1] ] } $train->messages ]
-				)
+				),
+				data => JSON->new->encode(
+					{
+						rt => $train->departure_has_realtime ? 1
+						: 0
+					}
+				),
 			}
 		);
 	}
@@ -152,6 +157,7 @@ sub add {
 				sched_departure => $stop->{sched_dep},
 				real_departure  => $stop->{rt_dep} // $stop->{sched_dep},
 				route           => $json->encode( [@route] ),
+				data => JSON->new->encode( { rt => $stop->{rt_dep} ? 1 : 0 } ),
 			}
 		);
 	}

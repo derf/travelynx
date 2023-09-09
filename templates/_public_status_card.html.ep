@@ -2,7 +2,7 @@
 % if ($journey->{checked_in}) {
 	<div class="card">
 		<div class="card-content">
-			<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
+			<i class="material-icons right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 			<span class="card-title">
 				% if (stash('from_profile')) {
 					Unterwegs mit <%= include '_format_train', journey => $journey %>
@@ -14,6 +14,9 @@
 					<a href="/p/<%= $name %>"><%= $name %></a> ist unterwegs
 				% }
 				<i class="material-icons right"><%= visibility_icon($journey->{effective_visibility_str}) %></i>
+				% if (not $journey->{extra_data}{rt}) {
+					<i class="material-icons right grey-text">gps_off</i>
+				% }
 			</span>
 			% if ($privacy->{comments_visible} and $journey->{comment}) {
 				<p>„<%= $journey->{comment} %>“</p>

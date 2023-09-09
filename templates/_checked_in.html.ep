@@ -2,7 +2,7 @@
 <div class="autorefresh">
 	<div class="card">
 		<div class="card-content">
-			<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
+			<i class="material-icons right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 			% if (not $journey->{arr_name}) {
 				<span class="card-title center-align">Ziel wählen</span>
 			% }
@@ -180,9 +180,12 @@
 					Bitte wähle ein neues Reiseziel.
 				</p>
 			% }
-			% if (@{$journey->{messages} // []} or @{$journey->{extra_data}{qos_msg} // []}) {
+			% if (@{$journey->{messages} // []} or @{$journey->{extra_data}{qos_msg} // []} or not $journey->{extra_data}{rt}) {
 				<p style="margin-bottom: 2ex;">
 					<ul>
+						% if (not $journey->{extra_data}{rt}) {
+							<li><i class="material-icons tiny">gps_off</i> Keine Echtzeitdaten vorhanden
+						% }
 						% for my $message (reverse @{$journey->{messages} // []}) {
 							% if ($journey->{sched_departure}->epoch - $message->[0]->epoch < 1800) {
 								<li> <i class="material-icons tiny">warning</i> <%= $message->[0]->strftime('%H:%M') %>: <%= $message->[1] %></li>
