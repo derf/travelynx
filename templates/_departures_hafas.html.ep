@@ -37,6 +37,9 @@
 			% if ($result->delay) {
 				(<%= sprintf('%+d', $result->delay) %>)
 			% }
+			% elsif (not defined $result->delay and not $result->is_cancelled) {
+				<i class="material-icons" aria-label="Keine Echtzeitdaten vorhanden" style="font-size: 16px;">gps_off</i>
+			% }
 		</td>
 	</tr>
 % }
