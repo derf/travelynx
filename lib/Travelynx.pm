@@ -2335,7 +2335,11 @@ sub startup {
 					{
 						polylines => $json->encode( \@station_pairs ),
 						color     => '#673ab7',
-						opacity   => $with_polyline ? 0.4 : 0.6,
+						opacity   => @polylines
+						? $with_polyline
+						      ? 0.4
+						      : 0.6
+						: 0.8,
 					},
 					{
 						polylines => $json->encode( \@polylines ),
