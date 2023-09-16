@@ -394,6 +394,20 @@ sub startup {
 	);
 
 	$self->helper(
+		'sprintf_km' => sub {
+			my ( $self, $km ) = @_;
+
+			if ( $km < 1 ) {
+				return sprintf( '%.f m', $km * 1000 );
+			}
+			if ( $km < 10 ) {
+				return sprintf( '%.1f km', $km );
+			}
+			return sprintf( '%.f km', $km );
+		}
+	);
+
+	$self->helper(
 		'load_icon' => sub {
 			my ( $self, $load ) = @_;
 			my $first  = $load->{FIRST}  // 0;

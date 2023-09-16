@@ -130,8 +130,8 @@
 							<%= numify_skipped_stations($journey->{skip_route}) %><br/>
 						% }
 						% if ($journey->{km_route} > 0.1) {
-							ca. <%= sprintf('%.f', $journey->{km_route}) %> km
-							(Luftlinie: <%= sprintf('%.f', $journey->{km_beeline}) %> km)
+							ca. <%= sprintf_km($journey->{km_route}) %>
+							(Luftlinie: <%= sprintf_km($journey->{km_beeline}) %>)
 						% }
 						% else {
 							?
