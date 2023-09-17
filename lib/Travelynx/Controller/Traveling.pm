@@ -905,6 +905,7 @@ sub station {
 	my ($self)  = @_;
 	my $station = $self->stash('station');
 	my $train   = $self->param('train');
+	my $trip_id = $self->param('trip_id');
 	my $uid     = $self->current_user->{id};
 
 	my @timeline = $self->in_transit->get_timeline(
@@ -1000,7 +1001,10 @@ sub station {
 			}
 
 			my $connections_p;
-			if ($train) {
+			if ( $trip_id and $use_hafas ) {
+				@results = grep { $_->id eq $trip_id } @results;
+			}
+			elsif ( $train and not $use_hafas ) {
 				@results
 				  = grep { $_->type . ' ' . $_->train_no eq $train } @results;
 			}
