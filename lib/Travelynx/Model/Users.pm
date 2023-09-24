@@ -567,7 +567,6 @@ sub delete {
 	$res{transit}   = $db->delete( 'in_transit',        { user_id => $uid } );
 	$res{hooks}     = $db->delete( 'webhooks',          { user_id => $uid } );
 	$res{trwl}      = $db->delete( 'traewelling',       { user_id => $uid } );
-	$res{lt}        = $db->delete( 'localtransit',      { user_id => $uid } );
 	$res{password}  = $db->delete( 'pending_passwords', { user_id => $uid } );
 	$res{relations} = $db->delete( 'relations',
 		[ { subject_id => $uid }, { object_id => $uid } ] );
@@ -651,34 +650,12 @@ sub use_history {
 	my $uid   = $opt{uid};
 	my $value = $opt{set};
 
-	if ( $opt{destinations} ) {
-		$db->insert(
-			'localtransit',
-			{
-				user_id => $uid,
-				data    =>
-				  JSON->new->encode( { destinations => $opt{destinations} } )
-			},
-			{ on_conflict => \'(user_id) do update set data = EXCLUDED.data' }
-		);
-	}
-
 	if ($value) {
 		$db->update( 'users', { use_history => $value }, { id => $uid } );
 	}
 	else {
-		if ( $opt{with_local_transit} ) {
-			my $res = $db->select(
-				'user_transit',
-				[ 'use_history', 'data' ],
-				{ id => $uid }
-			)->expand->hash;
-			return ( $res->{use_history}, $res->{data}{destinations} // [] );
-		}
-		else {
-			return $db->select( 'users', ['use_history'], { id => $uid } )
-			  ->hash->{use_history};
-		}
+		return $db->select( 'users', ['use_history'], { id => $uid } )
+		  ->hash->{use_history};
 	}
 }
 

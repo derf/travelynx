@@ -67,7 +67,7 @@
 				<th scope="row">Verbindungen</th>
 				<td>
 					<a href="/account/insight"><i class="material-icons">edit</i></a>
-					% if ($use_history & 0x07) {
+					% if ($use_history & 0x03) {
 						Vorschläge aktiv
 					% }
 					% else {

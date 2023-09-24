@@ -1726,7 +1726,7 @@ sub get_connection_targets {
 	my $min_count = $opt{min_count} // 3;
 
 	if ( $opt{destination_name} ) {
-		return ( $opt{destination_name} );
+		return ( { eva => $opt{eva}, name => $opt{destination_name} } );
 	}
 
 	my $dest_id = $opt{eva} // $self->get_latest_dest_id(%opt);
@@ -1755,7 +1755,6 @@ sub get_connection_targets {
 	  = $res->hashes->grep( sub { shift->{count} >= $min_count } )
 	  ->map( sub { shift->{dest} } )->each;
 	@destinations = $self->{stations}->get_by_evas(@destinations);
-	@destinations = map { $_->{name} } @destinations;
 	return @destinations;
 }
 

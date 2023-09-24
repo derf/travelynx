@@ -1915,6 +1915,20 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v49 -> v50
+	# travelynx 2.0 introduced proper HAFAS support, so there is no need for
+	# the 'FYI, here is some hAFAS data' kludge anymore.
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				drop view user_transit;
+				drop table localtransit;
+				update schema_version set version = 50;
+			}
+		);
+	},
 );
 
 sub sync_stations {

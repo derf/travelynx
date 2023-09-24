@@ -48,30 +48,6 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="input-field col s12">
-			<label>
-				%= check_box local_transit => 1
-				<span>Nahverkehr</span>
-			</label>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col s12">
-			Zeige beim Reisestatus zusätzlich Anschlussmöglichkeiten an den
-			Nahverkehr. Diese dienen lediglich zur Information; ein Checkin ist
-			nicht möglich. Es werden nur Anschlussmöglichkeiten zu Zielen
-			angezeigt, die im folgenden Feld gelistet sind (ein Ziel pro
-			Zeile, z.B. „Eichlinghofen H-Bahn, Dortmund“). Falls travelynx in
-			Zukunft eine Möglichkeit für Checkins in Nahverkehrsmittel erhält,
-			wird diese Liste ggf. gelöscht.
-		</div>
-	</div>
-	<div class="row">
-		<div class="col s12">
-			%= text_area 'destinations', id => 'destinations', class => 'materialize-textarea'
-		</div>
-	</div>
-	<div class="row">
 		<div class="col s3 m3 l3">
 		</div>
 		<div class="col s6 m6 l6 center-align">

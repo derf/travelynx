@@ -27,11 +27,8 @@ sub has_str_in_list {
 sub get_connecting_trains_p {
 	my ( $self, %opt ) = @_;
 
-	my $uid = $opt{uid} //= $self->current_user->{id};
-	my ( $use_history, $lt_stops ) = $self->users->use_history(
-		uid                => $uid,
-		with_local_transit => 1
-	);
+	my $uid         = $opt{uid} //= $self->current_user->{id};
+	my $use_history = $self->users->use_history( uid => $uid );
 
 	my ( $eva, $exclude_via, $exclude_train_id, $exclude_before );
 	my $now = $self->now->epoch;
@@ -68,13 +65,14 @@ sub get_connecting_trains_p {
 		return $promise->reject;
 	}
 
-	my @destinations = $self->journeys->get_connection_targets(%opt);
+	my @destinations
+	  = uniq_by { $_->{name} } $self->journeys->get_connection_targets(%opt);
 
 	if ($exclude_via) {
-		@destinations = grep { $_ ne $exclude_via } @destinations;
+		@destinations = grep { $_->{name} ne $exclude_via } @destinations;
 	}
 
-	if ( not( @destinations or $use_history & 0x04 and @{$lt_stops} ) ) {
+	if ( not @destinations ) {
 		return $promise->reject;
 	}
 
@@ -83,8 +81,11 @@ sub get_connecting_trains_p {
 	  = $can_check_in ? 40 : ( ( ${arr_countdown} // 0 ) / 60 + 40 );
 
 	my $iris_promise = Mojo::Promise->new;
+	my %via_count    = map { $_->{name} => 0 } @destinations;
 
-	if (@destinations) {
+	if ( $eva >= 8000000
+		and List::Util::any { $_->{eva} >= 8000000 } @destinations )
+	{
 		$self->iris->get_departures_p(
 			station      => $eva,
 			lookbehind   => 10,
@@ -94,7 +95,7 @@ sub get_connecting_trains_p {
 			sub {
 				my ($stationboard) = @_;
 				if ( $stationboard->{errstr} ) {
-					$iris_promise->reject( $stationboard->{errstr} );
+					$iris_promise->resolve( [] );
 					return;
 				}
 
@@ -105,7 +106,6 @@ sub get_connecting_trains_p {
 				my @results;
 				my @cancellations;
 				my $excluded_train;
-				my %via_count = map { $_ => 0 } @destinations;
 				for my $train ( @{ $stationboard->{results} } ) {
 					if ( not $train->departure ) {
 						next;
@@ -144,7 +144,7 @@ sub get_connecting_trains_p {
 							$train->sched_route_post, $train->sched_route_end
 						);
 						for my $dest (@destinations) {
-							if ( has_str_in_list( $dest, @via ) ) {
+							if ( has_str_in_list( $dest->{name}, @via ) ) {
 								push( @cancellations, [ $train, $dest ] );
 								next;
 							}
@@ -153,8 +153,8 @@ sub get_connecting_trains_p {
 					else {
 						my @via = ( $train->route_post, $train->route_end );
 						for my $dest (@destinations) {
-							if ( $via_count{$dest} < 2
-								and has_str_in_list( $dest, @via ) )
+							if ( $via_count{ $dest->{name} } < 2
+								and has_str_in_list( $dest->{name}, @via ) )
 							{
 								push( @results, [ $train, $dest ] );
 
@@ -162,7 +162,7 @@ sub get_connecting_trains_p {
 								if ( not $train->departure
 									or $train->departure->epoch >= $now )
 								{
-									$via_count{$dest}++;
+									$via_count{ $dest->{name} }++;
 								}
 								next;
 							}
@@ -234,7 +234,7 @@ sub get_connecting_trains_p {
 			}
 		)->catch(
 			sub {
-				$iris_promise->reject(@_);
+				$iris_promise->resolve( [] );
 				return;
 			}
 		)->wait;
@@ -266,9 +266,9 @@ sub get_connecting_trains_p {
 	Mojo::Promise->all( $iris_promise, $hafas_promise )->then(
 		sub {
 			my ( $iris, $hafas ) = @_;
-			my @iris_trains  = @{ $iris->[0] };
-			my @hafas_trains = @{ $hafas->[0] };
-			my @transit_fyi;
+			my @iris_trains      = @{ $iris->[0] };
+			my @all_hafas_trains = @{ $hafas->[0] };
+			my @hafas_trains;
 
 			# We've already got a list of connecting trains; this function
 			# only adds further information to them. We ignore errors, as
@@ -278,11 +278,12 @@ sub get_connecting_trains_p {
 					if ( $iris_train->[0]->departure_is_cancelled ) {
 						next;
 					}
-					for my $hafas_train (@hafas_trains) {
+					for my $hafas_train (@all_hafas_trains) {
 						if (    $hafas_train->number
 							and $hafas_train->number
 							== $iris_train->[0]->train_no )
 						{
+							$hafas_train->{iris_seen} = 1;
 							if (    $hafas_train->load
 								and $hafas_train->load->{SECOND} )
 							{
@@ -290,7 +291,8 @@ sub get_connecting_trains_p {
 							}
 							for my $stop ( $hafas_train->route ) {
 								if (    $stop->{name}
-									and $stop->{name} eq $iris_train->[1]
+									and $stop->{name} eq
+									$iris_train->[1]->{name}
 									and $stop->{arr} )
 								{
 									$iris_train->[2] = $stop->{arr};
@@ -308,39 +310,29 @@ sub get_connecting_trains_p {
 						}
 					}
 				}
-				if ( $use_history & 0x04 and @{$lt_stops} ) {
-					my %via_count = map { $_ => 0 } @{$lt_stops};
-					for my $hafas_train (@hafas_trains) {
-						for my $stop ( $hafas_train->route ) {
-							for my $dest ( @{$lt_stops} ) {
-								if (    $stop->{name}
-									and $stop->{name} eq $dest
-									and $via_count{$dest} < 2
-									and $hafas_train->datetime )
+				for my $hafas_train (@all_hafas_trains) {
+					if ( $hafas_train->{iris_seen} ) {
+						next;
+					}
+					for my $stop ( $hafas_train->route ) {
+						for my $dest (@destinations) {
+							if (    $stop->{name}
+								and $stop->{name} eq $dest->{name}
+								and $via_count{ $dest->{name} } < 2
+								and $hafas_train->datetime )
+							{
+								my $departure = $hafas_train->datetime;
+								my $arrival   = $stop->{arr};
+								my $delay     = $hafas_train->delay;
+								if (    $delay
+									and $stop->{arr} == $stop->{sched_arr} )
 								{
-									my $departure = $hafas_train->datetime;
-									my $arrival   = $stop->{arr};
-									my $delay     = $hafas_train->delay;
-									if (    $delay
-										and $stop->{arr} == $stop->{sched_arr} )
-									{
-										$arrival->add( minutes => $delay );
-									}
-									if ( $departure->epoch >= $exclude_before )
-									{
-										$via_count{$dest}++;
-										push(
-											@transit_fyi,
-											[
-												{
-													line => $hafas_train->line,
-													departure => $departure,
-													departure_delay => $delay
-												},
-												$dest, $arrival
-											]
-										);
-									}
+									$arrival->add( minutes => $delay );
+								}
+								if ( $departure->epoch >= $exclude_before ) {
+									$via_count{ $dest->{name} }++;
+									push( @hafas_trains,
+										[ $hafas_train, $dest, $arrival ] );
 								}
 							}
 						}
@@ -353,14 +345,12 @@ sub get_connecting_trains_p {
 				);
 			}
 
-			$promise->resolve( \@iris_trains, \@transit_fyi );
+			$promise->resolve( \@iris_trains, \@hafas_trains );
 			return;
 		}
 	)->catch(
 		sub {
 			my ($err) = @_;
-
-			# TODO logging. HAFAS errors should never happen, IRIS errors are noteworthy too.
 			$promise->reject($err);
 			return;
 		}
@@ -401,13 +391,13 @@ sub homepage {
 				$self->render_later;
 				$self->get_connecting_trains_p->then(
 					sub {
-						my ( $connecting_trains, $transit_fyi ) = @_;
+						my ( $connections_iris, $connections_hafas ) = @_;
 						$self->render(
 							'landingpage',
 							user_status        => $status,
 							journey_visibility => $journey_visibility,
-							connections        => $connecting_trains,
-							transit_fyi        => $transit_fyi,
+							connections_iris   => $connections_iris,
+							connections_hafas  => $connections_hafas,
 						);
 						$self->users->mark_seen( uid => $uid );
 					}
@@ -474,13 +464,13 @@ sub status_card {
 			$self->render_later;
 			$self->get_connecting_trains_p->then(
 				sub {
-					my ( $connecting_trains, $transit_fyi ) = @_;
+					my ( $connections_iris, $connections_hafas ) = @_;
 					$self->render(
 						'_checked_in',
 						journey            => $status,
 						journey_visibility => $journey_visibility,
-						connections        => $connecting_trains,
-						transit_fyi        => $transit_fyi
+						connections_iris   => $connections_iris,
+						connections_hafas  => $connections_hafas,
 					);
 				}
 			)->catch(
@@ -510,8 +500,8 @@ sub status_card {
 				my ($connecting_trains) = @_;
 				$self->render(
 					'_cancelled_departure',
-					journey     => $status->{cancellation},
-					connections => $connecting_trains
+					journey          => $status->{cancellation},
+					connections_iris => $connecting_trains
 				);
 			}
 		)->catch(
@@ -529,11 +519,12 @@ sub status_card {
 			$self->render_later;
 			$self->get_connecting_trains_p->then(
 				sub {
-					my ($connecting_trains) = @_;
+					my ( $connections_iris, $connections_hafas ) = @_;
 					$self->render(
 						'_checked_out',
-						journey     => $status,
-						connections => $connecting_trains
+						journey           => $status,
+						connections_iris  => $connections_iris,
+						connections_hafas => $connections_hafas,
 					);
 				}
 			)->catch(
@@ -1028,18 +1019,19 @@ sub station {
 			if ($connections_p) {
 				$connections_p->then(
 					sub {
-						my ($connecting_trains) = @_;
+						my ( $connections_iris, $connections_hafas ) = @_;
 						$self->render(
 							'departures',
-							eva              => $status->{station_eva},
-							results          => \@results,
-							hafas            => $use_hafas,
-							station          => $status->{station_name},
-							related_stations => $status->{related_stations},
-							user_status      => $user_status,
-							can_check_out    => $can_check_out,
-							connections      => $connecting_trains,
-							api_link         => $api_link,
+							eva               => $status->{station_eva},
+							results           => \@results,
+							hafas             => $use_hafas,
+							station           => $status->{station_name},
+							related_stations  => $status->{related_stations},
+							user_status       => $user_status,
+							can_check_out     => $can_check_out,
+							connections_iris  => $connections_iris,
+							connections_hafas => $connections_hafas,
+							api_link          => $api_link,
 							title => "travelynx: $status->{station_name}",
 						);
 					}

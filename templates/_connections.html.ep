@@ -9,7 +9,7 @@
 			% $link_class = 'action-cancelled-from';
 		% }
 		% if ($checkin_from) {
-			<tr class="<%= $link_class %>" data-station="<%= $train->station_uic %>" data-train="<%= $train->train_id %>" data-dest="<%= $via %>">
+			<tr class="<%= $link_class %>" data-station="<%= $train->station_uic %>" data-train="<%= $train->train_id %>" data-dest="<%= $via->{name} %>">
 		% }
 		% else {
 			<tr>
@@ -33,10 +33,10 @@
 			</td>
 			<td class="<%= $td_class %>">
 				% if ($checkin_from) {
-					<a><%= $via %></a>
+					<a><%= $via->{name} %></a>
 				% }
 				% else {
-					%= $via
+					%= $via->{name}
 				% }
 				<br/>
 				% if ($load) {

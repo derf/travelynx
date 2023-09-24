@@ -72,12 +72,17 @@
 		</div>
 	</div>
 % }
-% elsif (not param('train') and my @connections = @{stash('connections') // []}) {
+% elsif (not param('train') and (@{stash('connections_iris') // []} or @{stash('connections_hafas') // []}) ) {
 	% $have_connections = 1;
 	<div class="row">
 		<div class="col s12">
 			<p>Häufig genutzte Verbindungen – Fahrt auswählen zum Einchecken mit Zielwahl</p>
-			%= include '_connections', connections => \@connections, checkin_from => $eva;
+			% if (@{stash('connections_iris') // []}) {
+				%= include '_connections', connections => stash('connections_iris'), checkin_from => $eva;
+			% }
+			% if (@{stash('connections_hafas') // []}) {
+				%= include '_connections_hafas', connections => stash('connections_hafas'), checkin_from => $eva;
+			% }
 		</div>
 	</div>
 % }

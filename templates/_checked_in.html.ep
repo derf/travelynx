@@ -199,19 +199,17 @@
 					</ul>
 				</p>
 			% }
-			% if (my @connections = @{stash('connections') // []}) {
+			% if (@{stash('connections_iris') // [] } or @{stash('connections_hafas') // []}) {
 				<span class="card-title" style="margin-top: 2ex;">Verbindungen</span>
 				% if ($journey->{arrival_countdown} < 0) {
 					<p>Fahrt auswählen zum Einchecken mit Zielwahl.</p>
 				% }
-				%= include '_connections', connections => \@connections, checkin_from => $journey->{arrival_countdown} < 0 ? $journey->{arr_eva} : undef;
-			% }
-			% if (my @transit_fyi = @{stash('transit_fyi') // []}) {
-				<span class="card-title" style="margin-top: 2ex;">Nahverkehr</span>
-				% if ($journey->{arrival_countdown} < 0) {
-					<p>Nur zur Information – kein Checkin möglich.</p>
+				% if (@{stash('connections_iris') // [] }) {
+					%= include '_connections', connections => stash('connections_iris'), checkin_from => $journey->{arrival_countdown} < 0 ? $journey->{arr_eva} : undef;
 				% }
-				%= include '_transit_fyi', transit_fyi => \@transit_fyi;
+				% if (@{stash('connections_hafas') // [] }) {
+					%= include '_connections_hafas', connections => stash('connections_hafas'), checkin_from => $journey->{arrival_countdown} < 0 ? $journey->{arr_eva} : undef;
+				% }
 			% }
 			% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} <= 0) {
 				<p style="margin-top: 2ex;">
