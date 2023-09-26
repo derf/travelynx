@@ -2,6 +2,25 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		2.3
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left" aria-label="Neues Feature">add</i>
+			Checkin-Vorschläge für Nahverkehrsfahrten. Die manuelle Angabe von
+			Nahverkehrszielen für Anschlusshinweise entfällt damit.  Bei
+			größeren oder aus anderen Gründen im Backend komplexen Stationen
+			werden derzeit teilweise nicht alle möglichen Verbindungen
+			angegeben – dieser Aspekt wird in einem späteren Release
+			verbessert. Eine von der Auswahl von Nah- vs. Fernverkehr
+			unabhängige Liste mit Verbindungsvorschlägen folgt ebenfalls
+			später.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		2.2
 	</div>
 	<div class="col s12 m11 l11">
