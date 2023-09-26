@@ -276,6 +276,15 @@ sub get_connecting_trains_p {
 			eval {
 				for my $iris_train (@iris_trains) {
 					if ( $iris_train->[0]->departure_is_cancelled ) {
+						for my $hafas_train (@all_hafas_trains) {
+							if (    $hafas_train->number
+								and $hafas_train->number
+								== $iris_train->[0]->train_no )
+							{
+								$hafas_train->{iris_seen} = 1;
+								next;
+							}
+						}
 						next;
 					}
 					for my $hafas_train (@all_hafas_trains) {
