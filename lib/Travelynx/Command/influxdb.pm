@@ -121,6 +121,14 @@ sub run {
 			  ->hash->{count}
 		)
 	);
+	push(
+		@stations,
+		query_to_influx(
+			'meta',
+			$db->select( 'related_stations', 'count(*) as count' )
+			  ->hash->{count}
+		)
+	);
 
 	push(
 		@traewelling,
