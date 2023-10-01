@@ -331,9 +331,8 @@ sub get_connecting_trains_p {
 					if ( $hafas_train->{iris_seen} ) {
 						next;
 					}
-					if (    $iris_eva != $eva
-						and $hafas_train->station_eva == $iris_eva )
-					{
+					if ( $hafas_train->station_eva >= 8000000 ) {
+
 						# better safe than sorry, for now
 						next;
 					}
