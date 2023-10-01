@@ -960,6 +960,10 @@ sub station {
 					( $_->datetime // $_->sched_datetime )->epoch
 					  < $now + 30 * 60
 				  } $status->results;
+				$self->stations->add_meta(
+					eva  => $status->station->{eva},
+					meta => $status->station->{evas}
+				);
 				$status = {
 					station_eva  => $status->station->{eva},
 					station_name => (

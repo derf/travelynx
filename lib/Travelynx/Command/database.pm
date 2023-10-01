@@ -1929,6 +1929,23 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v50 -> v51
+	# store related HAFAS stations
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				create table related_stations (
+					eva integer not null,
+					meta integer not null,
+					unique (eva, meta)
+				);
+				create index rel_eva on related_stations (eva);
+				update schema_version set version = 51;
+			}
+		);
+	},
 );
 
 sub sync_stations {

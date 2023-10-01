@@ -50,6 +50,41 @@ sub add_or_update {
 	);
 }
 
+sub add_meta {
+	my ( $self, %opt ) = @_;
+	my $db   = $opt{db} // $self->{pg}->db;
+	my $eva  = $opt{eva};
+	my @meta = @{ $opt{meta} };
+
+	for my $meta (@meta) {
+		if ( $meta != $eva ) {
+			$db->insert(
+				'related_stations',
+				{
+					eva  => $eva,
+					meta => $meta
+				},
+				{ on_conflict => undef }
+			);
+		}
+	}
+}
+
+sub get_meta {
+	my ( $self, %opt ) = @_;
+	my $db  = $opt{db} // $self->{pg}->db;
+	my $eva = $opt{eva};
+
+	my $res = $db->select( 'related_stations', ['meta'], { eva => $eva } );
+	my @ret;
+
+	while ( my $row = $res->hash ) {
+		push( @ret, $row->{meta} );
+	}
+
+	return @ret;
+}
+
 sub get_for_autocomplete {
 	my ($self) = @_;
 

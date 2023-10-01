@@ -1735,21 +1735,20 @@ sub get_connection_targets {
 		return;
 	}
 
-	my $res = $db->query(
-		qq{
-			select
-			count(checkout_station_id) as count,
-			checkout_station_id as dest
-			from journeys
-			where user_id = ?
-			and checkin_station_id = ?
-			and real_departure > ?
-			group by checkout_station_id
-			order by count desc;
+	my $dest_ids = [ $dest_id, $self->{stations}->get_meta( eva => $dest_id ) ];
+
+	my $res = $db->select(
+		'journeys',
+		'count(checkout_station_id) as count, checkout_station_id as dest',
+		{
+			user_id            => $uid,
+			checkin_station_id => $dest_ids,
+			real_departure     => { '>', $threshold }
 		},
-		$uid,
-		$dest_id,
-		$threshold
+		{
+			group_by => ['checkout_station_id'],
+			order_by => { -desc => 'count' }
+		}
 	);
 	my @destinations
 	  = $res->hashes->grep( sub { shift->{count} >= $min_count } )
