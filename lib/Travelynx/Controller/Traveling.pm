@@ -65,8 +65,10 @@ sub get_connecting_trains_p {
 		return $promise->reject;
 	}
 
-	my @destinations
-	  = uniq_by { $_->{name} } $self->journeys->get_connection_targets(%opt);
+	my ( $dest_ids, $destinations )
+	  = $self->journeys->get_connection_targets(%opt);
+
+	my @destinations = uniq_by { $_->{name} } @{$destinations};
 
 	if ($exclude_via) {
 		@destinations = grep { $_->{name} ne $exclude_via } @destinations;
@@ -76,6 +78,12 @@ sub get_connecting_trains_p {
 		return $promise->reject;
 	}
 
+	my $iris_eva = $eva;
+	if ( $eva < 8000000 ) {
+		$iris_eva = ( List::Util::first { $_ >= 8000000 } @{$dest_ids} )
+		  // $eva;
+	}
+
 	my $can_check_in = not $arr_epoch || ( $arr_countdown // 1 ) < 0;
 	my $lookahead
 	  = $can_check_in ? 40 : ( ( ${arr_countdown} // 0 ) / 60 + 40 );
@@ -83,11 +91,11 @@ sub get_connecting_trains_p {
 	my $iris_promise = Mojo::Promise->new;
 	my %via_count    = map { $_->{name} => 0 } @destinations;
 
-	if ( $eva >= 8000000
+	if ( $iris_eva >= 8000000
 		and List::Util::any { $_->{eva} >= 8000000 } @destinations )
 	{
 		$self->iris->get_departures_p(
-			station      => $eva,
+			station      => $iris_eva,
 			lookbehind   => 10,
 			lookahead    => $lookahead,
 			with_related => 1
@@ -321,6 +329,12 @@ sub get_connecting_trains_p {
 				}
 				for my $hafas_train (@all_hafas_trains) {
 					if ( $hafas_train->{iris_seen} ) {
+						next;
+					}
+					if (    $iris_eva != $eva
+						and $hafas_train->station_eva == $iris_eva )
+					{
+						# better safe than sorry, for now
 						next;
 					}
 					for my $stop ( $hafas_train->route ) {
