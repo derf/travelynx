@@ -2,6 +2,23 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		2.4
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left" aria-label="Verbesserung">star</i>
+			Berücksichtigung verwandter Stationen (d.h. Stationen, die zwar
+			gleich heißen, aber intern unterschiedliche IDs haben) bei
+			Checkin-Vorschlägen für Nahverkehrsfahrten. Vorschläge für
+			Zugverbindungen gibt es aus dem Nahverkehrsmenü in vielen Fällen
+			ebenfalls, andersherum meist noch nicht. Die restlichen Feinheiten
+			dieses Themenkomplexes werden im Laufe der Zeit ausgebügelt.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		2.3
 	</div>
 	<div class="col s12 m11 l11">
