@@ -6,20 +6,20 @@
 				<p>
 					Du hast in diesem Jahr <strong><%= $stats->{num_trains} %> Fahrten</strong> von und zu <strong><%= $review->{num_stops} %> Betriebsstellen</strong> in travelynx erfasst.
 					% if ($stats->{num_trains} > 365) {
-						Das sind mehr als <strong><%= $review->{trains_per_day} %> Züge pro Tag</strong>!
+						Das sind mehr als <strong><%= $review->{trains_per_day} %> Fahrten pro Tag</strong>!
 					% }
 				</p>
 				<p>
 					% if ($review->{traveling_min_total} > 525) {
 						Insgesamt hast du mindestens <strong><%= $review->{traveling_percentage_year} %> des Jahres</strong>
-						(<%= $review->{traveling_time_year} %>) in Zügen und auf Bahnhöfen verbracht.
+						(<%= $review->{traveling_time_year} %>) unterwegs verbracht.
 					% }
 					% else {
-						Insgesamt hast du mindestens <strong><%= $review->{traveling_time_year} %></strong> in Zügen und auf Bahnhöfen verbracht.
+						Insgesamt hast du mindestens <strong><%= $review->{traveling_time_year} %></strong> unterwegs verbracht.
 					% }
 				</p>
 				<p>
-					Dabei hast du ca. <strong><%= $review->{km_route} %> km</strong> (Luftlinie: <%= $review->{km_beeline} %> km) auf Schienen zurückgelegt.
+					Dabei hast du ca. <strong><%= $review->{km_route} %> km</strong> (Luftlinie: <%= $review->{km_beeline} %> km) zurückgelegt.
 					% if ($review->{km_circle} > 1) {
 						Das entspricht <strong><%= $review->{km_circle_h} %> Fahrten um die Erde</strong>.
 					% }
@@ -104,7 +104,7 @@
 						% }
 					% }
 				% }
-				<p>Lediglich <strong><%= $review->{punctual_percent_h} %></strong> der Züge waren pünktlich auf die Minute.</p>
+				<p>Lediglich <strong><%= $review->{punctual_percent_h} %></strong> der Fahrten waren pünktlich auf die Minute.</p>
 			</div>
 			<div class="carousel-item" href="#five">
 				<h2>De trein is stukkie wukkie</h2>
@@ -114,7 +114,7 @@
 					% }
 					% if ($review->{cancel_count}) {
 						% if ($review->{fgr_percent} >= 0.1) {
-							und <strong><%= $review->{cancel_count} %></strong> Züge kamen gar nicht erst am Ziel an.
+							und <strong><%= $review->{cancel_count} %></strong> kamen gar nicht erst am Ziel an.
 						% }
 						% else {
 							<strong><%= $review->{cancel_count} %></strong> deiner geplanten Fahrten sind ausgefallen.
