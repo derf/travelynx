@@ -57,7 +57,6 @@
 	% if (stash('with_map')) {
 		%= stylesheet "/static/${av}/leaflet/leaflet.css"
 	% }
-	%= javascript "/static/${av}/js/jquery-3.4.1.min.js"
 	%= javascript "/static/${av}/js/materialize.min.js"
 	% my $min = ".min";
 	% if (app->mode eq 'development') {
