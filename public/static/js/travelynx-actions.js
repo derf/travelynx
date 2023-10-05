@@ -166,7 +166,11 @@ function tvly_journey_progress() {
 				break;
 			}
 			if ((rt_dep != 0) && (rt_dep - now > 0)) {
-				$('.next-stop').html(stop_name + '<br/>' + hhmm(rt_arr) + ' → ' + hhmm(rt_dep) + odelay(sched_dep, rt_dep));
+				if (rt_arr != 0) {
+					$('.next-stop').html(stop_name + '<br/>' + hhmm(rt_arr) + ' → ' + hhmm(rt_dep) + odelay(sched_dep, rt_dep));
+				} else {
+					$('.next-stop').html(stop_name + '<br/>' + hhmm(rt_dep) + odelay(sched_dep, rt_dep));
+				}
 				break;
 			}
 		}
