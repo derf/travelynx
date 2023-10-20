@@ -21,7 +21,7 @@
 			</td>
 		</tr>
 	% }
-	<tr class="<%= $link_class %>" data-station="<%= $result->station_eva %>" data-train="<%= $result->id %>" data-tr="3">
+	<tr class="<%= $link_class %>" data-station="<%= $result->station_eva %>" data-train="<%= $result->id %>" data-ts="<%= ($result->sched_datetime // $result->datetime)->epoch %>" data-tr="3">
 		<td>
 			<a>
 				<%= $result->line %>

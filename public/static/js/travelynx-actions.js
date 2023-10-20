@@ -185,6 +185,7 @@ function tvly_reg_handlers() {
 			station: link.data('station'),
 			train: link.data('train'),
 			dest: link.data('dest'),
+			ts: link.data('ts'),
 		};
 		tvly_run(link, req);
 	});
@@ -223,6 +224,7 @@ function tvly_reg_handlers() {
 		var req = {
 			action: 'cancelled_from',
 			station: link.data('station'),
+			ts: link.data('ts'),
 			train: link.data('train'),
 		};
 		tvly_run(link, req);

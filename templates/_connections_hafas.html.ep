@@ -9,7 +9,7 @@
 			% $link_class = 'action-cancelled-from';
 		% }
 		% if ($checkin_from) {
-			<tr class="<%= $link_class %>" data-station="<%= $train->station_eva %>" data-train="<%= $train->id %>" data-dest="<%= $via->{name} %>">
+			<tr class="<%= $link_class %>" data-station="<%= $train->station_eva %>" data-train="<%= $train->id %>" data-ts="<%= ($train->sched_datetime // $train->datetime)->epoch %>" data-dest="<%= $via->{name} %>">
 		% }
 		% else {
 			<tr>
