@@ -1,7 +1,9 @@
 <div class="row">
 	<div class="col s12">
-		<h2><i class="material-icons "><%= param('hafas') ? 'directions' : 'train' %></i>
-		<%= $station %></h2>
+		<h2>
+			<i class="material-icons "  aria-hidden="true"><%= param('hafas') ? 'directions' : 'train' %></i>
+			<%= $station %>
+		</h2>
 		% for my $related_station (sort { $a->{name} cmp $b->{name} } @{$related_stations}) {
 			+ <%= $related_station->{name} %> <br/>
 		% }
@@ -11,13 +13,13 @@
 	<div class="col s12">
 	% if ($api_link) {
 	% if (param('hafas')) {
-		<a href="<%= $api_link %>" class="btn-small"><i class="material-icons left">train</i>zum Schienenverkehr</a>
+		<a href="<%= $api_link %>" class="btn-small"><i class="material-icons left"  aria-hidden="true">train</i>zum Schienenverkehr</a>
 	% }
 	% else {
-		<a href="<%= $api_link %>" class="btn-small"><i class="material-icons left">directions</i>zum Nahverkehr</a>
+		<a href="<%= $api_link %>" class="btn-small"><i class="material-icons left"  aria-hidden="true">directions</i>zum Nahverkehr</a>
 	% }
 	% }
-	<a class="btn-small" href="#now"><i class="material-icons left">vertical_align_center</i>Jetzt</a>
+	<a class="btn-small" href="#now"><i class="material-icons left" aria-hidden="true">vertical_align_center</i>Jetzt</a>
 	</div>
 </div>
 
@@ -51,7 +53,7 @@
 							<i class="material-icons left" aria-hidden="true">undo</i> Rückgängig
 						</a>
 						<a class="action-checkout right" data-station="<%= $eva %>" data-force="1">
-							<i class="material-icons left">gps_off</i>
+							<i class="material-icons left" aria-hidden="true">gps_off</i>
 							Hier auschecken
 						</a>
 					% }

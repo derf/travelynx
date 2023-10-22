@@ -47,7 +47,7 @@
 					%= $result->destination
 					% for my $checkin (@{$checkin_by_train->{$result->train_id} // []}) {
 						<span class="followee-checkin">
-							<i class="material-icons tiny">people</i>
+							<i class="material-icons tiny" aria-label="Eine Person, der du folgst, ist hier eingecheckt">people</i>
 							<%= $checkin->{followee_name} %> → <%= $checkin->{arr_name} // '???' %>
 						</span>
 					% }

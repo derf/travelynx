@@ -68,6 +68,7 @@ ul.suggestions {
 	}
 }
 
+
 .departures li {
 	transition: background .3s;
 	display: grid;
@@ -89,35 +90,17 @@ ul.suggestions {
 		  font-style: normal;
 		}
 	}
-}
-
-.departures.connections {
-	li {
-		grid-template-columns: 15ch 10ch 1fr;
-	}
-	.connect-platform-wrapper {
-		text-align: center;
-		span {
-			display: block;
+	&#now {
+		background-color: $departures-highlight-color;
+		padding: 2rem 20px;
+		grid-template-columns: 10ch 1fr;
+		strong {
+			font-weight: bold;
 		}
 	}
 }
 
-.followee-checkin {
-	font-size: 0.9rem;
-	display: block;
-	i.material-icons {
-		vertical-align: middle;
-	}
-}
-.departures #now {
-	background-color: $departures-highlight-color;
-	padding: 2rem 20px;
-	grid-template-columns: 10ch 1fr;
-	strong {
-		font-weight: bold;
-	}
-}
+
 .departures .dep-time {
 	color: $off-black;
 }
@@ -137,6 +120,14 @@ ul.suggestions {
 	width: fit-content;
 	min-width: 6ch;
 	margin: 0 auto;
+	
+	.followee-checkin {
+		font-size: 0.9rem;
+		display: block;
+		i.material-icons {
+			vertical-align: middle;
+		}
+	}
 	
 	&.Bus, &.RUF, &.AST {
 		background-color: #a3167e;
@@ -158,10 +149,10 @@ ul.suggestions {
 		border-radius: 5rem;
 		padding: .2rem .5rem;
 	}
-	&.RE, &.IRE {
+	&.RE, &.IRE, &.REX {
 		background-color: #ff4f00;
 	}
-	&.RB, &.MEX, &.TER {
+	&.RB, &.MEX, &.TER, &.R {
 		background-color: #1f4a87;
 	}
 	// DE
@@ -188,8 +179,22 @@ ul.suggestions {
 	}
 	&.FLX {
 		background-color: #71d800;
+		color: black;
 	}
 }
+
+.departures.connections {
+	li {
+		grid-template-columns: 15ch 10ch 1fr;
+	}
+	.connect-platform-wrapper {
+		text-align: center;
+		span {
+			display: block;
+		}
+	}
+}
+
 
 @media screen and (max-width: 600px) {
 	.departures li {
