@@ -22,7 +22,7 @@
 		data-train="<%= $result->id %>"
 		data-ts="<%= ($result->sched_datetime // $result->datetime)->epoch %>"
 	>
-		<span class="dep-time">
+		<a class="dep-time" href="#">
 			%= $result->datetime->strftime('%H:%M')
 			% if ($result->delay) {
 				(<%= sprintf('%+d', $result->delay) %>)
@@ -30,18 +30,24 @@
 			% elsif (not defined $result->delay and not $result->is_cancelled) {
 				<i class="material-icons" aria-label="Keine Echtzeitdaten vorhanden" style="font-size: 16px;">gps_off</i>
 			% }
-			</span>
-			<a class="dep-line <%= (split(/ /, $result->line))[0] %>">
-				%= $result->line
-			</a>
-			<span class="dep-dest">
+		</a>
+		<span class="dep-line <%= (split(/ /, $result->line))[0] %>">
+			%= $result->line
+		</span>
+		<span class="dep-dest">
+			% if ($result->is_cancelled) {
+				Fahrt nach <%= $result->destination %> entfällt
+			% }
+			% else {
 				%= $result->destination
 				% for my $checkin (@{$checkin_by_train->{$result->id} // []}) {
 					<span class="followee-checkin">
-						<i class="material-icons tiny">people</i> <%= $checkin->{followee_name} %> → <%= $checkin->{arr_name} // '???' %>
+						<i class="material-icons tiny">people</i>
+						<%= $checkin->{followee_name} %> → <%= $checkin->{arr_name} // '???' %>
 					</span>
 				% }
-			</span>
+			% }
+		</span>
 	</li>
 % }
 </ul>

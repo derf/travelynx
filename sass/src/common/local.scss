@@ -71,7 +71,7 @@ ul.suggestions {
 .departures li {
 	transition: background .3s;
 	display: grid;
-	grid-template-columns: 10ch 11ch 1fr;
+	grid-template-columns: 10ch 10ch 1fr;
 	align-items: center;
 	&:hover {
 		background-color: $departures-highlight-color;
@@ -84,11 +84,11 @@ ul.suggestions {
 			border: 1px solid;
 			color: $off-black;
 		}
-		.dep-dest::before {
-		  content: "Fahrt nach";
+		.dep-time::after {
+		  content: " ⊖";
 		}
-		.dep-dest::after {
-		  content: "entfällt";
+	}
+}
 		}
 	}
 }
@@ -107,8 +107,12 @@ ul.suggestions {
 		font-weight: bold;
 	}
 }
-
-
+.departures .dep-time {
+	color: $off-black;
+}
+.departures .dep-dest {
+	margin-left: 0.8rem;
+}
 .departures .dep-line {
 	text-align: center;
 	padding: .2rem;
@@ -118,8 +122,10 @@ ul.suggestions {
 	display: inline-block;
 	font-weight: 600;
 	line-height: 1;
-	margin-right: 0.8rem;
 	height: fit-content;
+	width: fit-content;
+	min-width: 6ch;
+	margin: 0 auto;
 	
 	&.Bus, &.RUF, &.AST {
 		background-color: #a3167e;
@@ -176,8 +182,8 @@ ul.suggestions {
 
 @media screen and (max-width: 600px) {
 	.departures li {
-		grid-template-columns: 11ch 1fr;
 		.dep-line, .dep-time {
+		grid-template-columns: 10ch 1fr;
 			grid-column: 1;
 			margin-right: 0.8rem;
 			text-align: center;

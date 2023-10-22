@@ -22,7 +22,7 @@
 		data-train="<%= $result->train_id %>"
 		data-ts="<%= ($result->sched_departure // $result->departure)->epoch %>"
 	>
-		<span class="dep-time">
+		<a class="dep-time" href="#">
 			% if ($result->departure_hidden) {
 				(<%= $result->departure->strftime('%H:%M') %>)
 			% }
@@ -35,16 +35,22 @@
 			% elsif (not $result->has_realtime and $result->start->epoch < $now_epoch) {
 				<i class="material-icons" aria-label="Keine Echtzeitdaten vorhanden" style="font-size: 16px;">gps_off</i>
 			% }
-			</span>
-			<a class="dep-line <%= (split(/ /, $result->line))[0] %>">
-				%= $result->line
 			</a>
+			<span class="dep-line <%= (split(/ /, $result->line))[0] %>">
+				%= $result->line
+			</span>
 			<span class="dep-dest">
-				%= $result->destination
-				% for my $checkin (@{$checkin_by_train->{$result->train_id} // []}) {
-					<span class="followee-checkin">
-						<i class="material-icons tiny">people</i> <%= $checkin->{followee_name} %> → <%= $checkin->{arr_name} // '???' %>
-					</span>
+				% if ($result->is_cancelled) {
+					Fahrt nach <%= $result->destination %> entfällt
+				% }
+				% else {
+					%= $result->destination
+					% for my $checkin (@{$checkin_by_train->{$result->train_id} // []}) {
+						<span class="followee-checkin">
+							<i class="material-icons tiny">people</i>
+							<%= $checkin->{followee_name} %> → <%= $checkin->{arr_name} // '???' %>
+						</span>
+					% }
 				% }
 			</span>
 	</li>
