@@ -74,8 +74,9 @@ ul.suggestions {
 	display: grid;
 	grid-template-columns: 10ch 10ch 1fr;
 	align-items: center;
-	&:hover {
+	&:not(#now):hover, &:focus-within {
 		background-color: $departures-highlight-color;
+		outline: 2px solid $link-color;
 	}
  	&.cancelled {
 		background-color: $departures-cancelled-color;
@@ -103,6 +104,9 @@ ul.suggestions {
 
 .departures .dep-time {
 	color: $off-black;
+	&:focus {
+		outline: none;
+	}
 }
 .departures .dep-dest {
 	margin-left: 0.8rem;
