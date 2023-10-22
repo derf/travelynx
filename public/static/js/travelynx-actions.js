@@ -298,6 +298,10 @@ $(document).ready(function() {
 	$('a[href]').click(function() {
 		$('nav .preloader-wrapper').addClass('active');
 	});
+	$('a[href="#now"]').click(function(event) {
+	    event.preventDefault();
+	    $('#now')[0].scrollIntoView({behavior: "smooth", block: "center"});
+	});
 	const elems = document.querySelectorAll('.carousel');
 	const instances = M.Carousel.init(elems, {
 		fullWidth: true,
