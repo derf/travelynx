@@ -1,9 +1,9 @@
 <div class="row">
-	<div class="col s12 center-align">
-		<i class="tiny material-icons "><%= param('hafas') ? 'directions' : 'train' %></i>
-		<b><%= $station %></b>
+	<div class="col s12">
+		<h2><i class="material-icons "><%= param('hafas') ? 'directions' : 'train' %></i>
+		<%= $station %></h2>
 		% for my $related_station (sort { $a->{name} cmp $b->{name} } @{$related_stations}) {
-			<br/>+ <%= $related_station->{name} %>
+			+ <%= $related_station->{name} %> <br/>
 		% }
 	</div>
 </div>
