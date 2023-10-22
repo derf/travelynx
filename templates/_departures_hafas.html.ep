@@ -36,6 +36,10 @@
 			</a>
 			<span class="dep-dest">
 				%= $result->destination
+				% for my $checkin (@{$checkin_by_train->{$result->id} // []}) {
+					<span class="followee-checkin">
+						<i class="material-icons tiny">people</i> <%= $checkin->{followee_name} %> → <%= $checkin->{arr_name} // '???' %>
+					</span>
 				% }
 			</span>
 	</li>
