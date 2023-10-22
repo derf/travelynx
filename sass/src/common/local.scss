@@ -86,12 +86,23 @@ ul.suggestions {
 		}
 		.dep-time::after {
 		  content: " ⊖";
+		  font-style: normal;
 		}
 	}
 }
+
+.departures.connections {
+	li {
+		grid-template-columns: 15ch 10ch 1fr;
+	}
+	.connect-platform-wrapper {
+		text-align: center;
+		span {
+			display: block;
 		}
 	}
 }
+
 .followee-checkin {
 	font-size: 0.9rem;
 	display: block;
@@ -182,15 +193,20 @@ ul.suggestions {
 
 @media screen and (max-width: 600px) {
 	.departures li {
-		.dep-line, .dep-time {
 		grid-template-columns: 10ch 1fr;
+		.dep-line, .dep-time, .connect-platform-wrapper {
 			grid-column: 1;
-			margin-right: 0.8rem;
 			text-align: center;
 		} 
 		.dep-dest {
 			grid-column: 2;
 			grid-row: 1 / span 2;
+		}
+	}
+	.departures.connections li {
+		grid-template-columns: 15ch 1fr;
+		.connect-platform-wrapper span {
+			display: inline;
 		}
 	}
 }

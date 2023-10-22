@@ -1,48 +1,26 @@
-<div><table class="striped"><tbody>
+<ul class="collection departures connections">
 	% for my $res (@{$connections}) {
 		% my ($train, $via, $via_arr) = @{$res};
 		% $via_arr = $via_arr ? $via_arr->strftime('%H:%M') : q{};
-		% my $td_class = '';
+		% my $row_class = '';
 		% my $link_class = 'action-checkin';
 		% if ($train->is_cancelled) {
-			% $td_class = 'cancelled';
+			% $row_class = 'cancelled';
 			% $link_class = 'action-cancelled-from';
 		% }
 		% if ($checkin_from) {
-			<tr class="<%= $link_class %>" data-station="<%= $train->station_eva %>" data-train="<%= $train->id %>" data-ts="<%= ($train->sched_datetime // $train->datetime)->epoch %>" data-dest="<%= $via->{name} %>">
+			<li class="collection-item <%= $row_class %> <%= $link_class %>"
+			data-station="<%= $train->station_eva %>"
+			data-train="<%= $train->id %>"
+			data-ts="<%= ($train->sched_datetime // $train->datetime)->epoch %>"
+			data-dest="<%= $via->{name} %>">
 		% }
 		% else {
-			<tr>
+			<li class="collection-item">
 		% }
-			<td class="<%= $td_class %>">
-				% if ($train->platform) {
-					% if ($checkin_from) {
-						<a>Gleis <%= $train->platform %></a>
-					% }
-					% else {
-						Gleis <%= $train->platform %>
-					% }
-					<br/>
-				% }
-				% if ($checkin_from) {
-					<a><%= $train->line %></a>
-				% }
-				% else {
-					%= $train->line
-				% }
-			</td>
-			<td class="<%= $td_class %>">
-				% if ($checkin_from) {
-					<a><%= $via->{name} %></a>
-				% }
-				% else {
-					%= $via->{name}
-				% }
-			</td>
-			<td>
+			<a class="dep-time" href="#">
 				% if ($train->is_cancelled) {
 					%= $train->sched_datetime->strftime('%H:%M')
-					⊖
 				% }
 				% else {
 					%= $train->datetime->strftime('%H:%M')
@@ -53,7 +31,18 @@
 				% if ($train->delay) {
 					%= sprintf('(%+d)', $train->delay)
 				% }
-			</td>
-		</tr>
+			</a>
+			<span class="connect-platform-wrapper">
+				% if ($train->platform) {
+					<span>Gleis <%= $train->platform %></span>
+				% }
+				<span class="dep-line <%= (split(/ /, $train->line))[0] %>">
+					%= $train->line
+				</span>
+			</span>
+			<span class="dep-dest">
+				%= $via->{name}
+			</span>
+		</li>
 	% }
-</tbody></table></div>
+</ul>

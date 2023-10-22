@@ -1,39 +1,48 @@
-<div><table class="striped"><tbody>
+<ul class="collection departures connections">
 	% for my $res (@{$connections}) {
 		% my ($train, $via, $via_arr, $load) = @{$res};
 		% $via_arr = $via_arr ? $via_arr->strftime('%H:%M') : q{};
-		% my $td_class = '';
+		% my $row_class = '';
 		% my $link_class = 'action-checkin';
 		% if ($train->is_cancelled) {
-			% $td_class = 'cancelled';
+			% $row_class = 'cancelled';
 			% $link_class = 'action-cancelled-from';
 		% }
 		% if ($checkin_from) {
-			<tr class="<%= $link_class %>" data-station="<%= $train->station_uic %>" data-train="<%= $train->train_id %>" data-ts="<%= ($train->sched_departure // $train->departure)->epoch %>" data-dest="<%= $via->{name} %>">
+			<li class="collection-item <%= $row_class %> <%= $link_class %>"
+			data-station="<%= $train->station_uic %>"
+			data-train="<%= $train->train_id %>"
+			data-ts="<%= ($train->sched_departure // $train->departure)->epoch %>"
+			data-dest="<%= $via->{name} %>">
 		% }
 		% else {
-			<tr>
+			<li class="collection-item">
 		% }
-			<td class="<%= $td_class %>">
-				% if ($train->platform) {
-					% if ($checkin_from) {
-						<a>Gleis <%= $train->platform %></a>
-					% }
-					% else {
-						Gleis <%= $train->platform %>
-					% }
-					<br/>
-				% }
-				% if ($checkin_from) {
-					<a><%= $train->line %></a>
+			<a class="dep-time" href="#">
+				% if ($train->departure_is_cancelled) {
+					%= $train->sched_departure->strftime('%H:%M')
 				% }
 				% else {
-					%= $train->line
+					%= $train->departure->strftime('%H:%M')
 				% }
-			</td>
-			<td class="<%= $td_class %>">
-				% if ($checkin_from) {
-					<a><%= $via->{name} %></a>
+				% if ($via_arr) {
+					→ <%= $via_arr %>
+				% }
+				% if ($train->departure_delay) {
+					%= sprintf('(%+d)', $train->departure_delay)
+				% }
+			</a>
+			<span class="connect-platform-wrapper">
+				% if ($train->platform) {
+					<span>Gleis <%= $train->platform %></span>
+				% }
+				<span class="dep-line <%= (split(/ /, $train->line))[0] %>">
+					%= $train->line
+				</span>
+			</span>
+			<span class="dep-dest">
+				% if ($train->is_cancelled) {
+					Fahrt nach <%= $via->{name} %> entfällt
 				% }
 				% else {
 					%= $via->{name}
@@ -61,22 +70,7 @@
 				% if ($train->{message_id}{70} or $train->{message_id}{71}) {
 					<i class="material-icons tiny" aria-label="Ohne WLAN">portable_wifi_off</i>
 				% }
-			</td>
-			<td>
-				% if ($train->departure_is_cancelled) {
-					%= $train->sched_departure->strftime('%H:%M')
-					⊖
-				% }
-				% else {
-					%= $train->departure->strftime('%H:%M')
-				% }
-				% if ($via_arr) {
-					→ <%= $via_arr %>
-				% }
-				% if ($train->departure_delay) {
-					%= sprintf('(%+d)', $train->departure_delay)
-				% }
-			</td>
-		</tr>
+			</span>
+		</li>
 	% }
-</tbody></table></div>
+</ul>
