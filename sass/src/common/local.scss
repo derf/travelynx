@@ -110,6 +110,13 @@ ul.suggestions {
 }
 .departures .dep-dest {
 	margin-left: 0.8rem;
+	.followee-checkin {
+		font-size: 0.9rem;
+		display: block;
+		i.material-icons {
+			vertical-align: middle;
+		}
+	}
 }
 .departures .dep-line {
 	text-align: center;
@@ -124,14 +131,6 @@ ul.suggestions {
 	width: fit-content;
 	min-width: 6ch;
 	margin: 0 auto;
-	
-	.followee-checkin {
-		font-size: 0.9rem;
-		display: block;
-		i.material-icons {
-			vertical-align: middle;
-		}
-	}
 	
 	&.Bus, &.RUF, &.AST {
 		background-color: #a3167e;
