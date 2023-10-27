@@ -40,7 +40,7 @@
 				%= $result->line
 			</span>
 			<span class="dep-dest">
-				% if ($result->is_cancelled) {
+				% if ($result->departure_is_cancelled) {
 					Fahrt nach <%= $result->destination %> entfällt
 				% }
 				% else {
