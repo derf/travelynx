@@ -36,7 +36,7 @@
 				% if ($train->platform) {
 					<span>Gleis <%= $train->platform %></span>
 				% }
-				<span class="dep-line <%= (split(/ /, $train->line))[0] %>">
+				<span class="dep-line <%= $train->type // q{} %>">
 					%= $train->line
 				</span>
 			</span>
