@@ -21,10 +21,6 @@
 	color: #f5c4ce !important;
 }
 
-td.cancelled {
-	text-decoration: line-through;
-}
-
 .wagons span {
 	margin-right: 0.5ex;
 	color: #808080;
@@ -72,7 +68,153 @@ ul.suggestions {
 	}
 }
 
-table.departures tr.now td {
-	padding-top: 2em;
-	padding-bottom: 2em;
+
+.departures li {
+	transition: background .3s;
+	display: grid;
+	grid-template-columns: 10ch 10ch 1fr;
+	align-items: center;
+	&:not(#now):hover, &:focus-within {
+		background-color: $departures-highlight-color;
+		outline: 2px solid $link-color;
+	}
+ 	&.cancelled {
+		background-color: $departures-cancelled-color;
+		font-style: italic;
+		.dep-line {
+			background-color: transparent;
+			border: 1px solid;
+			color: $off-black;
+		}
+		.dep-time::after {
+		  content: " ⊖";
+		  font-style: normal;
+		}
+	}
+	&#now {
+		background-color: $departures-highlight-color;
+		padding: 2rem 20px;
+		grid-template-columns: 10ch 1fr;
+		strong {
+			font-weight: bold;
+		}
+	}
+}
+
+
+.departures .dep-time {
+	color: $off-black;
+	&:focus {
+		outline: none;
+	}
+}
+.departures .dep-dest {
+	margin-left: 0.8rem;
+	.followee-checkin {
+		font-size: 0.9rem;
+		display: block;
+		i.material-icons {
+			vertical-align: middle;
+		}
+	}
+}
+.departures .dep-line {
+	text-align: center;
+	padding: .2rem;
+	color: white;
+	background: color('grey', 'darken-3');
+	border-radius: .2rem;
+	display: inline-block;
+	font-weight: 600;
+	line-height: 1;
+	height: fit-content;
+	width: fit-content;
+	min-width: 6ch;
+	margin: 0 auto;
+	
+	&.Bus, &.RUF, &.AST {
+		background-color: #a3167e;
+		border-radius: 5rem;
+		padding: .2rem .5rem;
+	}
+	&.STR {
+		background-color: #c5161c;
+		border-radius: 5rem;
+		padding: .2rem .5rem;
+	}
+	&.S, &.RS, &.RER, &.SKW {
+		background-color: #008d4f;
+		border-radius: 5rem;
+		padding: .2rem .5rem;
+	}
+	&.U, &.STB, &.M  {
+		background-color: #014e8d;
+		border-radius: 5rem;
+		padding: .2rem .5rem;
+	}
+	&.RE, &.IRE, &.REX {
+		background-color: #ff4f00;
+	}
+	&.RB, &.MEX, &.TER, &.R {
+		background-color: #1f4a87;
+	}
+	// DE
+	&.IC, &.ICE, &.EC, &.ECE, &.D,
+	// CH
+	&.IR,
+	// FR
+	&.TGV, &.OGV, &.EST,
+	// PL
+	&.TLK, &.EIC {
+		background-color: #ff0404;
+		font-weight: 900;
+		font-style: italic;
+		padding: .2rem;
+	}
+	&.RJ, &.RJX {
+		background-color: #c63131;
+	}
+	&.NJ, &.EN {
+		background-color: #29255b;
+	}
+	&.WB {
+		background-color: #2e85ce;
+	}
+	&.FLX {
+		background-color: #71d800;
+		color: black;
+	}
+}
+
+.departures.connections {
+	li {
+		grid-template-columns: 15ch 10ch 1fr;
+	}
+	.connect-platform-wrapper {
+		text-align: center;
+		span {
+			display: block;
+		}
+	}
+}
+
+
+@media screen and (max-width: 600px) {
+	.departures li {
+		grid-template-columns: 10ch 1fr;
+		.dep-line, .dep-time, .connect-platform-wrapper {
+			grid-column: 1;
+			text-align: center;
+		} 
+		.dep-dest {
+			grid-column: 2;
+			grid-row: 1 / span 2;
+		}
+	}
+	.departures.connections li {
+		grid-template-columns: 15ch 1fr;
+		.connect-platform-wrapper span {
+			display: inline;
+		}
+	}
 }

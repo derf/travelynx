@@ -298,6 +298,20 @@ $(document).ready(function() {
 	$('a[href]').click(function() {
 		$('nav .preloader-wrapper').addClass('active');
 	});
+	$('a[href="#now"]').keydown(function(event) {
+	    // also trigger click handler on keyboard enter
+	    if (event.keyCode == 13) {
+	        event.preventDefault();
+	        event.target.click();
+	    }
+	});
+	$('a[href="#now"]').click(function(event) {
+	    event.preventDefault();
+	    $('nav .preloader-wrapper').removeClass('active');
+	    now_el = $('#now')[0];
+	    now_el.previousElementSibling.querySelector(".dep-time").focus();
+	    now_el.scrollIntoView({behavior: "smooth", block: "center"});
+	});
 	const elems = document.querySelectorAll('.carousel');
 	const instances = M.Carousel.init(elems, {
 		fullWidth: true,

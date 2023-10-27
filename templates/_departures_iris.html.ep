@@ -1,42 +1,28 @@
-<table class="striped departures">
-<tbody>
+<ul class="collection departures">
 % my $orientation_bar_shown = param('train');
 % my $now_epoch = now->epoch;
 % for my $result (@{$results}) {
-	% my $td_class = '';
+	% my $row_class = '';
 	% my $link_class = 'action-checkin';
 	% if ($result->departure_is_cancelled) {
-		% $td_class = "cancelled";
+		% $row_class = "cancelled";
 		% $link_class = 'action-cancelled-from';
 	% }
 	% if (not $orientation_bar_shown and $result->departure->epoch < $now_epoch) {
 		% $orientation_bar_shown = 1;
-		<tr class="now">
-			<td>
-			</td>
-			<td>
-				<strong>— Anfragezeitpunkt —</strong>
-			</td>
-			<td><strong>
+		<li class="collection-item" id="now">
+			<strong class="dep-time">
 				%= now->strftime('%H:%M')
-			</strong></td>
-		</tr>
+			</strong>
+			<strong>— Anfragezeitpunkt —</strong>
+		</li>
 	% }
-	<tr class="<%= $link_class %>" data-station="<%= $result->station_uic %>" data-train="<%= $result->train_id %>" data-ts="<%= ($result->sched_departure // $result->departure)->epoch %>" data-tr="3">
-		<td>
-			<a>
-				<%= $result->line %>
-			</a>
-		</td>
-		<td class="<%= $td_class %>">
-			<a>
-				<%= $result->destination %>
-			</a>
-			% for my $checkin (@{$checkin_by_train->{$result->train_id} // []}) {
-				<br/>(<%= $checkin->{followee_name} %> → <%= $checkin->{arr_name} // '???' %>)
-			% }
-		</td>
-		<td class="<%= $td_class %>">
+	<li class="collection-item <%= $link_class %> <%= $row_class %>"
+		data-station="<%= $result->station_uic %>"
+		data-train="<%= $result->train_id %>"
+		data-ts="<%= ($result->sched_departure // $result->departure)->epoch %>"
+	>
+		<a class="dep-time" href="#">
 			% if ($result->departure_hidden) {
 				(<%= $result->departure->strftime('%H:%M') %>)
 			% }
@@ -49,8 +35,24 @@
 			% elsif (not $result->has_realtime and $result->start->epoch < $now_epoch) {
 				<i class="material-icons" aria-label="Keine Echtzeitdaten vorhanden" style="font-size: 16px;">gps_off</i>
 			% }
-		</td>
-	</tr>
+			</a>
+			<span class="dep-line <%= $result->type // q{} %>">
+				%= $result->line
+			</span>
+			<span class="dep-dest">
+				% if ($result->departure_is_cancelled) {
+					Fahrt nach <%= $result->destination %> entfällt
+				% }
+				% else {
+					%= $result->destination
+					% for my $checkin (@{$checkin_by_train->{$result->train_id} // []}) {
+						<span class="followee-checkin">
+							<i class="material-icons tiny" aria-label="Eine Person, der du folgst, ist hier eingecheckt">people</i>
+							<%= $checkin->{followee_name} %> → <%= $checkin->{arr_name} // '???' %>
+						</span>
+					% }
+				% }
+			</span>
+	</li>
 % }
-</tbody>
-</table>
+</ul>
