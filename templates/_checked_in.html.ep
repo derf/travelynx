@@ -141,7 +141,7 @@
 								% }
 								%= $station->[2]{dep}->strftime('%H:%M')
 								% if ($station->[2]{dep_delay}) {
-									%= sprintf('(%+d)', $station->[2]{dep_dely} / 60);
+									%= sprintf('(%+d)', $station->[2]{dep_delay} / 60);
 								% }
 								% last;
 							% }
