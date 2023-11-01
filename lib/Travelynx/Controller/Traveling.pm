@@ -1105,23 +1105,20 @@ sub station {
 			}
 			elsif ( $use_hafas and $status and $status->errcode eq 'LOCATION' )
 			{
-				$status->similar_stops_p->then(
+				$self->hafas->search_location_p( query => $station )->then(
 					sub {
-						my @suggestions = @_;
+						my ($hafas2) = @_;
+						my @suggestions = $hafas2->results;
 						if ( @suggestions == 1 ) {
 							$self->redirect_to(
-								'/s/' . $suggestions[0]->{id} . '?hafas=1' );
+								'/s/' . $suggestions[0]->eva . '?hafas=1' );
 						}
 						else {
 							$self->render(
 								'disambiguation',
 								suggestions => [
-									map {
-										{
-											name => $_->{name},
-											eva  => $_->{id}
-										}
-									} @suggestions
+									map { { name => $_->name, eva => $_->eva } }
+									  @suggestions
 								],
 								status => 300,
 							);
@@ -1133,7 +1130,7 @@ sub station {
 						$self->render(
 							'exception',
 							exception =>
-							  "StopFinder threw '$err2' when handling '$err'",
+"locationSearch threw '$err2' when handling '$err'",
 							status => 502
 						);
 					}

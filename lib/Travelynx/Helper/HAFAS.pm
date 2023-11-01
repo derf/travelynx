@@ -98,6 +98,17 @@ sub get_departures_p {
 	);
 }
 
+sub search_location_p {
+	my ( $self, %opt ) = @_;
+
+	return Travel::Status::DE::HAFAS->new_p(
+		locationSearch => $opt{query},
+		cache          => $self->{realtime_cache},
+		promise        => 'Mojo::Promise',
+		user_agent     => $self->{user_agent}->request_timeout(5),
+	);
+}
+
 sub get_journey_p {
 	my ( $self, %opt ) = @_;
 
