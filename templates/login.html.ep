@@ -96,4 +96,11 @@
 		<div class="col s3 m3 l3">
 		</div>
 	</div>
+	% if (app->config->{registration}{disabled}) {
+	<div class="row" style="margin-top: 2em;">
+		<div class="col s12 center-align">
+			<em>Diese Instanz erlaubt derzeit keine Registrierung neuer Accounts</em>
+		</div>
+	</div>
+	% }
 %= end
