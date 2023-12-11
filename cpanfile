@@ -15,7 +15,7 @@ requires 'Mojo::Pg';
 requires 'Text::CSV';
 requires 'Text::Markdown';
 requires 'Travel::Status::DE::DBWagenreihung';
-requires 'Travel::Status::DE::HAFAS';
+requires 'Travel::Status::DE::HAFAS', '== 4.19';
 requires 'Travel::Status::DE::IRIS';
 requires 'UUID::Tiny';
 requires 'JSON';
