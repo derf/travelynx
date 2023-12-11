@@ -101,6 +101,7 @@ DISTRIBUTIONS
       JSON::PP 0
       List::Util 1.33
       Path::Tiny 0.077
+      PkgConfig 0.14026
       Test2::API 1.302096
       Text::ParseWords 3.26
       parent 0
@@ -369,11 +370,11 @@ DISTRIBUTIONS
       Crypt::RC4 2.02
     requirements:
       ExtUtils::MakeMaker 0
-  DBD-Pg-3.17.0
-    pathname: T/TU/TURNSTEP/DBD-Pg-3.17.0.tar.gz
+  DBD-Pg-3.18.0
+    pathname: T/TU/TURNSTEP/DBD-Pg-3.18.0.tar.gz
     provides:
-      Bundle::DBD::Pg v3.17.0
-      DBD::Pg v3.17.0
+      Bundle::DBD::Pg v3.18.0
+      DBD::Pg v3.18.0
     requirements:
       DBI 1.614
       ExtUtils::MakeMaker 6.58
@@ -495,19 +496,19 @@ DISTRIBUTIONS
       perl 5.012
       strict 0
       warnings 0
-  DateTime-1.59
-    pathname: D/DR/DROLSKY/DateTime-1.59.tar.gz
+  DateTime-1.65
+    pathname: D/DR/DROLSKY/DateTime-1.65.tar.gz
     provides:
-      DateTime 1.59
-      DateTime::Duration 1.59
-      DateTime::Helpers 1.59
-      DateTime::Infinite 1.59
-      DateTime::Infinite::Future 1.59
-      DateTime::Infinite::Past 1.59
-      DateTime::LeapSecond 1.59
-      DateTime::PP 1.59
-      DateTime::PPExtra 1.59
-      DateTime::Types 1.59
+      DateTime 1.65
+      DateTime::Duration 1.65
+      DateTime::Helpers 1.65
+      DateTime::Infinite 1.65
+      DateTime::Infinite::Future 1.65
+      DateTime::Infinite::Past 1.65
+      DateTime::LeapSecond 1.65
+      DateTime::PP 1.65
+      DateTime::PPExtra 1.65
+      DateTime::Types 1.65
     requirements:
       Carp 0
       DateTime::Locale 1.06
@@ -559,15 +560,15 @@ DISTRIBUTIONS
       parent 0
       strict 0
       warnings 0
-  DateTime-Locale-1.39
-    pathname: D/DR/DROLSKY/DateTime-Locale-1.39.tar.gz
+  DateTime-Locale-1.40
+    pathname: D/DR/DROLSKY/DateTime-Locale-1.40.tar.gz
     provides:
-      DateTime::Locale 1.39
-      DateTime::Locale::Base 1.39
-      DateTime::Locale::Catalog 1.39
-      DateTime::Locale::Data 1.39
-      DateTime::Locale::FromData 1.39
-      DateTime::Locale::Util 1.39
+      DateTime::Locale 1.40
+      DateTime::Locale::Base 1.40
+      DateTime::Locale::Catalog 1.40
+      DateTime::Locale::Data 1.40
+      DateTime::Locale::FromData 1.40
+      DateTime::Locale::Util 1.40
     requirements:
       Carp 0
       Dist::CheckConflicts 0.02
@@ -1356,12 +1357,12 @@ DISTRIBUTIONS
       perl 5.008001
       strict 0
       warnings 0
-  HTTP-Cookies-6.10
-    pathname: O/OA/OALDERS/HTTP-Cookies-6.10.tar.gz
+  HTTP-Cookies-6.11
+    pathname: O/OA/OALDERS/HTTP-Cookies-6.11.tar.gz
     provides:
-      HTTP::Cookies 6.10
-      HTTP::Cookies::Microsoft 6.10
-      HTTP::Cookies::Netscape 6.10
+      HTTP::Cookies 6.11
+      HTTP::Cookies::Microsoft 6.11
+      HTTP::Cookies::Netscape 6.11
     requirements:
       Carp 0
       ExtUtils::MakeMaker 0
@@ -1382,19 +1383,19 @@ DISTRIBUTIONS
       Time::Zone 0
       perl 5.006002
       strict 0
-  HTTP-Message-6.44
-    pathname: O/OA/OALDERS/HTTP-Message-6.44.tar.gz
+  HTTP-Message-6.45
+    pathname: O/OA/OALDERS/HTTP-Message-6.45.tar.gz
     provides:
-      HTTP::Config 6.44
-      HTTP::Headers 6.44
-      HTTP::Headers::Auth 6.44
-      HTTP::Headers::ETag 6.44
-      HTTP::Headers::Util 6.44
-      HTTP::Message 6.44
-      HTTP::Request 6.44
-      HTTP::Request::Common 6.44
-      HTTP::Response 6.44
-      HTTP::Status 6.44
+      HTTP::Config 6.45
+      HTTP::Headers 6.45
+      HTTP::Headers::Auth 6.45
+      HTTP::Headers::ETag 6.45
+      HTTP::Headers::Util 6.45
+      HTTP::Message 6.45
+      HTTP::Request 6.45
+      HTTP::Request::Common 6.45
+      HTTP::Response 6.45
+      HTTP::Status 6.45
     requirements:
       Carp 0
       Clone 0.46
@@ -1464,18 +1465,18 @@ DISTRIBUTIONS
       Exporter 5.57
       ExtUtils::MakeMaker 0
       perl 5.008
-  IO-Socket-SSL-2.083
-    pathname: S/SU/SULLR/IO-Socket-SSL-2.083.tar.gz
+  IO-Socket-SSL-2.084
+    pathname: S/SU/SULLR/IO-Socket-SSL-2.084.tar.gz
     provides:
-      IO::Socket::SSL 2.083
+      IO::Socket::SSL 2.084
       IO::Socket::SSL::Intercept 2.056
-      IO::Socket::SSL::OCSP_Cache 2.083
-      IO::Socket::SSL::OCSP_Resolver 2.083
+      IO::Socket::SSL::OCSP_Cache 2.084
+      IO::Socket::SSL::OCSP_Resolver 2.084
       IO::Socket::SSL::PublicSuffix undef
-      IO::Socket::SSL::SSL_Context 2.083
-      IO::Socket::SSL::SSL_HANDLE 2.083
-      IO::Socket::SSL::Session_Cache 2.083
-      IO::Socket::SSL::Trace 2.083
+      IO::Socket::SSL::SSL_Context 2.084
+      IO::Socket::SSL::SSL_HANDLE 2.084
+      IO::Socket::SSL::Session_Cache 2.084
+      IO::Socket::SSL::Trace 2.084
       IO::Socket::SSL::Utils 2.015
     requirements:
       ExtUtils::MakeMaker 0
@@ -1705,10 +1706,10 @@ DISTRIBUTIONS
       Text::ParseWords 0
       perl 5.006001
       version 0.87
-  Module-Build-Tiny-0.046
-    pathname: L/LE/LEONT/Module-Build-Tiny-0.046.tar.gz
+  Module-Build-Tiny-0.047
+    pathname: L/LE/LEONT/Module-Build-Tiny-0.047.tar.gz
     provides:
-      Module::Build::Tiny 0.046
+      Module::Build::Tiny 0.047
     requirements:
       CPAN::Meta 0
       DynaLoader 0
@@ -1755,7 +1756,7 @@ DISTRIBUTIONS
       File::Spec 3.00
       File::Spec::Functions 0
       if 0
-      perl 5.005030
+      perl 5.00503
       strict 0
   Module-Runtime-0.016
     pathname: Z/ZE/ZEFRAM/Module-Runtime-0.016.tar.gz
@@ -1782,8 +1783,8 @@ DISTRIBUTIONS
       Mojolicious 8.50
       SQL::Abstract::Pg 1.0
       perl 5.016
-  Mojolicious-9.34
-    pathname: S/SR/SRI/Mojolicious-9.34.tar.gz
+  Mojolicious-9.35
+    pathname: S/SR/SRI/Mojolicious-9.35.tar.gz
     provides:
       Mojo undef
       Mojo::Asset undef
@@ -1851,7 +1852,7 @@ DISTRIBUTIONS
       Mojo::UserAgent::Transactor undef
       Mojo::Util undef
       Mojo::WebSocket undef
-      Mojolicious 9.34
+      Mojolicious 9.35
       Mojolicious::Command undef
       Mojolicious::Command::Author::cpanify undef
       Mojolicious::Command::Author::generate undef
@@ -2094,6 +2095,14 @@ DISTRIBUTIONS
       strict 0
       warnings 0
       warnings::register 0
+  PkgConfig-0.25026
+    pathname: P/PL/PLICEASE/PkgConfig-0.25026.tar.gz
+    provides:
+      PkgConfig 0.25026
+    requirements:
+      ExtUtils::MakeMaker 6.56
+      Test::More 0.94
+      perl 5.006000
   Role-Tiny-2.002004
     pathname: H/HA/HAARG/Role-Tiny-2.002004.tar.gz
     provides:
@@ -2207,18 +2216,18 @@ DISTRIBUTIONS
       strict 0
       version 0.83
       warnings 0
-  Sub-Exporter-0.990
-    pathname: R/RJ/RJBS/Sub-Exporter-0.990.tar.gz
+  Sub-Exporter-0.991
+    pathname: R/RJ/RJBS/Sub-Exporter-0.991.tar.gz
     provides:
-      Sub::Exporter 0.990
-      Sub::Exporter::Util 0.990
+      Sub::Exporter 0.991
+      Sub::Exporter::Util 0.991
     requirements:
       Carp 0
       Data::OptList 0.100
       ExtUtils::MakeMaker 6.78
       Params::Util 0.14
       Sub::Install 0.92
-      perl 5.008000
+      perl 5.012
       strict 0
       warnings 0
   Sub-Exporter-Progressive-0.001013
@@ -2338,10 +2347,10 @@ DISTRIBUTIONS
       Test::Builder 0
       Test::More 0.96
       perl 5.012
-  Test-Differences-0.70
-    pathname: D/DC/DCANTRELL/Test-Differences-0.70.tar.gz
+  Test-Differences-0.71
+    pathname: D/DC/DCANTRELL/Test-Differences-0.71.tar.gz
     provides:
-      Test::Differences 0.70
+      Test::Differences 0.71
     requirements:
       Capture::Tiny 0.24
       Data::Dumper 2.126
@@ -2400,17 +2409,17 @@ DISTRIBUTIONS
       Test::Builder::Tester 1.02
       Test::More 0.62
       perl 5.008
-  Text-CSV-2.03
-    pathname: I/IS/ISHIGAKI/Text-CSV-2.03.tar.gz
+  Text-CSV-2.04
+    pathname: I/IS/ISHIGAKI/Text-CSV-2.04.tar.gz
     provides:
-      Text::CSV 2.03
-      Text::CSV::ErrorDiag 2.03
-      Text::CSV_PP 2.03
+      Text::CSV 2.04
+      Text::CSV::ErrorDiag 2.04
+      Text::CSV_PP 2.04
     requirements:
       ExtUtils::MakeMaker 0
       IO::Handle 0
       Test::Harness 0
-      Test::More 0.71
+      Test::More 0.92
       perl 5.006001
   Text-Diff-1.45
     pathname: N/NE/NEILB/Text-Diff-1.45.tar.gz
@@ -2554,16 +2563,16 @@ DISTRIBUTIONS
       Test::Pod 0
       Travel::Status::DE::IRIS 1.2
       perl v5.20.0
-  Travel-Status-DE-DeutscheBahn-4.17
-    pathname: D/DE/DERF/Travel-Status-DE-DeutscheBahn-4.17.tar.gz
+  Travel-Status-DE-DeutscheBahn-4.19
+    pathname: D/DE/DERF/Travel-Status-DE-DeutscheBahn-4.19.tar.gz
     provides:
-      Travel::Status::DE::DeutscheBahn 4.17
-      Travel::Status::DE::HAFAS 4.17
-      Travel::Status::DE::HAFAS::Journey 4.17
-      Travel::Status::DE::HAFAS::Message 4.17
-      Travel::Status::DE::HAFAS::Polyline 4.17
-      Travel::Status::DE::HAFAS::Stop 4.17
-      Travel::Status::DE::HAFAS::StopFinder 4.17
+      Travel::Status::DE::DeutscheBahn 4.19
+      Travel::Status::DE::HAFAS 4.19
+      Travel::Status::DE::HAFAS::Journey 4.19
+      Travel::Status::DE::HAFAS::Message 4.19
+      Travel::Status::DE::HAFAS::Polyline 4.19
+      Travel::Status::DE::HAFAS::Stop 4.19
+      Travel::Status::DE::HAFAS::StopFinder 4.19
     requirements:
       Carp 0
       Class::Accessor 0.16
@@ -2581,12 +2590,12 @@ DISTRIBUTIONS
       Test::More 0
       Test::Pod 0
       perl v5.14.0
-  Travel-Status-DE-IRIS-1.90
-    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.90.tar.gz
+  Travel-Status-DE-IRIS-1.91
+    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.91.tar.gz
     provides:
-      Travel::Status::DE::IRIS 1.90
-      Travel::Status::DE::IRIS::Result 1.90
-      Travel::Status::DE::IRIS::Stations 1.90
+      Travel::Status::DE::IRIS 1.91
+      Travel::Status::DE::IRIS::Result 1.91
+      Travel::Status::DE::IRIS::Stations 1.91
     requirements:
       Carp 0
       Class::Accessor 0
