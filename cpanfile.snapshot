@@ -1954,10 +1954,10 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       Module::Runtime 0.014
-  Mozilla-CA-20230821
-    pathname: L/LW/LWP/Mozilla-CA-20230821.tar.gz
+  Mozilla-CA-20231213
+    pathname: L/LW/LWP/Mozilla-CA-20231213.tar.gz
     provides:
-      Mozilla::CA 20230821
+      Mozilla::CA 20231213
     requirements:
       ExtUtils::MakeMaker 0
   Net-HTTP-6.23
@@ -2590,12 +2590,12 @@ DISTRIBUTIONS
       Test::More 0
       Test::Pod 0
       perl v5.14.0
-  Travel-Status-DE-IRIS-1.92
-    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.92.tar.gz
+  Travel-Status-DE-IRIS-1.93
+    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.93.tar.gz
     provides:
-      Travel::Status::DE::IRIS 1.92
-      Travel::Status::DE::IRIS::Result 1.92
-      Travel::Status::DE::IRIS::Stations 1.92
+      Travel::Status::DE::IRIS 1.93
+      Travel::Status::DE::IRIS::Result 1.93
+      Travel::Status::DE::IRIS::Stations 1.93
     requirements:
       Carp 0
       Class::Accessor 0
