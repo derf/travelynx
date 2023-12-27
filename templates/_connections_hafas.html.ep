@@ -16,7 +16,7 @@
 			data-dest="<%= $via->{name} %>">
 		% }
 		% else {
-			<li class="collection-item">
+			<li class="collection-item <%= $row_class %>">
 		% }
 			<a class="dep-time" href="#">
 				% if ($train->is_cancelled) {
