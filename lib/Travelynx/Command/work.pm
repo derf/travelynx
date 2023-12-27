@@ -46,10 +46,10 @@ sub run {
 					my $found_dep;
 					my $found_arr;
 					for my $stop ( $journey->route ) {
-						if ( $stop->eva == $dep ) {
+						if ( $stop->loc->eva == $dep ) {
 							$found_dep = $stop;
 						}
-						if ( $arr and $stop->eva == $arr ) {
+						if ( $arr and $stop->loc->eva == $arr ) {
 							$found_arr = $stop;
 							last;
 						}

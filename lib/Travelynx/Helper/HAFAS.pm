@@ -171,20 +171,20 @@ sub get_route_timestamps_p {
 
 			my $station_is_past = 1;
 			for my $stop ( $journey->route ) {
-				my $name = $stop->{name};
-				$ret->{$name} = $ret->{ $stop->{eva} } = {
-					name      => $stop->{name},
-					eva       => $stop->{eva},
-					sched_arr => _epoch( $stop->{sched_arr} ),
-					sched_dep => _epoch( $stop->{sched_dep} ),
-					rt_arr    => _epoch( $stop->{rt_arr} ),
-					rt_dep    => _epoch( $stop->{rt_dep} ),
-					arr_delay => $stop->{arr_delay},
-					dep_delay => $stop->{dep_delay},
-					load      => $stop->{load}
+				my $name = $stop->loc->name;
+				$ret->{$name} = $ret->{ $stop->loc->eva } = {
+					name      => $stop->loc->name,
+					eva       => $stop->loc->eva,
+					sched_arr => _epoch( $stop->sched_arr ),
+					sched_dep => _epoch( $stop->sched_dep ),
+					rt_arr    => _epoch( $stop->rt_arr ),
+					rt_dep    => _epoch( $stop->rt_dep ),
+					arr_delay => $stop->arr_delay,
+					dep_delay => $stop->dep_delay,
+					load      => $stop->load
 				};
-				if (    ( $stop->{arr_cancelled} or not $stop->{sched_arr} )
-					and ( $stop->{dep_cancelled} or not $stop->{sched_dep} ) )
+				if (    ( $stop->arr_cancelled or not $stop->sched_arr )
+					and ( $stop->dep_cancelled or not $stop->sched_dep ) )
 				{
 					$ret->{$name}{isCancelled} = 1;
 				}
@@ -229,8 +229,8 @@ sub get_route_timestamps_p {
 					or index( $hafas_stations, $iris_stations ) != -1 )
 				{
 					$polyline = {
-						from_eva => ( $journey->route )[0]{eva},
-						to_eva   => ( $journey->route )[-1]{eva},
+						from_eva => ( $journey->route )[0]->loc->eva,
+						to_eva   => ( $journey->route )[-1]->loc->eva,
 						coords   => \@coordinate_list,
 					};
 				}

@@ -541,7 +541,8 @@ sub startup {
 					my ($journey) = @_;
 					my $found;
 					for my $stop ( $journey->route ) {
-						if ( $stop->name eq $station or $stop->eva == $station )
+						if (   $stop->loc->name eq $station
+							or $stop->loc->eva == $station )
 						{
 							$found = $stop;
 							last;

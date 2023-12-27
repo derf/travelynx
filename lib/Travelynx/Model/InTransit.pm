@@ -126,16 +126,16 @@ sub add {
 			push(
 				@route,
 				[
-					$j_stop->name,
-					$j_stop->eva,
+					$j_stop->loc->name,
+					$j_stop->loc->eva,
 					{
-						sched_arr => _epoch( $j_stop->{sched_arr} ),
-						sched_dep => _epoch( $j_stop->{sched_dep} ),
-						rt_arr    => _epoch( $j_stop->{rt_arr} ),
-						rt_dep    => _epoch( $j_stop->{rt_dep} ),
-						arr_delay => $j_stop->{arr_delay},
-						dep_delay => $j_stop->{dep_delay},
-						load      => $j_stop->{load}
+						sched_arr => _epoch( $j_stop->sched_arr ),
+						sched_dep => _epoch( $j_stop->sched_dep ),
+						rt_arr    => _epoch( $j_stop->rt_arr ),
+						rt_dep    => _epoch( $j_stop->rt_dep ),
+						arr_delay => $j_stop->arr_delay,
+						dep_delay => $j_stop->dep_delay,
+						load      => $j_stop->load
 					}
 				]
 			);
@@ -147,7 +147,7 @@ sub add {
 				cancelled => $stop->{dep_cancelled}
 				? 1
 				: 0,
-				checkin_station_id => $stop->eva,
+				checkin_station_id => $stop->loc->eva,
 				checkin_time => DateTime->now( time_zone => 'Europe/Berlin' ),
 				dep_platform => $stop->{platform},
 				train_type   => $journey->type // q{},
@@ -724,16 +724,16 @@ sub update_arrival_hafas {
 		push(
 			@route,
 			[
-				$j_stop->name,
-				$j_stop->eva,
+				$j_stop->loc->name,
+				$j_stop->loc->eva,
 				{
-					sched_arr => _epoch( $j_stop->{sched_arr} ),
-					sched_dep => _epoch( $j_stop->{sched_dep} ),
-					rt_arr    => _epoch( $j_stop->{rt_arr} ),
-					rt_dep    => _epoch( $j_stop->{rt_dep} ),
-					arr_delay => $j_stop->{arr_delay},
-					dep_delay => $j_stop->{dep_delay},
-					load      => $j_stop->{load}
+					sched_arr => _epoch( $j_stop->sched_arr ),
+					sched_dep => _epoch( $j_stop->sched_dep ),
+					rt_arr    => _epoch( $j_stop->rt_arr ),
+					rt_dep    => _epoch( $j_stop->rt_dep ),
+					arr_delay => $j_stop->arr_delay,
+					dep_delay => $j_stop->dep_delay,
+					load      => $j_stop->load
 				}
 			]
 		);
