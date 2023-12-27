@@ -307,14 +307,14 @@ sub get_connecting_trains_p {
 								$iris_train->[3] = $hafas_train->load;
 							}
 							for my $stop ( $hafas_train->route ) {
-								if (    $stop->{name}
-									and $stop->{name} eq
+								if (    $stop->loc->name
+									and $stop->loc->name eq
 									$iris_train->[1]->{name}
-									and $stop->{arr} )
+									and $stop->arr )
 								{
-									$iris_train->[2] = $stop->{arr};
+									$iris_train->[2] = $stop->arr;
 									if ( $iris_train->[0]->departure_delay
-										and not $stop->{arr_delay} )
+										and not $stop->arr_delay )
 									{
 										$iris_train->[2]
 										  ->add( minutes => $iris_train->[0]
@@ -338,16 +338,16 @@ sub get_connecting_trains_p {
 					}
 					for my $stop ( $hafas_train->route ) {
 						for my $dest (@destinations) {
-							if (    $stop->{name}
-								and $stop->{name} eq $dest->{name}
+							if (    $stop->loc->name
+								and $stop->loc->name eq $dest->{name}
 								and $via_count{ $dest->{name} } < 2
 								and $hafas_train->datetime )
 							{
 								my $departure = $hafas_train->datetime;
-								my $arrival   = $stop->{arr};
+								my $arrival   = $stop->arr;
 								my $delay     = $hafas_train->delay;
 								if (    $delay
-									and $stop->{arr} == $stop->{sched_arr} )
+									and $stop->arr == $stop->sched_arr )
 								{
 									$arrival->add( minutes => $delay );
 								}
