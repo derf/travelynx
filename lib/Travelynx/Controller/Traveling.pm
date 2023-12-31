@@ -1332,7 +1332,11 @@ sub map_history {
 	if (    $filter_until
 		and $filter_until =~ m{ ^ (\d+) [.] (\d+) [.] (\d+) $ }x )
 	{
-		$filter_until = $parser->parse_datetime($filter_until);
+		$filter_until = $parser->parse_datetime($filter_until)->set(
+			hour   => 23,
+			minute => 59,
+			second => 58
+		);
 	}
 	else {
 		$filter_until = undef;
