@@ -1,6 +1,6 @@
 <div class="row">
 	<div class="col s12">
-		<div id="map" style="height: 500px;">
+		<div id="map" style="height: 70vh;">
 		</div>
 	</div>
 </div>
