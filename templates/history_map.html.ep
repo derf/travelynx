@@ -1,6 +1,9 @@
 <div class="row">
 	<div class="col s12">
-		% if (@{$station_coordinates}) {
+		% if (stash('year')) {
+			Alle Fahrten in <strong><%= stash('year') %></strong>
+		% }
+		% elsif (@{$station_coordinates}) {
 			Alle bisherigen Fahrten
 		% }
 		% else {

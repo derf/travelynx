@@ -1342,6 +1342,18 @@ sub map_history {
 		$filter_until = undef;
 	}
 
+	my $year;
+	if (    $filter_from
+		and $filter_from->day == 1
+		and $filter_from->month == 1
+		and $filter_until
+		and $filter_until->day == 31
+		and $filter_until->month == 12
+		and $filter_from->year == $filter_until->year )
+	{
+		$year = $filter_from->year;
+	}
+
 	my @journeys = $self->journeys->get(
 		uid           => $self->current_user->{id},
 		with_polyline => $with_polyline,
@@ -1376,6 +1388,7 @@ sub map_history {
 
 	$self->render(
 		template => 'history_map',
+		year     => $year,
 		with_map => 1,
 		%{$res}
 	);
