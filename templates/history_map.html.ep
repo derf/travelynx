@@ -1,7 +1,10 @@
 <div class="row">
 	<div class="col s12">
 		% if (stash('year')) {
-			Alle Fahrten in <strong><%= stash('year') %></strong>
+			Fahrten im Jahr <strong><%= stash('year') %></strong>
+		% }
+		% elsif (param('filter_after') and param('filter_before')) {
+			Fahrten zwischen dem <strong><%= param('filter_after') %></strong> und dem <strong><%= param('filter_before') %></strong>
 		% }
 		% elsif (@{$station_coordinates}) {
 			Alle bisherigen Fahrten
