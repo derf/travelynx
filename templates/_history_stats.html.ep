@@ -1,29 +1,3 @@
-% if (@{$stats->{inconsistencies}}) {
-	<div class="row">
-		<div class="col s12">
-			<div class="card caution-color">
-				<div class="card-content white-text">
-					<i class="material-icons small right">warning</i>
-					<span class="card-title">Inkonsistente Reisedaten</span>
-					<p>
-						Die folgenden Fahrten wurden bei der Wartezeitberechnung
-						ignoriert, da ihre Abfahrtszeit vor der Ankunftszeit der
-						vorherigen Fahrt liegt. Bei den restlichen Statistken
-						wurden sie mitberücksichtigt.
-						<ul>
-							% for my $field (@{$stats->{inconsistencies}}) {
-								<li><a href="/journey/<%= $field->{ignored}{id} %>"><%= $field->{ignored}{train} %> ab <%= $field->{ignored}{dep} %></a>
-									(Konflikt: <a href="/journey/<%= $field->{conflict}{id} %>"><%= $field->{conflict}{train} %> an <%= $field->{conflict}{arr} %>)</a>
-</li>
-							% }
-						</ul>
-					</p>
-				</div>
-			</div>
-		</div>
-	</div>
-% }
-
 <div class="row">
 	<div class="col s12">
 		<table class="striped">
@@ -44,6 +18,14 @@
 			<tr>
 				<th scope="row">Wartezeit (nur Umstiege)</th>
 				<td><%= $stats->{min_interchange_real_strf} %> Stunden
+					% if (@{$stats->{inconsistencies}}) {
+						<br/><br/>Für Wartezeitberechnung nicht berücksichtigte Fahrten:<br/>
+						% for my $field (@{$stats->{inconsistencies}}) {
+							<a href="/journey/<%= $field->{ignored}{id} %>"><%= $field->{ignored}{train} %> ab <%= $field->{ignored}{dep} %></a>
+								(Konflikt: <a href="/journey/<%= $field->{conflict}{id} %>"><%= $field->{conflict}{train} %> an <%= $field->{conflict}{arr} %></a>)<br/>
+						% }
+					% }
+				</td>
 			</tr>
 			<tr>
 				<th scope="row">Kumulierte Verspätung</th>
