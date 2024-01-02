@@ -6,6 +6,12 @@
 		% elsif (param('filter_from') and param('filter_to')) {
 			Fahrten zwischen dem <strong><%= param('filter_from') %></strong> und dem <strong><%= param('filter_to') %></strong>
 		% }
+		% elsif (param('filter_from')) {
+			Fahrten ab dem <strong><%= param('filter_from') %></strong>
+		% }
+		% elsif (param('filter_to')) {
+			Fahrten bis einschließlich <strong><%= param('filter_to') %></strong>
+		% }
 		% elsif (@{$station_coordinates}) {
 			Alle bisherigen Fahrten
 		% }
