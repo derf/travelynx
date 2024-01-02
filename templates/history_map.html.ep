@@ -1,22 +1,31 @@
 <div class="row">
 	<div class="col s12">
-		% if (stash('year')) {
-			Fahrten im Jahr <strong><%= stash('year') %></strong>
-		% }
-		% elsif (param('filter_from') and param('filter_to')) {
-			Fahrten zwischen dem <strong><%= param('filter_from') %></strong> und dem <strong><%= param('filter_to') %></strong>
-		% }
-		% elsif (param('filter_from')) {
-			Fahrten ab dem <strong><%= param('filter_from') %></strong>
-		% }
-		% elsif (param('filter_to')) {
-			Fahrten bis einschließlich <strong><%= param('filter_to') %></strong>
-		% }
-		% elsif (@{$station_coordinates}) {
-			Alle bisherigen Fahrten
+		% if (@{$station_coordinates}) {
+			Fahrten
 		% }
 		% else {
-			Keine Fahrten gefunden.
+			Keine Fahrten
+		% }
+		% if (param('filter_type')) {
+			mit <strong><%= param('filter_type') %></strong>
+		% }
+		% if (stash('year')) {
+			im Jahr <strong><%= stash('year') %></strong>
+		% }
+		% elsif (param('filter_from') and param('filter_to')) {
+			zwischen dem <strong><%= param('filter_from') %></strong> und dem <strong><%= param('filter_to') %></strong>
+		% }
+		% elsif (param('filter_from')) {
+			ab dem <strong><%= param('filter_from') %></strong>
+		% }
+		% elsif (param('filter_to')) {
+			bis einschließlich <strong><%= param('filter_to') %></strong>
+		% }
+		% elsif (@{$station_coordinates}) {
+			in travelynx
+		% }
+		% if (not @{$station_coordinates}) {
+			gefunden
 		% }
 	</div>
 </div>
@@ -92,7 +101,7 @@
 	<div class="row">
 		<div class="input-field col s12">
 			%= text_field 'filter_type', id => 'filter_type'
-			<label for="filter_tpye">Zugtypen</label>
+			<label for="filter_tpye">Verkehrsmittel</label>
 		</div>
 	</div>
 	<div class="row">
