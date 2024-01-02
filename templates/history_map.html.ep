@@ -3,8 +3,8 @@
 		% if (stash('year')) {
 			Fahrten im Jahr <strong><%= stash('year') %></strong>
 		% }
-		% elsif (param('filter_after') and param('filter_before')) {
-			Fahrten zwischen dem <strong><%= param('filter_after') %></strong> und dem <strong><%= param('filter_before') %></strong>
+		% elsif (param('filter_from') and param('filter_to')) {
+			Fahrten zwischen dem <strong><%= param('filter_from') %></strong> und dem <strong><%= param('filter_to') %></strong>
 		% }
 		% elsif (@{$station_coordinates}) {
 			Alle bisherigen Fahrten
@@ -73,14 +73,14 @@
 	</p>
 	<div class="row">
 		<div class="input-field col s12">
-			%= text_field 'filter_after', id => 'filter_after', class => 'validate', pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9]( +[0-9][0-9]:[0-9][0-9])?'
-			<label for="filter_after">Abfahrt ab (DD.MM.YYYY)</label>
+			%= text_field 'filter_from', id => 'filter_from', class => 'validate', pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9]( +[0-9][0-9]:[0-9][0-9])?'
+			<label for="filter_from">Abfahrt ab (DD.MM.YYYY)</label>
 		</div>
 	</div>
 	<div class="row">
 		<div class="input-field col s12">
-			%= text_field 'filter_before', id => 'filter_before', class => 'validate', pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9]( +[0-9][0-9]:[0-9][0-9])?'
-			<label for="filter_before">Abfahrt bis (DD.MM.YYYY)</label>
+			%= text_field 'filter_to', id => 'filter_to', class => 'validate', pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9]( +[0-9][0-9]:[0-9][0-9])?'
+			<label for="filter_to">Abfahrt bis (DD.MM.YYYY)</label>
 		</div>
 	</div>
 	<div class="row">

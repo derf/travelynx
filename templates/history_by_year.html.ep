@@ -7,7 +7,7 @@
 <div class="row">
 	% if (stash('have_review')) {
 	<div class="col s12 m12 l5 center-align">
-		<a href="/history/map?filter_after=1.1.<%= $year %>&amp;filter_before=31.12.<%= $year %>" class="waves-effect waves-light btn"><i class="material-icons left" aria-hidden="true">map</i> Karte</a>
+		<a href="/history/map?filter_from=1.1.<%= $year %>&amp;filter_to=31.12.<%= $year %>" class="waves-effect waves-light btn"><i class="material-icons left" aria-hidden="true">map</i> Karte</a>
 	</div>
 	<div class="col s12 m12 l2">&nbsp;</div>
 	<div class="col s12 m12 l5 center-align">
@@ -16,7 +16,7 @@
 	% }
 	% else {
 	<div class="col s12 m12 l12 center-align">
-		<a href="/history/map?filter_after=1.1.<%= $year %>&amp;filter_before=31.12.<%= $year %>" class="waves-effect waves-light btn"><i class="material-icons left" aria-hidden="true">map</i> Karte</a>
+		<a href="/history/map?filter_from=1.1.<%= $year %>&amp;filter_to=31.12.<%= $year %>" class="waves-effect waves-light btn"><i class="material-icons left" aria-hidden="true">map</i> Karte</a>
 	</div>
 	% }
 </div>

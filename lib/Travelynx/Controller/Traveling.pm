@@ -1309,8 +1309,8 @@ sub map_history {
 	}
 
 	my $route_type    = $self->param('route_type');
-	my $filter_from   = $self->param('filter_after');
-	my $filter_until  = $self->param('filter_before');
+	my $filter_from   = $self->param('filter_from');
+	my $filter_until  = $self->param('filter_to');
 	my $filter_type   = $self->param('filter_type');
 	my $with_polyline = $route_type eq 'beeline' ? 0 : 1;
 
