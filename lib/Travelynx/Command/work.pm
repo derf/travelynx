@@ -83,7 +83,14 @@ sub run {
 			)->catch(
 				sub {
 					my ($err) = @_;
-					$self->app->log->error("work($uid)/journey: $err");
+					if ( $err =~ m{svcResL\[0\][.]err is (?:FAIL|PARAMETER)$} )
+					{
+						# HAFAS do be weird. These are not actionable.
+						$self->app->log->debug("work($uid)/journey: $err");
+					}
+					else {
+						$self->app->log->error("work($uid)/journey: $err");
+					}
 				}
 			)->wait;
 
