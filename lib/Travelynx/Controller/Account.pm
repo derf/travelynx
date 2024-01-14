@@ -1218,6 +1218,15 @@ sub confirm_mail {
 	my $id     = $self->current_user->{id};
 	my $token  = $self->stash('token');
 
+	# Some mail clients include the trailing ">" from the confirmation mail
+	# when opening/copying the confirmation link. A token will never contain
+	# this symbol, so remove it just in case.
+	$token =~ s{>}{};
+
+	# I did not yet find a mail client that also includes the trailing ",",
+	# but you never now...
+	$token =~ s{,}{};
+
 	if (
 		$self->users->change_mail_with_token(
 			uid   => $id,
