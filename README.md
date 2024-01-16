@@ -3,18 +3,19 @@ travelynx - Railway Travel Logger
 
 [travelynx](https://finalrewind.org/projects/travelynx/) allows checking into
 and out of individual trains, thus providing a log of your railway journeys
-annotated with real-time delays and service messages. At the moment, it only
-supports german railways and trains which are exposed by the Deutsche Bahn
-[IRIS Interface](https://finalrewind.org/projects/Travel-Status-DE-IRIS/).
+annotated with real-time delays and service messages. It supports german
+railways and trains exposed by the Deutsche Bahn [IRIS
+Interface](https://finalrewind.org/projects/Travel-Status-DE-IRIS/) as well as
+local transit and some trains outside of germany exposed by the Deutsche Bahn
+[HAFAS Interface](https://finalrewind.org/projects/Travel-Status-DE-DeutscheBahn/).
 
 You can use the public instance on [travelynx.de](https://travelynx.de) or
-host your own via carton. Experimental Docker images are also
-available. See the Setup notes below.
+host your own. See the Installation and Setup notes below.
 
 Dependencies
 ---
 
- * perl >= 5.20
+ * perl ≥ 5.20
  * carton
  * build-essential
  * libpq-dev
@@ -211,3 +212,12 @@ both for personal/internal and public use, under the following conditions.
 The easiest way of making changes available is by maintaining a public fork of
 the Git repository. A tarball is also acceptable. Please change the `source`
 ref in travelynx.conf if you are using a fork with custom changes.
+
+References
+---
+
+Mirrors of the travelynx repository are maintained at the following locations:
+
+* [Chaosdorf](https://chaosdorf.de/git/derf/travelynx)
+* [git.finalrewind.org](https://git.finalrewind.org/travelynx/)
+* [GitHub](https://github.com/derf/travelynx)
