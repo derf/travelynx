@@ -7,6 +7,10 @@
 	cursor: pointer;
 }
 
+.navbar-fixed {
+	z-index: 1001;
+}
+
 .brand-logo span {
 	transition: color 1s;
 }
