@@ -1185,7 +1185,7 @@ sub cancelled {
 sub history {
 	my ($self) = @_;
 
-	$self->render( template => 'history' );
+	$self->render( template => 'history', title => 'travelynx: History' );
 }
 
 sub commute {
@@ -1293,6 +1293,7 @@ sub commute {
 		journeys_by_month => \%journeys_by_month,
 		count_by_month    => \%count_by_month,
 		total_journeys    => $total,
+		title => 'travelynx: Reisen nach Station',
 		months            => [
 			qw(Januar Februar März April Mai Juni Juli August September Oktober November Dezember)
 		],
@@ -1390,6 +1391,7 @@ sub map_history {
 		template => 'history_map',
 		year     => $year,
 		with_map => 1,
+		title => 'travelynx: Karte',
 		%{$res}
 	);
 }
@@ -1515,7 +1517,7 @@ sub year_in_review {
 
 	$self->render(
 		'year_in_review',
-		title  => "travelynx Jahresrückblick $year",
+		title  => "travelynx: Jahresrückblick $year",
 		year   => $year,
 		stats  => $stats,
 		review => $review,
@@ -1586,6 +1588,7 @@ sub yearly_history {
 		},
 		any => {
 			template    => 'history_by_year',
+			title => "travelynx: $year",
 			journeys    => [@journeys],
 			year        => $year,
 			have_review => $with_review,
@@ -1649,6 +1652,8 @@ sub monthly_history {
 		month => $month
 	);
 
+	my $month_name = $months[ $month - 1 ];
+
 	$self->respond_to(
 		json => {
 			json => {
@@ -1658,10 +1663,11 @@ sub monthly_history {
 		},
 		any => {
 			template   => 'history_by_month',
+			title => "travelynx: $month_name $year",
 			journeys   => [@journeys],
 			year       => $year,
 			month      => $month,
-			month_name => $months[ $month - 1 ],
+			month_name => $month_name,
 			statistics => $stats
 		}
 	);
@@ -1736,6 +1742,9 @@ sub journey_details {
 
 		$self->render(
 			'journey',
+			title =>  sprintf( 'travelynx: %s %s %s am %s',
+				$journey->{type}, $journey->{line} // '', $journey->{no},
+				$journey->{sched_arrival}->strftime('%d.%m.%Y, %H:%M') ),
 			error              => undef,
 			journey            => $journey,
 			journey_visibility => $visibility,
