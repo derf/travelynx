@@ -76,7 +76,7 @@
 		</div>
 	</div>
 	<h2 style="margin-left: 0.75rem;">Letzte Fahrten</h2>
-	%= include '_history_trains', date_format => '%d.%m', journeys => [journeys->get(uid => current_user->{id}, limit => 5, with_datetime => 1)];
+	%= include '_history_trains', date_format => '%d.%m.%Y', journeys => [journeys->get(uid => current_user->{id}, limit => 5, with_datetime => 1)];
 % }
 % else {
 	<div class="row">

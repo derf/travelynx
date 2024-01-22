@@ -72,17 +72,14 @@ ul.suggestions {
 	}
 }
 
-
-.departures li {
+.collection.departures li, .collection.history li {
 	transition: background .3s;
 	display: grid;
-	grid-template-columns: 10ch 10ch 1fr;
-	align-items: center;
-	&:not(#now):hover, &:focus-within {
+	&:not(#now,.history-date-change ):hover, &:focus-within {
 		background-color: $departures-highlight-color;
 		outline: 2px solid $link-color;
 	}
- 	&.cancelled {
+	&.cancelled {
 		background-color: $departures-cancelled-color;
 		font-style: italic;
 		.dep-line {
@@ -95,6 +92,11 @@ ul.suggestions {
 		  font-style: normal;
 		}
 	}
+}
+
+.collection.departures li {
+	grid-template-columns: 10ch 10ch 1fr;
+	align-items: center;
 	&#now {
 		background-color: $departures-highlight-color;
 		padding: 2rem 20px;
@@ -102,6 +104,36 @@ ul.suggestions {
 		strong {
 			font-weight: bold;
 		}
+	}
+}
+.collection.history li {
+	display: grid;
+	grid-template-columns: 10ch 1fr;
+	grid-template-rows: 1fr;
+	a:first-child {
+		grid-row: 1 / span 3;
+		align-self: center;
+		text-align: center;
+		display: flex;
+	}
+	.origin, .destination {
+		grid-column: 2;
+		strong {
+			font-weight: 600;
+		}
+	}
+	.destination::before {
+		content: ' ';
+		display: block;
+		border-left: 2px dotted $off-black;
+		height: 1rem;
+		position: absolute;
+		margin-left: calc( 0.5rem - 1px );
+		margin-top: -0.5rem;
+	}
+	&.history-date-change {
+		display: block;
+		font-weight: bold;
 	}
 }
 
@@ -204,12 +236,12 @@ ul.suggestions {
 
 
 @media screen and (max-width: 600px) {
-	.departures li {
+	.collection.departures li {
 		grid-template-columns: 10ch 1fr;
 		.dep-line, .dep-time, .connect-platform-wrapper {
 			grid-column: 1;
 			text-align: center;
-		} 
+		}
 		.dep-dest {
 			grid-column: 2;
 			grid-row: 1 / span 2;

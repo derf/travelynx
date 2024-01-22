@@ -1,63 +1,59 @@
 <div class="row">
 	<div class="col s12">
-		<table class="striped">
-			<thead>
-				<tr>
-					<th>Datum</th>
-					<th>Fahrt</th>
-					<th>Von</th>
-					<th>Nach</th>
-				</tr>
-			</thead>
-			<tbody>
-				% for my $travel (@{$journeys}) {
-					% my $detail_link = '/journey/' . $travel->{id};
-					% if (my $prefix = stash('link_prefix')) {
-						% $detail_link = $prefix . $travel->{id};
-					% }
-					<tr>
-						<td><%= $travel->{sched_departure}->strftime($date_format) %></td>
-						<td><a href="<%= $detail_link %>">
-						<span class="dep-line <%= $travel->{type} // q{} %>">
-							<%= $travel->{type} %> <%= $travel->{line}  // $travel->{no}%>
-						</span>
-						</a></td>
-						<td>
-						<a href="<%= $detail_link %>" class="unmarked">
-						% if (param('cancelled')) {
-							%= $travel->{sched_departure}->strftime('%H:%M')
-						% }
-						% else {
-							<%= $travel->{rt_departure}->strftime('%H:%M') %>
-							% if ($travel->{sched_departure} != $travel->{rt_departure}) {
-								(<%= sprintf('%+d', ($travel->{rt_departure}->epoch - $travel->{sched_departure}->epoch) / 60) %>)
-							% }
-						% }
-						<br/>
-						<%= $travel->{from_name} %>
-						</a>
-						</td>
-						<td>
-						<a href="<%= $detail_link %>" class="unmarked">
-						% if (param('cancelled') and $travel->{sched_arrival}->epoch != 0) {
-							%= $travel->{sched_arrival}->strftime('%H:%M')
-						% }
-						% else {
-							% if ($travel->{rt_arrival}->epoch == 0 and $travel->{sched_arrival}->epoch == 0) {
-								<i class="material-icons">timer_off</i>
-							% } else {
-								%= $travel->{rt_arrival}->strftime('%H:%M');
-								% if ($travel->{sched_arrival} != $travel->{rt_arrival}) {
-									(<%= sprintf('%+d', ($travel->{rt_arrival}->epoch - $travel->{sched_arrival}->epoch) / 60) %>)
-								% }
-							% }
-						% }
-						<br/>
-						<%= $travel->{to_name} %>
-						</a></td>
-					</tr>
+		<ul class="collection history">
+		% my $olddate = '';
+		% for my $travel (@{$journeys}) {
+			% my $detail_link = '/journey/' . $travel->{id};
+			% if (my $prefix = stash('link_prefix')) {
+				% $detail_link = $prefix . $travel->{id};
+			% }
+			% my $date = $travel->{sched_departure}->strftime($date_format);
+			% if ($olddate ne $date) {
+				<li class="collection-item history-date-change">
+					<b><%= $date %></b>
+				</li>
+				% $olddate = $date
+			% }
+			<li class="collection-item">
+				<a href="<%= $detail_link %>">
+					<span class="dep-line <%= $travel->{type} // q{} %>">
+						<%= $travel->{type} %> <%= $travel->{line}  // $travel->{no}%>
+					</span>
+				</a>
+
+				<a href="<%= $detail_link %>" class="unmarked origin">
+				<i class="material-icons tiny" aria-label="von">radio_button_unchecked</i>
+				% if (param('cancelled')) {
+					%= $travel->{sched_departure}->strftime('%H:%M')
 				% }
-			</tbody>
-		</table>
+				% else {
+					<%= $travel->{rt_departure}->strftime('%H:%M') %>
+					% if ($travel->{sched_departure} != $travel->{rt_departure}) {
+						(<%= sprintf('%+d', ($travel->{rt_departure}->epoch - $travel->{sched_departure}->epoch) / 60) %>)
+					% }
+				% }
+				<strong><%= $travel->{from_name} %></strong>
+				</a>
+
+				<a href="<%= $detail_link %>" class="unmarked destination">
+				<i class="material-icons tiny" aria-label="nach">place</i>
+				% if (param('cancelled') and $travel->{sched_arrival}->epoch != 0) {
+					%= $travel->{sched_arrival}->strftime('%H:%M')
+				% }
+				% else {
+					% if ($travel->{rt_arrival}->epoch == 0 and $travel->{sched_arrival}->epoch == 0) {
+						<i class="material-icons">timer_off</i>
+					% } else {
+						%= $travel->{rt_arrival}->strftime('%H:%M');
+						% if ($travel->{sched_arrival} != $travel->{rt_arrival}) {
+							(<%= sprintf('%+d', ($travel->{rt_arrival}->epoch - $travel->{sched_arrival}->epoch) / 60) %>)
+						% }
+					% }
+				% }
+				<strong><%= $travel->{to_name} %></strong>
+			</a>
+			</li>
+		% }
+		</ul>
 	</div>
 </div>
