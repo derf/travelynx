@@ -17,7 +17,11 @@
 					% }
 					<tr>
 						<td><%= $travel->{sched_departure}->strftime($date_format) %></td>
-						<td><a href="<%= $detail_link %>"><%= $travel->{type} %> <%= $travel->{line} // $travel->{no} %></a></td>
+						<td><a href="<%= $detail_link %>">
+						<span class="dep-line <%= $travel->{type} // q{} %>">
+							<%= $travel->{type} %> <%= $travel->{line}  // $travel->{no}%>
+						</span>
+						</a></td>
 						<td>
 						<a href="<%= $detail_link %>" class="unmarked">
 						% if (param('cancelled')) {

@@ -1,9 +1,10 @@
 % if ($journey->{extra_data}{wagonorder_pride}) {
 	🏳️‍🌈
 % }
+<span class="dep-line <%= $journey->{train_type} // q{} %>">
+	<%= $journey->{train_type} %>
+	<%= $journey->{train_line}  // $journey->{train_no}%>
+</span>
 % if ($journey->{train_line}) {
-	<b><%= $journey->{train_type} %> <%= $journey->{train_line} %></b> <%= $journey->{train_no} %>
-% }
-% else {
-	<%= $journey->{train_type} %> <%= $journey->{train_no} %>
+	<%= $journey->{train_no} %>
 % }

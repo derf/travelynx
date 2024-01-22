@@ -118,7 +118,7 @@ ul.suggestions {
 		}
 	}
 }
-.departures .dep-line {
+.dep-line {
 	text-align: center;
 	padding: .2rem;
 	color: white;
@@ -131,7 +131,7 @@ ul.suggestions {
 	width: fit-content;
 	min-width: 6ch;
 	margin: 0 auto;
-	
+
 	&.Bus, &.RUF, &.AST {
 		background-color: #a3167e;
 		border-radius: 5rem;

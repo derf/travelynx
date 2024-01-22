@@ -7,12 +7,7 @@
 				<span class="card-title center-align">Ziel wählen</span>
 			% }
 			<span class="card-title center-align">
-					% if ($journey->{train_line}) {
-						<b><%= $journey->{train_type} %> <%= $journey->{train_line} %></b> <%= $journey->{train_no} %>
-					% }
-					% else {
-						<%= $journey->{train_type} %> <%= $journey->{train_no} %>
-					% }
+				%= include '_format_train', journey => $journey
 			</span>
 			% if ($journey->{comment}) {
 				<p><%= $journey->{comment} %></p>
