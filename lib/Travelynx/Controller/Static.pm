@@ -8,25 +8,25 @@ use Mojo::Base 'Mojolicious::Controller';
 sub about {
 	my ($self) = @_;
 
-	$self->render('about');
+	$self->render('about', title => 'Über travelynx');
 }
 
 sub changelog {
 	my ($self) = @_;
 
-	$self->render('changelog');
+	$self->render('changelog',  title => 'travelynx: Changelog');
 }
 
 sub imprint {
 	my ($self) = @_;
 
-	$self->render('imprint');
+	$self->render('imprint',  title => 'travelynx: Impressum');
 }
 
 sub legend {
 	my ($self) = @_;
 
-	$self->render('legend');
+	$self->render('legend', title => 'travelynx: Legende' );
 }
 
 sub offline {
