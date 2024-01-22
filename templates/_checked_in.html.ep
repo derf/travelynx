@@ -331,13 +331,14 @@
 				% }
 			</div>
 			<div class="card-action">
+				% my $url = 'https://bahn.expert/details/';
 				% if ($journey->{train_id} =~ m{[|]}) {
-					&nbsp;
+					% $url =  $url .  '/' . $journey->{sched_departure}->epoch . '000?jid=' . $journey->{train_id};
 				% }
 				% else {
-					% my $url = 'https://bahn.expert/details/' . $journey->{train_type} . ' ' . $journey->{train_no} . '/' . DateTime->now(time_zone => 'Europe/Berlin')->epoch . '000';
-					<a style="margin-right: 0;" href="<%= $url %>" aria-label="Zuglauf"><i class="material-icons left">timeline</i> Zuglauf</a>
+					% $url = $url . $journey->{train_type} . ' ' . $journey->{train_no} . '/' . $journey->{sched_departure}->epoch . '000?station=' . $journey->{dep_eva};
 				% }
+				<a style="margin-right: 0;" href="<%= $url %>"><i class="material-icons left" aria-hidden="true">timeline</i> Zuglauf</a>
 				% if ($journey->{extra_data}{trip_id}) {
 					<a class="right" style="margin-right: 0;" href="https://dbf.finalrewind.org/map/<%= $journey->{extra_data}{trip_id} %>/<%= $journey->{train_line} || 0 %>?from=<%= $journey->{dep_name} %>&amp;to=<%= $journey->{arr_name} %>&amp;dark=<%= (session('theme') and session('theme') eq 'dark') ? 1 : 0 %>"><i class="material-icons left" aria-hidden="true">map</i> Karte</a>
 				% }
