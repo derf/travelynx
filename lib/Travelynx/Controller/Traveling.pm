@@ -1550,7 +1550,8 @@ sub yearly_history {
 		uid           => $self->current_user->{id},
 		after         => $interval_start,
 		before        => $interval_end,
-		with_datetime => 1
+		with_datetime => 1,
+		with_pride    => 1,
 	);
 
 	if ( $filter and $filter eq 'single' ) {
@@ -1631,7 +1632,8 @@ sub monthly_history {
 		uid           => $self->current_user->{id},
 		after         => $interval_start,
 		before        => $interval_end,
-		with_datetime => 1
+		with_datetime => 1,
+		with_pride    => 1,
 	);
 
 	if ( not @journeys ) {
@@ -1694,6 +1696,7 @@ sub journey_details {
 		with_datetime   => 1,
 		with_polyline   => 1,
 		with_visibility => 1,
+		with_pride    	=> 1,
 	);
 
 	if ($journey) {

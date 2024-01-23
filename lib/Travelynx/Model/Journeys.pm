@@ -611,6 +611,14 @@ sub get {
 			$ref->{polyline} = $entry->{polyline};
 		}
 
+		if ( $opt{with_pride} ) {
+			for my $wagongroup ( @{ $ref->{user_data}{wagongroups} } ) {
+				if ( $wagongroup->{name} eq 'ICE0304' ) {
+					$ref->{wagonorder_pride} = 1;
+				}
+			}
+		}
+
 		if ( $opt{with_datetime} ) {
 			$ref->{checkin} = epoch_to_dt( $ref->{checkin_ts} );
 			$ref->{sched_departure}
