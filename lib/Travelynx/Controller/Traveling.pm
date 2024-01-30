@@ -1742,9 +1742,9 @@ sub journey_details {
 
 		$self->render(
 			'journey',
-			title =>  sprintf( 'travelynx: %s %s %s am %s',
+			title =>  sprintf( 'travelynx: Fahrt %s %s %s am %s',
 				$journey->{type}, $journey->{line} // '', $journey->{no},
-				$journey->{sched_arrival}->strftime('%d.%m.%Y, %H:%M') ),
+				$journey->{sched_departure}->strftime('%d.%m.%Y um %H:%M') ),
 			error              => undef,
 			journey            => $journey,
 			journey_visibility => $visibility,
