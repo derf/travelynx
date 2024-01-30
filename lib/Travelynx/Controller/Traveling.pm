@@ -1185,7 +1185,10 @@ sub cancelled {
 sub history {
 	my ($self) = @_;
 
-	$self->render( template => 'history', title => 'travelynx: History' );
+	$self->render(
+		template => 'history',
+		title    => 'travelynx: History'
+	);
 }
 
 sub commute {
@@ -1293,7 +1296,7 @@ sub commute {
 		journeys_by_month => \%journeys_by_month,
 		count_by_month    => \%count_by_month,
 		total_journeys    => $total,
-		title => 'travelynx: Reisen nach Station',
+		title             => 'travelynx: Reisen nach Station',
 		months            => [
 			qw(Januar Februar März April Mai Juni Juli August September Oktober November Dezember)
 		],
@@ -1391,7 +1394,7 @@ sub map_history {
 		template => 'history_map',
 		year     => $year,
 		with_map => 1,
-		title => 'travelynx: Karte',
+		title    => 'travelynx: Karte',
 		%{$res}
 	);
 }
@@ -1588,7 +1591,7 @@ sub yearly_history {
 		},
 		any => {
 			template    => 'history_by_year',
-			title => "travelynx: $year",
+			title       => "travelynx: $year",
 			journeys    => [@journeys],
 			year        => $year,
 			have_review => $with_review,
@@ -1663,7 +1666,7 @@ sub monthly_history {
 		},
 		any => {
 			template   => 'history_by_month',
-			title => "travelynx: $month_name $year",
+			title      => "travelynx: $month_name $year",
 			journeys   => [@journeys],
 			year       => $year,
 			month      => $month,
@@ -1742,9 +1745,12 @@ sub journey_details {
 
 		$self->render(
 			'journey',
-			title =>  sprintf( 'travelynx: Fahrt %s %s %s am %s',
-				$journey->{type}, $journey->{line} // '', $journey->{no},
-				$journey->{sched_departure}->strftime('%d.%m.%Y um %H:%M') ),
+			title => sprintf(
+				'travelynx: Fahrt %s %s %s am %s',
+				$journey->{type}, $journey->{line} // '',
+				$journey->{no},
+				$journey->{sched_departure}->strftime('%d.%m.%Y um %H:%M')
+			),
 			error              => undef,
 			journey            => $journey,
 			journey_visibility => $visibility,

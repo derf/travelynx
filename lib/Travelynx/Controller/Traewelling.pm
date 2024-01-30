@@ -144,7 +144,7 @@ sub settings {
 		$self->param( tweet => 1 );
 	}
 
-	$self->stash ( title => 'travelynx × träwelling' );
+	$self->stash( title => 'travelynx × träwelling' );
 	$self->render(
 		'traewelling',
 		traewelling => $traewelling,

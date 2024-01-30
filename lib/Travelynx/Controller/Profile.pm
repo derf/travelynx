@@ -154,7 +154,7 @@ sub profile {
 
 	$self->render(
 		'profile',
-		title => "travelynx: $name",
+		title            => "travelynx: $name",
 		name             => $name,
 		uid              => $user->{id},
 		privacy          => $user,
@@ -314,7 +314,7 @@ sub journey_details {
 	}
 	$self->render(
 		'journey',
-		title => "travelynx: $title",
+		title     => "travelynx: $title",
 		error     => undef,
 		journey   => $journey,
 		with_map  => 1,
@@ -472,7 +472,7 @@ sub user_status {
 		any => {
 			template  => 'user_status',
 			name      => $name,
-			title => "travelynx: $tw_data{title}",
+			title     => "travelynx: $tw_data{title}",
 			privacy   => $user,
 			journey   => $status,
 			twitter   => \%tw_data,
