@@ -21,20 +21,6 @@
 					</span>
 				</a>
 
-				<a href="<%= $detail_link %>" class="unmarked origin">
-				<i class="material-icons tiny" aria-label="von">radio_button_unchecked</i>
-				% if (param('cancelled')) {
-					%= $travel->{sched_departure}->strftime('%H:%M')
-				% }
-				% else {
-					<%= $travel->{rt_departure}->strftime('%H:%M') %>
-					% if ($travel->{sched_departure} != $travel->{rt_departure}) {
-						(<%= sprintf('%+d', ($travel->{rt_departure}->epoch - $travel->{sched_departure}->epoch) / 60) %>)
-					% }
-				% }
-				<strong><%= $travel->{from_name} %></strong>
-				</a>
-
 				<a href="<%= $detail_link %>" class="unmarked destination">
 				<i class="material-icons tiny" aria-label="nach">place</i>
 				% if (param('cancelled') and $travel->{sched_arrival}->epoch != 0) {
@@ -51,6 +37,20 @@
 					% }
 				% }
 				<strong><%= $travel->{to_name} %></strong>
+
+				<a href="<%= $detail_link %>" class="unmarked origin">
+				<i class="material-icons tiny" aria-label="von">radio_button_unchecked</i>
+				% if (param('cancelled')) {
+					%= $travel->{sched_departure}->strftime('%H:%M')
+				% }
+				% else {
+					<%= $travel->{rt_departure}->strftime('%H:%M') %>
+					% if ($travel->{sched_departure} != $travel->{rt_departure}) {
+						(<%= sprintf('%+d', ($travel->{rt_departure}->epoch - $travel->{sched_departure}->epoch) / 60) %>)
+					% }
+				% }
+				<strong><%= $travel->{from_name} %></strong>
+				</a>
 			</a>
 			</li>
 		% }

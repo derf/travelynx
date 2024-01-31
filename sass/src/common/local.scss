@@ -122,14 +122,14 @@ ul.suggestions {
 			font-weight: 600;
 		}
 	}
-	.destination::before {
+	.origin::before {
 		content: ' ';
 		display: block;
 		border-left: 2px dotted $off-black;
 		height: 1rem;
 		position: absolute;
 		margin-left: calc( 0.5rem - 1px );
-		margin-top: -0.5rem;
+		margin-top: -0.75rem;
 	}
 	&.history-date-change {
 		display: block;
