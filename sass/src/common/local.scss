@@ -72,12 +72,29 @@ ul.suggestions {
 	}
 }
 
-.collection.departures li, .collection.history li {
+// departure board and history - focus highlight
+.collection.departures > li,
+.collection.history > li {
 	transition: background .3s;
 	display: grid;
 	&:not(#now,.history-date-change ):hover, &:focus-within {
 		background-color: $departures-highlight-color;
 		outline: 2px solid $link-color;
+	}
+}
+
+// departure board - layout
+
+.collection.departures li {
+	grid-template-columns: 10ch 10ch 1fr;
+	align-items: center;
+	&#now {
+		background-color: $departures-highlight-color;
+		padding: 2rem 20px;
+		grid-template-columns: 10ch 1fr;
+		strong {
+			font-weight: bold;
+		}
 	}
 	&.cancelled {
 		background-color: $departures-cancelled-color;
@@ -93,51 +110,6 @@ ul.suggestions {
 		}
 	}
 }
-
-.collection.departures li {
-	grid-template-columns: 10ch 10ch 1fr;
-	align-items: center;
-	&#now {
-		background-color: $departures-highlight-color;
-		padding: 2rem 20px;
-		grid-template-columns: 10ch 1fr;
-		strong {
-			font-weight: bold;
-		}
-	}
-}
-.collection.history li {
-	display: grid;
-	grid-template-columns: 10ch 1fr;
-	grid-template-rows: 1fr;
-	a:first-child {
-		grid-row: 1 / span 3;
-		align-self: center;
-		text-align: center;
-		display: flex;
-	}
-	.origin, .destination {
-		grid-column: 2;
-		strong {
-			font-weight: 600;
-		}
-	}
-	.origin::before {
-		content: ' ';
-		display: block;
-		border-left: 2px dotted $off-black;
-		height: 1rem;
-		position: absolute;
-		margin-left: calc( 0.5rem - 1px );
-		margin-top: -0.75rem;
-	}
-	&.history-date-change {
-		display: block;
-		font-weight: bold;
-	}
-}
-
-
 .departures .dep-time {
 	color: $off-black;
 	&:focus {
@@ -154,6 +126,71 @@ ul.suggestions {
 		}
 	}
 }
+
+// history - layout
+
+.collection.history > li {
+	display: grid;
+	grid-template-columns: 10ch 1fr;
+	grid-template-rows: 1fr;
+	a:first-child {
+		align-self: center;
+		text-align: center;
+		display: flex;
+	}
+	&.history-date-change {
+		display: block;
+		font-weight: bold;
+	}
+}
+
+ul.route-history > li {
+	list-style: none;
+
+	position: relative;
+	display: grid;
+	grid-template-columns: 1rem 1fr;
+	gap: 0.5rem;
+	a {
+		font-family: $font-stack;
+	}
+	strong {
+		font-weight: 600;
+	}
+
+	// route icon bubble
+	i.material-icons {
+		&[aria-label=nach] {
+			padding-top: 0.4rem;
+		}
+		&[aria-label=von] {
+			display: block;
+			transform: rotate(-90deg);
+			height: 1rem;
+			margin-top: 0.4rem;
+		}
+	}
+
+	// route line / "perlenschnur"
+	&::before {
+		content: '';
+		background: $off-black;
+		position: absolute;
+		width: 2px;
+		left: calc( (1rem - 2px) / 2  );
+		bottom: 0;
+		top: 0;
+	}
+	&:first-of-type::before {
+		top: 1.3rem;
+	}
+	&:last-of-type::before {
+		bottom: unset;
+		height: 0.5rem;
+	}
+}
+
+// train color bubbles
 .dep-line {
 	text-align: center;
 	padding: .2rem;
