@@ -1,6 +1,10 @@
 <div class="row">
 	<div class="col s12">
-		<ul class="collection history">
+		% my $fgr_class = '';
+		% if (@{$journeys} && @{$journeys}[0]->{generate_fgr_target}) {
+			% $fgr_class = 'fgr';
+		%}
+		<ul class="collection history <%= $fgr_class %>">
 		% my $olddate = '';
 		% for my $travel (@{$journeys}) {
 			% my $detail_link = '/journey/' . $travel->{id};
@@ -60,6 +64,15 @@
 						</a>
 					</li>
 				</ul>
+				% if ($travel->{generate_fgr_target}) {
+					%= form_for $travel->{generate_fgr_target} => (method => 'POST') => begin
+						%= csrf_field
+						%= hidden_field id => $travel->{id}
+						<button class="btn waves-effect waves-light grey darken-3" type="submit" name="action" value="generate">
+							<i class="material-icons" aria-label="Formular herunterladen">file_download</i>
+						</button>
+					%= end
+				% }
 			</li>
 		% }
 		</ul>

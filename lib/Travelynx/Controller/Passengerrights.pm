@@ -6,6 +6,8 @@ package Travelynx::Controller::Passengerrights;
 use Mojo::Base 'Mojolicious::Controller';
 
 use DateTime;
+use List::Util;
+use POSIX;
 use CAM::PDF;
 
 # Internal Helpers
@@ -157,6 +159,87 @@ sub list_candidates {
 			template => 'passengerrights',
 			journeys => [@journeys]
 		}
+	);
+}
+
+sub list_cumulative_delays {
+	my ($self) = @_;
+	my $parser = DateTime::Format::Strptime->new(
+		pattern   => '%Y-%m-%d',
+		locale    => 'de_DE',
+		time_zone => 'Europe/Berlin'
+	);
+	my @fv_types = qw(IC ICE EC ECE RJ RJX D IR NJ TGV WB FLX);
+	my @not_train_types = qw(Bus STR STB U);
+	my $ticket_value = $self->param('ticket_value') // 150;
+
+	my $start = $self->param('start') ?
+		$parser->parse_datetime($self->param('start')) :
+		$self->now->set_day(1);
+
+	my $end = $self->param('end') ?
+		$parser->parse_datetime($self->param('end')) :
+		$self->now->set_day(1)->add(months=>1)->subtract(days=>1);
+
+	my @journeys = $self->journeys->get(
+		uid           => $self->current_user->{id},
+		after         => $start->clone->subtract(days=>1),
+		before        => $end->clone->add(days=>1),
+		with_datetime => 1,
+	);
+	# filter for realtime data
+	@journeys = grep { $_->{sched_arrival}->epoch and $_->{rt_arrival}->epoch }
+		@journeys;
+
+
+	# sum up delays
+	my $cumulative_delay = 0;
+	for my $journey (@journeys) {
+		# filter out non-train transports not covered by FGR
+		if (List::Util::any {$journey->{type} eq $_} @not_train_types) {
+			next;
+		}
+		# if we're using a regional ticket, filter out all long-distance trains
+		if ($ticket_value < 500 and List::Util::any {$journey->{type} eq $_} @fv_types) {
+			next;
+		}
+
+		$journey->{delay}
+		  = ( $journey->{rt_arrival}->epoch - $journey->{sched_arrival}->epoch )  / 60;
+
+		 if ($journey->{delay} >= 20) {
+			 # add up to 60 minutes of delay per journey
+			 # not entirely clear if you could in theory get compensation
+			 # for a single 180-minute-delayed journey, so let's play it safe
+			 $cumulative_delay += ($journey->{delay} < 60) ? $journey->{delay} : 60;
+			 $journey->{generate_fgr_target} = sprintf(
+			 	'/journey/passenger_rights/FGR %s %s %s.pdf',
+				$journey->{sched_departure}->ymd, $journey->{type}, $journey->{no}
+			);
+		 }
+	}
+	# filter out journeys with delay below +20
+	@journeys = grep { ($_->{delay} // 0) >= 20 } @journeys;
+
+
+	my $compensation_amount = floor($cumulative_delay / 60) * $ticket_value;
+
+	my $min_delay_for_compensation = ceil(400/$ticket_value) * 60;
+	my $bar_fill = int( ($cumulative_delay/$min_delay_for_compensation) * 100);
+	$bar_fill = $bar_fill > 100 ? 100 : $bar_fill;
+
+	$self->render(
+		'passengerrights_cumulative',
+		title=>'travelynx: Zeitkarten-Fahrgastrechte',
+		start=>$start,
+		end=>$end,
+		journeys=>[@journeys],
+		num_journeys=>scalar @journeys,
+		cumulative_delay=>$cumulative_delay,
+		compensation_amount=>$compensation_amount,
+		min_delay_for_compensation=>$min_delay_for_compensation,
+		bar_fill=>$bar_fill,
+		ticket_value=>$ticket_value
 	);
 }
 

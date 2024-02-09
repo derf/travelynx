@@ -2459,6 +2459,7 @@ sub startup {
 	$authed_r->get('/ajax/status_card.html')->to('traveling#status_card');
 	$authed_r->get('/cancelled')->to('traveling#cancelled');
 	$authed_r->get('/fgr')->to('passengerrights#list_candidates');
+	$authed_r->get('/fgr_zeitkarten')->to('passengerrights#list_cumulative_delays');
 	$authed_r->get('/account/password')->to('account#password_form');
 	$authed_r->get('/account/mail')->to('account#change_mail');
 	$authed_r->get('/account/name')->to('account#change_name');

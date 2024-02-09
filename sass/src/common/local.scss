@@ -144,6 +144,10 @@ ul.suggestions {
 	}
 }
 
+.collection.history.fgr > li {
+	grid-template-columns: 10ch 1fr min-content;
+}
+
 ul.route-history > li {
 	list-style: none;
 
