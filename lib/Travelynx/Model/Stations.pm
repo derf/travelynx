@@ -71,6 +71,12 @@ sub add_meta {
 	}
 }
 
+sub get_db_iterator {
+	my ($self) = @_;
+
+	return $self->{pg}->db->select( 'stations', '*' );
+}
+
 sub get_meta {
 	my ( $self, %opt ) = @_;
 	my $db  = $opt{db} // $self->{pg}->db;
