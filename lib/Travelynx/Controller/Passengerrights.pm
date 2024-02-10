@@ -175,15 +175,15 @@ sub list_cumulative_delays {
 
 	my $start = $self->param('start') ?
 		$parser->parse_datetime($self->param('start')) :
-		$self->now->set_day(1);
+		$self->now->truncate(to=>'month');
 
 	my $end = $self->param('end') ?
 		$parser->parse_datetime($self->param('end')) :
-		$self->now->set_day(1)->add(months=>1)->subtract(days=>1);
+		$self->now->truncate(to=>'month')->add(months=>1)->subtract(days=>1);
 
 	my @journeys = $self->journeys->get(
 		uid           => $self->current_user->{id},
-		after         => $start->clone->subtract(days=>1),
+		after         => $start->clone,
 		before        => $end->clone->add(days=>1),
 		with_datetime => 1,
 	);
@@ -230,7 +230,7 @@ sub list_cumulative_delays {
 
 	$self->render(
 		'passengerrights_cumulative',
-		title=>'travelynx: Zeitkarten-Fahrgastrechte',
+		title=>'travelynx: Fahrgastrechte Zeitkarten',
 		start=>$start,
 		end=>$end,
 		journeys=>[@journeys],

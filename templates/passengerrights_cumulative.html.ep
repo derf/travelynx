@@ -57,9 +57,9 @@
 		Erstattungsbetrag:<br>
 		<span style="font-size:2rem">
 			% if ($compensation_amount < 400 and $compensation_amount > 0) {
-				%=  sprintf('(%.2f €) ', $compensation_amount/100)
+				%=  sprintf('(%.2f €)', $compensation_amount/100)
 			% } else {
-					%= sprintf('%.2f €', $compensation_amount/100)
+				%= sprintf('%.2f €', $compensation_amount/100)
 			% }
 		</span>
 	</div>
@@ -74,10 +74,10 @@
 	<div class="col s12">
 	% if ($compensation_amount < 400) {
 		<p>
-			Wegen der Bagatellgrenze von 4,00 € müssen bei einer Entschädigung von
+			Wegen der Bagatellgrenze von 4,00 € müssen bei einer Erstattung von
 			<%= sprintf('%.2f €', $ticket_value/100) %> pro Stunde
 			<b>mindestens <%= $min_delay_for_compensation %> Minuten</b> an
-			Verspätung während der Gültigkeitsdauer anfallen, damit eine Entschädigung
+			Verspätung während der Gültigkeitsdauer anfallen, damit eine Erstattung
 			ausgezahlt wird.
 		</p>
 		% }
