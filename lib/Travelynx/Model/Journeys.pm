@@ -1022,31 +1022,31 @@ sub sanity_check {
 		and $journey->{sched_duration} <= 0 )
 	{
 		return
-'Die geplante Dauer dieser Zugfahrt ist ≤ 0. Teleportation und Zeitreisen werden aktuell nicht unterstützt.';
+'Die geplante Dauer dieser Fahrt ist ≤ 0. Teleportation und Zeitreisen werden aktuell nicht unterstützt.';
 	}
 	if ( defined $journey->{rt_duration}
 		and $journey->{rt_duration} <= 0 )
 	{
 		return
-'Die Dauer dieser Zugfahrt ist ≤ 0. Teleportation und Zeitreisen werden aktuell nicht unterstützt.';
+'Die Dauer dieser Fahrt ist ≤ 0. Teleportation und Zeitreisen werden aktuell nicht unterstützt.';
 	}
 	if (    $journey->{sched_duration}
 		and $journey->{sched_duration} > 60 * 60 * 24 )
 	{
-		return 'Die Zugfahrt ist länger als 24 Stunden.';
+		return 'Die Fahrt ist länger als 24 Stunden.';
 	}
 	if (    $journey->{rt_duration}
 		and $journey->{rt_duration} > 60 * 60 * 24 )
 	{
-		return 'Die Zugfahrt ist länger als 24 Stunden.';
+		return 'Die Fahrt ist länger als 24 Stunden.';
 	}
 	if ( $journey->{kmh_route} > 500 or $journey->{kmh_beeline} > 500 ) {
-		return 'Zugfahrten mit über 500 km/h? Schön wär\'s.';
+		return 'Fahrten mit über 500 km/h? Schön wär\'s.';
 	}
-	if ( $journey->{route} and @{ $journey->{route} } > 99 ) {
+	if ( $journey->{route} and @{ $journey->{route} } > 199 ) {
 		my $stop_count = @{ $journey->{route} };
 		return
-"Die Zugfahrt hat $stop_count Unterwegshalte. Also ich weiß ja nicht so recht.";
+"Die Fahrt hat $stop_count Unterwegshalte. Also ich weiß ja nicht so recht.";
 	}
 	if ( $journey->{edited} & 0x0010 and not $lax ) {
 		my @unknown_stations
