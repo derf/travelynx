@@ -133,10 +133,14 @@ ul.suggestions {
 	display: grid;
 	grid-template-columns: 10ch 1fr;
 	grid-template-rows: 1fr;
-	a:first-child {
+	a.history-line-link {
 		align-self: center;
 		text-align: center;
 		display: flex;
+		grid-column: 1;
+	}
+	ul.route-history {
+		grid-column: 2;
 	}
 	&.history-date-change {
 		display: block;
@@ -146,6 +150,14 @@ ul.suggestions {
 
 .collection.history.fgr > li {
 	grid-template-columns: 10ch 1fr min-content;
+	.fgr-reason {
+		grid-column: 1 / span 2;
+	}
+	form {
+		grid-row: 1 / span 3;
+		grid-column: 3;
+		align-self: center;
+	}
 }
 
 ul.route-history > li {

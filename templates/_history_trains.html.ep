@@ -19,7 +19,55 @@
 				% $olddate = $date
 			% }
 			<li class="collection-item">
-				<a href="<%= $detail_link %>">
+
+			% # passenger rights history listing only:
+			% # display substitute connection if applicable
+			% if (my $substitute = $travel->{to_substitute}) {
+				% my $subst_detail_link = '/journey/' . $substitute->{id};
+				% if (my $prefix = stash('link_prefix')) {
+					% $subst_detail_link = $prefix . $substitute->{id};
+				% }
+				<a href="<%= $subst_detail_link %>" class="history-line-link unmarked">
+					<span class="dep-line <%= $substitute->{type} // q{} %>">
+						<%= $substitute->{type} %> <%= $substitute->{line}  // $substitute->{no}%>
+					</span>
+				</a>
+				<ul class="route-history">
+					<li>
+						<i class="material-icons tiny" aria-label="nach">radio_button_unchecked</i>
+
+						<a href="<%= $subst_detail_link %>" class="unmarked">
+						% if ($substitute->{rt_arrival}->epoch == 0 and $substitute->{sched_arrival}->epoch == 0) {
+							<i class="material-icons">timer_off</i>
+						% } else {
+							%= $substitute->{rt_arrival}->strftime('%H:%M');
+							% if ($substitute->{sched_arrival} != $substitute->{rt_arrival}) {
+								(<%= sprintf('%+d', ($substitute->{rt_arrival}->epoch - $substitute->{sched_arrival}->epoch) / 60) %>)
+							% }
+						% }
+						<strong><%= $substitute->{to_name} %></strong>
+						</a>
+					</li>
+
+					<li>
+						<i class="material-icons tiny" aria-label="von">play_circle_filled</i>
+
+						<a href="<%= $subst_detail_link %>" class="unmarked">
+						<%= $substitute->{rt_departure}->strftime('%H:%M') %>
+						% if ($substitute->{sched_departure} != $substitute->{rt_departure}) {
+							(<%= sprintf('%+d', ($travel->{rt_departure}->epoch - $travel->{sched_departure}->epoch) / 60) %>)
+						% }
+						<strong><%= $substitute->{from_name} %></strong>
+						</a>
+					</li>
+				</ul>
+				<i class="fgr-reason">
+					— Ersatzverbindung mit +<%= $travel->{substitute_delay}%> für —
+				</i>
+			% }
+			% # end of passenger rights substitute connection
+
+				<a href="<%= $detail_link %>" class="history-line-link">
 					<span class="dep-line <%= $travel->{type} // q{} %>">
 						<%= $travel->{type} %> <%= $travel->{line}  // $travel->{no}%>
 					</span>
@@ -27,7 +75,13 @@
 
 				<ul class="route-history">
 					<li>
-						<i class="material-icons tiny" aria-label="nach">radio_button_unchecked</i>
+						% my $arrival_icon = 'radio_button_unchecked';
+						% my $departure_icon = 'play_circle_filled';
+						% if ($travel->{cancelled}) {
+							% $arrival_icon = 'close';
+							% $departure_icon = 'play_circle_outline';
+						%}
+						<i class="material-icons tiny" aria-label="nach"><%= $arrival_icon %></i>
 
 						<a href="<%= $detail_link %>" class="unmarked">
 						% if (param('cancelled') and $travel->{sched_arrival}->epoch != 0) {
@@ -48,7 +102,7 @@
 					</li>
 
 					<li>
-						<i class="material-icons tiny" aria-label="von">play_circle_filled</i>
+						<i class="material-icons tiny" aria-label="von"><%= $departure_icon %></i>
 
 						<a href="<%= $detail_link %>" class="unmarked">
 						% if (param('cancelled')) {
