@@ -210,7 +210,7 @@ ul.route-history > li {
 		border-radius: 5rem;
 		padding: .2rem .5rem;
 	}
-	&.STR {
+	&.STR, &.RNV {
 		background-color: #c5161c;
 		border-radius: 5rem;
 		padding: .2rem .5rem;
@@ -220,12 +220,12 @@ ul.route-history > li {
 		border-radius: 5rem;
 		padding: .2rem .5rem;
 	}
-	&.U, &.STB, &.M  {
+	&.U, &.STB, &.M, &.Schw-B {
 		background-color: #014e8d;
 		border-radius: 5rem;
 		padding: .2rem .5rem;
 	}
-	&.RE, &.IRE, &.REX {
+	&.RE, &.IRE, &.REX, &.CJX {
 		background-color: #ff4f00;
 	}
 	&.RB, &.MEX, &.TER, &.R {
