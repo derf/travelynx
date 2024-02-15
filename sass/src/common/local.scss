@@ -204,6 +204,10 @@ ul.route-history > li {
 	width: fit-content;
 	min-width: 6ch;
 	margin: 0 auto;
+	.dep-train-number {
+		font-weight: 600;
+		font-style: normal;
+	}
 
 	&.Bus, &.RUF, &.AST {
 		background-color: #a3167e;
@@ -246,9 +250,11 @@ ul.route-history > li {
 	}
 	&.RJ, &.RJX {
 		background-color: #c63131;
+		font-weight: 900;
 	}
 	&.NJ, &.EN {
 		background-color: #29255b;
+		font-weight: 900;
 	}
 	&.WB {
 		background-color: #2e85ce;
