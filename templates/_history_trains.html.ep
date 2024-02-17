@@ -21,8 +21,9 @@
 			<li class="collection-item">
 
 			% # passenger rights history listing only:
-			% # display substitute connection if applicable
-			% if (my $substitute = $travel->{to_substitute}) {
+			% # display substitute connection or next train after possible missed
+			% # connection if applicable
+			% if (my $substitute = $travel->{to_substitute} // $travel->{connection}) {
 				% my $subst_detail_link = '/journey/' . $substitute->{id};
 				% if (my $prefix = stash('link_prefix')) {
 					% $subst_detail_link = $prefix . $substitute->{id};
@@ -62,7 +63,11 @@
 					</li>
 				</ul>
 				<i class="fgr-reason">
-					— Ersatzverbindung mit +<%= $travel->{substitute_delay}%> für —
+					% if ($travel->{has_substitute}) {
+						— Ersatzverbindung mit +<%= $travel->{substitute_delay}%> für —
+					% } elsif ($travel->{connection_missed}) {
+						— Erster Zug mit +<%= $travel->{delay}%>, eventuell in <%= $travel->{to_name} %> Anschluss verpasst —
+					% }
 				</i>
 			% }
 			% # end of passenger rights substitute connection
@@ -119,7 +124,7 @@
 					</li>
 				</ul>
 				% if ($travel->{generate_fgr_target}) {
-					%= form_for $travel->{generate_fgr_target} => (method => 'POST') => begin
+					%= form_for $travel->{generate_fgr_target} => (method => 'POST') => (target => '_blank') => begin
 						%= csrf_field
 						%= hidden_field id => $travel->{id}
 						<button class="btn waves-effect waves-light grey darken-3" type="submit" name="action" value="generate">

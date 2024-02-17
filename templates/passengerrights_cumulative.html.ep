@@ -7,7 +7,8 @@
 			und 2,25 € in der ersten Klasse, beim Fernverkehr 5,00 € bzw. 7,50 €.
 			Die Anträge einer Zeitperiode müssen gemeinsam eingereicht werden.
 			Erstattungen unter 4,00 € werden nicht ausgezahlt, maximal können 25% des
-			Fahrkartenpreises erstattet werden.
+			Fahrkartenpreises erstattet werden. Travelynx kann für dich automatisch
+			zusammenrechnen, wieviele Verspätungsminuten du so gesammelt hast.
 		</p>
 	</div>
 </div>
@@ -94,6 +95,12 @@
 				Verspätung über die Bagatellgrenze.
 			% }
 		</p>
+			% if ($did_miss_connections) {
+				<p>Travelynx vermutet, dass du während der Gültigkeitsdauer eventuell
+				Anschlüsse verpasst hat, weiß aber nicht, welchen Zug du jeweils eigentlich
+				erreichen wolltest. Für diese Züge kann Travelynx die Verspätung nicht
+				automatisch berechnen.</p>
+			% }
 	</div>
 
 	%= include '_history_trains', date_format => '%d.%m.%Y', journeys => stash('journeys');

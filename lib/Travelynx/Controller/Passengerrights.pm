@@ -222,7 +222,8 @@ sub list_cumulative_delays {
 
 	# sum up delays
 	my $cumulative_delay = 0;
-	for my $journey (@journeys) {
+	for my $i ( 0 .. $#journeys ) {
+		my $journey = $journeys[$i];
 		# filter out non-train transports not covered by FGR
 		if (List::Util::any {$journey->{type} eq $_} @not_train_types) {
 			next;
@@ -235,6 +236,14 @@ sub list_cumulative_delays {
 		$journey->{delay} = $journey->{substitute_delay} //
 			( $journey->{rt_arrival}->epoch - $journey->{sched_arrival}->epoch ) / 60;
 
+		# find candidates for missed connections - if we arrive with a delay and
+		# later check into a train again from the same station
+		# note that we can't assign a delay to potential missed connections
+		# because we don't know the planned arrival of the train we missed
+		if ( $i > 0 and $journey->{delay} >= 3) {
+			$self->mark_if_missed_connection( $journey, $journeys[ $i - 1 ] );
+		}
+
 		if ($journey->{delay} >= 20) {
 			# add up to 60 minutes of delay per journey
 			# not entirely clear if you could in theory get compensation
@@ -244,10 +253,15 @@ sub list_cumulative_delays {
 				'/journey/passenger_rights/FGR %s %s %s.pdf',
 				$journey->{sched_departure}->ymd, $journey->{type}, $journey->{no}
 			);
+		} elsif ($journey->{connection_missed}) {
+			$journey->{generate_fgr_target} = sprintf(
+				'/journey/passenger_rights/FGR %s %s %s.pdf',
+				$journey->{sched_departure}->ymd, $journey->{type}, $journey->{no}
+			);
 		}
 	}
 	# filter out journeys with delay below +20
-	@journeys = grep { ($_->{delay} // 0) >= 20 } @journeys;
+	@journeys = grep { ($_->{delay} // 0) >= 20 or $_->{connection_missed} } @journeys;
 	# sort by departure - we did add all the substitute trains to the very back
 	@journeys = sort {$b->{rt_departure} cmp $a->{rt_departure}} @journeys;
 
@@ -269,7 +283,8 @@ sub list_cumulative_delays {
 		compensation_amount=>$compensation_amount,
 		min_delay_for_compensation=>$min_delay_for_compensation,
 		bar_fill=>$bar_fill,
-		ticket_value=>$ticket_value
+		ticket_value=>$ticket_value,
+		did_miss_connections=>List::Util::any { $_->{connection_missed} } @journeys
 	);
 }
 
