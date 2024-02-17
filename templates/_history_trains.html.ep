@@ -34,33 +34,8 @@
 					</span>
 				</a>
 				<ul class="route-history">
-					<li>
-						<i class="material-icons tiny" aria-label="nach">radio_button_unchecked</i>
-
-						<a href="<%= $subst_detail_link %>" class="unmarked">
-						% if ($substitute->{rt_arrival}->epoch == 0 and $substitute->{sched_arrival}->epoch == 0) {
-							<i class="material-icons">timer_off</i>
-						% } else {
-							%= $substitute->{rt_arrival}->strftime('%H:%M');
-							% if ($substitute->{sched_arrival} != $substitute->{rt_arrival}) {
-								(<%= sprintf('%+d', ($substitute->{rt_arrival}->epoch - $substitute->{sched_arrival}->epoch) / 60) %>)
-							% }
-						% }
-						<strong><%= $substitute->{to_name} %></strong>
-						</a>
-					</li>
-
-					<li>
-						<i class="material-icons tiny" aria-label="von">play_circle_filled</i>
-
-						<a href="<%= $subst_detail_link %>" class="unmarked">
-						<%= $substitute->{rt_departure}->strftime('%H:%M') %>
-						% if ($substitute->{sched_departure} != $substitute->{rt_departure}) {
-							(<%= sprintf('%+d', ($travel->{rt_departure}->epoch - $travel->{sched_departure}->epoch) / 60) %>)
-						% }
-						<strong><%= $substitute->{from_name} %></strong>
-						</a>
-					</li>
+					%= include '_route_history_item', stop_type => 'destination', travel => $substitute, link => $subst_detail_link
+					%= include '_route_history_item', stop_type => 'origin', travel => $substitute, link => $subst_detail_link
 				</ul>
 				<i class="fgr-reason">
 					% if ($travel->{has_substitute}) {
@@ -79,49 +54,8 @@
 				</a>
 
 				<ul class="route-history">
-					<li>
-						% my $arrival_icon = 'radio_button_unchecked';
-						% my $departure_icon = 'play_circle_filled';
-						% if ($travel->{cancelled}) {
-							% $arrival_icon = 'close';
-							% $departure_icon = 'play_circle_outline';
-						%}
-						<i class="material-icons tiny" aria-label="nach"><%= $arrival_icon %></i>
-
-						<a href="<%= $detail_link %>" class="unmarked">
-						% if (param('cancelled') and $travel->{sched_arrival}->epoch != 0) {
-							%= $travel->{sched_arrival}->strftime('%H:%M')
-						% }
-						% else {
-							% if ($travel->{rt_arrival}->epoch == 0 and $travel->{sched_arrival}->epoch == 0) {
-								<i class="material-icons">timer_off</i>
-							% } else {
-								%= $travel->{rt_arrival}->strftime('%H:%M');
-								% if ($travel->{sched_arrival} != $travel->{rt_arrival}) {
-									(<%= sprintf('%+d', ($travel->{rt_arrival}->epoch - $travel->{sched_arrival}->epoch) / 60) %>)
-								% }
-							% }
-						% }
-						<strong><%= $travel->{to_name} %></strong>
-						</a>
-					</li>
-
-					<li>
-						<i class="material-icons tiny" aria-label="von"><%= $departure_icon %></i>
-
-						<a href="<%= $detail_link %>" class="unmarked">
-						% if (param('cancelled')) {
-							%= $travel->{sched_departure}->strftime('%H:%M')
-						% }
-						% else {
-							<%= $travel->{rt_departure}->strftime('%H:%M') %>
-							% if ($travel->{sched_departure} != $travel->{rt_departure}) {
-								(<%= sprintf('%+d', ($travel->{rt_departure}->epoch - $travel->{sched_departure}->epoch) / 60) %>)
-							% }
-						% }
-						<strong><%= $travel->{from_name} %></strong>
-						</a>
-					</li>
+					%= include '_route_history_item', stop_type => 'destination', travel => $travel, link => $detail_link, cancelled => $travel->{cancelled}
+					%= include '_route_history_item', stop_type => 'origin', travel => $travel, link => $detail_link, cancelled => $travel->{cancelled}
 				</ul>
 				% if ($travel->{generate_fgr_target}) {
 					%= form_for $travel->{generate_fgr_target} => (method => 'POST') => (target => '_blank') => begin
