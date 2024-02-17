@@ -167,23 +167,30 @@ ul.route-history > li {
 	display: grid;
 	grid-template-columns: 1rem 1fr;
 	gap: 0.5rem;
-	a {
-		font-family: $font-stack;
-	}
 	strong {
 		font-weight: 600;
+	}
+	&.cancelled a strong {
+		font-style: italic;
+		font-weight: normal;
 	}
 
 	// route icon bubble
 	i.material-icons {
-		&[aria-label=nach] {
-			padding-top: 0.4rem;
-		}
-		&[aria-label=von] {
+		width: 1rem;
+		height: 1rem;
+		padding-top: 0.4rem;
+		// mini arrow
+		&[aria-label*=nach]::after {
+			content: '';
 			display: block;
-			transform: rotate(-90deg);
-			height: 1rem;
-			margin-top: 0.4rem;
+			position: absolute;
+			height: 6px;
+			width: 6px;
+			margin-left: 4px;
+			border: 2px solid $off-black;
+			border-width: 2px 2px 0 0;
+			rotate: -45deg;
 		}
 	}
 
@@ -198,7 +205,7 @@ ul.route-history > li {
 		top: 0;
 	}
 	&:first-of-type::before {
-		top: 1.3rem;
+		top: 1.4rem;
 	}
 	&:last-of-type::before {
 		bottom: unset;
