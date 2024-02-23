@@ -2550,17 +2550,17 @@ DISTRIBUTIONS
       Test::Pod 0
       Travel::Status::DE::IRIS 1.2
       perl v5.20.0
-  Travel-Status-DE-DeutscheBahn-5.04
-    pathname: D/DE/DERF/Travel-Status-DE-DeutscheBahn-5.04.tar.gz
+  Travel-Status-DE-DeutscheBahn-5.05
+    pathname: D/DE/DERF/Travel-Status-DE-DeutscheBahn-5.05.tar.gz
     provides:
-      Travel::Status::DE::DeutscheBahn 5.04
-      Travel::Status::DE::HAFAS 5.04
-      Travel::Status::DE::HAFAS::Journey 5.04
-      Travel::Status::DE::HAFAS::Location 5.04
-      Travel::Status::DE::HAFAS::Message 5.04
-      Travel::Status::DE::HAFAS::Polyline 5.04
-      Travel::Status::DE::HAFAS::Stop 5.04
-      Travel::Status::DE::HAFAS::StopFinder 5.04
+      Travel::Status::DE::DeutscheBahn 5.05
+      Travel::Status::DE::HAFAS 5.05
+      Travel::Status::DE::HAFAS::Journey 5.05
+      Travel::Status::DE::HAFAS::Location 5.05
+      Travel::Status::DE::HAFAS::Message 5.05
+      Travel::Status::DE::HAFAS::Polyline 5.05
+      Travel::Status::DE::HAFAS::Stop 5.05
+      Travel::Status::DE::HAFAS::StopFinder 5.05
     requirements:
       Carp 0
       Class::Accessor 0.16
@@ -2578,12 +2578,12 @@ DISTRIBUTIONS
       Test::More 0
       Test::Pod 0
       perl v5.14.0
-  Travel-Status-DE-IRIS-1.94
-    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.94.tar.gz
+  Travel-Status-DE-IRIS-1.95
+    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.95.tar.gz
     provides:
-      Travel::Status::DE::IRIS 1.94
-      Travel::Status::DE::IRIS::Result 1.94
-      Travel::Status::DE::IRIS::Stations 1.94
+      Travel::Status::DE::IRIS 1.95
+      Travel::Status::DE::IRIS::Result 1.95
+      Travel::Status::DE::IRIS::Stations 1.95
     requirements:
       Carp 0
       Class::Accessor 0
