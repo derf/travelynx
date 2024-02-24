@@ -1169,6 +1169,8 @@ sub startup {
 		}
 	);
 
+	# This helper is only ever called from an IRIS context.
+	# HAFAS already has all relevant information.
 	$self->helper(
 		'add_route_timestamps' => sub {
 			my ( $self, $uid, $train, $is_departure, $update_polyline ) = @_;
@@ -1190,64 +1192,11 @@ sub startup {
 				return;
 			}
 
-			my ($platform) = ( ( $train->platform // 0 ) =~ m{(\d+)} );
-
 			my $route = $in_transit->{route};
 
-			my $base
-			  = 'https://reiseauskunft.bahn.de/bin/trainsearch.exe/dn?L=vs_json.vs_hap&start=yes&rt=1';
-			my $date_yy   = $train->start->strftime('%d.%m.%y');
-			my $date_yyyy = $train->start->strftime('%d.%m.%Y');
-			my $train_no  = $train->type . ' ' . $train->train_no;
-
-			$self->hafas->get_json_p(
-				"${base}&date=${date_yy}&trainname=${train_no}")->then(
+			$self->hafas->get_tripid_p( train => $train )->then(
 				sub {
-					my ($trainsearch) = @_;
-
-					# Fallback: Take first result
-					my $result = $trainsearch->{suggestions}[0];
-
-					# Try finding a result for the current date
-					for
-					  my $suggestion ( @{ $trainsearch->{suggestions} // [] } )
-					{
-
-						# Drunken API, sail with care. Both date formats are used interchangeably
-						if (
-							$suggestion->{depDate}
-							and (  $suggestion->{depDate} eq $date_yy
-								or $suggestion->{depDate} eq $date_yyyy )
-						  )
-						{
-							# Train numbers are not unique, e.g. IC 149 refers both to the
-							# InterCity service Amsterdam -> Berlin and to the InterCity service
-							# Koebenhavns Lufthavn st -> Aarhus.  One workaround is making
-							# requests with the stationFilter=80 parameter.  Checking the origin
-							# station seems to be the more generic solution, so we do that
-							# instead.
-							if ( $suggestion->{dep} eq $train->origin ) {
-								$result = $suggestion;
-								last;
-							}
-						}
-					}
-
-					if ( not $result ) {
-						$self->app->log->debug("trainlink not found");
-						return Mojo::Promise->reject("trainlink not found");
-					}
-
-					# Calculate and store trip_id.
-					# The trip_id's date part doesn't seem to matter -- so far,
-					# HAFAS is happy as long as the date part starts with a number.
-					# HAFAS-internal tripIDs use this format (withouth leading zero
-					# for day of month < 10) though, so let's stick with it.
-					my $date_map = $date_yyyy;
-					$date_map =~ tr{.}{}d;
-					my $trip_id = sprintf( '1|%d|%d|%d|%s',
-						$result->{id},   $result->{cycle},
-						$result->{pool}, $date_map );
+					my ($trip_id) = @_;
 
 					$self->in_transit->update_data(
 						uid  => $uid,

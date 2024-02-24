@@ -109,6 +109,56 @@ sub search_location_p {
 	);
 }
 
+sub get_tripid_p {
+	my ( $self, %opt ) = @_;
+
+	my $promise = Mojo::Promise->new;
+
+	my $train      = $opt{train};
+	my $train_desc = $train->type . ' ' . $train->train_no;
+	$train_desc =~ s{^- }{};
+
+	Travel::Status::DE::HAFAS->new_p(
+		journeyMatch => $train_desc,
+		datetime     => $train->start,
+		cache        => $self->{realtime_cache},
+		promise      => 'Mojo::Promise',
+		user_agent   => $self->{user_agent}->request_timeout(10),
+	)->then(
+		sub {
+			my ($hafas) = @_;
+			my @results = $hafas->results;
+
+			if ( not @results ) {
+				$promise->reject(
+					"journeyMatch($train_desc) returned no results");
+				return;
+			}
+
+			my $result = $results[0];
+			if ( @results > 1 ) {
+				for my $journey (@results) {
+					if ( ( $journey->route )[0]->loc->name eq $train->origin ) {
+						$result = $journey;
+						last;
+					}
+				}
+			}
+
+			$promise->resolve( $result->id );
+			return;
+		}
+	)->catch(
+		sub {
+			my ($err) = @_;
+			$promise->reject($err);
+			return;
+		}
+	)->wait;
+
+	return $promise;
+}
+
 sub get_journey_p {
 	my ( $self, %opt ) = @_;
 
