@@ -2578,12 +2578,12 @@ DISTRIBUTIONS
       Test::More 0
       Test::Pod 0
       perl v5.14.0
-  Travel-Status-DE-IRIS-1.95
-    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.95.tar.gz
+  Travel-Status-DE-IRIS-1.96
+    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.96.tar.gz
     provides:
-      Travel::Status::DE::IRIS 1.95
-      Travel::Status::DE::IRIS::Result 1.95
-      Travel::Status::DE::IRIS::Stations 1.95
+      Travel::Status::DE::IRIS 1.96
+      Travel::Status::DE::IRIS::Result 1.96
+      Travel::Status::DE::IRIS::Stations 1.96
     requirements:
       Carp 0
       Class::Accessor 0
