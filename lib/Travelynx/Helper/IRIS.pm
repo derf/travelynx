@@ -28,6 +28,16 @@ sub get_departures {
 	my $lookahead    = $opt{lookahead}    // 30;
 	my $with_related = $opt{with_related} // 0;
 
+	# Berlin Hbf exists twice:
+	# - BLS / 8011160
+	# - BL / 8098160 (formerly "Berlin Hbf (tief)")
+	# Right now, travelynx assumes that station name -> EVA / DS100 is a unique
+	# map.  This is not the case. Work around it here until travelynx has been
+	# adjusted properly.
+	if ( $station eq 'Berlin Hbf' or $station eq '8011160' ) {
+		$with_related = 1;
+	}
+
 	my @station_matches
 	  = Travel::Status::DE::IRIS::Stations::get_station($station);
 
@@ -84,6 +94,16 @@ sub get_departures_p {
 	my $lookbehind   = $opt{lookbehind}   // 180;
 	my $lookahead    = $opt{lookahead}    // 30;
 	my $with_related = $opt{with_related} // 0;
+
+	# Berlin Hbf exists twice:
+	# - BLS / 8011160
+	# - BL / 8098160 (formerly "Berlin Hbf (tief)")
+	# Right now, travelynx assumes that station name -> EVA / DS100 is a unique
+	# map.  This is not the case. Work around it here until travelynx has been
+	# adjusted properly.
+	if ( $station eq 'Berlin Hbf' or $station eq '8011160' ) {
+		$with_related = 1;
+	}
 
 	my @station_matches
 	  = Travel::Status::DE::IRIS::Stations::get_station($station);
