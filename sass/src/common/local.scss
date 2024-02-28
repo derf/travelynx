@@ -291,7 +291,7 @@ ul.route-history > li {
 	.departures.connections li {
 		grid-template-columns: 15ch 1fr;
 		.connect-platform-wrapper span {
-			display: inline;
+			display: inline-block;
 		}
 	}
 }
