@@ -1912,7 +1912,8 @@ sub startup {
 					train_id       => $traewelling->{trip_id},
 					uid            => $uid,
 					in_transaction => 1,
-					db             => $db
+					db             => $db,
+					ts => $traewelling->{dep_dt}->epoch
 				)->then(
 					sub {
 						$self->log->debug("... handled origin");
@@ -1921,7 +1922,8 @@ sub startup {
 							train_id       => $traewelling->{trip_id},
 							uid            => $uid,
 							in_transaction => 1,
-							db             => $db
+							db             => $db,
+							ts => $traewelling->{arr_dt}->epoch
 						);
 					}
 				)->then(
