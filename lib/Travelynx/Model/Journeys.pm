@@ -15,6 +15,8 @@ use utf8;
 use DateTime;
 use JSON;
 
+use Travelynx::Helper::HAFAS qw(lenient_compare_dts);
+
 my %visibility_itoa = (
 	100 => 'public',
 	80  => 'travelynx',
@@ -1066,9 +1068,11 @@ sub get_travel_distance {
 	my $from         = $journey->{from_name};
 	my $from_eva     = $journey->{from_eva};
 	my $from_latlon  = $journey->{from_latlon};
+	my $departure         = $journey->{sched_dep_ts};
 	my $to           = $journey->{to_name};
 	my $to_eva       = $journey->{to_eva};
 	my $to_latlon    = $journey->{to_latlon};
+	my $arrival         = $journey->{sched_arr_ts};
 	my $route_ref    = $journey->{route};
 	my $polyline_ref = $journey->{polyline};
 
@@ -1088,8 +1092,16 @@ sub get_travel_distance {
 	my $skipped               = 0;
 	my $geo                   = GIS::Distance->new();
 	my @stations              = map { $_->[0] } @{$route_ref};
-	my @route                 = after_incl { $_ eq $from } @stations;
-	@route = before_incl { $_ eq $to } @route;
+	my @route                 = map { $_->[0] }
+		before_incl {
+			$_->[0] eq $to and
+			Travelynx::Helper::HAFAS::lenient_compare_dts($arrival, $_->[2]{sched_arr})
+		}
+		after_incl {
+			$_->[0] eq $from and
+			Travelynx::Helper::HAFAS::lenient_compare_dts($departure, $_->[2]{sched_dep})
+		}
+		@{$route_ref};
 
 	if ( @route < 2 ) {
 
