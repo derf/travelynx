@@ -529,6 +529,7 @@ sub startup {
 			my ( $self, %opt ) = @_;
 
 			my $station  = $opt{station};
+			my $departure = $opt{ts};
 			my $train_id = $opt{train_id};
 			my $uid      = $opt{uid} // $self->current_user->{id};
 			my $db       = $opt{db}  // $self->pg->db;
@@ -539,15 +540,13 @@ sub startup {
 			$self->hafas->get_journey_p( trip_id => $train_id )->then(
 				sub {
 					my ($journey) = @_;
-					my $found;
-					for my $stop ( $journey->route ) {
-						if (   $stop->loc->name eq $station
-							or $stop->loc->eva == $station )
-						{
-							$found = $stop;
-							last;
-						}
-					}
+
+					my $found = List::Util::first {
+						($_->loc->name eq $station
+						or $_->loc->eva == $station)
+						and Travelynx::Helper::HAFAS::lenient_compare_dts($departure, $_->sched_dep)
+					} $journey->route;
+
 					if ( not $found ) {
 						$promise->reject(
 							"Did not find journey $train_id at $station");
@@ -965,6 +964,7 @@ sub startup {
 			my ( $self, %opt ) = @_;
 
 			my $station = $opt{station};
+			my $arrival = $opt{ts} // 0;
 			my $force   = $opt{force};
 			my $uid     = $opt{uid} // $self->current_user->{id};
 			my $db      = $opt{db}  // $self->pg->db;
@@ -986,7 +986,8 @@ sub startup {
 			my $found;
 			my $has_arrived;
 			for my $stop ( @{ $journey->{route_after} } ) {
-				if ( $station eq $stop->[0] or $station eq $stop->[1] ) {
+				if ( ($station eq $stop->[0] or $station eq $stop->[1])
+					and Travelynx::Helper::HAFAS::lenient_compare_dts($arrival, $stop->[2]{sched_arr})) {
 					$found = 1;
 					$self->in_transit->set_arrival_eva(
 						uid         => $uid,

@@ -46,10 +46,10 @@ sub run {
 					my $found_dep;
 					my $found_arr;
 					for my $stop ( $journey->route ) {
-						if ( $stop->loc->eva == $dep ) {
+						if ( $stop->loc->eva == $dep && Travelynx::Helper::HAFAS::lenient_compare_dts($stop->sched_dep, $entry->{sched_dep_ts})) {
 							$found_dep = $stop;
 						}
-						if ( $arr and $stop->loc->eva == $arr ) {
+						if ( $arr and $stop->loc->eva == $arr && Travelynx::Helper::HAFAS::lenient_compare_dts($stop->sched_arr, $entry->{sched_arr_ts})) {
 							$found_arr = $stop;
 							last;
 						}
@@ -103,7 +103,8 @@ sub run {
 					force   => 2,
 					dep_eva => $dep,
 					arr_eva => $arr,
-					uid     => $uid
+					uid     => $uid,
+					ts => $entry->{sched_arr_ts}
 				)->wait;
 			}
 			next;
