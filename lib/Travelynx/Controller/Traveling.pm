@@ -313,6 +313,7 @@ sub get_connecting_trains_p {
 									and $stop->arr )
 								{
 									$iris_train->[2] = $stop->arr;
+									$iris_train->[4] = $stop->arr;
 									if ( $iris_train->[0]->departure_delay
 										and not $stop->arr_delay )
 									{
@@ -354,7 +355,7 @@ sub get_connecting_trains_p {
 								if ( $departure->epoch >= $exclude_before ) {
 									$via_count{ $dest->{name} }++;
 									push( @hafas_trains,
-										[ $hafas_train, $dest, $arrival ] );
+										[ $hafas_train, $dest, $arrival, $stop->arr ] );
 								}
 							}
 						}

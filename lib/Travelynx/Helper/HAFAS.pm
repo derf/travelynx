@@ -20,6 +20,32 @@ sub _epoch {
 	return $dt ? $dt->epoch : 0;
 }
 
+# for making sure we have the right stop selected if it appears multiple times
+# on the route we need to compare the arrival/departure times.
+# depending on context they might be undef, stored as DateTime or just a plain
+# number. this helper plasters over these numerous edge cases and does a
+# fuzzy match on the values provided, also returning true if any values are
+# undef or 0.
+sub lenient_compare_dts {
+	my ( $a, $b ) = @_;
+
+	if (not defined($a) or not defined($b))  {
+		return 1;
+	}
+
+	if (ref($a) eq 'DateTime') {
+		$a = $a->epoch;
+	}
+	if (ref($b) eq 'DateTime') {
+		$b = $b->epoch;
+	}
+	if ($a == 0 or $b == 0) {
+		return 1;
+	} else {
+		return $a == $b;
+	}
+}
+
 sub new {
 	my ( $class, %opt ) = @_;
 
