@@ -975,7 +975,7 @@ sub station {
 				  } $status->results;
 				$self->stations->add_meta(
 					eva  => $status->station->{eva},
-					meta => $status->station->{evas}
+					meta => $status->station->{evas} // []
 				);
 				$status = {
 					station_eva  => $status->station->{eva},
