@@ -313,6 +313,7 @@ sub get_connecting_trains_p {
 									and $stop->arr )
 								{
 									$iris_train->[2] = $stop->arr;
+									$iris_train->[4] = $stop->arr;
 									if ( $iris_train->[0]->departure_delay
 										and not $stop->arr_delay )
 									{
@@ -354,7 +355,7 @@ sub get_connecting_trains_p {
 								if ( $departure->epoch >= $exclude_before ) {
 									$via_count{ $dest->{name} }++;
 									push( @hafas_trains,
-										[ $hafas_train, $dest, $arrival ] );
+										[ $hafas_train, $dest, $arrival, $stop->arr ] );
 								}
 							}
 						}
@@ -674,7 +675,7 @@ sub travel_action {
 			and $status->{arr_eva}
 			and $status->{arrival_countdown} <= 0 )
 		{
-			$promise = $self->checkout_p( station => $status->{arr_eva} );
+			$promise = $self->checkout_p( station => $status->{arr_eva}, ts => $params->{ts});
 		}
 		else {
 			$promise = Mojo::Promise->resolve;
@@ -685,7 +686,8 @@ sub travel_action {
 			sub {
 				return $self->checkin_p(
 					station  => $params->{station},
-					train_id => $params->{train}
+					train_id => $params->{train},
+					ts => $params->{ts}
 				);
 			}
 		)->then(
@@ -705,7 +707,8 @@ sub travel_action {
 				# them when selecting the destination manually.
 				return $self->checkout_p(
 					station => $destination,
-					force   => 0
+					force   => 0,
+					ts => $params->{dest_ts}
 				);
 			}
 		)->then(
@@ -744,7 +747,8 @@ sub travel_action {
 		my $status = $self->get_user_status;
 		$self->checkout_p(
 			station => $params->{station},
-			force   => $params->{force}
+			force   => $params->{force},
+			ts => $params->{ts}
 		)->then(
 			sub {
 				my ( $still_checked_in, $error ) = @_;
@@ -819,7 +823,8 @@ sub travel_action {
 		$self->render_later;
 		$self->checkin_p(
 			station  => $params->{station},
-			train_id => $params->{train}
+			train_id => $params->{train},
+			ts => $params->{ts}
 		)->then(
 			sub {
 				$self->render(
@@ -845,7 +850,8 @@ sub travel_action {
 		$self->render_later;
 		$self->checkout_p(
 			station => $params->{station},
-			force   => 1
+			force   => 1,
+			ts => $params->{ts}
 		)->then(
 			sub {
 				my ( undef, $error ) = @_;

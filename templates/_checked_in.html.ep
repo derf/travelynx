@@ -217,7 +217,11 @@
 			% elsif (not $journey->{arr_name}) {
 				<p>
 					% for my $station (@{$journey->{route_after}}) {
-						<a class="tablerow action-checkout" data-station="<%= $station->[1] // $station->[0] %>">
+						<a
+							class="tablerow action-checkout"
+							data-station="<%= $station->[1] // $station->[0] %>"
+							data-ts="<%= $station->[2]{sched_arr} ? $station->[2]{sched_arr}->epoch : 0 %>"
+						>
 							<span><%= $station->[0] %></span>
 							<span>
 							% if ($station->[2]{load}{SECOND}) {
@@ -260,8 +264,10 @@
 				<a
 					class="action-checkout right"
 					style="margin-right: 0;"
-					data-station="<%= $journey->{arr_name}%>">
-						<i class="material-icons left">done</i>
+					data-station="<%= $journey->{arr_name} %>"
+					data-ts="<%= $journey->{sched_arrival} ? $journey->{sched_arrival}->epoch : 0 %>"
+				>
+						<i class="material-icons left" aria-hidden="true">done</i>
 						Auschecken
 					</a>
 			% }
@@ -355,8 +361,14 @@
 					<p>
 				% }
 				% for my $station (@{$journey->{route_after}}) {
-					% my $is_dest = ($journey->{arr_name} and $station->[0] eq $journey->{arr_name});
-					<a class="action-checkout tablerow" style="<%= $is_dest? 'font-weight: bold;' : '' %>" data-station="<%= $station->[1] // $station->[0] %>">
+					% my $station_sched_arr = $station->[2]{sched_arr};
+					% my $is_dest = ($journey->{arr_name} and $station->[0] eq $journey->{arr_name}) && Travelynx::Helper::HAFAS::lenient_compare_dts($station_sched_arr,  $journey->{sched_arrival});
+					<a
+						class="action-checkout tablerow"
+						style="<%= $is_dest? 'font-weight: bold;' : '' %>"
+						data-station="<%= $station->[1] // $station->[0] %>"
+						data-ts="<%= $station_sched_arr ? $station_sched_arr->epoch : 0 %>"
+					>
 						<span><%= $station->[0] %></span>
 						<span>
 						% if ($station->[2]{load}{SECOND}) {
@@ -400,8 +412,9 @@
 		</p>
 		<p class="center-align">
 			<a class="action-checkout waves-light btn"
-			data-force="1" data-station="<%= $journey->{arr_name}
-			%>">Ohne Echtzeitdaten auschecken</a>
+			data-force="1" data-station="<%= $journey->{arr_name} %>"
+			data-ts="<%= $journey->{sched_arrival} ? $journey->{sched_arrival}->epoch : 0 %>">
+			Ohne Echtzeitdaten auschecken</a>
 		</p>
 	% }
 </div>

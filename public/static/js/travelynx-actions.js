@@ -186,6 +186,7 @@ function tvly_reg_handlers() {
 			train: link.data('train'),
 			dest: link.data('dest'),
 			ts: link.data('ts'),
+			dest_ts: link.data('dest-ts')
 		};
 		tvly_run(link, req);
 	});
@@ -195,6 +196,7 @@ function tvly_reg_handlers() {
 			action: 'checkout',
 			station: link.data('station'),
 			force: link.data('force'),
+			ts: link.data('ts'),
 		};
 		tvly_run(link, req, function() {
 			if (!link.data('force')) {
@@ -235,6 +237,7 @@ function tvly_reg_handlers() {
 			action: 'cancelled_to',
 			station: link.data('station'),
 			force: true,
+			ts: link.data('ts'),
 		};
 		tvly_run(link, req);
 	});

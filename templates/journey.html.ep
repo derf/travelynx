@@ -212,10 +212,10 @@
 						% my $within = 0;
 						% my $at_startstop = 0;
 						% for my $station (@{$journey->{route}}) {
-							% if ($station->[0] eq $journey->{from_name}) {
+							% if ($station->[0] eq $journey->{from_name} and Travelynx::Helper::HAFAS::lenient_compare_dts($station->[2]{sched_dep}, $journey->{sched_departure})) {
 								% $within = 1; $at_startstop = 1;
 							% }
-							% elsif ($station->[0] eq $journey->{to_name}) {
+							% elsif ($station->[0] eq $journey->{to_name} and Travelynx::Helper::HAFAS::lenient_compare_dts($station->[2]{sched_arr}, $journey->{sched_arrival})) {
 								% $within = 0; $at_startstop = 1;
 							% }
 							% else {
@@ -248,7 +248,7 @@
 									% }
 								</span>
 							% }
-							% if ($station->[0] eq $journey->{from_name}) {
+							% if ($station->[0] eq $journey->{from_name} and Travelynx::Helper::HAFAS::lenient_compare_dts($station->[2]{sched_dep}, $journey->{sched_departure})) {
 								% $before = 0;
 							% }
 							<br/>

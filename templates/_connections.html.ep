@@ -1,7 +1,8 @@
 <ul class="collection departures connections">
 	% for my $res (@{$connections}) {
-		% my ($train, $via, $via_arr, $load) = @{$res};
+		% my ($train, $via, $via_arr, $load, $via_arr_sched) = @{$res};
 		% $via_arr = $via_arr ? $via_arr->strftime('%H:%M') : q{};
+		% $via_arr_sched = $via_arr_sched ? $via_arr_sched->epoch : 0;
 		% my $row_class = '';
 		% my $link_class = 'action-checkin';
 		% if ($train->is_cancelled) {
@@ -13,7 +14,8 @@
 			data-station="<%= $train->station_uic %>"
 			data-train="<%= $train->train_id %>"
 			data-ts="<%= ($train->sched_departure // $train->departure)->epoch %>"
-			data-dest="<%= $via->{name} %>">
+			data-dest="<%= $via->{name} %>"
+			data-dest-ts="<%= $via_arr_sched %>">
 		% }
 		% else {
 			<li class="collection-item <%= $row_class %>">

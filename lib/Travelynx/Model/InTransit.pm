@@ -11,6 +11,8 @@ use 5.020;
 use DateTime;
 use JSON;
 
+use Travelynx::Helper::HAFAS qw(lenient_compare_dts);
+
 my %visibility_itoa = (
 	100 => 'public',
 	80  => 'travelynx',
@@ -207,7 +209,8 @@ sub postprocess {
 			push( @route_after, $station );
 		}
 		if (    $ret->{dep_name}
-			and $station->[0] eq $ret->{dep_name} )
+			and $station->[0] eq $ret->{dep_name}
+			and Travelynx::Helper::HAFAS::lenient_compare_dts($station->[2]{sched_dep}, $ret->{sched_dep_ts}))
 		{
 			$is_after = 1;
 			if ( @{$station} > 1 and not $dep_info ) {
