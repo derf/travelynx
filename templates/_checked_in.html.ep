@@ -76,7 +76,7 @@
 								% @wagons = reverse @wagons;
 							% }
 						% }
-						<a href="https://bahn.expert/details/<%= $journey->{train_type} %>%20<%= $journey->{train_no} %>/<%= DateTime->now(time_zone => 'Europe/Berlin')->iso8601 %>?station=<%= $journey->{dep_eva} %>">
+						<a href="https://dbf.finalrewind.org/_wr/<%= $journey->{train_no} %>/<%= $journey->{sched_departure}->strftime('%Y%m%d%H%M') %>?e=<%= $journey->{dep_direction} // q{} %>">
 						%= $direction
 						% for my $wagon (@wagons) {
 							% if (not ($wagon->is_locomotive or $wagon->is_powercar)) {
