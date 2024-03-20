@@ -78,10 +78,15 @@
 						% }
 						<a href="https://dbf.finalrewind.org/_wr/<%= $journey->{train_no} %>/<%= $journey->{sched_departure}->strftime('%Y%m%d%H%M') %>?e=<%= $journey->{dep_direction} // q{} %>">
 						%= $direction
+						% my $gi;
 						% for my $wagon (@wagons) {
 							% if (not ($wagon->is_locomotive or $wagon->is_powercar)) {
-								%= $wagon->number || $wagon->type
+								% if (defined $gi and $gi != $wagon->group_index) {
+									•
+								% }
+								%= $wagon->number || ($wagon->type =~ m{AB} ? '½' : $wagon->type =~ m{A} ? '1.' : $wagon->type =~ m{B} ? '2.' : $wagon->type )
 							% }
+							% $gi = $wagon->group_index;
 						% }
 						%= $direction
 						</a>
