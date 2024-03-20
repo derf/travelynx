@@ -133,12 +133,12 @@ DISTRIBUTIONS
       ExtUtils::CBuilder 0
       ExtUtils::MakeMaker 6.52
       perl 5.006
-  B-Hooks-EndOfScope-0.26
-    pathname: E/ET/ETHER/B-Hooks-EndOfScope-0.26.tar.gz
+  B-Hooks-EndOfScope-0.28
+    pathname: E/ET/ETHER/B-Hooks-EndOfScope-0.28.tar.gz
     provides:
-      B::Hooks::EndOfScope 0.26
-      B::Hooks::EndOfScope::PP 0.26
-      B::Hooks::EndOfScope::XS 0.26
+      B::Hooks::EndOfScope 0.28
+      B::Hooks::EndOfScope::PP 0.28
+      B::Hooks::EndOfScope::XS 0.28
     requirements:
       ExtUtils::MakeMaker 0
       Hash::Util::FieldHash 0
@@ -1317,16 +1317,16 @@ DISTRIBUTIONS
       parent 0
       perl 5.008001
       strictures 2.000000
-  HTML-Parser-3.81
-    pathname: O/OA/OALDERS/HTML-Parser-3.81.tar.gz
+  HTML-Parser-3.82
+    pathname: O/OA/OALDERS/HTML-Parser-3.82.tar.gz
     provides:
-      HTML::Entities 3.81
-      HTML::Filter 3.81
-      HTML::HeadParser 3.81
-      HTML::LinkExtor 3.81
-      HTML::Parser 3.81
-      HTML::PullParser 3.81
-      HTML::TokeParser 3.81
+      HTML::Entities 3.82
+      HTML::Filter 3.82
+      HTML::HeadParser 3.82
+      HTML::LinkExtor 3.82
+      HTML::Parser 3.82
+      HTML::PullParser 3.82
+      HTML::TokeParser 3.82
     requirements:
       Carp 0
       Exporter 0
@@ -1338,12 +1338,13 @@ DISTRIBUTIONS
       URI::URL 0
       XSLoader 0
       strict 0
-  HTML-Tagset-3.20
-    pathname: P/PE/PETDANCE/HTML-Tagset-3.20.tar.gz
+  HTML-Tagset-3.24
+    pathname: P/PE/PETDANCE/HTML-Tagset-3.24.tar.gz
     provides:
-      HTML::Tagset 3.20
+      HTML::Tagset 3.24
     requirements:
-      ExtUtils::MakeMaker 0
+      ExtUtils::MakeMaker 6.46
+      perl 5.010001
   HTTP-Cookies-6.11
     pathname: O/OA/OALDERS/HTTP-Cookies-6.11.tar.gz
     provides:
@@ -1505,11 +1506,11 @@ DISTRIBUTIONS
       Scalar::Util 0
       perl 5.006002
       strict 0
-  LWP-Protocol-https-6.13
-    pathname: O/OA/OALDERS/LWP-Protocol-https-6.13.tar.gz
+  LWP-Protocol-https-6.14
+    pathname: O/OA/OALDERS/LWP-Protocol-https-6.14.tar.gz
     provides:
-      LWP::Protocol::https 6.13
-      LWP::Protocol::https::Socket 6.13
+      LWP::Protocol::https 6.14
+      LWP::Protocol::https::Socket 6.14
     requirements:
       ExtUtils::MakeMaker 0
       IO::Socket::SSL 1.970
@@ -1770,8 +1771,8 @@ DISTRIBUTIONS
       Mojolicious 8.50
       SQL::Abstract::Pg 1.0
       perl 5.016
-  Mojolicious-9.35
-    pathname: S/SR/SRI/Mojolicious-9.35.tar.gz
+  Mojolicious-9.36
+    pathname: S/SR/SRI/Mojolicious-9.36.tar.gz
     provides:
       Mojo undef
       Mojo::Asset undef
@@ -1839,7 +1840,7 @@ DISTRIBUTIONS
       Mojo::UserAgent::Transactor undef
       Mojo::Util undef
       Mojo::WebSocket undef
-      Mojolicious 9.35
+      Mojolicious 9.36
       Mojolicious::Command undef
       Mojolicious::Command::Author::cpanify undef
       Mojolicious::Command::Author::generate undef
@@ -1941,10 +1942,10 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       Module::Runtime 0.014
-  Mozilla-CA-20231213
-    pathname: L/LW/LWP/Mozilla-CA-20231213.tar.gz
+  Mozilla-CA-20240313
+    pathname: L/LW/LWP/Mozilla-CA-20240313.tar.gz
     provides:
-      Mozilla::CA 20231213
+      Mozilla::CA 20240313
     requirements:
       ExtUtils::MakeMaker 0
   Net-HTTP-6.23
@@ -2531,12 +2532,12 @@ DISTRIBUTIONS
       TimeDate 1.21
     requirements:
       ExtUtils::MakeMaker 0
-  Travel-Status-DE-DBWagenreihung-0.08
-    pathname: D/DE/DERF/Travel-Status-DE-DBWagenreihung-0.08.tar.gz
+  Travel-Status-DE-DBWagenreihung-0.11
+    pathname: D/DE/DERF/Travel-Status-DE-DBWagenreihung-0.11.tar.gz
     provides:
-      Travel::Status::DE::DBWagenreihung 0.08
-      Travel::Status::DE::DBWagenreihung::Section 0.08
-      Travel::Status::DE::DBWagenreihung::Wagon 0.08
+      Travel::Status::DE::DBWagenreihung 0.11
+      Travel::Status::DE::DBWagenreihung::Section 0.11
+      Travel::Status::DE::DBWagenreihung::Wagon 0.11
     requirements:
       Carp 0
       Class::Accessor 0
@@ -2713,10 +2714,10 @@ DISTRIBUTIONS
       POSIX 0
       Test::More 0
       Time::HiRes 0
-  Variable-Magic-0.63
-    pathname: V/VP/VPIT/Variable-Magic-0.63.tar.gz
+  Variable-Magic-0.64
+    pathname: V/VP/VPIT/Variable-Magic-0.64.tar.gz
     provides:
-      Variable::Magic 0.63
+      Variable::Magic 0.64
     requirements:
       Carp 0
       Config 0
@@ -2892,32 +2893,32 @@ DISTRIBUTIONS
       XSLoader 0
       lib 0
       perl 5.008001
-  libwww-perl-6.76
-    pathname: O/OA/OALDERS/libwww-perl-6.76.tar.gz
+  libwww-perl-6.77
+    pathname: O/OA/OALDERS/libwww-perl-6.77.tar.gz
     provides:
-      LWP 6.76
-      LWP::Authen::Basic 6.76
-      LWP::Authen::Digest 6.76
-      LWP::Authen::Ntlm 6.76
-      LWP::ConnCache 6.76
-      LWP::Debug 6.76
-      LWP::Debug::TraceHTTP 6.76
-      LWP::DebugFile 6.76
-      LWP::MemberMixin 6.76
-      LWP::Protocol 6.76
-      LWP::Protocol::cpan 6.76
-      LWP::Protocol::data 6.76
-      LWP::Protocol::file 6.76
-      LWP::Protocol::ftp 6.76
-      LWP::Protocol::gopher 6.76
-      LWP::Protocol::http 6.76
-      LWP::Protocol::loopback 6.76
-      LWP::Protocol::mailto 6.76
-      LWP::Protocol::nntp 6.76
-      LWP::Protocol::nogo 6.76
-      LWP::RobotUA 6.76
-      LWP::Simple 6.76
-      LWP::UserAgent 6.76
+      LWP 6.77
+      LWP::Authen::Basic 6.77
+      LWP::Authen::Digest 6.77
+      LWP::Authen::Ntlm 6.77
+      LWP::ConnCache 6.77
+      LWP::Debug 6.77
+      LWP::Debug::TraceHTTP 6.77
+      LWP::DebugFile 6.77
+      LWP::MemberMixin 6.77
+      LWP::Protocol 6.77
+      LWP::Protocol::cpan 6.77
+      LWP::Protocol::data 6.77
+      LWP::Protocol::file 6.77
+      LWP::Protocol::ftp 6.77
+      LWP::Protocol::gopher 6.77
+      LWP::Protocol::http 6.77
+      LWP::Protocol::loopback 6.77
+      LWP::Protocol::mailto 6.77
+      LWP::Protocol::nntp 6.77
+      LWP::Protocol::nogo 6.77
+      LWP::RobotUA 6.77
+      LWP::Simple 6.77
+      LWP::UserAgent 6.77
     requirements:
       Digest::MD5 0
       Encode 2.12
