@@ -46,12 +46,6 @@
 			currentTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 		}
 		addStyleSheet(currentTheme, 'theme');
-
-		function toggleTheme() {
-			currentTheme = otherTheme[currentTheme] || 'light';
-			localStorage.setItem('theme', currentTheme);
-			addStyleSheet(currentTheme, 'theme');
-		}
 	</script>
 	%= stylesheet "/static/${av}/css/material-icons.css"
 	% if (stash('with_map')) {
@@ -94,9 +88,6 @@
 							</div>
 						</div>
 					</div>
-				</li>
-				<li class="waves-effect waves-light">
-					<a onClick="javascript:toggleTheme()" title="Farbschema invertieren"><i class="material-icons" aria-label="Farbschema invertieren">invert_colors</i></a>
 				</li>
 				% if ($acc) {
 					<li class="<%= navbar_class('/history') %>"><a href='/history' title="Vergangene Zugfahrten"><i class="material-icons" aria-label="Vergangene Zugfahrten">history</i></a></li>
@@ -147,8 +138,17 @@
 			<a href="/legend">Legende</a>
 		</div>
 	</div>
+	<div class="row">
+		<div class="col s12 center-align grey-text config">
+			Farbschema:
+			<a onClick="javascript:setTheme('light')">hell</a>
+			·
+			<a onClick="javascript:setTheme('dark')">dunkel</a>
+			·
+			<a onClick="javascript:setTheme('default')">automatisch</a>
+		</div>
+	</div>
 </div>
-
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {

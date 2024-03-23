@@ -9,6 +9,15 @@ var j_arrival = 0;
 var j_dest = '';
 var j_stops = [];
 var j_token = '';
+
+function setTheme(theme) {
+	localStorage.setItem('theme', theme);
+	if (!otherTheme.hasOwnProperty(theme)) {
+		theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+	}
+	addStyleSheet(theme, 'theme');
+}
+
 function upd_journey_data() {
 	$('.countdown').each(function() {
 		const journey_token = $(this).data('token');
