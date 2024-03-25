@@ -5,10 +5,10 @@
 			<i class="material-icons right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 			<span class="card-title">
 				% if (stash('from_profile')) {
-					Unterwegs mit <%= include '_format_train', journey => $journey %>
+					Unterwegs mit <%= include '_format_train', journey => $journey, mode => 'status' %>
 				% }
 				% elsif (stash('from_timeline')) {
-					<a href="/p/<%= $name %>"><%= $name %></a>: <%= include '_format_train', journey => $journey %>
+					<a href="/p/<%= $name %>"><%= $name %></a>: <%= include '_format_train', journey => $journey, mode => 'status' %>
 				% }
 				% else {
 					<a href="/p/<%= $name %>"><%= $name %></a> ist unterwegs
@@ -24,7 +24,7 @@
 			<p>
 				% if (not stash('from_profile') and not stash('from_timeline')) {
 					<div class="center-align">
-						%= include '_format_train', journey => $journey
+						%= include '_format_train', journey => $journey, mode => 'status'
 					</div>
 				% }
 				<div class="center-align countdown"

@@ -36,9 +36,7 @@
 				% if ($train->platform) {
 					<span>Gleis <%= $train->platform %></span>
 				% }
-				<span class="dep-line <%= $train->type // q{} %>">
-					%= $train->line
-				</span>
+				%= include '_format_train', journey => $train, mode => 'hafas', show_line_only => 1
 			</span>
 			<span class="dep-dest">
 				%= $via->{name}

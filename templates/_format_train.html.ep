@@ -1,10 +1,53 @@
+% use List::Util;
+% my @known_train_types = qw(Bus RUF AST STR RNV S RS RER SKW U STB M Schw-B RE IRE REX CJX RB MEX TER R IC ICE EC ECE D IR TGV OGV EST TLK EIC RJ RJX NJ EN WB FLX);
+
+% # unify different train data into one set of variables we can work with
+% my ($train_no, $train_type, $train_line, $operator_code);
+% if ($mode eq 'history') {
+	% $train_type = $journey->{type};
+	% $train_line = $journey->{line};
+	% $train_no = $journey->{no};
+% } elsif ($mode eq 'status') {
+	% $train_type = $journey->{train_type};
+	% $train_line = $journey->{train_line};
+	% $train_no = $journey->{train_no};
+% } elsif ($mode eq 'hafas') {
+	% $train_type = $journey->type;
+	% $train_line = $journey->line_no;
+	% $train_no = $journey->number;
+% } elsif ($mode eq 'iris') {
+	% $train_type = $journey->type;
+	% $train_line = $journey->line_no;
+	% $train_no = $journey->train_no;
+% }
+% # account for private operator type+lines like "ME RE2" or "SBB S6", where
+% # the actual train type is hidden in the line number:
+% # check if we don't know the train type (likely a private operator prefix)
+% if ($train_type and $train_line and List::Util::none {$train_type eq $_} @known_train_types) {
+	% for my $known_train_type (@known_train_types) {
+		% # if the train line starts with a known train type, keep the operator
+		% # abbreviation, extract the actual line number and correct the train type
+		% if (index($train_line, $known_train_type) == 0) {
+			% $operator_code = $train_type;
+			% $train_type = $known_train_type;
+			% $train_line = substr $train_line, (length $known_train_type);
+		% }
+	% }
+% }
+
 % if ($journey->{extra_data}{wagonorder_pride}) {
 	🏳️‍🌈
 % }
-<span class="dep-line <%= $journey->{train_type} // q{} %>">
-	<%= $journey->{train_type} %>
-	<%= $journey->{train_line}  // $journey->{train_no}%>
+<span class="dep-line <%= $train_type %>">
+	%= $train_type
+	% # set train numbers lighter and in roman instead of italics
+	% # to avoid confusion with line numbers
+	% if ($train_line) {
+		 %= $train_line
+	% } else {
+		 <span class="dep-train-number"><%= $train_no %></span>
+	% }
 </span>
-% if ($journey->{train_line}) {
-	<%= $journey->{train_no} %>
+% if ($train_line and not stash('show_line_only')) {
+	<%= $operator_code %> <%= $train_no %>
 % }

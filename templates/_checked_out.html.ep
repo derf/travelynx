@@ -2,7 +2,7 @@
 	<div class="card-content">
 		<span class="card-title">Ausgecheckt</span>
 		<p>Aus
-			%= include '_format_train', journey => $journey
+			%= include '_format_train', journey => $journey, mode => 'status'
 			bis <a href="/s/<%= $journey->{arr_eva} %>?hafas=<%= $journey->{train_id} =~ m{[|]} ? 1 : 0 %>"><%= $journey->{arr_name} %></a></p>
 		% if (@{stash('connections_iris') // [] } or @{stash('connections_hafas') // []}) {
 			<span class="card-title" style="margin-top: 2ex;">Verbindungen</span>
