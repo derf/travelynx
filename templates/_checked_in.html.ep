@@ -84,7 +84,12 @@
 								% if (defined $gi and $gi != $wagon->group_index) {
 									•
 								% }
-								%= $wagon->number || ($wagon->type =~ m{AB} ? '½' : $wagon->type =~ m{A} ? '1.' : $wagon->type =~ m{B} ? '2.' : $wagon->type )
+								% if ($wagon->is_closed) {
+									X
+								% }
+								% else {
+									%= $wagon->number || ($wagon->type =~ m{AB} ? '½' : $wagon->type =~ m{A} ? '1.' : $wagon->type =~ m{B} ? '2.' : $wagon->type )
+								% }
 							% }
 							% $gi = $wagon->group_index;
 						% }
