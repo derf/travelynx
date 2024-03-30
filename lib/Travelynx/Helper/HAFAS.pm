@@ -90,7 +90,7 @@ sub get_departures_p {
 	return Travel::Status::DE::HAFAS->new_p(
 		station    => $opt{eva},
 		datetime   => $when,
-		duration   => $opt{lookahead},
+		lookahead  => $opt{lookahead} + $opt{lookbehind},
 		results    => 300,
 		cache      => $self->{realtime_cache},
 		promise    => 'Mojo::Promise',
