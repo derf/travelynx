@@ -85,7 +85,9 @@ sub get_json_p {
 sub get_departures_p {
 	my ( $self, %opt ) = @_;
 
-	my $when = DateTime->now( time_zone => 'Europe/Berlin' )
+	my $when
+	  = ( $opt{timestamp}->clone
+		  // DateTime->now( time_zone => 'Europe/Berlin' ) )
 	  ->subtract( minutes => $opt{lookbehind} );
 	return Travel::Status::DE::HAFAS->new_p(
 		station    => $opt{eva},

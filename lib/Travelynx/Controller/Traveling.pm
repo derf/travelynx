@@ -915,11 +915,12 @@ sub travel_action {
 }
 
 sub station {
-	my ($self)  = @_;
-	my $station = $self->stash('station');
-	my $train   = $self->param('train');
-	my $trip_id = $self->param('trip_id');
-	my $uid     = $self->current_user->{id};
+	my ($self)    = @_;
+	my $station   = $self->stash('station');
+	my $train     = $self->param('train');
+	my $trip_id   = $self->param('trip_id');
+	my $timestamp = $self->param('timestamp');
+	my $uid       = $self->current_user->{id};
 
 	my @timeline = $self->in_transit->get_timeline(
 		uid   => $uid,
@@ -934,11 +935,22 @@ sub station {
 
 	$self->render_later;
 
+	if ( $timestamp and $timestamp =~ m{ ^ \d+ $ }x ) {
+		$timestamp = DateTime->from_epoch(
+			epoch     => $timestamp,
+			time_zone => 'Europe/Berlin'
+		);
+	}
+	else {
+		$timestamp = DateTime->now( time_zone => 'Europe/Berlin' );
+	}
+
 	my $use_hafas = $self->param('hafas');
 	my $promise;
 	if ($use_hafas) {
 		$promise = $self->hafas->get_departures_p(
 			eva        => $station,
+			timestamp  => $timestamp,
 			lookbehind => 30,
 			lookahead  => 30,
 		);
@@ -957,6 +969,10 @@ sub station {
 			my $api_link;
 			my @results;
 
+			my $now = $self->now->epoch;
+			my $now_within_range
+			  = abs( $timestamp->epoch - $now ) < 1800 ? 1 : 0;
+
 			if ($use_hafas) {
 
 				my $iris_eva = List::Util::min grep { $_ >= 1000000 }
@@ -965,14 +981,9 @@ sub station {
 					$api_link = '/s/' . $iris_eva;
 				}
 
-				my $now = $self->now->epoch;
 				@results = map { $_->[0] }
 				  sort { $b->[1] <=> $a->[1] }
-				  map  { [ $_, $_->datetime->epoch ] }
-				  grep {
-					( $_->datetime // $_->sched_datetime )->epoch
-					  < $now + 30 * 60
-				  } $status->results;
+				  map { [ $_, $_->datetime->epoch ] } $status->results;
 				$self->stations->add_meta(
 					eva  => $status->station->{eva},
 					meta => $status->station->{evas} // []
@@ -1049,6 +1060,8 @@ sub station {
 						$self->render(
 							'departures',
 							eva               => $status->{station_eva},
+							datetime          => $timestamp,
+							now_in_range      => $now_within_range,
 							results           => \@results,
 							hafas             => $use_hafas,
 							station           => $status->{station_name},
@@ -1066,6 +1079,8 @@ sub station {
 						$self->render(
 							'departures',
 							eva              => $status->{station_eva},
+							datetime         => $timestamp,
+							now_in_range     => $now_within_range,
 							results          => \@results,
 							hafas            => $use_hafas,
 							station          => $status->{station_name},
@@ -1082,6 +1097,8 @@ sub station {
 				$self->render(
 					'departures',
 					eva              => $status->{station_eva},
+					datetime         => $timestamp,
+					now_in_range     => $now_within_range,
 					results          => \@results,
 					hafas            => $use_hafas,
 					station          => $status->{station_name},
