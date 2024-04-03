@@ -139,6 +139,9 @@ sub add {
 					}
 				]
 			);
+			if ( defined $j_stop->tz_offset ) {
+				$route[-1][2]{tz_offset} = $j_stop->tz_offset;
+			}
 		}
 		$db->insert(
 			'in_transit',
@@ -156,7 +159,7 @@ sub add {
 				train_id     => $journey->id,
 				sched_departure => $stop->{sched_dep},
 				real_departure  => $stop->{rt_dep} // $stop->{sched_dep},
-				route           => $json->encode( [@route] ),
+				route           => $json->encode( \@route ),
 				data => JSON->new->encode( { rt => $stop->{rt_dep} ? 1 : 0 } ),
 			}
 		);
@@ -737,6 +740,9 @@ sub update_arrival_hafas {
 				}
 			]
 		);
+		if ( defined $j_stop->tz_offset ) {
+			$route[-1][2]{tz_offset} = $j_stop->tz_offset;
+		}
 	}
 
 	my $res_h = $db->select( 'in_transit', ['route'], { user_id => $uid } )

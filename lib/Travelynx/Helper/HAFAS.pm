@@ -236,6 +236,9 @@ sub get_route_timestamps_p {
 					dep_delay => $stop->dep_delay,
 					load      => $stop->load
 				};
+				if ( $stop->tz_offset ) {
+					$ret->{$name}{tz_offset} = $stop->tz_offset;
+				}
 				if (    ( $stop->arr_cancelled or not $stop->sched_arr )
 					and ( $stop->dep_cancelled or not $stop->sched_dep ) )
 				{
