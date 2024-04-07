@@ -536,7 +536,10 @@ sub startup {
 
 			my $promise = Mojo::Promise->new;
 
-			$self->hafas->get_journey_p( trip_id => $train_id )->then(
+			$self->hafas->get_journey_p(
+				trip_id       => $train_id,
+				with_polyline => 1
+			)->then(
 				sub {
 					my ($journey) = @_;
 					my $found;
@@ -578,6 +581,93 @@ sub startup {
 						db   => $db,
 						data => { trip_id => $journey->id }
 					);
+
+					my $polyline;
+					if ( $journey->polyline ) {
+						my @station_list;
+						my @coordinate_list;
+						for my $coord ( $journey->polyline ) {
+							if ( $coord->{name} ) {
+								push(
+									@coordinate_list,
+									[
+										$coord->{lon}, $coord->{lat},
+										$coord->{eva}
+									]
+								);
+								push( @station_list, $coord->{name} );
+							}
+							else {
+								push( @coordinate_list,
+									[ $coord->{lon}, $coord->{lat} ] );
+							}
+						}
+
+						# equal length → polyline only consists of straight
+						# lines between stops. that's not helpful.
+						if ( @station_list == @coordinate_list ) {
+							$self->log->debug( 'Ignoring polyline for '
+								  . $journey->line
+								  . ' as it only consists of straight lines between stops.'
+							);
+						}
+						else {
+							$polyline = {
+								from_eva => ( $journey->route )[0]->loc->eva,
+								to_eva   => ( $journey->route )[-1]->loc->eva,
+								coords   => \@coordinate_list,
+							};
+						}
+					}
+
+					if ($polyline) {
+						my $coords   = $polyline->{coords};
+						my $from_eva = $polyline->{from_eva};
+						my $to_eva   = $polyline->{to_eva};
+
+						my $polyline_str = JSON->new->encode($coords);
+
+						my $pl_res = $db->select(
+							'polylines',
+							['id'],
+							{
+								origin_eva      => $from_eva,
+								destination_eva => $to_eva,
+								polyline        => $polyline_str
+							},
+							{ limit => 1 }
+						);
+
+						my $polyline_id;
+						if ( my $h = $pl_res->hash ) {
+							$polyline_id = $h->{id};
+						}
+						else {
+							eval {
+								$polyline_id = $db->insert(
+									'polylines',
+									{
+										origin_eva      => $from_eva,
+										destination_eva => $to_eva,
+										polyline        => $polyline_str
+									},
+									{ returning => 'id' }
+								)->hash->{id};
+							};
+							if ($@) {
+								$self->log->warn(
+									"add_route_timestamps: insert polyline: $@"
+								);
+							}
+						}
+						if ($polyline_id) {
+							$self->in_transit->set_polyline_id(
+								uid         => $uid,
+								db          => $db,
+								polyline_id => $polyline_id
+							);
+						}
+					}
 
 					# mustn't be called during a transaction
 					if ( not $opt{in_transaction} ) {

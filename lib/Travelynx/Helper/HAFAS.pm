@@ -172,7 +172,7 @@ sub get_journey_p {
 		journey => {
 			id => $opt{trip_id},
 		},
-		with_polyline => 0,
+		with_polyline => $opt{with_polyline},
 		cache         => $self->{realtime_cache},
 		promise       => 'Mojo::Promise',
 		user_agent    => $self->{user_agent}->request_timeout(10),
