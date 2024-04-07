@@ -20,7 +20,8 @@ sub run {
 		$self->help;
 	}
 	elsif ( $command eq 'csv' ) {
-		open( my $fh, '>', $filename ) or die("open($filename): $!\n");
+		open( my $fh, '>:encoding(utf-8)', $filename )
+		  or die("open($filename): $!\n");
 
 		my $csv = Text::CSV->new( { eol => "\r\n" } );
 		$csv->combine(qw(name eva lat lon source archived));
