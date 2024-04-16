@@ -560,15 +560,15 @@ DISTRIBUTIONS
       parent 0
       strict 0
       warnings 0
-  DateTime-Locale-1.40
-    pathname: D/DR/DROLSKY/DateTime-Locale-1.40.tar.gz
+  DateTime-Locale-1.41
+    pathname: D/DR/DROLSKY/DateTime-Locale-1.41.tar.gz
     provides:
-      DateTime::Locale 1.40
-      DateTime::Locale::Base 1.40
-      DateTime::Locale::Catalog 1.40
-      DateTime::Locale::Data 1.40
-      DateTime::Locale::FromData 1.40
-      DateTime::Locale::Util 1.40
+      DateTime::Locale 1.41
+      DateTime::Locale::Base 1.41
+      DateTime::Locale::Catalog 1.41
+      DateTime::Locale::Data 1.41
+      DateTime::Locale::FromData 1.41
+      DateTime::Locale::Util 1.41
     requirements:
       Carp 0
       Dist::CheckConflicts 0.02
@@ -2551,18 +2551,18 @@ DISTRIBUTIONS
       Test::Pod 0
       Travel::Status::DE::IRIS 1.2
       perl v5.20.0
-  Travel-Status-DE-DeutscheBahn-6.00
-    pathname: D/DE/DERF/Travel-Status-DE-DeutscheBahn-6.00.tar.gz
+  Travel-Status-DE-DeutscheBahn-6.03
+    pathname: D/DE/DERF/Travel-Status-DE-DeutscheBahn-6.03.tar.gz
     provides:
-      Travel::Status::DE::DeutscheBahn 6.00
-      Travel::Status::DE::HAFAS 6.00
-      Travel::Status::DE::HAFAS::Journey 6.00
-      Travel::Status::DE::HAFAS::Location 6.00
-      Travel::Status::DE::HAFAS::Message 6.00
-      Travel::Status::DE::HAFAS::Polyline 6.00
-      Travel::Status::DE::HAFAS::Product 6.00
-      Travel::Status::DE::HAFAS::Stop 6.00
-      Travel::Status::DE::HAFAS::StopFinder 6.00
+      Travel::Status::DE::DeutscheBahn 6.03
+      Travel::Status::DE::HAFAS 6.03
+      Travel::Status::DE::HAFAS::Journey 6.03
+      Travel::Status::DE::HAFAS::Location 6.03
+      Travel::Status::DE::HAFAS::Message 6.03
+      Travel::Status::DE::HAFAS::Polyline 6.03
+      Travel::Status::DE::HAFAS::Product 6.03
+      Travel::Status::DE::HAFAS::Stop 6.03
+      Travel::Status::DE::HAFAS::StopFinder 6.03
     requirements:
       Carp 0
       Class::Accessor 0.16
