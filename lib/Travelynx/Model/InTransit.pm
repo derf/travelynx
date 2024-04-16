@@ -122,6 +122,8 @@ sub add {
 	}
 	elsif ( $journey and $stop ) {
 		my @route;
+		my $product = $journey->product_at( $stop->loc->eva )
+		  // $journey->product;
 		for my $j_stop ( $journey->route ) {
 			push(
 				@route,
@@ -153,9 +155,9 @@ sub add {
 				checkin_station_id => $stop->loc->eva,
 				checkin_time => DateTime->now( time_zone => 'Europe/Berlin' ),
 				dep_platform => $stop->{platform},
-				train_type   => $journey->type // q{},
-				train_line   => $journey->line_no,
-				train_no     => $journey->number // q{},
+				train_type   => $product->type // q{},
+				train_line   => $product->line_no,
+				train_no     => $product->number // q{},
 				train_id     => $journey->id,
 				sched_departure => $stop->{sched_dep},
 				real_departure  => $stop->{rt_dep} // $stop->{sched_dep},
