@@ -621,52 +621,11 @@ sub startup {
 					}
 
 					if ($polyline) {
-						my $coords   = $polyline->{coords};
-						my $from_eva = $polyline->{from_eva};
-						my $to_eva   = $polyline->{to_eva};
-
-						my $polyline_str = JSON->new->encode($coords);
-
-						my $pl_res = $db->select(
-							'polylines',
-							['id'],
-							{
-								origin_eva      => $from_eva,
-								destination_eva => $to_eva,
-								polyline        => $polyline_str
-							},
-							{ limit => 1 }
+						$self->in_transit->set_polyline(
+							uid      => $uid,
+							db       => $db,
+							polyline => $polyline,
 						);
-
-						my $polyline_id;
-						if ( my $h = $pl_res->hash ) {
-							$polyline_id = $h->{id};
-						}
-						else {
-							eval {
-								$polyline_id = $db->insert(
-									'polylines',
-									{
-										origin_eva      => $from_eva,
-										destination_eva => $to_eva,
-										polyline        => $polyline_str
-									},
-									{ returning => 'id' }
-								)->hash->{id};
-							};
-							if ($@) {
-								$self->log->warn(
-									"add_route_timestamps: insert polyline: $@"
-								);
-							}
-						}
-						if ($polyline_id) {
-							$self->in_transit->set_polyline_id(
-								uid         => $uid,
-								db          => $db,
-								polyline_id => $polyline_id
-							);
-						}
 					}
 
 					# mustn't be called during a transaction
@@ -1372,57 +1331,12 @@ sub startup {
 					);
 
 					if ($polyline) {
-						my $coords   = $polyline->{coords};
-						my $from_eva = $polyline->{from_eva};
-						my $to_eva   = $polyline->{to_eva};
-
-						my $polyline_str = JSON->new->encode($coords);
-
-						my $pl_res = $db->select(
-							'polylines',
-							['id'],
-							{
-								origin_eva      => $from_eva,
-								destination_eva => $to_eva,
-								polyline        => $polyline_str
-							},
-							{ limit => 1 }
+						$self->in_transit->set_polyline(
+							uid      => $uid,
+							db       => $db,
+							polyline => $polyline,
+							old_id   => $in_transit->{polyline_id},
 						);
-
-						my $polyline_id;
-						if ( my $h = $pl_res->hash ) {
-							$polyline_id = $h->{id};
-						}
-						else {
-							eval {
-								$polyline_id = $db->insert(
-									'polylines',
-									{
-										origin_eva      => $from_eva,
-										destination_eva => $to_eva,
-										polyline        => $polyline_str
-									},
-									{ returning => 'id' }
-								)->hash->{id};
-							};
-							if ($@) {
-								$self->app->log->warn(
-									"add_route_timestamps: insert polyline: $@"
-								);
-							}
-						}
-						if (
-							$polyline_id
-							and ( not $in_transit->{polyline_id}
-								or $polyline_id != $in_transit->{polyline_id} )
-						  )
-						{
-							$self->in_transit->set_polyline_id(
-								uid         => $uid,
-								db          => $db,
-								polyline_id => $polyline_id
-							);
-						}
 					}
 
 					return;
