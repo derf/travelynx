@@ -255,7 +255,7 @@ function tvly_reg_handlers() {
 			checkin: link.data('checkin'),
 			checkout: link.data('checkout'),
 		};
-		var really_delete = confirm("Diese Zugfahrt wirklich löschen? Der Eintrag wird sofort aus der Datenbank entfernt und kann nicht wiederhergestellt werden.");
+		var really_delete = confirm("Diese Fahrt wirklich löschen? Der Eintrag wird sofort aus der Datenbank entfernt und kann nicht wiederhergestellt werden.");
 		if (really_delete) {
 			tvly_run(link, req);
 		}
