@@ -10,8 +10,6 @@
 			Übersichtlichere Darstellung vergangener Fahrten.
 			Patch von Cass Dingenskirchen, vielen Dank!
 		</p>
-	</div>
-	<div class="col s12 m11 l11">
 		<p>
 			<i class="material-icons left" aria-label="Neues Feature">add</i>
 			Nahverkehr (HAFAS-Backend): Checkins in Fahrten, die mehr als 30
