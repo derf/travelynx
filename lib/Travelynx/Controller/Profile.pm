@@ -334,7 +334,16 @@ sub user_status {
 	my $user = $self->users->get_privacy_by( name => $name );
 
 	if ( not $user ) {
-		$self->render( 'not_found', status => 404 );
+		$self->respond_to(
+			json => {
+				json   => { error => 'not found' },
+				status => 404,
+			},
+			any => {
+				template => 'not_found',
+				status   => 404
+			}
+		);
 		return;
 	}
 
@@ -389,11 +398,29 @@ sub user_status {
 					"/p/${name}/j/$journey->{id}?token=${token}-${ts}");
 			}
 			else {
-				$self->render( 'not_found', status => 404 );
+				$self->respond_to(
+					json => {
+						json   => { error => 'not found' },
+						status => 404,
+					},
+					any => {
+						template => 'not_found',
+						status   => 404
+					}
+				);
 			}
 			return;
 		}
-		$self->render( 'not_found', status => 404 );
+		$self->respond_to(
+			json => {
+				json   => { error => 'not found' },
+				status => 404,
+			},
+			any => {
+				template => 'not_found',
+				status   => 404
+			}
+		);
 		return;
 	}
 
