@@ -2358,8 +2358,10 @@ sub startup {
 	$r->get('/recover')->to('account#request_password_reset');
 	$r->get('/recover/:id/:token')->to('account#recover_password');
 	$r->get('/reg/:id/:token')->to('account#verify');
-	$r->get('/status/:name')->to('profile#user_status');
-	$r->get('/status/:name/:ts')->to('profile#user_status');
+	$r->get( '/status/:name' => [ format => [ 'html', 'json' ] ] )
+	  ->to( 'profile#user_status', format => undef );
+	$r->get( '/status/:name/:ts' => [ format => [ 'html', 'json' ] ] )
+	  ->to( 'profile#user_status', format => undef );
 	$r->get('/ajax/status/#name')->to('profile#status_card');
 	$r->get('/ajax/status/:name/:ts')->to('profile#status_card');
 	$r->get('/p/:name')->to('profile#profile');
