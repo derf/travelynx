@@ -47,6 +47,16 @@ sub epoch_to_dt {
 	);
 }
 
+sub epoch_or_dt_to_dt {
+	my ($input) = @_;
+
+	if ( ref($input) eq 'DateTime' ) {
+		return $input;
+	}
+
+	return epoch_to_dt($input);
+}
+
 sub new {
 	my ( $class, %opt ) = @_;
 
@@ -273,31 +283,25 @@ sub postprocess {
 			# station is present several times in a train's route, e.g.
 			# for Frankfurt Flughafen in some nightly connections.
 			my $times = $station->[2] // {};
-			if ( $times->{sched_arr}
-				and ref( $times->{sched_arr} ) ne 'DateTime' )
-			{
-				$times->{sched_arr}
-				  = epoch_to_dt( $times->{sched_arr} );
-				if ( $times->{rt_arr} ) {
-					$times->{rt_arr}
-					  = epoch_to_dt( $times->{rt_arr} );
-					$times->{arr_delay}
-					  = $times->{rt_arr}->epoch - $times->{sched_arr}->epoch;
+			for my $key (qw(sched_arr rt_arr sched_dep rt_dep)) {
+				if ( $times->{$key} ) {
+					$times->{$key}
+					  = epoch_or_dt_to_dt( $times->{$key} );
 				}
+			}
+			if ( $times->{sched_arr} and $times->{rt_arr} ) {
+				$times->{arr_delay}
+				  = $times->{rt_arr}->epoch - $times->{sched_arr}->epoch;
+			}
+			if ( $times->{sched_arr} or $times->{rt_arr} ) {
 				$times->{arr} = $times->{rt_arr} || $times->{sched_arr};
 				$times->{arr_countdown} = $times->{arr}->epoch - $epoch;
 			}
-			if ( $times->{sched_dep}
-				and ref( $times->{sched_dep} ) ne 'DateTime' )
-			{
-				$times->{sched_dep}
-				  = epoch_to_dt( $times->{sched_dep} );
-				if ( $times->{rt_dep} ) {
-					$times->{rt_dep}
-					  = epoch_to_dt( $times->{rt_dep} );
-					$times->{dep_delay}
-					  = $times->{rt_dep}->epoch - $times->{sched_dep}->epoch;
-				}
+			if ( $times->{sched_dep} and $times->{rt_dep} ) {
+				$times->{dep_delay}
+				  = $times->{rt_dep}->epoch - $times->{sched_dep}->epoch;
+			}
+			if ( $times->{sched_dep} or $times->{rt_dep} ) {
 				$times->{dep} = $times->{rt_dep} || $times->{sched_dep};
 				$times->{dep_countdown} = $times->{dep}->epoch - $epoch;
 			}
