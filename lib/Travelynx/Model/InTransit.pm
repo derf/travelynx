@@ -221,8 +221,15 @@ sub postprocess {
 		if ($is_after) {
 			push( @route_after, $station );
 		}
-		if (    $ret->{dep_name}
-			and $station->[0] eq $ret->{dep_name} )
+
+		# Note that the departure stop may be present more than once in @route,
+		# e.g. when traveling along ring lines such as S41 / S42 in Berlin.
+		if (
+			    $ret->{dep_name}
+			and $station->[0] eq $ret->{dep_name}
+			and not($station->[2]{sched_dep}
+				and $station->[2]{sched_dep} < $ret->{sched_dep_ts} )
+		  )
 		{
 			$is_after = 1;
 			if ( @{$station} > 1 and not $dep_info ) {
