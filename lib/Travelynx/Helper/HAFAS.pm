@@ -199,7 +199,7 @@ sub get_journey_p {
 	return $promise;
 }
 
-sub get_route_timestamps_p {
+sub get_route_p {
 	my ( $self, %opt ) = @_;
 
 	my $promise = Mojo::Promise->new;
@@ -219,13 +219,12 @@ sub get_route_timestamps_p {
 		sub {
 			my ($hafas) = @_;
 			my $journey = $hafas->result;
-			my $ret     = {};
+			my $ret     = [];
 			my $polyline;
 
 			my $station_is_past = 1;
 			for my $stop ( $journey->route ) {
-				my $name = $stop->loc->name;
-				$ret->{$name} = $ret->{ $stop->loc->eva } = {
+				my $entry = {
 					name      => $stop->loc->name,
 					eva       => $stop->loc->eva,
 					sched_arr => _epoch( $stop->sched_arr ),
@@ -237,26 +236,27 @@ sub get_route_timestamps_p {
 					load      => $stop->load
 				};
 				if ( $stop->tz_offset ) {
-					$ret->{$name}{tz_offset} = $stop->tz_offset;
+					$entry->{tz_offset} = $stop->tz_offset;
 				}
 				if (    ( $stop->arr_cancelled or not $stop->sched_arr )
 					and ( $stop->dep_cancelled or not $stop->sched_dep ) )
 				{
-					$ret->{$name}{isCancelled} = 1;
+					$entry->{isCancelled} = 1;
 				}
 				if (
 					    $station_is_past
-					and not $ret->{$name}{isCancelled}
+					and not $entry->{isCancelled}
 					and $now->epoch < (
-						$ret->{$name}{rt_arr} // $ret->{$name}{rt_dep}
-						  // $ret->{$name}{sched_arr}
-						  // $ret->{$name}{sched_dep} // $now->epoch
+						$entry->{rt_arr} // $entry->{rt_dep}
+						  // $entry->{sched_arr} // $entry->{sched_dep}
+						  // $now->epoch
 					)
 				  )
 				{
 					$station_is_past = 0;
 				}
-				$ret->{$name}{isPast} = $station_is_past;
+				$entry->{isPast} = $station_is_past;
+				push( @{$ret}, $entry );
 			}
 
 			if ( $journey->polyline ) {

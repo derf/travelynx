@@ -1243,6 +1243,7 @@ sub startup {
 
 			my $route = $in_transit->{route};
 
+			# TODO get_tripid_p is only needed on the first call, afterwards the tripid is known.
 			$self->hafas->get_tripid_p( train => $train )->then(
 				sub {
 					my ($trip_id) = @_;
@@ -1253,7 +1254,7 @@ sub startup {
 						data => { trip_id => $trip_id }
 					);
 
-					return $self->hafas->get_route_timestamps_p(
+					return $self->hafas->get_route_p(
 						train         => $train,
 						trip_id       => $trip_id,
 						with_polyline => (
@@ -1264,42 +1265,53 @@ sub startup {
 				}
 			)->then(
 				sub {
-					my ( $route_data, $journey, $polyline ) = @_;
+					my ( $new_route, $journey, $polyline ) = @_;
+					my $db_route;
 
-					for my $station ( @{$route} ) {
-						if ( $station->[0]
-							=~ m{^Betriebsstelle nicht bekannt (\d+)$} )
-						{
-							my $eva = $1;
-							if ( $route_data->{$eva} ) {
-								$station->[0] = $route_data->{$eva}{name};
-								$station->[1] = $route_data->{$eva}{eva};
+					for my $i ( 0 .. $#{$new_route} ) {
+						my $old_name  = $route->[$i][0];
+						my $old_eva   = $route->[$i][1];
+						my $old_entry = $route->[$i][2];
+						my $new_name  = $new_route->[$i]->{name};
+						my $new_eva   = $new_route->[$i]->{eva};
+						my $new_entry = $new_route->[$i];
+
+						if ( $old_name eq $new_name ) {
+							if ( $old_entry->{rt_arr}
+								and not $new_entry->{rt_arr} )
+							{
+								$new_entry->{rt_arr} = $old_entry->{rt_arr};
+								$new_entry->{arr_delay}
+								  = $old_entry->{arr_delay};
+							}
+							if ( $old_entry->{rt_dep}
+								and not $new_entry->{rt_dep} )
+							{
+								$new_entry->{rt_dep} = $old_entry->{rt_dep};
+								$new_entry->{dep_delay}
+								  = $old_entry->{dep_delay};
 							}
 						}
-						if ( my $sd = $route_data->{ $station->[0] } ) {
-							$station->[1] = $sd->{eva};
-							if ( $station->[2]{isAdditional} ) {
-								$sd->{isAdditional} = 1;
-							}
-							if ( $station->[2]{isCancelled} ) {
-								$sd->{isCancelled} = 1;
-							}
 
-							# keep rt_dep / rt_arr if they are no longer present
-							my %old;
-							for my $k (qw(rt_arr rt_dep arr_delay dep_delay)) {
-								$old{$k} = $station->[2]{$k};
-							}
-							$station->[2] = $sd;
-							if ( not $station->[2]{rt_arr} ) {
-								$station->[2]{rt_arr}    = $old{rt_arr};
-								$station->[2]{arr_delay} = $old{arr_delay};
-							}
-							if ( not $station->[2]{rt_dep} ) {
-								$station->[2]{rt_dep}    = $old{rt_dep};
-								$station->[2]{dep_delay} = $old{dep_delay};
-							}
-						}
+						push(
+							@{$db_route},
+							[
+								$new_name,
+								$new_eva,
+								{
+									sched_arr    => $new_entry->{sched_arr},
+									rt_arr       => $new_entry->{rt_arr},
+									arr_delay    => $new_entry->{arr_delay},
+									sched_dep    => $new_entry->{sched_dep},
+									rt_dep       => $new_entry->{rt_dep},
+									dep_delay    => $new_entry->{dep_delay},
+									tz_offset    => $new_entry->{tz_offset},
+									isAdditional => $new_entry->{isAdditional},
+									isCancelled  => $new_entry->{isCancelled},
+									load         => $new_entry->{load},
+								}
+							]
+						);
 					}
 
 					my @messages;
@@ -1318,7 +1330,7 @@ sub startup {
 					$self->in_transit->set_route_data(
 						uid            => $uid,
 						db             => $db,
-						route          => $route,
+						route          => $db_route,
 						delay_messages => [
 							map { [ $_->[0]->epoch, $_->[1] ] }
 							  $train->delay_messages
