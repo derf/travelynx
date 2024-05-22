@@ -1276,7 +1276,7 @@ sub startup {
 						my $new_eva   = $new_route->[$i]->{eva};
 						my $new_entry = $new_route->[$i];
 
-						if ( $old_name eq $new_name ) {
+						if ( defined $old_name and $old_name eq $new_name ) {
 							if ( $old_entry->{rt_arr}
 								and not $new_entry->{rt_arr} )
 							{
