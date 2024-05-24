@@ -1241,7 +1241,8 @@ sub startup {
 				return;
 			}
 
-			my $route = $in_transit->{route};
+			my $route    = $in_transit->{route};
+			my $train_id = $in_transit->{train_id};
 
 			# TODO get_tripid_p is only needed on the first call, afterwards the tripid is known.
 			$self->hafas->get_tripid_p( train => $train )->then(
@@ -1249,9 +1250,10 @@ sub startup {
 					my ($trip_id) = @_;
 
 					$self->in_transit->update_data(
-						uid  => $uid,
-						db   => $db,
-						data => { trip_id => $trip_id }
+						uid      => $uid,
+						db       => $db,
+						data     => { trip_id => $trip_id },
+						train_id => $train_id,
 					);
 
 					return $self->hafas->get_route_p(
@@ -1340,6 +1342,7 @@ sub startup {
 							  $train->qos_messages
 						],
 						him_messages => \@messages,
+						train_id     => $train_id,
 					);
 
 					if ($polyline) {
@@ -1348,6 +1351,7 @@ sub startup {
 							db       => $db,
 							polyline => $polyline,
 							old_id   => $in_transit->{polyline_id},
+							train_id => $train_id,
 						);
 					}
 
@@ -1421,14 +1425,16 @@ sub startup {
 								}
 							}
 							$self->in_transit->update_data(
-								uid  => $uid,
-								db   => $db,
-								data => $data
+								uid      => $uid,
+								db       => $db,
+								data     => $data,
+								train_id => $train_id,
 							);
 							$self->in_transit->update_user_data(
 								uid       => $uid,
 								db        => $db,
-								user_data => $user_data
+								user_data => $user_data,
+								train_id  => $train_id,
 							);
 						}
 						elsif ( not $is_departure
@@ -1436,9 +1442,10 @@ sub startup {
 						{
 							$data->{wagonorder_arr} = $wagonorder;
 							$self->in_transit->update_data(
-								uid  => $uid,
-								db   => $db,
-								data => $data
+								uid      => $uid,
+								db       => $db,
+								data     => $data,
+								train_id => $train_id,
 							);
 						}
 						return;
@@ -1458,9 +1465,10 @@ sub startup {
 						my $data = { stationinfo_dep => $station_info };
 
 						$self->in_transit->update_data(
-							uid  => $uid,
-							db   => $db,
-							data => $data
+							uid      => $uid,
+							db       => $db,
+							data     => $data,
+							train_id => $train_id,
 						);
 						return;
 					}
@@ -1479,9 +1487,10 @@ sub startup {
 						my $data = { stationinfo_arr => $station_info };
 
 						$self->in_transit->update_data(
-							uid  => $uid,
-							db   => $db,
-							data => $data
+							uid      => $uid,
+							db       => $db,
+							data     => $data,
+							train_id => $train_id,
 						);
 						return;
 					}

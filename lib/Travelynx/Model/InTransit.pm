@@ -577,7 +577,8 @@ sub set_polyline {
 		$self->set_polyline_id(
 			uid         => $uid,
 			db          => $db,
-			polyline_id => $polyline_id
+			polyline_id => $polyline_id,
+			train_id    => $opt{train_id},
 		);
 	}
 
@@ -590,11 +591,13 @@ sub set_polyline_id {
 	my $db          = $opt{db} // $self->{pg}->db;
 	my $polyline_id = $opt{polyline_id};
 
-	$db->update(
-		'in_transit',
-		{ polyline_id => $polyline_id },
-		{ user_id     => $uid }
-	);
+	my %where = ( user_id => $uid );
+
+	if ( $opt{train_id} ) {
+		$where{train_id} = $opt{train_id};
+	}
+
+	$db->update( 'in_transit', { polyline_id => $polyline_id }, \%where );
 }
 
 sub set_route_data {
@@ -606,6 +609,12 @@ sub set_route_data {
 	my $delay_msg = $opt{delay_messages};
 	my $qos_msg   = $opt{qos_messages};
 	my $him_msg   = $opt{him_messages};
+
+	my %where = ( user_id => $uid );
+
+	if ( $opt{train_id} ) {
+		$where{train_id} = $opt{train_id};
+	}
 
 	my $res_h = $db->select( 'in_transit', ['data'], { user_id => $uid } )
 	  ->expand->hash;
@@ -623,7 +632,7 @@ sub set_route_data {
 			route => JSON->new->encode($route),
 			data  => JSON->new->encode($data)
 		},
-		{ user_id => $uid }
+		\%where
 	);
 }
 
@@ -850,6 +859,12 @@ sub update_data {
 	my $db       = $opt{db}   // $self->{pg}->db;
 	my $new_data = $opt{data} // {};
 
+	my %where = ( user_id => $uid );
+
+	if ( $opt{train_id} ) {
+		$where{train_id} = $opt{train_id};
+	}
+
 	my $res_h = $db->select( 'in_transit', ['data'], { user_id => $uid } )
 	  ->expand->hash;
 
@@ -859,11 +874,7 @@ sub update_data {
 		$data->{$k} = $v;
 	}
 
-	$db->update(
-		'in_transit',
-		{ data    => JSON->new->encode($data) },
-		{ user_id => $uid }
-	);
+	$db->update( 'in_transit', { data => JSON->new->encode($data) }, \%where );
 }
 
 sub update_user_data {
@@ -872,6 +883,12 @@ sub update_user_data {
 	my $uid      = $opt{uid};
 	my $db       = $opt{db}        // $self->{pg}->db;
 	my $new_data = $opt{user_data} // {};
+
+	my %where = ( user_id => $uid );
+
+	if ( $opt{train_id} ) {
+		$where{train_id} = $opt{train_id};
+	}
 
 	my $res_h = $db->select( 'in_transit', ['user_data'], { user_id => $uid } )
 	  ->expand->hash;
@@ -882,11 +899,8 @@ sub update_user_data {
 		$data->{$k} = $v;
 	}
 
-	$db->update(
-		'in_transit',
-		{ user_data => JSON->new->encode($data) },
-		{ user_id   => $uid }
-	);
+	$db->update( 'in_transit',
+		{ user_data => JSON->new->encode($data) }, \%where );
 }
 
 sub update_visibility {
