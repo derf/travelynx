@@ -183,6 +183,37 @@ DISTRIBUTIONS
       Test::More 0
       Text::PDF 0.29
       perl v5.6.0
+  CPAN-Meta-Requirements-2.143
+    pathname: R/RJ/RJBS/CPAN-Meta-Requirements-2.143.tar.gz
+    provides:
+      CPAN::Meta::Requirements 2.143
+      CPAN::Meta::Requirements::Range 2.143
+    requirements:
+      B 0
+      Carp 0
+      ExtUtils::MakeMaker 6.17
+      perl 5.010000
+      strict 0
+      version 0.88
+      warnings 0
+  CPAN-Requirements-Dynamic-0.001
+    pathname: L/LE/LEONT/CPAN-Requirements-Dynamic-0.001.tar.gz
+    provides:
+      CPAN::Requirements::Dynamic 0.001
+    requirements:
+      CPAN::Meta::Prereqs 0
+      CPAN::Meta::Requirements::Range 0
+      Carp 0
+      ExtUtils::Config 0
+      ExtUtils::HasCompiler 0
+      ExtUtils::MakeMaker 0
+      IPC::Cmd 0
+      Module::Metadata 0
+      Parse::CPAN::Meta 0
+      Perl::OSType 0
+      perl 5.006
+      strict 0
+      warnings 0
   Cache-2.11
     pathname: S/SH/SHLOMIF/Cache-2.11.tar.gz
     provides:
@@ -560,15 +591,15 @@ DISTRIBUTIONS
       parent 0
       strict 0
       warnings 0
-  DateTime-Locale-1.41
-    pathname: D/DR/DROLSKY/DateTime-Locale-1.41.tar.gz
+  DateTime-Locale-1.42
+    pathname: D/DR/DROLSKY/DateTime-Locale-1.42.tar.gz
     provides:
-      DateTime::Locale 1.41
-      DateTime::Locale::Base 1.41
-      DateTime::Locale::Catalog 1.41
-      DateTime::Locale::Data 1.41
-      DateTime::Locale::FromData 1.41
-      DateTime::Locale::Util 1.41
+      DateTime::Locale 1.42
+      DateTime::Locale::Base 1.42
+      DateTime::Locale::Catalog 1.42
+      DateTime::Locale::Data 1.42
+      DateTime::Locale::FromData 1.42
+      DateTime::Locale::Util 1.42
     requirements:
       Carp 0
       Dist::CheckConflicts 0.02
@@ -1130,13 +1161,16 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 6.17
       perl 5.006001
-  ExtUtils-Config-0.008
-    pathname: L/LE/LEONT/ExtUtils-Config-0.008.tar.gz
+  ExtUtils-Config-0.009
+    pathname: L/LE/LEONT/ExtUtils-Config-0.009.tar.gz
     provides:
-      ExtUtils::Config 0.008
+      ExtUtils::Config 0.009
+      ExtUtils::Config::MakeMaker 0.009
     requirements:
       Data::Dumper 0
-      ExtUtils::MakeMaker 6.30
+      ExtUtils::MakeMaker 0
+      ExtUtils::MakeMaker::Config 0
+      perl 5.006
       strict 0
       warnings 0
   ExtUtils-Depends-0.8001
@@ -1149,6 +1183,23 @@ DISTRIBUTIONS
       File::Spec 0
       IO::File 0
       perl 5.006
+  ExtUtils-HasCompiler-0.025
+    pathname: L/LE/LEONT/ExtUtils-HasCompiler-0.025.tar.gz
+    provides:
+      ExtUtils::HasCompiler 0.025
+    requirements:
+      Carp 0
+      DynaLoader 0
+      Exporter 0
+      ExtUtils::MakeMaker 0
+      ExtUtils::Mksymlists 0
+      File::Basename 0
+      File::Spec::Functions 0
+      File::Temp 0
+      base 0
+      perl 5.006
+      strict 0
+      warnings 0
   ExtUtils-Helpers-0.026
     pathname: L/LE/LEONT/ExtUtils-Helpers-0.026.tar.gz
     provides:
@@ -1167,10 +1218,10 @@ DISTRIBUTIONS
       perl 5.006
       strict 0
       warnings 0
-  ExtUtils-InstallPaths-0.012
-    pathname: L/LE/LEONT/ExtUtils-InstallPaths-0.012.tar.gz
+  ExtUtils-InstallPaths-0.013
+    pathname: L/LE/LEONT/ExtUtils-InstallPaths-0.013.tar.gz
     provides:
-      ExtUtils::InstallPaths 0.012
+      ExtUtils::InstallPaths 0.013
     requirements:
       Carp 0
       ExtUtils::Config 0.002
@@ -1371,19 +1422,19 @@ DISTRIBUTIONS
       Time::Zone 0
       perl 5.006002
       strict 0
-  HTTP-Message-6.45
-    pathname: O/OA/OALDERS/HTTP-Message-6.45.tar.gz
+  HTTP-Message-6.46
+    pathname: O/OA/OALDERS/HTTP-Message-6.46.tar.gz
     provides:
-      HTTP::Config 6.45
-      HTTP::Headers 6.45
-      HTTP::Headers::Auth 6.45
-      HTTP::Headers::ETag 6.45
-      HTTP::Headers::Util 6.45
-      HTTP::Message 6.45
-      HTTP::Request 6.45
-      HTTP::Request::Common 6.45
-      HTTP::Response 6.45
-      HTTP::Status 6.45
+      HTTP::Config 6.46
+      HTTP::Headers 6.46
+      HTTP::Headers::Auth 6.46
+      HTTP::Headers::ETag 6.46
+      HTTP::Headers::Util 6.46
+      HTTP::Message 6.46
+      HTTP::Request 6.46
+      HTTP::Request::Common 6.46
+      HTTP::Response 6.46
+      HTTP::Status 6.46
     requirements:
       Carp 0
       Clone 0.46
@@ -1562,39 +1613,39 @@ DISTRIBUTIONS
     requirements:
       Exporter 5.57
       Module::Build 0.4004
-  MIME-tools-5.514
-    pathname: D/DS/DSKOLL/MIME-tools-5.514.tar.gz
+  MIME-tools-5.515
+    pathname: D/DS/DSKOLL/MIME-tools-5.515.tar.gz
     provides:
-      MIME::Body 5.514
-      MIME::Body::File 5.514
-      MIME::Body::InCore 5.514
-      MIME::Body::Scalar 5.514
-      MIME::Decoder 5.514
-      MIME::Decoder::Base64 5.514
-      MIME::Decoder::BinHex 5.514
-      MIME::Decoder::Binary 5.514
-      MIME::Decoder::Gzip64 5.514
-      MIME::Decoder::NBit 5.514
-      MIME::Decoder::QuotedPrint 5.514
-      MIME::Decoder::UU 5.514
-      MIME::Entity 5.514
-      MIME::Field::ConTraEnc 5.514
-      MIME::Field::ContDisp 5.514
-      MIME::Field::ContType 5.514
-      MIME::Field::ParamVal 5.514
-      MIME::Head 5.514
-      MIME::Parser 5.514
+      MIME::Body 5.515
+      MIME::Body::File 5.515
+      MIME::Body::InCore 5.515
+      MIME::Body::Scalar 5.515
+      MIME::Decoder 5.515
+      MIME::Decoder::Base64 5.515
+      MIME::Decoder::BinHex 5.515
+      MIME::Decoder::Binary 5.515
+      MIME::Decoder::Gzip64 5.515
+      MIME::Decoder::NBit 5.515
+      MIME::Decoder::QuotedPrint 5.515
+      MIME::Decoder::UU 5.515
+      MIME::Entity 5.515
+      MIME::Field::ConTraEnc 5.515
+      MIME::Field::ContDisp 5.515
+      MIME::Field::ContType 5.515
+      MIME::Field::ParamVal 5.515
+      MIME::Head 5.515
+      MIME::Parser 5.515
       MIME::Parser::FileInto undef
       MIME::Parser::FileUnder undef
       MIME::Parser::Filer undef
       MIME::Parser::Reader undef
       MIME::Parser::Results undef
-      MIME::Tools 5.514
+      MIME::Tools 5.515
       MIME::WordDecoder undef
       MIME::WordDecoder::ISO_8859 undef
       MIME::WordDecoder::US_ASCII undef
       MIME::WordDecoder::UTF_8 undef
-      MIME::Words 5.514
+      MIME::Words 5.515
     requirements:
       ExtUtils::MakeMaker 6.59
       File::Path 1
@@ -1694,12 +1745,13 @@ DISTRIBUTIONS
       Text::ParseWords 0
       perl 5.006001
       version 0.87
-  Module-Build-Tiny-0.047
-    pathname: L/LE/LEONT/Module-Build-Tiny-0.047.tar.gz
+  Module-Build-Tiny-0.048
+    pathname: L/LE/LEONT/Module-Build-Tiny-0.048.tar.gz
     provides:
-      Module::Build::Tiny 0.047
+      Module::Build::Tiny 0.048
     requirements:
       CPAN::Meta 0
+      CPAN::Requirements::Dynamic 0
       DynaLoader 0
       Exporter 5.57
       ExtUtils::CBuilder 0
@@ -1771,14 +1823,15 @@ DISTRIBUTIONS
       Mojolicious 8.50
       SQL::Abstract::Pg 1.0
       perl 5.016
-  Mojolicious-9.36
-    pathname: S/SR/SRI/Mojolicious-9.36.tar.gz
+  Mojolicious-9.37
+    pathname: S/SR/SRI/Mojolicious-9.37.tar.gz
     provides:
       Mojo undef
       Mojo::Asset undef
       Mojo::Asset::File undef
       Mojo::Asset::Memory undef
       Mojo::Base undef
+      Mojo::BaseUtil undef
       Mojo::ByteStream undef
       Mojo::Cache undef
       Mojo::Collection undef
@@ -1840,7 +1893,7 @@ DISTRIBUTIONS
       Mojo::UserAgent::Transactor undef
       Mojo::Util undef
       Mojo::WebSocket undef
-      Mojolicious 9.36
+      Mojolicious 9.37
       Mojolicious::Command undef
       Mojolicious::Command::Author::cpanify undef
       Mojolicious::Command::Author::generate undef
@@ -2056,11 +2109,11 @@ DISTRIBUTIONS
       overload 0
       strict 0
       warnings 0
-  Path-Tiny-0.144
-    pathname: D/DA/DAGOLDEN/Path-Tiny-0.144.tar.gz
+  Path-Tiny-0.146
+    pathname: D/DA/DAGOLDEN/Path-Tiny-0.146.tar.gz
     provides:
-      Path::Tiny 0.144
-      Path::Tiny::Error 0.144
+      Path::Tiny 0.146
+      Path::Tiny::Error 0.146
     requirements:
       Carp 0
       Cwd 0
@@ -2263,17 +2316,16 @@ DISTRIBUTIONS
       perl 5.006
       strict 0
       warnings 0
-  Test-Compile-v3.3.1
-    pathname: E/EG/EGILES/Test-Compile-v3.3.1.tar.gz
+  Test-Compile-v3.3.3
+    pathname: E/EG/EGILES/Test-Compile-v3.3.3.tar.gz
     provides:
-      Test::Compile v3.3.1
-      Test::Compile::Internal v3.3.1
+      Test::Compile v3.3.3
+      Test::Compile::Internal v3.3.3
     requirements:
       Exporter 5.68
       Module::Build 0.38
       parent 0.225
       perl v5.10.0
-      version 0.77
   Test-Deep-1.204
     pathname: R/RJ/RJBS/Test-Deep-1.204.tar.gz
     provides:
@@ -2580,12 +2632,12 @@ DISTRIBUTIONS
       Test::More 0
       Test::Pod 0
       perl v5.14.0
-  Travel-Status-DE-IRIS-1.96
-    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.96.tar.gz
+  Travel-Status-DE-IRIS-1.97
+    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.97.tar.gz
     provides:
-      Travel::Status::DE::IRIS 1.96
-      Travel::Status::DE::IRIS::Result 1.96
-      Travel::Status::DE::IRIS::Stations 1.96
+      Travel::Status::DE::IRIS 1.97
+      Travel::Status::DE::IRIS::Result 1.97
+      Travel::Status::DE::IRIS::Stations 1.97
     requirements:
       Carp 0
       Class::Accessor 0
