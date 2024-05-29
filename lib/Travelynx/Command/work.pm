@@ -60,7 +60,7 @@ sub run {
 						return;
 					}
 
-					if ( $found_dep->{rt_dep} ) {
+					if ( $found_dep->rt_dep ) {
 						$self->app->in_transit->update_departure_hafas(
 							uid     => $uid,
 							journey => $journey,
@@ -68,9 +68,15 @@ sub run {
 							dep_eva => $dep,
 							arr_eva => $arr
 						);
+						if (    $journey->class <= 16
+							and $found_dep->rt_dep->epoch > $now->epoch )
+						{
+							$self->app->add_wagonorder( $uid, 1, $train_id,
+								$found_dep->sched_dep, $journey->number );
+						}
 					}
 
-					if ( $found_arr and $found_arr->{rt_arr} ) {
+					if ( $found_arr and $found_arr->rt_arr ) {
 						$self->app->in_transit->update_arrival_hafas(
 							uid     => $uid,
 							journey => $journey,
@@ -78,6 +84,12 @@ sub run {
 							dep_eva => $dep,
 							arr_eva => $arr
 						);
+						if (    $journey->class <= 16
+							and $now->epoch - $found_dep->rt_arr->epoch > 600 )
+						{
+							$self->app->add_wagonorder( $uid, 0, $train_id,
+								$found_dep->sched_dep, $journey->number );
+						}
 					}
 				}
 			)->catch(

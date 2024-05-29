@@ -633,6 +633,10 @@ sub startup {
 					# mustn't be called during a transaction
 					if ( not $opt{in_transaction} ) {
 						$self->run_hook( $uid, 'checkin' );
+						if ( $journey->class <= 16 ) {
+							$self->app->add_wagonorder( $uid, 1, $journey->id,
+								$found->sched_dep, $journey->number );
+						}
 					}
 
 					$promise->resolve($journey);
@@ -1232,7 +1236,7 @@ sub startup {
 
 			my $db = $self->pg->db;
 
-			if ($sched_departure) {
+			if ( $sched_departure and $train_no ) {
 				$self->dbdb->has_wagonorder_p( $sched_departure, $train_no )
 				  ->then(
 					sub {
