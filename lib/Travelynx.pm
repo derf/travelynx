@@ -506,6 +506,8 @@ sub startup {
 					# mustn't be called during a transaction
 					if ( not $opt{in_transaction} ) {
 						$self->add_route_timestamps( $uid, $train, 1 );
+						$self->add_wagonorder( $uid, 1, $train->train_id,
+							$train->sched_departure, $train->train_no );
 						$self->run_hook( $uid, 'checkin' );
 					}
 
@@ -992,6 +994,8 @@ sub startup {
 					if ( not $opt{in_transaction} ) {
 						$self->run_hook( $uid, 'update' );
 						$self->add_route_timestamps( $uid, $train, 0, 1 );
+						$self->add_wagonorder( $uid, 0, $train->train_id,
+							$train->sched_departure, $train->train_no );
 					}
 					$promise->resolve( 1, undef );
 					return;
@@ -1218,6 +1222,111 @@ sub startup {
 		}
 	);
 
+	$self->helper(
+		'add_wagonorder' => sub {
+			my ( $self, $uid, $is_departure, $train_id, $sched_departure,
+				$train_no )
+			  = @_;
+
+			$uid //= $self->current_user->{id};
+
+			my $db = $self->pg->db;
+
+			if ($sched_departure) {
+				$self->dbdb->has_wagonorder_p( $sched_departure, $train_no )
+				  ->then(
+					sub {
+						my ($api) = @_;
+						return $self->dbdb->get_wagonorder_p( $api,
+							$sched_departure, $train_no );
+					}
+				)->then(
+					sub {
+						my ($wagonorder) = @_;
+
+						my $data      = {};
+						my $user_data = {};
+
+						if ( $is_departure and not exists $wagonorder->{error} )
+						{
+							$data->{wagonorder_dep}   = $wagonorder;
+							$user_data->{wagongroups} = [];
+							for my $group (
+								@{
+									$wagonorder->{data}{istformation}
+									  {allFahrzeuggruppe} // []
+								}
+							  )
+							{
+								my @wagons;
+								for
+								  my $wagon ( @{ $group->{allFahrzeug} // [] } )
+								{
+									push(
+										@wagons,
+										{
+											id     => $wagon->{fahrzeugnummer},
+											number =>
+											  $wagon->{wagenordnungsnummer},
+											type => $wagon->{fahrzeugtyp},
+										}
+									);
+								}
+								push(
+									@{ $user_data->{wagongroups} },
+									{
+										name =>
+										  $group->{fahrzeuggruppebezeichnung},
+										from =>
+										  $group->{startbetriebsstellename},
+										to => $group->{zielbetriebsstellename},
+										no => $group->{verkehrlichezugnummer},
+										wagons => [@wagons],
+									}
+								);
+								if (    $group->{fahrzeuggruppebezeichnung}
+									and $group->{fahrzeuggruppebezeichnung} eq
+									'ICE0304' )
+								{
+									$data->{wagonorder_pride} = 1;
+								}
+							}
+							$self->in_transit->update_data(
+								uid      => $uid,
+								db       => $db,
+								data     => $data,
+								train_id => $train_id,
+							);
+							$self->in_transit->update_user_data(
+								uid       => $uid,
+								db        => $db,
+								user_data => $user_data,
+								train_id  => $train_id,
+							);
+						}
+						elsif ( not $is_departure
+							and not exists $wagonorder->{error} )
+						{
+							$data->{wagonorder_arr} = $wagonorder;
+							$self->in_transit->update_data(
+								uid      => $uid,
+								db       => $db,
+								data     => $data,
+								train_id => $train_id,
+							);
+						}
+						return;
+					}
+				)->catch(
+					sub {
+						# no wagonorder? no problem.
+						return;
+					}
+				)->wait;
+			}
+		}
+	);
+
 	# This helper is only ever called from an IRIS context.
 	# HAFAS already has all relevant information.
 	$self->helper(
@@ -1364,99 +1473,6 @@ sub startup {
 					return;
 				}
 			)->wait;
-
-			if ( $train->sched_departure ) {
-				$self->dbdb->has_wagonorder_p( $train->sched_departure,
-					$train->train_no )->then(
-					sub {
-						my ($api) = @_;
-						return $self->dbdb->get_wagonorder_p( $api,
-							$train->sched_departure, $train->train_no );
-					}
-				)->then(
-					sub {
-						my ($wagonorder) = @_;
-
-						my $data      = {};
-						my $user_data = {};
-
-						if ( $is_departure and not exists $wagonorder->{error} )
-						{
-							$data->{wagonorder_dep}   = $wagonorder;
-							$user_data->{wagongroups} = [];
-							for my $group (
-								@{
-									$wagonorder->{data}{istformation}
-									  {allFahrzeuggruppe} // []
-								}
-							  )
-							{
-								my @wagons;
-								for
-								  my $wagon ( @{ $group->{allFahrzeug} // [] } )
-								{
-									push(
-										@wagons,
-										{
-											id     => $wagon->{fahrzeugnummer},
-											number =>
-											  $wagon->{wagenordnungsnummer},
-											type => $wagon->{fahrzeugtyp},
-										}
-									);
-								}
-								push(
-									@{ $user_data->{wagongroups} },
-									{
-										name =>
-										  $group->{fahrzeuggruppebezeichnung},
-										from =>
-										  $group->{startbetriebsstellename},
-										to => $group->{zielbetriebsstellename},
-										no => $group->{verkehrlichezugnummer},
-										wagons => [@wagons],
-									}
-								);
-								if (    $group->{fahrzeuggruppebezeichnung}
-									and $group->{fahrzeuggruppebezeichnung} eq
-									'ICE0304' )
-								{
-									$data->{wagonorder_pride} = 1;
-								}
-							}
-							$self->in_transit->update_data(
-								uid      => $uid,
-								db       => $db,
-								data     => $data,
-								train_id => $train_id,
-							);
-							$self->in_transit->update_user_data(
-								uid       => $uid,
-								db        => $db,
-								user_data => $user_data,
-								train_id  => $train_id,
-							);
-						}
-						elsif ( not $is_departure
-							and not exists $wagonorder->{error} )
-						{
-							$data->{wagonorder_arr} = $wagonorder;
-							$self->in_transit->update_data(
-								uid      => $uid,
-								db       => $db,
-								data     => $data,
-								train_id => $train_id,
-							);
-						}
-						return;
-					}
-				)->catch(
-					sub {
-						# no wagonorder? no problem.
-						return;
-					}
-				)->wait;
-			}
 
 			if ($is_departure) {
 				$self->dbdb->get_stationinfo_p( $in_transit->{dep_eva} )->then(

@@ -171,6 +171,8 @@ sub run {
 				}
 				else {
 					$self->app->add_route_timestamps( $uid, $train, 1 );
+					$self->app->add_wagonorder( $uid, 1, $train->train_id,
+						$train->sched_departure, $train->train_no );
 				}
 			}
 		};
@@ -243,6 +245,8 @@ sub run {
 							  and $now->epoch > $entry->{real_arr_ts}
 						) ? 1 : 0
 					);
+					$self->app->add_wagonorder( $uid, 0, $train->train_id,
+						$train->sched_departure, $train->train_no );
 				}
 			}
 			elsif ( $entry->{real_arr_ts} ) {
