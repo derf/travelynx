@@ -362,11 +362,12 @@ sub startup {
 		dbdb => sub {
 			my ($self) = @_;
 			state $dbdb = Travelynx::Helper::DBDB->new(
-				log        => $self->app->log,
-				cache      => $self->app->cache_iris_main,
-				root_url   => $self->base_url_for('/')->to_abs,
-				user_agent => $self->ua,
-				version    => $self->app->config->{version},
+				log            => $self->app->log,
+				main_cache     => $self->app->cache_iris_main,
+				realtime_cache => $self->app->cache_iris_rt,
+				root_url       => $self->base_url_for('/')->to_abs,
+				user_agent     => $self->ua,
+				version        => $self->app->config->{version},
 			);
 		}
 	);

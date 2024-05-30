@@ -31,7 +31,7 @@ sub has_wagonorder_p {
 	my $api_ts = $ts->strftime('%Y%m%d%H%M');
 	my $url
 	  = "https://ist-wr.noncd.db.de/wagenreihung/1.0/${train_no}/${api_ts}";
-	my $cache   = $self->{cache};
+	my $cache   = $self->{realtime_cache};
 	my $promise = Mojo::Promise->new;
 
 	if ( my $content = $cache->get("HEAD $url") ) {
@@ -73,7 +73,7 @@ sub get_wagonorder_p {
 	my $url
 	  = "https://ist-wr.noncd.db.de/wagenreihung/1.0/${train_no}/${api_ts}";
 
-	my $cache   = $self->{cache};
+	my $cache   = $self->{realtime_cache};
 	my $promise = Mojo::Promise->new;
 
 	if ( my $content = $cache->thaw($url) ) {
@@ -113,7 +113,7 @@ sub get_stationinfo_p {
 
 	my $url = "https://lib.finalrewind.org/dbdb/s/${eva}.json";
 
-	my $cache   = $self->{cache};
+	my $cache   = $self->{main_cache};
 	my $promise = Mojo::Promise->new;
 
 	if ( my $content = $cache->thaw($url) ) {
