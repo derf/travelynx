@@ -508,6 +508,8 @@ sub startup {
 						$self->add_route_timestamps( $uid, $train, 1 );
 						$self->add_wagonorder( $uid, 1, $train->train_id,
 							$train->sched_departure, $train->train_no );
+						$self->add_stationinfo( $uid, 1, $train->train_id,
+							$eva );
 						$self->run_hook( $uid, 'checkin' );
 					}
 
@@ -636,6 +638,8 @@ sub startup {
 						if ( $journey->class <= 16 ) {
 							$self->app->add_wagonorder( $uid, 1, $journey->id,
 								$found->sched_dep, $journey->number );
+							$self->add_stationinfo( $uid, 1, $journey->id,
+								$found->loc->eva );
 						}
 					}
 
@@ -1000,6 +1004,8 @@ sub startup {
 						$self->add_route_timestamps( $uid, $train, 0, 1 );
 						$self->add_wagonorder( $uid, 0, $train->train_id,
 							$train->sched_departure, $train->train_no );
+						$self->add_stationinfo( $uid, 0, $train->train_id,
+							$dep_eva, $new_checkout_station_id );
 					}
 					$promise->resolve( 1, undef );
 					return;
@@ -1477,9 +1483,19 @@ sub startup {
 					return;
 				}
 			)->wait;
+		}
+	);
 
+	$self->helper(
+		'add_stationinfo' => sub {
+			my ( $self, $uid, $is_departure, $train_id, $dep_eva, $arr_eva )
+			  = @_;
+
+			$uid //= $self->current_user->{id};
+
+			my $db = $self->pg->db;
 			if ($is_departure) {
-				$self->dbdb->get_stationinfo_p( $in_transit->{dep_eva} )->then(
+				$self->dbdb->get_stationinfo_p($dep_eva)->then(
 					sub {
 						my ($station_info) = @_;
 						my $data = { stationinfo_dep => $station_info };
@@ -1500,8 +1516,8 @@ sub startup {
 				)->wait;
 			}
 
-			if ( $in_transit->{arr_eva} and not $is_departure ) {
-				$self->dbdb->get_stationinfo_p( $in_transit->{arr_eva} )->then(
+			if ( $arr_eva and not $is_departure ) {
+				$self->dbdb->get_stationinfo_p($arr_eva)->then(
 					sub {
 						my ($station_info) = @_;
 						my $data = { stationinfo_arr => $station_info };

@@ -73,6 +73,8 @@ sub run {
 						{
 							$self->app->add_wagonorder( $uid, 1, $train_id,
 								$found_dep->sched_dep, $journey->number );
+							$self->app->add_stationinfo( $uid, 1, $journey->id,
+								$found_dep->loc->eva );
 						}
 					}
 
@@ -89,6 +91,8 @@ sub run {
 						{
 							$self->app->add_wagonorder( $uid, 0, $train_id,
 								$found_dep->sched_dep, $journey->number );
+							$self->app->add_stationinfo( $uid, 0, $journey->id,
+								$found_dep->loc->eva, $found_arr->loc->eva );
 						}
 					}
 				}
@@ -185,6 +189,8 @@ sub run {
 					$self->app->add_route_timestamps( $uid, $train, 1 );
 					$self->app->add_wagonorder( $uid, 1, $train->train_id,
 						$train->sched_departure, $train->train_no );
+					$self->app->add_stationinfo( $uid, 1, $train->train_id,
+						$dep, $arr );
 				}
 			}
 		};
@@ -259,6 +265,8 @@ sub run {
 					);
 					$self->app->add_wagonorder( $uid, 0, $train->train_id,
 						$train->sched_departure, $train->train_no );
+					$self->app->add_stationinfo( $uid, 0, $train->train_id,
+						$dep, $arr );
 				}
 			}
 			elsif ( $entry->{real_arr_ts} ) {
