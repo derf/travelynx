@@ -36,9 +36,13 @@ sub has_wagonorder_p {
 
 	if ( my $content = $cache->get("HEAD $url") ) {
 		if ( $content eq 'n' ) {
+			$self->{log}
+			  ->debug("has_wagonorder_p(${train_no}/${api_ts}): n (cached)");
 			return $promise->reject;
 		}
 		else {
+			$self->{log}
+			  ->debug("has_wagonorder_p(${train_no}/${api_ts}): y (cached)");
 			return $promise->resolve($content);
 		}
 	}
@@ -48,10 +52,14 @@ sub has_wagonorder_p {
 		sub {
 			my ($tx) = @_;
 			if ( $tx->result->is_success ) {
+				$self->{log}
+				  ->debug("has_wagonorder_p(${train_no}/${api_ts}): a");
 				$cache->set( "HEAD $url", 'a' );
 				$promise->resolve('a');
 			}
 			else {
+				$self->{log}
+				  ->debug("has_wagonorder_p(${train_no}/${api_ts}): n");
 				$cache->set( "HEAD $url", 'n' );
 				$promise->reject;
 			}
@@ -59,6 +67,7 @@ sub has_wagonorder_p {
 		}
 	)->catch(
 		sub {
+			$self->{log}->debug("has_wagonorder_p(${train_no}/${api_ts}): n");
 			$cache->set( "HEAD $url", 'n' );
 			$promise->reject;
 			return;
@@ -77,6 +86,8 @@ sub get_wagonorder_p {
 	my $promise = Mojo::Promise->new;
 
 	if ( my $content = $cache->thaw($url) ) {
+		$self->{log}
+		  ->debug("get_wagonorder_p(${train_no}/${api_ts}): (cached)");
 		$promise->resolve($content);
 		return $promise;
 	}
@@ -89,11 +100,15 @@ sub get_wagonorder_p {
 			if ( $tx->result->is_success ) {
 				my $body = decode( 'utf-8', $tx->res->body );
 				my $json = JSON->new->decode($body);
+				$self->{log}
+				  ->debug("get_wagonorder_p(${train_no}/${api_ts}): success");
 				$cache->freeze( $url, $json );
 				$promise->resolve($json);
 			}
 			else {
 				my $code = $tx->code;
+				$self->{log}->debug(
+					"get_wagonorder_p(${train_no}/${api_ts}): HTTP ${code}");
 				$promise->reject("HTTP ${code}");
 			}
 			return;
@@ -101,6 +116,8 @@ sub get_wagonorder_p {
 	)->catch(
 		sub {
 			my ($err) = @_;
+			$self->{log}
+			  ->debug("get_wagonorder_p(${train_no}/${api_ts}): error ${err}");
 			$promise->reject($err);
 			return;
 		}
@@ -117,6 +134,7 @@ sub get_stationinfo_p {
 	my $promise = Mojo::Promise->new;
 
 	if ( my $content = $cache->thaw($url) ) {
+		$self->{log}->debug("get_stationinfo_p(${eva}): (cached)");
 		return $promise->resolve($content);
 	}
 
@@ -126,12 +144,16 @@ sub get_stationinfo_p {
 			my ($tx) = @_;
 
 			if ( my $err = $tx->error ) {
+				$self->{log}->debug(
+"get_stationinfo_p(${eva}): HTTP $err->{code} $err->{message}"
+				);
 				$cache->freeze( $url, {} );
 				$promise->reject("HTTP $err->{code} $err->{message}");
 				return;
 			}
 
 			my $json = $tx->result->json;
+			$self->{log}->debug("get_stationinfo_p(${eva}): success");
 			$cache->freeze( $url, $json );
 			$promise->resolve($json);
 			return;
@@ -139,6 +161,7 @@ sub get_stationinfo_p {
 	)->catch(
 		sub {
 			my ($err) = @_;
+			$self->{log}->debug("get_stationinfo_p(${eva}): Error ${err}");
 			$cache->freeze( $url, {} );
 			$promise->reject($err);
 			return;
