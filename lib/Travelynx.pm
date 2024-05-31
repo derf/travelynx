@@ -2422,7 +2422,8 @@ sub startup {
 	  ->to( 'profile#user_status', format => undef );
 	$r->get('/ajax/status/#name')->to('profile#status_card');
 	$r->get('/ajax/status/:name/:ts')->to('profile#status_card');
-	$r->get('/p/:name')->to('profile#profile');
+	$r->get( '/p/:name' => [ format => [ 'html', 'json' ] ] )
+	  ->to( 'profile#profile', format => undef );
 	$r->get( '/p/:name/j/:id' => 'public_journey' )
 	  ->to('profile#journey_details');
 	$r->get('/.well-known/webfinger')->to('account#webfinger');

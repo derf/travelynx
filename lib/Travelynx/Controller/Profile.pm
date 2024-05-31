@@ -152,34 +152,46 @@ sub profile {
 		@journeys = $self->journeys->get(%opt);
 	}
 
-	$self->render(
-		'profile',
-		title            => "travelynx: $name",
-		name             => $name,
-		uid              => $user->{id},
-		privacy          => $user,
-		bio              => $profile->{bio}{html},
-		metadata         => $profile->{metadata},
-		is_self          => $is_self,
-		following        => ( $relation and $relation eq 'follows' ) ? 1 : 0,
-		follow_requested => ( $relation and $relation eq 'requests_follow' )
-		? 1
-		: 0,
-		can_follow => ( $my_user and $user->{accept_follows} and not $relation )
-		? 1
-		: 0,
-		can_request_follow =>
-		  ( $my_user and $user->{accept_follow_requests} and not $relation )
-		? 1
-		: 0,
-		follows_me => ( $inverse_relation and $inverse_relation eq 'follows' )
-		? 1
-		: 0,
-		follow_reqs_me =>
-		  ( $inverse_relation and $inverse_relation eq 'requests_follow' ) ? 1
-		: 0,
-		journey  => $status,
-		journeys => [@journeys],
+	$self->respond_to(
+		json => {
+			json => {
+				name     => $name,
+				uid      => $user->{id},
+				bio      => $profile->{bio}{html},
+				metadata => $profile->{metadata},
+				journeys => [@journeys],
+			}
+		},
+		any => {
+			template  => 'profile',
+			title     => "travelynx: $name",
+			name      => $name,
+			uid       => $user->{id},
+			privacy   => $user,
+			bio       => $profile->{bio}{html},
+			metadata  => $profile->{metadata},
+			is_self   => $is_self,
+			following => ( $relation and $relation eq 'follows' ) ? 1 : 0,
+			follow_requested => ( $relation and $relation eq 'requests_follow' )
+			? 1
+			: 0,
+			can_follow =>
+			  ( $my_user and $user->{accept_follows} and not $relation ) ? 1
+			: 0,
+			can_request_follow => (
+				$my_user and $user->{accept_follow_requests} and not $relation
+			  ) ? 1
+			: 0,
+			follows_me =>
+			  ( $inverse_relation and $inverse_relation eq 'follows' ) ? 1
+			: 0,
+			follow_reqs_me => (
+				$inverse_relation and $inverse_relation eq 'requests_follow'
+			  ) ? 1
+			: 0,
+			journey  => $status,
+			journeys => [@journeys],
+		}
 	);
 }
 
