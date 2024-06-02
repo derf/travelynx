@@ -159,7 +159,6 @@ sub profile {
 				uid      => $user->{id},
 				bio      => $profile->{bio}{html},
 				metadata => $profile->{metadata},
-				journeys => [@journeys],
 			}
 		},
 		any => {
