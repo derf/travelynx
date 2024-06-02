@@ -87,7 +87,7 @@ sub run {
 							arr_eva => $arr
 						);
 						if (    $journey->class <= 16
-							and $found_dep->rt_arr->epoch - $now->epoch < 600 )
+							and $found_arr->rt_arr->epoch - $now->epoch < 600 )
 						{
 							$self->app->add_wagonorder( $uid, 0, $train_id,
 								$found_dep->sched_dep, $journey->number );
