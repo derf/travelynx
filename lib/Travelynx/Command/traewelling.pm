@@ -31,7 +31,7 @@ sub pull_sync {
 		}
 
 		if ( not defined $account_data->{data}{user_name} ) {
-			$self->app->log->error(
+			$self->app->log->debug(
 "travelynx user $account_data->{user_id} has a Traewellig connection, but no username"
 			);
 			next;
