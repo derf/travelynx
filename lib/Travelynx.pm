@@ -1080,7 +1080,7 @@ sub startup {
 					last;
 				}
 			}
-			if ( not $found ) {
+			if ( not $found and not $force ) {
 				return $promise->resolve( 1, 'station not found in route' );
 			}
 
