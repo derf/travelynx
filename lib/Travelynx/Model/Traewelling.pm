@@ -235,7 +235,10 @@ sub get_pull_accounts {
 	my $res = $self->{pg}->db->select(
 		'traewelling',
 		[ 'user_id', 'token', 'data' ],
-		{ pull_sync => 1 }
+		{
+			pull_sync => 1,
+			user_name => { '!=', undef },
+		}
 	);
 	return $res->expand->hashes->each;
 }
