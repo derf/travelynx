@@ -102,6 +102,8 @@ sub add {
 	my $json = JSON->new;
 
 	if ($train) {
+		my $backend_id
+		  = $db->select( 'backends', ['id'], { iris => 1 } )->hash->{id};
 		$db->insert(
 			'in_transit',
 			{
@@ -127,10 +129,19 @@ sub add {
 						: 0
 					}
 				),
+				backend_id => $backend_id,
 			}
 		);
 	}
 	elsif ( $journey and $stop ) {
+		my $backend_id = $db->select(
+			'backends',
+			['id'],
+			{
+				hafas => 1,
+				name  => 'DB'
+			}
+		)->hash->{id};
 		my @route;
 		my $product = $journey->product_at( $stop->loc->eva )
 		  // $journey->product;
@@ -173,6 +184,7 @@ sub add {
 				real_departure  => $stop->{rt_dep} // $stop->{sched_dep},
 				route           => $json->encode( \@route ),
 				data => JSON->new->encode( { rt => $stop->{rt_dep} ? 1 : 0 } ),
+				backend_id => $backend_id,
 			}
 		);
 	}

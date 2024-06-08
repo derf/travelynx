@@ -261,6 +261,13 @@
 	% if (stash('polyline_groups')) {
 		%= include '_map', station_coordinates => stash('station_coordinates'), polyline_groups => stash('polyline_groups')
 	% }
+	<div class="row">
+		<div class="col s12">
+			Backend:
+			<i class="material-icons tiny" aria-hidden="true"><%= $journey->{is_iris} ? 'train' : 'directions' %></i>
+			%= $journey->{backend_name} || 'IRIS'
+		</div>
+	</div>
 	% if (not stash('readonly')) {
 		% if (stash('with_share')) {
 			<div class="row">

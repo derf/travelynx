@@ -218,6 +218,7 @@ sub add {
 		edited              => 0x3fff,
 		cancelled           => $opt{cancelled} ? 1 : 0,
 		route               => JSON->new->encode( \@route ),
+		backend_id          => 1,
 	};
 
 	if ( $opt{comment} ) {
@@ -515,7 +516,7 @@ sub get {
 
 	my @select
 	  = (
-		qw(journey_id train_type train_line train_no checkin_ts sched_dep_ts real_dep_ts dep_eva dep_ds100 dep_name dep_lat dep_lon checkout_ts sched_arr_ts real_arr_ts arr_eva arr_ds100 arr_name arr_lat arr_lon cancelled edited route messages user_data visibility effective_visibility)
+		qw(journey_id is_iris is_hafas backend_name train_type train_line train_no checkin_ts sched_dep_ts real_dep_ts dep_eva dep_ds100 dep_name dep_lat dep_lon checkout_ts sched_arr_ts real_arr_ts arr_eva arr_ds100 arr_name arr_lat arr_lon cancelled edited route messages user_data visibility effective_visibility)
 	  );
 	my %where = (
 		user_id   => $uid,
@@ -573,6 +574,9 @@ sub get {
 
 		my $ref = {
 			id                   => $entry->{journey_id},
+			is_iris              => $entry->{is_iris},
+			is_hafas             => $entry->{is_hafas},
+			backend_name         => $entry->{backend_name},
 			type                 => $entry->{train_type},
 			line                 => $entry->{train_line},
 			no                   => $entry->{train_no},
