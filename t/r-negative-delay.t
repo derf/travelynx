@@ -82,7 +82,7 @@ $t->post_ok(
 		csrf_token      => $csrf_token,
 		action          => 'save',
 		train           => 'RE 42 11238',
-		dep_station     => 'EMST',
+		dep_station     => 'EMSTP',
 		sched_departure => '16.10.2018 17:36',
 		rt_departure    => '16.10.2018 17:35',
 		arr_station     => 'EG',

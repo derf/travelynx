@@ -78,7 +78,7 @@ $t->status_is(302)->header_is( location => '/' );
 $t->app->journeys->add(
 	db              => $t->app->pg->db,
 	uid             => $uid,
-	dep_station     => 'EMST',
+	dep_station     => 'EMSTP',
 	arr_station     => 'EG',
 	sched_departure => DateTime->new(
 		year      => 2018,
