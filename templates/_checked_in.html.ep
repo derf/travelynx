@@ -350,7 +350,7 @@
 				% }
 				<a style="margin-right: 0;" href="<%= $url %>"><i class="material-icons left" aria-hidden="true">timeline</i> Zuglauf</a>
 				% if ($journey->{extra_data}{trip_id}) {
-					<a class="right" style="margin-right: 0;" href="https://dbf.finalrewind.org/map/<%= $journey->{extra_data}{trip_id} %>/<%= $journey->{train_line} || 0 %>?from=<%= $journey->{dep_name} %>&amp;to=<%= $journey->{arr_name} %>&amp;dark=<%= (session('theme') and session('theme') eq 'dark') ? 1 : 0 %>"><i class="material-icons left" aria-hidden="true">map</i> Karte</a>
+					<a class="right" style="margin-right: 0;" href="https://dbf.finalrewind.org/map/<%= $journey->{extra_data}{trip_id} =~ s{#}{%23}gr %>/<%= $journey->{train_line} || 0 %>?from=<%= $journey->{dep_name} %>&amp;to=<%= $journey->{arr_name} %>&amp;dark=<%= (session('theme') and session('theme') eq 'dark') ? 1 : 0 %>"><i class="material-icons left" aria-hidden="true">map</i> Karte</a>
 				% }
 			</div>
 		</div>
