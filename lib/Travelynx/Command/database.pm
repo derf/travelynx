@@ -2049,7 +2049,123 @@ my @migrations = (
 				update schema_version set version = 52;
 			}
 		);
-	}
+	},
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				drop view in_transit_str;
+				drop view journeys_str;
+				drop view follows_in_transit;
+				alter table in_transit alter column train_id type varchar(384);
+				alter table journeys alter column train_id type varchar(384);
+				create view in_transit_str as select
+					user_id,
+					backend.iris as is_iris, backend.hafas as is_hafas,
+					backend.efa as is_efa, backend.ris as is_ris,
+					backend.name as backend_name,
+					train_type, train_line, train_no, train_id,
+					extract(epoch from checkin_time) as checkin_ts,
+					extract(epoch from sched_departure) as sched_dep_ts,
+					extract(epoch from real_departure) as real_dep_ts,
+					checkin_station_id as dep_eva,
+					dep_station.ds100 as dep_ds100,
+					dep_station.name as dep_name,
+					dep_station.lat as dep_lat,
+					dep_station.lon as dep_lon,
+					extract(epoch from checkout_time) as checkout_ts,
+					extract(epoch from sched_arrival) as sched_arr_ts,
+					extract(epoch from real_arrival) as real_arr_ts,
+					checkout_station_id as arr_eva,
+					arr_station.ds100 as arr_ds100,
+					arr_station.name as arr_name,
+					arr_station.lat as arr_lat,
+					arr_station.lon as arr_lon,
+					polyline_id,
+					polylines.polyline as polyline,
+					visibility,
+					coalesce(visibility, users.public_level & 127) as effective_visibility,
+					cancelled, route, messages, user_data,
+					dep_platform, arr_platform, data
+					from in_transit
+					left join polylines on polylines.id = polyline_id
+					left join users on users.id = user_id
+					left join stations as dep_station on checkin_station_id = dep_station.eva
+					left join stations as arr_station on checkout_station_id = arr_station.eva
+					left join backends as backend on backend_id = backend.id
+					;
+				create view journeys_str as select
+					journeys.id as journey_id, user_id,
+					backend.iris as is_iris, backend.hafas as is_hafas,
+					backend.efa as is_efa, backend.ris as is_ris,
+					backend.name as backend_name,
+					train_type, train_line, train_no, train_id,
+					extract(epoch from checkin_time) as checkin_ts,
+					extract(epoch from sched_departure) as sched_dep_ts,
+					extract(epoch from real_departure) as real_dep_ts,
+					checkin_station_id as dep_eva,
+					dep_station.ds100 as dep_ds100,
+					dep_station.name as dep_name,
+					dep_station.lat as dep_lat,
+					dep_station.lon as dep_lon,
+					extract(epoch from checkout_time) as checkout_ts,
+					extract(epoch from sched_arrival) as sched_arr_ts,
+					extract(epoch from real_arrival) as real_arr_ts,
+					checkout_station_id as arr_eva,
+					arr_station.ds100 as arr_ds100,
+					arr_station.name as arr_name,
+					arr_station.lat as arr_lat,
+					arr_station.lon as arr_lon,
+					polylines.polyline as polyline,
+					visibility,
+					coalesce(visibility, users.public_level & 127) as effective_visibility,
+					cancelled, edited, route, messages, user_data,
+					dep_platform, arr_platform
+					from journeys
+					left join polylines on polylines.id = polyline_id
+					left join users on users.id = user_id
+					left join stations as dep_station on checkin_station_id = dep_station.eva
+					left join stations as arr_station on checkout_station_id = arr_station.eva
+					left join backends as backend on backend_id = backend.id
+					;
+				create view follows_in_transit as select
+					r1.subject_id as follower_id, user_id as followee_id,
+					users.name as followee_name,
+					train_type, train_line, train_no, train_id,
+					extract(epoch from checkin_time) as checkin_ts,
+					extract(epoch from sched_departure) as sched_dep_ts,
+					extract(epoch from real_departure) as real_dep_ts,
+					checkin_station_id as dep_eva,
+					dep_station.ds100 as dep_ds100,
+					dep_station.name as dep_name,
+					dep_station.lat as dep_lat,
+					dep_station.lon as dep_lon,
+					extract(epoch from checkout_time) as checkout_ts,
+					extract(epoch from sched_arrival) as sched_arr_ts,
+					extract(epoch from real_arrival) as real_arr_ts,
+					checkout_station_id as arr_eva,
+					arr_station.ds100 as arr_ds100,
+					arr_station.name as arr_name,
+					arr_station.lat as arr_lat,
+					arr_station.lon as arr_lon,
+					polyline_id,
+					polylines.polyline as polyline,
+					visibility,
+					coalesce(visibility, users.public_level & 127) as effective_visibility,
+					cancelled, route, messages, user_data,
+					dep_platform, arr_platform, data
+					from in_transit
+					left join polylines on polylines.id = polyline_id
+					left join users on users.id = user_id
+					left join relations as r1 on r1.predicate = 1 and r1.object_id = user_id
+					left join stations as dep_station on checkin_station_id = dep_station.eva
+					left join stations as arr_station on checkout_station_id = arr_station.eva
+					order by checkin_time desc
+					;
+				update schema_version set version = 53;
+			}
+		);
+	},
 );
 
 sub sync_stations {
