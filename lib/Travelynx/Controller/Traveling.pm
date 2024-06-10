@@ -1510,7 +1510,7 @@ sub year_in_review {
 	if ( not @journeys ) {
 		$self->render(
 			'not_found',
-			message => 'Keine Zugfahrten im angefragten Jahr gefunden.',
+			message => 'Keine Fahrten im angefragten Jahr gefunden.',
 			status  => 404
 		);
 		return;
@@ -1583,7 +1583,7 @@ sub yearly_history {
 		$self->render(
 			'not_found',
 			status  => 404,
-			message => 'Keine Zugfahrten im angefragten Jahr gefunden.'
+			message => 'Keine Fahrten im angefragten Jahr gefunden.'
 		);
 		return;
 	}
@@ -1660,7 +1660,7 @@ sub monthly_history {
 	if ( not @journeys ) {
 		$self->render(
 			'not_found',
-			message => 'Keine Zugfahrten im angefragten Monat gefunden.',
+			message => 'Keine Fahrten im angefragten Monat gefunden.',
 			status  => 404
 		);
 		return;
