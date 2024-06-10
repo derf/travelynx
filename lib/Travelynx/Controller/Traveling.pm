@@ -2112,6 +2112,7 @@ sub add_journey_form {
 			$self->render(
 				'add_journey',
 				with_autocomplete => 1,
+				status            => 400,
 				error             =>
 'Zug muss als „Typ Nummer“ oder „Typ Linie Nummer“ eingegeben werden.'
 			);
@@ -2126,6 +2127,7 @@ sub add_journey_form {
 					$self->render(
 						'add_journey',
 						with_autocomplete => 1,
+						status            => 400,
 						error => "${key}: Ungültiges Datums-/Zeitformat"
 					);
 					return;
@@ -2167,6 +2169,7 @@ sub add_journey_form {
 			$self->render(
 				'add_journey',
 				with_autocomplete => 1,
+				status            => 400,
 				error             => $error,
 			);
 		}
