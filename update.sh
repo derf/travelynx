@@ -12,9 +12,11 @@ if [ "$1" = "with-deps" ]; then
 	carton install
 	cd ..
 	sudo systemctl stop travelynx
+	touch maintenance
 	mv local local.old
 	mv local.new/local .
 	perl index.pl database migrate
+	rm -f maintenance
 	sudo systemctl start travelynx
 elif perl index.pl database has-current-schema; then
 	sudo systemctl reload travelynx

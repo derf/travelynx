@@ -20,6 +20,10 @@ sub pull_sync {
 	my $request_count = 0;
 	for my $account_data ( $self->app->traewelling->get_pull_accounts ) {
 
+		if ( -e 'maintenance' ) {
+			return;
+		}
+
 		my $in_transit = $self->app->in_transit->get(
 			uid => $account_data->{user_id},
 		);
@@ -84,6 +88,11 @@ sub push_sync {
 	my %push_result;
 
 	for my $candidate ( $self->app->traewelling->get_pushable_accounts ) {
+
+		if ( -e 'maintenance' ) {
+			return;
+		}
+
 		$self->app->log->debug(
 			"Pushing to Traewelling for UID $candidate->{uid}");
 		my $trip_id = $candidate->{journey_data}{trip_id};
@@ -139,6 +148,10 @@ sub run {
 	}
 
 	my $trwl_pull_finished_at = DateTime->now( time_zone => 'Europe/Berlin' );
+
+	if ( -e 'maintenance' ) {
+		return;
+	}
 
 	my $trwl_push_duration = $trwl_push_finished_at->epoch - $started_at->epoch;
 	my $trwl_pull_duration

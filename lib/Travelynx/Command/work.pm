@@ -32,6 +32,10 @@ sub run {
 
 	for my $entry ( $self->app->in_transit->get_all_active ) {
 
+		if ( -e 'maintenance' ) {
+			return;
+		}
+
 		my $uid      = $entry->{user_id};
 		my $dep      = $entry->{dep_eva};
 		my $arr      = $entry->{arr_eva};
