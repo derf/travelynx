@@ -21,6 +21,11 @@ sub run {
 	my $checkin_deadline = $now->clone->subtract( hours => 48 );
 	my $json             = JSON->new;
 
+	if ( -e 'maintenance' ) {
+		$self->app->log->debug('maintenance mode, quitting ');
+		return;
+	}
+
 	my $num_incomplete = $self->app->in_transit->delete_incomplete_checkins(
 		earlier_than => $checkin_deadline );
 
@@ -33,6 +38,7 @@ sub run {
 	for my $entry ( $self->app->in_transit->get_all_active ) {
 
 		if ( -e 'maintenance' ) {
+			$self->app->log->debug('maintenance mode, quitting ');
 			return;
 		}
 
