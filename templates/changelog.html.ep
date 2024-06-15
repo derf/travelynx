@@ -2,6 +2,36 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		2.7
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left" aria-label="Verbesserung">star</i>
+			Checkins via Nahverkehr (HAFAS) speichern nun Polylines (Routen für
+			die Fahrtenkarte) und Wagenreihungen, sofern verfügbar. Sie sind
+			damit fast identisch zu Checkins via Schienenverkehr (IRIS); es
+			fehlen im Wesentlichen lediglich die mit Zeitstempel versehenen
+			Verspätungs- und Störungsmeldungen.
+		<p/>
+		<p>
+			<i class="material-icons left" aria-label="Bugfix">build</i>
+			Verbesserte (aber weiterhin nicht perfekte) Unterstützung für
+			Ringlinien.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Bugfix">build</i>
+			Korrekte Verlinkung von HAFAS-basierten Abfahrtstafeln bei den
+			Unterwegshalten des aktuellen Checkins im Nahverkehrsmodus. Die
+			Konfigurationsmöglichkeit zur Auswahl zwischen bahn.expert und DBF
+			unter Account → Externe Dienste besteht wegen der Abhängigkeit des
+			Diensts vom genutzten Backend und zwecks besserer Wartbarkeit von
+			travelynx nun nicht mehr.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		2.6
 	</div>
 	<div class="col s12 m11 l11">
