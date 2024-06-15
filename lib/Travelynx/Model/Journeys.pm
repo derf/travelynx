@@ -827,7 +827,7 @@ sub get_latest_checkout_stations {
 			{
 				name  => $row->{arr_name},
 				eva   => $row->{arr_eva},
-				hafas => ( $row->{train_id} =~ m{[|]} ? 1 : 0 ),
+				hafas => ( $row->{train_id} =~ m{[|]} ? 'DB' : 0 ),
 			}
 		);
 	}
