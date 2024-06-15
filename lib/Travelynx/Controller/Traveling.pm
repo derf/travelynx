@@ -604,7 +604,7 @@ sub geolocation {
 					name     => $_->name,
 					eva      => $_->eva,
 					distance => $_->distance_m / 1000,
-					hafas    => 1
+					hafas    => 'DB'
 				}
 			} $hafas->results;
 			if ( @hafas > 10 ) {
@@ -714,7 +714,7 @@ sub travel_action {
 				if ( my $destination = $params->{dest} ) {
 					my $station_link = '/s/' . $destination;
 					if ( $status->{train_id} =~ m{[|]} ) {
-						$station_link .= '?hafas=1';
+						$station_link .= '?hafas=DB';
 					}
 					$self->render(
 						json => {
@@ -750,7 +750,7 @@ sub travel_action {
 				my ( $still_checked_in, $error ) = @_;
 				my $station_link = '/s/' . $params->{station};
 				if ( $status->{train_id} =~ m{[|]} ) {
-					$station_link .= '?hafas=1';
+					$station_link .= '?hafas=DB';
 				}
 
 				if ($error) {
@@ -801,7 +801,7 @@ sub travel_action {
 			my $redir = '/';
 			if ( $status->{checked_in} or $status->{cancelled} ) {
 				if ( $status->{train_id} =~ m{[|]} ) {
-					$redir = '/s/' . $status->{dep_eva} . '?hafas=1';
+					$redir = '/s/' . $status->{dep_eva} . '?hafas=DB';
 				}
 				else {
 					$redir = '/s/' . $status->{dep_ds100};
@@ -999,7 +999,7 @@ sub station {
 			}
 			else {
 
-				$api_link = '/s/' . $status->{station_eva} . '?hafas=1';
+				$api_link = '/s/' . $status->{station_eva} . '?hafas=DB';
 
 				# You can't check into a train which terminates here
 				@results = grep { $_->departure } @{ $status->{results} };
@@ -1128,7 +1128,7 @@ sub station {
 						my @suggestions = $hafas2->results;
 						if ( @suggestions == 1 ) {
 							$self->redirect_to(
-								'/s/' . $suggestions[0]->eva . '?hafas=1' );
+								'/s/' . $suggestions[0]->eva . '?hafas=DB' );
 						}
 						else {
 							$self->render(
@@ -1171,14 +1171,14 @@ sub redirect_to_station {
 
 	if ( my $s = $self->app->stations->search($station) ) {
 		if ( $s->{source} == 1 ) {
-			$self->redirect_to("/s/${station}?hafas=1");
+			$self->redirect_to("/s/${station}?hafas=DB");
 		}
 		else {
 			$self->redirect_to("/s/${station}");
 		}
 	}
 	else {
-		$self->redirect_to("/s/${station}?hafas=1");
+		$self->redirect_to("/s/${station}?hafas=DB");
 	}
 }
 

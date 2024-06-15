@@ -8,7 +8,7 @@ use Mojo::Base 'Mojolicious::Command';
 use List::Util qw();
 use Text::CSV;
 
-has description => 'Export HAFAS/IRIS stops to CSV';
+has description => 'Export known stops to CSV';
 
 has usage => sub { shift->extract_usage };
 

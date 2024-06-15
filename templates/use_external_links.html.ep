@@ -52,7 +52,7 @@
 			<div>
 				<label>
 					%= radio_button stationboard => '3'
-					<span><a href="https://dbf.finalrewind.org/?hafas=1">DBF</a> (Nahverkehr)</span>
+					<span><a href="https://dbf.finalrewind.org/?hafas=DB">DBF</a> (Nahverkehr)</span>
 				</label>
 			</div>
 		</div>
