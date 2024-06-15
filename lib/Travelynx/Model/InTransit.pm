@@ -98,6 +98,7 @@ sub add {
 	my $stop               = $opt{stop};
 	my $checkin_station_id = $opt{departure_eva};
 	my $route              = $opt{route};
+	my $data               = $opt{data};
 
 	my $json = JSON->new;
 
@@ -126,7 +127,8 @@ sub add {
 				data => JSON->new->encode(
 					{
 						rt => $train->departure_has_realtime ? 1
-						: 0
+						: 0,
+						%{ $data // {} }
 					}
 				),
 				backend_id => $backend_id,
@@ -183,7 +185,12 @@ sub add {
 				sched_departure => $stop->{sched_dep},
 				real_departure  => $stop->{rt_dep} // $stop->{sched_dep},
 				route           => $json->encode( \@route ),
-				data => JSON->new->encode( { rt => $stop->{rt_dep} ? 1 : 0 } ),
+				data            => JSON->new->encode(
+					{
+						rt => $stop->{rt_dep} ? 1 : 0,
+						%{ $data // {} }
+					}
+				),
 				backend_id => $backend_id,
 			}
 		);

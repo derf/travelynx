@@ -573,6 +573,7 @@ sub startup {
 							db      => $db,
 							journey => $journey,
 							stop    => $found,
+							data    => { trip_id => $journey->id }
 						);
 					};
 					if ($@) {
@@ -581,11 +582,6 @@ sub startup {
 						$promise->reject( 'INSERT failed: ' . $@ );
 						return;
 					}
-					$self->in_transit->update_data(
-						uid  => $uid,
-						db   => $db,
-						data => { trip_id => $journey->id }
-					);
 
 					my $polyline;
 					if ( $journey->polyline ) {
