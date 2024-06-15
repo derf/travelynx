@@ -40,17 +40,6 @@ my %predicate_atoi = (
 	is_blocked_by   => 3,
 );
 
-my @sb_templates = (
-	undef,
-	[ 'DBF',         'https://dbf.finalrewind.org/{name}?rt=1#{tt}{tn}' ],
-	[ 'bahn.expert', 'https://bahn.expert/{name}#{id}' ],
-	[
-		'DBF HAFAS',
-		'https://dbf.finalrewind.org/{name}?rt=1&hafas=DB#{tt}{tn}'
-	],
-	[ 'bahn.expert/regional', 'https://bahn.expert/regional/{name}#{id}' ],
-);
-
 my %token_id = (
 	status  => 1,
 	history => 2,
@@ -414,7 +403,7 @@ sub get {
 	my $user = $db->select(
 		'users',
 		'id, name, status, public_level, email, '
-		  . 'external_services, accept_follows, notifications, '
+		  . 'accept_follows, notifications, '
 		  . 'extract(epoch from registered_at) as registered_at_ts, '
 		  . 'extract(epoch from last_seen) as last_seen_ts, '
 		  . 'extract(epoch from deletion_requested) as deletion_requested_ts',
@@ -438,12 +427,8 @@ sub get {
 			past_status => $user->{public_level} & 0x08000 ? 1 : 0,
 			past_all    => $user->{public_level} & 0x10000 ? 1 : 0,
 			email       => $user->{email},
-			sb_name     => $user->{external_services}
-			? $sb_templates[ $user->{external_services} & 0x07 ][0]
-			: undef,
-			sb_template => $user->{external_services}
-			? $sb_templates[ $user->{external_services} & 0x07 ][1]
-			: undef,
+			sb_template =>
+			  'https://dbf.finalrewind.org/{name}?rt=1&hafas={hafas}#{tt}{tn}',
 			registered_at => DateTime->from_epoch(
 				epoch     => $user->{registered_at_ts},
 				time_zone => 'Europe/Berlin'
@@ -659,24 +644,6 @@ sub use_history {
 	else {
 		return $db->select( 'users', ['use_history'], { id => $uid } )
 		  ->hash->{use_history};
-	}
-}
-
-sub use_external_services {
-	my ( $self, %opt ) = @_;
-	my $db    = $opt{db} // $self->{pg}->db;
-	my $uid   = $opt{uid};
-	my $value = $opt{set};
-
-	if ( defined $value ) {
-		if ( $value < 0 or $value > 4 ) {
-			$value = 0;
-		}
-		$db->update( 'users', { external_services => $value }, { id => $uid } );
-	}
-	else {
-		return $db->select( 'users', ['external_services'], { id => $uid } )
-		  ->hash->{external_services};
 	}
 }
 

@@ -111,12 +111,7 @@
 						% }
 					</div>
 					<div style="float: right; text-align: right;">
-						% if ($user->{sb_template}) {
-							<b><a href="<%= resolve_sb_template($user->{sb_template}, name => $journey->{arr_name}, eva => $journey->{arr_eva}, tt => $journey->{train_type} // q{x}, tn => $journey->{train_no}, id => $journey->{train_id}) %>" class="unmarked"><%= $journey->{arr_name} %></a></b><br/>
-						% }
-						% else {
-							<b><%= $journey->{arr_name} %></b><br/>
-						% }
+						<b><a href="<%= resolve_sb_template($user->{sb_template}, name => $journey->{arr_name}, eva => $journey->{arr_eva}, tt => $journey->{train_type} // q{x}, tn => $journey->{train_no}, id => $journey->{train_id}, hafas => $journey->{is_hafas} ? $journey->{backend_name} : q{}) %>" class="unmarked"><%= $journey->{arr_name} %></a></b><br/>
 						% if ($journey->{real_arrival}->epoch) {
 							<b><%= $journey->{real_arrival}->strftime('%H:%M') %></b>
 							% if ($journey->{real_arrival}->epoch != $journey->{sched_arrival}->epoch) {
@@ -358,12 +353,7 @@
 			<div class="card-content">
 				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 				<span class="card-title">Ziel ändern?</span>
-				% if ($user->{sb_template}) {
-					<div class="targetlist">
-				% }
-				% else {
-					<p>
-				% }
+				<div class="targetlist">
 				% for my $station (@{$journey->{route_after}}) {
 					% my $is_dest = ($journey->{arr_name} and $station->[0] eq $journey->{arr_name});
 					<a class="action-checkout tablerow" style="<%= $is_dest? 'font-weight: bold;' : '' %>" data-station="<%= $station->[1] // $station->[0] %>">
@@ -387,16 +377,9 @@
 						% }
 						</span>
 					</a>
-					% if ($user->{sb_template}) {
-						<a class="nonflex" href="<%= resolve_sb_template($user->{sb_template}, name => $station->[0], eva => $station->[1], tt => $journey->{train_type} // q{x}, tn => $journey->{train_no}, id => $journey->{train_id}) %>"><i class="material-icons tiny">train</i></a>
-					% }
+					<a class="nonflex" href="<%= resolve_sb_template($user->{sb_template}, name => $station->[0], eva => $station->[1], tt => $journey->{train_type} // q{x}, tn => $journey->{train_no}, id => $journey->{train_id}, hafas => $journey->{is_hafas} ? $journey->{backend_name} : q{}) %>"><i class="material-icons tiny"><%= $journey->{is_hafas} ? 'directions' : 'train' %></i></a>
 				% }
-				% if ($user->{sb_template}) {
-					</div>
-				% }
-				% else {
-					</p>
-				% }
+				</div>
 			</div>
 			<div class="card-action">
 				<a class="action-undo blue-text" data-id="in_transit" data-checkints="<%= $journey->{timestamp}->epoch %>"  style="margin-right: 0;">

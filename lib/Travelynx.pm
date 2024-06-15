@@ -1551,6 +1551,7 @@ sub startup {
 			$ret =~ s{[{]tt[}]}{$opt{tt}}g;
 			$ret =~ s{[{]tn[}]}{$opt{tn}}g;
 			$ret =~ s{[{]id[}]}{$opt{id}}g;
+			$ret =~ s{[{]hafas[}]}{$opt{hafas}}g;
 			return $ret;
 		}
 	);
@@ -2469,7 +2470,6 @@ sub startup {
 	$authed_r->get('/account/hooks')->to('account#webhook');
 	$authed_r->get('/account/traewelling')->to('traewelling#settings');
 	$authed_r->get('/account/insight')->to('account#insight');
-	$authed_r->get('/account/services')->to('account#services');
 	$authed_r->get('/ajax/status_card.html')->to('traveling#status_card');
 	$authed_r->get('/cancelled')->to('traveling#cancelled');
 	$authed_r->get('/fgr')->to('passengerrights#list_candidates');
@@ -2497,7 +2497,6 @@ sub startup {
 	$authed_r->post('/account/hooks')->to('account#webhook');
 	$authed_r->post('/account/traewelling')->to('traewelling#settings');
 	$authed_r->post('/account/insight')->to('account#insight');
-	$authed_r->post('/account/services')->to('account#services');
 	$authed_r->post('/journey/add')->to('traveling#add_journey_form');
 	$authed_r->post('/journey/comment')->to('traveling#comment_form');
 	$authed_r->post('/journey/visibility')->to('traveling#visibility_form');

@@ -28,9 +28,6 @@
 					% elsif ($success eq 'use_history') {
 						<span class="card-title">Einstellungen zu vorgeschlagenen Verbindungen geändert</span>
 					% }
-					% elsif ($success eq 'external') {
-						<span class="card-title">Einstellungen zu externen Diensten geändert</span>
-					% }
 					% elsif ($success eq 'webhook') {
 						<span class="card-title">Web Hook aktualisiert</span>
 					% }
@@ -151,18 +148,6 @@
 					</td>
 				</tr>
 			% }
-			<tr>
-				<th scope="row">Externe Dienste</th>
-				<td>
-					<a href="/account/services"><i class="material-icons">edit</i></a>
-					% if ($acc->{sb_name}) {
-						Abfahrtstafel: <%= $acc->{sb_name} %>
-					% }
-					% else {
-						<span style="color: #999999;">Keine</span>
-					% }
-				</td>
-			</tr>
 			<tr>
 				<th scope="row">Registriert am</th>
 				<td><%= $acc->{registered_at}->strftime('%d.%m.%Y %H:%M') %></td>

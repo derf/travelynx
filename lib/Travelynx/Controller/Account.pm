@@ -831,29 +831,6 @@ sub insight {
 
 }
 
-sub services {
-	my ($self) = @_;
-	my $user = $self->current_user;
-
-	if ( $self->param('action') and $self->param('action') eq 'save' ) {
-		my $sb    = $self->param('stationboard');
-		my $value = 0;
-		if ( $sb =~ m{ ^ \d+ $ }x and $sb >= 0 and $sb <= 4 ) {
-			$value = int($sb);
-		}
-		$self->users->use_external_services(
-			uid => $user->{id},
-			set => $value
-		);
-		$self->flash( success => 'external' );
-		$self->redirect_to('account');
-	}
-
-	$self->param( stationboard =>
-		  $self->users->use_external_services( uid => $user->{id} ) );
-	$self->render('use_external_links');
-}
-
 sub webhook {
 	my ($self) = @_;
 
