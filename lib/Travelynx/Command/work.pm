@@ -22,7 +22,7 @@ sub run {
 	my $json             = JSON->new;
 
 	if ( -e 'maintenance' ) {
-		$self->app->log->debug('maintenance mode, quitting ');
+		$self->app->log->debug('work: "maintenance" file found, aborting');
 		return;
 	}
 
@@ -38,7 +38,7 @@ sub run {
 	for my $entry ( $self->app->in_transit->get_all_active ) {
 
 		if ( -e 'maintenance' ) {
-			$self->app->log->debug('maintenance mode, quitting ');
+			$self->app->log->debug('work: "maintenance" file found, aborting');
 			return;
 		}
 

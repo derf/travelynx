@@ -21,6 +21,8 @@ sub pull_sync {
 	for my $account_data ( $self->app->traewelling->get_pull_accounts ) {
 
 		if ( -e 'maintenance' ) {
+			$self->app->log->debug(
+				'treawelling: "maintenance" file found, aborting');
 			return;
 		}
 
@@ -90,6 +92,8 @@ sub push_sync {
 	for my $candidate ( $self->app->traewelling->get_pushable_accounts ) {
 
 		if ( -e 'maintenance' ) {
+			$self->app->log->debug(
+				'treawelling: "maintenance" file found, aborting');
 			return;
 		}
 
@@ -137,6 +141,12 @@ sub run {
 	my $push_result;
 	my $pull_result;
 
+	if ( -e 'maintenance' ) {
+		$self->app->log->debug(
+			'treawelling: "maintenance" file found, aborting');
+		return;
+	}
+
 	if ( not $direction or $direction eq 'push' ) {
 		$push_result = $self->push_sync;
 	}
@@ -150,6 +160,8 @@ sub run {
 	my $trwl_pull_finished_at = DateTime->now( time_zone => 'Europe/Berlin' );
 
 	if ( -e 'maintenance' ) {
+		$self->app->log->debug(
+			'treawelling: "maintenance" file found, aborting');
 		return;
 	}
 
