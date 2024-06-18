@@ -8,7 +8,7 @@
 		v<%= $Travel::Status::DE::IRIS::VERSION %> und
 		<a href="https://finalrewind.org/projects/Travel-Status-DE-DeutscheBahn/">Travel::Status::DE::HAFAS</a>
 		v<%= $Travel::Status::DE::HAFAS::VERSION %><br/>
-		<a href="http://data.deutschebahn.com/dataset/data-haltestellen">Haltestellendaten</a>
+		Haltestellendaten
 		© DB Station&amp;Service AG,
 		Europaplatz 1,
 		10557 Berlin, lizensiert unter CC-BY 4.0
