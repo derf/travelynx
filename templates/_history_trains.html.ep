@@ -16,9 +16,7 @@
 			% }
 			<li class="collection-item">
 				<a href="<%= $detail_link %>">
-					<span class="dep-line <%= $travel->{type} // q{} %>">
-						<%= $travel->{type} %> <%= $travel->{line}  // $travel->{no}%>
-					</span>
+					%= include '_format_train', journey => $travel, mode => 'history', show_line_only => 1
 				</a>
 
 				<ul class="route-history">

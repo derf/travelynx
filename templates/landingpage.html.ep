@@ -25,7 +25,7 @@
 					<div class="card-content">
 						<span class="card-title">Ausfall dokumentieren</span>
 						<p>Prinzipiell wärest du nun eingecheckt in
-							%= include '_format_train', journey => $status
+							%= include '_format_train', journey => $status, mode => 'status'
 							ab <%= $status->{dep_name} %>, doch diese Fahrt fällt aus.
 						</p>
 						<p>Falls du den Ausfall z.B. für Fahrgastrechte
