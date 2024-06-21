@@ -1358,7 +1358,7 @@ sub startup {
 			}
 
 			my $route    = $in_transit->{route};
-			my $train_id = $in_transit->{train_id};
+			my $train_id = $train->id;
 
 			# TODO get_tripid_p is only needed on the first call, afterwards the tripid is known.
 			$self->hafas->get_tripid_p( train => $train )->then(
