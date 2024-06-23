@@ -324,6 +324,15 @@ sub run {
 	if ( not $self->app->config->{traewelling}->{separate_worker} ) {
 		$self->app->start('traewelling');
 	}
+
+	# add_wagonorder and add_stationinfo assume a permanently running IOLoop
+	# and do not allow Mojolicious commands to wait until they have completed.
+	# Hence, some add_wagonorder and add_stationinfo calls made here may not
+	# complete before the work command exits, and thus have no effect.
+	#
+	# This is not ideal and will need fixing at some point.  Until then, here
+	# is the pragmatic solution for 99% of the associated issues.
+	Mojo::Promise->timer(5)->wait;
 }
 
 1;
