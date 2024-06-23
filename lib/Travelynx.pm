@@ -1958,224 +1958,75 @@ sub startup {
 				return $promise->resolve;
 			}
 
-			if ( $traewelling->{category}
-				!~ m{^ (?: national .* | regional .* | suburban ) $ }x )
-			{
+			my $db = $self->pg->db;
+			my $tx = $db->begin;
 
-				my $db = $self->pg->db;
-				my $tx = $db->begin;
-
-				$self->checkin_p(
-					station        => $traewelling->{dep_eva},
-					train_id       => $traewelling->{trip_id},
-					uid            => $uid,
-					in_transaction => 1,
-					db             => $db
-				)->then(
-					sub {
-						$self->log->debug("... handled origin");
-						return $self->checkout_p(
-							station        => $traewelling->{arr_eva},
-							train_id       => $traewelling->{trip_id},
-							uid            => $uid,
-							in_transaction => 1,
-							db             => $db
-						);
-					}
-				)->then(
-					sub {
-						my ( undef, $err ) = @_;
-						if ($err) {
-							$self->log->debug("... error: $err");
-							return Mojo::Promise->reject($err);
-						}
-						$self->log->debug("... handled destination");
-						if ( $traewelling->{message} ) {
-							$self->in_transit->update_user_data(
-								uid       => $uid,
-								db        => $db,
-								user_data =>
-								  { comment => $traewelling->{message} }
-							);
-						}
-						$self->traewelling->log(
-							uid     => $uid,
-							db      => $db,
-							message =>
-"Eingecheckt in $traewelling->{line} nach $traewelling->{arr_name}",
-							status_id => $traewelling->{status_id},
-						);
-						$self->traewelling->set_latest_pull_status_id(
-							uid       => $uid,
-							status_id => $traewelling->{status_id},
-							db        => $db
-						);
-
-						$tx->commit;
-						$promise->resolve;
-						return;
-					}
-				)->catch(
-					sub {
-						my ($err) = @_;
-						$self->log->debug("... error: $err");
-						$self->traewelling->log(
-							uid     => $uid,
-							message =>
-"Konnte $traewelling->{line} nach $traewelling->{arr_name} nicht übernehmen: $err",
-							status_id => $traewelling->{status_id},
-							is_error  => 1
-						);
-						$promise->resolve;
-						return;
-					}
-				)->wait;
-				return $promise;
-			}
-
-			$self->iris->get_departures_p(
-				station    => $traewelling->{dep_eva},
-				lookbehind => 60,
-				lookahead  => 40
+			$self->_checkin_hafas_p(
+				hafas          => 'DB',
+				station        => $traewelling->{dep_eva},
+				train_id       => $traewelling->{trip_id},
+				uid            => $uid,
+				in_transaction => 1,
+				db             => $db
 			)->then(
 				sub {
-					my ($dep) = @_;
-					my ( $train_ref, $train_id );
-
-					if ( $dep->{errstr} ) {
-						$self->traewelling->log(
-							uid     => $uid,
-							message =>
-"Konnte $traewelling->{line} nach $traewelling->{arr_name} nicht übernehmen: $dep->{errstr}",
-							status_id => $traewelling->{status_id},
-							is_error  => 1,
-						);
-						$promise->resolve;
-						return;
-					}
-
-					for my $train ( @{ $dep->{results} } ) {
-						if ( $train->line ne $traewelling->{line} ) {
-							next;
-						}
-						if ( not $train->sched_departure
-							or $train->sched_departure->epoch
-							!= $traewelling->{dep_dt}->epoch )
-						{
-							next;
-						}
-						if (
-							not
-							List::Util::first { $_ eq $traewelling->{arr_name} }
-							$train->route_post
-						  )
-						{
-							next;
-						}
-						$train_id  = $train->train_id;
-						$train_ref = $train;
-						last;
-					}
-
-					if ( not $train_id ) {
-						$self->log->debug(
-							"... train $traewelling->{line} not found");
-						$self->traewelling->log(
-							uid     => $uid,
-							message =>
-"Konnte $traewelling->{line} nach $traewelling->{arr_name} nicht übernehmen: Zug nicht gefunden",
-							status_id => $traewelling->{status_id},
-							is_error  => 1
-						);
-						return $promise->resolve;
-					}
-
-					$self->log->debug("... found train: $train_id");
-
-					my $db = $self->pg->db;
-					my $tx = $db->begin;
-
-					$self->checkin_p(
-						station        => $traewelling->{dep_eva},
-						train_id       => $train_id,
+					$self->log->debug("... handled origin");
+					return $self->_checkout_hafas_p(
+						hafas          => 'DB',
+						station        => $traewelling->{arr_eva},
+						train_id       => $traewelling->{trip_id},
 						uid            => $uid,
 						in_transaction => 1,
 						db             => $db
-					)->then(
-						sub {
-							$self->log->debug("... handled origin");
-							return $self->checkout_p(
-								station        => $traewelling->{arr_eva},
-								train_id       => 0,
-								uid            => $uid,
-								in_transaction => 1,
-								db             => $db
-							);
-						}
-					)->then(
-						sub {
-							my ( undef, $err ) = @_;
-							if ($err) {
-								$self->log->debug("... error: $err");
-								return Mojo::Promise->reject($err);
-							}
-							$self->log->debug("... handled destination");
-							if ( $traewelling->{message} ) {
-								$self->in_transit->update_user_data(
-									uid       => $uid,
-									db        => $db,
-									user_data =>
-									  { comment => $traewelling->{message} }
-								);
-							}
-							$self->traewelling->log(
-								uid     => $uid,
-								db      => $db,
-								message =>
+					);
+				}
+			)->then(
+				sub {
+					my ( undef, $err ) = @_;
+					if ($err) {
+						$self->log->debug("... error: $err");
+						return Mojo::Promise->reject($err);
+					}
+					$self->log->debug("... handled destination");
+					if ( $traewelling->{message} ) {
+						$self->in_transit->update_user_data(
+							uid       => $uid,
+							db        => $db,
+							user_data => { comment => $traewelling->{message} }
+						);
+					}
+					$self->traewelling->log(
+						uid     => $uid,
+						db      => $db,
+						message =>
 "Eingecheckt in $traewelling->{line} nach $traewelling->{arr_name}",
-								status_id => $traewelling->{status_id},
-							);
-							$self->traewelling->set_latest_pull_status_id(
-								uid       => $uid,
-								status_id => $traewelling->{status_id},
-								db        => $db
-							);
+						status_id => $traewelling->{status_id},
+					);
+					$self->traewelling->set_latest_pull_status_id(
+						uid       => $uid,
+						status_id => $traewelling->{status_id},
+						db        => $db
+					);
 
-							$tx->commit;
-							$promise->resolve;
-							return;
-						}
-					)->catch(
-						sub {
-							my ($err) = @_;
-							$self->log->debug("... error: $err");
-							$self->traewelling->log(
-								uid     => $uid,
-								message =>
-"Konnte $traewelling->{line} nach $traewelling->{arr_name} nicht übernehmen: $err",
-								status_id => $traewelling->{status_id},
-								is_error  => 1
-							);
-							$promise->resolve;
-							return;
-						}
-					)->wait;
+					$tx->commit;
+					$promise->resolve;
+					return;
 				}
 			)->catch(
 				sub {
-					my ( $err, $dep ) = @_;
+					my ($err) = @_;
+					$self->log->debug("... error: $err");
 					$self->traewelling->log(
 						uid     => $uid,
 						message =>
-"Konnte $traewelling->{line} nach $traewelling->{arr_name} nicht übernehmen: $dep->{errstr}",
+"Konnte $traewelling->{line} nach $traewelling->{arr_name} nicht übernehmen: $err",
 						status_id => $traewelling->{status_id},
-						is_error  => 1,
+						is_error  => 1
 					);
 					$promise->resolve;
 					return;
 				}
 			)->wait;
-
 			return $promise;
 		}
 	);
