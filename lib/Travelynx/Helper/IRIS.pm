@@ -42,7 +42,7 @@ sub get_departures {
 	  = Travel::Status::DE::IRIS::Stations::get_station($station);
 
 	if ( @station_matches == 1 ) {
-		$station = $station_matches[0][0];
+		$station = $station_matches[0][2];
 		my $status = Travel::Status::DE::IRIS->new(
 			station        => $station,
 			main_cache     => $self->{main_cache},
@@ -109,7 +109,7 @@ sub get_departures_p {
 	  = Travel::Status::DE::IRIS::Stations::get_station($station);
 
 	if ( @station_matches == 1 ) {
-		$station = $station_matches[0][0];
+		$station = $station_matches[0][2];
 		my $promise = Mojo::Promise->new;
 		Travel::Status::DE::IRIS->new_p(
 			station        => $station,
