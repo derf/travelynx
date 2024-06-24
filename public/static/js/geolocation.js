@@ -51,7 +51,7 @@ $(document).ready(function() {
 					hafas = candidate.hafas,
 					distance = candidate.distance.toFixed(1);
 
-				const node = $('<a class="tablerow" href="/s/' + eva + '?hafas=' + hafas + '"><span><i class="material-icons" aria-hidden="true">' + (parts[2] == 0 ? 'train' : 'directions') + '</i>' + name + '</span></a>');
+				const node = $('<a class="tablerow" href="/s/' + eva + '?hafas=' + hafas + '"><span><i class="material-icons" aria-hidden="true">' + (hafas == '0' ? 'train' : 'directions') + '</i>' + name + '</span></a>');
 				node.click(function() {
 					$('nav .preloader-wrapper').addClass('active');
 				});
