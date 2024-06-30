@@ -1,5 +1,5 @@
 <div>
-	<a href="/timeline/in-transit">
+	<a class="timeline-link" href="/timeline/in-transit">
 	% if (@{$timeline} <= 2) {
 		<strong><%= $timeline->[0]->{followee_name} %></strong>
 	% }
