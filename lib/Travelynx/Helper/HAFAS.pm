@@ -233,7 +233,9 @@ sub get_route_p {
 					rt_dep    => _epoch( $stop->rt_dep ),
 					arr_delay => $stop->arr_delay,
 					dep_delay => $stop->dep_delay,
-					load      => $stop->load
+					load      => $stop->load,
+					lat       => $stop->loc->lat,
+					lon       => $stop->loc->lon,
 				};
 				if ( $stop->tz_offset ) {
 					$entry->{tz_offset} = $stop->tz_offset;

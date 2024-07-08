@@ -1427,6 +1427,8 @@ sub startup {
 									isAdditional => $new_entry->{isAdditional},
 									isCancelled  => $new_entry->{isCancelled},
 									load         => $new_entry->{load},
+									lat          => $new_entry->{lat},
+									lon          => $new_entry->{lon},
 								}
 							]
 						);

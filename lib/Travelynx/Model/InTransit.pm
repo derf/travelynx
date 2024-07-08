@@ -160,7 +160,9 @@ sub add {
 						rt_dep    => _epoch( $j_stop->rt_dep ),
 						arr_delay => $j_stop->arr_delay,
 						dep_delay => $j_stop->dep_delay,
-						load      => $j_stop->load
+						load      => $j_stop->load,
+						lat       => $j_stop->loc->lat,
+						lon       => $j_stop->loc->lon,
 					}
 				]
 			);
@@ -832,7 +834,9 @@ sub update_arrival_hafas {
 					rt_dep    => _epoch( $j_stop->rt_dep ),
 					arr_delay => $j_stop->arr_delay,
 					dep_delay => $j_stop->dep_delay,
-					load      => $j_stop->load
+					load      => $j_stop->load,
+					lat       => $j_stop->loc->lat,
+					lon       => $j_stop->loc->lon,
 				}
 			]
 		);
