@@ -7,7 +7,7 @@
 				<span class="card-title center-align">Ziel wählen</span>
 			% }
 			<span class="card-title center-align">
-				%= include '_format_train', journey => $journey
+				%= include '_format_train', journey => $journey, mode => 'status'
 			</span>
 			% if ($journey->{comment}) {
 				<p><%= $journey->{comment} %></p>
