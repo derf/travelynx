@@ -33,6 +33,12 @@ sub new {
 	return bless( \%opt, $class );
 }
 
+sub get_service {
+	my ( $self, $service ) = @_;
+
+	return Travel::Status::DE::HAFAS::get_service($service);
+}
+
 sub get_json_p {
 	my ( $self, $url, %opt ) = @_;
 
