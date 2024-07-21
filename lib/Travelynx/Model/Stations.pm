@@ -129,20 +129,6 @@ sub get_by_evas {
 }
 
 # Slow
-sub get_latlon_by_name {
-	my ( $self, %opt ) = @_;
-
-	my $db = $opt{db} // $self->{pg}->db;
-
-	my %location;
-	my $res = $db->select( 'stations', [ 'name', 'lat', 'lon' ] );
-	while ( my $row = $res->hash ) {
-		$location{ $row->{name} } = [ $row->{lat}, $row->{lon} ];
-	}
-	return \%location;
-}
-
-# Slow
 sub get_by_name {
 	my ( $self, $name, %opt ) = @_;
 
