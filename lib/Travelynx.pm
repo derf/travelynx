@@ -177,17 +177,6 @@ sub startup {
 		}
 	);
 
-	$self->attr(
-		coordinates_by_station => sub {
-			my $legacy_names = $self->app->renamed_station;
-			my $location     = $self->stations->get_latlon_by_name;
-			while ( my ( $old_name, $new_name ) = each %{$legacy_names} ) {
-				$location->{$old_name} = $location->{$new_name};
-			}
-			return $location;
-		}
-	);
-
 	# https://de.wikipedia.org/wiki/Liste_nach_Gemeinden_und_Regionen_benannter_IC/ICE-Fahrzeuge#Namensgebung_ICE-Triebz%C3%BCge_nach_Gemeinden
 	# via https://github.com/marudor/bahn.expert/blob/main/src/server/coachSequence/TrainNames.ts
 	$self->attr(
@@ -297,13 +286,12 @@ sub startup {
 		journeys => sub {
 			my ($self) = @_;
 			state $journeys = Travelynx::Model::Journeys->new(
-				log               => $self->app->log,
-				pg                => $self->pg,
-				in_transit        => $self->in_transit,
-				stats_cache       => $self->journey_stats_cache,
-				renamed_station   => $self->app->renamed_station,
-				latlon_by_station => $self->app->coordinates_by_station,
-				stations          => $self->stations,
+				log             => $self->app->log,
+				pg              => $self->pg,
+				in_transit      => $self->in_transit,
+				stats_cache     => $self->journey_stats_cache,
+				renamed_station => $self->app->renamed_station,
+				stations        => $self->stations,
 			);
 		}
 	);
@@ -2041,8 +2029,6 @@ sub startup {
 			my $route_type     = $opt{route_type} // 'polybee';
 			my $include_manual = $opt{include_manual} ? 1 : 0;
 
-			my $location = $self->app->coordinates_by_station;
-
 			my $with_polyline = $route_type eq 'beeline' ? 0 : 1;
 
 			if ( not @journeys ) {
@@ -2058,12 +2044,19 @@ sub startup {
 			my $first_departure = $journeys[-1]->{rt_departure};
 			my $last_departure  = $journeys[0]->{rt_departure};
 
-			my @stations = List::Util::uniq map { $_->{to_name} } @journeys;
-			push( @stations,
-				List::Util::uniq map { $_->{from_name} } @journeys );
-			@stations = List::Util::uniq @stations;
-			my @station_coordinates = map { [ $location->{$_}, $_ ] }
-			  grep { exists $location->{$_} } @stations;
+			my @stations = uniq_by { $_->{name} } map {
+				{
+					name   => $_->{to_name},
+					latlon => $_->{to_latlon}
+				},
+				  {
+					name   => $_->{from_name},
+					latlon => $_->{from_latlon}
+				  }
+			} @journeys;
+
+			my @station_coordinates
+			  = map { [ $_->{latlon}, $_->{name} ] } @stations;
 
 			my @station_pairs;
 			my @polylines;
@@ -2127,23 +2120,26 @@ sub startup {
 
 			for my $journey (@beeline_journeys) {
 
-				my @route = map { $_->[0] } @{ $journey->{route} };
+				my @route = @{ $journey->{route} };
 
 				my $from_index
-				  = first_index { $_ eq $journey->{from_name} } @route;
-				my $to_index = first_index { $_ eq $journey->{to_name} } @route;
+				  = first_index { $_->[0] eq $journey->{from_name} } @route;
+				my $to_index
+				  = first_index { $_->[0] eq $journey->{to_name} } @route;
 
 				if ( $from_index == -1 ) {
 					my $rename = $self->app->renamed_station;
 					$from_index = first_index {
-						( $rename->{$_} // $_ ) eq $journey->{from_name}
+						( $rename->{ $_->[0] } // $_->[0] ) eq
+						  $journey->{from_name}
 					}
 					@route;
 				}
 				if ( $to_index == -1 ) {
 					my $rename = $self->app->renamed_station;
 					$to_index = first_index {
-						( $rename->{$_} // $_ ) eq $journey->{to_name}
+						( $rename->{ $_->[0] } // $_->[0] ) eq
+						  $journey->{to_name}
 					}
 					@route;
 				}
@@ -2177,7 +2173,7 @@ sub startup {
 
 				@route = @route[ $from_index .. $to_index ];
 
-				my $key = join( '|', @route );
+				my $key = join( '|', map { $_->[0] } @route );
 
 				if ( $seen{$key} ) {
 					next;
@@ -2186,7 +2182,7 @@ sub startup {
 				$seen{$key} = 1;
 
 				# direction does not matter at the moment
-				$seen{ join( '|', reverse @route ) } = 1;
+				$seen{ join( '|', reverse map { $_->[0] } @route ) } = 1;
 
 				my $prev_station = shift @route;
 				for my $station (@route) {
@@ -2195,14 +2191,17 @@ sub startup {
 				}
 			}
 
-			@station_pairs = uniq_by { $_->[0] . '|' . $_->[1] } @station_pairs;
-			@station_pairs = grep {
-				      exists $location->{ $_->[0] }
-				  and exists $location->{ $_->[1] }
-			} @station_pairs;
 			@station_pairs
-			  = map { [ $location->{ $_->[0] }, $location->{ $_->[1] } ] }
+			  = uniq_by { $_->[0][0] . '|' . $_->[1][0] } @station_pairs;
+			@station_pairs
+			  = grep { defined $_->[0][2]{lat} and defined $_->[1][2]{lat} }
 			  @station_pairs;
+			@station_pairs = map {
+				[
+					[ $_->[0][2]{lat}, $_->[0][2]{lon} ],
+					[ $_->[1][2]{lat}, $_->[1][2]{lon} ]
+				]
+			} @station_pairs;
 
 			my $ret = {
 				skipped_journeys    => \@skipped_journeys,

@@ -1948,7 +1948,7 @@ my @migrations = (
 	},
 
 	# v51 -> v52
-	# Explicitly encode backend type; preparation for multiple hAFAS backends
+	# Explicitly encode backend type; preparation for multiple HAFAS backends
 	sub {
 		my ($db) = @_;
 		$db->query(
@@ -2050,6 +2050,9 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v52 -> v53
+	# Extend train_id to be compatible with more recent HAFAS versions
 	sub {
 		my ($db) = @_;
 		$db->query(
@@ -2166,6 +2169,147 @@ my @migrations = (
 			}
 		);
 	},
+
+	# v53 -> v54
+	# Retrofit lat/lon data onto routes logged before v2.7.8; ensure
+	# consistent name and eva entries as well.
+	sub {
+		my ($db) = @_;
+
+		say
+'Adding lat/lon to routes of journeys logged before v2.7.8 and improving consistency of name/eva data in very old route entries.';
+		say 'This may take a while ...';
+
+		my %legacy_to_new;
+		if ( -r 'share/old_station_names.json' ) {
+			%legacy_to_new = %{ JSON->new->utf8->decode(
+					scalar read_file('share/old_station_names.json')
+				)
+			};
+		}
+
+		my %latlon_by_eva;
+		my %latlon_by_name;
+		my $res = $db->select( 'stations', [ 'name', 'eva', 'lat', 'lon' ] );
+		while ( my $row = $res->hash ) {
+			$latlon_by_eva{ $row->{eva} }   = $row;
+			$latlon_by_name{ $row->{name} } = $row;
+		}
+
+		my $total
+		  = $db->select( 'journeys', 'count(*) as count' )->hash->{count};
+		my $count           = 0;
+		my $total_no_eva    = 0;
+		my $total_no_latlon = 0;
+
+		my $json = JSON->new;
+
+		$res = $db->select( 'journeys_str', [ 'route', 'journey_id' ] );
+		while ( my $row = $res->expand->hash ) {
+			my $no_eva    = 0;
+			my $no_latlon = 0;
+			my $changed   = 0;
+			my @route     = @{ $row->{route} };
+			for my $stop (@route) {
+				my $name = $stop->[0];
+				my $eva  = $stop->[1];
+
+				if ( not $eva and $stop->[2]{eva} ) {
+					$eva = $stop->[1] = 0 + $stop->[2]{eva};
+				}
+
+				if ( $stop->[2]{eva} and $eva and $eva == $stop->[2]{eva} ) {
+					delete $stop->[2]{eva};
+				}
+
+				if ( $stop->[2]{name} and $name eq $stop->[2]{name} ) {
+					delete $stop->[2]{name};
+				}
+
+				if ( not $eva ) {
+					if ( $latlon_by_name{$name} ) {
+						$eva     = $stop->[1] = $latlon_by_name{$name}{eva};
+						$changed = 1;
+					}
+					elsif ( $legacy_to_new{$name}
+						and $latlon_by_name{ $legacy_to_new{$name} } )
+					{
+						$eva = $stop->[1]
+						  = $latlon_by_name{ $legacy_to_new{$name} }{eva};
+						$stop->[2]{lat}
+						  = $latlon_by_name{ $legacy_to_new{$name} }{lat};
+						$stop->[2]{lon}
+						  = $latlon_by_name{ $legacy_to_new{$name} }{lon};
+						$changed = 1;
+					}
+					else {
+						$no_eva = 1;
+					}
+				}
+
+				if ( $stop->[2]{lat} and $stop->[2]{lon} ) {
+					next;
+				}
+
+				if ( $eva and $latlon_by_eva{$eva} ) {
+					$stop->[2]{lat} = $latlon_by_eva{$eva}{lat};
+					$stop->[2]{lon} = $latlon_by_eva{$eva}{lon};
+					$changed        = 1;
+				}
+				elsif ( $latlon_by_name{$name} ) {
+					$stop->[2]{lat} = $latlon_by_name{$name}{lat};
+					$stop->[2]{lon} = $latlon_by_name{$name}{lon};
+					$changed        = 1;
+				}
+				elsif ( $legacy_to_new{$name}
+					and $latlon_by_name{ $legacy_to_new{$name} } )
+				{
+					$stop->[2]{lat}
+					  = $latlon_by_name{ $legacy_to_new{$name} }{lat};
+					$stop->[2]{lon}
+					  = $latlon_by_name{ $legacy_to_new{$name} }{lon};
+					$changed = 1;
+				}
+				else {
+					$no_latlon = 1;
+				}
+			}
+			if ($no_eva) {
+				$total_no_eva += 1;
+			}
+			if ($no_latlon) {
+				$total_no_latlon += 1;
+			}
+			if ($changed) {
+				$db->update(
+					'journeys',
+					{
+						route => $json->encode( \@route ),
+					},
+					{ id => $row->{journey_id} }
+				);
+			}
+			if ( $count++ % 10000 == 0 ) {
+				printf( "    %2.0f%% complete\n", $count * 100 / $total );
+			}
+		}
+		say '    done';
+		if ($total_no_eva) {
+			printf( "    (%d of %d routes still lack some EVA IDs)\n",
+				$total_no_eva, $total );
+		}
+		if ($total_no_latlon) {
+			printf( "    (%d of %d routes still lack some lat/lon data)\n",
+				$total_no_latlon, $total );
+		}
+
+		$db->query(
+			qq{
+				update schema_version set version = 54;
+			}
+		);
+	},
+
 );
 
 sub sync_stations {

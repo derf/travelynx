@@ -1323,8 +1323,6 @@ sub commute {
 sub map_history {
 	my ($self) = @_;
 
-	my $location = $self->app->coordinates_by_station;
-
 	if ( not $self->param('route_type') ) {
 		$self->param( route_type => 'polybee' );
 	}
