@@ -167,7 +167,17 @@ sub add {
 	my @route;
 
 	if ( not $route_has_start ) {
-		push( @route, [ $dep_station->{name}, $dep_station->{eva}, {} ] );
+		push(
+			@route,
+			[
+				$dep_station->{name},
+				$dep_station->{eva},
+				{
+					lat => $dep_station->{lat},
+					lon => $dep_station->{lon},
+				}
+			]
+		);
 	}
 
 	if ( $opt{route} ) {
@@ -175,8 +185,17 @@ sub add {
 		for my $station ( @{ $opt{route} } ) {
 			my $station_info = $self->{stations}->search($station);
 			if ($station_info) {
-				push( @route,
-					[ $station_info->{name}, $station_info->{eva}, {} ] );
+				push(
+					@route,
+					[
+						$station_info->{name},
+						$station_info->{eva},
+						{
+							lat => $station_info->{lat},
+							lon => $station_info->{lon},
+						}
+					]
+				);
 			}
 			else {
 				push( @route,            [ $station, undef, {} ] );
@@ -198,7 +217,17 @@ sub add {
 	}
 
 	if ( not $route_has_stop ) {
-		push( @route, [ $arr_station->{name}, $arr_station->{eva}, {} ] );
+		push(
+			@route,
+			[
+				$arr_station->{name},
+				$arr_station->{eva},
+				{
+					lat => $arr_station->{lat},
+					lon => $arr_station->{lon},
+				}
+			]
+		);
 	}
 
 	my $entry = {
