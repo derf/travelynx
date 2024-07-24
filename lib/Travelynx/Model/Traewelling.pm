@@ -224,6 +224,7 @@ sub get_pushable_accounts {
 			join in_transit_str as i on t.user_id = i.user_id
 			where t.push_sync = True
 			and i.arr_eva is not null
+			and i.backend_id <= 1
 			and i.cancelled = False
 		}
 	);

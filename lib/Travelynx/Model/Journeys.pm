@@ -545,7 +545,7 @@ sub get {
 
 	my @select
 	  = (
-		qw(journey_id is_iris is_hafas backend_name train_type train_line train_no checkin_ts sched_dep_ts real_dep_ts dep_eva dep_ds100 dep_name dep_lat dep_lon checkout_ts sched_arr_ts real_arr_ts arr_eva arr_ds100 arr_name arr_lat arr_lon cancelled edited route messages user_data visibility effective_visibility)
+		qw(journey_id is_iris is_hafas backend_name backend_id train_type train_line train_no checkin_ts sched_dep_ts real_dep_ts dep_eva dep_ds100 dep_name dep_lat dep_lon checkout_ts sched_arr_ts real_arr_ts arr_eva arr_ds100 arr_name arr_lat arr_lon cancelled edited route messages user_data visibility effective_visibility)
 	  );
 	my %where = (
 		user_id   => $uid,
@@ -606,6 +606,7 @@ sub get {
 			is_iris              => $entry->{is_iris},
 			is_hafas             => $entry->{is_hafas},
 			backend_name         => $entry->{backend_name},
+			backend_id           => $entry->{backend_id},
 			type                 => $entry->{train_type},
 			line                 => $entry->{train_line},
 			no                   => $entry->{train_no},
@@ -665,7 +666,10 @@ sub get {
 			my $rename = $self->{renamed_station};
 			for my $stop ( @{ $ref->{route} } ) {
 				if ( $stop->[0] =~ m{^Betriebsstelle nicht bekannt (\d+)$} ) {
-					if ( my $s = $self->{stations}->get_by_eva($1) ) {
+					if ( my $s
+						= $self->{stations}
+						->get_by_eva( $1, backend_id => $ref->{backend_id} ) )
+					{
 						$stop->[0] = $s->{name};
 					}
 				}
@@ -800,14 +804,14 @@ sub get_oldest_ts {
 	return undef;
 }
 
-sub get_latest_checkout_station_id {
+sub get_latest_checkout_ids {
 	my ( $self, %opt ) = @_;
 	my $uid = $opt{uid};
 	my $db  = $opt{db} // $self->{pg}->db;
 
 	my $res_h = $db->select(
 		'journeys',
-		['checkout_station_id'],
+		[ 'checkout_station_id', 'backend_id', ],
 		{
 			user_id   => $uid,
 			cancelled => 0
@@ -822,7 +826,7 @@ sub get_latest_checkout_station_id {
 		return;
 	}
 
-	return $res_h->{checkout_station_id};
+	return $res_h->{checkout_station_id}, $res_h->{backend_id};
 }
 
 sub get_latest_checkout_stations {
@@ -833,7 +837,7 @@ sub get_latest_checkout_stations {
 
 	my $res = $db->select(
 		'journeys_str',
-		[ 'arr_name', 'arr_eva', 'train_id' ],
+		[ 'arr_name', 'arr_eva', 'train_id', 'backend_id', 'backend_name', 'is_hafas' ],
 		{
 			user_id   => $uid,
 			cancelled => 0
@@ -856,7 +860,8 @@ sub get_latest_checkout_stations {
 			{
 				name  => $row->{arr_name},
 				eva   => $row->{arr_eva},
-				hafas => ( $row->{train_id} =~ m{[|]} ? 'DB' : 0 ),
+				hafas => $row->{is_hafas} ? $row->{backend_name} : 0,
+				backend_id => $row->{backend_id},
 			}
 		);
 	}
@@ -1726,28 +1731,29 @@ sub get_stats {
 	return $stats;
 }
 
-sub get_latest_dest_id {
+sub get_latest_dest_ids {
 	my ( $self, %opt ) = @_;
 
 	my $uid = $opt{uid};
 	my $db  = $opt{db} // $self->{pg}->db;
 
 	if (
-		my $id = $self->{in_transit}->get_checkout_station_id(
+		my ( $id, $backend_id ) = $self->{in_transit}->get_checkout_ids(
 			uid => $uid,
 			db  => $db
 		)
 	  )
 	{
-		return $id;
+		return ( $id, $backend_id );
 	}
 
-	return $self->get_latest_checkout_station_id(
+	return $self->get_latest_checkout_ids(
 		uid => $uid,
 		db  => $db
 	);
 }
 
+# Returns a listref of {eva, name} hashrefs for the specified backend.
 sub get_connection_targets {
 	my ( $self, %opt ) = @_;
 
@@ -1755,22 +1761,30 @@ sub get_connection_targets {
 	my $threshold = $opt{threshold}
 	  // DateTime->now( time_zone => 'Europe/Berlin' )->subtract( months => 4 );
 	my $db        = $opt{db} //= $self->{pg}->db;
-	my $min_count = $opt{min_count} // 3;
+	my $min_count = $opt{min_count} // 1;
+	my $dest_id   = $opt{eva};
 
 	if ( $opt{destination_name} ) {
-		return (
-			[],
-			[ { eva => $opt{eva}, name => $opt{destination_name} } ]
-		);
+		return [ { eva => $opt{eva}, name => $opt{destination_name} } ];
 	}
 
-	my $dest_id = $opt{eva} // $self->get_latest_dest_id(%opt);
+	my $backend_id = $opt{backend_id};
 
 	if ( not $dest_id ) {
-		return ( [], [] );
+		( $dest_id, $backend_id ) = $self->get_latest_dest_ids(%opt);
 	}
 
-	my $dest_ids = [ $dest_id, $self->{stations}->get_meta( eva => $dest_id ) ];
+	if ( not $dest_id ) {
+		return [];
+	}
+
+	my $dest_ids = [
+		$dest_id,
+		$self->{stations}->get_meta(
+			eva        => $dest_id,
+			backend_id => $backend_id,
+		)
+	];
 
 	my $res = $db->select(
 		'journeys',
@@ -1778,7 +1792,8 @@ sub get_connection_targets {
 		{
 			user_id            => $uid,
 			checkin_station_id => $dest_ids,
-			real_departure     => { '>', $threshold }
+			real_departure     => { '>', $threshold },
+			backend_id         => $opt{backend_id},
 		},
 		{
 			group_by => ['checkout_station_id'],
@@ -1788,8 +1803,11 @@ sub get_connection_targets {
 	my @destinations
 	  = $res->hashes->grep( sub { shift->{count} >= $min_count } )
 	  ->map( sub { shift->{dest} } )->each;
-	@destinations = $self->{stations}->get_by_evas(@destinations);
-	return ( $dest_ids, \@destinations );
+	@destinations = $self->{stations}->get_by_evas(
+		backend_id => $opt{backend_id},
+		evas       => [@destinations]
+	);
+	return \@destinations;
 }
 
 sub update_visibility {

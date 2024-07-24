@@ -1,4 +1,5 @@
 package Travelynx::Command::dumpconfig;
+
 # Copyright (C) 2020-2023 Birte Kristina Friesel
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later

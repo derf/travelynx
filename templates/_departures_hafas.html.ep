@@ -18,6 +18,7 @@
 		</li>
 	% }
 	<li class="collection-item <%= $link_class %> <%= $row_class %>"
+		data-hafas="<%= $hafas %>"
 		data-station="<%= $result->station_eva %>"
 		data-train="<%= $result->id %>"
 		data-ts="<%= ($result->sched_datetime // $result->datetime)->epoch %>"

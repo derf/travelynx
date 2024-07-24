@@ -999,6 +999,52 @@ sub password_form {
 	$self->render('change_password');
 }
 
+sub backend_form {
+	my ($self) = @_;
+	my $user = $self->current_user;
+
+	my @backends = $self->stations->get_backends;
+
+	for my $backend (@backends) {
+		my $type = 'UNKNOWN';
+		if ( $backend->{iris} ) {
+			$type = 'IRIS-TTS';
+			$backend->{name} = 'DB';
+		}
+		elsif ( $backend->{hafas} ) {
+			$type = 'HAFAS';
+			$backend->{longname}
+			  = $self->hafas->get_service( $backend->{name} )->{name};
+		}
+		$backend->{type} = $type;
+	}
+
+	$self->render(
+		'select_backend',
+		backends    => \@backends,
+		user        => $user,
+		redirect_to => $self->req->param('redirect_to') // '/',
+	);
+}
+
+sub change_backend {
+	my ($self) = @_;
+
+	my $backend_id = $self->req->param('backend');
+	my $redir      = $self->req->param('redirect_to') // '/';
+
+	if ( $backend_id !~ m{ ^ \d+ $ }x ) {
+		$self->redirect_to($redir);
+	}
+
+	$self->users->set_backend(
+		uid        => $self->current_user->{id},
+		backend_id => $backend_id,
+	);
+
+	$self->redirect_to($redir);
+}
+
 sub change_password {
 	my ($self)       = @_;
 	my $old_password = $self->req->param('oldpw');

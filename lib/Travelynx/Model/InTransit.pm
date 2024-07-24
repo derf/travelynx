@@ -93,6 +93,7 @@ sub add {
 
 	my $uid                = $opt{uid};
 	my $db                 = $opt{db} // $self->{pg}->db;
+	my $backend_id         = $opt{backend_id};
 	my $train              = $opt{train};
 	my $journey            = $opt{journey};
 	my $stop               = $opt{stop};
@@ -103,8 +104,6 @@ sub add {
 	my $json = JSON->new;
 
 	if ($train) {
-		my $backend_id
-		  = $db->select( 'backends', ['id'], { iris => 1 } )->hash->{id};
 		$db->insert(
 			'in_transit',
 			{
@@ -136,14 +135,6 @@ sub add {
 		);
 	}
 	elsif ( $journey and $stop ) {
-		my $backend_id = $db->select(
-			'backends',
-			['id'],
-			{
-				hafas => 1,
-				name  => 'DB'
-			}
-		)->hash->{id};
 		my @route;
 		my $product = $journey->product_at( $stop->loc->eva )
 		  // $journey->product;
@@ -440,17 +431,20 @@ sub get_all_active {
 	  ->hashes->each;
 }
 
-sub get_checkout_station_id {
+sub get_checkout_ids {
 	my ( $self, %opt ) = @_;
 
 	my $uid = $opt{uid};
 	my $db  = $opt{db} // $self->{pg}->db;
 
-	my $status = $db->select( 'in_transit', ['checkout_station_id'],
-		{ user_id => $uid } )->hash;
+	my $status = $db->select(
+		'in_transit',
+		[ 'checkout_station_id', 'backend_id' ],
+		{ user_id => $uid }
+	)->hash;
 
 	if ($status) {
-		return $status->{checkout_station_id};
+		return $status->{checkout_station_id}, $status->{backend_id};
 	}
 	return;
 }
@@ -819,7 +813,6 @@ sub update_arrival_hafas {
 	my $stop    = $opt{stop};
 	my $json    = JSON->new;
 
-	# TODO use old rt data if available
 	my @route;
 	for my $j_stop ( $journey->route ) {
 		push(

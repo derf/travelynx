@@ -116,6 +116,7 @@ sub get_status_p {
 
 					my $category = $status->{train}{category};
 					my $linename = $status->{train}{lineName};
+					my $train_no = $status->{train}{journeyNumber};
 					my $trip_id  = $status->{train}{hafasId};
 					my ( $train_type, $train_line ) = split( qr{ }, $linename );
 					$promise->resolve(
@@ -133,6 +134,7 @@ sub get_status_p {
 							arr_ds100  => $arr_ds100,
 							arr_name   => $arr_name,
 							trip_id    => $trip_id,
+							train_no   => $train_no,
 							train_type => $train_type,
 							line       => $linename,
 							line_no    => $train_line,

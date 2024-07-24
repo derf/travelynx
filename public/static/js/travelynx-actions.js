@@ -191,6 +191,7 @@ function tvly_reg_handlers() {
 		var link = $(this);
 		var req = {
 			action: 'checkin',
+			hafas: link.data('hafas'),
 			station: link.data('station'),
 			train: link.data('train'),
 			dest: link.data('dest'),
@@ -202,6 +203,7 @@ function tvly_reg_handlers() {
 		var link = $(this);
 		var req = {
 			action: 'checkout',
+			hafas: link.data('hafas'),
 			station: link.data('station'),
 			force: link.data('force'),
 		};
@@ -232,6 +234,7 @@ function tvly_reg_handlers() {
 		var link = $(this);
 		var req = {
 			action: 'cancelled_from',
+			hafas: link.data('hafas'),
 			station: link.data('station'),
 			ts: link.data('ts'),
 			train: link.data('train'),
@@ -242,6 +245,7 @@ function tvly_reg_handlers() {
 		var link = $(this);
 		var req = {
 			action: 'cancelled_to',
+			hafas: link.data('hafas'),
 			station: link.data('station'),
 			force: true,
 		};

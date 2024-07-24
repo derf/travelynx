@@ -47,9 +47,12 @@ sub run {
 		my $arr      = $entry->{arr_eva};
 		my $train_id = $entry->{train_id};
 
-		if ( $train_id =~ m{[|]} ) {
+		if ( $entry->{is_hafas} ) {
 
-			$self->app->hafas->get_journey_p( trip_id => $train_id )->then(
+			$self->app->hafas->get_journey_p(
+				trip_id => $train_id,
+				service => $entry->{backend_name}
+			)->then(
 				sub {
 					my ($journey) = @_;
 
@@ -134,6 +137,9 @@ sub run {
 			}
 			next;
 		}
+
+		# TODO irgendwo ist hier ne race condition wo ein neuer checkin (in HAFAS) mit IRIS-Daten überschrieben wird.
+		# Die ganzen updates brauchen wirklich mal sanity checks mit train id ...
 
 		# Note: IRIS data is not always updated in real-time. Both departure and
 		# arrival delays may take several minutes to appear, especially in case

@@ -9,7 +9,7 @@ use warnings;
 
 use 5.020;
 
-use Encode qw(encode);
+use Encode                qw(encode);
 use Email::Sender::Simple qw(try_to_sendmail);
 use MIME::Entity;
 

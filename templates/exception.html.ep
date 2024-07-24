@@ -20,8 +20,15 @@
 			Timestamp:
 			%= DateTime->now(time_zone => 'Europe/Berlin')->strftime("%d/%b/%Y:%H:%M:%S %z")
 			<br/><br/>
-			Message:
-			%= ref($exception) ? (split(qr{\n}, $exception->message))[0] : $exception
+			% if (ref($exception)) {
+				Trace:<br/>
+				% for my $line (split(qr{\n}, $exception->message)) {
+					<%= $line %><br/>
+				% }
+			% }
+			% else {
+				Message: <%= $exception %>
+			% }
 		</p>
 	</div>
 </div>

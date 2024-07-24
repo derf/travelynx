@@ -14,38 +14,126 @@ sub new {
 	return bless( \%opt, $class );
 }
 
+sub get_backend_id {
+	my ( $self, %opt ) = @_;
+
+	if ( $opt{iris} ) {
+
+		# special case
+		return 0;
+	}
+	if ( $opt{hafas} and $self->{backend_id}{hafas}{ $opt{hafas} } ) {
+		return $self->{backend_id}{hafas}{ $opt{hafas} };
+	}
+
+	my $db         = $opt{db} // $self->{pg}->db;
+	my $backend_id = 0;
+
+	if ( $opt{hafas} ) {
+		$backend_id = $db->select(
+			'backends',
+			['id'],
+			{
+				hafas => 1,
+				name  => $opt{hafas}
+			}
+		)->hash->{id};
+		$self->{backend_id}{hafas}{ $opt{hafas} } = $backend_id;
+	}
+
+	return $backend_id;
+}
+
+sub get_hafas_name {
+	my ( $self, %opt ) = @_;
+
+	if ( exists $self->{hafas_name}{ $opt{backend_id} } ) {
+		return $self->{hafas_name}{ $opt{backend_id} };
+	}
+
+	my $db = $opt{db} // $self->{pg}->db;
+	my $hafas_name;
+	my $ret = $db->select(
+		'backends',
+		['name'],
+		{
+			hafas => 1,
+			id    => $opt{backend_id},
+		}
+	)->hash;
+
+	if ($ret) {
+		$hafas_name = $ret->{name};
+	}
+
+	$self->{hafas_name}{ $opt{backend_id} } = $hafas_name;
+
+	return $hafas_name;
+}
+
+sub get_backends {
+	my ( $self, %opt ) = @_;
+
+	$opt{db} //= $self->{pg}->db;
+
+	my $res = $opt{db}->select( 'backends', [ 'id', 'name', 'iris', 'hafas' ] );
+	my @ret;
+
+	while ( my $row = $res->hash ) {
+		push(
+			@ret,
+			{
+				id    => $row->{id},
+				name  => $row->{name},
+				iris  => $row->{iris},
+				hafas => $row->{hafas},
+			}
+		);
+	}
+
+	return @ret;
+}
+
 sub add_or_update {
 	my ( $self, %opt ) = @_;
-	my $stop   = $opt{stop};
-	my $loc    = $stop->loc;
-	my $source = 1;
-	my $db     = $opt{db} // $self->{pg}->db;
+	my $stop = $opt{stop};
+	my $loc  = $stop->loc;
+	$opt{db} //= $self->{pg}->db;
 
-	if ( my $s = $self->get_by_eva( $loc->eva, db => $db ) ) {
-		if ( $source == 1 and $s->{source} == 0 and not $s->{archived} ) {
-			return;
-		}
-		$db->update(
+	$opt{backend_id} //= $self->get_backend_id(%opt);
+
+	if (
+		my $s = $self->get_by_eva(
+			$loc->eva,
+			db         => $opt{db},
+			backend_id => $opt{backend_id}
+		)
+	  )
+	{
+		$opt{db}->update(
 			'stations',
 			{
 				name     => $loc->name,
 				lat      => $loc->lat,
 				lon      => $loc->lon,
-				source   => $source,
+				source   => $opt{backend_id},
 				archived => 0
 			},
-			{ eva => $loc->eva }
+			{
+				eva    => $loc->eva,
+				source => $opt{backend_id}
+			}
 		);
 		return;
 	}
-	$db->insert(
+	$opt{db}->insert(
 		'stations',
 		{
 			eva      => $loc->eva,
 			name     => $loc->name,
 			lat      => $loc->lat,
 			lon      => $loc->lon,
-			source   => $source,
+			source   => $opt{backend_id},
 			archived => 0
 		}
 	);
@@ -53,17 +141,20 @@ sub add_or_update {
 
 sub add_meta {
 	my ( $self, %opt ) = @_;
-	my $db   = $opt{db} // $self->{pg}->db;
 	my $eva  = $opt{eva};
 	my @meta = @{ $opt{meta} };
 
+	$opt{db}         //= $self->{pg}->db;
+	$opt{backend_id} //= $self->get_backend_id(%opt);
+
 	for my $meta (@meta) {
 		if ( $meta != $eva ) {
-			$db->insert(
+			$opt{db}->insert(
 				'related_stations',
 				{
-					eva  => $eva,
-					meta => $meta
+					eva        => $eva,
+					meta       => $meta,
+					backend_id => $opt{backend_id},
 				},
 				{ on_conflict => undef }
 			);
@@ -82,7 +173,16 @@ sub get_meta {
 	my $db  = $opt{db} // $self->{pg}->db;
 	my $eva = $opt{eva};
 
-	my $res = $db->select( 'related_stations', ['meta'], { eva => $eva } );
+	$opt{backend_id} //= $self->get_backend_id( %opt, db => $db );
+
+	my $res = $db->select(
+		'related_stations',
+		['meta'],
+		{
+			eva        => $eva,
+			backend_id => $opt{backend_id}
+		}
+	);
 	my @ret;
 
 	while ( my $row = $res->hash ) {
@@ -93,9 +193,12 @@ sub get_meta {
 }
 
 sub get_for_autocomplete {
-	my ($self) = @_;
+	my ( $self, %opt ) = @_;
 
-	my $res = $self->{pg}->db->select( 'stations', ['name'] );
+	$opt{backend_id} //= $self->get_backend_id(%opt);
+
+	my $res = $self->{pg}
+	  ->db->select( 'stations', ['name'], { source => $opt{backend_id} } );
 	my %ret;
 
 	while ( my $row = $res->hash ) {
@@ -113,18 +216,34 @@ sub get_by_eva {
 		return;
 	}
 
-	my $db = $opt{db} // $self->{pg}->db;
+	$opt{db}         //= $self->{pg}->db;
+	$opt{backend_id} //= $self->get_backend_id(%opt);
 
-	return $db->select( 'stations', '*', { eva => $eva } )->hash;
+	return $opt{db}->select(
+		'stations',
+		'*',
+		{
+			eva    => $eva,
+			source => $opt{backend_id}
+		}
+	)->hash;
 }
 
 # Fast
 sub get_by_evas {
-	my ( $self, @evas ) = @_;
+	my ( $self, %opt ) = @_;
 
-	my @ret
-	  = $self->{pg}->db->select( 'stations', '*', { eva => { '=', \@evas } } )
-	  ->hashes->each;
+	$opt{db}         //= $self->{pg}->db;
+	$opt{backend_id} //= $self->get_backend_id(%opt);
+
+	my @ret = $self->{pg}->db->select(
+		'stations',
+		'*',
+		{
+			eva    => { '=', $opt{evas} },
+			source => $opt{backend_id}
+		}
+	)->hashes->each;
 	return @ret;
 }
 
@@ -132,10 +251,18 @@ sub get_by_evas {
 sub get_by_name {
 	my ( $self, $name, %opt ) = @_;
 
-	my $db = $opt{db} // $self->{pg}->db;
+	$opt{db}         //= $self->{pg}->db;
+	$opt{backend_id} //= $self->get_backend_id(%opt);
 
-	return $db->select( 'stations', '*', { name => $name }, { limit => 1 } )
-	  ->hash;
+	return $opt{db}->select(
+		'stations',
+		'*',
+		{
+			name   => $name,
+			source => $opt{backend_id}
+		},
+		{ limit => 1 }
+	)->hash;
 }
 
 # Slow
@@ -152,15 +279,26 @@ sub get_by_names {
 sub get_by_ds100 {
 	my ( $self, $ds100, %opt ) = @_;
 
-	my $db = $opt{db} // $self->{pg}->db;
+	$opt{db}         //= $self->{pg}->db;
+	$opt{backend_id} //= $self->get_backend_id(%opt);
 
-	return $db->select( 'stations', '*', { ds100 => $ds100 }, { limit => 1 } )
-	  ->hash;
+	return $opt{db}->select(
+		'stations',
+		'*',
+		{
+			ds100  => $ds100,
+			source => $opt{backend_id}
+		},
+		{ limit => 1 }
+	)->hash;
 }
 
 # Can be slow
 sub search {
 	my ( $self, $identifier, %opt ) = @_;
+
+	$opt{db}         //= $self->{pg}->db;
+	$opt{backend_id} //= $self->get_backend_id(%opt);
 
 	if ( $identifier =~ m{ ^ \d+ $ }x ) {
 		return $self->get_by_eva( $identifier, %opt )

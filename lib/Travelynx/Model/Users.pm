@@ -205,6 +205,13 @@ sub get_privacy_by {
 	return;
 }
 
+sub set_backend {
+	my ( $self, %opt ) = @_;
+	$opt{db} //= $self->{pg}->db;
+
+	$opt{db}->update('users', {backend_id => $opt{backend_id}}, {id => $opt{uid}});
+}
+
 sub set_privacy {
 	my ( $self, %opt ) = @_;
 	my $db           = $opt{db} // $self->{pg}->db;
@@ -401,12 +408,13 @@ sub get {
 	my $uid = $opt{uid};
 
 	my $user = $db->select(
-		'users',
+		'users_with_backend',
 		'id, name, status, public_level, email, '
 		  . 'accept_follows, notifications, '
 		  . 'extract(epoch from registered_at) as registered_at_ts, '
 		  . 'extract(epoch from last_seen) as last_seen_ts, '
-		  . 'extract(epoch from deletion_requested) as deletion_requested_ts',
+		  . 'extract(epoch from deletion_requested) as deletion_requested_ts, '
+		  . 'backend_id, backend_name, hafas',
 		{ id => $uid }
 	)->hash;
 	if ($user) {
@@ -443,6 +451,9 @@ sub get {
 				time_zone => 'Europe/Berlin'
 			  )
 			: undef,
+			backend_id    => $user->{backend_id},
+			backend_name  => $user->{backend_name},
+			backend_hafas => $user->{hafas},
 		};
 	}
 	return undef;
