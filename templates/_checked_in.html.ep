@@ -343,7 +343,12 @@
 				% else {
 					% $url = $url . $journey->{train_type} . ' ' . $journey->{train_no} . '/' . $journey->{sched_departure}->epoch . '000?station=' . $journey->{dep_eva};
 				% }
-				<a style="margin-right: 0;" href="<%= $url %>"><i class="material-icons left" aria-hidden="true">timeline</i> Zuglauf</a>
+				% if ($journey->{backend_id} <= 1) {
+					<a style="margin-right: 0;" href="<%= $url %>"><i class="material-icons left" aria-hidden="true">timeline</i> Zuglauf</a>
+				% }
+				% else {
+					&nbsp;
+				% }
 				% if ($journey->{extra_data}{trip_id}) {
 					<a class="right" style="margin-right: 0;" href="https://dbf.finalrewind.org/map/<%= $journey->{extra_data}{trip_id} =~ s{#}{%23}gr %>/<%= $journey->{train_line} || 0 %>?hafas=<%= $journey->{backend_name} // 'DB' %>&amp;from=<%= $journey->{dep_name} %>&amp;to=<%= $journey->{arr_name} %>&amp;dark=<%= (session('theme') and session('theme') eq 'dark') ? 1 : 0 %>"><i class="material-icons left" aria-hidden="true">map</i> Karte</a>
 				% }
