@@ -95,7 +95,8 @@ sub get_connecting_trains_p {
 		return $promise->reject;
 	}
 
-	$self->log->debug( join( q{, }, map { $_->{name} } @destinations ) );
+	$self->log->debug( 'get_connection_targets returned '
+		  . join( q{, }, map { $_->{name} } @destinations ) );
 
 	my $can_check_in = not $arr_epoch || ( $arr_countdown // 1 ) < 0;
 	my $lookahead
