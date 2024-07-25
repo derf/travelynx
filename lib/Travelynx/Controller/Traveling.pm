@@ -24,6 +24,10 @@ sub has_str_in_list {
 	return;
 }
 
+# when called with "eva" provided: look up connections from eva, either
+# for provided backend_id / hafas or (if not provided) for user backend id.
+# When calld without "eva": look up connections from current/latest arrival
+# eva, using the checkin's backend id.
 sub get_connecting_trains_p {
 	my ( $self, %opt ) = @_;
 
@@ -44,9 +48,10 @@ sub get_connecting_trains_p {
 		elsif ( $opt{destination_name} ) {
 			$eva = $opt{eva};
 		}
-		if (not defined $opt{backend_id}) {
-			if ($opt{hafas}) {
-				$opt{backend_id} = $self->stations->get_backend_id(hafas => $opt{hafas});
+		if ( not defined $opt{backend_id} ) {
+			if ( $opt{hafas} ) {
+				$opt{backend_id}
+				  = $self->stations->get_backend_id( hafas => $opt{hafas} );
 			}
 			else {
 				$opt{backend_id} = $user->{backend_id};
@@ -75,11 +80,12 @@ sub get_connecting_trains_p {
 		return $promise->reject;
 	}
 
-	$self->log->debug("get_connecting_trains_p(backend_id => $opt{backend_id}, eva => $eva)");
+	$self->log->debug(
+		"get_connecting_trains_p(backend_id => $opt{backend_id}, eva => $eva)");
 
-	my $destinations = $self->journeys->get_connection_targets(%opt);
+	my @destinations = $self->journeys->get_connection_targets(%opt);
 
-	my @destinations = uniq_by { $_->{name} } @{$destinations};
+	@destinations = uniq_by { $_->{name} } @destinations;
 
 	if ($exclude_via) {
 		@destinations = grep { $_->{name} ne $exclude_via } @destinations;
@@ -89,7 +95,7 @@ sub get_connecting_trains_p {
 		return $promise->reject;
 	}
 
-	$self->log->debug(join(q{, }, map { $_->{name} } @destinations));
+	$self->log->debug( join( q{, }, map { $_->{name} } @destinations ) );
 
 	my $can_check_in = not $arr_epoch || ( $arr_countdown // 1 ) < 0;
 	my $lookahead
@@ -253,8 +259,10 @@ sub get_connecting_trains_p {
 		)->wait;
 	}
 	else {
+		my $hafas_service
+		  = $self->stations->get_hafas_name( backend_id => $opt{backend_id} );
 		$self->hafas->get_departures_p(
-			service    => $self->stations->get_hafas_name(backend_id => $opt{backend_id}),
+			service    => $hafas_service,
 			eva        => $eva,
 			lookbehind => 10,
 			lookahead  => $lookahead
@@ -285,7 +293,7 @@ sub get_connecting_trains_p {
 										@hafas_trains,
 										[
 											$hafas_train, $dest,
-											$arrival,     $opt{hafas}
+											$arrival,     $hafas_service
 										]
 									);
 								}
@@ -340,8 +348,7 @@ sub homepage {
 				and $status->{arrival_countdown} < ( 40 * 60 ) )
 			{
 				$self->render_later;
-				$self->get_connecting_trains_p(
-					backend_id => $status->{backend_id} )->then(
+				$self->get_connecting_trains_p->then(
 					sub {
 						my ( $connections_iris, $connections_hafas ) = @_;
 						$self->render(
@@ -419,8 +426,7 @@ sub status_card {
 			and $status->{arrival_countdown} < ( 40 * 60 ) )
 		{
 			$self->render_later;
-			$self->get_connecting_trains_p(
-				backend_id => $status->{backend_id} )->then(
+			$self->get_connecting_trains_p->then(
 				sub {
 					my ( $connections_iris, $connections_hafas ) = @_;
 					$self->render(
@@ -476,8 +482,7 @@ sub status_card {
 		my $now = DateTime->now( time_zone => 'Europe/Berlin' );
 		if ( $now->epoch - $status->{timestamp}->epoch < ( 30 * 60 ) ) {
 			$self->render_later;
-			$self->get_connecting_trains_p( hafas => $self->param('hafas') )
-			  ->then(
+			$self->get_connecting_trains_p->then(
 				sub {
 					my ( $connections_iris, $connections_hafas ) = @_;
 					$self->render(
@@ -994,12 +999,15 @@ sub station {
 					$connections_p = $self->get_connecting_trains_p(
 						eva => $user_status->{cancellation}{dep_eva},
 						destination_name =>
-						  $user_status->{cancellation}{arr_name}
+						  $user_status->{cancellation}{arr_name},
+						hafas => $hafas_service,
 					);
 				}
 				else {
 					$connections_p = $self->get_connecting_trains_p(
-						eva => $status->{station_eva} );
+						eva   => $status->{station_eva},
+						hafas => $hafas_service
+					);
 				}
 			}
 

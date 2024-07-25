@@ -837,7 +837,10 @@ sub get_latest_checkout_stations {
 
 	my $res = $db->select(
 		'journeys_str',
-		[ 'arr_name', 'arr_eva', 'train_id', 'backend_id', 'backend_name', 'is_hafas' ],
+		[
+			'arr_name',     'arr_eva', 'train_id', 'backend_id',
+			'backend_name', 'is_hafas'
+		],
 		{
 			user_id   => $uid,
 			cancelled => 0
@@ -858,9 +861,9 @@ sub get_latest_checkout_stations {
 		push(
 			@ret,
 			{
-				name  => $row->{arr_name},
-				eva   => $row->{arr_eva},
-				hafas => $row->{is_hafas} ? $row->{backend_name} : 0,
+				name       => $row->{arr_name},
+				eva        => $row->{arr_eva},
+				hafas      => $row->{is_hafas} ? $row->{backend_name} : 0,
 				backend_id => $row->{backend_id},
 			}
 		);
@@ -1807,7 +1810,7 @@ sub get_connection_targets {
 		backend_id => $opt{backend_id},
 		evas       => [@destinations]
 	);
-	return \@destinations;
+	return @destinations;
 }
 
 sub update_visibility {
