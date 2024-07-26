@@ -2,6 +2,32 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		2.8
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left" aria-label="Neues Feature">add</i>
+			Unterstützung von HAFAS-Backends abseits der Deutschen Bahn. Somit
+			sind zumeist akkurate Echtzeit- und Routendaten für Checkins u.a.
+			in Aachen, Berlin/Brandenburg, Hessen, Sachsen-Anhalt,
+			Schleswig-Holstein, Österreich und der Schweiz verfügbar.
+			Das Backend muss vor dem Checkin explizit ausgewählt werden.
+			Eine Synchronisierung mit Traewelling wird nur für DB (IRIS-TTS) –
+			vormals „Schienenverkehr“ – und DB (HAFAS) – vormals „Nahverkehr“ –
+			durchgeführt. Manuell eingetragene Fahrten sind vorerst ebenfalls
+			auf DB (HAFAS) beschränkt.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Ankündigung">announcement</i>
+			Stationssuche und Verbindungsvorschläge berücksichtigen nur noch
+			das ausgewählte Backend. Die bisherige Verknüpfung von DB (IRIS-TTS)
+			und DB (HAFAS) entfällt.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		2.7
 	</div>
 	<div class="col s12 m11 l11">
