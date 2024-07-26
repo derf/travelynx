@@ -57,7 +57,6 @@
 						<div class="card-content">
 							<span class="card-title">Hallo, <%= $user->{name} %>!</span>
 							<p>Du bist gerade nicht eingecheckt.</p>
-							<p>
 							<div class="geolocation" data-recent="<%= join('|', map { $_->{eva} . ';' . $_->{name} . ';' . $_->{hafas} } @{stash('recent_targets') // []} ) %>" data-backend=<%= $user->{backend_id} %>">
 								<button class="btn waves-effect waves-light btn-flat">Stationen in der Umgebung abfragen</button>
 							</div>
@@ -65,7 +64,6 @@
 								%= text_field 'station', id => 'station', class => 'autocomplete contrast-color-text', autocomplete => 'off', required => undef
 								<label for="station">Manuelle Eingabe</label>
 							</div>
-							</p>
 						</div>
 						<div class="card-action">
 							% if ($user->{backend_id}) {
