@@ -7,6 +7,7 @@ use Mojo::Base 'Mojolicious::Command';
 
 use DateTime;
 use File::Slurp qw(read_file);
+use List::Util  qw();
 use JSON;
 use Travel::Status::DE::HAFAS;
 use Travel::Status::DE::IRIS::Stations;
@@ -2401,6 +2402,65 @@ my @migrations = (
 				printf( "    %2.0f%% complete\n", $count * 100 / $total );
 			}
 		}
+
+		# Occasionally, IRIS checkins refer to stations that are not part of
+		# the Travel::Status::DE::IRIS database. Add those as HAFAS stops to
+		# satisfy the upcoming foreign key constraints.
+
+		my %iris_has_eva;
+		$res = $db->query(qq{select eva from stations where source = 0;});
+		while ( my $row = $res->hash ) {
+			$iris_has_eva{ $row->{eva} } = 1;
+		}
+
+		my %hafas_by_eva;
+		$res = $db->query(qq{select * from stations where source = 1;});
+		while ( my $row = $res->hash ) {
+			$hafas_by_eva{ $row->{eva} } = $row;
+		}
+
+		my @iris_ref_stations;
+		$res
+		  = $db->query(
+qq{select distinct checkin_station_id from journeys where backend_id = 0;}
+		  );
+		while ( my $row = $res->hash ) {
+			push( @iris_ref_stations, $row->{checkin_station_id} );
+		}
+		$res
+		  = $db->query(
+qq{select distinct checkout_station_id from journeys where backend_id = 0;}
+		  );
+		while ( my $row = $res->hash ) {
+			push( @iris_ref_stations, $row->{checkout_station_id} );
+		}
+		$res
+		  = $db->query(
+qq{select distinct checkin_station_id from in_transit where backend_id = 0;}
+		  );
+		while ( my $row = $res->hash ) {
+			push( @iris_ref_stations, $row->{checkin_station_id} );
+		}
+		$res
+		  = $db->query(
+qq{select distinct checkout_station_id from in_transit where backend_id = 0;}
+		  );
+		while ( my $row = $res->hash ) {
+			if ( $row->{checkout_station_id} ) {
+				push( @iris_ref_stations, $row->{checkout_station_id} );
+			}
+		}
+
+		@iris_ref_stations = List::Util::uniq @iris_ref_stations;
+
+		for my $station (@iris_ref_stations) {
+			if ( not $iris_has_eva{$station} ) {
+				$hafas_by_eva{$station}{source}   = 0;
+				$hafas_by_eva{$station}{archived} = 1;
+				$db->insert( 'stations', $hafas_by_eva{$station} );
+			}
+		}
+
 		$db->query(
 			qq{
 				alter table in_transit add constraint in_transit_checkin_eva_fk
@@ -2732,15 +2792,15 @@ sub sync_stations {
 
 sub sync_backends {
 	my ($db) = @_;
-	for my $service ( Travel::Status::DE::HAFAS::get_services()) {
+	for my $service ( Travel::Status::DE::HAFAS::get_services() ) {
 		$db->insert(
 			'backends',
 			{
-				iris => 0,
+				iris  => 0,
 				hafas => 1,
-				efa => 0,
-				ris => 0,
-				name => $service->{shortname},
+				efa   => 0,
+				ris   => 0,
+				name  => $service->{shortname},
 			},
 			{ on_conflict => undef }
 		);
@@ -2843,11 +2903,10 @@ sub migrate_db {
 		say 'Backend table is up-to-date';
 	}
 	else {
-			say
+		say
 "Synchronizing with Travel::Status::DE::HAFAS $Travel::Status::DE::HAFAS::VERSION";
 		sync_backends($db);
 	}
-
 
 	$db->update( 'schema_version',
 		{ travelynx => $self->app->config->{version} } );
