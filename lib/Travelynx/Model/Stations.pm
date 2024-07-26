@@ -116,7 +116,6 @@ sub add_or_update {
 				name     => $loc->name,
 				lat      => $loc->lat,
 				lon      => $loc->lon,
-				source   => $opt{backend_id},
 				archived => 0
 			},
 			{
