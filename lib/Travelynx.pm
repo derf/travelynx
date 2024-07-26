@@ -448,7 +448,7 @@ sub startup {
 				return Mojo::Promise->reject('You are already checked in');
 			}
 
-			if ( $train_id =~ m{[|]} ) {
+			if ( $opt{hafas} ) {
 				return $self->_checkin_hafas_p(%opt);
 			}
 
@@ -482,7 +482,9 @@ sub startup {
 							db            => $db,
 							departure_eva => $eva,
 							train         => $train,
-							route => [ $self->iris->route_diff($train) ],
+							route      => [ $self->iris->route_diff($train) ],
+							backend_id =>
+							  $self->stations->get_backend_id( iris => 1 ),
 						);
 					};
 					if ($@) {
@@ -530,6 +532,7 @@ sub startup {
 			my $promise = Mojo::Promise->new;
 
 			$self->hafas->get_journey_p(
+				service       => $opt{hafas},
 				trip_id       => $train_id,
 				with_polyline => 1
 			)->then(
@@ -551,17 +554,21 @@ sub startup {
 					}
 					for my $stop ( $journey->route ) {
 						$self->stations->add_or_update(
-							stop => $stop,
-							db   => $db,
+							stop  => $stop,
+							db    => $db,
+							hafas => $opt{hafas},
 						);
 					}
 					eval {
 						$self->in_transit->add(
-							uid     => $uid,
-							db      => $db,
-							journey => $journey,
-							stop    => $found,
-							data    => { trip_id => $journey->id }
+							uid        => $uid,
+							db         => $db,
+							journey    => $journey,
+							stop       => $found,
+							data       => { trip_id => $journey->id },
+							backend_id => $self->stations->get_backend_id(
+								hafas => $opt{hafas}
+							),
 						);
 					};
 					if ($@) {
@@ -620,8 +627,8 @@ sub startup {
 					# mustn't be called during a transaction
 					if ( not $opt{in_transaction} ) {
 						$self->run_hook( $uid, 'checkin' );
-						if ( $journey->class <= 16 ) {
-							$self->app->add_wagonorder( $uid, 1, $journey->id,
+						if ( $opt{hafas} eq 'DB' and $journey->class <= 16 ) {
+							$self->add_wagonorder( $uid, 1, $journey->id,
 								$found->sched_dep, $journey->number );
 							$self->add_stationinfo( $uid, 1, $journey->id,
 								$found->loc->eva );
@@ -744,6 +751,7 @@ sub startup {
 			my $db           = $opt{db}  // $self->pg->db;
 			my $user         = $self->get_user_status( $uid, $db );
 			my $train_id     = $user->{train_id};
+			my $hafas        = $opt{hafas};
 
 			my $promise = Mojo::Promise->new;
 
@@ -765,7 +773,7 @@ sub startup {
 				return $promise->resolve( 0, 'race condition' );
 			}
 
-			if ( $train_id =~ m{[|]} ) {
+			if ( $user->{is_hafas} ) {
 				return $self->_checkout_hafas_p(%opt);
 			}
 
@@ -1736,7 +1744,8 @@ sub startup {
 			if ( $latest_cancellation and $latest_cancellation->{cancelled} ) {
 				if (
 					my $station = $self->stations->get_by_eva(
-						$latest_cancellation->{dep_eva}
+						$latest_cancellation->{dep_eva},
+						backend_id => $latest_cancellation->{backend_id},
 					)
 				  )
 				{
@@ -1745,7 +1754,8 @@ sub startup {
 				}
 				if (
 					my $station = $self->stations->get_by_eva(
-						$latest_cancellation->{arr_eva}
+						$latest_cancellation->{arr_eva},
+						backend_id => $latest_cancellation->{backend_id},
 					)
 				  )
 				{
@@ -1760,14 +1770,20 @@ sub startup {
 			if ($latest) {
 				my $ts          = $latest->{checkout_ts};
 				my $action_time = epoch_to_dt($ts);
-				if ( my $station
-					= $self->stations->get_by_eva( $latest->{dep_eva} ) )
+				if (
+					my $station = $self->stations->get_by_eva(
+						$latest->{dep_eva}, backend_id => $latest->{backend_id}
+					)
+				  )
 				{
 					$latest->{dep_ds100} = $station->{ds100};
 					$latest->{dep_name}  = $station->{name};
 				}
-				if ( my $station
-					= $self->stations->get_by_eva( $latest->{arr_eva} ) )
+				if (
+					my $station = $self->stations->get_by_eva(
+						$latest->{arr_eva}, backend_id => $latest->{backend_id}
+					)
+				  )
 				{
 					$latest->{arr_ds100} = $station->{ds100};
 					$latest->{arr_name}  = $station->{name};
@@ -1776,6 +1792,10 @@ sub startup {
 					checked_in      => 0,
 					cancelled       => 0,
 					cancellation    => $latest_cancellation,
+					backend_id      => $latest->{backend_id},
+					backend_name    => $latest->{backend_name},
+					is_iris         => $latest->{is_iris},
+					is_hafas        => $latest->{is_hafas},
 					journey_id      => $latest->{journey_id},
 					timestamp       => $action_time,
 					timestamp_delta => $now->epoch - $action_time->epoch,
@@ -1833,7 +1853,12 @@ sub startup {
 					     $status->{checked_in}
 					  or $status->{cancelled}
 				) ? \1 : \0,
-				comment     => $status->{comment},
+				comment => $status->{comment},
+				backend => {
+					id   => $status->{backend_id},
+					type => $status->{is_hafas} ? 'HAFAS' : 'IRIS-TTS',
+					name => $status->{backend_name},
+				},
 				fromStation => {
 					ds100         => $status->{dep_ds100},
 					name          => $status->{dep_name},
@@ -1992,6 +2017,7 @@ sub startup {
 "Eingecheckt in $traewelling->{line} nach $traewelling->{arr_name}",
 						status_id => $traewelling->{status_id},
 					);
+
 					$self->traewelling->set_latest_pull_status_id(
 						uid       => $uid,
 						status_id => $traewelling->{status_id},
@@ -2324,6 +2350,7 @@ sub startup {
 	$authed_r->get('/account/password')->to('account#password_form');
 	$authed_r->get('/account/mail')->to('account#change_mail');
 	$authed_r->get('/account/name')->to('account#change_name');
+	$authed_r->get('/account/select_backend')->to('account#backend_form');
 	$authed_r->get('/export.json')->to('account#json_export');
 	$authed_r->get('/history.json')->to('traveling#json_history');
 	$authed_r->get('/history.csv')->to('traveling#csv_history');
@@ -2345,6 +2372,7 @@ sub startup {
 	$authed_r->post('/account/hooks')->to('account#webhook');
 	$authed_r->post('/account/traewelling')->to('traewelling#settings');
 	$authed_r->post('/account/insight')->to('account#insight');
+	$authed_r->post('/account/select_backend')->to('account#change_backend');
 	$authed_r->post('/journey/add')->to('traveling#add_journey_form');
 	$authed_r->post('/journey/comment')->to('traveling#comment_form');
 	$authed_r->post('/journey/visibility')->to('traveling#visibility_form');

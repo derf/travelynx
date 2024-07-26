@@ -24,10 +24,15 @@ sub has_str_in_list {
 	return;
 }
 
+# when called with "eva" provided: look up connections from eva, either
+# for provided backend_id / hafas or (if not provided) for user backend id.
+# When calld without "eva": look up connections from current/latest arrival
+# eva, using the checkin's backend id.
 sub get_connecting_trains_p {
 	my ( $self, %opt ) = @_;
 
-	my $uid         = $opt{uid} //= $self->current_user->{id};
+	my $user        = $self->current_user;
+	my $uid         = $opt{uid} //= $user->{id};
 	my $use_history = $self->users->use_history( uid => $uid );
 
 	my ( $eva, $exclude_via, $exclude_train_id, $exclude_before );
@@ -43,10 +48,20 @@ sub get_connecting_trains_p {
 		elsif ( $opt{destination_name} ) {
 			$eva = $opt{eva};
 		}
+		if ( not defined $opt{backend_id} ) {
+			if ( $opt{hafas} ) {
+				$opt{backend_id}
+				  = $self->stations->get_backend_id( hafas => $opt{hafas} );
+			}
+			else {
+				$opt{backend_id} = $user->{backend_id};
+			}
+		}
 	}
 	else {
 		if ( $use_history & 0x02 ) {
 			my $status = $self->get_user_status;
+			$opt{backend_id}  = $status->{backend_id};
 			$eva              = $status->{arr_eva};
 			$exclude_via      = $status->{dep_name};
 			$exclude_train_id = $status->{train_id};
@@ -65,10 +80,12 @@ sub get_connecting_trains_p {
 		return $promise->reject;
 	}
 
-	my ( $dest_ids, $destinations )
-	  = $self->journeys->get_connection_targets(%opt);
+	$self->log->debug(
+		"get_connecting_trains_p(backend_id => $opt{backend_id}, eva => $eva)");
 
-	my @destinations = uniq_by { $_->{name} } @{$destinations};
+	my @destinations = $self->journeys->get_connection_targets(%opt);
+
+	@destinations = uniq_by { $_->{name} } @destinations;
 
 	if ($exclude_via) {
 		@destinations = grep { $_->{name} ne $exclude_via } @destinations;
@@ -78,11 +95,8 @@ sub get_connecting_trains_p {
 		return $promise->reject;
 	}
 
-	my $iris_eva = $eva;
-	if ( $eva < 8000000 ) {
-		$iris_eva = ( List::Util::first { $_ >= 8000000 } @{$dest_ids} )
-		  // $eva;
-	}
+	$self->log->debug( 'get_connection_targets returned '
+		  . join( q{, }, map { $_->{name} } @destinations ) );
 
 	my $can_check_in = not $arr_epoch || ( $arr_countdown // 1 ) < 0;
 	my $lookahead
@@ -91,11 +105,9 @@ sub get_connecting_trains_p {
 	my $iris_promise = Mojo::Promise->new;
 	my %via_count    = map { $_->{name} => 0 } @destinations;
 
-	if ( $iris_eva >= 8000000
-		and List::Util::any { $_->{eva} >= 8000000 } @destinations )
-	{
+	if ( $opt{backend_id} == 0 ) {
 		$self->iris->get_departures_p(
-			station      => $iris_eva,
+			station      => $eva,
 			lookbehind   => 10,
 			lookahead    => $lookahead,
 			with_related => 1
@@ -103,7 +115,7 @@ sub get_connecting_trains_p {
 			sub {
 				my ($stationboard) = @_;
 				if ( $stationboard->{errstr} ) {
-					$iris_promise->resolve( [] );
+					$promise->resolve( [], [] );
 					return;
 				}
 
@@ -237,105 +249,30 @@ sub get_connecting_trains_p {
 					}
 				}
 
-				$iris_promise->resolve( [ @results, @cancellations ] );
+				$promise->resolve( [ @results, @cancellations ], [] );
 				return;
 			}
 		)->catch(
 			sub {
-				$iris_promise->resolve( [] );
+				$promise->resolve( [], [] );
 				return;
 			}
 		)->wait;
 	}
 	else {
-		$iris_promise->resolve( [] );
-	}
-
-	my $hafas_promise = Mojo::Promise->new;
-	$self->hafas->get_departures_p(
-		eva        => $eva,
-		lookbehind => 10,
-		lookahead  => $lookahead
-	)->then(
-		sub {
-			my ($status) = @_;
-			$hafas_promise->resolve( [ $status->results ] );
-			return;
-		}
-	)->catch(
-		sub {
-			# HAFAS data is optional.
-			# Errors are logged by get_json_p and can be silently ignored here.
-			$hafas_promise->resolve( [] );
-			return;
-		}
-	)->wait;
-
-	Mojo::Promise->all( $iris_promise, $hafas_promise )->then(
-		sub {
-			my ( $iris, $hafas ) = @_;
-			my @iris_trains      = @{ $iris->[0] };
-			my @all_hafas_trains = @{ $hafas->[0] };
-			my @hafas_trains;
-
-			# We've already got a list of connecting trains; this function
-			# only adds further information to them. We ignore errors, as
-			# partial data is better than no data.
-			eval {
-				for my $iris_train (@iris_trains) {
-					if ( $iris_train->[0]->departure_is_cancelled ) {
-						for my $hafas_train (@all_hafas_trains) {
-							if (    $hafas_train->number
-								and $hafas_train->number
-								== $iris_train->[0]->train_no )
-							{
-								$hafas_train->{iris_seen} = 1;
-								next;
-							}
-						}
-						next;
-					}
-					for my $hafas_train (@all_hafas_trains) {
-						if (    $hafas_train->number
-							and $hafas_train->number
-							== $iris_train->[0]->train_no )
-						{
-							$hafas_train->{iris_seen} = 1;
-							if (    $hafas_train->load
-								and $hafas_train->load->{SECOND} )
-							{
-								$iris_train->[3] = $hafas_train->load;
-							}
-							for my $stop ( $hafas_train->route ) {
-								if (    $stop->loc->name
-									and $stop->loc->name eq
-									$iris_train->[1]->{name}
-									and $stop->arr )
-								{
-									$iris_train->[2] = $stop->arr;
-									if ( $iris_train->[0]->departure_delay
-										and not $stop->arr_delay )
-									{
-										$iris_train->[2]
-										  ->add( minutes => $iris_train->[0]
-											  ->departure_delay );
-									}
-									last;
-								}
-							}
-							last;
-						}
-					}
-				}
+		my $hafas_service
+		  = $self->stations->get_hafas_name( backend_id => $opt{backend_id} );
+		$self->hafas->get_departures_p(
+			service    => $hafas_service,
+			eva        => $eva,
+			lookbehind => 10,
+			lookahead  => $lookahead
+		)->then(
+			sub {
+				my ($status) = @_;
+				my @hafas_trains;
+				my @all_hafas_trains = $status->results;
 				for my $hafas_train (@all_hafas_trains) {
-					if ( $hafas_train->{iris_seen} ) {
-						next;
-					}
-					if ( $hafas_train->station_eva >= 8000000 ) {
-
-						# better safe than sorry, for now
-						next;
-					}
 					for my $stop ( $hafas_train->route ) {
 						for my $dest (@destinations) {
 							if (    $stop->loc->name
@@ -353,30 +290,30 @@ sub get_connecting_trains_p {
 								}
 								if ( $departure->epoch >= $exclude_before ) {
 									$via_count{ $dest->{name} }++;
-									push( @hafas_trains,
-										[ $hafas_train, $dest, $arrival ] );
+									push(
+										@hafas_trains,
+										[
+											$hafas_train, $dest,
+											$arrival,     $hafas_service
+										]
+									);
 								}
 							}
 						}
 					}
 				}
-			};
-			if ($@) {
-				$self->app->log->error(
-					"get_connecting_trains_p($uid): IRIS/HAFAS merge failed: $@"
-				);
+				$promise->resolve( [], \@hafas_trains );
+				return;
 			}
-
-			$promise->resolve( \@iris_trains, \@hafas_trains );
-			return;
-		}
-	)->catch(
-		sub {
-			my ($err) = @_;
-			$promise->reject($err);
-			return;
-		}
-	)->wait;
+		)->catch(
+			sub {
+				my ($err) = @_;
+				$self->log->debug("get_connection_trains: hafas: $err");
+				$promise->resolve( [], [] );
+				return;
+			}
+		)->wait;
+	}
 
 	return $promise;
 }
@@ -394,7 +331,8 @@ sub compute_effective_visibility {
 sub homepage {
 	my ($self) = @_;
 	if ( $self->is_user_authenticated ) {
-		my $uid      = $self->current_user->{id};
+		my $user     = $self->current_user;
+		my $uid      = $user->{id};
 		my $status   = $self->get_user_status;
 		my @timeline = $self->in_transit->get_timeline(
 			uid   => $uid,
@@ -405,7 +343,7 @@ sub homepage {
 		if ( $status->{checked_in} ) {
 			my $journey_visibility
 			  = $self->compute_effective_visibility(
-				$self->current_user->{default_visibility_str},
+				$user->{default_visibility_str},
 				$status->{visibility_str} );
 			if ( defined $status->{arrival_countdown}
 				and $status->{arrival_countdown} < ( 40 * 60 ) )
@@ -416,6 +354,7 @@ sub homepage {
 						my ( $connections_iris, $connections_hafas ) = @_;
 						$self->render(
 							'landingpage',
+							user               => $user,
 							user_status        => $status,
 							journey_visibility => $journey_visibility,
 							connections_iris   => $connections_iris,
@@ -427,6 +366,7 @@ sub homepage {
 					sub {
 						$self->render(
 							'landingpage',
+							user               => $user,
 							user_status        => $status,
 							journey_visibility => $journey_visibility,
 						);
@@ -438,6 +378,7 @@ sub homepage {
 			else {
 				$self->render(
 					'landingpage',
+					user               => $user,
 					user_status        => $status,
 					journey_visibility => $journey_visibility,
 				);
@@ -451,10 +392,12 @@ sub homepage {
 		}
 		$self->render(
 			'landingpage',
+			user              => $user,
 			user_status       => $status,
 			recent_targets    => \@recent_targets,
 			with_autocomplete => 1,
-			with_geolocation  => 1
+			with_geolocation  => 1,
+			backend_id        => $user->{backend_id},
 		);
 		$self->users->mark_seen( uid => $uid );
 	}
@@ -515,6 +458,7 @@ sub status_card {
 	elsif ( $status->{cancellation} ) {
 		$self->render_later;
 		$self->get_connecting_trains_p(
+			backend_id       => $status->{backend_id},
 			eva              => $status->{cancellation}{dep_eva},
 			destination_name => $status->{cancellation}{arr_name}
 		)->then(
@@ -563,14 +507,63 @@ sub status_card {
 sub geolocation {
 	my ($self) = @_;
 
-	my $lon = $self->param('lon');
-	my $lat = $self->param('lat');
+	my $lon        = $self->param('lon');
+	my $lat        = $self->param('lat');
+	my $backend_id = $self->param('backend') // 0;
 
-	if ( not $lon or not $lat ) {
+	if ( not $lon or not $lat or $backend_id !~ m{ ^ \d+ $ }x ) {
 		$self->render( json => { error => 'Invalid lon/lat received' } );
 		return;
 	}
-	$self->render_later;
+
+	my $hafas_service
+	  = $self->stations->get_hafas_name( backend_id => $backend_id );
+
+	if ($hafas_service) {
+		$self->render_later;
+
+		Travel::Status::DE::HAFAS->new_p(
+			promise    => 'Mojo::Promise',
+			user_agent => $self->ua,
+			service    => $hafas_service,
+			geoSearch  => {
+				lat => $lat,
+				lon => $lon
+			}
+		)->then(
+			sub {
+				my ($hafas) = @_;
+				my @hafas = map {
+					{
+						name     => $_->name,
+						eva      => $_->eva,
+						distance => $_->distance_m / 1000,
+						hafas    => $hafas_service
+					}
+				} $hafas->results;
+				if ( @hafas > 10 ) {
+					@hafas = @hafas[ 0 .. 9 ];
+				}
+				$self->render(
+					json => {
+						candidates => [@hafas],
+					}
+				);
+			}
+		)->catch(
+			sub {
+				my ($err) = @_;
+				$self->render(
+					json => {
+						candidates => [],
+						warning    => $err,
+					}
+				);
+			}
+		)->wait;
+
+		return;
+	}
 
 	my @iris = map {
 		{
@@ -580,7 +573,6 @@ sub geolocation {
 			lon      => $_->[0][3],
 			lat      => $_->[0][4],
 			distance => $_->[1],
-			hafas    => 0,
 		}
 	} Travel::Status::DE::IRIS::Stations::get_station_by_location( $lon,
 		$lat, 10 );
@@ -588,48 +580,12 @@ sub geolocation {
 	if ( @iris > 5 ) {
 		@iris = @iris[ 0 .. 4 ];
 	}
+	$self->render(
+		json => {
+			candidates => [@iris],
+		}
+	);
 
-	Travel::Status::DE::HAFAS->new_p(
-		promise    => 'Mojo::Promise',
-		user_agent => $self->ua,
-		geoSearch  => {
-			lat => $lat,
-			lon => $lon
-		}
-	)->then(
-		sub {
-			my ($hafas) = @_;
-			my @hafas = map {
-				{
-					name     => $_->name,
-					eva      => $_->eva,
-					distance => $_->distance_m / 1000,
-					hafas    => 'DB'
-				}
-			} $hafas->results;
-			if ( @hafas > 10 ) {
-				@hafas = @hafas[ 0 .. 9 ];
-			}
-			my @results = map { $_->[0] }
-			  sort { $a->[1] <=> $b->[1] }
-			  map { [ $_, $_->{distance} ] } ( @iris, @hafas );
-			$self->render(
-				json => {
-					candidates => [@results],
-				}
-			);
-		}
-	)->catch(
-		sub {
-			my ($err) = @_;
-			$self->render(
-				json => {
-					candidates => [@iris],
-					warning    => $err,
-				}
-			);
-		}
-	)->wait;
 }
 
 sub travel_action {
@@ -684,6 +640,7 @@ sub travel_action {
 		$promise->then(
 			sub {
 				return $self->checkin_p(
+					hafas    => $params->{hafas},
 					station  => $params->{station},
 					train_id => $params->{train}
 				);
@@ -713,8 +670,8 @@ sub travel_action {
 				my ( $still_checked_in, undef ) = @_;
 				if ( my $destination = $params->{dest} ) {
 					my $station_link = '/s/' . $destination;
-					if ( $status->{train_id} =~ m{[|]} ) {
-						$station_link .= '?hafas=DB';
+					if ( $status->{is_hafas} ) {
+						$station_link .= '?hafas=' . $status->{backend_name};
 					}
 					$self->render(
 						json => {
@@ -749,8 +706,8 @@ sub travel_action {
 			sub {
 				my ( $still_checked_in, $error ) = @_;
 				my $station_link = '/s/' . $params->{station};
-				if ( $status->{train_id} =~ m{[|]} ) {
-					$station_link .= '?hafas=DB';
+				if ( $status->{is_hafas} ) {
+					$station_link .= '?hafas=' . $status->{backend_name};
 				}
 
 				if ($error) {
@@ -800,8 +757,12 @@ sub travel_action {
 		else {
 			my $redir = '/';
 			if ( $status->{checked_in} or $status->{cancelled} ) {
-				if ( $status->{train_id} =~ m{[|]} ) {
-					$redir = '/s/' . $status->{dep_eva} . '?hafas=DB';
+				if ( $status->{is_hafas} ) {
+					$redir
+					  = '/s/'
+					  . $status->{dep_eva}
+					  . '?hafas='
+					  . $status->{backend_name};
 				}
 				else {
 					$redir = '/s/' . $status->{dep_ds100};
@@ -818,6 +779,7 @@ sub travel_action {
 	elsif ( $params->{action} eq 'cancelled_from' ) {
 		$self->render_later;
 		$self->checkin_p(
+			hafas    => $params->{hafas},
 			station  => $params->{station},
 			train_id => $params->{train}
 		)->then(
@@ -920,7 +882,8 @@ sub station {
 	my $train     = $self->param('train');
 	my $trip_id   = $self->param('trip_id');
 	my $timestamp = $self->param('timestamp');
-	my $uid       = $self->current_user->{id};
+	my $user      = $self->current_user;
+	my $uid       = $user->{id};
 
 	my @timeline = $self->in_transit->get_timeline(
 		uid   => $uid,
@@ -928,7 +891,6 @@ sub station {
 	);
 	my %checkin_by_train;
 	for my $checkin (@timeline) {
-		say $checkin->{train_id};
 		push( @{ $checkin_by_train{ $checkin->{train_id} } }, $checkin );
 	}
 	$self->stash( checkin_by_train => \%checkin_by_train );
@@ -945,10 +907,12 @@ sub station {
 		$timestamp = DateTime->now( time_zone => 'Europe/Berlin' );
 	}
 
-	my $use_hafas = $self->param('hafas');
+	my $hafas_service = $self->param('hafas')
+	  // ( $user->{backend_hafas} ? $user->{backend_name} : undef );
 	my $promise;
-	if ($use_hafas) {
+	if ($hafas_service) {
 		$promise = $self->hafas->get_departures_p(
+			service    => $hafas_service,
 			eva        => $station,
 			timestamp  => $timestamp,
 			lookbehind => 30,
@@ -966,27 +930,21 @@ sub station {
 	$promise->then(
 		sub {
 			my ($status) = @_;
-			my $api_link;
 			my @results;
 
 			my $now = $self->now->epoch;
 			my $now_within_range
 			  = abs( $timestamp->epoch - $now ) < 1800 ? 1 : 0;
 
-			if ($use_hafas) {
-
-				my $iris_eva = List::Util::min grep { $_ >= 1000000 }
-				  @{ $status->station->{evas} // [] };
-				if ($iris_eva) {
-					$api_link = '/s/' . $iris_eva;
-				}
+			if ($hafas_service) {
 
 				@results = map { $_->[0] }
 				  sort { $b->[1] <=> $a->[1] }
 				  map { [ $_, $_->datetime->epoch ] } $status->results;
 				$self->stations->add_meta(
-					eva  => $status->station->{eva},
-					meta => $status->station->{evas} // []
+					eva   => $status->station->{eva},
+					meta  => $status->station->{evas} // [],
+					hafas => $hafas_service,
 				);
 				$status = {
 					station_eva  => $status->station->{eva},
@@ -998,8 +956,6 @@ sub station {
 				};
 			}
 			else {
-
-				$api_link = '/s/' . $status->{station_eva} . '?hafas=DB';
 
 				# You can't check into a train which terminates here
 				@results = grep { $_->departure } @{ $status->{results} };
@@ -1029,10 +985,10 @@ sub station {
 			}
 
 			my $connections_p;
-			if ( $trip_id and $use_hafas ) {
+			if ( $trip_id and $hafas_service ) {
 				@results = grep { $_->id eq $trip_id } @results;
 			}
-			elsif ( $train and not $use_hafas ) {
+			elsif ( $train and not $hafas_service ) {
 				@results
 				  = grep { $_->type . ' ' . $_->train_no eq $train } @results;
 			}
@@ -1044,12 +1000,15 @@ sub station {
 					$connections_p = $self->get_connecting_trains_p(
 						eva => $user_status->{cancellation}{dep_eva},
 						destination_name =>
-						  $user_status->{cancellation}{arr_name}
+						  $user_status->{cancellation}{arr_name},
+						hafas => $hafas_service,
 					);
 				}
 				else {
 					$connections_p = $self->get_connecting_trains_p(
-						eva => $status->{station_eva} );
+						eva   => $status->{station_eva},
+						hafas => $hafas_service
+					);
 				}
 			}
 
@@ -1059,18 +1018,18 @@ sub station {
 						my ( $connections_iris, $connections_hafas ) = @_;
 						$self->render(
 							'departures',
+							user              => $user,
+							hafas             => $hafas_service,
 							eva               => $status->{station_eva},
 							datetime          => $timestamp,
 							now_in_range      => $now_within_range,
 							results           => \@results,
-							hafas             => $use_hafas,
 							station           => $status->{station_name},
 							related_stations  => $status->{related_stations},
 							user_status       => $user_status,
 							can_check_out     => $can_check_out,
 							connections_iris  => $connections_iris,
 							connections_hafas => $connections_hafas,
-							api_link          => $api_link,
 							title => "travelynx: $status->{station_name}",
 						);
 					}
@@ -1078,16 +1037,16 @@ sub station {
 					sub {
 						$self->render(
 							'departures',
+							user             => $user,
+							hafas            => $hafas_service,
 							eva              => $status->{station_eva},
 							datetime         => $timestamp,
 							now_in_range     => $now_within_range,
 							results          => \@results,
-							hafas            => $use_hafas,
 							station          => $status->{station_name},
 							related_stations => $status->{related_stations},
 							user_status      => $user_status,
 							can_check_out    => $can_check_out,
-							api_link         => $api_link,
 							title => "travelynx: $status->{station_name}",
 						);
 					}
@@ -1096,16 +1055,16 @@ sub station {
 			else {
 				$self->render(
 					'departures',
+					user             => $user,
+					hafas            => $hafas_service,
 					eva              => $status->{station_eva},
 					datetime         => $timestamp,
 					now_in_range     => $now_within_range,
 					results          => \@results,
-					hafas            => $use_hafas,
 					station          => $status->{station_name},
 					related_stations => $status->{related_stations},
 					user_status      => $user_status,
 					can_check_out    => $can_check_out,
-					api_link         => $api_link,
 					title            => "travelynx: $status->{station_name}",
 				);
 			}
@@ -1120,15 +1079,22 @@ sub station {
 					status      => 300,
 				);
 			}
-			elsif ( $use_hafas and $status and $status->errcode eq 'LOCATION' )
+			elsif ( $hafas_service
+				and $status
+				and $status->errcode eq 'LOCATION' )
 			{
-				$self->hafas->search_location_p( query => $station )->then(
+				$self->hafas->search_location_p(
+					service => $hafas_service,
+					query   => $station
+				)->then(
 					sub {
 						my ($hafas2) = @_;
 						my @suggestions = $hafas2->results;
 						if ( @suggestions == 1 ) {
-							$self->redirect_to(
-								'/s/' . $suggestions[0]->eva . '?hafas=DB' );
+							$self->redirect_to( '/s/'
+								  . $suggestions[0]->eva
+								  . '?hafas='
+								  . $hafas_service );
 						}
 						else {
 							$self->render(
@@ -1169,17 +1135,7 @@ sub redirect_to_station {
 	my ($self) = @_;
 	my $station = $self->param('station');
 
-	if ( my $s = $self->app->stations->search($station) ) {
-		if ( $s->{source} == 1 ) {
-			$self->redirect_to("/s/${station}?hafas=DB");
-		}
-		else {
-			$self->redirect_to("/s/${station}");
-		}
-	}
-	else {
-		$self->redirect_to("/s/${station}?hafas=DB");
-	}
+	$self->redirect_to("/s/${station}");
 }
 
 sub cancelled {

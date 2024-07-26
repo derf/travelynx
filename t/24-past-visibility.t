@@ -266,6 +266,7 @@ $t->app->in_transit->add(
 	departure_eva => 8000001,
 	train         => $train_dep,
 	route         => [],
+	backend_id    => $t->app->stations->get_backend_id( iris => 1 ),
 );
 $t->app->in_transit->set_arrival_eva(
 	uid         => $uid1,

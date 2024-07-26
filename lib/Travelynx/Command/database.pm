@@ -8,6 +8,7 @@ use Mojo::Base 'Mojolicious::Command';
 use DateTime;
 use File::Slurp qw(read_file);
 use JSON;
+use Travel::Status::DE::HAFAS;
 use Travel::Status::DE::IRIS::Stations;
 
 has description => 'Initialize or upgrade database layout';
@@ -1918,7 +1919,7 @@ my @migrations = (
 
 	# v49 -> v50
 	# travelynx 2.0 introduced proper HAFAS support, so there is no need for
-	# the 'FYI, here is some hAFAS data' kludge anymore.
+	# the 'FYI, here is some HAFAS data' kludge anymore.
 	sub {
 		my ($db) = @_;
 		$db->query(
@@ -2310,6 +2311,235 @@ my @migrations = (
 		);
 	},
 
+	# v54 -> v55
+	# do not share stations between backends
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				alter table schema_version add column hafas varchar(12);
+				alter table users drop column external_services;
+				alter table users add column backend_id smallint references backends (id) default 1;
+				alter table stations drop constraint stations_pkey;
+				alter table stations add unique (eva, source);
+				create index eva_by_source on stations (eva, source);
+				create index eva on stations (eva);
+				alter table related_stations drop constraint related_stations_eva_meta_key;
+				drop index rel_eva;
+				alter table related_stations add column backend_id smallint;
+				update related_stations set backend_id = 1;
+				alter table related_stations alter column backend_id set not null;
+				alter table related_stations add constraint backend_fk foreign key (backend_id) references backends (id);
+				alter table related_stations add unique (eva, meta, backend_id);
+				create index related_stations_eva_backend_key on related_stations (eva, backend_id);
+			}
+		);
+
+		# up until now, IRIS and DB HAFAS shared stations, with IRIS taking
+		# preference.  As of v2.7, this is no longer the case. However, old DB
+		# HAFAS journeys may still reference IRIS-specific stations. So, we
+		# make all IRIS stations available as DB HAFAS stations as well.
+		my $total
+		  = $db->select( 'stations', 'count(*) as count', { source => 0 } )
+		  ->hash->{count};
+		my $count = 0;
+
+		# Caveat: If this is a fresh installation, there are no IRIS stations
+		# in the database yet. So we have to populate it first.
+		if ( not $total ) {
+			say
+'Preparing to untangle IRIS / HAFAS stations, this may take a while ...';
+			$total = scalar Travel::Status::DE::IRIS::Stations::get_stations();
+			for my $s ( Travel::Status::DE::IRIS::Stations::get_stations() ) {
+				my ( $ds100, $name, $eva, $lon, $lat ) = @{$s};
+				if ( $ENV{__TRAVELYNX_TEST_MINI_IRIS}
+					and ( $eva < 8000000 or $eva > 8000100 ) )
+				{
+					next;
+				}
+				$db->insert(
+					'stations',
+					{
+						eva      => $eva,
+						ds100    => $ds100,
+						name     => $name,
+						lat      => $lat,
+						lon      => $lon,
+						source   => 0,
+						archived => 0
+					},
+				);
+				if ( $count++ % 1000 == 0 ) {
+					printf( "    %2.0f%% complete\n", $count * 100 / $total );
+				}
+			}
+			$count = 0;
+		}
+
+		say 'Untangling IRIS / HAFAS stations, this may take a while ...';
+		my $res = $db->query(
+			qq{
+				select eva, ds100, name, lat, lon, archived
+				from stations
+				where source = 0;
+			}
+		);
+		while ( my $row = $res->hash ) {
+			$db->insert(
+				'stations',
+				{
+					eva      => $row->{eva},
+					ds100    => $row->{ds100},
+					name     => $row->{name},
+					lat      => $row->{lat},
+					lon      => $row->{lon},
+					archived => $row->{archived},
+					source   => 1,
+				}
+			);
+			if ( $count++ % 1000 == 0 ) {
+				printf( "    %2.0f%% complete\n", $count * 100 / $total );
+			}
+		}
+		$db->query(
+			qq{
+				alter table in_transit add constraint in_transit_checkin_eva_fk
+					foreign key (checkin_station_id, backend_id)
+					references stations (eva, source);
+				alter table in_transit add constraint in_transit_checkout_eva_fk
+					foreign key (checkout_station_id, backend_id)
+					references stations (eva, source);
+				alter table journeys add constraint journeys_checkin_eva_fk
+					foreign key (checkin_station_id, backend_id)
+					references stations (eva, source);
+				alter table journeys add constraint journeys_checkout_eva_fk
+					foreign key (checkout_station_id, backend_id)
+					references stations (eva, source);
+				drop view in_transit_str;
+				drop view journeys_str;
+				drop view follows_in_transit;
+				create view in_transit_str as select
+					user_id,
+					backend.iris as is_iris, backend.hafas as is_hafas,
+					backend.efa as is_efa, backend.ris as is_ris,
+					backend.name as backend_name, in_transit.backend_id as backend_id,
+					train_type, train_line, train_no, train_id,
+					extract(epoch from checkin_time) as checkin_ts,
+					extract(epoch from sched_departure) as sched_dep_ts,
+					extract(epoch from real_departure) as real_dep_ts,
+					checkin_station_id as dep_eva,
+					dep_station.ds100 as dep_ds100,
+					dep_station.name as dep_name,
+					dep_station.lat as dep_lat,
+					dep_station.lon as dep_lon,
+					extract(epoch from checkout_time) as checkout_ts,
+					extract(epoch from sched_arrival) as sched_arr_ts,
+					extract(epoch from real_arrival) as real_arr_ts,
+					checkout_station_id as arr_eva,
+					arr_station.ds100 as arr_ds100,
+					arr_station.name as arr_name,
+					arr_station.lat as arr_lat,
+					arr_station.lon as arr_lon,
+					polyline_id,
+					polylines.polyline as polyline,
+					visibility,
+					coalesce(visibility, users.public_level & 127) as effective_visibility,
+					cancelled, route, messages, user_data,
+					dep_platform, arr_platform, data
+					from in_transit
+					left join polylines on polylines.id = polyline_id
+					left join users on users.id = user_id
+					left join stations as dep_station on checkin_station_id = dep_station.eva and in_transit.backend_id = dep_station.source
+					left join stations as arr_station on checkout_station_id = arr_station.eva and in_transit.backend_id = arr_station.source
+					left join backends as backend on in_transit.backend_id = backend.id
+					;
+				create view journeys_str as select
+					journeys.id as journey_id, user_id,
+					backend.iris as is_iris, backend.hafas as is_hafas,
+					backend.efa as is_efa, backend.ris as is_ris,
+					backend.name as backend_name, journeys.backend_id as backend_id,
+					train_type, train_line, train_no, train_id,
+					extract(epoch from checkin_time) as checkin_ts,
+					extract(epoch from sched_departure) as sched_dep_ts,
+					extract(epoch from real_departure) as real_dep_ts,
+					checkin_station_id as dep_eva,
+					dep_station.ds100 as dep_ds100,
+					dep_station.name as dep_name,
+					dep_station.lat as dep_lat,
+					dep_station.lon as dep_lon,
+					extract(epoch from checkout_time) as checkout_ts,
+					extract(epoch from sched_arrival) as sched_arr_ts,
+					extract(epoch from real_arrival) as real_arr_ts,
+					checkout_station_id as arr_eva,
+					arr_station.ds100 as arr_ds100,
+					arr_station.name as arr_name,
+					arr_station.lat as arr_lat,
+					arr_station.lon as arr_lon,
+					polylines.polyline as polyline,
+					visibility,
+					coalesce(visibility, users.public_level & 127) as effective_visibility,
+					cancelled, edited, route, messages, user_data,
+					dep_platform, arr_platform
+					from journeys
+					left join polylines on polylines.id = polyline_id
+					left join users on users.id = user_id
+					left join stations as dep_station on checkin_station_id = dep_station.eva and journeys.backend_id = dep_station.source
+					left join stations as arr_station on checkout_station_id = arr_station.eva and journeys.backend_id = arr_station.source
+					left join backends as backend on journeys.backend_id = backend.id
+					;
+				create view follows_in_transit as select
+					r1.subject_id as follower_id, user_id as followee_id,
+					users.name as followee_name,
+					train_type, train_line, train_no, train_id,
+					in_transit.backend_id as backend_id,
+					extract(epoch from checkin_time) as checkin_ts,
+					extract(epoch from sched_departure) as sched_dep_ts,
+					extract(epoch from real_departure) as real_dep_ts,
+					checkin_station_id as dep_eva,
+					dep_station.ds100 as dep_ds100,
+					dep_station.name as dep_name,
+					dep_station.lat as dep_lat,
+					dep_station.lon as dep_lon,
+					extract(epoch from checkout_time) as checkout_ts,
+					extract(epoch from sched_arrival) as sched_arr_ts,
+					extract(epoch from real_arrival) as real_arr_ts,
+					checkout_station_id as arr_eva,
+					arr_station.ds100 as arr_ds100,
+					arr_station.name as arr_name,
+					arr_station.lat as arr_lat,
+					arr_station.lon as arr_lon,
+					polyline_id,
+					polylines.polyline as polyline,
+					visibility,
+					coalesce(visibility, users.public_level & 127) as effective_visibility,
+					cancelled, route, messages, user_data,
+					dep_platform, arr_platform, data
+					from in_transit
+					left join polylines on polylines.id = polyline_id
+					left join users on users.id = user_id
+					left join relations as r1 on r1.predicate = 1 and r1.object_id = user_id
+					left join stations as dep_station on checkin_station_id = dep_station.eva and in_transit.backend_id = dep_station.source
+					left join stations as arr_station on checkout_station_id = arr_station.eva and in_transit.backend_id = arr_station.source
+					order by checkin_time desc
+					;
+				create view users_with_backend as select
+					users.id as id, users.name as name, status, public_level,
+					email, password, registered_at, last_seen,
+					deletion_requested, deletion_notified, use_history,
+					accept_follows, notifications, profile, backend_id, iris,
+					hafas, efa, ris, backend.name as backend_name
+					from users
+					left join backends as backend on users.backend_id = backend.id
+					;
+				update schema_version set version = 55;
+				update schema_version set hafas = '0';
+			}
+		);
+		say
+		  'This travelynx instance now has support for non-DB HAFAS backends.';
+		say
+'If the migration fails due to a deadlock, re-run it after stopping all background workers';
+	},
 );
 
 sub sync_stations {
@@ -2341,7 +2571,7 @@ sub sync_stations {
 			},
 			{
 				on_conflict => \
-'(eva) do update set archived = false, source = 0, ds100 = EXCLUDED.ds100, name=EXCLUDED.name, lat=EXCLUDED.lat, lon=EXCLUDED.lon'
+'(eva, source) do update set archived = false, source = 0, ds100 = EXCLUDED.ds100, name=EXCLUDED.name, lat=EXCLUDED.lat, lon=EXCLUDED.lon'
 			}
 		);
 		if ( $count++ % 1000 == 0 ) {
@@ -2500,6 +2730,26 @@ sub sync_stations {
 	}
 }
 
+sub sync_backends {
+	my ($db) = @_;
+	for my $service ( Travel::Status::DE::HAFAS::get_services()) {
+		$db->insert(
+			'backends',
+			{
+				iris => 0,
+				hafas => 1,
+				efa => 0,
+				ris => 0,
+				name => $service->{shortname},
+			},
+			{ on_conflict => undef }
+		);
+	}
+
+	$db->update( 'schema_version',
+		{ hafas => $Travel::Status::DE::HAFAS::VERSION } );
+}
+
 sub setup_db {
 	my ($db) = @_;
 	my $tx = $db->begin;
@@ -2566,9 +2816,9 @@ sub migrate_db {
 	}
 
 	my $iris_version = get_schema_version( $db, 'iris' );
-	say "Found IRIS station database v${iris_version}";
+	say "Found IRIS station table v${iris_version}";
 	if ( $iris_version eq $Travel::Status::DE::IRIS::Stations::VERSION ) {
-		say 'Station database is up-to-date';
+		say 'Station table is up-to-date';
 	}
 	else {
 		eval {
@@ -2586,6 +2836,18 @@ sub migrate_db {
 			exit(1);
 		}
 	}
+
+	my $hafas_version = get_schema_version( $db, 'hafas' );
+	say "Found backend table for HAFAS v${hafas_version}";
+	if ( $hafas_version eq $Travel::Status::DE::HAFAS::VERSION ) {
+		say 'Backend table is up-to-date';
+	}
+	else {
+			say
+"Synchronizing with Travel::Status::DE::HAFAS $Travel::Status::DE::HAFAS::VERSION";
+		sync_backends($db);
+	}
+
 
 	$db->update( 'schema_version',
 		{ travelynx => $self->app->config->{version} } );

@@ -1,5 +1,6 @@
 % if (is_user_authenticated()) {
 	% my $status = stash('user_status');
+	% my $user = stash('user');
 	% if (stash('error')) {
 		<div class="row">
 			<div class="col s12">
@@ -51,32 +52,40 @@
 				% if ( @{stash('timeline') // [] } ) {
 					%= include '_timeline_link', timeline => stash('timeline')
 				% }
-				<div class="card">
-					<div class="card-content">
-						<span class="card-title">Hallo, <%= current_user->{name} %>!</span>
-						<p>Du bist gerade nicht eingecheckt.</p>
-						<div class="geolocation" data-recent="<%= join('|', map { $_->{eva} . ';' . $_->{name} . ';' . $_->{hafas} } @{stash('recent_targets') // []} ) %>">
-							<button class="btn waves-effect waves-light btn-flat">Stationen in der Umgebung abfragen</button>
-						</div>
-						%= form_for 'list_departures' => begin
+				%= form_for 'list_departures' => begin
+					<div class="card">
+						<div class="card-content">
+							<span class="card-title">Hallo, <%= $user->{name} %>!</span>
+							<p>Du bist gerade nicht eingecheckt.</p>
+							<p>
+							<div class="geolocation" data-recent="<%= join('|', map { $_->{eva} . ';' . $_->{name} . ';' . $_->{hafas} } @{stash('recent_targets') // []} ) %>" data-backend=<%= $user->{backend_id} %>">
+								<button class="btn waves-effect waves-light btn-flat">Stationen in der Umgebung abfragen</button>
+							</div>
 							<div class="input-field">
 								%= text_field 'station', id => 'station', class => 'autocomplete contrast-color-text', autocomplete => 'off', required => undef
 								<label for="station">Manuelle Eingabe</label>
 							</div>
-							<div class="center-align">
-								<button class="btn waves-effect waves-light btn-flat" type="submit" name="action" value="departures">
-									<i class="material-icons left" aria-hidden="true">send</i>
-									Abfahrten
-								</button>
-							</div>
-						%= end
+							</p>
+						</div>
+						<div class="card-action">
+							% if ($user->{backend_id}) {
+								<a href="/account/select_backend?redirect_to=/" class="btn btn-flat"><i class="material-icons left" aria-hidden="true">directions</i><%= $user->{backend_name} %> (<%= $user->{backend_hafas} ? 'HAFAS' : q{} %>)</a>
+							% }
+							% else {
+								<a href="/account/select_backend?redirect_to=/" class="btn btn-flat"><i class="material-icons left" aria-hidden="true">train</i>DB (IRIS-TTS)</a>
+							% }
+							<button class="btn right waves-effect waves-light btn-flat" type="submit" name="action" value="departures">
+								<i class="material-icons left" aria-hidden="true">send</i>
+								Abfahrten
+							</button>
+						</div>
 					</div>
-				</div>
+				%= end
 			% }
 		</div>
 	</div>
 	<h2 style="margin-left: 0.75rem;">Letzte Fahrten</h2>
-	%= include '_history_trains', date_format => '%d.%m.%Y', journeys => [journeys->get(uid => current_user->{id}, limit => 5, with_datetime => 1)];
+	%= include '_history_trains', date_format => '%d.%m.%Y', journeys => [journeys->get(uid => $user->{id}, limit => 5, with_datetime => 1)];
 % }
 % else {
 	<div class="row">

@@ -62,7 +62,8 @@ $(document).ready(function() {
 	};
 
 	const processLocation = function(loc) {
-		$.post('/geolocation', {lon: loc.coords.longitude, lat: loc.coords.latitude}, processResult);
+		const backend = $('div.geolocation > button').data('backend');
+		$.post('/geolocation', {lon: loc.coords.longitude, lat: loc.coords.latitude, backend: backend}, processResult);
 	};
 
 	const processError = function(error) {

@@ -13,7 +13,7 @@
 	<div class="col s12">
 		<ul class="suggestions">
 			% for my $suggestion (@{$suggestions // []}) {
-				<li><a href="<%= url_for('station' => $suggestion->{eva}) . (param('hafas') ? '?hafas=DB' : q{}) %>"><%= $suggestion->{name} %></a></li>
+				<li><a href="<%= url_for('station' => $suggestion->{eva}) . (param('hafas') ? '?hafas=' . param('hafas') : q{}) %>"><%= $suggestion->{name} %></a></li>
 			% }
 		</ul>
 	</div>

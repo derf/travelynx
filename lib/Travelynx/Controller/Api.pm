@@ -117,6 +117,7 @@ sub travel_v1 {
 				deprecated => \0,
 				error      => 'Malformed JSON',
 			},
+			status => 400,
 		);
 		return;
 	}
@@ -130,6 +131,7 @@ sub travel_v1 {
 				deprecated => \0,
 				error      => 'Malformed token',
 			},
+			status => 400,
 		);
 		return;
 	}
@@ -143,6 +145,7 @@ sub travel_v1 {
 				deprecated => \0,
 				error      => 'Malformed token',
 			},
+			status => 400,
 		);
 		return;
 	}
@@ -155,6 +158,7 @@ sub travel_v1 {
 				deprecated => \0,
 				error      => 'Invalid token',
 			},
+			status => 400,
 		);
 		return;
 	}
@@ -169,6 +173,7 @@ sub travel_v1 {
 				error      => 'Missing or invalid action',
 				status     => $self->get_user_status_json_v1( uid => $uid )
 			},
+			status => 400,
 		);
 		return;
 	}
@@ -177,7 +182,8 @@ sub travel_v1 {
 		my $from_station = sanitize( q{}, $payload->{fromStation} );
 		my $to_station   = sanitize( q{}, $payload->{toStation} );
 		my $train_id;
-		my $hafas = exists $payload->{train}{journeyID} ? 1 : 0;
+		my $hafas = sanitize(undef, $payload->{hafas});
+		$hafas //= exists $payload->{train}{journeyID} ? 'DB' : undef;
 
 		if (
 			not(
@@ -195,11 +201,12 @@ sub travel_v1 {
 					error      => 'Missing fromStation or train data',
 					status     => $self->get_user_status_json_v1( uid => $uid )
 				},
+			status => 400,
 			);
 			return;
 		}
 
-		if ( not $hafas and not $self->stations->search($from_station) ) {
+		if ( not $hafas and not $self->stations->search($from_station, iris => 1) ) {
 			$self->render(
 				json => {
 					success    => \0,
@@ -207,13 +214,14 @@ sub travel_v1 {
 					error      => 'Unknown fromStation',
 					status     => $self->get_user_status_json_v1( uid => $uid )
 				},
+			status => 400,
 			);
 			return;
 		}
 
 		if (    $to_station
 			and not $hafas
-			and not $self->stations->search($to_station) )
+			and not $self->stations->search($to_station, iris => 1) )
 		{
 			$self->render(
 				json => {
@@ -222,6 +230,7 @@ sub travel_v1 {
 					error      => 'Unknown toStation',
 					status     => $self->get_user_status_json_v1( uid => $uid )
 				},
+			status => 400,
 			);
 			return;
 		}
@@ -273,7 +282,8 @@ sub travel_v1 {
 				return $self->checkin_p(
 					station  => $from_station,
 					train_id => $train_id,
-					uid      => $uid
+					uid      => $uid,
+					hafas    => $hafas,
 				);
 			}
 		)->then(
@@ -654,10 +664,13 @@ sub autocomplete {
 
 	$self->res->headers->cache_control('max-age=86400, immutable');
 
+	my $backend_id = $self->param('backend_id') // 1;
+
 	my $output
 	  = "document.addEventListener('DOMContentLoaded',function(){M.Autocomplete.init(document.querySelectorAll('.autocomplete'),{\n";
 	$output .= 'minLength:3,limit:50,data:';
-	$output .= encode_json( $self->stations->get_for_autocomplete );
+	$output
+	  .= encode_json( $self->stations->get_for_autocomplete( backend_id => $backend_id ) );
 	$output .= "\n});});\n";
 
 	$self->render(

@@ -157,26 +157,21 @@
 				<div>
 					<label>
 						%= check_box toot => 1
-						<span>… Checkin auf Mastodon veröffentlichen</span>
-					</label>
-				</div>
-				<div>
-					<label>
-						%= check_box tweet => 1
-						<span>… Checkin auf Twitter veröffentlichen</span>
+						<span>… Checkin im Fediverse veröffentlichen</span>
 					</label>
 				</div>
 				<p>Die Synchronisierung erfolgt spätestens drei Minuten nach der
-					Zielwahl. Beachte, dass die Synchronisierung travelynx
-					→ Träwelling unabhängig von der eingestellten Sichtbarkeit
-					des Checkins erfolgt. travelynx reicht die Sichtbarkeit
-					aber an Träwelling weiter.
-					Träwelling-Checkins können von travelynx aktuell nicht
-					rückgängig gemacht werden. Eine nachträgliche Änderung der
-					Zielstation wird nicht übernommen. Mastodon und Twitter beziehen
-					sich auf die in den <a
+					Zielwahl. Es werden ausschließlich Checkins mittels
+					DB (IRIS-TTS) und DB (HAFAS) synchornisiert. Beachte, dass
+					die Synchronisierung travelynx → Träwelling unabhängig von
+					der eingestellten Sichtbarkeit des Checkins erfolgt.
+					travelynx reicht die Sichtbarkeit aber an Träwelling
+					weiter.  Träwelling-Checkins können von travelynx aktuell
+					nicht rückgängig gemacht werden. Eine nachträgliche
+					Änderung der Zielstation wird nicht übernommen. Fediverse
+					bezieht sich auf den in den <a
 					href="https://traewelling.de/settings">Träwelling-Einstellungen</a>
-					verknüpften Accounts.</p>
+					verknüpften Account.</p>
 			</div>
 			<div class="input-field col s12">
 				<div>

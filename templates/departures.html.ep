@@ -1,26 +1,27 @@
 <div class="row">
-	<div class="col s12">
-		<h2>
-			<i class="material-icons "  aria-hidden="true"><%= param('hafas') ? 'directions' : 'train' %></i>
+	<div class="col s8">
+		<strong style="font-size: 120%;">
 			<%= $station %>
-		</h2>
+		</strong>
 		% for my $related_station (sort { $a->{name} cmp $b->{name} } @{$related_stations}) {
 			+ <%= $related_station->{name} %> <br/>
 		% }
 	</div>
-</div>
-% if ($api_link) {
-<div class="row">
-	<div class="col s12 center-align">
-	% if (param('hafas')) {
-		<a href="<%= $api_link %>" class="btn-small"><i class="material-icons left"  aria-hidden="true">train</i>zum Schienenverkehr</a>
-	% }
-	% else {
-		<a href="<%= $api_link %>" class="btn-small"><i class="material-icons left"  aria-hidden="true">directions</i>zum Nahverkehr</a>
-	% }
+	<div class="col s4 center-align">
+		% my $self_link = url_for('sstation', station => param('station'));
+		% if (param('hafas')) {
+			<span class="btn-small disabled"><i class="material-icons left" aria-hidden="true">directions</i> <%= param('hafas') %> (HAFAS)</span>
+		% }
+		% else {
+			% if ($user->{backend_id}) {
+				<a href="/account/select_backend?redirect_to=<%= $self_link %>" class="btn-small"><i class="material-icons left" aria-hidden="true">directions</i><%= $user->{backend_name} %> (<%= $user->{backend_hafas} ? 'HAFAS' : q{} %>)</a>
+			% }
+			% else {
+				<a href="/account/select_backend?redirect_to=<%= $self_link %>" class="btn-small"><i class="material-icons left" aria-hidden="true">train</i>DB (IRIS-TTS)</a>
+			% }
+		% }
 	</div>
 </div>
-% }
 
 % my $have_connections = 0;
 % if ($user_status->{checked_in}) {
@@ -40,10 +41,10 @@
 				</div>
 				<div class="card-action">
 					% if ($can_check_out) {
-						<a class="action-undo" data-id="in_transit" data-checkints="<%= $user_status->{timestamp}->epoch %>"  style="margin-right: 0;">
+						<a class="action-undo" data-hafas="<%= param('hafas') // q{} %>" data-id="in_transit" data-checkints="<%= $user_status->{timestamp}->epoch %>"  style="margin-right: 0;">
 							<i class="material-icons left" aria-hidden="true">undo</i> Rückgängig
 						</a>
-						<a class="action-checkout right" data-station="<%= $eva %>" data-force="1">
+						<a class="action-checkout right" data-hafas="<%= param('hafas') // q{} %>" data-station="<%= $eva %>" data-force="1">
 							Hier auschecken
 						</a>
 					% }
@@ -51,7 +52,7 @@
 						<a class="action-undo" data-id="in_transit" data-checkints="<%= $user_status->{timestamp}->epoch %>"  style="margin-right: 0;">
 							<i class="material-icons left" aria-hidden="true">undo</i> Rückgängig
 						</a>
-						<a class="action-checkout right" data-station="<%= $eva %>" data-force="1">
+						<a class="action-checkout right" data-hafas="<%= param('hafas') // q{} %>" data-station="<%= $eva %>" data-force="1">
 							<i class="material-icons left" aria-hidden="true">gps_off</i>
 							Hier auschecken
 						</a>
@@ -139,7 +140,7 @@
 		</p>
 		% if (not $user_status->{checked_in} or ($can_check_out and $user_status->{arr_eva} and $user_status->{arrival_countdown} <= 0)) {
 			% if ($hafas) {
-				%= include '_departures_hafas', results => $results;
+				%= include '_departures_hafas', results => $results, hafas => $hafas;
 			% }
 			% else {
 				%= include '_departures_iris', results => $results;

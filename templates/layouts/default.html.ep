@@ -62,7 +62,7 @@
 		%= javascript "/static/${av}/js/geolocation${min}.js"
 	% }
 	% if (stash('with_autocomplete')) {
-		%= javascript "/dyn/${av}/autocomplete.js", defer => undef
+		%= javascript "/dyn/${av}/autocomplete.js?backend_id=" . (stash('backend_id') // 1), defer => undef
 	% }
 	% if (stash('with_map')) {
 		%= javascript "/static/${av}/leaflet/leaflet.js"
