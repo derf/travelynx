@@ -1764,7 +1764,7 @@ sub get_connection_targets {
 	my $threshold = $opt{threshold}
 	  // DateTime->now( time_zone => 'Europe/Berlin' )->subtract( months => 4 );
 	my $db        = $opt{db} //= $self->{pg}->db;
-	my $min_count = $opt{min_count} // 1;
+	my $min_count = $opt{min_count} // 3;
 	my $dest_id   = $opt{eva};
 
 	if ( $opt{destination_name} ) {
