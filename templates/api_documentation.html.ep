@@ -30,6 +30,11 @@
 			"actionTime" : 1234567, (UNIX-Timestamp des letzten Checkin/Checkout)<br/>
 			"checkedIn" : true / false,<br/>
 			"comment": "Kommentar",<br/>
+			"backend": {<br/>
+				"id": 1,<br/>
+				"name": "DB",<br/>
+				"type": "HAFAS",<br/>
+			},<br/>
 			"fromStation" : { (letzter Checkin)<br/>
 				"name" : "Essen Hbf",<br/>
 				"ds100" : "EE", (ggf. null)<br/>
@@ -122,6 +127,7 @@
 		{<br/>
 			"token" : "<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>",<br/>
 			"action" : "checkin",<br/>
+			"hafas" : "DB", (HAFAS-Instanz – Default: Deutsche Bahn)<br/>
 			"train" : {<br/>
 				"journeyID" : "1|1426396|4|80|19082023",<br/>
 			}<br/>
