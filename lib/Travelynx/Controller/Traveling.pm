@@ -511,8 +511,15 @@ sub geolocation {
 	my $lat        = $self->param('lat');
 	my $backend_id = $self->param('backend') // 0;
 
-	if ( not $lon or not $lat or $backend_id !~ m{ ^ \d+ $ }x ) {
-		$self->render( json => { error => 'Invalid lon/lat received' } );
+	if ( not $lon or not $lat ) {
+		$self->render(
+			json => { error => "Invalid lon/lat (${lon}/${lat}) received" } );
+		return;
+	}
+
+	if ( $backend_id !~ m{ ^ \d+ $ }x ) {
+		$self->render(
+			json => { error => "Invalid backend (${backend_id}) received" } );
 		return;
 	}
 
