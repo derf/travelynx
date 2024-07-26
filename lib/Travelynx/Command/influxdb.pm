@@ -29,7 +29,7 @@ sub run {
 	my $active = $now->clone->subtract( months => 1 );
 
 	my @stats;
-	my @stations;
+	my @backend_stats;
 	my @traewelling;
 
 	push(
@@ -85,50 +85,31 @@ sub run {
 		)
 	);
 
-	push(
-		@stations,
-		query_to_influx(
-			'iris',
-			$db->select(
-				'stations',
-				'count(*) as count',
-				{
-					source   => 0,
-					archived => 0
-				}
-			)->hash->{count}
-		)
-	);
-	push(
-		@stations,
-		query_to_influx(
-			'hafas',
-			$db->select(
-				'stations',
-				'count(*) as count',
-				{
-					source   => 1,
-					archived => 0
-				}
-			)->hash->{count}
-		)
-	);
-	push(
-		@stations,
-		query_to_influx(
-			'archived',
-			$db->select( 'stations', 'count(*) as count', { archived => 1 } )
-			  ->hash->{count}
-		)
-	);
-	push(
-		@stations,
-		query_to_influx(
-			'meta',
-			$db->select( 'related_stations', 'count(*) as count' )
-			  ->hash->{count}
-		)
-	);
+	my @backends = $self->app->stations->get_backends;
+
+	for my $backend (@backends) {
+		push(
+			@backend_stats,
+			[
+				$backend->{iris} ? 'IRIS' : $backend->{name},
+				$db->select(
+					'stations',
+					'count(*) as count',
+					{
+						source   => $backend->{id},
+						archived => 0
+					}
+				)->hash->{count},
+				$db->select(
+					'related_stations',
+					'count(*) as count',
+					{
+						backend_id => $backend->{id},
+					}
+				)->hash->{count}
+			]
+		);
+	}
 
 	push(
 		@traewelling,
@@ -167,10 +148,18 @@ sub run {
 			  . $self->app->config->{influxdb}->{url}
 			  . ' stats '
 			  . join( ',', @stats ) );
-		$self->app->log->debug( 'POST '
-			  . $self->app->config->{influxdb}->{url}
-			  . ' stations '
-			  . join( ',', @stations ) );
+		for my $backend_entry (@backend_stats) {
+			$self->app->log->debug(
+				    'POST '
+				  . $self->app->config->{influxdb}->{url}
+				  . ' stations,backend='
+				  . $backend_entry->[0]
+				  . sprintf(
+					' count=%d,meta=%d',
+					$backend_entry->[1], $backend_entry->[2]
+				  )
+			);
+		}
 		$self->app->log->debug( 'POST '
 			  . $self->app->config->{influxdb}->{url}
 			  . ' traewelling '
@@ -181,10 +170,16 @@ sub run {
 			$self->app->config->{influxdb}->{url},
 			'stats ' . join( ',', @stats )
 		)->wait;
-		$self->app->ua->post_p(
-			$self->app->config->{influxdb}->{url},
-			'stations ' . join( ',', @stations )
-		)->wait;
+		my $buf = q{};
+		for my $backend_entry (@backend_stats) {
+			$buf
+			  .= "\nstations,backend="
+			  . $backend_entry->[0]
+			  . sprintf( ' count=%d,meta=%d',
+				$backend_entry->[1], $backend_entry->[2] );
+		}
+		$self->app->ua->post_p( $self->app->config->{influxdb}->{url}, $buf )
+		  ->wait;
 		$self->app->ua->post_p(
 			$self->app->config->{influxdb}->{url},
 			'traewelling ' . join( ',', @traewelling )
