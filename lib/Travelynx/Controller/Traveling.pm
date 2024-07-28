@@ -1644,13 +1644,15 @@ sub monthly_history {
 			}
 		},
 		any => {
-			template   => 'history_by_month',
-			title      => "travelynx: $month_name $year",
-			journeys   => [@journeys],
-			year       => $year,
-			month      => $month,
-			month_name => $month_name,
-			statistics => $stats
+			template    => 'history_by_month',
+			title       => "travelynx: $month_name $year",
+			journeys    => [@journeys],
+			year        => $year,
+			month       => $month,
+			month_name  => $month_name,
+			filter_from => $interval_start,
+			filter_to   => $interval_end->clone->subtract( days => 1 ),
+			statistics  => $stats
 		}
 	);
 

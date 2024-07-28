@@ -4,6 +4,12 @@
 	%= include '_history_stats', stats => stash('statistics');
 % }
 
+<div class="row">
+	<div class="col s12 m12 l12 center-align">
+		<a href="/history/map?filter_from=<%= $filter_from->strftime('%d.%m.%Y') %>&amp;filter_to=<%= $filter_to->strftime('%d.%m.%Y') %>" class="waves-effect waves-light btn"><i class="material-icons left" aria-hidden="true">map</i> Karte</a>
+	</div>
+</div>
+
 % if (stash('journeys')) {
 	%= include '_history_trains', date_format => '%d.%m.', journeys => stash('journeys');
 % }
