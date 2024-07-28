@@ -338,7 +338,7 @@
 			<div class="card-action">
 				% my $url = 'https://bahn.expert/details/';
 				% if ($journey->{train_id} =~ m{[|]}) {
-					% $url =  $url .  '/' . $journey->{sched_departure}->epoch . '000?jid=' . $journey->{train_id};
+					% $url =  $url .  '/' . $journey->{sched_departure}->epoch . '000?jid=' . $journey->{train_id} =~ s{#}{%23}gr;
 				% }
 				% else {
 					% $url = $url . $journey->{train_type} . ' ' . $journey->{train_no} . '/' . $journey->{sched_departure}->epoch . '000?station=' . $journey->{dep_eva};
