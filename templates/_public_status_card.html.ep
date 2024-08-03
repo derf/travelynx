@@ -165,9 +165,12 @@
 			<div class="card-action">
 				% if ($journey->{traewelling_url}) {
 					<a style="margin-right: 0;" href="<%= $journey->{traewelling_url} %>"><i class="material-icons left">timeline</i> Träwelling</a>
-				% } else {
+				% } elsif ($journey->{backend_id} <= 1) {
 					% my $url = 'https://bahn.expert/details/' . $journey->{train_type} . ' ' . $journey->{train_no} . '/' . DateTime->now(time_zone => 'Europe/Berlin')->epoch . '000';
 					<a style="margin-right: 0;" href="<%= $url %>"><i class="material-icons left">timeline</i> Zuglauf</a>
+				% }
+				% else {
+					&nbsp;
 				% }
 				% if ($journey->{extra_data}{trip_id}) {
 					<a class="right" style="margin-right: 0;" href="https://dbf.finalrewind.org/map/<%= $journey->{extra_data}{trip_id} =~ s{#}{%23}gr %>/<%= $journey->{train_line} || 0 %>?hafas=<%= $journey->{backend_name} // 'DB' %>&amp;from=<%= $journey->{dep_name} %>&amp;to=<%= $journey->{arr_name} // '' %>"><i class="material-icons left">map</i> Karte</a>
