@@ -185,7 +185,8 @@ sub add {
 	if ( $opt{route} ) {
 		my @unknown_stations;
 		for my $station ( @{ $opt{route} } ) {
-			my $station_info = $self->{stations}->search($station);
+			my $station_info = $self->{stations}
+			  ->search( $station, backend_id => $opt{backend_id} );
 			if ($station_info) {
 				push(
 					@route,
@@ -249,7 +250,7 @@ sub add {
 		edited              => 0x3fff,
 		cancelled           => $opt{cancelled} ? 1 : 0,
 		route               => JSON->new->encode( \@route ),
-		backend_id          => 1,
+		backend_id          => $opt{backend_id},
 	};
 
 	if ( $opt{comment} ) {
