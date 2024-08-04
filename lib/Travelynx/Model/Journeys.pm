@@ -118,8 +118,10 @@ sub add {
 	my $db          = $opt{db};
 	my $uid         = $opt{uid};
 	my $now         = DateTime->now( time_zone => 'Europe/Berlin' );
-	my $dep_station = $self->{stations}->search( $opt{dep_station} );
-	my $arr_station = $self->{stations}->search( $opt{arr_station} );
+	my $dep_station = $self->{stations}
+	  ->search( $opt{dep_station}, backend_id => $opt{backend_id} );
+	my $arr_station = $self->{stations}
+	  ->search( $opt{arr_station}, backend_id => $opt{backend_id} );
 
 	if ( not $dep_station ) {
 		return ( undef, 'Unbekannter Startbahnhof' );

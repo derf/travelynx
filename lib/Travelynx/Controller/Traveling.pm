@@ -2114,8 +2114,9 @@ sub add_journey_form {
 		my $db = $self->pg->db;
 		my $tx = $db->begin;
 
-		$opt{db}  = $db;
-		$opt{uid} = $self->current_user->{id};
+		$opt{db}         = $db;
+		$opt{uid}        = $self->current_user->{id};
+		$opt{backend_id} = 1;
 
 		my ( $journey_id, $error ) = $self->journeys->add(%opt);
 
