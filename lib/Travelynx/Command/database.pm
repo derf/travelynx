@@ -2600,6 +2600,28 @@ qq{select distinct checkout_station_id from in_transit where backend_id = 0;}
 		say
 'If the migration fails due to a deadlock, re-run it after stopping all background workers';
 	},
+
+	# v55 -> v56
+	# include backend data in dumpstops command
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				create view stations_str as
+				select stations.name as name,
+				eva, lat, lon,
+				backends.name as backend,
+				iris as is_iris,
+				hafas as is_hafas,
+				efa as is_efa,
+				ris as is_ris
+				from stations
+				left join backends
+				on source = backends.id;
+				update schema_version set version = 56;
+			}
+		);
+	},
 );
 
 sub sync_stations {

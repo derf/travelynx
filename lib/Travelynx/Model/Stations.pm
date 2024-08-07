@@ -164,7 +164,7 @@ sub add_meta {
 sub get_db_iterator {
 	my ($self) = @_;
 
-	return $self->{pg}->db->select( 'stations', '*' );
+	return $self->{pg}->db->select( 'stations_str', '*' );
 }
 
 sub get_meta {
