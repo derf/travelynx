@@ -78,7 +78,7 @@ $(document).ready(function() {
 		}
 	};
 
-	const geoLocationButton = $('div.geolocation > button');
+	const geoLocationButton = $('div.geolocation > .request');
 	const recentStops = geoLocationButton.data('recent');
 	const getGeoLocation = function() {
 		geoLocationButton.replaceWith($('<p class="geolocationhint">Stationen in der Umgebung:</p><div class="progress"><div class="indeterminate"></div></div>'));
