@@ -497,8 +497,15 @@ sub startup {
 					# mustn't be called during a transaction
 					if ( not $opt{in_transaction} ) {
 						$self->add_route_timestamps( $uid, $train, 1 );
-						$self->add_wagonorder( $uid, 1, $train->train_id,
-							$train->sched_departure, $train->train_no );
+						$self->add_wagonorder(
+							uid          => $uid,
+							train_id     => $train->train_id,
+							is_departure => 1,
+							eva          => $eva,
+							datetime     => $train->sched_departure,
+							train_type   => $train->type,
+							train_no     => $train->train_no
+						);
 						$self->add_stationinfo( $uid, 1, $train->train_id,
 							$eva );
 						$self->run_hook( $uid, 'checkin' );
@@ -628,8 +635,15 @@ sub startup {
 					if ( not $opt{in_transaction} ) {
 						$self->run_hook( $uid, 'checkin' );
 						if ( $opt{hafas} eq 'DB' and $journey->class <= 16 ) {
-							$self->add_wagonorder( $uid, 1, $journey->id,
-								$found->sched_dep, $journey->number );
+							$self->add_wagonorder(
+								uid          => $uid,
+								train_id     => $journey->id,
+								is_departure => 1,
+								eva          => $found->loc->eva,
+								datetime     => $found->sched_dep,
+								train_type   => $journey->type,
+								train_no     => $journey->number
+							);
 							$self->add_stationinfo( $uid, 1, $journey->id,
 								$found->loc->eva );
 						}
@@ -995,8 +1009,15 @@ sub startup {
 					if ( not $opt{in_transaction} ) {
 						$self->run_hook( $uid, 'update' );
 						$self->add_route_timestamps( $uid, $train, 0, 1 );
-						$self->add_wagonorder( $uid, 0, $train->train_id,
-							$train->sched_departure, $train->train_no );
+						$self->add_wagonorder(
+							uid        => $uid,
+							train_id   => $train->train_id,
+							is_arrival => 1,
+							eva        => $new_checkout_station_id,
+							datetime   => $train->sched_departure,
+							train_type => $train->type,
+							train_no   => $train->train_no
+						);
 						$self->add_stationinfo( $uid, 0, $train->train_id,
 							$dep_eva, $new_checkout_station_id );
 					}
@@ -1227,21 +1248,23 @@ sub startup {
 
 	$self->helper(
 		'add_wagonorder' => sub {
-			my ( $self, $uid, $is_departure, $train_id, $sched_departure,
-				$train_no )
-			  = @_;
+			my ( $self, %opt ) = @_;
+
+			my $uid        = $opt{uid};
+			my $train_id   = $opt{train_id};
+			my $train_type = $opt{train_type};
+			my $train_no   = $opt{train_no};
+			my $eva        = $opt{eva};
+			my $datetime   = $opt{datetime};
 
 			$uid //= $self->current_user->{id};
 
 			my $db = $self->pg->db;
 
-			if ( $sched_departure and $train_no ) {
-				$self->dbdb->has_wagonorder_p( $sched_departure, $train_no )
-				  ->then(
+			if ( $datetime and $train_no ) {
+				$self->dbdb->has_wagonorder_p(%opt)->then(
 					sub {
-						my ($api) = @_;
-						return $self->dbdb->get_wagonorder_p( $api,
-							$sched_departure, $train_no );
+						return $self->dbdb->get_wagonorder_p(%opt);
 					}
 				)->then(
 					sub {
@@ -1250,46 +1273,39 @@ sub startup {
 						my $data      = {};
 						my $user_data = {};
 
-						if ( $is_departure and not exists $wagonorder->{error} )
+						if ( $opt{is_departure}
+							and not exists $wagonorder->{error} )
 						{
 							$data->{wagonorder_dep}   = $wagonorder;
 							$user_data->{wagongroups} = [];
-							for my $group (
-								@{
-									$wagonorder->{data}{istformation}
-									  {allFahrzeuggruppe} // []
-								}
-							  )
-							{
+							for my $group ( @{ $wagonorder->{groups} // [] } ) {
 								my @wagons;
-								for
-								  my $wagon ( @{ $group->{allFahrzeug} // [] } )
+								for my $wagon ( @{ $group->{vehicles} // [] } )
 								{
 									push(
 										@wagons,
 										{
-											id     => $wagon->{fahrzeugnummer},
-											number =>
-											  $wagon->{wagenordnungsnummer},
-											type => $wagon->{fahrzeugtyp},
+											id     => $wagon->{vehicleID},
+											number => $wagon
+											  ->{wagonIdentificationNumber},
+											type =>
+											  $wagon->{type}{constructionType},
 										}
 									);
 								}
 								push(
 									@{ $user_data->{wagongroups} },
 									{
-										name =>
-										  $group->{fahrzeuggruppebezeichnung},
-										from =>
-										  $group->{startbetriebsstellename},
-										to => $group->{zielbetriebsstellename},
-										no => $group->{verkehrlichezugnummer},
+										name => $group->{name},
+										to   => $group->{transport}{destination}
+										  {name},
+										type   => $group->{transport}{category},
+										no     => $group->{transport}{number},
 										wagons => [@wagons],
 									}
 								);
-								if (    $group->{fahrzeuggruppebezeichnung}
-									and $group->{fahrzeuggruppebezeichnung} eq
-									'ICE0304' )
+								if (    $group->{name}
+									and $group->{name} eq 'ICE0304' )
 								{
 									$data->{wagonorder_pride} = 1;
 								}
@@ -1307,7 +1323,7 @@ sub startup {
 								train_id  => $train_id,
 							);
 						}
-						elsif ( not $is_departure
+						elsif ( $opt{is_arrival}
 							and not exists $wagonorder->{error} )
 						{
 							$data->{wagonorder_arr} = $wagonorder;
@@ -1580,10 +1596,10 @@ sub startup {
 						from_json => $wagonorder );
 				};
 				if (    $wr
-					and $wr->sections
+					and $wr->sectors
 					and defined $wr->direction )
 				{
-					my $section_0 = ( $wr->sections )[0];
+					my $section_0 = ( $wr->sectors )[0];
 					my $direction = $wr->direction;
 					if (    $section_0->name eq 'A'
 						and $direction == 0 )
@@ -1726,7 +1742,7 @@ sub startup {
 							from_json => $in_transit->{data}{wagonorder_dep} );
 					};
 					if (    $wr
-						and $wr->wagons
+						and $wr->carriages
 						and defined $wr->direction )
 					{
 						$ret->{wagonorder} = $wr;

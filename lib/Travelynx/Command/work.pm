@@ -84,8 +84,15 @@ sub run {
 						if (    $journey->class <= 16
 							and $found_dep->rt_dep->epoch > $now->epoch )
 						{
-							$self->app->add_wagonorder( $uid, 1, $train_id,
-								$found_dep->sched_dep, $journey->number );
+							$self->app->add_wagonorder(
+								uid          => $uid,
+								train_id     => $journey->id,
+								is_departure => 1,
+								eva          => $dep,
+								datetime     => $found_dep->sched_dep,
+								train_type   => $journey->type,
+								train_no     => $journey->number,
+							);
 							$self->app->add_stationinfo( $uid, 1, $journey->id,
 								$found_dep->loc->eva );
 						}
@@ -102,8 +109,15 @@ sub run {
 						if (    $journey->class <= 16
 							and $found_arr->rt_arr->epoch - $now->epoch < 600 )
 						{
-							$self->app->add_wagonorder( $uid, 0, $train_id,
-								$found_dep->sched_dep, $journey->number );
+							$self->app->add_wagonorder(
+								uid        => $uid,
+								train_id   => $journey->id,
+								is_arrival => 1,
+								eva        => $arr,
+								datetime   => $found_arr->sched_dep,
+								train_type => $journey->type,
+								train_no   => $journey->number,
+							);
 							$self->app->add_stationinfo( $uid, 0, $journey->id,
 								$found_dep->loc->eva, $found_arr->loc->eva );
 						}
@@ -203,8 +217,15 @@ sub run {
 				}
 				else {
 					$self->app->add_route_timestamps( $uid, $train, 1 );
-					$self->app->add_wagonorder( $uid, 1, $train->train_id,
-						$train->sched_departure, $train->train_no );
+					$self->app->add_wagonorder(
+						uid          => $uid,
+						train_id     => $train->train_id,
+						is_departure => 1,
+						eva          => $dep,
+						datetime     => $train->sched_departure,
+						train_type   => $train->type,
+						train_no     => $train->train_no
+					);
 					$self->app->add_stationinfo( $uid, 1, $train->train_id,
 						$dep, $arr );
 				}
@@ -279,8 +300,15 @@ sub run {
 							  and $now->epoch > $entry->{real_arr_ts}
 						) ? 1 : 0
 					);
-					$self->app->add_wagonorder( $uid, 0, $train->train_id,
-						$train->sched_departure, $train->train_no );
+					$self->app->add_wagonorder(
+						uid        => $uid,
+						train_id   => $train->train_id,
+						is_arrival => 1,
+						eva        => $arr,
+						datetime   => $train->sched_departure,
+						train_type => $train->type,
+						train_no   => $train->train_no
+					);
 					$self->app->add_stationinfo( $uid, 0, $train->train_id,
 						$dep, $arr );
 				}

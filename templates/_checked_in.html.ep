@@ -68,33 +68,48 @@
 					% }
 					% if (my $wr = $journey->{wagonorder}) {
 						<br/>
-						% my @wagons = $wr->wagons;
-						% my $direction = $wr->direction == 100 ? '→' : '←';
-						% if ($journey->{dep_direction}) {
-							% $direction = $journey->{dep_direction} eq 'l' ? '◀' : '▶';
-							% if (($journey->{dep_direction} eq 'l' ? 0 : 100) != $wr->direction) {
-								% @wagons = reverse @wagons;
+						<!-- <a href="https://dbf.finalrewind.org/carriage-formation?<%= $journey->{train_no} %>/<%= $journey->{sched_departure}->strftime('%Y%m%d%H%M') %>?e=<%= $journey->{dep_direction} // q{} %>"> -->
+							% my $direction = $wr->direction == 100 ? '→' : '←';
+							% if ($journey->{dep_direction}) {
+								% $direction = $journey->{dep_direction} eq 'l' ? '◀' : '▶';
 							% }
-						% }
-						<a href="https://dbf.finalrewind.org/_wr/<%= $journey->{train_no} %>/<%= $journey->{sched_departure}->strftime('%Y%m%d%H%M') %>?e=<%= $journey->{dep_direction} // q{} %>">
-						%= $direction
-						% my $gi;
-						% for my $wagon (@wagons) {
-							% if (not ($wagon->is_locomotive or $wagon->is_powercar)) {
-								% if (defined $gi and $gi != $wagon->group_index) {
+							%= $direction
+							% my $had_entry = 0;
+							% for my $group ($wr->groups) {
+								% if ($had_entry) {
+									% $had_entry = 0;
 									•
 								% }
-								% if ($wagon->is_closed) {
-									X
-								% }
-								% else {
-									%= $wagon->number || ($wagon->type =~ m{AB} ? '½' : $wagon->type =~ m{A} ? '1.' : $wagon->type =~ m{B} ? '2.' : $wagon->type )
+								% for my $wagon ($group->carriages) {
+									% if (not ($wagon->is_locomotive or $wagon->is_powercar)) {
+										% $had_entry = 1;
+										% if ($wagon->is_closed) {
+											X
+										% }
+										% elsif ( $wagon->number) {
+											%= $wagon->number
+										% }
+										% else {
+											% if ( $wagon->has_first_class ) {
+												% if ( $wagon->has_second_class ) {
+													½
+												% }
+												% else {
+													1.
+												% }
+											% }
+											% elsif ( $wagon->has_second_class ) {
+												2.
+											% }
+											% else {
+												%= $wagon->type;
+											% }
+										% }
+									% }
 								% }
 							% }
-							% $gi = $wagon->group_index;
-						% }
-						%= $direction
-						</a>
+							%= $direction
+						<!-- </a> -->
 					% }
 				</div>
 				<div class="progress" style="height: 1ex;">

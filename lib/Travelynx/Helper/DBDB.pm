@@ -27,39 +27,53 @@ sub new {
 }
 
 sub has_wagonorder_p {
-	my ( $self, $ts, $train_no ) = @_;
-	my $api_ts = $ts->strftime('%Y%m%d%H%M');
-	my $url
-	  = "https://ist-wr.noncd.db.de/wagenreihung/1.0/${train_no}/${api_ts}";
+	my ( $self, %opt ) = @_;
+
+	my $datetime = $opt{datetime}->clone->set_time_zone('UTC');
+	my %param    = (
+		administrationId => 80,
+		category         => $opt{train_type},
+		date             => $datetime->strftime('%Y-%m-%d'),
+		evaNumber        => $opt{eva},
+		number           => $opt{train_no},
+		time             => $datetime->rfc3339 =~ s{(?=Z)}{.000}r
+	);
+
+	my $url = sprintf( '%s?%s',
+'https://www.bahn.de/web/api/reisebegleitung/wagenreihung/vehicle-sequence',
+		join( '&', map { $_ . '=' . $param{$_} } keys %param ) );
+
 	my $cache   = $self->{realtime_cache};
 	my $promise = Mojo::Promise->new;
+	my $debug_prefix
+	  = "has_wagonorder_p($opt{train_type} $opt{train_no} @ $opt{eva})";
 
 	if ( my $content = $cache->get("HEAD $url") ) {
 		if ( $content eq 'n' ) {
-			$self->{log}
-			  ->debug("has_wagonorder_p(${train_no}/${api_ts}): n (cached)");
+			$self->{log}->debug("${debug_prefix}: n (cached)");
 			return $promise->reject;
 		}
 		else {
-			$self->{log}
-			  ->debug("has_wagonorder_p(${train_no}/${api_ts}): y (cached)");
+			$self->{log}->debug("${debug_prefix}: y (cached)");
 			return $promise->resolve($content);
 		}
 	}
 
-	$self->{user_agent}->request_timeout(5)->head_p( $url => $self->{header} )
+	$self->{user_agent}->request_timeout(5)->get_p( $url => $self->{header} )
 	  ->then(
 		sub {
 			my ($tx) = @_;
 			if ( $tx->result->is_success ) {
-				$self->{log}
-				  ->debug("has_wagonorder_p(${train_no}/${api_ts}): a");
+				$self->{log}->debug("${debug_prefix}: a");
 				$cache->set( "HEAD $url", 'a' );
+				my $body = decode( 'utf-8', $tx->res->body );
+				my $json = JSON->new->decode($body);
+				$cache->freeze( $url, $json );
 				$promise->resolve('a');
 			}
 			else {
-				$self->{log}
-				  ->debug("has_wagonorder_p(${train_no}/${api_ts}): n");
+				my $code = $tx->code;
+				$self->{log}->debug("${debug_prefix}: n (HTTP $code)");
 				$cache->set( "HEAD $url", 'n' );
 				$promise->reject;
 			}
@@ -67,7 +81,8 @@ sub has_wagonorder_p {
 		}
 	)->catch(
 		sub {
-			$self->{log}->debug("has_wagonorder_p(${train_no}/${api_ts}): n");
+			my ($err) = @_;
+			$self->{log}->debug("${debug_prefix}: n ($err)");
 			$cache->set( "HEAD $url", 'n' );
 			$promise->reject;
 			return;
@@ -77,17 +92,29 @@ sub has_wagonorder_p {
 }
 
 sub get_wagonorder_p {
-	my ( $self, $api, $ts, $train_no ) = @_;
-	my $api_ts = $ts->strftime('%Y%m%d%H%M');
-	my $url
-	  = "https://ist-wr.noncd.db.de/wagenreihung/1.0/${train_no}/${api_ts}";
+	my ( $self, %opt ) = @_;
+
+	my $datetime = $opt{datetime}->clone->set_time_zone('UTC');
+	my %param    = (
+		administrationId => 80,
+		category         => $opt{train_type},
+		date             => $datetime->strftime('%Y-%m-%d'),
+		evaNumber        => $opt{eva},
+		number           => $opt{train_no},
+		time             => $datetime->rfc3339 =~ s{(?=Z)}{.000}r
+	);
+
+	my $url = sprintf( '%s?%s',
+'https://www.bahn.de/web/api/reisebegleitung/wagenreihung/vehicle-sequence',
+		join( '&', map { $_ . '=' . $param{$_} } keys %param ) );
+	my $debug_prefix
+	  = "get_wagonorder_p($opt{train_type} $opt{train_no} @ $opt{eva})";
 
 	my $cache   = $self->{realtime_cache};
 	my $promise = Mojo::Promise->new;
 
 	if ( my $content = $cache->thaw($url) ) {
-		$self->{log}
-		  ->debug("get_wagonorder_p(${train_no}/${api_ts}): (cached)");
+		$self->{log}->debug("${debug_prefix}: (cached)");
 		$promise->resolve($content);
 		return $promise;
 	}
@@ -100,15 +127,13 @@ sub get_wagonorder_p {
 			if ( $tx->result->is_success ) {
 				my $body = decode( 'utf-8', $tx->res->body );
 				my $json = JSON->new->decode($body);
-				$self->{log}
-				  ->debug("get_wagonorder_p(${train_no}/${api_ts}): success");
+				$self->{log}->debug("${debug_prefix}: success");
 				$cache->freeze( $url, $json );
 				$promise->resolve($json);
 			}
 			else {
 				my $code = $tx->code;
-				$self->{log}->debug(
-					"get_wagonorder_p(${train_no}/${api_ts}): HTTP ${code}");
+				$self->{log}->debug("${debug_prefix}: HTTP ${code}");
 				$promise->reject("HTTP ${code}");
 			}
 			return;
@@ -116,8 +141,7 @@ sub get_wagonorder_p {
 	)->catch(
 		sub {
 			my ($err) = @_;
-			$self->{log}
-			  ->debug("get_wagonorder_p(${train_no}/${api_ts}): error ${err}");
+			$self->{log}->debug("${debug_prefix}: error ${err}");
 			$promise->reject($err);
 			return;
 		}
