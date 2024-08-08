@@ -591,15 +591,15 @@ DISTRIBUTIONS
       parent 0
       strict 0
       warnings 0
-  DateTime-Locale-1.42
-    pathname: D/DR/DROLSKY/DateTime-Locale-1.42.tar.gz
+  DateTime-Locale-1.43
+    pathname: D/DR/DROLSKY/DateTime-Locale-1.43.tar.gz
     provides:
-      DateTime::Locale 1.42
-      DateTime::Locale::Base 1.42
-      DateTime::Locale::Catalog 1.42
-      DateTime::Locale::Data 1.42
-      DateTime::Locale::FromData 1.42
-      DateTime::Locale::Util 1.42
+      DateTime::Locale 1.43
+      DateTime::Locale::Base 1.43
+      DateTime::Locale::Catalog 1.43
+      DateTime::Locale::Data 1.43
+      DateTime::Locale::FromData 1.43
+      DateTime::Locale::Util 1.43
     requirements:
       Carp 0
       Dist::CheckConflicts 0.02
@@ -1367,16 +1367,16 @@ DISTRIBUTIONS
       parent 0
       perl 5.008001
       strictures 2.000000
-  HTML-Parser-3.82
-    pathname: O/OA/OALDERS/HTML-Parser-3.82.tar.gz
+  HTML-Parser-3.83
+    pathname: O/OA/OALDERS/HTML-Parser-3.83.tar.gz
     provides:
-      HTML::Entities 3.82
-      HTML::Filter 3.82
-      HTML::HeadParser 3.82
-      HTML::LinkExtor 3.82
-      HTML::Parser 3.82
-      HTML::PullParser 3.82
-      HTML::TokeParser 3.82
+      HTML::Entities 3.83
+      HTML::Filter 3.83
+      HTML::HeadParser 3.83
+      HTML::LinkExtor 3.83
+      HTML::Parser 3.83
+      HTML::PullParser 3.83
+      HTML::TokeParser 3.83
     requirements:
       Carp 0
       Exporter 0
@@ -1503,22 +1503,21 @@ DISTRIBUTIONS
       Exporter 5.57
       ExtUtils::MakeMaker 0
       perl 5.008
-  IO-Socket-SSL-2.086
-    pathname: S/SU/SULLR/IO-Socket-SSL-2.086.tar.gz
+  IO-Socket-SSL-2.088
+    pathname: S/SU/SULLR/IO-Socket-SSL-2.088.tar.gz
     provides:
-      IO::Socket::SSL 2.086
+      IO::Socket::SSL 2.088
       IO::Socket::SSL::Intercept 2.056
-      IO::Socket::SSL::OCSP_Cache 2.086
-      IO::Socket::SSL::OCSP_Resolver 2.086
+      IO::Socket::SSL::OCSP_Cache 2.088
+      IO::Socket::SSL::OCSP_Resolver 2.088
       IO::Socket::SSL::PublicSuffix undef
-      IO::Socket::SSL::SSL_Context 2.086
-      IO::Socket::SSL::SSL_HANDLE 2.086
-      IO::Socket::SSL::Session_Cache 2.086
-      IO::Socket::SSL::Trace 2.086
+      IO::Socket::SSL::SSL_Context 2.088
+      IO::Socket::SSL::SSL_HANDLE 2.088
+      IO::Socket::SSL::Session_Cache 2.088
+      IO::Socket::SSL::Trace 2.088
       IO::Socket::SSL::Utils 2.015
     requirements:
       ExtUtils::MakeMaker 0
-      Mozilla::CA 0
       Net::SSLeay 1.46
       Scalar::Util 0
   IO-String-1.08
@@ -1994,12 +1993,6 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       Module::Runtime 0.014
-  Mozilla-CA-20240313
-    pathname: L/LW/LWP/Mozilla-CA-20240313.tar.gz
-    provides:
-      Mozilla::CA 20240313
-    requirements:
-      ExtUtils::MakeMaker 0
   Net-HTTP-6.23
     pathname: O/OA/OALDERS/Net-HTTP-6.23.tar.gz
     provides:
@@ -2583,12 +2576,13 @@ DISTRIBUTIONS
       TimeDate 1.21
     requirements:
       ExtUtils::MakeMaker 0
-  Travel-Status-DE-DBWagenreihung-0.12
-    pathname: D/DE/DERF/Travel-Status-DE-DBWagenreihung-0.12.tar.gz
+  Travel-Status-DE-DBWagenreihung-0.16
+    pathname: D/DE/DERF/Travel-Status-DE-DBWagenreihung-0.16.tar.gz
     provides:
-      Travel::Status::DE::DBWagenreihung 0.12
-      Travel::Status::DE::DBWagenreihung::Section 0.12
-      Travel::Status::DE::DBWagenreihung::Wagon 0.12
+      Travel::Status::DE::DBWagenreihung 0.16
+      Travel::Status::DE::DBWagenreihung::Carriage 0.16
+      Travel::Status::DE::DBWagenreihung::Group 0.16
+      Travel::Status::DE::DBWagenreihung::Sector 0.16
     requirements:
       Carp 0
       Class::Accessor 0
