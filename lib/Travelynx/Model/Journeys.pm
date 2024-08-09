@@ -1771,7 +1771,10 @@ sub get_connection_targets {
 	my $dest_id   = $opt{eva};
 
 	if ( $opt{destination_name} ) {
-		return [ { eva => $opt{eva}, name => $opt{destination_name} } ];
+		return {
+			eva  => $opt{eva},
+			name => $opt{destination_name}
+		};
 	}
 
 	my $backend_id = $opt{backend_id};
@@ -1781,7 +1784,7 @@ sub get_connection_targets {
 	}
 
 	if ( not $dest_id ) {
-		return [];
+		return;
 	}
 
 	my $dest_ids = [
