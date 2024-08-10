@@ -16,6 +16,7 @@ use FindBin;
 require "$FindBin::Bin/../index.pl";
 
 use DateTime;
+use utf8;
 
 my $t = Test::Mojo->new('Travelynx');
 
@@ -75,11 +76,12 @@ $t->post_ok(
 );
 $t->status_is(302)->header_is( location => '/' );
 
-$t->app->journeys->add(
+my ( $success, $error ) = $t->app->journeys->add(
 	db              => $t->app->pg->db,
 	uid             => $uid,
-	dep_station     => 'EMSTP',
-	arr_station     => 'EG',
+	backend_id      => 1,
+	dep_station     => 'Münster(Westf)Hbf',
+	arr_station     => 'Gelsenkirchen Hbf',
 	sched_departure => DateTime->new(
 		year      => 2018,
 		month     => 10,
@@ -118,6 +120,9 @@ $t->app->journeys->add(
 	train_no   => '11238',
 	comment    => 'Huhu'
 );
+
+ok( $success, "journeys->add" );
+is( $error, undef, "journeys->add" );
 
 $t->get_ok('/journey/1')->status_is(200)->content_like(qr{M.nster\(Westf\)Hbf})
   ->content_like(qr{Gelsenkirchen Hbf})->content_like(qr{RE 11238})
