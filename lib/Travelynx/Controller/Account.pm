@@ -1012,12 +1012,18 @@ sub backend_form {
 			$backend->{name} = 'DB';
 		}
 		elsif ( $backend->{hafas} ) {
-			$type = 'HAFAS';
-			$backend->{longname}
-			  = $self->hafas->get_service( $backend->{name} )->{name};
+			if ( my $s = $self->hafas->get_service( $backend->{name} ) ) {
+				$type = 'HAFAS';
+				$backend->{longname} = $s->{name};
+			}
+			else {
+				$type = undef;
+			}
 		}
 		$backend->{type} = $type;
 	}
+
+	@backends = grep { $_->{type} } @backends;
 
 	$self->render(
 		'select_backend',
