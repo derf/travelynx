@@ -72,7 +72,7 @@ sub has_wagonorder_p {
 				$promise->resolve('a');
 			}
 			else {
-				my $code = $tx->code;
+				my $code = $tx->res->code;
 				$self->{log}->debug("${debug_prefix}: n (HTTP $code)");
 				$cache->set( "HEAD $url", 'n' );
 				$promise->reject;
@@ -132,7 +132,7 @@ sub get_wagonorder_p {
 				$promise->resolve($json);
 			}
 			else {
-				my $code = $tx->code;
+				my $code = $tx->res->code;
 				$self->{log}->debug("${debug_prefix}: HTTP ${code}");
 				$promise->reject("HTTP ${code}");
 			}
