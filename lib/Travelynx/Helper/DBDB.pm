@@ -29,6 +29,7 @@ sub new {
 sub has_wagonorder_p {
 	my ( $self, %opt ) = @_;
 
+	$opt{train_type} //= q{};
 	my $datetime = $opt{datetime}->clone->set_time_zone('UTC');
 	my %param    = (
 		administrationId => 80,
