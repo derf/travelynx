@@ -2815,17 +2815,27 @@ sub sync_stations {
 sub sync_backends {
 	my ($db) = @_;
 	for my $service ( Travel::Status::DE::HAFAS::get_services() ) {
-		$db->insert(
+		my $present = $db->select(
 			'backends',
+			'count(*) as count',
 			{
-				iris  => 0,
 				hafas => 1,
-				efa   => 0,
-				ris   => 0,
-				name  => $service->{shortname},
-			},
-			{ on_conflict => undef }
-		);
+				name  => $service->{shortname}
+			}
+		)->hash->{count};
+		if ( not $present ) {
+			$db->insert(
+				'backends',
+				{
+					iris  => 0,
+					hafas => 1,
+					efa   => 0,
+					ris   => 0,
+					name  => $service->{shortname},
+				},
+				{ on_conflict => undef }
+			);
+		}
 	}
 
 	$db->update( 'schema_version',
