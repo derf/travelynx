@@ -16,18 +16,18 @@
 	% }
 	% for my $backend (@{ stash('backends') // [] }) {
 		<div class="row">
-			<div class="col s12 m4 l4 center-align">
-				<button class="btn waves-effect waves-light <%= $backend->{id} == $user->{backend_id} ? 'disabled' : q{} %>" type="submit" name="backend" value="<%= $backend->{id} %>">
-					<%= $backend->{name} %> (<%= $backend->{type} %>)
-				</button>
-			</div>
-			<div class="col s12 m8 l8">
+			<div class="col s8 m6 l6 right-align">
 				% if ($backend->{longname}) {
-					<%= $backend->{longname} %>
+					<a href="<%= $backend->{homepage} %>"><%= $backend->{longname} %></a>
 				% }
 				% if ($backend->{id} == $user->{backend_id}) {
 					(aktuell ausgewählt)
 				% }
+			</div>
+			<div class="col s4 m6 l6 left-align">
+				<button class="btn waves-effect waves-light <%= $backend->{id} == $user->{backend_id} ? 'disabled' : q{} %>" type="submit" name="backend" value="<%= $backend->{id} %>">
+					<%= $backend->{name} %> (<%= $backend->{type} %>)
+				</button>
 			</div>
 		</div>
 	% }

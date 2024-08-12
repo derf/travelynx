@@ -1008,13 +1008,16 @@ sub backend_form {
 	for my $backend (@backends) {
 		my $type = 'UNKNOWN';
 		if ( $backend->{iris} ) {
-			$type = 'IRIS-TTS';
-			$backend->{name} = 'DB';
+			$type                = 'IRIS-TTS';
+			$backend->{name}     = 'DB';
+			$backend->{longname} = 'Deutsche Bahn';
+			$backend->{homepage} = 'https://www.bahn.de';
 		}
 		elsif ( $backend->{hafas} ) {
 			if ( my $s = $self->hafas->get_service( $backend->{name} ) ) {
-				$type = 'HAFAS';
+				$type                = 'HAFAS';
 				$backend->{longname} = $s->{name};
+				$backend->{homepage} = $s->{homepage};
 			}
 			else {
 				$type = undef;
