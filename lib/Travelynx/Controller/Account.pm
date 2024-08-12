@@ -1026,7 +1026,12 @@ sub backend_form {
 		$backend->{type} = $type;
 	}
 
-	@backends = grep { $_->{type} } @backends;
+	my $iris = shift @backends;
+
+	@backends
+	  = sort { $a->{name} cmp $b->{name} } grep { $_->{type} } @backends;
+
+	unshift( @backends, $iris );
 
 	$self->render(
 		'select_backend',
