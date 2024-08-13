@@ -42,7 +42,7 @@ sub has_wagonorder_p {
 
 	my $url = sprintf( '%s?%s',
 'https://www.bahn.de/web/api/reisebegleitung/wagenreihung/vehicle-sequence',
-		join( '&', map { $_ . '=' . $param{$_} } keys %param ) );
+		join( '&', map { $_ . '=' . $param{$_} } sort keys %param ) );
 
 	my $cache   = $self->{realtime_cache};
 	my $promise = Mojo::Promise->new;
@@ -107,7 +107,7 @@ sub get_wagonorder_p {
 
 	my $url = sprintf( '%s?%s',
 'https://www.bahn.de/web/api/reisebegleitung/wagenreihung/vehicle-sequence',
-		join( '&', map { $_ . '=' . $param{$_} } keys %param ) );
+		join( '&', map { $_ . '=' . $param{$_} } sort keys %param ) );
 	my $debug_prefix
 	  = "get_wagonorder_p($opt{train_type} $opt{train_no} @ $opt{eva})";
 
