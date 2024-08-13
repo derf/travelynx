@@ -70,17 +70,19 @@
 						<br/>
 						<!-- <a href="https://dbf.finalrewind.org/carriage-formation?<%= $journey->{train_no} %>/<%= $journey->{sched_departure}->strftime('%Y%m%d%H%M') %>?e=<%= $journey->{dep_direction} // q{} %>"> -->
 							% my $direction = $wr->direction == 100 ? '→' : '←';
+							% my $rev = 0;
 							% if ($journey->{dep_direction}) {
 								% $direction = $journey->{dep_direction} eq 'l' ? '◀' : '▶';
+								% $rev = (($journey->{dep_direction} eq 'l' ? 0 : 100) == $wr->direction) ? 0 : 1;
 							% }
 							%= $direction
 							% my $had_entry = 0;
-							% for my $group ($wr->groups) {
+							% for my $group ($rev ? reverse $wr->groups : $wr->groups) {
 								% if ($had_entry) {
 									% $had_entry = 0;
 									•
 								% }
-								% for my $wagon ($group->carriages) {
+								% for my $wagon ($rev ? reverse $group->carriages : $group->carriages) {
 									% if (not ($wagon->is_locomotive or $wagon->is_powercar)) {
 										% $had_entry = 1;
 										% if ($wagon->is_closed) {
