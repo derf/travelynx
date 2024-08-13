@@ -3,10 +3,10 @@
 		<h2>Backend auswählen</h2>
 		<p style="text-align: justify;">
 			Das ausgewählte Backend bestimmt die Datenquelle für Fahrten in travelynx.
-			<strong>DB (HAFAS)</strong> ist eine gute Wahl für Nah-, Regional- und Fernverkehr in Deutschland und (teilweise) Nachbarländern.
-			<strong>IRIS-TTS</strong> unterstützt ausschließlich Schienenverkehr; im Gegensatz zum HAFAS sind hier detaillierte Verspätungsgründe verfügbar.
+			<strong>Deutsche Bahn</strong> ist eine gute Wahl für Nah-, Regional- und Fernverkehr in Deutschland und (teilweise) Nachbarländern.
+			<strong>Deutsche Bahn (IRIS-TTS)</strong> unterstützt ausschließlich Schienenverkehr; im Gegensatz zum HAFAS sind hier detaillierte Verspätungsgründe verfügbar.
 			Die restlichen Backends können sich für Fahrten außerhalb Deutschlands sowie in einzelnen innerdeutschen Verkehrsverbünden lohnen.
-			Fahrten im Ausland fehlen im DB-HAFAS oft; Fahrten im Inland können mit spezifischen Backends genauere Daten haben – z.B. liefert das AVV-HAFAS im Gegensatz zum DB-HAFAS Kartendaten für dortige Buslinien.
+			Fahrten im Ausland fehlen im DB-HAFAS oft; Fahrten im Inland können mit spezifischen Backends genauere Daten haben – z.B. liefern viele lokale HAFAS-Instanzen im Gegensatz zum DB-HAFAS Kartendaten für dortige Bus- und Tramlinien.
 		</p>
 	</div>
 </div>
@@ -25,8 +25,8 @@
 				% }
 			</div>
 			<div class="col s4 m6 l6 left-align">
-				<button class="btn waves-effect waves-light <%= $backend->{id} == $user->{backend_id} ? 'disabled' : q{} %>" type="submit" name="backend" value="<%= $backend->{id} %>">
-					<%= $backend->{name} %> (<%= $backend->{type} %>)
+				<button class="btn waves-effect waves-light <%= $backend->{id} == $user->{backend_id} ? 'disabled' : q{} %>" style="min-width: 6em;" type="submit" name="backend" value="<%= $backend->{id} %>">
+					<%= $backend->{name} %>
 				</button>
 			</div>
 		</div>

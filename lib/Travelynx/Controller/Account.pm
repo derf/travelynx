@@ -1010,7 +1010,7 @@ sub backend_form {
 		if ( $backend->{iris} ) {
 			$type                = 'IRIS-TTS';
 			$backend->{name}     = 'DB';
-			$backend->{longname} = 'Deutsche Bahn';
+			$backend->{longname} = 'Deutsche Bahn (IRIS-TTS)';
 			$backend->{homepage} = 'https://www.bahn.de';
 		}
 		elsif ( $backend->{hafas} ) {
