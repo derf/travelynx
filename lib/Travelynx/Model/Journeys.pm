@@ -1128,16 +1128,16 @@ sub get_travel_distance {
 
 	my $distance_polyline     = 0;
 	my $distance_intermediate = 0;
-	my $distance_beeline      = 0;
-	my $skipped               = 0;
 	my $geo                   = GIS::Distance->new();
-	my @route                 = after_incl { $_->[0] eq $from } @{$route_ref};
+	my $distance_beeline
+	  = $geo->distance_metal( @{$from_latlon}, @{$to_latlon} );
+	my @route = after_incl { $_->[0] eq $from } @{$route_ref};
 	@route = before_incl { $_->[0] eq $to } @route;
 
 	if ( @route < 2 ) {
 
 		# I AM ERROR
-		return ( 0, 0, 0 );
+		return ( 0, 0, $distance_beeline );
 	}
 
 	my @polyline = after_incl { $_->[2] and $_->[2] == $from_eva }
@@ -1155,7 +1155,7 @@ sub get_travel_distance {
 	}
 
 	if ( not( defined $route[0][2]{lat} and defined $route[0][2]{lon} ) ) {
-		return ( $distance_polyline, 0, 0 );
+		return ( $distance_polyline, 0, $distance_beeline );
 	}
 
 	$prev_station = shift @route;
@@ -1169,10 +1169,7 @@ sub get_travel_distance {
 		}
 	}
 
-	$distance_beeline = $geo->distance_metal( @{$from_latlon}, @{$to_latlon} );
-
-	return ( $distance_polyline, $distance_intermediate,
-		$distance_beeline, $skipped );
+	return ( $distance_polyline, $distance_intermediate, $distance_beeline );
 }
 
 sub grep_single {
