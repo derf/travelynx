@@ -1372,17 +1372,28 @@ sub startup {
 			my $route    = $in_transit->{route};
 			my $train_id = $train->train_id;
 
-			# TODO get_tripid_p is only needed on the first call, afterwards the tripid is known.
-			$self->hafas->get_tripid_p( train => $train )->then(
+			my $tripid_promise;
+
+			if ( $in_transit->{data}{trip_id} ) {
+				$tripid_promise
+				  = Mojo::Promise->resolve( $in_transit->{data}{trip_id} );
+			}
+			else {
+				$tripid_promise = $self->hafas->get_tripid_p( train => $train );
+			}
+
+			$tripid_promise->then(
 				sub {
 					my ($trip_id) = @_;
 
-					$self->in_transit->update_data(
-						uid      => $uid,
-						db       => $db,
-						data     => { trip_id => $trip_id },
-						train_id => $train_id,
-					);
+					if ( not $in_transit->{extra_data}{trip_id} ) {
+						$self->in_transit->update_data(
+							uid      => $uid,
+							db       => $db,
+							data     => { trip_id => $trip_id },
+							train_id => $train_id,
+						);
+					}
 
 					return $self->hafas->get_route_p(
 						train         => $train,
