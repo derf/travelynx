@@ -133,6 +133,9 @@
 							ca. <%= sprintf_km($journey->{km_route}) %>
 							(Luftlinie: <%= sprintf_km($journey->{km_beeline}) %>)
 						% }
+						% elsif ($journey->{km_beeline} > 0.1) {
+							(Luftlinie: <%= sprintf_km($journey->{km_beeline}) %>)
+						% }
 						% else {
 							?
 						% }
@@ -154,6 +157,9 @@
 							% if ($journey->{edited} & 0x0303) {
 								∗
 							% }
+						% }
+						% elsif ($journey->{km_beeline} > 0.1 and $journey->{kmh_beeline} > 0.01) {
+							(<%= sprintf('%.f', $journey->{kmh_beeline}) %> km/h)
 						% }
 						% else {
 							?
