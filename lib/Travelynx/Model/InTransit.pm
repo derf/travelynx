@@ -483,13 +483,6 @@ sub set_arrival {
 	my $uid   = $opt{uid};
 	my $db    = $opt{db} // $self->{pg}->db;
 	my $train = $opt{train};
-	my $route = $opt{route};
-
-	$route = $self->_merge_old_route(
-		db    => $db,
-		uid   => $uid,
-		route => $route
-	);
 
 	my $json = JSON->new;
 
@@ -500,7 +493,6 @@ sub set_arrival {
 			arr_platform  => $train->platform,
 			sched_arrival => $train->sched_arrival,
 			real_arrival  => $train->arrival,
-			route         => $json->encode($route),
 			messages      => $json->encode(
 				[ map { [ $_->[0]->epoch, $_->[1] ] } $train->messages ]
 			)

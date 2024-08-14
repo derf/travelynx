@@ -910,7 +910,6 @@ sub startup {
 								uid   => $uid,
 								db    => $db,
 								train => $train,
-								route => [ $self->iris->route_diff($train) ]
 							);
 
 							$has_arrived
