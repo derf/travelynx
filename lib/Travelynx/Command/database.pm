@@ -2622,6 +2622,23 @@ qq{select distinct checkout_station_id from in_transit where backend_id = 0;}
 			}
 		);
 	},
+
+	# v56 -> v57
+	# Berlin Hbf used to be divided between "Berlin Hbf" (8011160) and "Berlin
+	# Hbf (tief)" (8098160). Since 2024, both are called "Berlin Hbf".
+	# As there are some places in the IRIS backend where station names are
+	# mapped to EVA IDs, this is not good.  As of 2.8.21, travelynx deals with
+	# this IRIS edge case (and probably similar edge cases in Karlsruhe).
+	# Rebuild stats to ensure no bogus data is in there.
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				truncate journey_stats;
+				update schema_version set version = 57;
+			}
+		);
+	},
 );
 
 sub sync_stations {
