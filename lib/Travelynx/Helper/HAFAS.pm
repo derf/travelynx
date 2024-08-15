@@ -142,10 +142,13 @@ sub get_tripid_p {
 			my @results = $hafas->results;
 
 			if ( not @results ) {
+				$self->{log}->debug("get_tripid_p($train_desc): no results");
 				$promise->reject(
 					"journeyMatch($train_desc) returned no results");
 				return;
 			}
+
+			$self->{log}->debug("get_tripid_p($train_desc): success");
 
 			my $result = $results[0];
 			if ( @results > 1 ) {
@@ -163,6 +166,7 @@ sub get_tripid_p {
 	)->catch(
 		sub {
 			my ($err) = @_;
+			$self->{log}->debug("get_tripid_p($train_desc): error $err");
 			$promise->reject($err);
 			return;
 		}
@@ -192,15 +196,18 @@ sub get_journey_p {
 			my $journey = $hafas->result;
 
 			if ($journey) {
+				$self->{log}->debug("get_journey_p($opt{trip_id}): success");
 				$promise->resolve($journey);
 				return;
 			}
+			$self->{log}->debug("get_journey_p($opt{trip_id}): no journey");
 			$promise->reject('no journey');
 			return;
 		}
 	)->catch(
 		sub {
 			my ($err) = @_;
+			$self->{log}->debug("get_journey_p($opt{trip_id}): error $err");
 			$promise->reject($err);
 			return;
 		}
@@ -311,12 +318,14 @@ sub get_route_p {
 				}
 			}
 
+			$self->{log}->debug("get_route_p($opt{trip_id}): success");
 			$promise->resolve( $ret, $journey, $polyline );
 			return;
 		}
 	)->catch(
 		sub {
 			my ($err) = @_;
+			$self->{log}->debug("get_route_p($opt{trip_id}): error $err");
 			$promise->reject($err);
 			return;
 		}
