@@ -1126,6 +1126,39 @@ sub get_travel_distance {
 		  ->warn("Journey $journey->{id} has no from_name for EVA $from_eva");
 	}
 
+	# Work around inconsistencies caused by a multiple EVA IDs mapping to the same station name
+	if (
+		not List::MoreUtils::any { $_->[2] and $_->[2] == $from_eva }
+		@{ $polyline_ref // [] }
+	  )
+	{
+		$self->{log}->debug(
+"Journey $journey->{id} from_eva ($from_eva) is not part of polyline"
+		);
+		for my $entry ( @{$route_ref} ) {
+			if ( $entry->[0] eq $from ) {
+				$from_eva = $entry->[1];
+				$self->{log}->debug("... setting to $from_eva");
+				last;
+			}
+		}
+	}
+	if (
+		not List::MoreUtils::any { $_->[2] and $_->[2] == $to_eva }
+		@{ $polyline_ref // [] }
+	  )
+	{
+		$self->{log}->debug(
+			"Journey $journey->{id} to_eva ($to_eva) is not part of polyline");
+		for my $entry ( @{$route_ref} ) {
+			if ( $entry->[0] eq $to ) {
+				$to_eva = $entry->[1];
+				$self->{log}->debug("... setting to $to_eva");
+				last;
+			}
+		}
+	}
+
 	my $distance_polyline     = 0;
 	my $distance_intermediate = 0;
 	my $geo                   = GIS::Distance->new();
@@ -1134,7 +1167,7 @@ sub get_travel_distance {
 	my @route = after_incl { $_->[0] eq $from } @{$route_ref};
 	@route = before_incl { $_->[0] eq $to } @route;
 
-	if ( @route < 2 ) {
+	if ( @route < 2 or $route[-1][0] ne $to ) {
 
 		# I AM ERROR
 		return ( 0, 0, $distance_beeline );
@@ -1145,27 +1178,28 @@ sub get_travel_distance {
 	@polyline
 	  = before_incl { $_->[2] and $_->[2] == $to_eva } @polyline;
 
-	my $prev_station = shift @polyline;
-	for my $station (@polyline) {
-		$distance_polyline += $geo->distance_metal(
-			$prev_station->[1], $prev_station->[0],
-			$station->[1],      $station->[0]
-		);
-		$prev_station = $station;
-	}
-
-	if ( not( defined $route[0][2]{lat} and defined $route[0][2]{lon} ) ) {
-		return ( $distance_polyline, 0, $distance_beeline );
-	}
-
-	$prev_station = shift @route;
-	for my $station (@route) {
-		if ( defined $station->[2]{lat} and defined $station->[2]{lon} ) {
-			$distance_intermediate += $geo->distance_metal(
-				$prev_station->[2]{lat}, $prev_station->[2]{lon},
-				$station->[2]{lat},      $station->[2]{lon}
+	# ensure that before_incl matched -- otherwise, @polyline is too long
+	if ( @polyline and $polyline[-1][2] == $to_eva ) {
+		my $prev_station = shift @polyline;
+		for my $station (@polyline) {
+			$distance_polyline += $geo->distance_metal(
+				$prev_station->[1], $prev_station->[0],
+				$station->[1],      $station->[0]
 			);
 			$prev_station = $station;
+		}
+	}
+
+	if ( defined $route[0][2]{lat} and defined $route[0][2]{lon} ) {
+		my $prev_station = shift @route;
+		for my $station (@route) {
+			if ( defined $station->[2]{lat} and defined $station->[2]{lon} ) {
+				$distance_intermediate += $geo->distance_metal(
+					$prev_station->[2]{lat}, $prev_station->[2]{lon},
+					$station->[2]{lat},      $station->[2]{lon}
+				);
+				$prev_station = $station;
+			}
 		}
 	}
 
