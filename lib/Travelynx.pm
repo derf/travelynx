@@ -556,7 +556,8 @@ sub startup {
 					}
 					if ( not $found ) {
 						$promise->reject(
-							"Did not find journey $train_id at $station");
+"Did not find stop '$station' within journey '$train_id'"
+						);
 						return;
 					}
 					for my $stop ( $journey->route ) {
