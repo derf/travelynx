@@ -49,109 +49,119 @@ sub run {
 
 		if ( $entry->{is_hafas} ) {
 
-			$self->app->hafas->get_journey_p(
-				trip_id => $train_id,
-				service => $entry->{backend_name}
-			)->then(
-				sub {
-					my ($journey) = @_;
+			eval {
 
-					my $found_dep;
-					my $found_arr;
-					for my $stop ( $journey->route ) {
-						if ( $stop->loc->eva == $dep ) {
-							$found_dep = $stop;
-						}
-						if ( $arr and $stop->loc->eva == $arr ) {
-							$found_arr = $stop;
-							last;
-						}
-					}
-					if ( not $found_dep ) {
-						$self->app->log->debug(
-							"Did not find $dep within journey $train_id");
-						return;
-					}
+				$self->app->hafas->get_journey_p(
+					trip_id => $train_id,
+					service => $entry->{backend_name}
+				)->then(
+					sub {
+						my ($journey) = @_;
 
-					if ( $found_dep->rt_dep ) {
-						$self->app->in_transit->update_departure_hafas(
-							uid     => $uid,
-							journey => $journey,
-							stop    => $found_dep,
-							dep_eva => $dep,
-							arr_eva => $arr
-						);
-						if (    $entry->{backend_id} <= 1
-							and $journey->class <= 16
-							and $found_dep->rt_dep->epoch > $now->epoch )
-						{
-							$self->app->add_wagonorder(
-								uid          => $uid,
-								train_id     => $journey->id,
-								is_departure => 1,
-								eva          => $dep,
-								datetime     => $found_dep->sched_dep,
-								train_type   => $journey->type,
-								train_no     => $journey->number,
+						my $found_dep;
+						my $found_arr;
+						for my $stop ( $journey->route ) {
+							if ( $stop->loc->eva == $dep ) {
+								$found_dep = $stop;
+							}
+							if ( $arr and $stop->loc->eva == $arr ) {
+								$found_arr = $stop;
+								last;
+							}
+						}
+						if ( not $found_dep ) {
+							$self->app->log->debug(
+								"Did not find $dep within journey $train_id");
+							return;
+						}
+
+						if ( $found_dep->rt_dep ) {
+							$self->app->in_transit->update_departure_hafas(
+								uid     => $uid,
+								journey => $journey,
+								stop    => $found_dep,
+								dep_eva => $dep,
+								arr_eva => $arr
 							);
-							$self->app->add_stationinfo( $uid, 1, $journey->id,
-								$found_dep->loc->eva );
+							if (    $entry->{backend_id} <= 1
+								and $journey->class <= 16
+								and $found_dep->rt_dep->epoch > $now->epoch )
+							{
+								$self->app->add_wagonorder(
+									uid          => $uid,
+									train_id     => $journey->id,
+									is_departure => 1,
+									eva          => $dep,
+									datetime     => $found_dep->sched_dep,
+									train_type   => $journey->type,
+									train_no     => $journey->number,
+								);
+								$self->app->add_stationinfo( $uid, 1,
+									$journey->id, $found_dep->loc->eva );
+							}
 						}
-					}
 
-					if ( $found_arr and $found_arr->rt_arr ) {
-						$self->app->in_transit->update_arrival_hafas(
-							uid     => $uid,
-							journey => $journey,
-							stop    => $found_arr,
-							dep_eva => $dep,
-							arr_eva => $arr
-						);
-						if (    $entry->{backend_id} <= 1
-							and $journey->class <= 16
-							and $found_arr->rt_arr->epoch - $now->epoch < 600 )
-						{
-							$self->app->add_wagonorder(
-								uid        => $uid,
-								train_id   => $journey->id,
-								is_arrival => 1,
-								eva        => $arr,
-								datetime   => $found_arr->sched_dep,
-								train_type => $journey->type,
-								train_no   => $journey->number,
+						if ( $found_arr and $found_arr->rt_arr ) {
+							$self->app->in_transit->update_arrival_hafas(
+								uid     => $uid,
+								journey => $journey,
+								stop    => $found_arr,
+								dep_eva => $dep,
+								arr_eva => $arr
 							);
-							$self->app->add_stationinfo( $uid, 0, $journey->id,
-								$found_dep->loc->eva, $found_arr->loc->eva );
+							if (    $entry->{backend_id} <= 1
+								and $journey->class <= 16
+								and $found_arr->rt_arr->epoch - $now->epoch
+								< 600 )
+							{
+								$self->app->add_wagonorder(
+									uid        => $uid,
+									train_id   => $journey->id,
+									is_arrival => 1,
+									eva        => $arr,
+									datetime   => $found_arr->sched_dep,
+									train_type => $journey->type,
+									train_no   => $journey->number,
+								);
+								$self->app->add_stationinfo( $uid, 0,
+									$journey->id, $found_dep->loc->eva,
+									$found_arr->loc->eva );
+							}
 						}
 					}
-				}
-			)->catch(
-				sub {
-					my ($err) = @_;
-					if ( $err =~ m{svcResL\[0\][.]err is (?:FAIL|PARAMETER)$} )
-					{
-						# HAFAS do be weird. These are not actionable.
-						$self->app->log->debug("work($uid)/journey: $err");
+				)->catch(
+					sub {
+						my ($err) = @_;
+						if ( $err
+							=~ m{svcResL\[0\][.]err is (?:FAIL|PARAMETER)$} )
+						{
+							# HAFAS do be weird. These are not actionable.
+							$self->app->log->debug("work($uid)/journey: $err");
+						}
+						else {
+							$self->app->log->error("work($uid)/journey: $err");
+						}
 					}
-					else {
-						$self->app->log->error("work($uid)/journey: $err");
-					}
-				}
-			)->wait;
-
-			if (    $arr
-				and $entry->{real_arr_ts}
-				and $now->epoch - $entry->{real_arr_ts} > 600 )
-			{
-				$self->app->checkout_p(
-					station => $arr,
-					force   => 2,
-					dep_eva => $dep,
-					arr_eva => $arr,
-					uid     => $uid
 				)->wait;
+
+				if (    $arr
+					and $entry->{real_arr_ts}
+					and $now->epoch - $entry->{real_arr_ts} > 600 )
+				{
+					$self->app->checkout_p(
+						station => $arr,
+						force   => 2,
+						dep_eva => $dep,
+						arr_eva => $arr,
+						uid     => $uid
+					)->wait;
+				}
+				next;
+			};
+			if ($@) {
+				$errors += 1;
+				$self->app->log->error("work($uid)/hafas: $@");
 			}
-			next;
 		}
 
 		# TODO irgendwo ist hier ne race condition wo ein neuer checkin (in HAFAS) mit IRIS-Daten überschrieben wird.
