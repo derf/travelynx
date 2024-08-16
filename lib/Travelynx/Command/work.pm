@@ -156,12 +156,12 @@ sub run {
 						uid     => $uid
 					)->wait;
 				}
-				next;
 			};
 			if ($@) {
 				$errors += 1;
 				$self->app->log->error("work($uid)/hafas: $@");
 			}
+			next;
 		}
 
 		# TODO irgendwo ist hier ne race condition wo ein neuer checkin (in HAFAS) mit IRIS-Daten überschrieben wird.
