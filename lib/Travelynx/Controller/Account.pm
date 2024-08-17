@@ -1026,6 +1026,10 @@ sub backend_form {
 		$backend->{type} = $type;
 	}
 
+	# These backends lack a journey endpoint and are useless for travelynx
+	@backends
+	  = grep { $_->{name} ne 'Resrobot' and $_->{name} ne 'TPG' } @backends;
+
 	my $iris = shift @backends;
 
 	@backends
