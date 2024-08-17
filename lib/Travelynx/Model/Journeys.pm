@@ -1136,7 +1136,7 @@ sub get_travel_distance {
 "Journey $journey->{id} from_eva ($from_eva) is not part of polyline"
 		);
 		for my $entry ( @{$route_ref} ) {
-			if ( $entry->[0] eq $from ) {
+			if ( $entry->[0] eq $from and $entry->[1] ) {
 				$from_eva = $entry->[1];
 				$self->{log}->debug("... setting to $from_eva");
 				last;
@@ -1151,7 +1151,7 @@ sub get_travel_distance {
 		$self->{log}->debug(
 			"Journey $journey->{id} to_eva ($to_eva) is not part of polyline");
 		for my $entry ( @{$route_ref} ) {
-			if ( $entry->[0] eq $to ) {
+			if ( $entry->[0] eq $to and $entry->[1] ) {
 				$to_eva = $entry->[1];
 				$self->{log}->debug("... setting to $to_eva");
 				last;
