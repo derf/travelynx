@@ -44,18 +44,19 @@ sub has_wagonorder_p {
 'https://www.bahn.de/web/api/reisebegleitung/wagenreihung/vehicle-sequence',
 		join( '&', map { $_ . '=' . $param{$_} } sort keys %param ) );
 
-	my $cache   = $self->{realtime_cache};
 	my $promise = Mojo::Promise->new;
 	my $debug_prefix
 	  = "has_wagonorder_p($opt{train_type} $opt{train_no} @ $opt{eva})";
 
-	if ( my $content = $cache->get("HEAD $url") ) {
+	if ( my $content = $self->{main_cache}->get("HEAD $url")
+		// $self->{realtime_cache}->get("HEAD $url") )
+	{
 		if ( $content eq 'n' ) {
 			$self->{log}->debug("${debug_prefix}: n (cached)");
 			return $promise->reject;
 		}
 		else {
-			$self->{log}->debug("${debug_prefix}: y (cached)");
+			$self->{log}->debug("${debug_prefix}: ${content} (cached)");
 			return $promise->resolve($content);
 		}
 	}
@@ -66,16 +67,16 @@ sub has_wagonorder_p {
 			my ($tx) = @_;
 			if ( $tx->result->is_success ) {
 				$self->{log}->debug("${debug_prefix}: a");
-				$cache->set( "HEAD $url", 'a' );
+				$self->{main_cache}->set( "HEAD $url", 'a' );
 				my $body = decode( 'utf-8', $tx->res->body );
 				my $json = JSON->new->decode($body);
-				$cache->freeze( $url, $json );
+				$self->{main_cache}->freeze( $url, $json );
 				$promise->resolve('a');
 			}
 			else {
 				my $code = $tx->res->code;
 				$self->{log}->debug("${debug_prefix}: n (HTTP $code)");
-				$cache->set( "HEAD $url", 'n' );
+				$self->{realtime_cache}->set( "HEAD $url", 'n' );
 				$promise->reject;
 			}
 			return;
@@ -84,7 +85,7 @@ sub has_wagonorder_p {
 		sub {
 			my ($err) = @_;
 			$self->{log}->debug("${debug_prefix}: n ($err)");
-			$cache->set( "HEAD $url", 'n' );
+			$self->{realtime_cache}->set( "HEAD $url", 'n' );
 			$promise->reject;
 			return;
 		}
@@ -111,10 +112,9 @@ sub get_wagonorder_p {
 	my $debug_prefix
 	  = "get_wagonorder_p($opt{train_type} $opt{train_no} @ $opt{eva})";
 
-	my $cache   = $self->{realtime_cache};
 	my $promise = Mojo::Promise->new;
 
-	if ( my $content = $cache->thaw($url) ) {
+	if ( my $content = $self->{main_cache}->thaw($url) ) {
 		$self->{log}->debug("${debug_prefix}: (cached)");
 		$promise->resolve($content);
 		return $promise;
@@ -129,7 +129,7 @@ sub get_wagonorder_p {
 				my $body = decode( 'utf-8', $tx->res->body );
 				my $json = JSON->new->decode($body);
 				$self->{log}->debug("${debug_prefix}: success");
-				$cache->freeze( $url, $json );
+				$self->{main_cache}->freeze( $url, $json );
 				$promise->resolve($json);
 			}
 			else {
