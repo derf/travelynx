@@ -1005,6 +1005,36 @@ sub backend_form {
 
 	my @backends = $self->stations->get_backends;
 
+	my %place_map = (
+		AT       => 'Österreich',
+		CH       => 'Schweiz',
+		'CH-BE'  => 'Kanton Bern',
+		'CH-GE'  => 'Kanton Genf',
+		'CH-LU'  => 'Kanton Luzern',
+		'CH-ZH'  => 'Kanton Zürich',
+		DE       => 'Deutschland',
+		'DE-BB'  => 'Brandenburg',
+		'DE-BW'  => 'Baden-Württemberg',
+		'DE-BE'  => 'Berlin',
+		'DE-BY'  => 'Bayern',
+		'DE-HB'  => 'Bremen',
+		'DE-HE'  => 'Hessen',
+		'DE-MV'  => 'Mecklenburg-Vorpommern',
+		'DE-NI'  => 'Niedersachsen',
+		'DE-NW'  => 'Nordrhein-Westfalen',
+		'DE-RP'  => 'Rheinland-Pfalz',
+		'DE-SH'  => 'Schleswig-Holstein',
+		'DE-ST'  => 'Sachsen-Anhalt',
+		'DE-TH'  => 'Thüringen',
+		DK       => 'Dänemark',
+		'GB-NIR' => 'Nordirland',
+		LI       => 'Liechtenstein',
+		LU       => 'Luxembourg',
+		IE       => 'Irland',
+		'US-CA'  => 'California',
+		'US-TX'  => 'Texas',
+	);
+
 	for my $backend (@backends) {
 		my $type = 'UNKNOWN';
 		if ( $backend->{iris} ) {
@@ -1018,6 +1048,9 @@ sub backend_form {
 				$type                = 'HAFAS';
 				$backend->{longname} = $s->{name};
 				$backend->{homepage} = $s->{homepage};
+				$backend->{regions}  = [ map { $place_map{$_} // $_ }
+					  @{ $s->{coverage}{regions} // [] } ];
+				$backend->{has_area} = $s->{coverage}{area} ? 1 : 0;
 			}
 			else {
 				$type = undef;
