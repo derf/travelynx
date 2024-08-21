@@ -8,16 +8,16 @@
 		% }
 	</div>
 	<div class="col s4 center-align">
-		% my $self_link = url_for('sstation', station => param('station'));
+		% my $self_link = url_for('sstation', station => $station // param('station'));
 		% if (param('hafas')) {
-			<span class="btn-small disabled"><i class="material-icons left" aria-hidden="true">directions</i> <%= param('hafas') %></span>
+			<a href="/account/select_backend?redirect_to=<%= $self_link %>" class="btn-small btn-flat"><i class="material-icons left" aria-hidden="true">directions</i><%= param('hafas') %></a>
 		% }
 		% else {
 			% if ($user->{backend_id}) {
-				<a href="/account/select_backend?redirect_to=<%= $self_link %>" class="btn-small"><i class="material-icons left" aria-hidden="true">directions</i><%= $user->{backend_name} %></a>
+				<a href="/account/select_backend?redirect_to=<%= $self_link %>" class="btn-small btn-flat"><i class="material-icons left" aria-hidden="true">directions</i><%= $user->{backend_name} %></a>
 			% }
 			% else {
-				<a href="/account/select_backend?redirect_to=<%= $self_link %>" class="btn-small"><i class="material-icons left" aria-hidden="true">train</i>DB</a>
+				<a href="/account/select_backend?redirect_to=<%= $self_link %>" class="btn-small btn-flat"><i class="material-icons left" aria-hidden="true">train</i>DB</a>
 			% }
 		% }
 	</div>
