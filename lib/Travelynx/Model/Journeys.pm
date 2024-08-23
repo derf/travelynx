@@ -807,6 +807,32 @@ sub get_oldest_ts {
 	return undef;
 }
 
+sub get_latest_checkout_latlon {
+	my ( $self, %opt ) = @_;
+	my $uid = $opt{uid};
+	my $db  = $opt{db} // $self->{pg}->db;
+
+	my $res_h = $db->select(
+		'journeys_str',
+		[ 'arr_lat', 'arr_lon', ],
+		{
+			user_id   => $uid,
+			cancelled => 0
+		},
+		{
+			limit    => 1,
+			order_by => { -desc => 'journey_id' }
+		}
+	)->hash;
+
+	if ( not $res_h ) {
+		return;
+	}
+
+	return $res_h->{arr_lat}, $res_h->{arr_lon};
+
+}
+
 sub get_latest_checkout_ids {
 	my ( $self, %opt ) = @_;
 	my $uid = $opt{uid};

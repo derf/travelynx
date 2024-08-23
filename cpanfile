@@ -7,6 +7,7 @@ requires 'Email::Sender::Simple';
 requires 'GIS::Distance';
 requires 'GIS::Distance::Fast';
 requires 'List::UtilsBy';
+requires 'Math::Polygon';
 requires 'MIME::Entity';
 requires 'Mojolicious';
 requires 'Mojolicious::Plugin::Authentication';

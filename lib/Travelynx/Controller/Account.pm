@@ -6,6 +6,7 @@ package Travelynx::Controller::Account;
 use Mojo::Base 'Mojolicious::Controller';
 
 use JSON;
+use Math::Polygon;
 use Mojo::Util qw(xml_escape);
 use Text::Markdown;
 use UUID::Tiny qw(:std);
@@ -1004,6 +1005,7 @@ sub backend_form {
 	my $user = $self->current_user;
 
 	my @backends = $self->stations->get_backends;
+	my @suggested_backends;
 
 	my %place_map = (
 		AT       => 'Österreich',
@@ -1035,6 +1037,10 @@ sub backend_form {
 		'US-TX'  => 'Texas',
 	);
 
+	my ( $user_lat, $user_lon )
+	  = $self->journeys->get_latest_checkout_latlon( uid => $user->{id} );
+	say $user_lat . ' ' . $user_lon;
+
 	for my $backend (@backends) {
 		my $type = 'UNKNOWN';
 		if ( $backend->{iris} ) {
@@ -1051,6 +1057,33 @@ sub backend_form {
 				$backend->{regions}  = [ map { $place_map{$_} // $_ }
 					  @{ $s->{coverage}{regions} // [] } ];
 				$backend->{has_area} = $s->{coverage}{area} ? 1 : 0;
+
+				if (    $s->{coverage}{area}
+					and $s->{coverage}{area}{type} eq 'Polygon' )
+				{
+					# [0] == outer polygon, [1:] == holes within polygon
+					my $poly = Math::Polygon->new(
+						@{ $s->{coverage}{area}{coordinates}[0] } );
+					say $backend->{name} . ' ' . $poly->area;
+					if ( $poly->contains( [ $user_lon, $user_lat ] ) ) {
+						push( @suggested_backends, $backend );
+					}
+				}
+				elsif ( $s->{coverage}{area}
+					and $s->{coverage}{area}{type} eq 'MultiPolygon' )
+				{
+					for my $s_poly (
+						@{ $s->{coverage}{area}{coordinates} // [] } )
+					{
+						my $poly
+						  = Math::Polygon->new( @{ $s_poly->[0] // [] } );
+						say $backend->{name} . ' ' . $poly->area;
+						if ( $poly->contains( [ $user_lon, $user_lat ] ) ) {
+							push( @suggested_backends, $backend );
+							last;
+						}
+					}
+				}
 			}
 			else {
 				$type = undef;
@@ -1072,6 +1105,7 @@ sub backend_form {
 
 	$self->render(
 		'select_backend',
+		suggestions => \@suggested_backends,
 		backends    => \@backends,
 		user        => $user,
 		redirect_to => $self->req->param('redirect_to') // '/',
