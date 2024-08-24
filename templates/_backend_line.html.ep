@@ -1,0 +1,25 @@
+<div class="row">
+	<div class="col s8 m6 l6 right-align">
+		%= $backend->{longname}
+		% if ($backend->{id} == $user->{backend_id}) {
+			(aktuell ausgewählt)
+		% }
+		% if ($backend->{has_area}) {
+			<br/>
+			<a href="https://dbf.finalrewind.org/coverage/HAFAS/<%= $backend->{name} %>"><%= join(q{, }, @{$backend->{regions} // []}) || '[Karte]' %></a>
+		% }
+		% elsif ($backend->{regions}) {
+			<br/>
+			%= join(q{, }, @{$backend->{regions} // []})
+		% }
+		% if ($backend->{homepage}) {
+			<br/>
+			<a href="<%= $backend->{homepage} %>"><%= $backend->{homepage} =~ s{ ^ http s? :// (?: www[.] )? (.*?) (?: / )? $ }{$1}xr %></a>
+		% }
+	</div>
+	<div class="col s4 m6 l6 left-align">
+		<button class="btn waves-effect waves-light <%= $backend->{id} == $user->{backend_id} ? 'disabled' : q{} %>" style="min-width: 6em;" type="submit" name="backend" value="<%= $backend->{id} %>">
+			<%= $backend->{name} %>
+		</button>
+	</div>
+</div>
