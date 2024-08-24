@@ -358,10 +358,13 @@
 			<div class="card-action">
 				% my $url = 'https://bahn.expert/details/';
 				% if ($journey->{train_id} =~ m{[|]}) {
-					% $url =  $url .  '/' . $journey->{sched_departure}->epoch . '000?jid=' . $journey->{train_id} =~ s{#}{%23}gr;
+					% if ($journey->{train_type} and $journey->{train_no}) {
+						% $url .= $journey->{train_type} . ' ' . $journey->{train_no};
+					% }
+					% $url .=  '/' . $journey->{sched_departure}->epoch . '000?jid=' . $journey->{train_id} =~ s{#}{%23}gr;
 				% }
 				% else {
-					% $url = $url . $journey->{train_type} . ' ' . $journey->{train_no} . '/' . $journey->{sched_departure}->epoch . '000?station=' . $journey->{dep_eva};
+					% $url .= $journey->{train_type} . ' ' . $journey->{train_no} . '/' . $journey->{sched_departure}->epoch . '000?station=' . $journey->{dep_eva};
 				% }
 				% if ($journey->{backend_id} <= 1) {
 					<a style="margin-right: 0;" href="<%= $url %>"><i class="material-icons left" aria-hidden="true">timeline</i> Zuglauf</a>
