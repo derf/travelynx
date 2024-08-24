@@ -3,10 +3,6 @@
 		<h2>Backend auswählen</h2>
 		<p style="text-align: justify;">
 			Das ausgewählte Backend bestimmt die Datenquelle für Fahrten in travelynx.
-			<strong>Deutsche Bahn</strong> ist eine gute Wahl für Nah-, Regional- und Fernverkehr in Deutschland und (teilweise) Nachbarländern.
-			<strong>Deutsche Bahn (IRIS-TTS)</strong> unterstützt ausschließlich Schienenverkehr; im Gegensatz zum HAFAS sind hier detaillierte Verspätungsgründe verfügbar.
-			Die restlichen Backends können sich für Fahrten außerhalb Deutschlands sowie in einzelnen innerdeutschen Verkehrsverbünden lohnen.
-			Fahrten im Ausland fehlen im DB-HAFAS oft; Fahrten im Inland können mit spezifischen Backends genauere Daten haben – z.B. liefern viele lokale HAFAS-Instanzen im Gegensatz zum DB-HAFAS Kartendaten für dortige Bus- und Tramlinien.
 		</p>
 	</div>
 </div>
@@ -33,3 +29,20 @@
 		%= include '_backend_line', user => $user, backend => $backend
 	% }
 %= end
+<div class="row">
+	<div class="col s12">
+		<h2>Details</h2>
+		<p>
+			<strong>Deutsche Bahn</strong> ist eine gute Wahl für Nah-, Regional- und Fernverkehr in Deutschland und (teilweise) Nachbarländern.
+			Hier stehen zumeist brauchbare Echtzeitdaten zur Verfügung; bei Zügen sind zusätzlich Kartendaten vorhanden.
+		</p>
+		<p>
+			<strong>Deutsche Bahn (IRIS-TTS)</strong> unterstützt ausschließlich Schienenverkehr; im Gegensatz zum HAFAS sind hier detaillierte Verspätungsgründe verfügbar.
+		</p>
+		<p>
+			Die restlichen Backends können sich für Fahrten in den zugehörigen Verkehrsverbünden lohnen.
+			Im Gegensatz zum Deutsche Bahn-HAFAS haben sie oft besser gepflegte Echtzeitdaten und lieern in vielen (aber nicht allen) Fällen auch Kartendaten für Nahverkehrsmittel wie Busse oder Stadtbahnen.
+			In Einzelfällen (z.B. BVG) sind sogar Auslastungsdaten eingepflegt.
+		</p>
+	</div>
+</div>
