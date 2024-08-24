@@ -1000,6 +1000,25 @@ sub password_form {
 	$self->render('change_password');
 }
 
+sub lonlat_in_polygon {
+	my ( $self, $polygon, $lonlat ) = @_;
+
+	my $circle = shift( @{$polygon} );
+	my @holes  = @{$polygon};
+
+	my $circle_poly = Math::Polygon->new( @{$circle} );
+	if ( $circle_poly->contains($lonlat) ) {
+		for my $hole (@holes) {
+			my $hole_poly = Math::Polygon->new( @{$hole} );
+			if ( $hole_poly->contains($lonlat) ) {
+				return;
+			}
+		}
+		return 1;
+	}
+	return;
+}
+
 sub backend_form {
 	my ($self) = @_;
 	my $user = $self->current_user;
@@ -1039,7 +1058,6 @@ sub backend_form {
 
 	my ( $user_lat, $user_lon )
 	  = $self->journeys->get_latest_checkout_latlon( uid => $user->{id} );
-	say $user_lat . ' ' . $user_lon;
 
 	for my $backend (@backends) {
 		my $type = 'UNKNOWN';
@@ -1058,16 +1076,16 @@ sub backend_form {
 					  @{ $s->{coverage}{regions} // [] } ];
 				$backend->{has_area} = $s->{coverage}{area} ? 1 : 0;
 
-				if (    $s->{coverage}{area}
-					and $s->{coverage}{area}{type} eq 'Polygon' )
+				if (
+					    $s->{coverage}{area}
+					and $s->{coverage}{area}{type} eq 'Polygon'
+					and $self->lonlat_in_polygon(
+						$s->{coverage}{area}{coordinates},
+						[ $user_lon, $user_lat ]
+					)
+				  )
 				{
-					# [0] == outer polygon, [1:] == holes within polygon
-					my $poly = Math::Polygon->new(
-						@{ $s->{coverage}{area}{coordinates}[0] } );
-					say $backend->{name} . ' ' . $poly->area;
-					if ( $poly->contains( [ $user_lon, $user_lat ] ) ) {
-						push( @suggested_backends, $backend );
-					}
+					push( @suggested_backends, $backend );
 				}
 				elsif ( $s->{coverage}{area}
 					and $s->{coverage}{area}{type} eq 'MultiPolygon' )
@@ -1075,10 +1093,12 @@ sub backend_form {
 					for my $s_poly (
 						@{ $s->{coverage}{area}{coordinates} // [] } )
 					{
-						my $poly
-						  = Math::Polygon->new( @{ $s_poly->[0] // [] } );
-						say $backend->{name} . ' ' . $poly->area;
-						if ( $poly->contains( [ $user_lon, $user_lat ] ) ) {
+						if (
+							$self->lonlat_in_polygon(
+								$s_poly, [ $user_lon, $user_lat ]
+							)
+						  )
+						{
 							push( @suggested_backends, $backend );
 							last;
 						}
