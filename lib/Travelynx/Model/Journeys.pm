@@ -1154,7 +1154,8 @@ sub get_travel_distance {
 
 	# Work around inconsistencies caused by a multiple EVA IDs mapping to the same station name
 	if (
-		not List::MoreUtils::any { $_->[2] and $_->[2] == $from_eva }
+		@{ $polyline_ref // [] }
+		and not List::MoreUtils::any { $_->[2] and $_->[2] == $from_eva }
 		@{ $polyline_ref // [] }
 	  )
 	{
@@ -1170,7 +1171,8 @@ sub get_travel_distance {
 		}
 	}
 	if (
-		not List::MoreUtils::any { $_->[2] and $_->[2] == $to_eva }
+		@{ $polyline_ref // [] }
+		and not List::MoreUtils::any { $_->[2] and $_->[2] == $to_eva }
 		@{ $polyline_ref // [] }
 	  )
 	{
