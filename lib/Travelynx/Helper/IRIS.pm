@@ -41,6 +41,10 @@ sub get_departures {
 	my @station_matches
 	  = Travel::Status::DE::IRIS::Stations::get_station($station);
 
+	if ( $station =~ m{ ^ \d+ $ }x ) {
+		@station_matches = ( [ undef, undef, $station ] );
+	}
+
 	if ( @station_matches == 1 ) {
 		$station = $station_matches[0][2];
 		my $status = Travel::Status::DE::IRIS->new(
@@ -107,6 +111,10 @@ sub get_departures_p {
 
 	my @station_matches
 	  = Travel::Status::DE::IRIS::Stations::get_station($station);
+
+	if ( $station =~ m{ ^ \d+ $ }x ) {
+		@station_matches = ( [ undef, undef, $station ] );
+	}
 
 	if ( @station_matches == 1 ) {
 		$station = $station_matches[0][2];

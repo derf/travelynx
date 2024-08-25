@@ -1409,6 +1409,14 @@ sub startup {
 					my ( $new_route, $journey, $polyline ) = @_;
 					my $db_route;
 
+					for my $stop ( $journey->route ) {
+						$self->stations->add_or_update(
+							stop => $stop,
+							db   => $db,
+							iris => 1,
+						);
+					}
+
 					for my $i ( 0 .. $#{$new_route} ) {
 						my $old_name  = $route->[$i][0];
 						my $old_eva   = $route->[$i][1];
