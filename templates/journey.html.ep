@@ -218,10 +218,10 @@
 						% my $within = 0;
 						% my $at_startstop = 0;
 						% for my $station (@{$journey->{route}}) {
-							% if ($station->[0] eq $journey->{from_name}) {
+							% if (($station->[1] and $station->[1] == $journey->{from_eva}) or $station->[0] eq $journey->{from_name}) {
 								% $within = 1; $at_startstop = 1;
 							% }
-							% elsif ($station->[0] eq $journey->{to_name}) {
+							% elsif (($station->[1] and $station->[1] == $journey->{to_eva}) or $station->[0] eq $journey->{to_name}) {
 								% $within = 0; $at_startstop = 1;
 							% }
 							% else {
@@ -254,7 +254,7 @@
 									% }
 								</span>
 							% }
-							% if ($station->[0] eq $journey->{from_name}) {
+							% if (($station->[1] and $station->[1] == $journey->{from_eva}) or $station->[0] eq $journey->{from_name}) {
 								% $before = 0;
 							% }
 							<br/>
