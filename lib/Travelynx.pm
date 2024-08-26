@@ -2208,10 +2208,16 @@ sub startup {
 
 				my @route = @{ $journey->{route} };
 
-				my $from_index
-				  = first_index { $_->[0] eq $journey->{from_name} } @route;
-				my $to_index
-				  = first_index { $_->[0] eq $journey->{to_name} } @route;
+				my $from_index = first_index {
+					( $_->[1] and $_->[1] == $journey->{from_eva} )
+					  or $_->[0] eq $journey->{from_name}
+				}
+				@route;
+				my $to_index = first_index {
+					( $_->[1] and $_->[1] == $journey->{to_eva} )
+					  or $_->[0] eq $journey->{to_name}
+				}
+				@route;
 
 				if ( $from_index == -1 ) {
 					my $rename = $self->app->renamed_station;

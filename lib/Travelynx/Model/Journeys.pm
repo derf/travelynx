@@ -1192,8 +1192,12 @@ sub get_travel_distance {
 	my $geo                   = GIS::Distance->new();
 	my $distance_beeline
 	  = $geo->distance_metal( @{$from_latlon}, @{$to_latlon} );
-	my @route = after_incl { $_->[0] eq $from } @{$route_ref};
-	@route = before_incl { $_->[0] eq $to } @route;
+	my @route
+	  = after_incl { ( $_->[1] and $_->[1] == $from_eva ) or $_->[0] eq $from }
+	@{$route_ref};
+	@route
+	  = before_incl { ( $_->[1] and $_->[1] == $to_eva ) or $_->[0] eq $to }
+	@route;
 
 	if ( @route < 2 or $route[-1][0] ne $to ) {
 
