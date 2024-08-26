@@ -1063,7 +1063,7 @@ sub backend_form {
 		my $type = 'UNKNOWN';
 		if ( $backend->{iris} ) {
 			$type                = 'IRIS-TTS';
-			$backend->{name}     = 'DB';
+			$backend->{name}     = 'IRIS';
 			$backend->{longname} = 'Deutsche Bahn (IRIS-TTS)';
 			$backend->{homepage} = 'https://www.bahn.de';
 		}
