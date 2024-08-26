@@ -103,9 +103,52 @@ sub run {
 			}
 		}
 	}
+
 	if ($found) {
 		say '------------8<----------';
 		say '';
+		$found = 0;
+	}
+
+	$res = $db->select(
+		'journeys_str',
+		[ 'journey_id', 'sched_arr_ts', 'route', 'arr_name', 'arr_eva' ],
+		{ backend_id => 0 }
+	)->expand;
+	journey: while ( my $j = $res->hash ) {
+		my $found_in_route;
+		my $found_arr;
+		for my $stop ( @{ $j->{route} // [] } ) {
+			if ( not $stop->[1] ) {
+				next journey;
+			}
+			if ( $stop->[1] == $j->{arr_eva} ) {
+				$found_in_route = 1;
+				last;
+			}
+			if (    $stop->[2]{sched_arr}
+				and $j->{sched_arr_ts}
+				and $stop->[2]{sched_arr} == int( $j->{sched_arr_ts} ) )
+			{
+				$found_arr = $stop;
+			}
+		}
+		if ( $found_arr and not $found_in_route ) {
+			if ( not $found ) {
+				say q{};
+				say
+'The following journeys have route entries which do not agree with checkout EVA ID.';
+				say
+'checkout station ID (left) vs route entry with matching checkout time (right)';
+				say '------------8<----------';
+				$found = 1;
+			}
+			printf(
+				"%7d  %d (%s) vs %d (%s)\n",
+				$j->{journey_id}, $j->{arr_eva}, $j->{arr_name},
+				$found_arr->[1],  $found_arr->[0]
+			);
+		}
 	}
 }
 
