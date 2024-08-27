@@ -153,22 +153,6 @@ sub run {
 	}
 
 	$tx->commit;
-
-	# Computing stats may take a while, but we've got all time in the
-	# world here. This means users won't have to wait when loading their
-	# own journey log.
-	say 'Generating missing stats ...';
-	for
-	  my $user ( $db->select( 'users', ['id'], { status => 1 } )->hashes->each )
-	{
-		$tx = $db->begin;
-		$self->app->journeys->generate_missing_stats( uid => $user->{id} );
-		$self->app->journeys->get_stats(
-			uid  => $user->{id},
-			year => $now->year
-		);
-		$tx->commit;
-	}
 }
 
 1;
