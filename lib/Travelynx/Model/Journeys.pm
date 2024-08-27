@@ -1199,7 +1199,12 @@ sub get_travel_distance {
 	  = before_incl { ( $_->[1] and $_->[1] == $to_eva ) or $_->[0] eq $to }
 	@route;
 
-	if ( @route < 2 or $route[-1][0] ne $to ) {
+	if (
+		@route < 2
+		or ( $route[-1][0] ne $to
+			and ( not $route[-1][1] or $route[-1][1] != $to_eva ) )
+	  )
+	{
 
 		# I AM ERROR
 		return ( 0, 0, $distance_beeline );
