@@ -181,8 +181,10 @@ sub startup {
 	# via https://github.com/marudor/bahn.expert/blob/main/src/server/coachSequence/TrainNames.ts
 	$self->attr(
 		ice_name => sub {
-			my $id_to_name = JSON->new->utf8->decode(
-				scalar read_file('share/ice_names.json') );
+			state $id_to_name = {
+				Travel::Status::DE::DBWagenreihung::Group::name_to_designation(
+				)
+			};
 			return $id_to_name;
 		}
 	);
