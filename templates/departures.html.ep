@@ -17,7 +17,7 @@
 				<a href="/account/select_backend?redirect_to=<%= $self_link %>" class="btn-small btn-flat"><i class="material-icons left" aria-hidden="true">directions</i><%= $user->{backend_name} %></a>
 			% }
 			% else {
-				<a href="/account/select_backend?redirect_to=<%= $self_link %>" class="btn-small btn-flat"><i class="material-icons left" aria-hidden="true">train</i>DB</a>
+				<a href="/account/select_backend?redirect_to=<%= $self_link %>" class="btn-small btn-flat"><i class="material-icons left" aria-hidden="true">train</i>IRIS</a>
 			% }
 		% }
 	</div>
