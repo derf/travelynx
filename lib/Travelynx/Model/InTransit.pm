@@ -265,6 +265,11 @@ sub postprocess {
 	$ret->{extra_data}         = $ret->{data};
 	$ret->{comment}            = $ret->{user_data}{comment};
 
+	$ret->{platform_type} = 'Gleis';
+	if ( $ret->{train_type} =~ m{ ast | bus | ruf }ix ) {
+		$ret->{platform_type} = 'Steig';
+	}
+
 	$ret->{visibility_str}
 	  = $ret->{visibility}
 	  ? $visibility_itoa{ $ret->{visibility} }

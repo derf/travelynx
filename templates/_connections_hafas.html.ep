@@ -35,7 +35,15 @@
 			</a>
 			<span class="connect-platform-wrapper">
 				% if ($train->platform) {
-					<span>Gleis <%= $train->platform %></span>
+					<span>
+						% if (($train->type // q{}) =~ m{ ast | bus | ruf }ix) {
+							Steig
+						% }
+						% else {
+							Gleis
+						% }
+						%= $train->platform
+					</span>
 				% }
 				<span class="dep-line <%= $train->type // q{} %>">
 					%= $train->line
