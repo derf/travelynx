@@ -136,10 +136,14 @@ sub run {
 							=~ m{svcResL\[0\][.]err is (?:FAIL|PARAMETER)$} )
 						{
 							# HAFAS do be weird. These are not actionable.
-							$self->app->log->debug("work($uid)/journey: $err");
+							$self->app->log->debug(
+"work($uid) @ HAFAS $entry->{backend_name}: journey: $err"
+							);
 						}
 						else {
-							$self->app->log->error("work($uid)/journey: $err");
+							$self->app->log->error(
+"work($uid) @ HAFAS $entry->{backend_name}: journey: $err"
+							);
 						}
 					}
 				)->wait;
@@ -159,7 +163,8 @@ sub run {
 			};
 			if ($@) {
 				$errors += 1;
-				$self->app->log->error("work($uid)/hafas: $@");
+				$self->app->log->error(
+					"work($uid) @ HAFAS $entry->{backend_name}: $@");
 			}
 			next;
 		}
@@ -245,7 +250,7 @@ sub run {
 		};
 		if ($@) {
 			$errors += 1;
-			$self->app->log->error("work($uid)/departure: $@");
+			$self->app->log->error("work($uid) @ IRIS: departure: $@");
 		}
 
 		eval {
@@ -335,14 +340,15 @@ sub run {
 				)->catch(
 					sub {
 						my ($error) = @_;
-						$self->app->log->error("work($uid)/arrival: $error");
+						$self->app->log->error(
+							"work($uid) @ IRIS: arrival: $error");
 						$errors += 1;
 					}
 				)->wait;
 			}
 		};
 		if ($@) {
-			$self->app->log->error("work($uid)/arrival: $@");
+			$self->app->log->error("work($uid) @ IRIS: arrival: $@");
 			$errors += 1;
 		}
 
