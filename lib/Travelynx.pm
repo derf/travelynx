@@ -1902,6 +1902,7 @@ sub startup {
 					uic           => $status->{dep_eva},
 					longitude     => $status->{dep_lon},
 					latitude      => $status->{dep_lat},
+					platform      => $status->{dep_platform},
 					scheduledTime => $status->{sched_departure}
 					? $status->{sched_departure}->epoch
 					: undef,
@@ -1915,6 +1916,7 @@ sub startup {
 					uic           => $status->{arr_eva},
 					longitude     => $status->{arr_lon},
 					latitude      => $status->{arr_lat},
+					platform      => $status->{arr_platform},
 					scheduledTime => $status->{sched_arrival}
 					? $status->{sched_arrival}->epoch
 					: undef,

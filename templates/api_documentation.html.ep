@@ -41,6 +41,7 @@
 				"uic" : 8000098,<br/>
 				"latitude" : 51.451355,<br/>
 				"longitude" : 7.014793,<br/>
+				"platform" : "12", (ggf. null)<br/>
 				"scheduledTime": 1556083680,<br/>
 				"realTime": 1556083680<br/>
 			},<br/>
@@ -50,6 +51,7 @@
 				"uic" : 8001896,<br/>
 				"latitude" : 51.422853,<br/>
 				"longitude" : 7.023296,<br/>
+				"platform" : "2", (ggf. null)<br/>
 				"scheduledTime": 1556083980, (ggf. null)<br/>
 				"realTime": 1556083980 (ggf. null)<br/>
 			},<br/>
