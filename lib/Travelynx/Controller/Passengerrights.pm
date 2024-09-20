@@ -121,6 +121,8 @@ sub list_candidates {
 		}
 	}
 
+	my @abo_journeys
+	  = grep { $_->{delay} >= 20 and $_->{delay} < 60 } @journeys;
 	@journeys = grep { $_->{delay} >= 60 or $_->{connection_missed} } @journeys;
 
 	my @cancelled = $self->journeys->get(
@@ -154,8 +156,9 @@ sub list_candidates {
 	$self->respond_to(
 		json => { json => [@journeys] },
 		any  => {
-			template => 'passengerrights',
-			journeys => [@journeys]
+			template     => 'passengerrights',
+			journeys     => [@journeys],
+			abo_journeys => [@abo_journeys]
 		}
 	);
 }

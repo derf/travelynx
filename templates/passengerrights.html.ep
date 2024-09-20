@@ -2,10 +2,10 @@
 <div class="row">
 	<div class="col s12">
 		<p>
-			Gemäß der Fahrgastrechte im Eisenbahnverkehr besteht ab 60 Minuten
-			Verspätung am Ziel ein Entschädigungsanspruch gegenüber dem
-			Eisenbahnverkehrsunternehmen. Dieser kann mit dem
-			Fahrgastrechteformular geltend gemacht werden.
+			Ab 60 Minuten Verspätung am Ziel besteht in einigen Fällen ein
+			Entschädigungsanspruch gegenüber dem Eisenbahnverkehrsunternehmen.
+			Dieser kann mit dem Fahrgastrechteformular oder online geltend
+			gemacht werden.
 		</p>
 		<p>
 			Die folgenden Zugfahrten sind wahrscheinliche Kandidaten dafür.
@@ -66,6 +66,67 @@
 									<i class="material-icons">file_download</i>
 								</button>
 							%= end
+						</td>
+					</tr>
+				% }
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12">
+		<p>
+			Bei Abo-Tickets besteht teilweise die Möglichkeit, bereits ab 20
+			Minuten Verspätung Fahrten gesammelt zu Entschädigungszwecken
+			einzureichen. Die folgenden Zugfahrten sind Kandidaten dafür.
+			Fahrten mit einer Verspätung von 60 Minuten oder mehr werden hier
+			nicht aufgeführt.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12">
+		<table class="striped">
+			<thead>
+				<tr>
+					<th>Datum</th>
+					<th>Zug</th>
+					<th>Verspätung</th>
+				</tr>
+			</thead>
+			<tbody>
+				% for my $journey (@{$abo_journeys}) {
+					% my $detail_link = '/journey/' . $journey->{id};
+					<tr>
+						<td><%= $journey->{sched_departure}->strftime('%d.%m.%Y') %></td>
+						<td><a href="<%= $detail_link %>">
+							<%= $journey->{type} %> <%= $journey->{line} // $journey->{no} %>
+							→ <%= $journey->{to_name} %>
+							% if ($journey->{connection}) {
+								% $detail_link = '/journey/' . $journey->{connection}{id};
+								</a><br/><a href="<%= $detail_link %>">
+								<%= $journey->{connection}{type} %> <%= $journey->{connection}{line} // $journey->{connection}{no} %>
+								→ <%= $journey->{connection}{to_name} %>
+							% }
+						</a></td>
+						<td>
+							% if ($journey->{cancelled}) {
+								% if ($journey->{has_substitute}) {
+									Ausfall, Ersatzverbindung
+									%= sprintf('%+d', $journey->{substitute_delay})
+								% }
+								% else {
+									Ausfall ohne Ersatzverbindung
+								% }
+							% }
+							% elsif ($journey->{connection}) {
+								%= sprintf('%+d, ggf. Anschluss verpasst',  $journey->{delay})
+							% }
+							% else {
+								%= sprintf('%+d',  $journey->{delay})
+							% }
 						</td>
 					</tr>
 				% }
