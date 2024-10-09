@@ -294,6 +294,21 @@ ul.route-history > li {
 			display: inline-block;
 		}
 	}
+	.row .col {
+		padding: 0 $gutter-width;
+	}
+	.container.nav-wrapper {
+		width: 90%;
+	}
+	.container {
+		width: 100%;
+	}
+	.collection {
+		margin-left: (-1 * $gutter-width);
+		margin-right: (-1 * $gutter-width);
+		border-left: none;
+		border-right: none;
+	}
 }
 
 a.timeline-link {
