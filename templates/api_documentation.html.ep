@@ -204,6 +204,7 @@
 			"dryRun" : true/false, (optional: wenn true, wird die Eingabe validiert, aber keine Fahrt angelegt)<br/>
 			"lax" : true/false, (optional: wenn true, werden unbekannte Unterwegshalte akzeptiert)<br/>
 			"cancelled" : true/false, (Ausfall?)<br/>
+			"backend_id": 0 (optional: Backend-ID)<br/>
 			"train" : {<br/>
 			"type" : "S", (Typ, z.B. ICE, RE, S, U)<br/>
 			"line" : "6", (Linie als String, bei Zügen ohne Linie wie IC/ICE u.ä. null)<br/>
