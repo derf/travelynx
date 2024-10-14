@@ -530,6 +530,7 @@ sub import_v1 {
 			),
 			comment => sanitize( q{}, $payload->{comment} ),
 			lax     => $payload->{lax} ? 1 : 0,
+			backend_id => sanitize( 0, $payload->{backend_id} ),
 		);
 
 		if ( $payload->{intermediateStops}
