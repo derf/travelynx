@@ -206,7 +206,9 @@ sub travel_v1 {
 			return;
 		}
 
-		if ( not $hafas and not $self->stations->search($from_station, iris => 1) ) {
+		if (    not $hafas
+			and not $self->stations->search( $from_station, backend_id => 1 ) )
+		{
 			$self->render(
 				json => {
 					success    => \0,
@@ -221,7 +223,7 @@ sub travel_v1 {
 
 		if (    $to_station
 			and not $hafas
-			and not $self->stations->search($to_station, iris => 1) )
+			and not $self->stations->search( $to_station, backend_id => 1 ) )
 		{
 			$self->render(
 				json => {
@@ -528,8 +530,9 @@ sub import_v1 {
 				$payload->{toStation}{realTime}
 				  // $payload->{toStation}{scheduledTime}
 			),
-			comment => sanitize( q{}, $payload->{comment} ),
-			lax     => $payload->{lax} ? 1 : 0,
+			comment    => sanitize( q{}, $payload->{comment} ),
+			lax        => $payload->{lax} ? 1 : 0,
+			backend_id => 1,
 		);
 
 		if ( $payload->{intermediateStops}
