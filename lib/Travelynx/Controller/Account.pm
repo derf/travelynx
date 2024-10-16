@@ -46,6 +46,7 @@ sub send_registration_mail {
 
 	my $ua          = $self->req->headers->user_agent;
 	my $reg_url     = $self->url_for('reg')->to_abs->scheme('https');
+	my $tos_url     = $self->url_for('tos')->to_abs->scheme('https');
 	my $imprint_url = $self->url_for('impressum')->to_abs->scheme('https');
 
 	my $body = "Hallo, ${user}!\n\n";
@@ -54,7 +55,8 @@ sub send_registration_mail {
 	$body
 	  .= "Falls die Registrierung von dir ausging, kannst du den Account unter\n";
 	$body .= "${reg_url}/${user_id}/${token}\n";
-	$body .= "freischalten.\n\n";
+	$body .= "freischalten.\n";
+	$body .= "Beachte dabei die Nutzungsbedingungen: ${tos_url}\n\n";
 	$body
 	  .= "Falls nicht, ignoriere diese Mail bitte. Nach etwa 48 Stunden wird deine\n";
 	$body

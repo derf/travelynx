@@ -126,6 +126,7 @@ privacy policy. For the sake of this readme, we assume that you are using the
   The travelynx container does not contain a mail server, so it needs a
   separate SMTP server to send mail. It does not receive mail.
 * create local/imprint.html.ep and enter imprint as well as privacy policy data.
+* create local/terms-of-service.html.ep and enter your terms of service.
 * Configure your web server to reverse-provy requests to the travelynx
   instance. See `examples/nginx-site` for an nginx config.
 

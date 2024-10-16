@@ -35,4 +35,10 @@ sub offline {
 	$self->render('offline');
 }
 
+sub tos {
+	my ($self) = @_;
+
+	$self->render('terms-of-service');
+}
+
 1;
