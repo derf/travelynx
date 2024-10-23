@@ -182,7 +182,7 @@ sub travel_v1 {
 		my $from_station = sanitize( q{}, $payload->{fromStation} );
 		my $to_station   = sanitize( q{}, $payload->{toStation} );
 		my $train_id;
-		my $hafas = sanitize(undef, $payload->{hafas});
+		my $hafas = sanitize( undef, $payload->{hafas} );
 		$hafas //= exists $payload->{train}{journeyID} ? 'DB' : undef;
 
 		if (
@@ -201,7 +201,7 @@ sub travel_v1 {
 					error      => 'Missing fromStation or train data',
 					status     => $self->get_user_status_json_v1( uid => $uid )
 				},
-			status => 400,
+				status => 400,
 			);
 			return;
 		}
@@ -216,7 +216,7 @@ sub travel_v1 {
 					error      => 'Unknown fromStation',
 					status     => $self->get_user_status_json_v1( uid => $uid )
 				},
-			status => 400,
+				status => 400,
 			);
 			return;
 		}
@@ -232,7 +232,7 @@ sub travel_v1 {
 					error      => 'Unknown toStation',
 					status     => $self->get_user_status_json_v1( uid => $uid )
 				},
-			status => 400,
+				status => 400,
 			);
 			return;
 		}
@@ -673,7 +673,8 @@ sub autocomplete {
 	  = "document.addEventListener('DOMContentLoaded',function(){M.Autocomplete.init(document.querySelectorAll('.autocomplete'),{\n";
 	$output .= 'minLength:3,limit:50,data:';
 	$output
-	  .= encode_json( $self->stations->get_for_autocomplete( backend_id => $backend_id ) );
+	  .= encode_json(
+		$self->stations->get_for_autocomplete( backend_id => $backend_id ) );
 	$output .= "\n});});\n";
 
 	$self->render(
