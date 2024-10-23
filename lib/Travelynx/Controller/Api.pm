@@ -571,14 +571,20 @@ sub import_v1 {
 	my $journey;
 
 	if ( not $error ) {
-		$journey = $self->journeys->get_single(
-			uid        => $uid,
-			db         => $db,
-			journey_id => $journey_id,
-			verbose    => 1
-		);
-		$error
-		  = $self->journeys->sanity_check( $journey, $payload->{lax} ? 1 : 0 );
+		eval {
+			$journey = $self->journeys->get_single(
+				uid        => $uid,
+				db         => $db,
+				journey_id => $journey_id,
+				verbose    => 1
+			);
+			$error
+			  = $self->journeys->sanity_check( $journey,
+				$payload->{lax} ? 1 : 0 );
+		};
+		if ($@) {
+			$error = $@;
+		}
 	}
 
 	if ($error) {
