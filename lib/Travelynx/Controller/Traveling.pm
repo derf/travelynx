@@ -650,7 +650,8 @@ sub travel_action {
 				return $self->checkin_p(
 					hafas    => $params->{hafas},
 					station  => $params->{station},
-					train_id => $params->{train}
+					train_id => $params->{train},
+					ts       => $params->{ts},
 				);
 			}
 		)->then(
@@ -789,7 +790,8 @@ sub travel_action {
 		$self->checkin_p(
 			hafas    => $params->{hafas},
 			station  => $params->{station},
-			train_id => $params->{train}
+			train_id => $params->{train},
+			ts       => $params->{ts},
 		)->then(
 			sub {
 				$self->render(
