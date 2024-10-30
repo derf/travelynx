@@ -2,6 +2,54 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		2.9
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left" aria-label="Neues Feature">add</i>
+			Neue HAFAS-Backends: BVG, KVB, mobiliteit, RMV, RSAG, STV, VMT,
+			VOS, VRN, ZVV.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Bugfix">build</i>
+			HAFAS-Backends: verbesserte Unterstützung für Ringlinien.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Bugfix">build</i>
+			Verbesserte Unterstützung für uneindeutige Stationsnamen.  Berlin
+			Hbf ist beispielsweise intern in „Berlin Hbf“ (Gleise 1 bis 8),
+			„Berlin Hbf“ (Gleise 11 bis 14) und „Berlin Hbf (S-Bahn)“ (Gleise
+			15 und 16) getrennt. Teile von travelynx gingen in der
+			Vergangenheit fälschlich davon aus, dass es keine Stationen mit
+			identischen Namen, aber unterschiedlichen internen IDs gebe.
+			Dies hat u.a. bei Fahrten von/nach Berlin Hbf und innerhalb von
+			Karlsruhe zu interessanten Bugs geführt.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Bug">warning</i>
+			Reisen, die in travelynx 2.8.0 bis 2.8.30 mittels IRIS-Backend
+			geloggt wurden, können in Einzelfällen fehlerhafte Stationsangaben
+			enthalten. Der Bug betrifft alle Fahrten von/zu Stationen, die in
+			der von travelynx genutzten Stationsdatenbank zum Checkin-Zeitpunkt
+			nicht bekannt waren. Eine nachträgliche Korrektur dieser Fahrten
+			folgt ggf. in einem späteren Release.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Administration">announcement</i>
+			travelynx verlinkt bei Registrierung und Anmeldung nun
+			instanzspezifische <a href="/tos">Nutzungsbedingungen</a>. Admins
+			sollten beim Update auf diese Version
+			templates/terms-of-service.html.ep anlegen. Die Nutzungsbedingungen
+			können beispielsweise Richtlinien für die Freitexte in
+			Checkin-Kommentaren und auf der Profilseite vorgeben oder
+			allgemeine Hinweise und Bedingungen zur Verfügbarkeit der
+			jeweiligen Instanz beinhalten.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		2.8
 	</div>
 	<div class="col s12 m11 l11">
