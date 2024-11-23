@@ -1129,11 +1129,18 @@ sub station {
 					}
 				)->wait;
 			}
+			elsif ( $err =~ m{svcRes} ) {
+				$self->render(
+					'bad_gateway',
+					message => $err,
+					status  => 502
+				);
+			}
 			else {
 				$self->render(
 					'exception',
 					exception => $err,
-					status    => 502
+					status    => 500
 				);
 			}
 		}

@@ -1,0 +1,21 @@
+<div class="row">
+	<div class="col s12">
+		<div class="card caution-color">
+			<div class="card-content white-text">
+				<span class="card-title">502 Bad Gateway</span>
+				<p>
+					Das von travelynx genutzte Backend hat einen Fehler zurückgegeben.
+					Oft sind diese temporär – versuche es in ein paar Sekunden bis Minuten noch einmal.
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col s12">
+		<p>Details:</p>
+		<p style="font-family: monospace;">
+			%= $message
+		</p>
+	</div>
+</div>
