@@ -1101,14 +1101,14 @@ sub sanity_check {
 		  . ' Teleportation und Zeitreisen werden in diesem Universum nicht unterstützt.';
 	}
 	if (    $journey->{sched_duration}
-		and $journey->{sched_duration} > 60 * 60 * 24 )
+		and $journey->{sched_duration} > 60 * 60 * 72 )
 	{
-		return 'Die Fahrt ist länger als 24 Stunden.';
+		return 'Die Fahrt ist länger als drei Tage.';
 	}
 	if (    $journey->{rt_duration}
-		and $journey->{rt_duration} > 60 * 60 * 24 )
+		and $journey->{rt_duration} > 60 * 60 * 72 )
 	{
-		return 'Die Fahrt ist länger als 24 Stunden.';
+		return 'Die Fahrt ist länger als drei Tage.';
 	}
 	if ( $journey->{kmh_route} > 500 or $journey->{kmh_beeline} > 500 ) {
 		return 'Die berechnete Geschwindigkeit beträgt über 500 km/h.'
