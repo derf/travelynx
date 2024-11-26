@@ -2013,6 +2013,7 @@ sub startup {
 			$self->log->debug(
 "... checked in : $traewelling->{dep_name} $traewelling->{dep_eva} -> $traewelling->{arr_name} $traewelling->{arr_eva}"
 			);
+			$self->users->mark_seen( uid => $uid );
 			my $user_status = $self->get_user_status($uid);
 			if ( $user_status->{checked_in} ) {
 				$self->log->debug(
