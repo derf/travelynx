@@ -51,6 +51,8 @@ sub documentation {
 sub get_v1 {
 	my ($self) = @_;
 
+	$self->res->headers->access_control_allow_origin(q{*});
+
 	my $api_action = $self->stash('user_action');
 	my $api_token  = $self->stash('token');
 	if ( $api_action !~ qr{ ^ (?: status | history | action ) $ }x ) {
