@@ -1614,38 +1614,38 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       perl 5.006
-  MailTools-2.21
-    pathname: M/MA/MARKOV/MailTools-2.21.tar.gz
+  MailTools-2.22
+    pathname: M/MA/MARKOV/MailTools-2.22.tar.gz
     provides:
-      Mail::Address 2.21
-      Mail::Cap 2.21
-      Mail::Field 2.21
-      Mail::Field::AddrList 2.21
-      Mail::Field::Date 2.21
-      Mail::Field::Generic 2.21
-      Mail::Filter 2.21
-      Mail::Header 2.21
-      Mail::Internet 2.21
-      Mail::Mailer 2.21
-      Mail::Mailer::qmail 2.21
-      Mail::Mailer::rfc822 2.21
-      Mail::Mailer::sendmail 2.21
-      Mail::Mailer::smtp 2.21
-      Mail::Mailer::smtp::pipe 2.21
-      Mail::Mailer::smtps 2.21
-      Mail::Mailer::smtps::pipe 2.21
-      Mail::Mailer::testfile 2.21
-      Mail::Mailer::testfile::pipe 2.21
-      Mail::Send 2.21
-      Mail::Util 2.21
-      MailTools 2.21
+      Mail::Address 2.22
+      Mail::Cap 2.22
+      Mail::Field 2.22
+      Mail::Field::AddrList 2.22
+      Mail::Field::Date 2.22
+      Mail::Field::Generic 2.22
+      Mail::Filter 2.22
+      Mail::Header 2.22
+      Mail::Internet 2.22
+      Mail::Mailer 2.22
+      Mail::Mailer::qmail 2.22
+      Mail::Mailer::rfc822 2.22
+      Mail::Mailer::sendmail 2.22
+      Mail::Mailer::smtp 2.22
+      Mail::Mailer::smtp::pipe 2.22
+      Mail::Mailer::smtps 2.22
+      Mail::Mailer::smtps::pipe 2.22
+      Mail::Mailer::testfile 2.22
+      Mail::Mailer::testfile::pipe 2.22
+      Mail::Send 2.22
+      Mail::Util 2.22
+      MailTools 2.22
     requirements:
       Date::Format 0
       Date::Parse 0
       ExtUtils::MakeMaker 0
       IO::Handle 0
       Net::Domain 1.05
-      Net::SMTP 1.03
+      Net::SMTP 1.28
       Test::More 0
   Math-Polygon-1.10
     pathname: M/MA/MARKOV/Math-Polygon-1.10.tar.gz
@@ -1784,8 +1784,8 @@ DISTRIBUTIONS
       Mojolicious 8.50
       SQL::Abstract::Pg 1.0
       perl 5.016
-  Mojolicious-9.38
-    pathname: S/SR/SRI/Mojolicious-9.38.tar.gz
+  Mojolicious-9.39
+    pathname: S/SR/SRI/Mojolicious-9.39.tar.gz
     provides:
       Mojo undef
       Mojo::Asset undef
@@ -1854,7 +1854,7 @@ DISTRIBUTIONS
       Mojo::UserAgent::Transactor undef
       Mojo::Util undef
       Mojo::WebSocket undef
-      Mojolicious 9.38
+      Mojolicious 9.39
       Mojolicious::Command undef
       Mojolicious::Command::Author::cpanify undef
       Mojolicious::Command::Author::generate undef
@@ -2552,19 +2552,19 @@ DISTRIBUTIONS
       Test::Pod 0
       Travel::Status::DE::IRIS 1.2
       perl v5.20.0
-  Travel-Status-DE-DeutscheBahn-6.11
-    pathname: D/DE/DERF/Travel-Status-DE-DeutscheBahn-6.11.tar.gz
+  Travel-Status-DE-DeutscheBahn-6.12
+    pathname: D/DE/DERF/Travel-Status-DE-DeutscheBahn-6.12.tar.gz
     provides:
-      Travel::Status::DE::DeutscheBahn 6.11
-      Travel::Status::DE::HAFAS 6.11
-      Travel::Status::DE::HAFAS::Journey 6.11
-      Travel::Status::DE::HAFAS::Location 6.11
-      Travel::Status::DE::HAFAS::Message 6.11
-      Travel::Status::DE::HAFAS::Polyline 6.11
-      Travel::Status::DE::HAFAS::Product 6.11
-      Travel::Status::DE::HAFAS::Services 6.11
-      Travel::Status::DE::HAFAS::Stop 6.11
-      Travel::Status::DE::HAFAS::StopFinder 6.11
+      Travel::Status::DE::DeutscheBahn 6.12
+      Travel::Status::DE::HAFAS 6.12
+      Travel::Status::DE::HAFAS::Journey 6.12
+      Travel::Status::DE::HAFAS::Location 6.12
+      Travel::Status::DE::HAFAS::Message 6.12
+      Travel::Status::DE::HAFAS::Polyline 6.12
+      Travel::Status::DE::HAFAS::Product 6.12
+      Travel::Status::DE::HAFAS::Services 6.12
+      Travel::Status::DE::HAFAS::Stop 6.12
+      Travel::Status::DE::HAFAS::StopFinder 6.12
     requirements:
       Carp 0
       Class::Accessor 0.16
@@ -2636,57 +2636,62 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       common::sense 0
-  URI-5.29
-    pathname: O/OA/OALDERS/URI-5.29.tar.gz
+  URI-5.31
+    pathname: O/OA/OALDERS/URI-5.31.tar.gz
     provides:
-      URI 5.29
-      URI::Escape 5.29
-      URI::Heuristic 5.29
-      URI::IRI 5.29
-      URI::QueryParam 5.29
-      URI::Split 5.29
-      URI::URL 5.29
-      URI::WithBase 5.29
-      URI::data 5.29
-      URI::file 5.29
-      URI::file::Base 5.29
-      URI::file::FAT 5.29
-      URI::file::Mac 5.29
-      URI::file::OS2 5.29
-      URI::file::QNX 5.29
-      URI::file::Unix 5.29
-      URI::file::Win32 5.29
-      URI::ftp 5.29
-      URI::geo 5.29
-      URI::gopher 5.29
-      URI::http 5.29
-      URI::https 5.29
-      URI::icap 5.29
-      URI::icaps 5.29
-      URI::ldap 5.29
-      URI::ldapi 5.29
-      URI::ldaps 5.29
-      URI::mailto 5.29
-      URI::mms 5.29
-      URI::news 5.29
-      URI::nntp 5.29
-      URI::nntps 5.29
-      URI::otpauth 5.29
-      URI::pop 5.29
-      URI::rlogin 5.29
-      URI::rsync 5.29
-      URI::rtsp 5.29
-      URI::rtspu 5.29
-      URI::sftp 5.29
-      URI::sip 5.29
-      URI::sips 5.29
-      URI::snews 5.29
-      URI::ssh 5.29
-      URI::telnet 5.29
-      URI::tn3270 5.29
-      URI::urn 5.29
-      URI::urn::isbn 5.29
-      URI::urn::oid 5.29
+      URI 5.31
+      URI::Escape 5.31
+      URI::Heuristic 5.31
+      URI::IRI 5.31
+      URI::QueryParam 5.31
+      URI::Split 5.31
+      URI::URL 5.31
+      URI::WithBase 5.31
+      URI::data 5.31
+      URI::file 5.31
+      URI::file::Base 5.31
+      URI::file::FAT 5.31
+      URI::file::Mac 5.31
+      URI::file::OS2 5.31
+      URI::file::QNX 5.31
+      URI::file::Unix 5.31
+      URI::file::Win32 5.31
+      URI::ftp 5.31
+      URI::ftpes 5.31
+      URI::ftps 5.31
+      URI::geo 5.31
+      URI::gopher 5.31
+      URI::http 5.31
+      URI::https 5.31
+      URI::icap 5.31
+      URI::icaps 5.31
+      URI::irc 5.31
+      URI::ircs 5.31
+      URI::ldap 5.31
+      URI::ldapi 5.31
+      URI::ldaps 5.31
+      URI::mailto 5.31
+      URI::mms 5.31
+      URI::news 5.31
+      URI::nntp 5.31
+      URI::nntps 5.31
+      URI::otpauth 5.31
+      URI::pop 5.31
+      URI::rlogin 5.31
+      URI::rsync 5.31
+      URI::rtsp 5.31
+      URI::rtspu 5.31
+      URI::scp 5.31
+      URI::sftp 5.31
+      URI::sip 5.31
+      URI::sips 5.31
+      URI::snews 5.31
+      URI::ssh 5.31
+      URI::telnet 5.31
+      URI::tn3270 5.31
+      URI::urn 5.31
+      URI::urn::isbn 5.31
+      URI::urn::oid 5.31
     requirements:
       Carp 0
       Cwd 0
