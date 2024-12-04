@@ -951,11 +951,13 @@ sub station {
 				@results = map { $_->[0] }
 				  sort { $b->[1] <=> $a->[1] }
 				  map { [ $_, $_->datetime->epoch ] } $status->results;
-				$self->stations->add_meta(
-					eva   => $status->station->{eva},
-					meta  => $status->station->{evas} // [],
-					hafas => $hafas_service,
-				);
+				if ( $status->station->{eva} ) {
+					$self->stations->add_meta(
+						eva   => $status->station->{eva},
+						meta  => $status->station->{evas} // [],
+						hafas => $hafas_service,
+					);
+				}
 				$status = {
 					station_eva  => $status->station->{eva},
 					station_name => (
