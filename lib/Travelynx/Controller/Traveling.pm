@@ -1136,6 +1136,13 @@ sub station {
 					status  => 502
 				);
 			}
+			elsif ( $err =~ m{timeout}i ) {
+				$self->render(
+					'gateway_timeout',
+					message => $err,
+					status  => 504
+				);
+			}
 			else {
 				$self->render(
 					'exception',
