@@ -5,7 +5,8 @@
 				<span class="card-title">502 Bad Gateway</span>
 				<p>
 					Das von travelynx genutzte Backend hat einen Fehler zurückgegeben.
-					Oft sind diese temporär – versuche es in ein paar Sekunden bis Minuten noch einmal.
+					travelynx hat keine Möglichkeiten, diese Situation zu beheben.
+					Versuche es in ein paar Sekunden bis Minuten noch einmal.
 				</p>
 			</div>
 		</div>
