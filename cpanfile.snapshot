@@ -2552,19 +2552,19 @@ DISTRIBUTIONS
       Test::Pod 0
       Travel::Status::DE::IRIS 1.2
       perl v5.20.0
-  Travel-Status-DE-DeutscheBahn-6.12
-    pathname: D/DE/DERF/Travel-Status-DE-DeutscheBahn-6.12.tar.gz
+  Travel-Status-DE-DeutscheBahn-6.14
+    pathname: D/DE/DERF/Travel-Status-DE-DeutscheBahn-6.14.tar.gz
     provides:
-      Travel::Status::DE::DeutscheBahn 6.12
-      Travel::Status::DE::HAFAS 6.12
-      Travel::Status::DE::HAFAS::Journey 6.12
-      Travel::Status::DE::HAFAS::Location 6.12
-      Travel::Status::DE::HAFAS::Message 6.12
-      Travel::Status::DE::HAFAS::Polyline 6.12
-      Travel::Status::DE::HAFAS::Product 6.12
-      Travel::Status::DE::HAFAS::Services 6.12
-      Travel::Status::DE::HAFAS::Stop 6.12
-      Travel::Status::DE::HAFAS::StopFinder 6.12
+      Travel::Status::DE::DeutscheBahn 6.14
+      Travel::Status::DE::HAFAS 6.14
+      Travel::Status::DE::HAFAS::Journey 6.14
+      Travel::Status::DE::HAFAS::Location 6.14
+      Travel::Status::DE::HAFAS::Message 6.14
+      Travel::Status::DE::HAFAS::Polyline 6.14
+      Travel::Status::DE::HAFAS::Product 6.14
+      Travel::Status::DE::HAFAS::Services 6.14
+      Travel::Status::DE::HAFAS::Stop 6.14
+      Travel::Status::DE::HAFAS::StopFinder 6.14
     requirements:
       Carp 0
       Class::Accessor 0.16
