@@ -1167,9 +1167,10 @@ sub redirect_to_station {
 sub cancelled {
 	my ($self) = @_;
 	my @journeys = $self->journeys->get(
-		uid           => $self->current_user->{id},
-		cancelled     => 1,
-		with_datetime => 1
+		uid                 => $self->current_user->{id},
+		cancelled           => 1,
+		with_datetime       => 1,
+		with_route_datetime => 1
 	);
 
 	$self->respond_to(
@@ -1696,12 +1697,13 @@ sub journey_details {
 	}
 
 	my $journey = $self->journeys->get_single(
-		uid             => $uid,
-		journey_id      => $journey_id,
-		verbose         => 1,
-		with_datetime   => 1,
-		with_polyline   => 1,
-		with_visibility => 1,
+		uid                 => $uid,
+		journey_id          => $journey_id,
+		verbose             => 1,
+		with_datetime       => 1,
+		with_route_datetime => 1,
+		with_polyline       => 1,
+		with_visibility     => 1,
 	);
 
 	if ($journey) {
@@ -1924,10 +1926,11 @@ sub edit_journey {
 	}
 
 	my $journey = $self->journeys->get_single(
-		uid           => $uid,
-		journey_id    => $journey_id,
-		verbose       => 1,
-		with_datetime => 1,
+		uid                 => $uid,
+		journey_id          => $journey_id,
+		verbose             => 1,
+		with_datetime       => 1,
+		with_route_datetime => 1,
 	);
 
 	if ( not $journey ) {
@@ -2028,11 +2031,12 @@ sub edit_journey {
 
 		if ( not $error ) {
 			$journey = $self->journeys->get_single(
-				uid           => $uid,
-				db            => $db,
-				journey_id    => $journey_id,
-				verbose       => 1,
-				with_datetime => 1,
+				uid                 => $uid,
+				db                  => $db,
+				journey_id          => $journey_id,
+				verbose             => 1,
+				with_datetime       => 1,
+				with_route_datetime => 1,
 			);
 			$error = $self->journeys->sanity_check($journey);
 		}

@@ -301,10 +301,11 @@ sub update {
 	my $rows;
 
 	my $journey = $self->get_single(
-		uid           => $uid,
-		db            => $db,
-		journey_id    => $journey_id,
-		with_datetime => 1,
+		uid                 => $uid,
+		db                  => $db,
+		journey_id          => $journey_id,
+		with_datetime       => 1,
+		with_route_datetime => 1,
 	);
 
 	eval {
@@ -656,6 +657,8 @@ sub get {
 			$ref->{checkout}      = epoch_to_dt( $ref->{checkout_ts} );
 			$ref->{sched_arrival} = epoch_to_dt( $ref->{sched_arr_ts} );
 			$ref->{rt_arrival}    = epoch_to_dt( $ref->{rt_arr_ts} );
+		}
+		if ( $opt{with_route_datetime} ) {
 			for my $stop ( @{ $ref->{route} } ) {
 				for my $k (qw(rt_arr rt_dep sched_arr sched_dep)) {
 					if ( $stop->[2]{$k} ) {

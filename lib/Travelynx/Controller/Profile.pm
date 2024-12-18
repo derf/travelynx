@@ -231,12 +231,13 @@ sub journey_details {
 	}
 
 	my $journey = $self->journeys->get_single(
-		uid             => $user->{id},
-		journey_id      => $journey_id,
-		verbose         => 1,
-		with_datetime   => 1,
-		with_polyline   => 1,
-		with_visibility => 1,
+		uid                 => $user->{id},
+		journey_id          => $journey_id,
+		verbose             => 1,
+		with_datetime       => 1,
+		with_route_datetime => 1,
+		with_polyline       => 1,
+		with_visibility     => 1,
 	);
 
 	if ( not $journey ) {
