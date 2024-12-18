@@ -1131,7 +1131,7 @@ sub station {
 					}
 				)->wait;
 			}
-			elsif ( $err =~ m{svcRes} ) {
+			elsif ( $err =~ m{svcRes|connection close} ) {
 				$self->render(
 					'bad_gateway',
 					message => $err,
