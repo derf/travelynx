@@ -75,6 +75,9 @@ function hhmm(epoch) {
 	return (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m);
 }
 function odelay(sched, rt) {
+	if (sched == 0) {
+		return '';
+	}
 	if (sched < rt) {
 		return ' (+' + ((rt - sched) / 60) + ')';
 	}
