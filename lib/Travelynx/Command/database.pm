@@ -2689,6 +2689,18 @@ qq{select distinct checkout_station_id from in_transit where backend_id = 0;}
 			}
 		);
 	},
+
+	# v58 -> v59
+	# DB HAFAS is dead. Default to DB IRIS for now.
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				alter table users alter column backend_id set default 0;
+				update schema_version set version = 59;
+			}
+		);
+	},
 );
 
 sub sync_stations {
