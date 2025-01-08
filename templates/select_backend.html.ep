@@ -3,6 +3,7 @@
 		<h2>Backend auswählen</h2>
 		<p style="text-align: justify;">
 			Das ausgewählte Backend bestimmt die Datenquelle für Fahrten in travelynx.
+			<a href="#help">Hilfe bei der Auswahl</a>.
 		</p>
 	</div>
 </div>
@@ -31,17 +32,22 @@
 %= end
 <div class="row">
 	<div class="col s12">
-		<h2>Details</h2>
+		<h2 id="help">Hilfe</h2>
 		<p>
-			<strong>Deutsche Bahn</strong> (IRIS-TTS) und <strong>ÖBB</strong> sind eine gute Wahl für Regional- und Fernverkehr in Deutschland und (teilweise) Nachbarländern.
-			IRIS-TTS liefert gute Echtzeitdaten und detaillierte Verspätungsgründe; ÖBB liefert dagegen detaillierte Kartendaten.
+			Leider gibt es seit der Abschaltung des DB HAFAS am 8. Januar 2025 derzeit kein Backend, welches allgemein für Nah- und Fernverkehr in Deutschland nutzbar ist.
+			Stattdessen muss je nach Verkehrsmittel, Region und Wünschen an die verfügbaren Daten hier ein geeignetes Backend ausgewählt werden.
+			Abhilfe ist in Arbeit.
 		</p>
 		<p>
-			Die restlichen Backends lohnen sich für Fahrten in den zugehörigen Verkehrsverbünden.
+			<strong>Deutsche Bahn</strong> (IRIS-TTS) und <strong>ÖBB</strong> sind eine gute Wahl für Regional- und Fernverkehr in Deutschland.
+			IRIS-TTS liefert Echtzeitdaten, detaillierte Verspätungsgründe und Wagenreihungen, sofern verfügbar.
+			ÖBB kennt nur beim Fernverkehr teilweise Echtzeitdaten, stellt dafür aber detaillierte Kartendaten zur Verfügung.
+		</p>
+		<p>
+			Die restlichen Backends lohnen sich für Fahrten in den zugehörigen Verkehrsverbünden bzw. Ländern.
 			Im Gegensatz zu IRIS-TTS liefern sie in vielen (aber nicht allen) Fällen auch Kartendaten für die dem Verbund zugehörigen Verkehrsmittel.
 			In Einzelfällen (z.B. BVG) sind sogar Auslastungsdaten eingepflegt.
-			Ein generisches Backend für Nah- und Fernverkehr in Deutschland ist aktuell leider nicht verfügbar.
-			Abhilfe ist in Arbeit.
+			Bei Fahrten außerhalb von Deutschland und der Schweiz ist <strong>ÖBB</strong> zumeist die beste Wahl.
 		</p>
 	</div>
 </div>
