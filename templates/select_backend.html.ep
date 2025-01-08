@@ -33,16 +33,15 @@
 	<div class="col s12">
 		<h2>Details</h2>
 		<p>
-			<strong>Deutsche Bahn</strong> ist eine gute Wahl für Nah-, Regional- und Fernverkehr in Deutschland und (teilweise) Nachbarländern.
-			Hier stehen zumeist brauchbare Echtzeitdaten zur Verfügung; bei Zügen sind zusätzlich Kartendaten vorhanden.
+			<strong>Deutsche Bahn</strong> (IRIS-TTS) und <strong>ÖBB</strong> sind eine gute Wahl für Regional- und Fernverkehr in Deutschland und (teilweise) Nachbarländern.
+			IRIS-TTS liefert gute Echtzeitdaten und detaillierte Verspätungsgründe; ÖBB liefert dagegen detaillierte Kartendaten.
 		</p>
 		<p>
-			<strong>Deutsche Bahn (IRIS-TTS)</strong> unterstützt ausschließlich Schienenverkehr; im Gegensatz zum HAFAS sind hier detaillierte Verspätungsgründe verfügbar.
-		</p>
-		<p>
-			Die restlichen Backends können sich für Fahrten in den zugehörigen Verkehrsverbünden lohnen.
-			Im Gegensatz zum Deutsche Bahn-HAFAS haben sie oft besser gepflegte Echtzeitdaten und liefern in vielen (aber nicht allen) Fällen auch Kartendaten für Nahverkehrsmittel wie Busse oder Stadtbahnen.
+			Die restlichen Backends lohnen sich für Fahrten in den zugehörigen Verkehrsverbünden.
+			Im Gegensatz zu IRIS-TTS liefern sie in vielen (aber nicht allen) Fällen auch Kartendaten für die dem Verbund zugehörigen Verkehrsmittel.
 			In Einzelfällen (z.B. BVG) sind sogar Auslastungsdaten eingepflegt.
+			Ein generisches Backend für Nah- und Fernverkehr in Deutschland ist aktuell leider nicht verfügbar.
+			Abhilfe ist in Arbeit.
 		</p>
 	</div>
 </div>

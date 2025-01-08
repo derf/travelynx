@@ -1070,7 +1070,16 @@ sub backend_form {
 			$backend->{homepage} = 'https://www.bahn.de';
 		}
 		elsif ( $backend->{hafas} ) {
-			if ( my $s = $self->hafas->get_service( $backend->{name} ) ) {
+
+			# These backends lack a journey endpoint or are no longer
+			# operational and are thus useless for travelynx
+			if (   $backend->{name} eq 'Resrobot'
+				or $backend->{name} eq 'TPG'
+				or $backend->{name} eq 'DB' )
+			{
+				$type = undef;
+			}
+			elsif ( my $s = $self->hafas->get_service( $backend->{name} ) ) {
 				$type                = 'HAFAS';
 				$backend->{longname} = $s->{name};
 				$backend->{homepage} = $s->{homepage};
