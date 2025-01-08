@@ -21,6 +21,7 @@ use List::UtilsBy   qw(uniq_by);
 use List::MoreUtils qw(first_index);
 use Travel::Status::DE::DBWagenreihung;
 use Travelynx::Helper::DBDB;
+use Travelynx::Helper::EFA;
 use Travelynx::Helper::HAFAS;
 use Travelynx::Helper::IRIS;
 use Travelynx::Helper::Sendmail;
@@ -157,11 +158,12 @@ sub startup {
 		cache_iris_main => sub {
 			my ($self) = @_;
 
-			return Cache::File->new(
+			state $cache = Cache::File->new(
 				cache_root      => $self->app->config->{cache}->{schedule},
 				default_expires => '6 hours',
 				lock_level      => Cache::File::LOCK_LOCAL(),
 			);
+			return $cache;
 		}
 	);
 
@@ -169,11 +171,12 @@ sub startup {
 		cache_iris_rt => sub {
 			my ($self) = @_;
 
-			return Cache::File->new(
+			state $cache = Cache::File->new(
 				cache_root      => $self->app->config->{cache}->{realtime},
 				default_expires => '70 seconds',
 				lock_level      => Cache::File::LOCK_LOCAL(),
 			);
+			return $cache;
 		}
 	);
 
@@ -191,7 +194,7 @@ sub startup {
 
 	$self->attr(
 		renamed_station => sub {
-			my $legacy_to_new = JSON->new->utf8->decode(
+			state $legacy_to_new = JSON->new->utf8->decode(
 				scalar read_file('share/old_station_names.json') );
 			return $legacy_to_new;
 		}
@@ -215,6 +218,21 @@ sub startup {
 			  ->base( $self->app->config->{base_url} );
 		}
 	);
+
+	$self->helper(
+		efa => sub {
+			my ($self) = @_;
+			state $efa = Travelynx::Helper::EFA->new(
+				log            => $self->app->log,
+				main_cache     => $self->app->cache_iris_main,
+				realtime_cache => $self->app->cache_iris_rt,
+				root_url       => $self->base_url_for('/')->to_abs,
+				user_agent     => $self->ua,
+				version        => $self->app->config->{version},
+			);
+		}
+	);
+
 
 	$self->helper(
 		hafas => sub {

@@ -9,6 +9,7 @@ use DateTime;
 use File::Slurp qw(read_file);
 use List::Util  qw();
 use JSON;
+use Travel::Status::DE::EFA;
 use Travel::Status::DE::HAFAS;
 use Travel::Status::DE::IRIS::Stations;
 
@@ -2689,6 +2690,19 @@ qq{select distinct checkout_station_id from in_transit where backend_id = 0;}
 			}
 		);
 	},
+
+	# v58 -> v59
+	# Add EFA backend support
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				alter table schema_version add column efa varchar(12);
+				update schema_version set version = 59;
+				update schema_version set efa = '0';
+			}
+		);
+	},
 );
 
 sub sync_stations {
@@ -2879,7 +2893,37 @@ sub sync_stations {
 	}
 }
 
-sub sync_backends {
+sub sync_efa {
+	my ($db) = @_;
+	for my $service ( Travel::Status::DE::EFA::get_services() ) {
+		my $present = $db->select(
+			'backends',
+			'count(*) as count',
+			{
+				efa => 1,
+				name  => $service->{shortname}
+			}
+		)->hash->{count};
+		if ( not $present ) {
+			$db->insert(
+				'backends',
+				{
+					iris  => 0,
+					hafas => 0,
+					efa   => 1,
+					ris   => 0,
+					name  => $service->{shortname},
+				},
+				{ on_conflict => undef }
+			);
+		}
+	}
+
+	$db->update( 'schema_version',
+		{ efa => $Travel::Status::DE::EFA::VERSION } );
+}
+
+sub sync_hafas {
 	my ($db) = @_;
 	for my $service ( Travel::Status::DE::HAFAS::get_services() ) {
 		my $present = $db->select(
@@ -2996,6 +3040,17 @@ sub migrate_db {
 		}
 	}
 
+	my $efa_version = get_schema_version( $db, 'efa' );
+	say "Found backend table for EFA v${efa_version}";
+	if ( $efa_version eq $Travel::Status::DE::EFA::VERSION ) {
+		say 'Backend table is up-to-date';
+	}
+	else {
+		say
+"Synchronizing with Travel::Status::DE::EFA $Travel::Status::DE::EFA::VERSION";
+		sync_efa($db);
+	}
+
 	my $hafas_version = get_schema_version( $db, 'hafas' );
 	say "Found backend table for HAFAS v${hafas_version}";
 	if ( $hafas_version eq $Travel::Status::DE::HAFAS::VERSION ) {
@@ -3004,7 +3059,7 @@ sub migrate_db {
 	else {
 		say
 "Synchronizing with Travel::Status::DE::HAFAS $Travel::Status::DE::HAFAS::VERSION";
-		sync_backends($db);
+		sync_hafas($db);
 	}
 
 	$db->update( 'schema_version',

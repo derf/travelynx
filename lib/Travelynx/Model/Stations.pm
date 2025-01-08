@@ -76,7 +76,7 @@ sub get_backends {
 
 	$opt{db} //= $self->{pg}->db;
 
-	my $res = $opt{db}->select( 'backends', [ 'id', 'name', 'iris', 'hafas' ] );
+	my $res = $opt{db}->select( 'backends', [ 'id', 'name', 'efa', 'hafas', 'iris' ] );
 	my @ret;
 
 	while ( my $row = $res->hash ) {
@@ -85,8 +85,9 @@ sub get_backends {
 			{
 				id    => $row->{id},
 				name  => $row->{name},
-				iris  => $row->{iris},
+				efa   => $row->{efa},
 				hafas => $row->{hafas},
+				iris  => $row->{iris},
 			}
 		);
 	}

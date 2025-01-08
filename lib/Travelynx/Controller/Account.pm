@@ -1069,6 +1069,48 @@ sub backend_form {
 			$backend->{longname} = 'Deutsche Bahn (IRIS-TTS)';
 			$backend->{homepage} = 'https://www.bahn.de';
 		}
+		elsif ( $backend->{efa} ) {
+			if ( my $s = $self->efa->get_service( $backend->{name} ) ) {
+				$type                = 'EFA';
+				$backend->{longname} = $s->{name};
+				$backend->{homepage} = $s->{homepage};
+				$backend->{regions}  = [ map { $place_map{$_} // $_ }
+					  @{ $s->{coverage}{regions} // [] } ];
+				$backend->{has_area} = $s->{coverage}{area} ? 1 : 0;
+
+				if (
+					    $s->{coverage}{area}
+					and $s->{coverage}{area}{type} eq 'Polygon'
+					and $self->lonlat_in_polygon(
+						$s->{coverage}{area}{coordinates},
+						[ $user_lon, $user_lat ]
+					)
+				  )
+				{
+					push( @suggested_backends, $backend );
+				}
+				elsif ( $s->{coverage}{area}
+					and $s->{coverage}{area}{type} eq 'MultiPolygon' )
+				{
+					for my $s_poly (
+						@{ $s->{coverage}{area}{coordinates} // [] } )
+					{
+						if (
+							$self->lonlat_in_polygon(
+								$s_poly, [ $user_lon, $user_lat ]
+							)
+						  )
+						{
+							push( @suggested_backends, $backend );
+							last;
+						}
+					}
+				}
+			}
+			else {
+				$type = undef;
+			}
+		}
 		elsif ( $backend->{hafas} ) {
 			if ( my $s = $self->hafas->get_service( $backend->{name} ) ) {
 				$type                = 'HAFAS';

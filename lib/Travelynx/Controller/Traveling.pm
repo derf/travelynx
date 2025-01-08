@@ -917,6 +917,8 @@ sub station {
 		$timestamp = DateTime->now( time_zone => 'Europe/Berlin' );
 	}
 
+	my $efa_service = $self->param('efa')
+	  // ( $user->{backend_efa} ? $user->{backend_name} : undef );
 	my $hafas_service = $self->param('hafas')
 	  // ( $user->{backend_hafas} ? $user->{backend_name} : undef );
 	my $promise;
@@ -926,6 +928,15 @@ sub station {
 			eva        => $station,
 			timestamp  => $timestamp,
 			lookbehind => 30,
+			lookahead  => 30,
+		);
+	}
+	elsif ($efa_service) {
+		$promise = $self->efa->get_departures_p(
+			service    => $efa_service,
+			name       => $station,
+			timestamp  => $timestamp,
+			lookbehind => 10,
 			lookahead  => 30,
 		);
 	}
@@ -964,6 +975,16 @@ sub station {
 						List::Util::reduce { length($a) < length($b) ? $a : $b }
 						@{ $status->station->{names} }
 					),
+					related_stations => [],
+				};
+			}
+			elsif ($efa_service) {
+				@results = map { $_->[0] }
+				  sort { $b->[1] <=> $a->[1] }
+				  map { [ $_, $_->datetime->epoch ] } $status->results;
+				$status = {
+					station_eva => $status->stop->id,
+					station_name => $status->stop->full_name,
 					related_stations => [],
 				};
 			}
@@ -1013,12 +1034,14 @@ sub station {
 						eva => $user_status->{cancellation}{dep_eva},
 						destination_name =>
 						  $user_status->{cancellation}{arr_name},
+						efa   => $efa_service,
 						hafas => $hafas_service,
 					);
 				}
 				else {
 					$connections_p = $self->get_connecting_trains_p(
 						eva   => $status->{station_eva},
+						efa   => $efa_service,
 						hafas => $hafas_service
 					);
 				}
@@ -1031,6 +1054,7 @@ sub station {
 						$self->render(
 							'departures',
 							user              => $user,
+							efa              => $efa_service,
 							hafas             => $hafas_service,
 							eva               => $status->{station_eva},
 							datetime          => $timestamp,
@@ -1050,6 +1074,7 @@ sub station {
 						$self->render(
 							'departures',
 							user             => $user,
+							efa              => $efa_service,
 							hafas            => $hafas_service,
 							eva              => $status->{station_eva},
 							datetime         => $timestamp,
@@ -1068,6 +1093,7 @@ sub station {
 				$self->render(
 					'departures',
 					user             => $user,
+					efa              => $efa_service,
 					hafas            => $hafas_service,
 					eva              => $status->{station_eva},
 					datetime         => $timestamp,

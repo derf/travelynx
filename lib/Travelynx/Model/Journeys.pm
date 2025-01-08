@@ -1722,6 +1722,8 @@ sub compute_stats {
 sub get_stats {
 	my ( $self, %opt ) = @_;
 
+	$self->{log}->debug("get_stats");
+
 	if ( $opt{cancelled} ) {
 		$self->{log}
 		  ->warn('get_journey_stats called with illegal option cancelled => 1');
@@ -1748,8 +1750,11 @@ sub get_stats {
 		)
 	  )
 	{
+		$self->{log}->debug("got cached journey stats for $year/$month");
 		return $stats;
 	}
+
+	$self->{log}->debug("computing journey stats for $year/$month");
 
 	my $interval_start = DateTime->new(
 		time_zone => 'Europe/Berlin',

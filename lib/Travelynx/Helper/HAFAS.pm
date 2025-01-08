@@ -33,6 +33,20 @@ sub new {
 	return bless( \%opt, $class );
 }
 
+sub class_to_product {
+	my ( $self, $hafas ) = @_;
+
+	my $bits = $hafas->get_active_service->{productbits};
+	my $ret;
+
+	for my $i ( 0 .. $#{$bits} ) {
+		$ret->{ 2**$i }
+		  = ref( $bits->[$i] ) eq 'ARRAY' ? $bits->[$i][0] : $bits->[$i];
+	}
+
+	return $ret;
+}
+
 sub get_service {
 	my ( $self, $service ) = @_;
 

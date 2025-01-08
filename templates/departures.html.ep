@@ -139,7 +139,10 @@
 			% }
 		</p>
 		% if (not $user_status->{checked_in} or ($can_check_out and $user_status->{arr_eva} and $user_status->{arrival_countdown} <= 0)) {
-			% if ($hafas) {
+			% if ($efa) {
+				%= include '_departures_efa', results => $results, efa => $efa;
+			% }
+			% elsif ($hafas) {
 				%= include '_departures_hafas', results => $results, hafas => $hafas;
 			% }
 			% else {
