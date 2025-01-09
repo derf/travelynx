@@ -40,9 +40,9 @@
 			Abhilfe ist in Arbeit.
 		</p>
 		<p>
-			<strong>VRN</strong> ist eine gute Wahl für Nah-, Regional- und Fernverkehr in Deutschland. Hier gibt es meist Echtzeitdaten, Meldungen und Kartendaten, jedoch keine Wagenreihungen.
+			<strong>VRN</strong> ist eine gute Wahl für Nah-, Regional- und Fernverkehr in Deutschland. Hier gibt es meist Echtzeitdaten, allgemeine Meldungen, Wagenreihungen und Kartendaten.
 			<strong>Deutsche Bahn</strong> (IRIS-TTS) liefert Echtzeitdaten, Wagenreihungen und Verspätungsmeldungen, jedoch keine Kartendaten.
-			<strong>ÖBB</strong> liefern Echtzeit- und Kartendaten für Fernverkehr in Deutschland, jedoch keine Wagenreihungen und Meldungen.
+			<strong>ÖBB</strong> liefern Kartendaten und Wagenreihungen für Fernverkehr in Deutschland, jedoch keine Meldungen. Echtzeitdaten sind teilweise verfügbar.
 		</p>
 		<p>
 			Die restlichen Backends lohnen sich für Fahrten in den zugehörigen Verkehrsverbünden bzw. Ländern.

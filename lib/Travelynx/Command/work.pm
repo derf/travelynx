@@ -6,6 +6,8 @@ package Travelynx::Command::work;
 use Mojo::Base 'Mojolicious::Command';
 use Mojo::Promise;
 
+use utf8;
+
 use DateTime;
 use JSON;
 use List::Util;
@@ -83,22 +85,27 @@ sub run {
 								dep_eva => $dep,
 								arr_eva => $arr
 							);
-							if (    $entry->{backend_id} <= 1
-								and $journey->class <= 16
-								and $found_dep->rt_dep->epoch > $now->epoch )
-							{
-								$self->app->add_wagonorder(
-									uid          => $uid,
-									train_id     => $journey->id,
-									is_departure => 1,
-									eva          => $dep,
-									datetime     => $found_dep->sched_dep,
-									train_type   => $journey->type,
-									train_no     => $journey->number,
-								);
-								$self->app->add_stationinfo( $uid, 1,
-									$journey->id, $found_dep->loc->eva );
-							}
+						}
+						if (
+							$found_dep->sched_dep
+							and (  $entry->{backend_id} <= 1
+								or $entry->{backend_name} eq 'VRN'
+								or $entry->{backend_name} eq 'ÖBB' )
+							and $journey->class <= 16
+							and $found_dep->dep->epoch > $now->epoch
+						  )
+						{
+							$self->app->add_wagonorder(
+								uid          => $uid,
+								train_id     => $journey->id,
+								is_departure => 1,
+								eva          => $dep,
+								datetime     => $found_dep->sched_dep,
+								train_type   => $journey->type =~ s{ +$}{}r,
+								train_no     => $journey->number,
+							);
+							$self->app->add_stationinfo( $uid, 1,
+								$journey->id, $found_dep->loc->eva );
 						}
 
 						if ( $found_arr and $found_arr->rt_arr ) {
