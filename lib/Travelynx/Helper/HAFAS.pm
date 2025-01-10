@@ -97,7 +97,7 @@ sub get_departures_p {
 		: DateTime->now( time_zone => 'Europe/Berlin' )
 	)->subtract( minutes => $opt{lookbehind} );
 	return Travel::Status::DE::HAFAS->new_p(
-		service    => $opt{service},
+		service    => $opt{service} // 'VRN',
 		station    => $opt{eva},
 		datetime   => $when,
 		lookahead  => $opt{lookahead} + $opt{lookbehind},
@@ -112,7 +112,7 @@ sub search_location_p {
 	my ( $self, %opt ) = @_;
 
 	return Travel::Status::DE::HAFAS->new_p(
-		service        => $opt{service},
+		service        => $opt{service} // 'VRN',
 		locationSearch => $opt{query},
 		cache          => $self->{realtime_cache},
 		promise        => 'Mojo::Promise',
@@ -130,7 +130,7 @@ sub get_tripid_p {
 	$train_desc =~ s{^- }{};
 
 	Travel::Status::DE::HAFAS->new_p(
-		service      => $opt{service},
+		service      => $opt{service} // 'VRN',
 		journeyMatch => $train_desc,
 		datetime     => $train->start,
 		cache        => $self->{realtime_cache},
@@ -182,7 +182,7 @@ sub get_journey_p {
 	my $now     = DateTime->now( time_zone => 'Europe/Berlin' );
 
 	Travel::Status::DE::HAFAS->new_p(
-		service => $opt{service},
+		service => $opt{service} // 'VRN',
 		journey => {
 			id => $opt{trip_id},
 		},
@@ -223,7 +223,7 @@ sub get_route_p {
 	my $now     = DateTime->now( time_zone => 'Europe/Berlin' );
 
 	Travel::Status::DE::HAFAS->new_p(
-		service => $opt{service},
+		service => $opt{service} // 'VRN',
 		journey => {
 			id => $opt{trip_id},
 
