@@ -43,9 +43,16 @@
 
 <div class="row">
 	<div class="col s12">
-		<div class="card purple">
+		<div class="card caution-color">
 			<div class="card-content white-text">
-				<span class="card-title">Eingeschränkte Synchronisierung</span>
+				<span class="card-title">Derzeit keine Synchronisierung möglich</span>
+				<p>
+					Seit Abschaltung des DB HAFAS am 8. Januar 2024 ist leider keine Synchronisierung zwischen Träwelling und travelynx möglich.
+					Träwelling nutzt seitdem eine zu großen Teilen mit dem DB HAFAS kompatible bahn.de-API, während travelynx derzeit ersatzweise das VRN HAFAS nutzt.
+					Da die von diesen APIs genutzten Reise-IDs nicht miteinander kompatibel sind, können Checkins nicht synchronisiert werden.
+					Eine Einbindung der bahn.de-API in travelynx (und damit eine Wiederherstellung der Synchronisierungsmöglichkeiten) ist in Arbeit, kann jedoch durchaus noch einige Wochen bis Monate in Anspruch nehmen.
+				</p>
+				<!--
 				<p>
 					Träwelling und travelynx setzen unterschiedliche Schwerpunkte und haben unterschiedliche Features.
 					Kombiniert mit der Vielzahl an möglichen Randfällen heißt das, dass die Synchronisierung nicht immer funktioniert.
@@ -55,6 +62,7 @@
 					Bei hohen Verspätungen, Ausfällen und nachträglichen Checkin-Änderungen ist die Synchronisierung u.U. nicht möglich und muss von Hand vorgenommen werden.
 					travelynx-Hooks werden bei via Träwelling vorgenommenen Checkins nicht ausgelöst.
 				</p>
+				-->
 			</div>
 			<div class="card-action">
 				<a href="https://github.com/derf/travelynx/issues" class="waves-effect waves-light btn-flat white-text">
