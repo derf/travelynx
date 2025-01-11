@@ -1131,18 +1131,22 @@ sub station {
 					}
 				)->wait;
 			}
-			elsif ( $err =~ m{svcRes|connection close|Service Temporarily Unavailable} ) {
+			elsif ( $err
+				=~ m{svcRes|connection close|Service Temporarily Unavailable} )
+			{
 				$self->render(
 					'bad_gateway',
-					message => $err,
-					status  => 502
+					message            => $err,
+					status             => 502,
+					select_new_backend => 1,
 				);
 			}
 			elsif ( $err =~ m{timeout}i ) {
 				$self->render(
 					'gateway_timeout',
-					message => $err,
-					status  => 504
+					message            => $err,
+					status             => 504,
+					select_new_backend => 1,
 				);
 			}
 			else {
