@@ -30,7 +30,7 @@ my %visibility_atoi = (
 sub _epoch {
 	my ($dt) = @_;
 
-	return $dt ? $dt->epoch : 0;
+	return $dt ? $dt->epoch : undef;
 }
 
 sub epoch_to_dt {
