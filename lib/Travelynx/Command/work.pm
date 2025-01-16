@@ -116,10 +116,15 @@ sub run {
 								dep_eva => $dep,
 								arr_eva => $arr
 							);
-							if (    $entry->{backend_id} <= 1
+							if (
+								(
+									   $entry->{backend_id} <= 1
+									or $entry->{backend_name} eq 'VRN'
+									or $entry->{backend_name} eq 'ÖBB'
+								)
 								and $journey->class <= 16
-								and $found_arr->rt_arr->epoch - $now->epoch
-								< 600 )
+								and $found_arr->arr->epoch - $now->epoch < 600
+							  )
 							{
 								$self->app->add_wagonorder(
 									uid        => $uid,
