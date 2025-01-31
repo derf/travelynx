@@ -954,7 +954,7 @@ sub startup {
 
 			if ( not $user->{checked_in} and not $user->{cancelled} ) {
 				return $promise->resolve( 0,
-					'You are not checked into any train' );
+					'You are not checked in' );
 			}
 
 			if ( $dep_eva and $dep_eva != $user->{dep_eva} ) {
