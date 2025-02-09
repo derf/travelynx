@@ -6,6 +6,8 @@ requires 'DateTime::Format::Strptime';
 requires 'Email::Sender::Simple';
 requires 'GIS::Distance';
 requires 'GIS::Distance::Fast';
+requires 'IO::Socket::Socks', '>= 0.64';
+requires 'IO::Socket::SSL', '>= 2.009';
 requires 'List::UtilsBy';
 requires 'Math::Polygon';
 requires 'MIME::Entity';
