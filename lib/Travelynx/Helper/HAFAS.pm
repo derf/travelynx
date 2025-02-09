@@ -39,55 +39,6 @@ sub get_service {
 	return Travel::Status::DE::HAFAS::get_service($service);
 }
 
-sub get_json_p {
-	my ( $self, $url, %opt ) = @_;
-
-	my $cache   = $self->{main_cache};
-	my $promise = Mojo::Promise->new;
-
-	if ( $opt{realtime} ) {
-		$cache = $self->{realtime_cache};
-	}
-	$opt{encoding} //= 'ISO-8859-15';
-
-	if ( my $content = $cache->thaw($url) ) {
-		return $promise->resolve($content);
-	}
-
-	$self->{user_agent}->request_timeout(5)->get_p( $url => $self->{header} )
-	  ->then(
-		sub {
-			my ($tx) = @_;
-
-			if ( my $err = $tx->error ) {
-				$promise->reject(
-"hafas->get_json_p($url) returned HTTP $err->{code} $err->{message}"
-				);
-				return;
-			}
-
-			my $body = decode( $opt{encoding}, $tx->res->body );
-
-			$body =~ s{^TSLs[.]sls = }{};
-			$body =~ s{;$}{};
-			$body =~ s{&#x0028;}{(}g;
-			$body =~ s{&#x0029;}{)}g;
-			my $json = JSON->new->decode($body);
-			$cache->freeze( $url, $json );
-			$promise->resolve($json);
-			return;
-		}
-	)->catch(
-		sub {
-			my ($err) = @_;
-			$self->{log}->info("hafas->get_json_p($url): $err");
-			$promise->reject("hafas->get_json_p($url): $err");
-			return;
-		}
-	)->wait;
-	return $promise;
-}
-
 sub get_departures_p {
 	my ( $self, %opt ) = @_;
 
