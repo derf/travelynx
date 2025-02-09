@@ -10,6 +10,7 @@ use DateTime::Format::Strptime;
 use List::Util      qw(uniq min max);
 use List::UtilsBy   qw(max_by uniq_by);
 use List::MoreUtils qw(first_index);
+use Mojo::UserAgent;
 use Mojo::Promise;
 use Text::CSV;
 use Travel::Status::DE::IRIS::Stations;
@@ -529,9 +530,16 @@ sub geolocation {
 	if ($hafas_service) {
 		$self->render_later;
 
+		my $agent = $self->ua;
+		if ( my $proxy = $self->app->config->{hafas}{$hafas_service}{proxy} ) {
+			$agent = Mojo::UserAgent->new;
+			$agent->proxy->http($proxy);
+			$agent->proxy->https($proxy);
+		}
+
 		Travel::Status::DE::HAFAS->new_p(
 			promise    => 'Mojo::Promise',
-			user_agent => $self->ua,
+			user_agent => $agent,
 			service    => $hafas_service,
 			geoSearch  => {
 				lat => $lat,

@@ -1079,6 +1079,17 @@ sub backend_form {
 			{
 				$type = undef;
 			}
+
+			# PKP is behind a GeoIP filter. Only list it if travelynx.conf
+			# indicates that our IP is allowed or provides a proxy.
+			elsif (
+				$backend->{name} eq 'PKP'
+				and not( $self->app->config->{hafas}{PKP}{geoip_ok}
+					or $self->app->config->{hafas}{PKP}{proxy} )
+			  )
+			{
+				$type = undef;
+			}
 			elsif ( my $s = $self->hafas->get_service( $backend->{name} ) ) {
 				$type                = 'HAFAS';
 				$backend->{longname} = $s->{name};

@@ -12,6 +12,7 @@ use DateTime;
 use Encode qw(decode);
 use JSON;
 use Mojo::Promise;
+use Mojo::UserAgent;
 use Travel::Status::DE::HAFAS;
 
 sub _epoch {
@@ -42,32 +43,50 @@ sub get_service {
 sub get_departures_p {
 	my ( $self, %opt ) = @_;
 
+	$opt{service} //= 'VRN';
+
+	my $agent = $self->{user_agent};
+	if ( my $proxy = $self->{service_config}{ $opt{service} }{proxy} ) {
+		$agent = Mojo::UserAgent->new;
+		$agent->proxy->http($proxy);
+		$agent->proxy->https($proxy);
+	}
+
 	my $when = (
 		  $opt{timestamp}
 		? $opt{timestamp}->clone
 		: DateTime->now( time_zone => 'Europe/Berlin' )
 	)->subtract( minutes => $opt{lookbehind} );
 	return Travel::Status::DE::HAFAS->new_p(
-		service    => $opt{service} // 'VRN',
+		service    => $opt{service},
 		station    => $opt{eva},
 		datetime   => $when,
 		lookahead  => $opt{lookahead} + $opt{lookbehind},
 		results    => 300,
 		cache      => $self->{realtime_cache},
 		promise    => 'Mojo::Promise',
-		user_agent => $self->{user_agent}->request_timeout(5),
+		user_agent => $agent->request_timeout(5),
 	);
 }
 
 sub search_location_p {
 	my ( $self, %opt ) = @_;
 
+	$opt{service} //= 'VRN';
+
+	my $agent = $self->{user_agent};
+	if ( my $proxy = $self->{service_config}{ $opt{service} }{proxy} ) {
+		$agent = Mojo::UserAgent->new;
+		$agent->proxy->http($proxy);
+		$agent->proxy->https($proxy);
+	}
+
 	return Travel::Status::DE::HAFAS->new_p(
-		service        => $opt{service} // 'VRN',
+		service        => $opt{service},
 		locationSearch => $opt{query},
 		cache          => $self->{realtime_cache},
 		promise        => 'Mojo::Promise',
-		user_agent     => $self->{user_agent}->request_timeout(5),
+		user_agent     => $agent->request_timeout(5),
 	);
 }
 
@@ -80,13 +99,22 @@ sub get_tripid_p {
 	my $train_desc = $train->type . ' ' . $train->train_no;
 	$train_desc =~ s{^- }{};
 
+	$opt{service} //= 'VRN';
+
+	my $agent = $self->{user_agent};
+	if ( my $proxy = $self->{service_config}{ $opt{service} }{proxy} ) {
+		$agent = Mojo::UserAgent->new;
+		$agent->proxy->http($proxy);
+		$agent->proxy->https($proxy);
+	}
+
 	Travel::Status::DE::HAFAS->new_p(
-		service      => $opt{service} // 'VRN',
+		service      => $opt{service},
 		journeyMatch => $train_desc,
 		datetime     => $train->start,
 		cache        => $self->{realtime_cache},
 		promise      => 'Mojo::Promise',
-		user_agent   => $self->{user_agent}->request_timeout(10),
+		user_agent   => $agent->request_timeout(10),
 	)->then(
 		sub {
 			my ($hafas) = @_;
@@ -132,15 +160,24 @@ sub get_journey_p {
 	my $promise = Mojo::Promise->new;
 	my $now     = DateTime->now( time_zone => 'Europe/Berlin' );
 
+	$opt{service} //= 'VRN';
+
+	my $agent = $self->{user_agent};
+	if ( my $proxy = $self->{service_config}{ $opt{service} }{proxy} ) {
+		$agent = Mojo::UserAgent->new;
+		$agent->proxy->http($proxy);
+		$agent->proxy->https($proxy);
+	}
+
 	Travel::Status::DE::HAFAS->new_p(
-		service => $opt{service} // 'VRN',
+		service => $opt{service},
 		journey => {
 			id => $opt{trip_id},
 		},
 		with_polyline => $opt{with_polyline},
 		cache         => $self->{realtime_cache},
 		promise       => 'Mojo::Promise',
-		user_agent    => $self->{user_agent}->request_timeout(10),
+		user_agent    => $agent->request_timeout(10),
 	)->then(
 		sub {
 			my ($hafas) = @_;
@@ -173,8 +210,17 @@ sub get_route_p {
 	my $promise = Mojo::Promise->new;
 	my $now     = DateTime->now( time_zone => 'Europe/Berlin' );
 
+	$opt{service} //= 'VRN';
+
+	my $agent = $self->{user_agent};
+	if ( my $proxy = $self->{service_config}{ $opt{service} }{proxy} ) {
+		$agent = Mojo::UserAgent->new;
+		$agent->proxy->http($proxy);
+		$agent->proxy->https($proxy);
+	}
+
 	Travel::Status::DE::HAFAS->new_p(
-		service => $opt{service} // 'VRN',
+		service => $opt{service},
 		journey => {
 			id => $opt{trip_id},
 
@@ -183,7 +229,7 @@ sub get_route_p {
 		with_polyline => $opt{with_polyline},
 		cache         => $self->{realtime_cache},
 		promise       => 'Mojo::Promise',
-		user_agent    => $self->{user_agent}->request_timeout(10),
+		user_agent    => $agent->request_timeout(10),
 	)->then(
 		sub {
 			my ($hafas) = @_;

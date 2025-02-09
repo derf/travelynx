@@ -221,6 +221,7 @@ sub startup {
 			my ($self) = @_;
 			state $hafas = Travelynx::Helper::HAFAS->new(
 				log            => $self->app->log,
+				service_config => $self->app->config->{hafas},
 				main_cache     => $self->app->cache_iris_main,
 				realtime_cache => $self->app->cache_iris_rt,
 				root_url       => $self->base_url_for('/')->to_abs,
