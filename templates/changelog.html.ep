@@ -2,6 +2,37 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		2.10
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left" aria-label="Neues Feature">add</i>
+			Neue HAFAS-Backends: PKP, SaarVV.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Bug">warning</i> Das DB
+			HAFAS-Backend wurde am 8. Januar 2025 abgeschaltet und wird von
+			travelynx daher seit v2.9.11 nicht mehr angeboten. Als vorläufiger
+			Ersatz bietet sich das VRN HAFAS-Backend an. Eine Wieder-Anbindung
+			der DB mittels Travel::Status::DE::DBRIS ist in Arbeit. Bis dahin
+			ist keine Synchronisierung mit Traewelling möglich.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Administration">announcement</i>
+			Das PKP HAFAS befindet sich hinter einem GeoIP-Filter und wird
+			daher in travelynx-Installationen außerhalb von travelynx.de
+			standardmäßig nicht angeboten. Sofern die travelynx-Instanz auf
+			einer geeigneten IP-Adresse betrieben wird oder eine solche per
+			Proxy erreichbar ist, lässt es sich über einen Eintrag in
+			travelynx.conf aktivieren. Als Nebenwirkung davon kann auch auf
+			beliebige andere HAFAS-Instanzen bei Bedarf über einen
+			Instanz-spezifischen Proxy zugegriffen werden.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		2.9
 	</div>
 	<div class="col s12 m11 l11">
