@@ -168,8 +168,13 @@
 			<div class="card-action">
 				% if ($journey->{traewelling_url}) {
 					<a style="margin-right: 0;" href="<%= $journey->{traewelling_url} %>"><i class="material-icons left">timeline</i> Träwelling</a>
-				% } elsif ($journey->{backend_id} <= 1) {
-					% my $url = 'https://bahn.expert/details/' . $journey->{train_type} . ' ' . $journey->{train_no} . '/' . DateTime->now(time_zone => 'Europe/Berlin')->epoch . '000';
+				% }
+				% elsif ($journey->{is_hafas}) {
+					% my $url = 'https://dbf.finalrewind.org/z/' . $journey->{train_id} =~ s{#}{%23}gr . '?hafas=' . $journey->{backend_name};
+					<a style="margin-right: 0;" href="<%= $url %>"><i class="material-icons left">timeline</i> Details</a>
+				% }
+				% elsif ($journey->{extra_data}{trip_id}) {
+					% my $url = 'https://dbf.finalrewind.org/z/' . $journey->{extra_data}{trip_id} =~ s{#}{%23}gr;
 					<a style="margin-right: 0;" href="<%= $url %>"><i class="material-icons left">timeline</i> Zuglauf</a>
 				% }
 				% else {
