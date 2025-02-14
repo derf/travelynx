@@ -333,4 +333,5 @@ $(document).ready(function() {
 		fullWidth: true,
 		indicators: true}
 	);
+	$('select').formSelect();
 });
