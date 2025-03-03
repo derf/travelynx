@@ -1140,7 +1140,8 @@ sub station {
 				)->wait;
 			}
 			elsif ( $err
-				=~ m{svcRes|connection close|Service Temporarily Unavailable} )
+				=~ m{svcRes|connection close|Service Temporarily Unavailable|Forbidden}
+			  )
 			{
 				$self->render(
 					'bad_gateway',
