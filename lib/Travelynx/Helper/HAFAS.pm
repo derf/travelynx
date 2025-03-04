@@ -7,6 +7,7 @@ package Travelynx::Helper::HAFAS;
 use strict;
 use warnings;
 use 5.020;
+use utf8;
 
 use DateTime;
 use Encode qw(decode);
@@ -43,7 +44,7 @@ sub get_service {
 sub get_departures_p {
 	my ( $self, %opt ) = @_;
 
-	$opt{service} //= 'VRN';
+	$opt{service} //= 'ÖBB';
 
 	my $agent = $self->{user_agent};
 	if ( my $proxy = $self->{service_config}{ $opt{service} }{proxy} ) {
@@ -72,7 +73,7 @@ sub get_departures_p {
 sub search_location_p {
 	my ( $self, %opt ) = @_;
 
-	$opt{service} //= 'VRN';
+	$opt{service} //= 'ÖBB';
 
 	my $agent = $self->{user_agent};
 	if ( my $proxy = $self->{service_config}{ $opt{service} }{proxy} ) {
@@ -99,7 +100,7 @@ sub get_tripid_p {
 	my $train_desc = $train->type . ' ' . $train->train_no;
 	$train_desc =~ s{^- }{};
 
-	$opt{service} //= 'VRN';
+	$opt{service} //= 'ÖBB';
 
 	my $agent = $self->{user_agent};
 	if ( my $proxy = $self->{service_config}{ $opt{service} }{proxy} ) {
@@ -160,7 +161,7 @@ sub get_journey_p {
 	my $promise = Mojo::Promise->new;
 	my $now     = DateTime->now( time_zone => 'Europe/Berlin' );
 
-	$opt{service} //= 'VRN';
+	$opt{service} //= 'ÖBB';
 
 	my $agent = $self->{user_agent};
 	if ( my $proxy = $self->{service_config}{ $opt{service} }{proxy} ) {
@@ -210,7 +211,7 @@ sub get_route_p {
 	my $promise = Mojo::Promise->new;
 	my $now     = DateTime->now( time_zone => 'Europe/Berlin' );
 
-	$opt{service} //= 'VRN';
+	$opt{service} //= 'ÖBB';
 
 	my $agent = $self->{user_agent};
 	if ( my $proxy = $self->{service_config}{ $opt{service} }{proxy} ) {

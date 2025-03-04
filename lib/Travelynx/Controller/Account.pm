@@ -1075,6 +1075,7 @@ sub backend_form {
 			# operational and are thus useless for travelynx
 			if (   $backend->{name} eq 'Resrobot'
 				or $backend->{name} eq 'TPG'
+				or $backend->{name} eq 'VRN'
 				or $backend->{name} eq 'DB' )
 			{
 				$type = undef;
