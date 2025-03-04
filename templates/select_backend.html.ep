@@ -35,13 +35,13 @@
 		<h2 id="help">Hilfe</h2>
 		<p>
 			Leider gibt es seit der Abschaltung des DB HAFAS am 8. Januar 2025 sowie des VRN HAFAS am 3. März 2025 derzeit kein Backend, welches allgemein für Nah- und Fernverkehr in Deutschland nutzbar ist.
-			Das <strong>Deutsche Bahn</strong> (IRIS-TTS) eignet sich für Fahrten mit S-Bahnen, Regional- und Fernzügen.
+			<strong>Deutsche Bahn</strong> (IRIS-TTS) eignet sich für Fahrten mit S-Bahnen, Regional- und Fernzügen.
 			Im Übrigen muss je nach Verkehrsmittel, Region und Wünschen an die verfügbaren Daten hier ein geeignetes Backend ausgewählt werden.
 			In einzelnen Regionen steht kein geeignetes Backend für Nahverkehrsfahrten zur Verfügung.
 			Abhilfe ist in Arbeit.
 		</p>
 		<p>
-			<strong>Deutsche Bahn</strong> (IRIS-TTS) liefert Echtzeitdaten, Wagenreihungen und Verspätungsmeldungen für Regional- und Fernverkehr in Deutschland. In vielen Fällen sind auch allgemeine Meldungen und Kartendaten verfügbar.
+			<strong>Deutsche Bahn</strong> (IRIS-TTS) liefert Echtzeitdaten (nur am Start- und Zielbahnhof), Wagenreihungen und Verspätungsmeldungen für Regional- und Fernverkehr in Deutschland. In vielen Fällen sind auch Kartendaten verfügbar.
 			<strong>ÖBB</strong> liefern Kartendaten und Wagenreihungen für Fernverkehr in Deutschland und Umgebung, jedoch keine Meldungen. Echtzeitdaten sind teilweise verfügbar.
 		</p>
 		<p>
