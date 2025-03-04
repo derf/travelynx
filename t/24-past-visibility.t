@@ -116,11 +116,11 @@ sub test_history_visibility {
 
 	if ( $opt{public} ) {
 		$t->get_ok('/p/test1')->status_is(200)
-		  ->content_like( qr{DPN 667}, "public $desc" );
+		  ->content_like( qr{DPN\s*667}, "public $desc" );
 	}
 	else {
 		$t->get_ok('/p/test1')->status_is(200)
-		  ->content_unlike( qr{DPN 667}, "public $desc" );
+		  ->content_unlike( qr{DPN\s*667}, "public $desc" );
 	}
 
 	login(
@@ -130,11 +130,11 @@ sub test_history_visibility {
 
 	if ( $opt{self} ) {
 		$t->get_ok('/p/test1')->status_is(200)
-		  ->content_like( qr{DPN 667}, "self $desc" );
+		  ->content_like( qr{DPN\s*667}, "self $desc" );
 	}
 	else {
 		$t->get_ok('/p/test1')->status_is(200)
-		  ->content_unlike( qr{DPN 667}, "self $desc" );
+		  ->content_unlike( qr{DPN\s*667}, "self $desc" );
 	}
 
 	logout();
@@ -145,11 +145,11 @@ sub test_history_visibility {
 
 	if ( $opt{followers} ) {
 		$t->get_ok('/p/test1')->status_is(200)
-		  ->content_like( qr{DPN 667}, "follower $desc" );
+		  ->content_like( qr{DPN\s*667}, "follower $desc" );
 	}
 	else {
 		$t->get_ok('/p/test1')->status_is(200)
-		  ->content_unlike( qr{DPN 667}, "follower $desc" );
+		  ->content_unlike( qr{DPN\s*667}, "follower $desc" );
 	}
 
 	logout();
@@ -160,11 +160,11 @@ sub test_history_visibility {
 
 	if ( $opt{travelynx} ) {
 		$t->get_ok('/p/test1')->status_is(200)
-		  ->content_like( qr{DPN 667}, "travelynx $desc" );
+		  ->content_like( qr{DPN\s*667}, "travelynx $desc" );
 	}
 	else {
 		$t->get_ok('/p/test1')->status_is(200)
-		  ->content_unlike( qr{DPN 667}, "travelynx $desc" );
+		  ->content_unlike( qr{DPN\s*667}, "travelynx $desc" );
 	}
 
 	logout();
