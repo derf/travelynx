@@ -16,6 +16,19 @@
 </div>
 
 <div class="row">
+	<div class="col s12">
+		<p>
+			Travelynx ist ein kostenfreies, privat betriebenes Projekt ohne
+			Verfügbarkeitsgarantie. Unangekündigte Downtimes oder eine
+			kurzfristige Einstellung dieser Seite sind nicht vorgesehen, aber
+			möglich. Feature Requests, Bug Reports und sonstige Nachrichten
+			werden je nach Kapazität und Motivation zeitnah, verzögert oder gar
+			nicht bearbeitet / beantwortet.
+		</p>
+	</div>
+</div>
+
+<div class="row">
 	<div class="col s12 m12 l4 center-align" style="margin-top: 1em;">
 		<a href="https://social.skyshaper.org/derf" class="waves-effect waves-light btn"><i class="material-icons left">message</i>Kontakt</a>
 	</div>
