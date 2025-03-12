@@ -1,0 +1,5 @@
+#!/bin/sh
+
+export EMAIL_SENDER_TRANSPORT=SMTP
+export EMAIL_SENDER_TRANSPORT_HOST=smtp.example.com
+export EMAIL_SENDER_TRANSPORT_PORT=25
