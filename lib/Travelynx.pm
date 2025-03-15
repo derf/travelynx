@@ -19,7 +19,7 @@ use JSON;
 use List::Util;
 use List::UtilsBy   qw(uniq_by);
 use List::MoreUtils qw(first_index);
-use Travel::Status::DE::DBWagenreihung;
+use Travel::Status::DE::DBRIS::Formation;
 use Travelynx::Helper::DBDB;
 use Travelynx::Helper::HAFAS;
 use Travelynx::Helper::IRIS;
@@ -182,7 +182,7 @@ sub startup {
 	$self->attr(
 		ice_name => sub {
 			state $id_to_name = {
-				Travel::Status::DE::DBWagenreihung::Group::name_to_designation(
+				Travel::Status::DE::DBRIS::Formation::Group::name_to_designation(
 				)
 			};
 			return $id_to_name;
@@ -1622,8 +1622,8 @@ sub startup {
 				my $wr;
 				eval {
 					$wr
-					  = Travel::Status::DE::DBWagenreihung->new(
-						from_json => $wagonorder );
+					  = Travel::Status::DE::DBRIS::Formation->new(
+						json => $wagonorder );
 				};
 				if (    $wr
 					and $wr->sectors
@@ -1768,8 +1768,8 @@ sub startup {
 					my $wr;
 					eval {
 						$wr
-						  = Travel::Status::DE::DBWagenreihung->new(
-							from_json => $in_transit->{data}{wagonorder_dep} );
+						  = Travel::Status::DE::DBRIS::Formation->new(
+							json => $in_transit->{data}{wagonorder_dep} );
 					};
 					if (    $wr
 						and $wr->carriages
