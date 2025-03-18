@@ -48,9 +48,9 @@
 				<span class="card-title">Derzeit keine Synchronisierung möglich</span>
 				<p>
 					Seit Abschaltung des DB HAFAS am 8. Januar 2024 ist leider keine Synchronisierung zwischen Träwelling und travelynx möglich.
-					Träwelling nutzt seitdem eine zu großen Teilen mit dem DB HAFAS kompatible bahn.de-API, während travelynx derzeit ersatzweise das VRN HAFAS nutzt.
-					Da die von diesen APIs genutzten Reise-IDs nicht miteinander kompatibel sind, können Checkins nicht synchronisiert werden.
-					Eine Einbindung der bahn.de-API in travelynx (und damit eine Wiederherstellung der Synchronisierungsmöglichkeiten) ist in Arbeit, kann jedoch durchaus noch einige Wochen bis Monate in Anspruch nehmen.
+					Träwelling nutzt seitdem eine neue bahn.de-API, welche von travelynx noch nicht unterstützt wird.
+					Somit sind die Reise-IDs von Träwelling und travelynx inkompatibel und Checkins können nicht synchronisiert werden.
+					Eine Einbindung der bahn.de-API in travelynx (und damit eine Wiederherstellung der Synchronisierungsmöglichkeiten) ist in Arbeit und wird voraussichtlich im Laufe des Jahres 2025 fertiggestellt.
 				</p>
 				<!--
 				<p>
