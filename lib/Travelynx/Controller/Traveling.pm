@@ -967,6 +967,21 @@ sub station {
 	  // ( $user->{backend_hafas} ? $user->{backend_name} : undef );
 	my $promise;
 	if ($dbris_service) {
+		if ( $station !~ m{ [@] L = \d+ }x ) {
+			$self->render_later;
+			$self->dbris->get_station_id_p($station)->then(
+				sub {
+					my ($dbris_station) = @_;
+					$self->redirect_to( '/s/' . $dbris_station->{id} );
+				}
+			)->catch(
+				sub {
+					my ($err) = @_;
+					$self->redirect_to('/');
+				}
+			)->wait;
+			return;
+		}
 		$promise = $self->dbris->get_departures_p(
 			station    => $station,
 			timestamp  => $timestamp,
