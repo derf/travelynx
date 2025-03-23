@@ -545,7 +545,47 @@ sub geolocation {
 	}
 
 	if ($dbris_service) {
-		...;
+		$self->render_later;
+
+		Travel::Status::DE::DBRIS->new_p(
+			promise    => 'Mojo::Promise',
+			user_agent => Mojo::UserAgent->new,
+			geoSearch  => {
+				latitude  => $lat,
+				longitude => $lon
+			}
+		)->then(
+			sub {
+				my ($dbris) = @_;
+				my @results = map {
+					{
+						name     => $_->name,
+						eva      => $_->eva,
+						distance => 0,
+						dbris    => $dbris_service,
+					}
+				} $dbris->results;
+				if ( @results > 10 ) {
+					@results = @results[ 0 .. 9 ];
+				}
+				$self->render(
+					json => {
+						candidates => [@results],
+					}
+				);
+			}
+		)->catch(
+			sub {
+				my ($err) = @_;
+				$self->render(
+					json => {
+						candidates => [],
+						warning    => $err,
+					}
+				);
+			}
+		)->wait;
+		return;
 	}
 	elsif ($hafas_service) {
 		$self->render_later;
