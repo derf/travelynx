@@ -3062,7 +3062,7 @@ sub sync_backends {
 					iris  => 0,
 					hafas => 1,
 					efa   => 0,
-					ris   => 0,
+					dbris => 0,
 					name  => $service->{shortname},
 				},
 				{ on_conflict => undef }
