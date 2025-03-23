@@ -42,6 +42,13 @@ sub get_connecting_trains_p {
 
 	my $promise = Mojo::Promise->new;
 
+	if ( $user->{backend_dbris} ) {
+
+		# We do get a little bit of via information, so this might work in some
+		# cases. But not reliably. Probably best to leave it out entirely then.
+		return $promise->reject;
+	}
+
 	if ( $opt{eva} ) {
 		if ( $use_history & 0x01 ) {
 			$eva = $opt{eva};
@@ -106,6 +113,8 @@ sub get_connecting_trains_p {
 	my $iris_promise = Mojo::Promise->new;
 	my %via_count    = map { $_->{name} => 0 } @destinations;
 
+	my $backend
+	  = $self->stations->get_backend( backend_id => $opt{backend_id} );
 	if ( $opt{backend_id} == 0 ) {
 		$self->iris->get_departures_p(
 			station      => $eva,
@@ -260,9 +269,11 @@ sub get_connecting_trains_p {
 			}
 		)->wait;
 	}
-	else {
-		my $hafas_service
-		  = $self->stations->get_hafas_name( backend_id => $opt{backend_id} );
+	elsif ( $backend->{dbris} ) {
+		...;
+	}
+	elsif ( $backend->{hafas} ) {
+		my $hafas_service = $backend->{name};
 		$self->hafas->get_departures_p(
 			service    => $hafas_service,
 			eva        => $eva,
@@ -524,10 +535,19 @@ sub geolocation {
 		return;
 	}
 
-	my $hafas_service
-	  = $self->stations->get_hafas_name( backend_id => $backend_id );
+	my ( $dbris_service, $hafas_service );
+	my $backend = $self->stations->get_backend( backend_id => $backend_id );
+	if ( $backend->{dbris} ) {
+		$dbris_service = $backend->{name};
+	}
+	elsif ( $backend->{hafas} ) {
+		$hafas_service = $backend->{name};
+	}
 
-	if ($hafas_service) {
+	if ($dbris_service) {
+		...;
+	}
+	elsif ($hafas_service) {
 		$self->render_later;
 
 		my $agent = $self->ua;
@@ -588,6 +608,7 @@ sub geolocation {
 			lon      => $_->[0][3],
 			lat      => $_->[0][4],
 			distance => $_->[1],
+			dbris    => 0,
 			hafas    => 0,
 		}
 	} Travel::Status::DE::IRIS::Stations::get_station_by_location( $lon,
@@ -656,6 +677,7 @@ sub travel_action {
 		$promise->then(
 			sub {
 				return $self->checkin_p(
+					dbris    => $params->{dbris},
 					hafas    => $params->{hafas},
 					station  => $params->{station},
 					train_id => $params->{train},
@@ -687,7 +709,10 @@ sub travel_action {
 				my ( $still_checked_in, undef ) = @_;
 				if ( my $destination = $params->{dest} ) {
 					my $station_link = '/s/' . $destination;
-					if ( $status->{is_hafas} ) {
+					if ( $status->{is_dbris} ) {
+						$station_link .= '?dbris=' . $status->{backend_name};
+					}
+					elsif ( $status->{is_hafas} ) {
 						$station_link .= '?hafas=' . $status->{backend_name};
 					}
 					$self->render(
@@ -723,7 +748,10 @@ sub travel_action {
 			sub {
 				my ( $still_checked_in, $error ) = @_;
 				my $station_link = '/s/' . $params->{station};
-				if ( $status->{is_hafas} ) {
+				if ( $status->{is_dbris} ) {
+					$station_link .= '?dbris=' . $status->{backend_name};
+				}
+				elsif ( $status->{is_hafas} ) {
 					$station_link .= '?hafas=' . $status->{backend_name};
 				}
 
@@ -774,7 +802,14 @@ sub travel_action {
 		else {
 			my $redir = '/';
 			if ( $status->{checked_in} or $status->{cancelled} ) {
-				if ( $status->{is_hafas} ) {
+				if ( $status->{is_dbris} ) {
+					$redir
+					  = '/s/'
+					  . $status->{dep_eva}
+					  . '?dbris='
+					  . $status->{backend_name};
+				}
+				elsif ( $status->{is_hafas} ) {
 					$redir
 					  = '/s/'
 					  . $status->{dep_eva}
@@ -796,6 +831,7 @@ sub travel_action {
 	elsif ( $params->{action} eq 'cancelled_from' ) {
 		$self->render_later;
 		$self->checkin_p(
+			dbris    => $params->{dbris},
 			hafas    => $params->{hafas},
 			station  => $params->{station},
 			train_id => $params->{train},
@@ -925,10 +961,19 @@ sub station {
 		$timestamp = DateTime->now( time_zone => 'Europe/Berlin' );
 	}
 
+	my $dbris_service = $self->param('dbris')
+	  // ( $user->{backend_dbris} ? $user->{backend_name} : undef );
 	my $hafas_service = $self->param('hafas')
 	  // ( $user->{backend_hafas} ? $user->{backend_name} : undef );
 	my $promise;
-	if ($hafas_service) {
+	if ($dbris_service) {
+		$promise = $self->dbris->get_departures_p(
+			station    => $station,
+			timestamp  => $timestamp,
+			lookbehind => 30,
+		);
+	}
+	elsif ($hafas_service) {
 		$promise = $self->hafas->get_departures_p(
 			service    => $hafas_service,
 			eva        => $station,
@@ -954,7 +999,22 @@ sub station {
 			my $now_within_range
 			  = abs( $timestamp->epoch - $now ) < 1800 ? 1 : 0;
 
-			if ($hafas_service) {
+			if ($dbris_service) {
+
+				@results = map { $_->[0] }
+				  sort { $b->[1] <=> $a->[1] }
+				  map { [ $_, $_->dep->epoch ] } $status->results;
+
+				$status = {
+					station_eva      => $station,
+					related_stations => [],
+				};
+
+				if ( $station =~ m{ [@] O = (?<name> [^@]+ ) [@] }x ) {
+					$status->{station_name} = $+{name};
+				}
+			}
+			elsif ($hafas_service) {
 
 				@results = map { $_->[0] }
 				  sort { $b->[1] <=> $a->[1] }
@@ -1039,6 +1099,7 @@ sub station {
 						$self->render(
 							'departures',
 							user              => $user,
+							dbris             => $dbris_service,
 							hafas             => $hafas_service,
 							eva               => $status->{station_eva},
 							datetime          => $timestamp,
@@ -1058,6 +1119,7 @@ sub station {
 						$self->render(
 							'departures',
 							user             => $user,
+							dbris            => $dbris_service,
 							hafas            => $hafas_service,
 							eva              => $status->{station_eva},
 							datetime         => $timestamp,
@@ -1076,6 +1138,7 @@ sub station {
 				$self->render(
 					'departures',
 					user             => $user,
+					dbris            => $dbris_service,
 					hafas            => $hafas_service,
 					eva              => $status->{station_eva},
 					datetime         => $timestamp,
@@ -1174,7 +1237,23 @@ sub redirect_to_station {
 	my ($self) = @_;
 	my $station = $self->param('station');
 
-	$self->redirect_to("/s/${station}");
+	if ( $self->param('backend_dbris') ) {
+		$self->render_later;
+		$self->dbris->get_station_id_p($station)->then(
+			sub {
+				my ($dbris_station) = @_;
+				$self->redirect_to( '/s/' . $dbris_station->{id} );
+			}
+		)->catch(
+			sub {
+				my ($err) = @_;
+				$self->redirect_to('/');
+			}
+		)->wait;
+	}
+	else {
+		$self->redirect_to("/s/${station}");
+	}
 }
 
 sub cancelled {

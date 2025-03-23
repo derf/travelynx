@@ -549,7 +549,7 @@ sub get {
 
 	my @select
 	  = (
-		qw(journey_id is_iris is_hafas backend_name backend_id train_type train_line train_no checkin_ts sched_dep_ts real_dep_ts dep_eva dep_ds100 dep_name dep_lat dep_lon checkout_ts sched_arr_ts real_arr_ts arr_eva arr_ds100 arr_name arr_lat arr_lon cancelled edited route messages user_data visibility effective_visibility)
+		qw(journey_id is_dbris is_iris is_hafas backend_name backend_id train_type train_line train_no checkin_ts sched_dep_ts real_dep_ts dep_eva dep_ds100 dep_name dep_lat dep_lon checkout_ts sched_arr_ts real_arr_ts arr_eva arr_ds100 arr_name arr_lat arr_lon cancelled edited route messages user_data visibility effective_visibility)
 	  );
 	my %where = (
 		user_id   => $uid,
@@ -607,6 +607,7 @@ sub get {
 
 		my $ref = {
 			id                   => $entry->{journey_id},
+			is_dbris             => $entry->{is_dbris},
 			is_iris              => $entry->{is_iris},
 			is_hafas             => $entry->{is_hafas},
 			backend_name         => $entry->{backend_name},
@@ -870,8 +871,8 @@ sub get_latest_checkout_stations {
 	my $res = $db->select(
 		'journeys_str',
 		[
-			'arr_name',     'arr_eva', 'train_id', 'backend_id',
-			'backend_name', 'is_hafas'
+			'arr_name',     'arr_eva',  'train_id', 'backend_id',
+			'backend_name', 'is_dbris', 'is_hafas'
 		],
 		{
 			user_id   => $uid,
@@ -895,6 +896,7 @@ sub get_latest_checkout_stations {
 			{
 				name       => $row->{arr_name},
 				eva        => $row->{arr_eva},
+				dbris      => $row->{is_dbris} ? $row->{backend_name} : 0,
 				hafas      => $row->{is_hafas} ? $row->{backend_name} : 0,
 				backend_id => $row->{backend_id},
 			}
@@ -1883,7 +1885,8 @@ sub get_connection_targets {
 	);
 	my @destinations
 	  = $res->hashes->grep( sub { shift->{count} >= $min_count } )
-	  ->map( sub { shift->{dest} } )->each;
+	  ->map( sub { shift->{dest} } )
+	  ->each;
 	@destinations = $self->{stations}->get_by_evas(
 		backend_id => $opt{backend_id},
 		evas       => [@destinations]

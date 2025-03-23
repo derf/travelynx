@@ -25,11 +25,25 @@ sub get_backend_id {
 	if ( $opt{hafas} and $self->{backend_id}{hafas}{ $opt{hafas} } ) {
 		return $self->{backend_id}{hafas}{ $opt{hafas} };
 	}
+	if ( $opt{dbris} and $self->{backend_id}{dbris}{ $opt{dbris} } ) {
+		return $self->{backend_id}{dbris}{ $opt{dbris} };
+	}
 
 	my $db         = $opt{db} // $self->{pg}->db;
 	my $backend_id = 0;
 
-	if ( $opt{hafas} ) {
+	if ( $opt{dbris} ) {
+		$backend_id = $db->select(
+			'backends',
+			['id'],
+			{
+				dbris => 1,
+				name  => $opt{dbris}
+			}
+		)->hash->{id};
+		$self->{backend_id}{dbris}{ $opt{dbris} } = $backend_id;
+	}
+	elsif ( $opt{hafas} ) {
 		$backend_id = $db->select(
 			'backends',
 			['id'],
@@ -44,31 +58,25 @@ sub get_backend_id {
 	return $backend_id;
 }
 
-sub get_hafas_name {
+sub get_backend {
 	my ( $self, %opt ) = @_;
 
-	if ( exists $self->{hafas_name}{ $opt{backend_id} } ) {
-		return $self->{hafas_name}{ $opt{backend_id} };
+	if ( $self->{backend_cache}{ $opt{backend_id} } ) {
+		return $self->{backend_cache}{ $opt{backend_id} };
 	}
 
-	my $db = $opt{db} // $self->{pg}->db;
-	my $hafas_name;
+	my $db  = $opt{db} // $self->{pg}->db;
 	my $ret = $db->select(
 		'backends',
-		['name'],
+		'*',
 		{
-			hafas => 1,
-			id    => $opt{backend_id},
+			id => $opt{backend_id},
 		}
 	)->hash;
 
-	if ($ret) {
-		$hafas_name = $ret->{name};
-	}
+	$self->{backend_cache}{ $opt{backend_id} } = $ret;
 
-	$self->{hafas_name}{ $opt{backend_id} } = $hafas_name;
-
-	return $hafas_name;
+	return $ret;
 }
 
 sub get_backends {
@@ -76,7 +84,8 @@ sub get_backends {
 
 	$opt{db} //= $self->{pg}->db;
 
-	my $res = $opt{db}->select( 'backends', [ 'id', 'name', 'iris', 'hafas' ] );
+	my $res = $opt{db}
+	  ->select( 'backends', [ 'id', 'name', 'iris', 'hafas', 'dbris' ] );
 	my @ret;
 
 	while ( my $row = $res->hash ) {
@@ -86,6 +95,7 @@ sub get_backends {
 				id    => $row->{id},
 				name  => $row->{name},
 				iris  => $row->{iris},
+				dbris => $row->{dbris},
 				hafas => $row->{hafas},
 			}
 		);
@@ -97,11 +107,49 @@ sub get_backends {
 sub add_or_update {
 	my ( $self, %opt ) = @_;
 	my $stop = $opt{stop};
-	my $loc  = $stop->loc;
 	$opt{db} //= $self->{pg}->db;
 
 	$opt{backend_id} //= $self->get_backend_id(%opt);
 
+	if ( $opt{dbris} ) {
+		if (
+			my $s = $self->get_by_eva(
+				$stop->eva,
+				db         => $opt{db},
+				backend_id => $opt{backend_id}
+			)
+		  )
+		{
+			$opt{db}->update(
+				'stations',
+				{
+					name     => $stop->name,
+					lat      => $stop->lat,
+					lon      => $stop->lon,
+					archived => 0
+				},
+				{
+					eva    => $stop->eva,
+					source => $opt{backend_id}
+				}
+			);
+			return;
+		}
+		$opt{db}->insert(
+			'stations',
+			{
+				eva      => $stop->eva,
+				name     => $stop->name,
+				lat      => $stop->lat,
+				lon      => $stop->lon,
+				source   => $opt{backend_id},
+				archived => 0
+			}
+		);
+		return;
+	}
+
+	my $loc = $stop->loc;
 	if (
 		my $s = $self->get_by_eva(
 			$loc->eva,

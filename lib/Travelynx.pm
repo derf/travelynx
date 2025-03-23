@@ -21,6 +21,7 @@ use List::UtilsBy   qw(uniq_by);
 use List::MoreUtils qw(first_index);
 use Travel::Status::DE::DBRIS::Formation;
 use Travelynx::Helper::DBDB;
+use Travelynx::Helper::DBRIS;
 use Travelynx::Helper::HAFAS;
 use Travelynx::Helper::IRIS;
 use Travelynx::Helper::Sendmail;
@@ -213,6 +214,19 @@ sub startup {
 			}
 			return $self->url_for($path)
 			  ->base( $self->app->config->{base_url} );
+		}
+	);
+
+	$self->helper(
+		dbris => sub {
+			my ($self) = @_;
+			state $dbris = Travelynx::Helper::DBRIS->new(
+				log        => $self->app->log,
+				cache      => $self->app->cache_iris_rt,
+				root_url   => $self->base_url_for('/')->to_abs,
+				user_agent => $self->ua,
+				version    => $self->app->config->{version},
+			);
 		}
 	);
 
@@ -452,6 +466,9 @@ sub startup {
 				return Mojo::Promise->reject('You are already checked in');
 			}
 
+			if ( $opt{dbris} ) {
+				return $self->_checkin_dbris_p(%opt);
+			}
 			if ( $opt{hafas} ) {
 				return $self->_checkin_hafas_p(%opt);
 			}
@@ -522,6 +539,146 @@ sub startup {
 				sub {
 					my ( $err, $status ) = @_;
 					$promise->reject( $status->{errstr} );
+					return;
+				}
+			)->wait;
+
+			return $promise;
+		}
+	);
+
+	$self->helper(
+		'_checkin_dbris_p' => sub {
+			my ( $self, %opt ) = @_;
+
+			my $station  = $opt{station};
+			my $train_id = $opt{train_id};
+			my $ts       = $opt{ts};
+			my $uid      = $opt{uid} // $self->current_user->{id};
+			my $db       = $opt{db}  // $self->pg->db;
+			my $hafas;
+
+			my $promise = Mojo::Promise->new;
+
+			$self->dbris->get_journey_p(
+				trip_id       => $train_id,
+				with_polyline => 1
+			)->then(
+				sub {
+					my ($journey) = @_;
+					my $found;
+					for my $stop ( $journey->route ) {
+						if ( $stop->eva eq $station ) {
+							$found = $stop;
+
+							# Lines may serve the same stop several times.
+							# Keep looking until the scheduled departure
+							# matches the one passed while checking in.
+							if ( $ts and $stop->sched_dep->epoch == $ts ) {
+								last;
+							}
+						}
+					}
+					if ( not $found ) {
+						$promise->reject(
+"Did not find stop '$station' within journey '$train_id'"
+						);
+						return;
+					}
+					for my $stop ( $journey->route ) {
+						$self->stations->add_or_update(
+							stop  => $stop,
+							db    => $db,
+							dbris => 'bahn.de',
+						);
+					}
+					eval {
+						$self->in_transit->add(
+							uid        => $uid,
+							db         => $db,
+							journey    => $journey,
+							stop       => $found,
+							data       => { trip_id => $train_id },
+							backend_id => $self->stations->get_backend_id(
+								dbris => 'bahn.de'
+							),
+						);
+					};
+					if ($@) {
+						$self->app->log->error(
+							"Checkin($uid): INSERT failed: $@");
+						$promise->reject( 'INSERT failed: ' . $@ );
+						return;
+					}
+
+					my $polyline;
+					if ( $journey->polyline ) {
+						my @station_list;
+						my @coordinate_list;
+						for my $coord ( $journey->polyline ) {
+							if ( $coord->{stop} ) {
+								push(
+									@coordinate_list,
+									[
+										$coord->{lon}, $coord->{lat},
+										$coord->{stop}->eva
+									]
+								);
+								push( @station_list, $coord->{stop}->name );
+							}
+							else {
+								push( @coordinate_list,
+									[ $coord->{lon}, $coord->{lat} ] );
+							}
+						}
+
+						# equal length → polyline only consists of straight
+						# lines between stops. that's not helpful.
+						if ( @station_list == @coordinate_list ) {
+							$self->log->debug( 'Ignoring polyline for '
+								  . $journey->train
+								  . ' as it only consists of straight lines between stops.'
+							);
+						}
+						else {
+							$polyline = {
+								from_eva => ( $journey->route )[0]->eva,
+								to_eva   => ( $journey->route )[-1]->eva,
+								coords   => \@coordinate_list,
+							};
+						}
+					}
+
+					if ($polyline) {
+						$self->in_transit->set_polyline(
+							uid      => $uid,
+							db       => $db,
+							polyline => $polyline,
+						);
+					}
+
+					# mustn't be called during a transaction
+					if ( not $opt{in_transaction} ) {
+						$self->run_hook( $uid, 'checkin' );
+						$self->add_wagonorder(
+							uid          => $uid,
+							train_id     => $train_id,
+							is_departure => 1,
+							eva          => $found->eva,
+							datetime     => $found->sched_dep,
+							train_type   => $journey->type,
+							train_no     => $journey->number
+						);
+						$self->add_stationinfo( $uid, 1, $train_id,
+							$found->eva );
+					}
+
+					$promise->resolve($journey);
+				}
+			)->catch(
+				sub {
+					my ($err) = @_;
+					$promise->reject($err);
 					return;
 				}
 			)->wait;
@@ -799,8 +956,8 @@ sub startup {
 				return $promise->resolve( 0, 'race condition' );
 			}
 
-			if ( $user->{is_hafas} ) {
-				return $self->_checkout_hafas_p(%opt);
+			if ( $user->{is_dbris} or $user->{is_hafas} ) {
+				return $self->_checkout_journey_p(%opt);
 			}
 
 			my $now     = DateTime->now( time_zone => 'Europe/Berlin' );
@@ -1049,7 +1206,7 @@ sub startup {
 	);
 
 	$self->helper(
-		'_checkout_hafas_p' => sub {
+		'_checkout_journey_p' => sub {
 			my ( $self, %opt ) = @_;
 
 			my $station = $opt{station};
@@ -1840,6 +1997,7 @@ sub startup {
 					cancellation    => $latest_cancellation,
 					backend_id      => $latest->{backend_id},
 					backend_name    => $latest->{backend_name},
+					is_dbris        => $latest->{is_dbris},
 					is_iris         => $latest->{is_iris},
 					is_hafas        => $latest->{is_hafas},
 					journey_id      => $latest->{journey_id},
@@ -1901,8 +2059,10 @@ sub startup {
 				) ? \1 : \0,
 				comment => $status->{comment},
 				backend => {
-					id   => $status->{backend_id},
-					type => $status->{is_hafas} ? 'HAFAS' : 'IRIS-TTS',
+					id => $status->{backend_id},
+					type => $status->{ds_dbris} ? 'DBRIS'
+					: $status->{is_hafas} ? 'HAFAS'
+					: 'IRIS-TTS',
 					name => $status->{backend_name},
 				},
 				fromStation => {

@@ -194,6 +194,7 @@ function tvly_reg_handlers() {
 		var link = $(this);
 		var req = {
 			action: 'checkin',
+			dbris: link.data('dbris'),
 			hafas: link.data('hafas'),
 			station: link.data('station'),
 			train: link.data('train'),
@@ -206,6 +207,7 @@ function tvly_reg_handlers() {
 		var link = $(this);
 		var req = {
 			action: 'checkout',
+			dbris: link.data('dbris'),
 			hafas: link.data('hafas'),
 			station: link.data('station'),
 			force: link.data('force'),
@@ -237,6 +239,7 @@ function tvly_reg_handlers() {
 		var link = $(this);
 		var req = {
 			action: 'cancelled_from',
+			dbris: link.data('dbris'),
 			hafas: link.data('hafas'),
 			station: link.data('station'),
 			ts: link.data('ts'),
@@ -248,6 +251,7 @@ function tvly_reg_handlers() {
 		var link = $(this);
 		var req = {
 			action: 'cancelled_to',
+			dbris: link.data('dbris'),
 			hafas: link.data('hafas'),
 			station: link.data('station'),
 			force: true,

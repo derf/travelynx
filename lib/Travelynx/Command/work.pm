@@ -49,6 +49,111 @@ sub run {
 		my $arr      = $entry->{arr_eva};
 		my $train_id = $entry->{train_id};
 
+		if ( $entry->{is_dbris} ) {
+
+			eval {
+
+				$self->app->dbris->get_journey_p( trip_id => $train_id )->then(
+					sub {
+						my ($journey) = @_;
+
+						my $found_dep;
+						my $found_arr;
+						for my $stop ( $journey->route ) {
+							if ( $stop->eva == $dep ) {
+								$found_dep = $stop;
+							}
+							if ( $arr and $stop->eva == $arr ) {
+								$found_arr = $stop;
+								last;
+							}
+						}
+						if ( not $found_dep ) {
+							$self->app->log->debug(
+								"Did not find $dep within journey $train_id");
+							return;
+						}
+
+						if ( $found_dep->rt_dep ) {
+							$self->app->in_transit->update_departure_dbris(
+								uid      => $uid,
+								journey  => $journey,
+								stop     => $found_dep,
+								dep_eva  => $dep,
+								arr_eva  => $arr,
+								train_id => $train_id,
+							);
+						}
+						if (    $found_dep->sched_dep
+							and $found_dep->dep->epoch > $now->epoch )
+						{
+							$self->app->add_wagonorder(
+								uid          => $uid,
+								train_id     => $train_id,
+								is_departure => 1,
+								eva          => $dep,
+								datetime     => $found_dep->sched_dep,
+								train_type   => $journey->type,
+								train_no     => $journey->number,
+							);
+							$self->app->add_stationinfo( $uid, 1,
+								$train_id, $found_dep->eva );
+						}
+
+						if ( $found_arr and $found_arr->rt_arr ) {
+							$self->app->in_transit->update_arrival_dbris(
+								uid     => $uid,
+								journey => $journey,
+								stop    => $found_arr,
+								dep_eva => $dep,
+								arr_eva => $arr
+							);
+							if ( $found_arr->arr->epoch - $now->epoch < 600 ) {
+								$self->app->add_wagonorder(
+									uid        => $uid,
+									train_id   => $train_id,
+									is_arrival => 1,
+									eva        => $arr,
+									datetime   => $found_arr->sched_dep,
+									train_type => $journey->type,
+									train_no   => $journey->number,
+								);
+								$self->app->add_stationinfo( $uid, 0,
+									$train_id, $found_dep->eva,
+									$found_arr->eva );
+							}
+						}
+					}
+				)->catch(
+					sub {
+						my ($err) = @_;
+						$self->app->log->error(
+"work($uid) @ DBRIS $entry->{backend_name}: journey: $err"
+						);
+					}
+				)->wait;
+
+				if (    $arr
+					and $entry->{real_arr_ts}
+					and $now->epoch - $entry->{real_arr_ts} > 600 )
+				{
+					$self->app->checkout_p(
+						station => $arr,
+						force   => 2,
+						dep_eva => $dep,
+						arr_eva => $arr,
+						uid     => $uid
+					)->wait;
+				}
+			};
+			if ($@) {
+				$errors += 1;
+				$self->app->log->error(
+					"work($uid) @ DBRIS $entry->{backend_name}: $@");
+			}
+			next;
+		}
+
 		if ( $entry->{is_hafas} ) {
 
 			eval {

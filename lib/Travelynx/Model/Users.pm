@@ -209,7 +209,11 @@ sub set_backend {
 	my ( $self, %opt ) = @_;
 	$opt{db} //= $self->{pg}->db;
 
-	$opt{db}->update('users', {backend_id => $opt{backend_id}}, {id => $opt{uid}});
+	$opt{db}->update(
+		'users',
+		{ backend_id => $opt{backend_id} },
+		{ id         => $opt{uid} }
+	);
 }
 
 sub set_privacy {
@@ -414,7 +418,7 @@ sub get {
 		  . 'extract(epoch from registered_at) as registered_at_ts, '
 		  . 'extract(epoch from last_seen) as last_seen_ts, '
 		  . 'extract(epoch from deletion_requested) as deletion_requested_ts, '
-		  . 'backend_id, backend_name, hafas',
+		  . 'backend_id, backend_name, hafas, dbris',
 		{ id => $uid }
 	)->hash;
 	if ($user) {
@@ -453,6 +457,7 @@ sub get {
 			: undef,
 			backend_id    => $user->{backend_id},
 			backend_name  => $user->{backend_name},
+			backend_dbris => $user->{dbris},
 			backend_hafas => $user->{hafas},
 		};
 	}
