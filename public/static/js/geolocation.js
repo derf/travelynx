@@ -24,7 +24,7 @@ $(document).ready(function() {
 			const res = $(document.createElement('p'));
 			$.each(stops, function(i, stop) {
 				const parts = stop.split(';');
-				const node = $('<a class="tablerow" href="/s/' + parts[0] + '?hafas=' + parts[2] + '"><span><i class="material-icons" aria-hidden="true">' + (parts[2] == '0' ? 'train' : 'directions') + '</i>' + parts[1] + '</span></a>');
+				const node = $('<a class="tablerow" href="/s/' + parts[0] + '?dbris=' + parts[2] + '&amp;hafas=' + parts[3] + '"><span><i class="material-icons" aria-hidden="true">' + (parts[2] == '0' ? 'train' : 'directions') + '</i>' + parts[1] + '</span></a>');
 				node.click(function() {
 					$('nav .preloader-wrapper').addClass('active');
 				});
