@@ -209,9 +209,12 @@ sub add {
 						rt_dep    => _epoch( $j_stop->rt_dep ),
 						arr_delay => $j_stop->arr_delay,
 						dep_delay => $j_stop->dep_delay,
-						load      => undef,
-						lat       => $j_stop->lat,
-						lon       => $j_stop->lon,
+						load      => {
+							FIRST  => $j_stop->occupancy_first,
+							SECOND => $j_stop->occupancy_second
+						},
+						lat => $j_stop->lat,
+						lon => $j_stop->lon,
 					}
 				]
 			);
@@ -905,8 +908,12 @@ sub update_arrival_dbris {
 					rt_dep    => _epoch( $j_stop->rt_dep ),
 					arr_delay => $j_stop->arr_delay,
 					dep_delay => $j_stop->dep_delay,
-					lat       => $j_stop->lat,
-					lon       => $j_stop->lon,
+					load      => {
+						FIRST  => $j_stop->occupancy_first,
+						SECOND => $j_stop->occupancy_second
+					},
+					lat => $j_stop->lat,
+					lon => $j_stop->lon,
 				}
 			]
 		);

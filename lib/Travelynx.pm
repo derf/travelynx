@@ -419,6 +419,14 @@ sub startup {
 			my $first  = $load->{FIRST}  // 0;
 			my $second = $load->{SECOND} // 0;
 
+			# DBRIS
+			if ( $first == 99 ) {
+				$first = 4;
+			}
+			if ( $second == 99 ) {
+				$second = 4;
+			}
+
 			my @symbols
 			  = (
 				qw(help_outline person_outline people priority_high not_interested)
