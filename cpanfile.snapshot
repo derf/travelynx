@@ -118,10 +118,10 @@ DISTRIBUTIONS
       URI 0
       URI::Escape 0
       perl 5.008004
-  Alien-Libxml2-0.19
-    pathname: P/PL/PLICEASE/Alien-Libxml2-0.19.tar.gz
+  Alien-Libxml2-0.20
+    pathname: P/PL/PLICEASE/Alien-Libxml2-0.20.tar.gz
     provides:
-      Alien::Libxml2 0.19
+      Alien::Libxml2 0.20
     requirements:
       Alien::Base 2.37
       Alien::Build 2.37
@@ -496,19 +496,19 @@ DISTRIBUTIONS
       perl 5.012
       strict 0
       warnings 0
-  DateTime-1.65
-    pathname: D/DR/DROLSKY/DateTime-1.65.tar.gz
+  DateTime-1.66
+    pathname: D/DR/DROLSKY/DateTime-1.66.tar.gz
     provides:
-      DateTime 1.65
-      DateTime::Duration 1.65
-      DateTime::Helpers 1.65
-      DateTime::Infinite 1.65
-      DateTime::Infinite::Future 1.65
-      DateTime::Infinite::Past 1.65
-      DateTime::LeapSecond 1.65
-      DateTime::PP 1.65
-      DateTime::PPExtra 1.65
-      DateTime::Types 1.65
+      DateTime 1.66
+      DateTime::Duration 1.66
+      DateTime::Helpers 1.66
+      DateTime::Infinite 1.66
+      DateTime::Infinite::Future 1.66
+      DateTime::Infinite::Past 1.66
+      DateTime::LeapSecond 1.66
+      DateTime::PP 1.66
+      DateTime::PPExtra 1.66
+      DateTime::Types 1.66
     requirements:
       Carp 0
       DateTime::Locale 1.06
@@ -518,7 +518,7 @@ DISTRIBUTIONS
       POSIX 0
       Params::ValidationCompiler 0.26
       Scalar::Util 0
-      Specio 0.18
+      Specio 0.50
       Specio::Declare 0
       Specio::Exporter 0
       Specio::Library::Builtins 0
@@ -1130,10 +1130,10 @@ DISTRIBUTIONS
       perl 5.006
       strict 0
       warnings 0
-  ExtUtils-Depends-0.8001
-    pathname: X/XA/XAOC/ExtUtils-Depends-0.8001.tar.gz
+  ExtUtils-Depends-0.8002
+    pathname: E/ET/ETJ/ExtUtils-Depends-0.8002.tar.gz
     provides:
-      ExtUtils::Depends 0.8001
+      ExtUtils::Depends 0.8002
     requirements:
       Data::Dumper 0
       ExtUtils::MakeMaker 7.44
@@ -2078,11 +2078,11 @@ DISTRIBUTIONS
       overload 0
       strict 0
       warnings 0
-  Path-Tiny-0.146
-    pathname: D/DA/DAGOLDEN/Path-Tiny-0.146.tar.gz
+  Path-Tiny-0.148
+    pathname: D/DA/DAGOLDEN/Path-Tiny-0.148.tar.gz
     provides:
-      Path::Tiny 0.146
-      Path::Tiny::Error 0.146
+      Path::Tiny 0.148
+      Path::Tiny::Error 0.148
     requirements:
       Carp 0
       Cwd 0
@@ -2156,49 +2156,49 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       SQL::Abstract 2.0
       perl 5.016
-  Specio-0.49
-    pathname: D/DR/DROLSKY/Specio-0.49.tar.gz
+  Specio-0.50
+    pathname: D/DR/DROLSKY/Specio-0.50.tar.gz
     provides:
-      Specio 0.49
-      Specio::Coercion 0.49
-      Specio::Constraint::AnyCan 0.49
-      Specio::Constraint::AnyDoes 0.49
-      Specio::Constraint::AnyIsa 0.49
-      Specio::Constraint::Enum 0.49
-      Specio::Constraint::Intersection 0.49
-      Specio::Constraint::ObjectCan 0.49
-      Specio::Constraint::ObjectDoes 0.49
-      Specio::Constraint::ObjectIsa 0.49
-      Specio::Constraint::Parameterizable 0.49
-      Specio::Constraint::Parameterized 0.49
-      Specio::Constraint::Role::CanType 0.49
-      Specio::Constraint::Role::DoesType 0.49
-      Specio::Constraint::Role::Interface 0.49
-      Specio::Constraint::Role::IsaType 0.49
-      Specio::Constraint::Simple 0.49
-      Specio::Constraint::Structurable 0.49
-      Specio::Constraint::Structured 0.49
-      Specio::Constraint::Union 0.49
-      Specio::Declare 0.49
-      Specio::DeclaredAt 0.49
-      Specio::Exception 0.49
-      Specio::Exporter 0.49
-      Specio::Helpers 0.49
-      Specio::Library::Builtins 0.49
-      Specio::Library::Numeric 0.49
-      Specio::Library::Perl 0.49
-      Specio::Library::String 0.49
-      Specio::Library::Structured 0.49
-      Specio::Library::Structured::Dict 0.49
-      Specio::Library::Structured::Map 0.49
-      Specio::Library::Structured::Tuple 0.49
-      Specio::OO 0.49
-      Specio::PartialDump 0.49
-      Specio::Registry 0.49
-      Specio::Role::Inlinable 0.49
-      Specio::Subs 0.49
-      Specio::TypeChecks 0.49
-      Test::Specio 0.49
+      Specio 0.50
+      Specio::Coercion 0.50
+      Specio::Constraint::AnyCan 0.50
+      Specio::Constraint::AnyDoes 0.50
+      Specio::Constraint::AnyIsa 0.50
+      Specio::Constraint::Enum 0.50
+      Specio::Constraint::Intersection 0.50
+      Specio::Constraint::ObjectCan 0.50
+      Specio::Constraint::ObjectDoes 0.50
+      Specio::Constraint::ObjectIsa 0.50
+      Specio::Constraint::Parameterizable 0.50
+      Specio::Constraint::Parameterized 0.50
+      Specio::Constraint::Role::CanType 0.50
+      Specio::Constraint::Role::DoesType 0.50
+      Specio::Constraint::Role::Interface 0.50
+      Specio::Constraint::Role::IsaType 0.50
+      Specio::Constraint::Simple 0.50
+      Specio::Constraint::Structurable 0.50
+      Specio::Constraint::Structured 0.50
+      Specio::Constraint::Union 0.50
+      Specio::Declare 0.50
+      Specio::DeclaredAt 0.50
+      Specio::Exception 0.50
+      Specio::Exporter 0.50
+      Specio::Helpers 0.50
+      Specio::Library::Builtins 0.50
+      Specio::Library::Numeric 0.50
+      Specio::Library::Perl 0.50
+      Specio::Library::String 0.50
+      Specio::Library::Structured 0.50
+      Specio::Library::Structured::Dict 0.50
+      Specio::Library::Structured::Map 0.50
+      Specio::Library::Structured::Tuple 0.50
+      Specio::OO 0.50
+      Specio::PartialDump 0.50
+      Specio::Registry 0.50
+      Specio::Role::Inlinable 0.50
+      Specio::Subs 0.50
+      Specio::TypeChecks 0.50
+      Test::Specio 0.50
     requirements:
       B 0
       Carp 0
@@ -2411,12 +2411,12 @@ DISTRIBUTIONS
       Test::Builder::Tester 1.02
       Test::More 0.62
       perl 5.008
-  Text-CSV-2.05
-    pathname: I/IS/ISHIGAKI/Text-CSV-2.05.tar.gz
+  Text-CSV-2.06
+    pathname: I/IS/ISHIGAKI/Text-CSV-2.06.tar.gz
     provides:
-      Text::CSV 2.05
-      Text::CSV::ErrorDiag 2.05
-      Text::CSV_PP 2.05
+      Text::CSV 2.06
+      Text::CSV::ErrorDiag 2.06
+      Text::CSV_PP 2.06
     requirements:
       ExtUtils::MakeMaker 0
       IO::Handle 0
@@ -2546,38 +2546,44 @@ DISTRIBUTIONS
       TimeDate 1.21
     requirements:
       ExtUtils::MakeMaker 0
-  Travel-Status-DE-DBWagenreihung-0.18
-    pathname: D/DE/DERF/Travel-Status-DE-DBWagenreihung-0.18.tar.gz
+  Travel-Status-DE-DBRIS-0.07
+    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.07.tar.gz
     provides:
-      Travel::Status::DE::DBWagenreihung 0.18
-      Travel::Status::DE::DBWagenreihung::Carriage 0.18
-      Travel::Status::DE::DBWagenreihung::Group 0.18
-      Travel::Status::DE::DBWagenreihung::Sector 0.18
+      Travel::Status::DE::DBRIS 0.07
+      Travel::Status::DE::DBRIS::Formation 0.07
+      Travel::Status::DE::DBRIS::Formation::Carriage 0.07
+      Travel::Status::DE::DBRIS::Formation::Group 0.07
+      Travel::Status::DE::DBRIS::Formation::Sector 0.07
+      Travel::Status::DE::DBRIS::Journey 0.07
+      Travel::Status::DE::DBRIS::JourneyAtStop 0.07
+      Travel::Status::DE::DBRIS::Location 0.07
     requirements:
       Carp 0
-      Class::Accessor 0
+      Class::Accessor 0.16
+      DateTime 0
+      DateTime::Format::Strptime 0
       Getopt::Long 0
       JSON 0
+      LWP::Protocol::https 0
       LWP::UserAgent 0
       List::Util 0
       Module::Build 0.4
       Test::Compile 0
       Test::More 0
       Test::Pod 0
-      Travel::Status::DE::IRIS 1.2
       perl v5.20.0
-  Travel-Status-DE-HAFAS-6.18
-    pathname: D/DE/DERF/Travel-Status-DE-HAFAS-6.18.tar.gz
+  Travel-Status-DE-HAFAS-6.19
+    pathname: D/DE/DERF/Travel-Status-DE-HAFAS-6.19.tar.gz
     provides:
-      Travel::Status::DE::HAFAS 6.18
-      Travel::Status::DE::HAFAS::Journey 6.18
-      Travel::Status::DE::HAFAS::Location 6.18
-      Travel::Status::DE::HAFAS::Message 6.18
-      Travel::Status::DE::HAFAS::Polyline 6.18
-      Travel::Status::DE::HAFAS::Product 6.18
-      Travel::Status::DE::HAFAS::Services 6.18
-      Travel::Status::DE::HAFAS::Stop 6.18
-      Travel::Status::DE::HAFAS::StopFinder 6.18
+      Travel::Status::DE::HAFAS 6.19
+      Travel::Status::DE::HAFAS::Journey 6.19
+      Travel::Status::DE::HAFAS::Location 6.19
+      Travel::Status::DE::HAFAS::Message 6.19
+      Travel::Status::DE::HAFAS::Polyline 6.19
+      Travel::Status::DE::HAFAS::Product 6.19
+      Travel::Status::DE::HAFAS::Services 6.19
+      Travel::Status::DE::HAFAS::Stop 6.19
+      Travel::Status::DE::HAFAS::StopFinder 6.19
     requirements:
       Carp 0
       Class::Accessor 0.16
@@ -2916,32 +2922,32 @@ DISTRIBUTIONS
       XSLoader 0
       lib 0
       perl 5.008001
-  libwww-perl-6.77
-    pathname: O/OA/OALDERS/libwww-perl-6.77.tar.gz
+  libwww-perl-6.78
+    pathname: O/OA/OALDERS/libwww-perl-6.78.tar.gz
     provides:
-      LWP 6.77
-      LWP::Authen::Basic 6.77
-      LWP::Authen::Digest 6.77
-      LWP::Authen::Ntlm 6.77
-      LWP::ConnCache 6.77
-      LWP::Debug 6.77
-      LWP::Debug::TraceHTTP 6.77
-      LWP::DebugFile 6.77
-      LWP::MemberMixin 6.77
-      LWP::Protocol 6.77
-      LWP::Protocol::cpan 6.77
-      LWP::Protocol::data 6.77
-      LWP::Protocol::file 6.77
-      LWP::Protocol::ftp 6.77
-      LWP::Protocol::gopher 6.77
-      LWP::Protocol::http 6.77
-      LWP::Protocol::loopback 6.77
-      LWP::Protocol::mailto 6.77
-      LWP::Protocol::nntp 6.77
-      LWP::Protocol::nogo 6.77
-      LWP::RobotUA 6.77
-      LWP::Simple 6.77
-      LWP::UserAgent 6.77
+      LWP 6.78
+      LWP::Authen::Basic 6.78
+      LWP::Authen::Digest 6.78
+      LWP::Authen::Ntlm 6.78
+      LWP::ConnCache 6.78
+      LWP::Debug 6.78
+      LWP::Debug::TraceHTTP 6.78
+      LWP::DebugFile 6.78
+      LWP::MemberMixin 6.78
+      LWP::Protocol 6.78
+      LWP::Protocol::cpan 6.78
+      LWP::Protocol::data 6.78
+      LWP::Protocol::file 6.78
+      LWP::Protocol::ftp 6.78
+      LWP::Protocol::gopher 6.78
+      LWP::Protocol::http 6.78
+      LWP::Protocol::loopback 6.78
+      LWP::Protocol::mailto 6.78
+      LWP::Protocol::nntp 6.78
+      LWP::Protocol::nogo 6.78
+      LWP::RobotUA 6.78
+      LWP::Simple 6.78
+      LWP::UserAgent 6.78
     requirements:
       Digest::MD5 0
       Encode 2.12
