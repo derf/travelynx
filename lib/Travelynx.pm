@@ -2193,8 +2193,7 @@ sub startup {
 			my $db = $self->pg->db;
 			my $tx = $db->begin;
 
-			$self->_checkin_hafas_p(
-				hafas          => 'DB',
+			$self->_checkin_dbris_p(
 				station        => $traewelling->{dep_eva},
 				train_id       => $traewelling->{trip_id},
 				uid            => $uid,
@@ -2203,8 +2202,7 @@ sub startup {
 			)->then(
 				sub {
 					$self->log->debug("... handled origin");
-					return $self->_checkout_hafas_p(
-						hafas          => 'DB',
+					return $self->_checkout_journey_p(
 						station        => $traewelling->{arr_eva},
 						train_id       => $traewelling->{trip_id},
 						uid            => $uid,
