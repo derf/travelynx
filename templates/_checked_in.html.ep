@@ -327,7 +327,7 @@
 	% if (@{stash('timeline') // []}) {
 		%= include '_timeline_link', timeline => stash('timeline'), from_checkin => 1
 	% }
-	% if ($journey->{arr_name}) {
+	% if ($journey->{arr_name} and not $journey->{is_dbris}) {
 		<div class="card" style="margin-top: <%= scalar @{stash('timeline') // []} ? '1.5rem' : '3em' %>;">
 			<div class="card-content">
 				<span class="card-title">Details</span>
