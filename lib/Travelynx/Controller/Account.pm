@@ -1072,7 +1072,7 @@ sub backend_form {
 		elsif ( $backend->{dbris} ) {
 			$type = 'DBRIS';
 			$backend->{longname}
-			  = 'Deutsche Bahn: bahn.de (UNFERTIG / BETA-TEST – Fehler und fehlerhafte Daten sind möglich)';
+			  = 'Deutsche Bahn: bahn.de';
 			$backend->{homepage} = 'https://www.bahn.de';
 		}
 		elsif ( $backend->{hafas} ) {

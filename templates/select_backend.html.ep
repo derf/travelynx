@@ -34,19 +34,18 @@
 	<div class="col s12">
 		<h2 id="help">Hilfe</h2>
 		<p>
-			Leider gibt es seit der Abschaltung des DB HAFAS am 8. Januar 2025 sowie des VRN HAFAS am 3. März 2025 derzeit kein Backend, welches allgemein für Nah- und Fernverkehr in Deutschland nutzbar ist.
-			<strong>Deutsche Bahn</strong> (IRIS-TTS) eignet sich für Fahrten mit S-Bahnen, Regional- und Fernzügen.
-			Im Übrigen muss je nach Verkehrsmittel, Region und Wünschen an die verfügbaren Daten hier ein geeignetes Backend ausgewählt werden.
-			In einzelnen Regionen steht kein geeignetes Backend für Nahverkehrsfahrten zur Verfügung.
-			Abhilfe ist in Arbeit.
-		</p>
+			<strong>Deutsche Bahn: bahn.de</strong> ist eine gute Wahl für Fahrten des Nah-, Regional- und Fernverkehrs innerhalb Deutschlands.
+			Die Implementierung ist noch recht frisch, bietet jedoch prinzipiell akkurate Echtzeit- und Kartendaten.
+			Wagenreihungen sind nur bei Fahrten des Fernverkehrs sowie Zügen ohne Liniennummer verfügbar.
+			Verspätungsmeldungen werden aktuell nicht berücksichtigt.
+			bahn.de ist das einzige Backend, welches Synchronisierung mit Träwelling unterstützt.
 		<p>
-			<strong>Deutsche Bahn</strong> (IRIS-TTS) liefert Echtzeitdaten (nur am Start- und Zielbahnhof), Wagenreihungen und Verspätungsmeldungen für Regional- und Fernverkehr in Deutschland. In vielen Fällen sind auch Kartendaten verfügbar.
+			<strong>Deutsche Bahn: IRIS-TTS</strong> liefert Echtzeitdaten (nur am Start- und Zielbahnhof), Wagenreihungen und Verspätungsmeldungen für Regional- und Fernverkehr in Deutschland. In vielen Fällen sind auch Kartendaten verfügbar.
 			<strong>ÖBB</strong> liefern Kartendaten und Wagenreihungen für Fernverkehr in Deutschland und Umgebung, jedoch keine Meldungen. Echtzeitdaten sind teilweise verfügbar.
 		</p>
 		<p>
 			Die restlichen Backends lohnen sich für Fahrten in den zugehörigen Verkehrsverbünden bzw. Ländern.
-			Im Gegensatz zu IRIS-TTS liefern sie in vielen (aber nicht allen) Fällen auch Kartendaten für die dem Verbund zugehörigen Verkehrsmittel.
+			Im Gegensatz zu bahn.de liefern sie in vielen (aber nicht allen) Fällen auch detaillierte Kartendaten für die dem Verbund zugehörigen Verkehrsmittel.
 			In Einzelfällen (z.B. BVG) sind sogar Auslastungsdaten eingepflegt.
 			Bei Fahrten außerhalb von Deutschland und der Schweiz ist <strong>ÖBB</strong> zumeist die beste Wahl.
 		</p>
