@@ -373,6 +373,8 @@
 				% }
 			</div>
 		</div>
+	% }
+	% if ($journey->{arr_name}) {
 		<div class="card" style="margin-top: 3em;">
 			<div class="card-content">
 				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
