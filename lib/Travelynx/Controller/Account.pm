@@ -1070,9 +1070,8 @@ sub backend_form {
 			$backend->{homepage} = 'https://www.bahn.de';
 		}
 		elsif ( $backend->{dbris} ) {
-			$type = 'DBRIS';
-			$backend->{longname}
-			  = 'Deutsche Bahn: bahn.de';
+			$type                = 'DBRIS';
+			$backend->{longname} = 'Deutsche Bahn: bahn.de';
 			$backend->{homepage} = 'https://www.bahn.de';
 		}
 		elsif ( $backend->{hafas} ) {
@@ -1141,13 +1140,9 @@ sub backend_form {
 		$backend->{type} = $type;
 	}
 
-	my $iris = shift @backends;
-
 	@backends = map { $_->[1] }
 	  sort { $a->[0] cmp $b->[0] }
 	  map { [ lc( $_->{name} ), $_ ] } grep { $_->{type} } @backends;
-
-	unshift( @backends, $iris );
 
 	$self->render(
 		'select_backend',
