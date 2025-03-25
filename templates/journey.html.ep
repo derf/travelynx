@@ -269,7 +269,7 @@
 	% }
 	<div class="row">
 		<div class="col s12 grey-text">
-			<i class="material-icons tiny" aria-hidden="true"><%= $journey->{is_iris} ? 'train' : 'directions' %></i>
+			<i class="material-icons tiny" aria-hidden="true"><%= $journey->{is_hafas} ? 'directions' : 'train' %></i>
 			%= $journey->{backend_name} || 'IRIS'
 			#<%= $journey->{id} %>
 		</div>
