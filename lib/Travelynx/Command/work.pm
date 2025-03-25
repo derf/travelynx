@@ -102,11 +102,12 @@ sub run {
 
 						if ( $found_arr and $found_arr->rt_arr ) {
 							$self->app->in_transit->update_arrival_dbris(
-								uid     => $uid,
-								journey => $journey,
-								stop    => $found_arr,
-								dep_eva => $dep,
-								arr_eva => $arr
+								uid      => $uid,
+								journey  => $journey,
+								train_id => $train_id,
+								stop     => $found_arr,
+								dep_eva  => $dep,
+								arr_eva  => $arr
 							);
 							if ( $found_arr->arr->epoch - $now->epoch < 600 ) {
 								$self->app->add_wagonorder(
