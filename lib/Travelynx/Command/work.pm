@@ -35,7 +35,8 @@ sub run {
 		$self->app->log->debug("Removed ${num_incomplete} incomplete checkins");
 	}
 
-	my $errors = 0;
+	my $errors             = 0;
+	my $dbris_rate_limited = 0;
 
 	for my $entry ( $self->app->in_transit->get_all_active ) {
 
@@ -53,9 +54,16 @@ sub run {
 
 			eval {
 
-				$self->app->dbris->get_journey_p( trip_id => $train_id )->then(
+				Mojo::Promise->timer( $dbris_rate_limited ? 2.5 : 0.5 )->then(
+					sub {
+						return $self->app->dbris->get_journey_p(
+							trip_id => $train_id );
+					}
+				)->then(
 					sub {
 						my ($journey) = @_;
+
+						$dbris_rate_limited = 0;
 
 						my $found_dep;
 						my $found_arr;
@@ -131,6 +139,9 @@ sub run {
 						$self->app->log->error(
 "work($uid) @ DBRIS $entry->{backend_name}: journey: $err"
 						);
+						if ( $err =~ m{HTTP 429} ) {
+							$dbris_rate_limited = 1;
+						}
 					}
 				)->wait;
 
