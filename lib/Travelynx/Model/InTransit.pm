@@ -136,7 +136,7 @@ sub add {
 			}
 		);
 	}
-	elsif ( $journey and $stop and $journey->can('id') ) {
+	elsif ( $journey and $stop and $journey->can('product') ) {
 
 		# HAFAS
 		my @route;
