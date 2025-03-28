@@ -54,7 +54,7 @@ sub run {
 
 			eval {
 
-				Mojo::Promise->timer( $dbris_rate_limited ? 2.5 : 0.5 )->then(
+				Mojo::Promise->timer( $dbris_rate_limited ? 4.5 : 1.0 )->then(
 					sub {
 						return $self->app->dbris->get_journey_p(
 							trip_id => $train_id );
