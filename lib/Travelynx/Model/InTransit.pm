@@ -203,13 +203,14 @@ sub add {
 					$j_stop->name,
 					$j_stop->eva,
 					{
-						sched_arr => _epoch( $j_stop->sched_arr ),
-						sched_dep => _epoch( $j_stop->sched_dep ),
-						rt_arr    => _epoch( $j_stop->rt_arr ),
-						rt_dep    => _epoch( $j_stop->rt_dep ),
-						arr_delay => $j_stop->arr_delay,
-						dep_delay => $j_stop->dep_delay,
-						load      => {
+						sched_arr   => _epoch( $j_stop->sched_arr ),
+						sched_dep   => _epoch( $j_stop->sched_dep ),
+						rt_arr      => _epoch( $j_stop->rt_arr ),
+						rt_dep      => _epoch( $j_stop->rt_dep ),
+						isCancelled => $j_stop->is_cancelled,
+						arr_delay   => $j_stop->arr_delay,
+						dep_delay   => $j_stop->dep_delay,
+						load        => {
 							FIRST  => $j_stop->occupancy_first,
 							SECOND => $j_stop->occupancy_second
 						},
@@ -902,13 +903,14 @@ sub update_arrival_dbris {
 				$j_stop->name,
 				$j_stop->eva,
 				{
-					sched_arr => _epoch( $j_stop->sched_arr ),
-					sched_dep => _epoch( $j_stop->sched_dep ),
-					rt_arr    => _epoch( $j_stop->rt_arr ),
-					rt_dep    => _epoch( $j_stop->rt_dep ),
-					arr_delay => $j_stop->arr_delay,
-					dep_delay => $j_stop->dep_delay,
-					load      => {
+					sched_arr   => _epoch( $j_stop->sched_arr ),
+					sched_dep   => _epoch( $j_stop->sched_dep ),
+					rt_arr      => _epoch( $j_stop->rt_arr ),
+					rt_dep      => _epoch( $j_stop->rt_dep ),
+					isCancelled => $j_stop->is_cancelled,
+					arr_delay   => $j_stop->arr_delay,
+					dep_delay   => $j_stop->dep_delay,
+					load        => {
 						FIRST  => $j_stop->occupancy_first,
 						SECOND => $j_stop->occupancy_second
 					},
