@@ -2067,7 +2067,7 @@ sub startup {
 				comment => $status->{comment},
 				backend => {
 					id => $status->{backend_id},
-					type => $status->{ds_dbris} ? 'DBRIS'
+					type => $status->{is_dbris} ? 'DBRIS'
 					: $status->{is_hafas} ? 'HAFAS'
 					: 'IRIS-TTS',
 					name => $status->{backend_name},
