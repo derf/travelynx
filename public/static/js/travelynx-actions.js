@@ -198,6 +198,7 @@ function tvly_reg_handlers() {
 			hafas: link.data('hafas'),
 			station: link.data('station'),
 			train: link.data('train'),
+			suffix: link.data('suffix'),
 			dest: link.data('dest'),
 			ts: link.data('ts'),
 		};

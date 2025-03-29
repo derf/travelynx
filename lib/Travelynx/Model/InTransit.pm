@@ -95,6 +95,7 @@ sub add {
 	my $db                 = $opt{db} // $self->{pg}->db;
 	my $backend_id         = $opt{backend_id};
 	my $train              = $opt{train};
+	my $train_suffix       = $opt{train_suffix};
 	my $journey            = $opt{journey};
 	my $stop               = $opt{stop};
 	my $checkin_station_id = $opt{departure_eva};
@@ -194,6 +195,14 @@ sub add {
 	}
 	elsif ( $journey and $stop ) {
 
+		my $line;
+		if (    $train_suffix
+			and $journey->number
+			and $train_suffix ne $journey->number )
+		{
+			$line = $train_suffix;
+		}
+
 		# DBRIS
 		my @route;
 		for my $j_stop ( $journey->route ) {
@@ -231,6 +240,7 @@ sub add {
 				checkin_time => DateTime->now( time_zone => 'Europe/Berlin' ),
 				dep_platform => $stop->platform,
 				train_type   => $journey->type,
+				train_line   => $line,
 				train_no     => $journey->number,
 				train_id     => $data->{trip_id},
 				sched_departure => $stop->sched_dep,

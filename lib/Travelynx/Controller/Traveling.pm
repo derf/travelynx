@@ -717,11 +717,12 @@ sub travel_action {
 		$promise->then(
 			sub {
 				return $self->checkin_p(
-					dbris    => $params->{dbris},
-					hafas    => $params->{hafas},
-					station  => $params->{station},
-					train_id => $params->{train},
-					ts       => $params->{ts},
+					dbris        => $params->{dbris},
+					hafas        => $params->{hafas},
+					station      => $params->{station},
+					train_id     => $params->{train},
+					train_suffix => $params->{suffix},
+					ts           => $params->{ts},
 				);
 			}
 		)->then(

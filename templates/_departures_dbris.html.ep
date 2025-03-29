@@ -21,6 +21,7 @@
 		data-dbris="<%= $dbris %>"
 		data-station="<%= $result->stop_eva %>"
 		data-train="<%= $result->id %>"
+		data-suffix="<%= $result->maybe_line_no %>"
 		data-ts="<%= ($result->sched_dep // $result->dep)->epoch %>"
 	>
 		<a class="dep-time" href="#">

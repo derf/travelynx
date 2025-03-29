@@ -559,11 +559,12 @@ sub startup {
 		'_checkin_dbris_p' => sub {
 			my ( $self, %opt ) = @_;
 
-			my $station  = $opt{station};
-			my $train_id = $opt{train_id};
-			my $ts       = $opt{ts};
-			my $uid      = $opt{uid} // $self->current_user->{id};
-			my $db       = $opt{db}  // $self->pg->db;
+			my $station      = $opt{station};
+			my $train_id     = $opt{train_id};
+			my $train_suffix = $opt{train_suffix};
+			my $ts           = $opt{ts};
+			my $uid          = $opt{uid} // $self->current_user->{id};
+			my $db           = $opt{db}  // $self->pg->db;
 			my $hafas;
 
 			my $promise = Mojo::Promise->new;
@@ -610,6 +611,7 @@ sub startup {
 							backend_id => $self->stations->get_backend_id(
 								dbris => 'bahn.de'
 							),
+							train_suffix => $train_suffix,
 						);
 					};
 					if ($@) {
