@@ -36,6 +36,7 @@ sub run {
 	}
 
 	my $errors             = 0;
+	my $rate_limit_counts  = 0;
 	my $dbris_rate_limited = 0;
 
 	for my $entry ( $self->app->in_transit->get_all_active ) {
@@ -141,6 +142,7 @@ sub run {
 						);
 						if ( $err =~ m{HTTP 429} ) {
 							$dbris_rate_limited = 1;
+							$rate_limit_counts += 1;
 						}
 					}
 				)->wait;
@@ -492,13 +494,13 @@ sub run {
 		if ( $self->app->mode eq 'development' ) {
 			$self->app->log->debug( 'POST '
 				  . $self->app->config->{influxdb}->{url}
-				  . " worker runtime_seconds=${worker_duration},errors=${errors}"
+				  . " worker runtime_seconds=${worker_duration},errors=${errors},ratelimit_count=${rate_limit_counts}"
 			);
 		}
 		else {
 			$self->app->ua->post_p( $self->app->config->{influxdb}->{url},
-				"worker runtime_seconds=${worker_duration},errors=${errors}" )
-			  ->wait;
+"worker runtime_seconds=${worker_duration},errors=${errors},ratelimit_count=${rate_limit_counts}"
+			)->wait;
 		}
 	}
 
