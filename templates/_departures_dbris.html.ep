@@ -38,10 +38,10 @@
 		</span>
 		<span class="dep-dest">
 			% if ($result->is_cancelled) {
-				Fahrt nach <%= $result->destination %> entfällt
+				Fahrt nach <%= $result->destination // $result->via_last %> entfällt
 			% }
 			% else {
-				%= $result->destination
+				%= $result->destination // $result->via_last
 				% for my $checkin (@{$checkin_by_train->{$result->id} // []}) {
 					<span class="followee-checkin">
 						<i class="material-icons tiny" aria-label="Eine Person, der du folgst, ist hier eingecheckt">people</i>
