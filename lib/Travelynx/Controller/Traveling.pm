@@ -270,7 +270,7 @@ sub get_connecting_trains_p {
 		)->wait;
 	}
 	elsif ( $backend->{dbris} ) {
-		...;
+		return $promise->reject;
 	}
 	elsif ( $backend->{hafas} ) {
 		my $hafas_service = $backend->{name};
