@@ -36,6 +36,7 @@ sub run {
 	}
 
 	my $errors             = 0;
+	my $backend_issues     = 0;
 	my $rate_limit_counts  = 0;
 	my $dbris_rate_limited = 0;
 
@@ -143,6 +144,9 @@ sub run {
 						if ( $err =~ m{HTTP 429} ) {
 							$dbris_rate_limited = 1;
 							$rate_limit_counts += 1;
+						}
+						else {
+							$backend_issues += 1;
 						}
 					}
 				)->wait;
@@ -263,6 +267,7 @@ sub run {
 				)->catch(
 					sub {
 						my ($err) = @_;
+						$backend_issues += 1;
 						if ( $err
 							=~ m{svcResL\[0\][.]err is (?:FAIL|PARAMETER)$} )
 						{
@@ -471,6 +476,7 @@ sub run {
 				)->catch(
 					sub {
 						my ($error) = @_;
+						$backend_issues += 1;
 						$self->app->log->error(
 							"work($uid) @ IRIS: arrival: $error");
 						$errors += 1;
@@ -494,12 +500,12 @@ sub run {
 		if ( $self->app->mode eq 'development' ) {
 			$self->app->log->debug( 'POST '
 				  . $self->app->config->{influxdb}->{url}
-				  . " worker runtime_seconds=${worker_duration},errors=${errors},ratelimit_count=${rate_limit_counts}"
+				  . " worker runtime_seconds=${worker_duration},errors=${errors},backend_errors=${backend_issues},ratelimit_count=${rate_limit_counts}"
 			);
 		}
 		else {
 			$self->app->ua->post_p( $self->app->config->{influxdb}->{url},
-"worker runtime_seconds=${worker_duration},errors=${errors},ratelimit_count=${rate_limit_counts}"
+"worker runtime_seconds=${worker_duration},errors=${errors},backend_errors=${backend_issues},ratelimit_count=${rate_limit_counts}"
 			)->wait;
 		}
 	}
