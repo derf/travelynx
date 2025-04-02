@@ -1241,7 +1241,7 @@ sub startup {
 			my $has_arrived;
 			for my $stop ( @{ $journey->{route_after} } ) {
 				if ( $station eq $stop->[0] or $station eq $stop->[1] ) {
-					$found = 1;
+					$found = $stop;
 					$self->in_transit->set_arrival_eva(
 						uid         => $uid,
 						db          => $db,
@@ -1307,6 +1307,22 @@ sub startup {
 						ts  => $cache_ts,
 						db  => $db,
 						uid => $uid
+					);
+				}
+				elsif ( $found and $found->[2]{isCancelled} ) {
+					$journey = $self->in_transit->get(
+						uid => $uid,
+						db  => $db
+					);
+					$journey->{cancelled} = 1;
+					$self->journeys->add_from_in_transit(
+						db      => $db,
+						journey => $journey
+					);
+					$self->in_transit->set_cancelled_destination(
+						uid                   => $uid,
+						db                    => $db,
+						cancelled_destination => $found->[0],
 					);
 				}
 
