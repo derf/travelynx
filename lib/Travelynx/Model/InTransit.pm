@@ -239,7 +239,7 @@ sub add {
 				checkin_station_id => $stop->eva,
 				checkin_time => DateTime->now( time_zone => 'Europe/Berlin' ),
 				dep_platform => $stop->platform,
-				train_type   => $journey->type,
+				train_type   => $journey->type // q{},
 				train_line   => $line,
 				train_no     => $journey->number,
 				train_id     => $data->{trip_id},
