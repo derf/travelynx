@@ -233,7 +233,7 @@ sub add {
 			'in_transit',
 			{
 				user_id   => $uid,
-				cancelled => $stop->{dep_cancelled}
+				cancelled => $stop->is_cancelled
 				? 1
 				: 0,
 				checkin_station_id => $stop->eva,
