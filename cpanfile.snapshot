@@ -560,15 +560,15 @@ DISTRIBUTIONS
       parent 0
       strict 0
       warnings 0
-  DateTime-Locale-1.44
-    pathname: D/DR/DROLSKY/DateTime-Locale-1.44.tar.gz
+  DateTime-Locale-1.45
+    pathname: D/DR/DROLSKY/DateTime-Locale-1.45.tar.gz
     provides:
-      DateTime::Locale 1.44
-      DateTime::Locale::Base 1.44
-      DateTime::Locale::Catalog 1.44
-      DateTime::Locale::Data 1.44
-      DateTime::Locale::FromData 1.44
-      DateTime::Locale::Util 1.44
+      DateTime::Locale 1.45
+      DateTime::Locale::Base 1.45
+      DateTime::Locale::Catalog 1.45
+      DateTime::Locale::Data 1.45
+      DateTime::Locale::FromData 1.45
+      DateTime::Locale::Util 1.45
     requirements:
       Carp 0
       Dist::CheckConflicts 0.02
@@ -2289,60 +2289,60 @@ DISTRIBUTIONS
       Module::Build 0.38
       parent 0.225
       perl v5.10.0
-  Test-Deep-1.204
-    pathname: R/RJ/RJBS/Test-Deep-1.204.tar.gz
+  Test-Deep-1.205
+    pathname: R/RJ/RJBS/Test-Deep-1.205.tar.gz
     provides:
-      Test::Deep 1.204
-      Test::Deep::All 1.204
-      Test::Deep::Any 1.204
-      Test::Deep::Array 1.204
-      Test::Deep::ArrayEach 1.204
-      Test::Deep::ArrayElementsOnly 1.204
-      Test::Deep::ArrayLength 1.204
-      Test::Deep::ArrayLengthOnly 1.204
-      Test::Deep::Blessed 1.204
-      Test::Deep::Boolean 1.204
-      Test::Deep::Cache 1.204
-      Test::Deep::Cache::Simple 1.204
-      Test::Deep::Class 1.204
-      Test::Deep::Cmp 1.204
-      Test::Deep::Code 1.204
-      Test::Deep::Hash 1.204
-      Test::Deep::HashEach 1.204
-      Test::Deep::HashElements 1.204
-      Test::Deep::HashKeys 1.204
-      Test::Deep::HashKeysOnly 1.204
-      Test::Deep::Ignore 1.204
-      Test::Deep::Isa 1.204
-      Test::Deep::ListMethods 1.204
-      Test::Deep::MM 1.204
-      Test::Deep::Methods 1.204
-      Test::Deep::NoTest 1.204
-      Test::Deep::None 1.204
-      Test::Deep::Number 1.204
-      Test::Deep::Obj 1.204
-      Test::Deep::Ref 1.204
-      Test::Deep::RefType 1.204
-      Test::Deep::Regexp 1.204
-      Test::Deep::RegexpMatches 1.204
-      Test::Deep::RegexpOnly 1.204
-      Test::Deep::RegexpRef 1.204
-      Test::Deep::RegexpRefOnly 1.204
-      Test::Deep::RegexpVersion 1.204
-      Test::Deep::ScalarRef 1.204
-      Test::Deep::ScalarRefOnly 1.204
-      Test::Deep::Set 1.204
-      Test::Deep::Shallow 1.204
-      Test::Deep::Stack 1.204
-      Test::Deep::String 1.204
-      Test::Deep::SubHash 1.204
-      Test::Deep::SubHashElements 1.204
-      Test::Deep::SubHashKeys 1.204
-      Test::Deep::SubHashKeysOnly 1.204
-      Test::Deep::SuperHash 1.204
-      Test::Deep::SuperHashElements 1.204
-      Test::Deep::SuperHashKeys 1.204
-      Test::Deep::SuperHashKeysOnly 1.204
+      Test::Deep 1.205
+      Test::Deep::All 1.205
+      Test::Deep::Any 1.205
+      Test::Deep::Array 1.205
+      Test::Deep::ArrayEach 1.205
+      Test::Deep::ArrayElementsOnly 1.205
+      Test::Deep::ArrayLength 1.205
+      Test::Deep::ArrayLengthOnly 1.205
+      Test::Deep::Blessed 1.205
+      Test::Deep::Boolean 1.205
+      Test::Deep::Cache 1.205
+      Test::Deep::Cache::Simple 1.205
+      Test::Deep::Class 1.205
+      Test::Deep::Cmp 1.205
+      Test::Deep::Code 1.205
+      Test::Deep::Hash 1.205
+      Test::Deep::HashEach 1.205
+      Test::Deep::HashElements 1.205
+      Test::Deep::HashKeys 1.205
+      Test::Deep::HashKeysOnly 1.205
+      Test::Deep::Ignore 1.205
+      Test::Deep::Isa 1.205
+      Test::Deep::ListMethods 1.205
+      Test::Deep::MM 1.205
+      Test::Deep::Methods 1.205
+      Test::Deep::NoTest 1.205
+      Test::Deep::None 1.205
+      Test::Deep::Number 1.205
+      Test::Deep::Obj 1.205
+      Test::Deep::Ref 1.205
+      Test::Deep::RefType 1.205
+      Test::Deep::Regexp 1.205
+      Test::Deep::RegexpMatches 1.205
+      Test::Deep::RegexpOnly 1.205
+      Test::Deep::RegexpRef 1.205
+      Test::Deep::RegexpRefOnly 1.205
+      Test::Deep::RegexpVersion 1.205
+      Test::Deep::ScalarRef 1.205
+      Test::Deep::ScalarRefOnly 1.205
+      Test::Deep::Set 1.205
+      Test::Deep::Shallow 1.205
+      Test::Deep::Stack 1.205
+      Test::Deep::String 1.205
+      Test::Deep::SubHash 1.205
+      Test::Deep::SubHashElements 1.205
+      Test::Deep::SubHashKeys 1.205
+      Test::Deep::SubHashKeysOnly 1.205
+      Test::Deep::SuperHash 1.205
+      Test::Deep::SuperHashElements 1.205
+      Test::Deep::SuperHashKeys 1.205
+      Test::Deep::SuperHashKeysOnly 1.205
     requirements:
       ExtUtils::MakeMaker 6.78
       List::Util 1.09
@@ -2547,17 +2547,17 @@ DISTRIBUTIONS
       TimeDate 1.21
     requirements:
       ExtUtils::MakeMaker 0
-  Travel-Status-DE-DBRIS-0.08
-    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.08.tar.gz
+  Travel-Status-DE-DBRIS-0.09
+    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.09.tar.gz
     provides:
-      Travel::Status::DE::DBRIS 0.08
-      Travel::Status::DE::DBRIS::Formation 0.08
-      Travel::Status::DE::DBRIS::Formation::Carriage 0.08
-      Travel::Status::DE::DBRIS::Formation::Group 0.08
-      Travel::Status::DE::DBRIS::Formation::Sector 0.08
-      Travel::Status::DE::DBRIS::Journey 0.08
-      Travel::Status::DE::DBRIS::JourneyAtStop 0.08
-      Travel::Status::DE::DBRIS::Location 0.08
+      Travel::Status::DE::DBRIS 0.09
+      Travel::Status::DE::DBRIS::Formation 0.09
+      Travel::Status::DE::DBRIS::Formation::Carriage 0.09
+      Travel::Status::DE::DBRIS::Formation::Group 0.09
+      Travel::Status::DE::DBRIS::Formation::Sector 0.09
+      Travel::Status::DE::DBRIS::Journey 0.09
+      Travel::Status::DE::DBRIS::JourneyAtStop 0.09
+      Travel::Status::DE::DBRIS::Location 0.09
     requirements:
       Carp 0
       Class::Accessor 0.16
