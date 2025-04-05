@@ -138,7 +138,7 @@ sub run {
 				)->catch(
 					sub {
 						my ($err) = @_;
-						$self->app->log->error(
+						$self->app->log->debug(
 "work($uid) @ DBRIS $entry->{backend_name}: journey: $err"
 						);
 						if ( $err =~ m{HTTP 429} ) {
@@ -269,9 +269,10 @@ sub run {
 						my ($err) = @_;
 						$backend_issues += 1;
 						if ( $err
-							=~ m{svcResL\[0\][.]err is (?:FAIL|PARAMETER)$} )
+							=~ m{svcResL\[0\][.]err is (?:FAIL|PARAMETER)$}
+							or $err =~ m{timeout} )
 						{
-							# HAFAS do be weird. These are not actionable.
+							# These are not actionable.
 							$self->app->log->debug(
 "work($uid) @ HAFAS $entry->{backend_name}: journey: $err"
 							);
