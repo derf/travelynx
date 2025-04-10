@@ -221,11 +221,12 @@ sub startup {
 		dbris => sub {
 			my ($self) = @_;
 			state $dbris = Travelynx::Helper::DBRIS->new(
-				log        => $self->app->log,
-				cache      => $self->app->cache_iris_rt,
-				root_url   => $self->base_url_for('/')->to_abs,
-				user_agent => $self->ua,
-				version    => $self->app->config->{version},
+				log            => $self->app->log,
+				service_config => $self->app->config->{dbris},
+				cache          => $self->app->cache_iris_rt,
+				root_url       => $self->base_url_for('/')->to_abs,
+				user_agent     => $self->ua,
+				version        => $self->app->config->{version},
 			);
 		}
 	);
