@@ -123,6 +123,8 @@
 				<tr>
 					<th scope="row">Träwelling</th>
 					<td>
+						Wird wegen Inkompatibilität zwischen bahn.de und transitous derzeit nicht unterstützt
+					<!--
 						<a href="/account/traewelling"><i class="material-icons">edit</i></a>
 						% if (not ($traewelling->{token})) {
 							<span style="color: #999999;">Nicht verknüpft</span>
@@ -145,6 +147,7 @@
 								– Checkins in travelynx werden zu Träwelling weitergereicht
 							% }
 						% }
+					-->
 					</td>
 				</tr>
 			% }
