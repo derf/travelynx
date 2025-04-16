@@ -809,6 +809,24 @@ sub update_departure_dbris {
 	my $stop    = $opt{stop};
 	my $json    = JSON->new;
 
+	my $res_h = $db->select( 'in_transit', ['data'], { user_id => $uid } )
+	  ->expand->hash;
+	my $data = $res_h ? $res_h->{data} : {};
+
+	$data->{him_msg} = [];
+	for my $msg ( $journey->messages ) {
+		if ( not $msg->{ueberschrift} ) {
+			push(
+				@{ $data->{him_msg} },
+				{
+					header => q{},
+					prio   => $msg->{prioritaet},
+					lead   => $msg->{text}
+				}
+			);
+		}
+	}
+
 	# selecting on user_id and train_no avoids a race condition if a user checks
 	# into a new train while we are fetching data for their previous journey. In
 	# this case, the new train would receive data from the previous journey.
@@ -816,6 +834,7 @@ sub update_departure_dbris {
 		'in_transit',
 		{
 			real_departure => $stop->{rt_dep},
+			data           => $json->encode($data),
 		},
 		{
 			user_id             => $uid,
@@ -905,6 +924,24 @@ sub update_arrival_dbris {
 	my $stop    = $opt{stop};
 	my $json    = JSON->new;
 
+	my $res_h = $db->select( 'in_transit', ['data'], { user_id => $uid } )
+	  ->expand->hash;
+	my $data = $res_h ? $res_h->{data} : {};
+
+	$data->{him_msg} = [];
+	for my $msg ( $journey->messages ) {
+		if ( not $msg->{ueberschrift} ) {
+			push(
+				@{ $data->{him_msg} },
+				{
+					header => q{},
+					prio   => $msg->{prioritaet},
+					lead   => $msg->{text}
+				}
+			);
+		}
+	}
+
 	my @route;
 	for my $j_stop ( $journey->route ) {
 		push(
@@ -939,6 +976,7 @@ sub update_arrival_dbris {
 		{
 			real_arrival => $stop->{rt_arr},
 			route        => $json->encode( [@route] ),
+			data         => $json->encode($data),
 		},
 		{
 			user_id             => $uid,
