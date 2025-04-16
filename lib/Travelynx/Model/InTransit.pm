@@ -195,6 +195,7 @@ sub add {
 	}
 	elsif ( $journey and $stop ) {
 
+		# DBRIS
 		my $line;
 		if (    $train_suffix
 			and $journey->number
@@ -203,7 +204,6 @@ sub add {
 			$line = $train_suffix;
 		}
 
-		# DBRIS
 		my @route;
 		for my $j_stop ( $journey->route ) {
 			push(
@@ -228,6 +228,19 @@ sub add {
 					}
 				]
 			);
+		}
+		my @messages;
+		for my $msg ( $journey->messages ) {
+			if ( not $msg->{ueberschrift} ) {
+				push(
+					@{ $data->{him_msg} },
+					{
+						header => q{},
+						prio   => $msg->{prioritaet},
+						lead   => $msg->{text}
+					}
+				);
+			}
 		}
 		$db->insert(
 			'in_transit',
