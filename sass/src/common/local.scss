@@ -209,30 +209,30 @@ ul.route-history > li {
 	min-width: 6ch;
 	margin: 0 auto;
 
-	&.Bus, &.RUF, &.AST {
+	&.Bus, &.BUS, &.RUF, &.AST {
 		background-color: #a3167e;
 		border-radius: 5rem;
 		padding: .2rem .5rem;
 	}
-	&.STR, &.Tram, &.Str, &.Strb, &.STB {
+	&.STR, &.Tram, &.TRAM, &.Str, &.Strb, &.STB {
 		background-color: #c5161c;
 		border-radius: 5rem;
 		padding: .2rem .5rem;
 	}
-	&.S, &.RS, &.RER, &.SKW {
+	&.S, &.RS, &.RER, &.SKW, &.METRO {
 		background-color: #008d4f;
 		border-radius: 5rem;
 		padding: .2rem .5rem;
 	}
-	&.U, &.M  {
+	&.U, &.M, &.SUBWAY {
 		background-color: #014e8d;
 		border-radius: 5rem;
 		padding: .2rem .5rem;
 	}
-	&.RE, &.IRE, &.REX {
+	&.RE, &.IRE, &.REX, &.REGIONAL_FAST_RAIL {
 		background-color: #ff4f00;
 	}
-	&.RB, &.MEX, &.TER, &.R {
+	&.RB, &.MEX, &.TER, &.R, &.REGIONAL_RAIL {
 		background-color: #1f4a87;
 	}
 	// DE
@@ -242,7 +242,9 @@ ul.route-history > li {
 	// FR
 	&.TGV, &.OGV, &.EST,
 	// PL
-	&.TLK, &.EIC {
+	&.TLK, &.EIC,
+	// MOTIS
+	&.HIGHSPEED_RAIL, &.LONG_DISTANCE {
 		background-color: #ff0404;
 		font-weight: 900;
 		font-style: italic;
@@ -251,7 +253,7 @@ ul.route-history > li {
 	&.RJ, &.RJX {
 		background-color: #c63131;
 	}
-	&.NJ, &.EN {
+	&.NJ, &.EN, &.NIGHT_RAIL {
 		background-color: #29255b;
 	}
 	&.WB {

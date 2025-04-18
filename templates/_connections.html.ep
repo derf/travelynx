@@ -36,7 +36,7 @@
 				% if ($train->platform) {
 					<span>Gleis <%= $train->platform %></span>
 				% }
-				<span class="dep-line <%= $train->type // q{} %>">
+				<span class="dep-line <%= $train->type // q{} %>" style="background-color: #<%= $train->color %>;">
 					%= $train->line
 				</span>
 			</span>

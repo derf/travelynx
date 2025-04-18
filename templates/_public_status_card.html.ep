@@ -15,7 +15,7 @@
 				% }
 				<i class="material-icons right"><%= visibility_icon($journey->{effective_visibility_str}) %></i>
 				% if (stash('from_timeline') and $journey->{extra_data}{trip_id}) {
-					<a class="right" href="https://dbf.finalrewind.org/map/<%= $journey->{extra_data}{trip_id} =~ s{#}{%23}gr %>/<%= $journey->{train_line} || 0 %>?dbris=<%= $journey->{is_dbris} ? $journey->{backend_name} : q{} %>&amp;hafas=<%= $journey->{is_hafas} ? $journey->{backend_name} : q{} %>&amp;from=<%= $journey->{dep_name} %>&amp;to=<%= $journey->{arr_name} // '' %>"><i class="material-icons">map</i></a>
+					<a class="right" href="https://dbf.finalrewind.org/map/<%= $journey->{extra_data}{trip_id} =~ s{#}{%23}gr %>/<%= $journey->{train_line} || 0 %>?dbris=<%= $journey->{is_dbris} ? $journey->{backend_name} : q{} %>&amp;motis=<%= $journey->{is_motis} ? $journey->{backend_name} : q{} %>&amp;hafas=<%= $journey->{is_hafas} ? $journey->{backend_name} : q{} %>&amp;from=<%= $journey->{dep_name} %>&amp;to=<%= $journey->{arr_name} // '' %>"><i class="material-icons">map</i></a>
 				% }
 				% if (not $journey->{extra_data}{rt}) {
 					<i class="material-icons right grey-text">gps_off</i>
@@ -173,7 +173,7 @@
 					% my $url = 'https://dbf.finalrewind.org/z/' . $journey->{train_id} =~ s{#}{%23}gr . '?hafas=' . $journey->{backend_name};
 					<a style="margin-right: 0;" href="<%= $url %>"><i class="material-icons left">timeline</i> Details</a>
 				% }
-				% elsif ($journey->{extra_data}{trip_id}) {
+				% elsif ($journey->{extra_data}{trip_id} and not ($journey->{is_dbris} or $journey->{is_motis})) {
 					% my $url = 'https://dbf.finalrewind.org/z/' . $journey->{extra_data}{trip_id} =~ s{#}{%23}gr;
 					<a style="margin-right: 0;" href="<%= $url %>"><i class="material-icons left">timeline</i> Zuglauf</a>
 				% }
@@ -181,7 +181,7 @@
 					&nbsp;
 				% }
 				% if ($journey->{extra_data}{trip_id}) {
-					<a class="right" style="margin-right: 0;" href="https://dbf.finalrewind.org/map/<%= $journey->{extra_data}{trip_id} =~ s{#}{%23}gr %>/<%= $journey->{train_line} || 0 %>?dbris=<%= $journey->{is_dbris} ? $journey->{backend_name} : q{} %>&amp;hafas=<%= $journey->{is_hafas} ? $journey->{backend_name} : q{} %>&amp;from=<%= $journey->{dep_name} %>&amp;to=<%= $journey->{arr_name} // '' %>"><i class="material-icons left">map</i> Karte</a>
+					<a class="right" style="margin-right: 0;" href="https://dbf.finalrewind.org/map/<%= $journey->{extra_data}{trip_id} =~ s{#}{%23}gr %>/<%= $journey->{train_line} || 0 %>?dbris=<%= $journey->{is_dbris} ? $journey->{backend_name} : q{} %>&amp;motis=<%= $journey->{is_motis} ? $journey->{backend_name} : q{} %>&amp;hafas=<%= $journey->{is_hafas} ? $journey->{backend_name} : q{} %>&amp;from=<%= $journey->{dep_name} %>&amp;to=<%= $journey->{arr_name} // '' %>"><i class="material-icons left" aria-hidden="true">map</i> Karte</a>
 				% }
 			</div>
 		% }

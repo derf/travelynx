@@ -16,8 +16,11 @@
 			% }
 			<li class="collection-item">
 				<a href="<%= $detail_link %>">
-					<span class="dep-line <%= $travel->{type} // q{} %>">
-						<%= $travel->{type} %> <%= $travel->{line}  // $travel->{no}%>
+					<span class="dep-line <%= $travel->{type} // q{} %>" style="background-color: #<%= $travel->{color} %>;">
+						% if (not $travel->{is_motis}) {
+							<%= $travel->{type} %>
+						% }
+						<%= $travel->{line}  // $travel->{no}%>
 					</span>
 				</a>
 

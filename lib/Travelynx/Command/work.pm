@@ -1,6 +1,7 @@
 package Travelynx::Command::work;
 
 # Copyright (C) 2020-2023 Birte Kristina Friesel
+# Copyright (C) 2025 networkException <git@nwex.de>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 use Mojo::Base 'Mojolicious::Command';
@@ -168,6 +169,100 @@ sub run {
 				$errors += 1;
 				$self->app->log->error(
 					"work($uid) @ DBRIS $entry->{backend_name}: $@");
+			}
+			next;
+		}
+
+		if ( $entry->{is_motis} ) {
+
+			eval {
+				$self->app->motis->trip_id(
+					service => $entry->{backend_name},
+					trip_id => $train_id,
+				)->then(
+					sub {
+						my ($journey) = @_;
+
+						for my $stopover ( $journey->stopovers ) {
+							if ( not defined $stopover->stop->{eva} ) {
+								my $stop = $self->app->stations->get_by_external_id(
+									external_id => $stopover->stop->id,
+									motis       => $entry->{backend_name},
+								);
+
+								$stopover->stop->{eva} = $stop->{eva};
+							}
+						}
+
+						my $found_departure;
+						my $found_arrival;
+						for my $stopover ( $journey->stopovers ) {
+							if ( $stopover->stop->{eva} == $dep ) {
+								$found_departure = $stopover;
+							}
+
+							if ( $arr and $stopover->stop->{eva} == $arr ) {
+								$found_arrival = $stopover;
+								last;
+							}
+						}
+
+						if ( not $found_departure ) {
+							$self->app->log->debug("Did not find $dep within trip $train_id");
+							return;
+						}
+
+						if ( $found_departure->realtime_departure ) {
+							$self->app->in_transit->update_departure_motis(
+								uid      => $uid,
+								journey  => $journey,
+								stopover => $found_departure,
+								dep_eva  => $dep,
+								arr_eva  => $arr,
+								train_id => $train_id,
+							);
+						}
+
+						if ( $found_arrival and $found_arrival->realtime_arrival ) {
+							$self->app->in_transit->update_arrival_motis(
+								uid      => $uid,
+								journey  => $journey,
+								train_id => $train_id,
+								stopover => $found_arrival,
+								dep_eva  => $dep,
+								arr_eva  => $arr
+							);
+						}
+					}
+				)->catch(
+					sub {
+						my ($err) = @_;
+						$self->app->log->error(
+"work($uid) @ MOTIS $entry->{backend_name}: journey: $err"
+						);
+						if ( $err =~ m{HTTP 429} ) {
+							$dbris_rate_limited = 1;
+						}
+					}
+				)->wait;
+
+				if (    $arr
+					and $entry->{real_arr_ts}
+					and $now->epoch - $entry->{real_arr_ts} > 600 )
+				{
+					$self->app->checkout_p(
+						station => $arr,
+						force   => 2,
+						dep_eva => $dep,
+						arr_eva => $arr,
+						uid     => $uid
+					)->wait;
+				}
+			};
+			if ($@) {
+				$errors += 1;
+				$self->app->log->error(
+					"work($uid) @ MOTIS $entry->{backend_name}: $@");
 			}
 			next;
 		}

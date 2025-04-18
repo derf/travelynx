@@ -418,7 +418,7 @@ sub get {
 		  . 'extract(epoch from registered_at) as registered_at_ts, '
 		  . 'extract(epoch from last_seen) as last_seen_ts, '
 		  . 'extract(epoch from deletion_requested) as deletion_requested_ts, '
-		  . 'backend_id, backend_name, hafas, dbris',
+		  . 'backend_id, backend_name, hafas, dbris, motis',
 		{ id => $uid }
 	)->hash;
 	if ($user) {
@@ -459,6 +459,7 @@ sub get {
 			backend_name  => $user->{backend_name},
 			backend_dbris => $user->{dbris},
 			backend_hafas => $user->{hafas},
+			backend_motis => $user->{motis},
 		};
 	}
 	return undef;
@@ -1026,11 +1027,11 @@ sub get_followers {
 				id             => $row->{id},
 				name           => $row->{name},
 				following_back => (
-					      $row->{inverse_predicate}
+						  $row->{inverse_predicate}
 					  and $row->{inverse_predicate} == $predicate_atoi{follows}
 				) ? 1 : 0,
 				followback_requested => (
-					      $row->{inverse_predicate}
+						  $row->{inverse_predicate}
 					  and $row->{inverse_predicate}
 					  == $predicate_atoi{requests_follow}
 				) ? 1 : 0,
@@ -1102,7 +1103,7 @@ sub get_followees {
 				id             => $row->{id},
 				name           => $row->{name},
 				following_back => (
-					      $row->{inverse_predicate}
+						  $row->{inverse_predicate}
 					  and $row->{inverse_predicate} == $predicate_atoi{follows}
 				) ? 1 : 0,
 			}

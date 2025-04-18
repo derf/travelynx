@@ -189,6 +189,7 @@ sub travel_v1 {
 		my $train_id;
 		my $dbris = sanitize( undef, $payload->{dbris} );
 		my $hafas = sanitize( undef, $payload->{hafas} );
+		my $motis = sanitize( undef, $payload->{motis} );
 
 		if ( not $hafas and exists $payload->{train}{journeyID} ) {
 			$dbris //= 'bahn.de';
@@ -298,6 +299,7 @@ sub travel_v1 {
 					uid      => $uid,
 					hafas    => $hafas,
 					dbris    => $dbris,
+					motis    => $motis,
 				);
 			}
 		)->then(
