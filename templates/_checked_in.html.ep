@@ -357,7 +357,11 @@
 			</div>
 			<div class="card-action">
 				% my $url = 'https://dbf.finalrewind.org/z/';
-				% if ($journey->{is_hafas}) {
+				% if ($journey->{is_dbris}) {
+					% $url .= $journey->{train_id} =~ s{#}{%23}gr . '?dbris=' . $journey->{backend_name};
+					<a style="margin-right: 0;" href="<%= $url %>"><i class="material-icons left" aria-hidden="true">timeline</i> Details</a>
+				% }
+				% elsif ($journey->{is_hafas}) {
 					% $url .= $journey->{train_id} =~ s{#}{%23}gr . '?hafas=' . $journey->{backend_name};
 					<a style="margin-right: 0;" href="<%= $url %>"><i class="material-icons left" aria-hidden="true">timeline</i> Details</a>
 				% }
