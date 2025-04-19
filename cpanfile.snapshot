@@ -1774,16 +1774,13 @@ DISTRIBUTIONS
       if 0
       perl 5.006
       strict 0
-  Module-Runtime-0.016
-    pathname: Z/ZE/ZEFRAM/Module-Runtime-0.016.tar.gz
+  Module-Runtime-0.017
+    pathname: H/HA/HAARG/Module-Runtime-0.017.tar.gz
     provides:
-      Module::Runtime 0.016
+      Module::Runtime 0.017
     requirements:
-      Module::Build 0
-      Test::More 0.41
-      perl 5.006
-      strict 0
-      warnings 0
+      ExtUtils::MakeMaker 0
+      perl 5.006000
   Mojo-Pg-4.27
     pathname: S/SR/SRI/Mojo-Pg-4.27.tar.gz
     provides:
@@ -2106,10 +2103,10 @@ DISTRIBUTIONS
       strict 0
       warnings 0
       warnings::register 0
-  PkgConfig-0.25026
-    pathname: P/PL/PLICEASE/PkgConfig-0.25026.tar.gz
+  PkgConfig-0.26026
+    pathname: P/PL/PLICEASE/PkgConfig-0.26026.tar.gz
     provides:
-      PkgConfig 0.25026
+      PkgConfig 0.26026
     requirements:
       ExtUtils::MakeMaker 6.56
       Test::More 0.94
@@ -2547,17 +2544,17 @@ DISTRIBUTIONS
       TimeDate 1.21
     requirements:
       ExtUtils::MakeMaker 0
-  Travel-Status-DE-DBRIS-0.09
-    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.09.tar.gz
+  Travel-Status-DE-DBRIS-0.10
+    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.10.tar.gz
     provides:
-      Travel::Status::DE::DBRIS 0.09
-      Travel::Status::DE::DBRIS::Formation 0.09
-      Travel::Status::DE::DBRIS::Formation::Carriage 0.09
-      Travel::Status::DE::DBRIS::Formation::Group 0.09
-      Travel::Status::DE::DBRIS::Formation::Sector 0.09
-      Travel::Status::DE::DBRIS::Journey 0.09
-      Travel::Status::DE::DBRIS::JourneyAtStop 0.09
-      Travel::Status::DE::DBRIS::Location 0.09
+      Travel::Status::DE::DBRIS 0.10
+      Travel::Status::DE::DBRIS::Formation 0.10
+      Travel::Status::DE::DBRIS::Formation::Carriage 0.10
+      Travel::Status::DE::DBRIS::Formation::Group 0.10
+      Travel::Status::DE::DBRIS::Formation::Sector 0.10
+      Travel::Status::DE::DBRIS::Journey 0.10
+      Travel::Status::DE::DBRIS::JourneyAtStop 0.10
+      Travel::Status::DE::DBRIS::Location 0.10
     requirements:
       Carp 0
       Class::Accessor 0.16
