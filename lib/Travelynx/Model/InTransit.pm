@@ -197,10 +197,10 @@ sub add {
 
 		# DBRIS
 		my $line;
-		if (    $train_suffix
-			and $journey->number
-			and $train_suffix ne $journey->number )
-		{
+		if ( $journey->line_no ne $journey->train_no ) {
+			$line = $journey->line_no;
+		}
+		elsif ( $train_suffix ne $journey->train_no ) {
 			$line = $train_suffix;
 		}
 
@@ -254,7 +254,7 @@ sub add {
 				dep_platform => $stop->platform,
 				train_type   => $journey->type // q{},
 				train_line   => $line,
-				train_no     => $journey->number,
+				train_no     => $journey->train_no,
 				train_id     => $data->{trip_id},
 				sched_departure => $stop->sched_dep,
 				real_departure  => $stop->rt_dep // $stop->sched_dep,

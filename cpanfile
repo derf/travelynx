@@ -17,7 +17,7 @@ requires 'Mojolicious::Plugin::OAuth2';
 requires 'Mojo::Pg';
 requires 'Text::CSV';
 requires 'Text::Markdown';
-requires 'Travel::Status::DE::DBRIS', '>= 0.08';
+requires 'Travel::Status::DE::DBRIS', '>= 0.10';
 requires 'Travel::Status::DE::HAFAS', '>= 6.20';
 requires 'Travel::Status::DE::IRIS';
 requires 'UUID::Tiny';
