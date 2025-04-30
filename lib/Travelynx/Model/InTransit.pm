@@ -309,7 +309,6 @@ sub add {
 				train_no     => q{},
 				train_id     => $journey->id,
 				train_line   => $journey->route_name,
-				train_color  => $journey->route_color,
 				sched_departure => $stopover->scheduled_departure,
 				real_departure  => $stopover->departure,
 				route           => $json->encode( \@route ),
@@ -547,7 +546,7 @@ sub get_timeline {
 		return $db->select(
 			'follows_in_transit',
 			[
-				qw(followee_name train_type train_line train_no train_id train_color dep_eva dep_name arr_eva arr_name)
+				qw(followee_name train_type train_line train_no train_id dep_eva dep_name arr_eva arr_name)
 			],
 			$where
 		)->hashes->each;

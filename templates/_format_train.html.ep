@@ -1,7 +1,7 @@
 % if ($journey->{extra_data}{wagonorder_pride}) {
 	🏳️‍🌈
 % }
-<span class="dep-line <%= $journey->{train_type} // q{} %>" style="background-color: #<%= $journey->{train_color} %>;">
+<span class="dep-line <%= $journey->{train_type} // q{} %>">
 	% if (not $journey->{is_motis}) {
 		<%= $journey->{train_type} %>
 	% }

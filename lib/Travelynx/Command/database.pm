@@ -2894,9 +2894,6 @@ qq{select distinct checkout_station_id from in_transit where backend_id = 0;}
 						stations.source = stations_external_ids.backend_id
 					;
 
-				alter table in_transit add column train_color varchar(6);
-				alter table journeys add column train_color varchar(6);
-
 				drop view in_transit_str;
 				drop view journeys_str;
 				drop view users_with_backend;
@@ -2908,7 +2905,7 @@ qq{select distinct checkout_station_id from in_transit where backend_id = 0;}
 					backend.efa as is_efa, backend.dbris as is_dbris,
 					backend.motis as is_motis,
 					backend.name as backend_name, in_transit.backend_id as backend_id,
-					train_type, train_line, train_no, train_id, train_color,
+					train_type, train_line, train_no, train_id,
 					extract(epoch from checkin_time) as checkin_ts,
 					extract(epoch from sched_departure) as sched_dep_ts,
 					extract(epoch from real_departure) as real_dep_ts,
@@ -2948,7 +2945,7 @@ qq{select distinct checkout_station_id from in_transit where backend_id = 0;}
 					backend.efa as is_efa, backend.dbris as is_dbris,
 					backend.motis as is_motis,
 					backend.name as backend_name, journeys.backend_id as backend_id,
-					train_type, train_line, train_no, train_id, train_color,
+					train_type, train_line, train_no, train_id,
 					extract(epoch from checkin_time) as checkin_ts,
 					extract(epoch from sched_departure) as sched_dep_ts,
 					extract(epoch from real_departure) as real_dep_ts,
@@ -2993,7 +2990,7 @@ qq{select distinct checkout_station_id from in_transit where backend_id = 0;}
 				create view follows_in_transit as select
 					r1.subject_id as follower_id, user_id as followee_id,
 					users.name as followee_name,
-					train_type, train_line, train_no, train_id, train_color,
+					train_type, train_line, train_no, train_id,
 					backend.iris as is_iris, backend.hafas as is_hafas,
 					backend.efa as is_efa, backend.dbris as is_dbris,
 					backend.motis as is_motis,
