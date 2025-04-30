@@ -2866,17 +2866,6 @@ qq{select distinct checkout_station_id from in_transit where backend_id = 0;}
 				alter table backends add column motis bool default false;
 				alter table schema_version add column motis varchar(12);
 
-				drop view users_with_backend;
-				create view users_with_backend as select
-					users.id as id, users.name as name, status, public_level,
-					email, password, registered_at, last_seen,
-					deletion_requested, deletion_notified, use_history,
-					accept_follows, notifications, profile, backend_id, iris,
-					hafas, efa, dbris, motis, backend.name as backend_name
-					from users
-					left join backends as backend on users.backend_id = backend.id
-					;
-
 				create table stations_external_ids (
 					eva serial not null primary key,
 					backend_id smallint not null,
