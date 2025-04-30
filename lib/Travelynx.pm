@@ -836,7 +836,7 @@ sub startup {
 							eva          => $found->eva,
 							datetime     => $found->sched_dep,
 							train_type   => $journey->type,
-							train_no     => $journey->number
+							train_no     => $journey->train_no,
 						);
 						$self->add_stationinfo( $uid, 1, $train_id,
 							$found->eva );
