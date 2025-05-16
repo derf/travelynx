@@ -330,7 +330,7 @@
 	% if ($journey->{arr_name}) {
 		<div class="card" style="margin-top: <%= scalar @{stash('timeline') // []} ? '1.5rem' : '3em' %>;">
 			<div class="card-content">
-				<span class="card-title">Details</span>
+				<span class="card-title">Meldungen</span>
 				% if (@{$journey->{extra_data}{him_msg} // []}) {
 					<p style="margin-bottom: 2ex;">
 						<ul>
