@@ -101,6 +101,7 @@ sub add {
 	my $checkin_station_id = $opt{departure_eva};
 	my $route              = $opt{route};
 	my $data               = $opt{data};
+	my $persistent_data;
 
 	my $json = JSON->new;
 
@@ -242,6 +243,13 @@ sub add {
 						lead   => $msg->{text}
 					}
 				);
+				push(
+					@{ $persistent_data->{him_msg} },
+					{
+						prio => $msg->{prioritaet},
+						lead => $msg->{text}
+					}
+				);
 			}
 		}
 		$db->insert(
@@ -267,6 +275,7 @@ sub add {
 						%{ $data // {} }
 					}
 				),
+				user_data  => JSON->new->encode($persistent_data),
 				backend_id => $backend_id,
 			}
 		);
@@ -824,19 +833,28 @@ sub update_departure_dbris {
 	my $stop    = $opt{stop};
 	my $json    = JSON->new;
 
-	my $res_h = $db->select( 'in_transit', ['data'], { user_id => $uid } )
-	  ->expand->hash;
-	my $data = $res_h ? $res_h->{data} : {};
+	my $res_h = $db->select( 'in_transit', [ 'data', 'user_data' ],
+		{ user_id => $uid } )->expand->hash;
+	my $ephemeral_data  = $res_h ? $res_h->{data}      : {};
+	my $persistent_data = $res_h ? $res_h->{user_data} : {};
 
-	$data->{him_msg} = [];
+	$ephemeral_data->{him_msg}  = [];
+	$persistent_data->{him_msg} = [];
 	for my $msg ( $journey->messages ) {
 		if ( not $msg->{ueberschrift} ) {
 			push(
-				@{ $data->{him_msg} },
+				@{ $ephemeral_data->{him_msg} },
 				{
 					header => q{},
 					prio   => $msg->{prioritaet},
 					lead   => $msg->{text}
+				}
+			);
+			push(
+				@{ $persistent_data->{him_msg} },
+				{
+					prio => $msg->{prioritaet},
+					lead => $msg->{text}
 				}
 			);
 		}
@@ -849,7 +867,8 @@ sub update_departure_dbris {
 		'in_transit',
 		{
 			real_departure => $stop->{rt_dep},
-			data           => $json->encode($data),
+			data           => $json->encode($ephemeral_data),
+			user_data      => $json->encode($persistent_data),
 		},
 		{
 			user_id             => $uid,
@@ -939,19 +958,28 @@ sub update_arrival_dbris {
 	my $stop    = $opt{stop};
 	my $json    = JSON->new;
 
-	my $res_h = $db->select( 'in_transit', ['data'], { user_id => $uid } )
-	  ->expand->hash;
-	my $data = $res_h ? $res_h->{data} : {};
+	my $res_h = $db->select( 'in_transit', [ 'data', 'user_data' ],
+		{ user_id => $uid } )->expand->hash;
+	my $ephemeral_data  = $res_h ? $res_h->{data}      : {};
+	my $persistent_data = $res_h ? $res_h->{user_data} : {};
 
-	$data->{him_msg} = [];
+	$ephemeral_data->{him_msg}  = [];
+	$persistent_data->{him_msg} = [];
 	for my $msg ( $journey->messages ) {
 		if ( not $msg->{ueberschrift} ) {
 			push(
-				@{ $data->{him_msg} },
+				@{ $ephemeral_data->{him_msg} },
 				{
 					header => q{},
 					prio   => $msg->{prioritaet},
 					lead   => $msg->{text}
+				}
+			);
+			push(
+				@{ $persistent_data->{him_msg} },
+				{
+					prio => $msg->{prioritaet},
+					lead => $msg->{text}
 				}
 			);
 		}
@@ -991,7 +1019,8 @@ sub update_arrival_dbris {
 		{
 			real_arrival => $stop->{rt_arr},
 			route        => $json->encode( [@route] ),
-			data         => $json->encode($data),
+			data         => $json->encode($ephemeral_data),
+			user_data    => $json->encode($persistent_data),
 		},
 		{
 			user_id             => $uid,
