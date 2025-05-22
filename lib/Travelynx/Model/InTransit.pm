@@ -997,6 +997,7 @@ sub update_arrival_dbris {
 					sched_dep   => _epoch( $j_stop->sched_dep ),
 					rt_arr      => _epoch( $j_stop->rt_arr ),
 					rt_dep      => _epoch( $j_stop->rt_dep ),
+					platform    => $j_stop->platform,
 					isCancelled => $j_stop->is_cancelled,
 					arr_delay   => $j_stop->arr_delay,
 					dep_delay   => $j_stop->dep_delay,
@@ -1018,6 +1019,7 @@ sub update_arrival_dbris {
 		'in_transit',
 		{
 			real_arrival => $stop->{rt_arr},
+			arr_platform => $stop->{platform},
 			route        => $json->encode( [@route] ),
 			data         => $json->encode($ephemeral_data),
 			user_data    => $json->encode($persistent_data),
