@@ -242,13 +242,7 @@
 						<a class="tablerow action-checkout" data-station="<%= $station->[1] // $station->[0] %>">
 							<span><%= $station->[0] %></span>
 							<span>
-							% if ($station->[2]{load}{SECOND}) {
-								% my ($first, $second) = load_icon($station->[2]{load});
-								% if ($first ne 'help_outline') {
-									<i class="material-icons tiny" aria-hidden="true"><%= $first %></i>
-								% }
-								<i class="material-icons tiny" aria-hidden="true"><%= $second %></i>
-							% }
+							%= include '_show_load_icons', station => $station
 							% if ($station->[2]{isCancelled}) {
 								entfällt
 							% }
@@ -389,13 +383,7 @@
 					<a class="action-checkout tablerow" style="<%= $is_dest? 'font-weight: bold;' : '' %>" data-station="<%= $station->[1] // $station->[0] %>">
 						<span><%= $station->[0] %></span>
 						<span>
-						% if ($station->[2]{load}{SECOND}) {
-							% my ($first, $second) = load_icon($station->[2]{load});
-							% if ($first ne 'help_outline') {
-								<i class="material-icons tiny" aria-hidden="true"><%= $first %></i>
-							% }
-							<i class="material-icons tiny" aria-hidden="true"><%= $second %></i>
-						% }
+						%= include '_show_load_icons', station => $station
 						% if ($station->[2]{isCancelled}) {
 							entfällt
 						% }
