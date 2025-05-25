@@ -356,6 +356,7 @@ sub postprocess {
 	$ret->{route_after}        = \@route_after;
 	$ret->{extra_data}         = $ret->{data};
 	$ret->{comment}            = $ret->{user_data}{comment};
+	$ret->{wagongroups}        = $ret->{user_data}{wagongroups};
 
 	$ret->{platform_type} = 'Gleis';
 	if ( $ret->{train_type} =~ m{ ast | bus | ruf }ix ) {

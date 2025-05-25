@@ -197,6 +197,11 @@
 					</ul>
 				</p>
 			% }
+			% if ( $journey->{wagongroups} and @{$journey->{wagongroups}} and not stash('from_timeline')) {
+				<div class="wagons">
+					%= include '_wagons', wagongroups => $journey->{wagongroups};
+				</div>
+			% }
 		</div>
 		% if (not stash('from_timeline')) {
 			<div class="card-action">
