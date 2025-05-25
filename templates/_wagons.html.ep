@@ -1,7 +1,10 @@
 % for my $wagongroup (@{$wagongroups // []}) {
-	<%= $wagongroup->{name} %>
+	%= $wagongroup->{description} // $wagongroup->{name}
 	% my ($wagon_number) = ($wagongroup->{name} =~ m{ ^ ICE 0* (\d+) $ }x);
-	% if ($wagon_number and my $group_name = app->ice_name->{$wagon_number}) {
+	% if ($wagongroup->{designation}) {
+		„<%= $wagongroup->{designation} %>“
+	% }
+	% elsif ($wagon_number and my $group_name = app->ice_name->{$wagon_number}) {
 		„<%= $group_name %>“
 	% }
 	als <b><%= $wagongroup->{type} // $journey->{type} %> <%= $wagongroup->{no} %></b>

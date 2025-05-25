@@ -173,7 +173,7 @@
 				</div>
 			% }
 			% if (@{$journey->{messages} // []} > 0 and $journey->{messages}[0]) {
-				<div style="margin-bottom: 2ex;">
+				<div style="margin-top: 2ex;">
 					<ul>
 						% for my $message (reverse @{$journey->{messages} // []}) {
 							% if ($journey->{sched_departure}->epoch - $message->[0]->epoch < 1800) {
@@ -187,7 +187,7 @@
 				</div>
 			% }
 			% if (@{$journey->{extra_data}{him_msg} // []}) {
-				<div style="margin-bottom: 2ex;">
+				<div style="margin-top: 2ex;">
 					<ul>
 						% for my $message (@{$journey->{extra_data}{him_msg} // []}) {
 							% if (not stash('from_timeline') or $message->{prio} and $message->{prio} eq 'HOCH') {
@@ -198,13 +198,13 @@
 				</div>
 			% }
 			% if ( @{$journey->{wagongroups} // []} and not stash('from_timeline')) {
-				<div class="wagons" style="margin-bottom: 2ex;">
+				<div class="wagons" style="margin-top: 2ex;">
 					Wagen:<br/>
 					%= include '_wagons', wagongroups => $journey->{wagongroups};
 				</div>
 			% }
 			% if (not stash('from_timeline')) {
-				<div>
+				<div style="margin-top: 2ex;">
 					Zuglauf:<br/>
 					% my $before = 1;
 					% my $within = 0;
@@ -213,7 +213,7 @@
 						% if (($station->[1] and $station->[1] == $journey->{dep_eva}) or $station->[0] eq $journey->{dep_name}) {
 							% $within = 1; $at_startstop = 1;
 						% }
-						% elsif (($station->[1] and $station->[1] == $journey->{arr_eva}) or $station->[0] eq $journey->{arr_name}) {
+						% elsif ($journey->{arr_eva} and ($station->[1] and $station->[1] == $journey->{arr_eva}) or $station->[0] eq $journey->{arr_name}) {
 							% $within = 0; $at_startstop = 1;
 						% }
 						% else {

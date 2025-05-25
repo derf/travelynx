@@ -1100,7 +1100,7 @@ sub startup {
 								if (@unknown_stations) {
 									$self->app->log->warn(
 										sprintf(
-'Route of %s %s (%s -> %s) contains unknown stations: %s',
+'IRIS: Route of %s %s (%s -> %s) contains unknown stations: %s',
 											$train->type,
 											$train->train_no,
 											$train->origin,
@@ -1467,35 +1467,41 @@ sub startup {
 						my $data      = {};
 						my $user_data = {};
 
-						if ( $opt{is_departure}
+						my $wr;
+						eval {
+							$wr
+							  = Travel::Status::DE::DBRIS::Formation->new(
+								json => $wagonorder );
+						};
+
+						if (    $opt{is_departure}
+							and $wr
 							and not exists $wagonorder->{error} )
 						{
 							$data->{wagonorder_dep}   = $wagonorder;
 							$user_data->{wagongroups} = [];
-							for my $group ( @{ $wagonorder->{groups} // [] } ) {
+							for my $group ( $wr->groups ) {
 								my @wagons;
-								for my $wagon ( @{ $group->{vehicles} // [] } )
-								{
+								for my $wagon ( $group->carriages ) {
 									push(
 										@wagons,
 										{
-											id     => $wagon->{vehicleID},
-											number => $wagon
-											  ->{wagonIdentificationNumber},
-											type =>
-											  $wagon->{type}{constructionType},
+											id     => $wagon->uic_id,
+											number => $wagon->number,
+											type   => $wagon->type,
 										}
 									);
 								}
 								push(
 									@{ $user_data->{wagongroups} },
 									{
-										name => $group->{name},
-										to   => $group->{transport}{destination}
-										  {name},
-										type   => $group->{transport}{category},
-										no     => $group->{transport}{number},
-										wagons => [@wagons],
+										name        => $group->name,
+										description => $group->description,
+										designation => $group->designation,
+										to          => $group->destination,
+										type        => $group->train_type,
+										no          => $group->train_no,
+										wagons      => [@wagons],
 									}
 								);
 								if (    $group->{name}
