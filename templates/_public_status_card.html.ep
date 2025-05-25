@@ -22,9 +22,9 @@
 				% }
 			</span>
 			% if ($privacy->{comments_visible} and $journey->{comment}) {
-				<p>„<%= $journey->{comment} %>“</p>
+				<div>„<%= $journey->{comment} %>“</div>
 			% }
-			<p>
+			<div>
 				% if (not stash('from_profile') and not stash('from_timeline')) {
 					<div class="center-align">
 						%= include '_format_train', journey => $journey
@@ -63,8 +63,8 @@
 				<div class="progress" style="height: 1ex;">
 					<div class="determinate" style="width: <%= sprintf('%.2f', 100 * ($journey->{journey_completion} // 0)); %>%;"></div>
 				</div>
-			</p>
-			<p>
+			</div>
+			<div>
 				<div style="float: left;">
 					<b><%= $journey->{dep_name} %></b><br/>
 					<b><%= $journey->{real_departure}->strftime('%H:%M') %></b>
@@ -164,16 +164,16 @@
 						% }
 					% }
 				</div>
-			</p>
+			</div>
 			% if ($journey->{extra_data}{cancelled_destination}) {
-				<p style="margin-bottom: 2ex;">
+				<div style="margin-bottom: 2ex;">
 					<i class="material-icons tiny" aria-hidden="true">error</i>
 					Der Halt an der Zielstation <b><%=
 					$journey->{extra_data}{cancelled_destination} %></b> entfällt.
-				</p>
+				</div>
 			% }
 			% if (@{$journey->{messages} // []} > 0 and $journey->{messages}[0]) {
-				<p style="margin-bottom: 2ex;">
+				<div style="margin-bottom: 2ex;">
 					<ul>
 						% for my $message (reverse @{$journey->{messages} // []}) {
 							% if ($journey->{sched_departure}->epoch - $message->[0]->epoch < 1800) {
@@ -184,10 +184,10 @@
 							<li> <i class="material-icons tiny">info</i> <%= $message->[0]->strftime('%H:%M') %>: <%= $message->[1] %></li>
 						% }
 					</ul>
-				</p>
+				</div>
 			% }
 			% if (@{$journey->{extra_data}{him_msg} // []}) {
-				<p style="margin-bottom: 2ex;">
+				<div style="margin-bottom: 2ex;">
 					<ul>
 						% for my $message (@{$journey->{extra_data}{him_msg} // []}) {
 							% if (not stash('from_timeline') or $message->{prio} and $message->{prio} eq 'HOCH') {
@@ -195,7 +195,7 @@
 							% }
 						% }
 					</ul>
-				</p>
+				</div>
 			% }
 			% if ( $journey->{wagongroups} and @{$journey->{wagongroups}} and not stash('from_timeline')) {
 				<div class="wagons">
@@ -236,7 +236,7 @@
 			% else {
 				<span class="card-title"><a href="/p/<%= $name %>"><%= $name %></a> ist gerade nicht eingecheckt</span>
 			% }
-			<p>
+			<div>
 			% if ($journey->{arr_name}) {
 				Zuletzt gesehen
 				% if ($journey->{real_arrival}->epoch) {
@@ -248,7 +248,7 @@
 					in <b><%= $journey->{arr_name} %></b>
 				% }
 			% }
-			</p>
+			</div>
 		</div>
 	</div>
 % }
