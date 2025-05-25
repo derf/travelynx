@@ -392,7 +392,7 @@ sub postprocess {
 		  = $dep_info->{rt_arr}->epoch - $epoch;
 	}
 
-	for my $station (@route_after) {
+	for my $station (@route) {
 		if ( @{$station} > 1 ) {
 
 			# Note: $station->[2]{sched_arr} may already have been

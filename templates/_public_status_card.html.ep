@@ -197,13 +197,62 @@
 					</ul>
 				</div>
 			% }
-			% if ( $journey->{wagongroups} and @{$journey->{wagongroups}} and not stash('from_timeline')) {
-				<div class="wagons">
+			% if ( @{$journey->{wagongroups} // []} and not stash('from_timeline')) {
+				<div class="wagons" style="margin-bottom: 2ex;">
+					Wagen:<br/>
 					%= include '_wagons', wagongroups => $journey->{wagongroups};
 				</div>
 			% }
+			% if (not stash('from_timeline')) {
+				<div>
+					Zuglauf:<br/>
+					% my $before = 1;
+					% my $within = 0;
+					% my $at_startstop = 0;
+					% for my $station (@{$journey->{route}}) {
+						% if (($station->[1] and $station->[1] == $journey->{dep_eva}) or $station->[0] eq $journey->{dep_name}) {
+							% $within = 1; $at_startstop = 1;
+						% }
+						% elsif (($station->[1] and $station->[1] == $journey->{arr_eva}) or $station->[0] eq $journey->{arr_name}) {
+							% $within = 0; $at_startstop = 1;
+						% }
+						% else {
+							% $at_startstop = 0;
+						% }
+						<span style="color: #808080;">
+							% if ($before and $station->[2]{sched_dep}) {
+								%= $station->[2]{sched_dep}->strftime('%H:%M')
+							% }
+							% elsif (not $before and $station->[2]{sched_arr}) {
+								%= $station->[2]{sched_arr}->strftime('%H:%M')
+							% }
+						</span>
+						% if ($at_startstop or $within) {
+							%= $station->[0]
+						% }
+						% else {
+							<span style="color: #808080;"><%= $station->[0] %></span>
+						% }
+						<span>
+							%= include '_show_load_icons', station => $station
+						</span>
+						<span style="color: #808080;">
+							% if ($before and $station->[2]{rt_dep} and $station->[2]{dep_delay}) {
+								%= sprintf('%+d', $station->[2]{dep_delay} / 60)
+							% }
+							% elsif (not $before and $station->[2]{rt_arr} and $station->[2]{arr_delay}) {
+								%= sprintf('%+d', $station->[2]{arr_delay} / 60)
+							% }
+						</span>
+						% if (($station->[1] and $station->[1] == $journey->{dep_eva}) or $station->[0] eq $journey->{dep_name}) {
+							% $before = 0;
+						% }
+						<br/>
+					% }
+				</div>
+			% }
 		</div>
-		% if (not stash('from_timeline')) {
+		% if (0 and not stash('from_timeline')) {
 			<div class="card-action">
 				% if ($journey->{traewelling_url}) {
 					<a style="margin-right: 0;" href="<%= $journey->{traewelling_url} %>"><i class="material-icons left">timeline</i> Träwelling</a>
