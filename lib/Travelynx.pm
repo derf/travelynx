@@ -1496,6 +1496,7 @@ sub startup {
 									@{ $user_data->{wagongroups} },
 									{
 										name        => $group->name,
+										desc        => $group->desc_short,
 										description => $group->description,
 										designation => $group->designation,
 										to          => $group->destination,

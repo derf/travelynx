@@ -197,11 +197,28 @@
 					</ul>
 				</div>
 			% }
-			% if ( @{$journey->{wagongroups} // []} and not stash('from_timeline')) {
-				<div class="wagons" style="margin-top: 2ex;">
-					Wagen:<br/>
-					%= include '_wagons', wagongroups => $journey->{wagongroups};
-				</div>
+			% if ( @{$journey->{wagongroups} // []} ) {
+				% if (stash('from_timeline')) {
+					<div class="wagons" style="margin-top: 2ex;">
+						% for my $wagongroup (@{$journey->{wagongroups}}) {
+							%= $wagongroup->{desc} // $wagongroup->{name}
+							% if ($wagongroup->{designation}) {
+								„<%= $wagongroup->{designation} %>“
+							% }
+							— <%= $wagongroup->{type} // $journey->{type} %> <%= $wagongroup->{no} %>
+							% if ($wagongroup->{to}) {
+								→ <%= $wagongroup->{to} %>
+							% }
+							<br/>
+						% }
+					</div>
+				% }
+				% else {
+					<div class="wagons" style="margin-top: 2ex;">
+						Wagen:<br/>
+						%= include '_wagons', wagongroups => $journey->{wagongroups};
+					</div>
+				% }
 			% }
 			% if (not stash('from_timeline')) {
 				<div style="margin-top: 2ex;">
@@ -213,7 +230,7 @@
 						% if (($station->[1] and $station->[1] == $journey->{dep_eva}) or $station->[0] eq $journey->{dep_name}) {
 							% $within = 1; $at_startstop = 1;
 						% }
-						% elsif ($journey->{arr_eva} and ($station->[1] and $station->[1] == $journey->{arr_eva}) or $station->[0] eq $journey->{arr_name}) {
+						% elsif ($journey->{arr_eva} and (($station->[1] and $station->[1] == $journey->{arr_eva}) or $station->[0] eq $journey->{arr_name})) {
 							% $within = 0; $at_startstop = 1;
 						% }
 						% else {
