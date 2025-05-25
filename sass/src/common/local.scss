@@ -275,6 +275,11 @@ ul.route-history > li {
 	}
 }
 
+.status-card-progress-annot {
+	padding-bottom: 2ex;
+	border-bottom: 2px dashed #808080;
+}
+
 
 @media screen and (max-width: 600px) {
 	.collection.departures li {

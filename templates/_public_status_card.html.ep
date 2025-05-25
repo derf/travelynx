@@ -64,7 +64,7 @@
 					<div class="determinate" style="width: <%= sprintf('%.2f', 100 * ($journey->{journey_completion} // 0)); %>%;"></div>
 				</div>
 			</div>
-			<div>
+			<div class="status-card-progress-annot">
 				<div style="float: left;">
 					<b><%= $journey->{dep_name} %></b><br/>
 					<b><%= $journey->{real_departure}->strftime('%H:%M') %></b>
