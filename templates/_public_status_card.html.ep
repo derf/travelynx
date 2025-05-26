@@ -205,7 +205,6 @@
 							% if ($wagongroup->{designation}) {
 								„<%= $wagongroup->{designation} %>“
 							% }
-							— <%= $wagongroup->{type} // $journey->{type} %> <%= $wagongroup->{no} %>
 							% if ($wagongroup->{to}) {
 								→ <%= $wagongroup->{to} %>
 							% }
