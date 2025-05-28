@@ -104,6 +104,7 @@ sub add {
 	my $persistent_data;
 
 	my $json = JSON->new;
+	my $now  = DateTime->now( time_zone => 'Europe/Berlin' );
 
 	if ($train) {
 
@@ -115,16 +116,16 @@ sub add {
 				cancelled => $train->departure_is_cancelled ? 1
 				: 0,
 				checkin_station_id => $checkin_station_id,
-				checkin_time => DateTime->now( time_zone => 'Europe/Berlin' ),
-				dep_platform => $train->platform,
-				train_type   => $train->type,
-				train_line   => $train->line_no,
-				train_no     => $train->train_no,
-				train_id     => $train->train_id,
-				sched_departure => $train->sched_departure,
-				real_departure  => $train->departure,
-				route           => $json->encode($route),
-				messages        => $json->encode(
+				checkin_time       => $now,
+				dep_platform       => $train->platform,
+				train_type         => $train->type,
+				train_line         => $train->line_no,
+				train_no           => $train->train_no,
+				train_id           => $train->train_id,
+				sched_departure    => $train->sched_departure,
+				real_departure     => $train->departure,
+				route              => $json->encode($route),
+				messages           => $json->encode(
 					[ map { [ $_->[0]->epoch, $_->[1] ] } $train->messages ]
 				),
 				data => JSON->new->encode(
@@ -175,16 +176,16 @@ sub add {
 				? 1
 				: 0,
 				checkin_station_id => $stop->loc->eva,
-				checkin_time => DateTime->now( time_zone => 'Europe/Berlin' ),
-				dep_platform => $stop->{platform},
-				train_type   => $product->type // q{},
-				train_line   => $product->line_no,
-				train_no     => $product->number // q{},
-				train_id     => $journey->id,
-				sched_departure => $stop->{sched_dep},
-				real_departure  => $stop->{rt_dep} // $stop->{sched_dep},
-				route           => $json->encode( \@route ),
-				data            => JSON->new->encode(
+				checkin_time       => $now,
+				dep_platform       => $stop->{platform},
+				train_type         => $product->type // q{},
+				train_line         => $product->line_no,
+				train_no           => $product->number // q{},
+				train_id           => $journey->id,
+				sched_departure    => $stop->{sched_dep},
+				real_departure     => $stop->{rt_dep} // $stop->{sched_dep},
+				route              => $json->encode( \@route ),
+				data               => JSON->new->encode(
 					{
 						rt => $stop->{rt_dep} ? 1 : 0,
 						%{ $data // {} }
@@ -260,16 +261,16 @@ sub add {
 				? 1
 				: 0,
 				checkin_station_id => $stop->eva,
-				checkin_time => DateTime->now( time_zone => 'Europe/Berlin' ),
-				dep_platform => $stop->platform,
-				train_type   => $journey->type // q{},
-				train_line   => $line,
-				train_no     => $number,
-				train_id     => $data->{trip_id},
-				sched_departure => $stop->sched_dep,
-				real_departure  => $stop->rt_dep // $stop->sched_dep,
-				route           => $json->encode( \@route ),
-				data            => JSON->new->encode(
+				checkin_time       => $now,
+				dep_platform       => $stop->platform,
+				train_type         => $journey->type // q{},
+				train_line         => $line,
+				train_no           => $number,
+				train_id           => $data->{trip_id},
+				sched_departure    => $stop->sched_dep,
+				real_departure     => $stop->rt_dep // $stop->sched_dep,
+				route              => $json->encode( \@route ),
+				data               => JSON->new->encode(
 					{
 						rt => $stop->{rt_dep} ? 1 : 0,
 						%{ $data // {} }
