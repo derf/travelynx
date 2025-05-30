@@ -1478,7 +1478,17 @@ sub startup {
 							and $wr
 							and not exists $wagonorder->{error} )
 						{
+							my $dt
+							  = $opt{datetime}->clone->set_time_zone('UTC');
 							$data->{wagonorder_dep}   = $wagonorder;
+							$data->{wagonorder_param} = {
+								time      => $dt->rfc3339 =~ s{(?=Z)}{.000}r,
+								number    => $opt{train_no},
+								evaNumber => $opt{eva},
+								administrationId => 80,
+								date             => $dt->strftime('%Y-%m-%d'),
+								category         => $opt{train_type},
+							};
 							$user_data->{wagongroups} = [];
 							for my $group ( $wr->groups ) {
 								my @wagons;

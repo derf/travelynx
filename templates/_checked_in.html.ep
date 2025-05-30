@@ -68,7 +68,7 @@
 					% }
 					% if (my $wr = $journey->{wagonorder}) {
 						<br/>
-						<!-- <a href="https://dbf.finalrewind.org/carriage-formation?<%= $journey->{train_no} %>/<%= $journey->{sched_departure}->strftime('%Y%m%d%H%M') %>?e=<%= $journey->{dep_direction} // q{} %>"> -->
+						<a href="https://dbf.finalrewind.org/carriage-formation?<%= join('&', map { $_ . '=' . $journey->{extra_data}{wagonorder_param}{$_} } sort keys %{$journey->{extra_data}{wagonorder_param}}) %>&amp;e=<%= $journey->{dep_direction} // q{} %>">
 							% my $direction = $wr->direction == 100 ? '→' : '←';
 							% my $rev = 0;
 							% if ($journey->{dep_direction}) {
@@ -111,7 +111,7 @@
 								% }
 							% }
 							%= $direction
-						<!-- </a> -->
+						</a>
 					% }
 				</div>
 				<div class="progress" style="height: 1ex;">
