@@ -321,7 +321,7 @@
 	% if (@{stash('timeline') // []}) {
 		%= include '_timeline_link', timeline => stash('timeline'), from_checkin => 1
 	% }
-	% if ($journey->{arr_name}) {
+	% if ($journey->{arr_name} and @{$journey->{extra_data}{him_msg} // []}) {
 		<div class="card" style="margin-top: <%= scalar @{stash('timeline') // []} ? '1.5rem' : '3em' %>;">
 			<div class="card-content">
 				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
@@ -351,6 +351,8 @@
 				% }
 			</div>
 		</div>
+	% }
+	% if ($journey->{arr_name}) {
 		<div class="card" style="margin-top: 3em;">
 			<div class="card-content">
 				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
