@@ -3,7 +3,7 @@
 		<a href="https://finalrewind.org/projects/travelynx">travelynx</a> v<%= stash('version') // '???' %><br/>
 		Entwickelt von <a href="https://finalrewind.org">derf</a>
 		und <a href="https://github.com/derf/travelynx/graphs/contributors">weiteren</a><br/>
-		<a href="<%= app->config->{ref}{source} // 'https://github.com/derf/travelynx' %>">Quelltext</a> lizensiert unter AGPL v3<br/><br/>
+		<a href="<%= app->config->{ref}{source} // 'https://git.finalrewind.org/travelynx' %>">Quelltext</a> lizensiert unter AGPL v3<br/><br/>
 		Backends:
 		<a href="https://finalrewind.org/projects/Travel-Status-DE-DBRIS/">Travel::Status::DE::DBRIS</a>
 		v<%= $Travel::Status::DE::DBRIS::VERSION %>,
