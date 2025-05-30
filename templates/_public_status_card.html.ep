@@ -223,7 +223,7 @@
 			% }
 			% if (not stash('from_timeline')) {
 				<div style="margin-top: 2ex;">
-					Zuglauf:<br/>
+					Route:<br/>
 					% my $before = 1;
 					% my $within = 0;
 					% my $at_startstop = 0;
