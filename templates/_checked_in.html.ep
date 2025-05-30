@@ -350,27 +350,6 @@
 					</p>
 				% }
 			</div>
-			<div class="card-action">
-				% my $url = 'https://dbf.finalrewind.org/z/';
-				% if ($journey->{is_dbris}) {
-					% $url .= $journey->{train_id} =~ s{#}{%23}gr . '?dbris=' . $journey->{backend_name};
-					<a style="margin-right: 0;" href="<%= $url %>"><i class="material-icons left" aria-hidden="true">timeline</i> Details</a>
-				% }
-				% elsif ($journey->{is_hafas}) {
-					% $url .= $journey->{train_id} =~ s{#}{%23}gr . '?hafas=' . $journey->{backend_name};
-					<a style="margin-right: 0;" href="<%= $url %>"><i class="material-icons left" aria-hidden="true">timeline</i> Details</a>
-				% }
-				% elsif ($journey->{extra_data}{trip_id} and not $journey->{is_dbris}) {
-					% $url .= $journey->{extra_data}{trip_id} =~ s{#}{%23}gr;
-					<a style="margin-right: 0;" href="<%= $url %>"><i class="material-icons left" aria-hidden="true">timeline</i> Zuglauf</a>
-				% }
-				% else {
-					&nbsp;
-				% }
-				% if ($journey->{extra_data}{trip_id}) {
-					<a class="right" style="margin-right: 0;" href="https://dbf.finalrewind.org/map/<%= $journey->{extra_data}{trip_id} =~ s{#}{%23}gr %>/<%= $journey->{train_line} || 0 %>?<%= $journey->{is_hafas} ? 'hafas' : 'dbris' %>=<%= $journey->{backend_name} // 'ÖBB' %>&amp;from=<%= $journey->{dep_name} %>&amp;to=<%= $journey->{arr_name} %>"><i class="material-icons left" aria-hidden="true">map</i> Karte</a>
-				% }
-			</div>
 		</div>
 		<div class="card" style="margin-top: 3em;">
 			<div class="card-content">
