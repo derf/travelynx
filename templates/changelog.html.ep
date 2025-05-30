@@ -2,6 +2,41 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		2.12
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left" aria-label="Neues Feature">add</i>
+			Kartografische Visualisierung der Route bei eigenen Checkins und auf
+			der Statusseite sowie Angaben zu Meldungen, Rollmaterial, Route und
+			Auslastung auf der Statusseite. Feinheiten wie die Markierung der
+			geschätzten aktuellen Zugposition oder eine regelmäßige
+			Aktualisierung ohne Zurücksetzen der Kartenansicht folgen später.
+			Die Kartenlinks zu dbf.finalrewind.org entfallen.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Ankündigung">announcement</i>
+			Das IRIS-TTS-Backend der Deutschen Bahn wird wegen zunehmend
+			schlechter Datenanreicherunngsmöglichkeiten nicht mehr
+			weiterentwickelt. Bei Checkins per IRIS-TTS stehen regelmäßig keine
+			Echtzeitdaten und insbesondere bei Nebenbahnen auch keine
+			Kartendaten zur Verfügung. In diesem Fall fehlt auch die
+			ersatzwiese Visualisierung der Luftlinie zwischen den
+			Unterwegshalten. Dies betrifft auch die Visualisierung in der
+			Fahrtenkarte.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Ankündigung">announcement</i>
+			Derzeit besteht wegen inkompatibler Backends keine
+			Synchronisierungsmöglichkeit zwischen Träwelling (transitous MOTIS)
+			und travelynx (DB IRIS-TTS / DB HAFAS / bahn.de).
+			MOTIS-Unterstützung in travelynx ist in Arbeit.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		2.11
 	</div>
 	<div class="col s12 m11 l11">
