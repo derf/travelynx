@@ -2410,6 +2410,9 @@ sub startup {
 				  . ( $to_index - $from_index );
 				$seen{$key} = 1;
 
+				if ( $from_index > $to_index ) {
+					( $to_index, $from_index ) = ( $from_index, $to_index );
+				}
 				@polyline = @polyline[ $from_index .. $to_index ];
 				my @polyline_coords;
 				for my $coord (@polyline) {
