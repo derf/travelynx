@@ -324,6 +324,7 @@
 	% if ($journey->{arr_name}) {
 		<div class="card" style="margin-top: <%= scalar @{stash('timeline') // []} ? '1.5rem' : '3em' %>;">
 			<div class="card-content">
+				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 				<span class="card-title">Meldungen</span>
 				% if (@{$journey->{extra_data}{him_msg} // []}) {
 					<p style="margin-bottom: 2ex;">
@@ -371,8 +372,15 @@
 				% }
 			</div>
 		</div>
-	% }
-	% if ($journey->{arr_name}) {
+		<div class="card" style="margin-top: 3em;">
+			<div class="card-content">
+				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
+				<span class="card-title">Karte</span>
+				<div id="map" style="height: 70vh;">
+				</div>
+				%= include '_map', with_map_header => 0, station_coordinates => stash('station_coordinates'), polyline_groups => stash('polyline_groups')
+			</div>
+		</div>
 		<div class="card" style="margin-top: 3em;">
 			<div class="card-content">
 				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>

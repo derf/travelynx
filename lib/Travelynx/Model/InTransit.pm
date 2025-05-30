@@ -12,11 +12,12 @@ use DateTime;
 use JSON;
 
 my %visibility_itoa = (
-	100 => 'public',
-	80  => 'travelynx',
-	60  => 'followers',
-	30  => 'unlisted',
-	10  => 'private',
+	100     => 'public',
+	80      => 'travelynx',
+	60      => 'followers',
+	30      => 'unlisted',
+	10      => 'private',
+	default => 'default',
 );
 
 my %visibility_atoi = (
@@ -360,16 +361,14 @@ sub postprocess {
 	$ret->{wagongroups}        = $ret->{user_data}{wagongroups};
 
 	$ret->{platform_type} = 'Gleis';
-	if ( $ret->{train_type} =~ m{ ast | bus | ruf }ix ) {
+	if ( $ret->{train_type} and $ret->{train_type} =~ m{ ast | bus | ruf }ix ) {
 		$ret->{platform_type} = 'Steig';
 	}
 
 	$ret->{visibility_str}
-	  = $ret->{visibility}
-	  ? $visibility_itoa{ $ret->{visibility} }
-	  : 'default';
+	  = $visibility_itoa{ $ret->{visibility} // 'default' };
 	$ret->{effective_visibility_str}
-	  = $visibility_itoa{ $ret->{effective_visibility} };
+	  = $visibility_itoa{ $ret->{effective_visibility} // 'default' };
 
 	my @parsed_messages;
 	for my $message ( @{ $ret->{messages} // [] } ) {
@@ -461,7 +460,7 @@ sub get {
 
 	my $table = 'in_transit';
 
-	if ( $opt{with_timestamps} ) {
+	if ( $opt{with_timestamps} or $opt{with_polyline} ) {
 		$table = 'in_transit_str';
 	}
 
@@ -475,13 +474,16 @@ sub get {
 		$ret = $res->hash;
 	}
 
+	if ( $opt{with_polyline} and $ret ) {
+		$ret->{dep_latlon} = [ $ret->{dep_lat}, $ret->{dep_lon} ];
+		$ret->{arr_latlon} = [ $ret->{arr_lat}, $ret->{arr_lon} ];
+	}
+
 	if ( $opt{with_visibility} and $ret ) {
 		$ret->{visibility_str}
-		  = $ret->{visibility}
-		  ? $visibility_itoa{ $ret->{visibility} }
-		  : 'default';
+		  = $visibility_itoa{ $ret->{visibility} // 'default' };
 		$ret->{effective_visibility_str}
-		  = $visibility_itoa{ $ret->{effective_visibility} };
+		  = $visibility_itoa{ $ret->{effective_visibility} // 'default' };
 	}
 
 	if ( $opt{postprocess} and $ret ) {

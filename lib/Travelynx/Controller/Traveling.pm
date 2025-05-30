@@ -353,6 +353,9 @@ sub homepage {
 		$self->stash( timeline => [@timeline] );
 		my @recent_targets;
 		if ( $status->{checked_in} ) {
+			my $map_data = $self->journeys_to_map_data(
+				journeys => [$status],
+			);
 			my $journey_visibility
 			  = $self->compute_effective_visibility(
 				$user->{default_visibility_str},
@@ -371,6 +374,8 @@ sub homepage {
 							journey_visibility => $journey_visibility,
 							connections_iris   => $connections_iris,
 							connections_hafas  => $connections_hafas,
+							with_map           => 1,
+							%{$map_data},
 						);
 						$self->users->mark_seen( uid => $uid );
 					}
@@ -381,6 +386,8 @@ sub homepage {
 							user               => $user,
 							user_status        => $status,
 							journey_visibility => $journey_visibility,
+							with_map           => 1,
+							%{$map_data},
 						);
 						$self->users->mark_seen( uid => $uid );
 					}
@@ -393,6 +400,8 @@ sub homepage {
 					user               => $user,
 					user_status        => $status,
 					journey_visibility => $journey_visibility,
+					with_map           => 1,
+					%{$map_data},
 				);
 				$self->users->mark_seen( uid => $uid );
 				return;
@@ -431,6 +440,9 @@ sub status_card {
 	$self->stash( timeline => [@timeline] );
 
 	if ( $status->{checked_in} ) {
+		my $map_data = $self->journeys_to_map_data(
+			journeys => [$status],
+		);
 		my $journey_visibility
 		  = $self->compute_effective_visibility(
 			$self->current_user->{default_visibility_str},
@@ -448,6 +460,7 @@ sub status_card {
 						journey_visibility => $journey_visibility,
 						connections_iris   => $connections_iris,
 						connections_hafas  => $connections_hafas,
+						%{$map_data},
 					);
 				}
 			)->catch(
@@ -456,6 +469,7 @@ sub status_card {
 						'_checked_in',
 						journey            => $status,
 						journey_visibility => $journey_visibility,
+						%{$map_data},
 					);
 				}
 			)->wait;
@@ -465,6 +479,7 @@ sub status_card {
 			'_checked_in',
 			journey            => $status,
 			journey_visibility => $journey_visibility,
+			%{$map_data},
 		);
 	}
 	elsif ( $status->{cancellation} ) {
