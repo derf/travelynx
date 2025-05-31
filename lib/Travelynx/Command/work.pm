@@ -110,7 +110,19 @@ sub run {
 								$train_id, $found_dep->eva );
 						}
 
-						if ( $found_arr and $found_arr->rt_arr ) {
+						if ( $found_arr and $found_arr->is_cancelled ) {
+
+							# check out (adds a cancelled journey and resets journey state
+							# to destination selection)
+							$self->app->checkout_p(
+								station => $arr,
+								force   => 0,
+								dep_eva => $dep,
+								arr_eva => $arr,
+								uid     => $uid
+							)->wait;
+						}
+						elsif ( $found_arr and $found_arr->rt_arr ) {
 							$self->app->in_transit->update_arrival_dbris(
 								uid      => $uid,
 								journey  => $journey,
