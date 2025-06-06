@@ -1,5 +1,5 @@
 % for my $wagongroup (@{$wagongroups // []}) {
-	%= $wagongroup->{description} // $wagongroup->{name}
+	%= $wagongroup->{desc} // $wagongroup->{name}
 	% my ($wagon_number) = ($wagongroup->{name} =~ m{ ^ ICE 0* (\d+) $ }x);
 	% if ($wagongroup->{designation}) {
 		„<%= $wagongroup->{designation} %>“
