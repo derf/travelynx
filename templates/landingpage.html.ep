@@ -87,7 +87,7 @@
 						<p>
 							Das aktuell aktive IRIS-Backend wird nicht mehr weiterentwickelt und voraussichtlich bald von der Deutschen Bahn abgeschaltet.
 							Schon jetzt ist die Datenqualität wegen zunehmend schlechter Datenaufbereitungsmöglichkeiten oft unzureichend.
-							Das bahn.de-Backend ist fast jeder Hinsicht besser geeignet; lediglich bei Verspätungs- und Servicemeldungen ist es geringfügig weniger detailliert.
+							Das bahn.de-Backend ist in fast jeder Hinsicht besser geeignet; lediglich bei Verspätungs- und Servicemeldungen ist es geringfügig weniger detailliert und Checkin-Vorschläge werden derzeit nicht unterstützt.
 						</p>
 					</div>
 					<div class="card-action">
