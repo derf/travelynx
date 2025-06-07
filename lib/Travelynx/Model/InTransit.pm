@@ -1,6 +1,6 @@
 package Travelynx::Model::InTransit;
 
-# Copyright (C) 2020-2023 Birte Kristina Friesel
+# Copyright (C) 2020-2025 Birte Kristina Friesel
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -842,6 +842,10 @@ sub update_departure_dbris {
 	my $ephemeral_data  = $res_h ? $res_h->{data}      : {};
 	my $persistent_data = $res_h ? $res_h->{user_data} : {};
 
+	if ( $stop->{rt_dep} ) {
+		$ephemeral_data->{rt} = 1;
+	}
+
 	$ephemeral_data->{him_msg}  = [];
 	$persistent_data->{him_msg} = [];
 	for my $msg ( $journey->messages ) {
@@ -966,6 +970,10 @@ sub update_arrival_dbris {
 		{ user_id => $uid } )->expand->hash;
 	my $ephemeral_data  = $res_h ? $res_h->{data}      : {};
 	my $persistent_data = $res_h ? $res_h->{user_data} : {};
+
+	if ( $stop->{rt_arr} ) {
+		$ephemeral_data->{rt} = 1;
+	}
 
 	$ephemeral_data->{him_msg}  = [];
 	$persistent_data->{him_msg} = [];
