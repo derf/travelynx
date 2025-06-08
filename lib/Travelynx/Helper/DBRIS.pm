@@ -97,7 +97,16 @@ sub get_journey_p {
 	my $now     = DateTime->now( time_zone => 'Europe/Berlin' );
 
 	my $agent = $self->{user_agent};
-	if ( my $proxy = $self->{service_config}{'bahn.de'}{proxy} ) {
+	my $proxy;
+	if ( my @proxies = @{ $self->{service_config}{'bahn.de'}{proxies} // [] } )
+	{
+		$proxy = $proxies[ int( rand( scalar @proxies ) ) ];
+	}
+	elsif ( my $p = $self->{service_config}{'bahn.de'}{proxy} ) {
+		$proxy = $p;
+	}
+
+	if ($proxy) {
 		$agent = Mojo::UserAgent->new;
 		$agent->proxy->http($proxy);
 		$agent->proxy->https($proxy);
