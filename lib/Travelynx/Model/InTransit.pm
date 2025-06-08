@@ -897,12 +897,20 @@ sub update_departure_hafas {
 	my $stop    = $opt{stop};
 	my $json    = JSON->new;
 
+	my $res_h = $db->select( 'in_transit', ['data'], { user_id => $uid } )
+	  ->expand->hash;
+	my $ephemeral_data = $res_h ? $res_h->{data} : {};
+	if ( $stop->{rt_dep} ) {
+		$ephemeral_data->{rt} = 1;
+	}
+
 	# selecting on user_id and train_no avoids a race condition if a user checks
 	# into a new train while we are fetching data for their previous journey. In
 	# this case, the new train would receive data from the previous journey.
 	$db->update(
 		'in_transit',
 		{
+			data           => $json->encode($ephemeral_data),
 			real_departure => $stop->{rt_dep},
 		},
 		{
@@ -1055,6 +1063,16 @@ sub update_arrival_hafas {
 	my $stop    = $opt{stop};
 	my $json    = JSON->new;
 
+	my $res_h
+	  = $db->select( 'in_transit', [ 'data', 'route' ], { user_id => $uid } )
+	  ->expand->hash;
+	my $ephemeral_data = $res_h ? $res_h->{data}  : {};
+	my $old_route      = $res_h ? $res_h->{route} : [];
+
+	if ( $stop->{rt_arr} ) {
+		$ephemeral_data->{rt} = 1;
+	}
+
 	my @route;
 	for my $j_stop ( $journey->route ) {
 		push(
@@ -1080,10 +1098,6 @@ sub update_arrival_hafas {
 		}
 	}
 
-	my $res_h = $db->select( 'in_transit', ['route'], { user_id => $uid } )
-	  ->expand->hash;
-	my $old_route = $res_h ? $res_h->{route} : [];
-
 	for my $i ( 0 .. $#route ) {
 		if ( $old_route->[$i] and $old_route->[$i][1] == $route[$i][1] ) {
 			for my $k (qw(rt_arr rt_dep arr_delay dep_delay)) {
@@ -1098,6 +1112,7 @@ sub update_arrival_hafas {
 	$db->update(
 		'in_transit',
 		{
+			data         => $json->encode($ephemeral_data),
 			real_arrival => $stop->{rt_arr},
 			route        => $json->encode( [@route] ),
 		},
