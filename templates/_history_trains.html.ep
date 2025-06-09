@@ -16,7 +16,7 @@
 			% }
 			<li class="collection-item">
 				<a href="<%= $detail_link %>">
-					<span class="dep-line <%= $travel->{type} // q{} %>">
+					<span class="dep-line <%= $travel->{type} // q{} %>" style="color: #<%= $travel->{user_data}{train_text_color} %>; background-color: #<%= $travel->{user_data}{train_color} %>;">
 						% if (not $travel->{is_motis}) {
 							<%= $travel->{type} %>
 						% }
