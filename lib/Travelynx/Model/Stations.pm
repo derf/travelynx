@@ -217,7 +217,7 @@ sub add_or_update {
 
 		$stop->{eva} = $s->hash->{eva};
 
-		return $s->hash;
+		return;
 	}
 
 	my $loc = $stop->loc;
@@ -255,6 +255,8 @@ sub add_or_update {
 			archived => 0
 		}
 	);
+
+	return;
 }
 
 sub add_meta {
@@ -347,7 +349,7 @@ sub get_by_eva {
 	)->hash;
 }
 
-# Fast
+# Slow
 sub get_by_external_id {
 	my ( $self, %opt ) = @_;
 
