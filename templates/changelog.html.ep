@@ -10,6 +10,8 @@
 			Experimentelle Unterstützung für Checkins via MOTIS-Backends
 			(derzeit transitous und RNV). Vielen Dank an <a href="https://github.com/networkException">networkException</a>
 			für die Implementierung der API und Einbindung in travelynx.
+			Träwelling-Synchronisierung ist noch nicht wiederhergestellt.
+			Time zones are currently somewhat wibbly-wobbly timey-wimey.
 		</p>
 	</div>
 </div>
