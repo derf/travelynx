@@ -82,6 +82,12 @@ Please open an issue on <https://github.com/derf/travelynx/issues> or send a
 mail to derf+travelynx@finalrewind.org if there is anything missing or
 ambiguous in this setup manual.
 
+Note that Deutsche Bahn have put parts of their API behind an IP reputation
+filter. In general, checkins with the bahn.de backend will only be possible if
+travelynx is accessing it from a residential (non-server) IP range.  See the
+dbris bahn.de proxy / proxies setting in `example/travelynx.conf` for
+workarounds.
+
 Updating
 ---
 
