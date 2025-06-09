@@ -359,9 +359,12 @@ sub homepage {
 		$self->stash( timeline => [@timeline] );
 		my @recent_targets;
 		if ( $status->{checked_in} ) {
-			my $map_data = $self->journeys_to_map_data(
-				journeys => [$status],
-			);
+			my $map_data = {};
+			if ( $status->{arr_name} ) {
+				$map_data = $self->journeys_to_map_data(
+					journeys => [$status],
+				);
+			}
 			my $journey_visibility
 			  = $self->compute_effective_visibility(
 				$user->{default_visibility_str},
@@ -446,9 +449,12 @@ sub status_card {
 	$self->stash( timeline => [@timeline] );
 
 	if ( $status->{checked_in} ) {
-		my $map_data = $self->journeys_to_map_data(
-			journeys => [$status],
-		);
+		my $map_data = {};
+		if ( $status->{arr_name} ) {
+			$map_data = $self->journeys_to_map_data(
+				journeys => [$status],
+			);
+		}
 		my $journey_visibility
 		  = $self->compute_effective_visibility(
 			$self->current_user->{default_visibility_str},
