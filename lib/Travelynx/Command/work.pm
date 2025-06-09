@@ -197,13 +197,15 @@ sub run {
 
 						for my $stopover ( $journey->stopovers ) {
 							if ( not defined $stopover->stop->{eva} ) {
-								my $stop
-								  = $self->app->stations->get_by_external_id(
-									external_id => $stopover->stop->id,
-									motis       => $entry->{backend_name},
-								  );
 
-								$stopover->stop->{eva} = $stop->{eva};
+								# Looks like MOTIS / transitous station IDs can change after the fact.
+								# So let's be safe rather than sorry, even if this causes way too many calls to the slow path
+								# (Stations::get_by_external_id uses string lookups).
+								# This function call implicitly sets $stopover->stop->{eva} for MOTIS backends.
+								$self->app->stations->add_or_update(
+									stop  => $stopover->stop,
+									motis => $entry->{backend_name},
+								);
 							}
 						}
 

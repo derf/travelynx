@@ -120,6 +120,7 @@ sub get_backends {
 	return @ret;
 }
 
+# Slow for MOTIS backends
 sub add_or_update {
 	my ( $self, %opt ) = @_;
 	my $stop = $opt{stop};
@@ -188,8 +189,8 @@ sub add_or_update {
 				}
 			);
 
+			# MOTIS backends do not provide a numeric ID, so we set our ID here.
 			$stop->{eva} = $s->{eva};
-
 			return;
 		}
 
@@ -211,8 +212,8 @@ sub add_or_update {
 			)
 		);
 
+		# MOTIS backends do not provide a numeric ID, so we set our ID here.
 		$stop->{eva} = $s->hash->{eva};
-
 		return;
 	}
 
