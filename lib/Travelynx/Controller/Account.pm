@@ -1,6 +1,7 @@
 package Travelynx::Controller::Account;
 
 # Copyright (C) 2020-2023 Birte Kristina Friesel
+# Copyright (C) 2025 networkException <git@nwex.de>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 use Mojo::Base 'Mojolicious::Controller';
@@ -1066,8 +1067,15 @@ sub backend_form {
 		if ( $backend->{iris} ) {
 			$type                = 'IRIS-TTS';
 			$backend->{name}     = 'IRIS';
-			$backend->{longname} = 'Deutsche Bahn (IRIS-TTS)';
+			$backend->{longname} = 'Deutsche Bahn: IRIS-TTS';
 			$backend->{homepage} = 'https://www.bahn.de';
+			$backend->{legacy}   = 1;
+		}
+		elsif ( $backend->{dbris} ) {
+			$type                   = 'DBRIS';
+			$backend->{longname}    = 'Deutsche Bahn: bahn.de';
+			$backend->{homepage}    = 'https://www.bahn.de';
+			$backend->{recommended} = 1;
 		}
 		elsif ( $backend->{efa} ) {
 			if ( my $s = $self->efa->get_service( $backend->{name} ) ) {
@@ -1112,13 +1120,41 @@ sub backend_form {
 			}
 		}
 		elsif ( $backend->{hafas} ) {
-			if ( my $s = $self->hafas->get_service( $backend->{name} ) ) {
+
+			# These backends lack a journey endpoint or are no longer
+			# operational and are thus useless for travelynx
+			if (   $backend->{name} eq 'Resrobot'
+				or $backend->{name} eq 'TPG'
+				or $backend->{name} eq 'VRN'
+				or $backend->{name} eq 'DB' )
+			{
+				$type = undef;
+			}
+
+			# PKP is behind a GeoIP filter. Only list it if travelynx.conf
+			# indicates that our IP is allowed or provides a proxy.
+			elsif (
+				$backend->{name} eq 'PKP'
+				and not( $self->app->config->{hafas}{PKP}{geoip_ok}
+					or $self->app->config->{hafas}{PKP}{proxy} )
+			  )
+			{
+				$type = undef;
+			}
+			elsif ( my $s = $self->hafas->get_service( $backend->{name} ) ) {
 				$type                = 'HAFAS';
 				$backend->{longname} = $s->{name};
 				$backend->{homepage} = $s->{homepage};
 				$backend->{regions}  = [ map { $place_map{$_} // $_ }
 					  @{ $s->{coverage}{regions} // [] } ];
 				$backend->{has_area} = $s->{coverage}{area} ? 1 : 0;
+
+				if ( $backend->{name} eq 'ÖBB' ) {
+					$backend->{recommended} = 1;
+				}
+				else {
+					$backend->{association} = 1;
+				}
 
 				if (
 					    $s->{coverage}{area}
@@ -1153,19 +1189,58 @@ sub backend_form {
 				$type = undef;
 			}
 		}
+		elsif ( $backend->{motis} ) {
+			my $s = $self->motis->get_service( $backend->{name} );
+
+			$type                = 'MOTIS';
+			$backend->{longname} = $s->{name};
+			$backend->{homepage} = $s->{homepage};
+			$backend->{regions}  = [ map { $place_map{$_} // $_ }
+				  @{ $s->{coverage}{regions} // [] } ];
+			$backend->{has_area}     = $s->{coverage}{area} ? 1 : 0;
+			$backend->{experimental} = 1;
+
+			if ( $backend->{name} eq 'transitous' ) {
+				$backend->{regions} = ['Weltweit'];
+			}
+			if ( $backend->{name} eq 'RNV' ) {
+				$backend->{homepage} = 'https://rnv-online.de/';
+			}
+
+			if (
+				    $s->{coverage}{area}
+				and $s->{coverage}{area}{type} eq 'Polygon'
+				and $self->lonlat_in_polygon(
+					$s->{coverage}{area}{coordinates},
+					[ $user_lon, $user_lat ]
+				)
+			  )
+			{
+				push( @suggested_backends, $backend );
+			}
+			elsif ( $s->{coverage}{area}
+				and $s->{coverage}{area}{type} eq 'MultiPolygon' )
+			{
+				for my $s_poly ( @{ $s->{coverage}{area}{coordinates} // [] } )
+				{
+					if (
+						$self->lonlat_in_polygon(
+							$s_poly, [ $user_lon, $user_lat ]
+						)
+					  )
+					{
+						push( @suggested_backends, $backend );
+						last;
+					}
+				}
+			}
+		}
 		$backend->{type} = $type;
 	}
 
-	# These backends lack a journey endpoint and are useless for travelynx
-	@backends
-	  = grep { $_->{name} ne 'Resrobot' and $_->{name} ne 'TPG' } @backends;
-
-	my $iris = shift @backends;
-
-	@backends
-	  = sort { $a->{name} cmp $b->{name} } grep { $_->{type} } @backends;
-
-	unshift( @backends, $iris );
+	@backends = map { $_->[1] }
+	  sort { $a->[0] cmp $b->[0] }
+	  map { [ lc( $_->{name} ), $_ ] } grep { $_->{type} } @backends;
 
 	$self->render(
 		'select_backend',

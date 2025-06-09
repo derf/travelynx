@@ -3,6 +3,7 @@
 		<h2>Backend auswählen</h2>
 		<p style="text-align: justify;">
 			Das ausgewählte Backend bestimmt die Datenquelle für Fahrten in travelynx.
+			<a href="#help">Details</a>.
 		</p>
 	</div>
 </div>
@@ -14,6 +15,11 @@
 		<div class="row">
 			<div class="col s12">
 				<h3>Vorschläge</h3>
+				<p style="text-align: justify;">
+					Anhand der Zielstation der letzten Fahrt und den
+					empfohlenen Nutzungsbereichen der verfügbaren Backends
+					(soweit bekannt).
+				</p>
 			</div>
 		</div>
 		% for my $backend (@{ stash('suggestions') // [] }) {
@@ -22,27 +28,57 @@
 	% }
 	<div class="row">
 		<div class="col s12">
-			<h3>Alle Backends</h3>
+			<h3>Empfohlen</h3>
+				<p style="text-align: justify;">
+					<strong>bahn.de</strong> für Regional- und Fernverkehr in Deutschland.
+					<strong>ÖBB</strong> für Nah-, Regional- und Fernverkehr in Österreich sowie Regional- und Fernverkehr in der EU.
+				</p>
 		</div>
 	</div>
-	% for my $backend (@{ stash('backends') // [] }) {
+	% for my $backend (grep { $_->{recommended} } @{ stash('backends') // [] }) {
+		%= include '_backend_line', user => $user, backend => $backend
+	% }
+	<div class="row">
+		<div class="col s12">
+			<h3>Verbünde</h3>
+				<p style="text-align: justify;">
+					Diese Backends sind meist die beste Wahl für
+					Nahverkehrsfahrten in der jeweiligen Region.
+					Backends außerhalb Deutschlands sind im Regelfall auch
+					für dortigen Regional- und Fernverkehr die beste Wahl.
+				</p>
+		</div>
+	</div>
+	% for my $backend (grep { $_->{association} } @{ stash('backends') // [] }) {
+		%= include '_backend_line', user => $user, backend => $backend
+	% }
+	<div class="row">
+		<div class="col s12">
+			<h3>Experimentell oder abgekündigt</h3>
+				<p style="text-align: justify;">
+					Einchecken auf eigene Gefahr.
+				</p>
+		</div>
+	</div>
+	% for my $backend (grep { $_->{experimental} or $_->{legacy} } @{ stash('backends') // [] }) {
 		%= include '_backend_line', user => $user, backend => $backend
 	% }
 %= end
 <div class="row">
 	<div class="col s12">
-		<h2>Details</h2>
+		<h2 id="help">Hilfe</h2>
 		<p>
-			<strong>Deutsche Bahn</strong> ist eine gute Wahl für Nah-, Regional- und Fernverkehr in Deutschland und (teilweise) Nachbarländern.
-			Hier stehen zumeist brauchbare Echtzeitdaten zur Verfügung; bei Zügen sind zusätzlich Kartendaten vorhanden.
+			<strong>Deutsche Bahn: bahn.de</strong> ist eine gute Wahl für Fahrten des Nah-, Regional- und Fernverkehrs innerhalb Deutschlands.
+			Die Implementierung ist noch recht frisch, bietet jedoch prinzipiell akkurate Echtzeit- und Kartendaten sowie Wagenreihungen.
+		<p>
+			<strong>Deutsche Bahn: IRIS-TTS</strong> liefert Echtzeitdaten (nur am Start- und Zielbahnhof), Wagenreihungen und Verspätungsmeldungen für Regional- und Fernverkehr in Deutschland. Kartendaten sind nur teilweise verfügbar.
+			<strong>ÖBB</strong> liefern Kartendaten und Wagenreihungen für Fernverkehr in Deutschland und Umgebung, jedoch keine Meldungen. Echtzeitdaten sind teilweise verfügbar.
 		</p>
 		<p>
-			<strong>Deutsche Bahn (IRIS-TTS)</strong> unterstützt ausschließlich Schienenverkehr; im Gegensatz zum HAFAS sind hier detaillierte Verspätungsgründe verfügbar.
-		</p>
-		<p>
-			Die restlichen Backends können sich für Fahrten in den zugehörigen Verkehrsverbünden lohnen.
-			Im Gegensatz zum Deutsche Bahn-HAFAS haben sie oft besser gepflegte Echtzeitdaten und liefern in vielen (aber nicht allen) Fällen auch Kartendaten für Nahverkehrsmittel wie Busse oder Stadtbahnen.
+			Die restlichen Backends lohnen sich für Fahrten in den zugehörigen Verkehrsverbünden bzw. Ländern.
+			Im Gegensatz zu bahn.de liefern sie in vielen (aber nicht allen) Fällen auch detaillierte Kartendaten für die dem Verbund zugehörigen Verkehrsmittel.
 			In Einzelfällen (z.B. BVG) sind sogar Auslastungsdaten eingepflegt.
+			Bei Fahrten außerhalb von Deutschland und der Schweiz ist <strong>ÖBB</strong> zumeist die beste Wahl.
 		</p>
 	</div>
 </div>

@@ -1,5 +1,5 @@
 <div class="row">
 	<div class="col s12 publicstatuscol" data-user="<%= $name %>">
-		%= include '_public_status_card', name => $name, privacy => $privacy, journey => $journey
+		%= include '_public_status_card', name => $name, privacy => $privacy, journey => $journey, station_coordinates => stash('station_coordinates'), polyline_groups => stash('polyline_groups')
 	</div>
 </div>

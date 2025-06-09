@@ -7,11 +7,13 @@ package Travelynx::Helper::HAFAS;
 use strict;
 use warnings;
 use 5.020;
+use utf8;
 
 use DateTime;
 use Encode qw(decode);
 use JSON;
 use Mojo::Promise;
+use Mojo::UserAgent;
 use Travel::Status::DE::HAFAS;
 
 sub _epoch {
@@ -53,57 +55,17 @@ sub get_service {
 	return Travel::Status::DE::HAFAS::get_service($service);
 }
 
-sub get_json_p {
-	my ( $self, $url, %opt ) = @_;
-
-	my $cache   = $self->{main_cache};
-	my $promise = Mojo::Promise->new;
-
-	if ( $opt{realtime} ) {
-		$cache = $self->{realtime_cache};
-	}
-	$opt{encoding} //= 'ISO-8859-15';
-
-	if ( my $content = $cache->thaw($url) ) {
-		return $promise->resolve($content);
-	}
-
-	$self->{user_agent}->request_timeout(5)->get_p( $url => $self->{header} )
-	  ->then(
-		sub {
-			my ($tx) = @_;
-
-			if ( my $err = $tx->error ) {
-				$promise->reject(
-"hafas->get_json_p($url) returned HTTP $err->{code} $err->{message}"
-				);
-				return;
-			}
-
-			my $body = decode( $opt{encoding}, $tx->res->body );
-
-			$body =~ s{^TSLs[.]sls = }{};
-			$body =~ s{;$}{};
-			$body =~ s{&#x0028;}{(}g;
-			$body =~ s{&#x0029;}{)}g;
-			my $json = JSON->new->decode($body);
-			$cache->freeze( $url, $json );
-			$promise->resolve($json);
-			return;
-		}
-	)->catch(
-		sub {
-			my ($err) = @_;
-			$self->{log}->info("hafas->get_json_p($url): $err");
-			$promise->reject("hafas->get_json_p($url): $err");
-			return;
-		}
-	)->wait;
-	return $promise;
-}
-
 sub get_departures_p {
 	my ( $self, %opt ) = @_;
+
+	$opt{service} //= 'ÖBB';
+
+	my $agent = $self->{user_agent};
+	if ( my $proxy = $self->{service_config}{ $opt{service} }{proxy} ) {
+		$agent = Mojo::UserAgent->new;
+		$agent->proxy->http($proxy);
+		$agent->proxy->https($proxy);
+	}
 
 	my $when = (
 		  $opt{timestamp}
@@ -118,19 +80,28 @@ sub get_departures_p {
 		results    => 300,
 		cache      => $self->{realtime_cache},
 		promise    => 'Mojo::Promise',
-		user_agent => $self->{user_agent}->request_timeout(5),
+		user_agent => $agent->request_timeout(5),
 	);
 }
 
 sub search_location_p {
 	my ( $self, %opt ) = @_;
 
+	$opt{service} //= 'ÖBB';
+
+	my $agent = $self->{user_agent};
+	if ( my $proxy = $self->{service_config}{ $opt{service} }{proxy} ) {
+		$agent = Mojo::UserAgent->new;
+		$agent->proxy->http($proxy);
+		$agent->proxy->https($proxy);
+	}
+
 	return Travel::Status::DE::HAFAS->new_p(
 		service        => $opt{service},
 		locationSearch => $opt{query},
 		cache          => $self->{realtime_cache},
 		promise        => 'Mojo::Promise',
-		user_agent     => $self->{user_agent}->request_timeout(5),
+		user_agent     => $agent->request_timeout(5),
 	);
 }
 
@@ -143,13 +114,22 @@ sub get_tripid_p {
 	my $train_desc = $train->type . ' ' . $train->train_no;
 	$train_desc =~ s{^- }{};
 
+	$opt{service} //= 'ÖBB';
+
+	my $agent = $self->{user_agent};
+	if ( my $proxy = $self->{service_config}{ $opt{service} }{proxy} ) {
+		$agent = Mojo::UserAgent->new;
+		$agent->proxy->http($proxy);
+		$agent->proxy->https($proxy);
+	}
+
 	Travel::Status::DE::HAFAS->new_p(
 		service      => $opt{service},
 		journeyMatch => $train_desc,
 		datetime     => $train->start,
 		cache        => $self->{realtime_cache},
 		promise      => 'Mojo::Promise',
-		user_agent   => $self->{user_agent}->request_timeout(10),
+		user_agent   => $agent->request_timeout(10),
 	)->then(
 		sub {
 			my ($hafas) = @_;
@@ -195,6 +175,15 @@ sub get_journey_p {
 	my $promise = Mojo::Promise->new;
 	my $now     = DateTime->now( time_zone => 'Europe/Berlin' );
 
+	$opt{service} //= 'ÖBB';
+
+	my $agent = $self->{user_agent};
+	if ( my $proxy = $self->{service_config}{ $opt{service} }{proxy} ) {
+		$agent = Mojo::UserAgent->new;
+		$agent->proxy->http($proxy);
+		$agent->proxy->https($proxy);
+	}
+
 	Travel::Status::DE::HAFAS->new_p(
 		service => $opt{service},
 		journey => {
@@ -203,7 +192,7 @@ sub get_journey_p {
 		with_polyline => $opt{with_polyline},
 		cache         => $self->{realtime_cache},
 		promise       => 'Mojo::Promise',
-		user_agent    => $self->{user_agent}->request_timeout(10),
+		user_agent    => $agent->request_timeout(10),
 	)->then(
 		sub {
 			my ($hafas) = @_;
@@ -236,6 +225,15 @@ sub get_route_p {
 	my $promise = Mojo::Promise->new;
 	my $now     = DateTime->now( time_zone => 'Europe/Berlin' );
 
+	$opt{service} //= 'ÖBB';
+
+	my $agent = $self->{user_agent};
+	if ( my $proxy = $self->{service_config}{ $opt{service} }{proxy} ) {
+		$agent = Mojo::UserAgent->new;
+		$agent->proxy->http($proxy);
+		$agent->proxy->https($proxy);
+	}
+
 	Travel::Status::DE::HAFAS->new_p(
 		service => $opt{service},
 		journey => {
@@ -246,7 +244,7 @@ sub get_route_p {
 		with_polyline => $opt{with_polyline},
 		cache         => $self->{realtime_cache},
 		promise       => 'Mojo::Promise',
-		user_agent    => $self->{user_agent}->request_timeout(10),
+		user_agent    => $agent->request_timeout(10),
 	)->then(
 		sub {
 			my ($hafas) = @_;

@@ -111,6 +111,13 @@ sub profile {
 		$status->{arr_name} = undef;
 	}
 
+	my $map_data = {};
+	if ( $status->{checked_in} ) {
+		$map_data = $self->journeys_to_map_data(
+			journeys => [$status],
+		);
+	}
+
 	my @journeys;
 
 	if (
@@ -190,6 +197,8 @@ sub profile {
 			: 0,
 			journey  => $status,
 			journeys => [@journeys],
+			with_map => 1,
+			%{$map_data},
 		}
 	);
 }
@@ -494,6 +503,13 @@ sub user_status {
 		$og_data{description} = $tw_data{description} = q{};
 	}
 
+	my $map_data = {};
+	if ( $status->{checked_in} ) {
+		$map_data = $self->journeys_to_map_data(
+			journeys => [$status],
+		);
+	}
+
 	$self->respond_to(
 		json => {
 			json => {
@@ -516,7 +532,9 @@ sub user_status {
 			journey   => $status,
 			twitter   => \%tw_data,
 			opengraph => \%og_data,
-			version   => $self->app->config->{version} // 'UNKNOWN',
+			with_map  => 1,
+			%{$map_data},
+			version => $self->app->config->{version} // 'UNKNOWN',
 		},
 	);
 }
@@ -555,6 +573,7 @@ sub status_card {
 
 	my $status = $self->get_user_status( $user->{id} );
 	my $visibility;
+	my $map_data = {};
 	if ( $status->{checked_in} or $status->{arr_name} ) {
 		my $visibility = $status->{effective_visibility};
 		if (
@@ -579,12 +598,19 @@ sub status_card {
 		$status->{arr_name} = undef;
 	}
 
+	if ( $status->{checked_in} ) {
+		$map_data = $self->journeys_to_map_data(
+			journeys => [$status],
+		);
+	}
+
 	$self->render(
 		'_public_status_card',
 		name         => $name,
 		privacy      => $user,
 		journey      => $status,
 		from_profile => $self->param('profile') ? 1 : 0,
+		%{$map_data},
 	);
 }
 

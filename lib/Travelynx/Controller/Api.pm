@@ -21,6 +21,9 @@ sub sanitize {
 	if ( not defined $value ) {
 		return undef;
 	}
+	if ( not defined $type ) {
+		return $value ? ( '' . $value ) : undef;
+	}
 	if ( $type eq '' ) {
 		return '' . $value;
 	}
@@ -184,8 +187,13 @@ sub travel_v1 {
 		my $from_station = sanitize( q{}, $payload->{fromStation} );
 		my $to_station   = sanitize( q{}, $payload->{toStation} );
 		my $train_id;
+		my $dbris = sanitize( undef, $payload->{dbris} );
 		my $hafas = sanitize( undef, $payload->{hafas} );
-		$hafas //= exists $payload->{train}{journeyID} ? 'DB' : undef;
+		my $motis = sanitize( undef, $payload->{motis} );
+
+		if ( not $hafas and exists $payload->{train}{journeyID} ) {
+			$dbris //= 'bahn.de';
+		}
 
 		if (
 			not(
@@ -209,6 +217,7 @@ sub travel_v1 {
 		}
 
 		if (    not $hafas
+			and not $dbris
 			and not $self->stations->search( $from_station, backend_id => 1 ) )
 		{
 			$self->render(
@@ -225,6 +234,7 @@ sub travel_v1 {
 
 		if (    $to_station
 			and not $hafas
+			and not $dbris
 			and not $self->stations->search( $to_station, backend_id => 1 ) )
 		{
 			$self->render(
@@ -288,6 +298,8 @@ sub travel_v1 {
 					train_id => $train_id,
 					uid      => $uid,
 					hafas    => $hafas,
+					dbris    => $dbris,
+					motis    => $motis,
 				);
 			}
 		)->then(

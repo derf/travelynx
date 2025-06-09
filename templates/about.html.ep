@@ -1,17 +1,33 @@
 <div class="row">
 	<div class="col s12">
 		<a href="https://finalrewind.org/projects/travelynx">travelynx</a> v<%= stash('version') // '???' %><br/>
-		Entwickelt von <a href="https://finalrewind.org">derf</a><br/>
-		<a href="<%= app->config->{ref}{source} // 'https://github.com/derf/travelynx' %>">Quelltext</a> lizensiert unter AGPL v3<br/><br/>
+		Entwickelt von <a href="https://finalrewind.org">derf</a>
+		und <a href="https://github.com/derf/travelynx/graphs/contributors">weiteren</a><br/>
+		<a href="<%= app->config->{ref}{source} // 'https://git.finalrewind.org/travelynx' %>">Quelltext</a> lizensiert unter AGPL v3<br/><br/>
 		Backends:
+		<a href="https://finalrewind.org/projects/Travel-Status-DE-DBRIS/">Travel::Status::DE::DBRIS</a>
+		v<%= $Travel::Status::DE::DBRIS::VERSION %>,
+		<a href="https://finalrewind.org/projects/Travel-Status-DE-HAFAS/">Travel::Status::DE::HAFAS</a>
+		v<%= $Travel::Status::DE::HAFAS::VERSION %> und
 		<a href="https://finalrewind.org/projects/Travel-Status-DE-IRIS/">Travel::Status::DE::IRIS</a>
-		v<%= $Travel::Status::DE::IRIS::VERSION %> und
-		<a href="https://finalrewind.org/projects/Travel-Status-DE-DeutscheBahn/">Travel::Status::DE::HAFAS</a>
-		v<%= $Travel::Status::DE::HAFAS::VERSION %><br/>
+		v<%= $Travel::Status::DE::IRIS::VERSION %><br/>
 		Haltestellendaten
 		© DB Station&amp;Service AG,
 		Europaplatz 1,
 		10557 Berlin, lizensiert unter CC-BY 4.0
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12">
+		<p>
+			Travelynx ist ein kostenfreies, privat betriebenes Projekt ohne
+			Verfügbarkeitsgarantie. Unangekündigte Downtimes oder eine
+			kurzfristige Einstellung dieser Seite sind nicht vorgesehen, aber
+			möglich. Feature Requests, Bug Reports und sonstige Nachrichten
+			werden je nach Kapazität und Motivation zeitnah, verzögert oder gar
+			nicht bearbeitet / beantwortet.
+		</p>
 	</div>
 </div>
 

@@ -129,12 +129,13 @@
 		{<br/>
 			"token" : "<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>",<br/>
 			"action" : "checkin",<br/>
-			"hafas" : "DB", (HAFAS-Instanz – Default: Deutsche Bahn)<br/>
+			"dbris" : "bahn.de", (DBRIS-Instanz – Default: bahn.de)<br/>
+			"hafas" : null, (HAFAS-Instanz, falls verwendet, sonste null)<br/>
 			"train" : {<br/>
-				"journeyID" : "1|1426396|4|80|19082023",<br/>
+				"journeyID" : "2|#VN#1#ST#1742845592#PI#0#ZI#315136#TA#0#DA#270325#1S#8000080#1T#1841#LS#8006486#LT#2024#PU#80#RT#1#CA#RE#ZE#10773#ZB#RE10773#PC#3#FR#8000080#FT#1841#TO#8006486#TT#2024#",<br/>
 			}<br/>
-			"fromStation" : 651806, (Name oder EVA-Nummer)<br/>
-			"toStation" : 654645, (optional, Name oder EVA-Nummer)<br/>
+			"fromStation" : 8000080, (Name oder EVA-Nummer – bei bahn.de nur EVA-Nummer)<br/>
+			"toStation" : 8006486, (optional, Name oder EVA-Nummer – bei bahn.de nur EVA-Nummer)<br/>
 			"comment" : "Beliebiger Text" (optional, überschreibt vorherigen Kommentar)<br/>
 		}
 		</p>

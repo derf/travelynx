@@ -2,7 +2,9 @@
 	🏳️‍🌈
 % }
 <span class="dep-line <%= $journey->{train_type} // q{} %>">
-	<%= $journey->{train_type} %>
+	% if (not $journey->{is_motis}) {
+		<%= $journey->{train_type} %>
+	% }
 	<%= $journey->{train_line}  // $journey->{train_no}%>
 </span>
 % if ($journey->{train_line}) {

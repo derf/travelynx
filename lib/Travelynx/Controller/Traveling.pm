@@ -1,6 +1,7 @@
 package Travelynx::Controller::Traveling;
 
 # Copyright (C) 2020-2023 Birte Kristina Friesel
+# Copyright (C) 2025 networkException <git@nwex.de>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 use Mojo::Base 'Mojolicious::Controller';
@@ -10,6 +11,7 @@ use DateTime::Format::Strptime;
 use List::Util      qw(uniq min max);
 use List::UtilsBy   qw(max_by uniq_by);
 use List::MoreUtils qw(first_index);
+use Mojo::UserAgent;
 use Mojo::Promise;
 use Text::CSV;
 use Travel::Status::DE::IRIS::Stations;
@@ -40,6 +42,18 @@ sub get_connecting_trains_p {
 	my ( $stationinfo, $arr_epoch, $arr_platform, $arr_countdown );
 
 	my $promise = Mojo::Promise->new;
+
+	if ( $user->{backend_dbris} ) {
+
+		# We do get a little bit of via information, so this might work in some
+		# cases. But not reliably. Probably best to leave it out entirely then.
+		return $promise->reject;
+	}
+	if ( $user->{backend_motis} ) {
+
+		# FIXME: The following code can't handle external_ids currently
+		return $promise->reject;
+	}
 
 	if ( $opt{eva} ) {
 		if ( $use_history & 0x01 ) {
@@ -105,6 +119,8 @@ sub get_connecting_trains_p {
 	my $iris_promise = Mojo::Promise->new;
 	my %via_count    = map { $_->{name} => 0 } @destinations;
 
+	my $backend
+	  = $self->stations->get_backend( backend_id => $opt{backend_id} );
 	if ( $opt{backend_id} == 0 ) {
 		$self->iris->get_departures_p(
 			station      => $eva,
@@ -259,9 +275,11 @@ sub get_connecting_trains_p {
 			}
 		)->wait;
 	}
-	else {
-		my $hafas_service
-		  = $self->stations->get_hafas_name( backend_id => $opt{backend_id} );
+	elsif ( $backend->{dbris} ) {
+		return $promise->reject;
+	}
+	elsif ( $backend->{hafas} ) {
+		my $hafas_service = $backend->{name};
 		$self->hafas->get_departures_p(
 			service    => $hafas_service,
 			eva        => $eva,
@@ -341,6 +359,12 @@ sub homepage {
 		$self->stash( timeline => [@timeline] );
 		my @recent_targets;
 		if ( $status->{checked_in} ) {
+			my $map_data = {};
+			if ( $status->{arr_name} ) {
+				$map_data = $self->journeys_to_map_data(
+					journeys => [$status],
+				);
+			}
 			my $journey_visibility
 			  = $self->compute_effective_visibility(
 				$user->{default_visibility_str},
@@ -359,6 +383,8 @@ sub homepage {
 							journey_visibility => $journey_visibility,
 							connections_iris   => $connections_iris,
 							connections_hafas  => $connections_hafas,
+							with_map           => 1,
+							%{$map_data},
 						);
 						$self->users->mark_seen( uid => $uid );
 					}
@@ -369,6 +395,8 @@ sub homepage {
 							user               => $user,
 							user_status        => $status,
 							journey_visibility => $journey_visibility,
+							with_map           => 1,
+							%{$map_data},
 						);
 						$self->users->mark_seen( uid => $uid );
 					}
@@ -381,13 +409,15 @@ sub homepage {
 					user               => $user,
 					user_status        => $status,
 					journey_visibility => $journey_visibility,
+					with_map           => 1,
+					%{$map_data},
 				);
 				$self->users->mark_seen( uid => $uid );
 				return;
 			}
 		}
 		else {
-			@recent_targets = uniq_by { $_->{eva} }
+			@recent_targets = uniq_by { $_->{external_id_or_eva} }
 			$self->journeys->get_latest_checkout_stations( uid => $uid );
 		}
 		$self->render(
@@ -419,6 +449,12 @@ sub status_card {
 	$self->stash( timeline => [@timeline] );
 
 	if ( $status->{checked_in} ) {
+		my $map_data = {};
+		if ( $status->{arr_name} ) {
+			$map_data = $self->journeys_to_map_data(
+				journeys => [$status],
+			);
+		}
 		my $journey_visibility
 		  = $self->compute_effective_visibility(
 			$self->current_user->{default_visibility_str},
@@ -436,6 +472,7 @@ sub status_card {
 						journey_visibility => $journey_visibility,
 						connections_iris   => $connections_iris,
 						connections_hafas  => $connections_hafas,
+						%{$map_data},
 					);
 				}
 			)->catch(
@@ -444,6 +481,7 @@ sub status_card {
 						'_checked_in',
 						journey            => $status,
 						journey_visibility => $journey_visibility,
+						%{$map_data},
 					);
 				}
 			)->wait;
@@ -453,6 +491,7 @@ sub status_card {
 			'_checked_in',
 			journey            => $status,
 			journey_visibility => $journey_visibility,
+			%{$map_data},
 		);
 	}
 	elsif ( $status->{cancellation} ) {
@@ -523,15 +562,74 @@ sub geolocation {
 		return;
 	}
 
-	my $hafas_service
-	  = $self->stations->get_hafas_name( backend_id => $backend_id );
+	my ( $dbris_service, $hafas_service, $motis_service );
+	my $backend = $self->stations->get_backend( backend_id => $backend_id );
+	if ( $backend->{dbris} ) {
+		$dbris_service = $backend->{name};
+	}
+	elsif ( $backend->{hafas} ) {
+		$hafas_service = $backend->{name};
+	}
+	elsif ( $backend->{motis} ) {
+		$motis_service = $backend->{name};
+	}
 
-	if ($hafas_service) {
+	if ($dbris_service) {
 		$self->render_later;
+
+		Travel::Status::DE::DBRIS->new_p(
+			promise    => 'Mojo::Promise',
+			user_agent => Mojo::UserAgent->new,
+			geoSearch  => {
+				latitude  => $lat,
+				longitude => $lon
+			}
+		)->then(
+			sub {
+				my ($dbris) = @_;
+				my @results = map {
+					{
+						name     => $_->name,
+						eva      => $_->eva,
+						distance => 0,
+						dbris    => $dbris_service,
+					}
+				} $dbris->results;
+				if ( @results > 10 ) {
+					@results = @results[ 0 .. 9 ];
+				}
+				$self->render(
+					json => {
+						candidates => [@results],
+					}
+				);
+			}
+		)->catch(
+			sub {
+				my ($err) = @_;
+				$self->render(
+					json => {
+						candidates => [],
+						warning    => $err,
+					}
+				);
+			}
+		)->wait;
+		return;
+	}
+	elsif ($hafas_service) {
+		$self->render_later;
+
+		my $agent = $self->ua;
+		if ( my $proxy = $self->app->config->{hafas}{$hafas_service}{proxy} ) {
+			$agent = Mojo::UserAgent->new;
+			$agent->proxy->http($proxy);
+			$agent->proxy->https($proxy);
+		}
 
 		Travel::Status::DE::HAFAS->new_p(
 			promise    => 'Mojo::Promise',
-			user_agent => $self->ua,
+			user_agent => $agent,
 			service    => $hafas_service,
 			geoSearch  => {
 				lat => $lat,
@@ -571,6 +669,54 @@ sub geolocation {
 
 		return;
 	}
+	elsif ($motis_service) {
+		$self->render_later;
+
+		Travel::Status::MOTIS->new_p(
+			promise    => 'Mojo::Promise',
+			user_agent => $self->ua,
+
+			service             => $motis_service,
+			stops_by_coordinate => {
+				lat => $lat,
+				lon => $lon
+			}
+		)->then(
+			sub {
+				my ($motis) = @_;
+				my @motis = map {
+					{
+						id       => $_->id,
+						name     => $_->name,
+						distance => 0,
+						motis    => $motis_service,
+					}
+				} $motis->results;
+
+				if ( @motis > 10 ) {
+					@motis = @motis[ 0 .. 9 ];
+				}
+
+				$self->render(
+					json => {
+						candidates => [@motis],
+					}
+				);
+			}
+		)->catch(
+			sub {
+				my ($err) = @_;
+				$self->render(
+					json => {
+						candidates => [],
+						warning    => $err,
+					}
+				);
+			}
+		)->wait;
+
+		return;
+	}
 
 	my @iris = map {
 		{
@@ -580,6 +726,7 @@ sub geolocation {
 			lon      => $_->[0][3],
 			lat      => $_->[0][4],
 			distance => $_->[1],
+			dbris    => 0,
 			hafas    => 0,
 		}
 	} Travel::Status::DE::IRIS::Stations::get_station_by_location( $lon,
@@ -648,10 +795,13 @@ sub travel_action {
 		$promise->then(
 			sub {
 				return $self->checkin_p(
-					hafas    => $params->{hafas},
-					station  => $params->{station},
-					train_id => $params->{train},
-					ts       => $params->{ts},
+					dbris        => $params->{dbris},
+					hafas        => $params->{hafas},
+					motis        => $params->{motis},
+					station      => $params->{station},
+					train_id     => $params->{train},
+					train_suffix => $params->{suffix},
+					ts           => $params->{ts},
 				);
 			}
 		)->then(
@@ -679,7 +829,10 @@ sub travel_action {
 				my ( $still_checked_in, undef ) = @_;
 				if ( my $destination = $params->{dest} ) {
 					my $station_link = '/s/' . $destination;
-					if ( $status->{is_hafas} ) {
+					if ( $status->{is_dbris} ) {
+						$station_link .= '?dbris=' . $status->{backend_name};
+					}
+					elsif ( $status->{is_hafas} ) {
 						$station_link .= '?hafas=' . $status->{backend_name};
 					}
 					$self->render(
@@ -715,7 +868,10 @@ sub travel_action {
 			sub {
 				my ( $still_checked_in, $error ) = @_;
 				my $station_link = '/s/' . $params->{station};
-				if ( $status->{is_hafas} ) {
+				if ( $status->{is_dbris} ) {
+					$station_link .= '?dbris=' . $status->{backend_name};
+				}
+				elsif ( $status->{is_hafas} ) {
 					$station_link .= '?hafas=' . $status->{backend_name};
 				}
 
@@ -766,11 +922,25 @@ sub travel_action {
 		else {
 			my $redir = '/';
 			if ( $status->{checked_in} or $status->{cancelled} ) {
-				if ( $status->{is_hafas} ) {
+				if ( $status->{is_dbris} ) {
+					$redir
+					  = '/s/'
+					  . $status->{dep_eva}
+					  . '?dbris='
+					  . $status->{backend_name};
+				}
+				elsif ( $status->{is_hafas} ) {
 					$redir
 					  = '/s/'
 					  . $status->{dep_eva}
 					  . '?hafas='
+					  . $status->{backend_name};
+				}
+				elsif ( $status->{is_motis} ) {
+					$redir
+					  = '/s/'
+					  . $status->{dep_external_id}
+					  . '?motis='
 					  . $status->{backend_name};
 				}
 				else {
@@ -788,7 +958,9 @@ sub travel_action {
 	elsif ( $params->{action} eq 'cancelled_from' ) {
 		$self->render_later;
 		$self->checkin_p(
+			dbris    => $params->{dbris},
 			hafas    => $params->{hafas},
+			motis    => $params->{motis},
 			station  => $params->{station},
 			train_id => $params->{train},
 			ts       => $params->{ts},
@@ -917,12 +1089,38 @@ sub station {
 		$timestamp = DateTime->now( time_zone => 'Europe/Berlin' );
 	}
 
+	my $dbris_service = $self->param('dbris')
+	  // ( $user->{backend_dbris} ? $user->{backend_name} : undef );
 	my $efa_service = $self->param('efa')
 	  // ( $user->{backend_efa} ? $user->{backend_name} : undef );
 	my $hafas_service = $self->param('hafas')
 	  // ( $user->{backend_hafas} ? $user->{backend_name} : undef );
+	my $motis_service = $self->param('motis')
+	  // ( $user->{backend_motis} ? $user->{backend_name} : undef );
 	my $promise;
-	if ($hafas_service) {
+	if ($dbris_service) {
+		if ( $station !~ m{ [@] L = \d+ }x ) {
+			$self->render_later;
+			$self->dbris->get_station_id_p($station)->then(
+				sub {
+					my ($dbris_station) = @_;
+					$self->redirect_to( '/s/' . $dbris_station->{id} );
+				}
+			)->catch(
+				sub {
+					my ($err) = @_;
+					$self->redirect_to('/');
+				}
+			)->wait;
+			return;
+		}
+		$promise = $self->dbris->get_departures_p(
+			station    => $station,
+			timestamp  => $timestamp,
+			lookbehind => 30,
+		);
+	}
+	elsif ($hafas_service) {
 		$promise = $self->hafas->get_departures_p(
 			service    => $hafas_service,
 			eva        => $station,
@@ -936,7 +1134,36 @@ sub station {
 			service    => $efa_service,
 			name       => $station,
 			timestamp  => $timestamp,
-			lookbehind => 10,
+			lookbehind => 30,
+			lookahead  => 30,
+		);
+	}
+	elsif ($motis_service) {
+		if ( $station !~ m/.*_.*/ ) {
+			$self->render_later;
+			$self->motis->get_station_by_query_p(
+				service => $motis_service,
+				query   => $station,
+			)->then(
+				sub {
+					my ($motis_station) = @_;
+					$self->redirect_to( '/s/' . $motis_station->{id} );
+				}
+			)->catch(
+				sub {
+					my ($err) = @_;
+					say "$err";
+
+					$self->redirect_to('/');
+				}
+			)->wait;
+			return;
+		}
+		$promise = $self->motis->get_departures_p(
+			service    => $motis_service,
+			station_id => $station,
+			timestamp  => $timestamp,
+			lookbehind => 30,
 			lookahead  => 30,
 		);
 	}
@@ -957,7 +1184,22 @@ sub station {
 			my $now_within_range
 			  = abs( $timestamp->epoch - $now ) < 1800 ? 1 : 0;
 
-			if ($hafas_service) {
+			if ($dbris_service) {
+
+				@results = map { $_->[0] }
+				  sort { $b->[1] <=> $a->[1] }
+				  map { [ $_, $_->dep->epoch ] } $status->results;
+
+				$status = {
+					station_eva      => $station,
+					related_stations => [],
+				};
+
+				if ( $station =~ m{ [@] O = (?<name> [^@]+ ) [@] }x ) {
+					$status->{station_name} = $+{name};
+				}
+			}
+			elsif ($hafas_service) {
 
 				@results = map { $_->[0] }
 				  sort { $b->[1] <=> $a->[1] }
@@ -985,6 +1227,19 @@ sub station {
 				$status = {
 					station_eva => $status->stop->id,
 					station_name => $status->stop->full_name,
+					related_stations => [],
+				};
+			}
+			elsif ($motis_service) {
+				@results = map { $_->[0] }
+				  sort { $b->[1] <=> $a->[1] }
+				  map  { [ $_, $_->stopover->departure->epoch ] }
+				  $status->results;
+
+				$status = {
+					station_eva  => $station,
+					station_name =>
+					  $status->{results}->[0]->stopover->stop->name,
 					related_stations => [],
 				};
 			}
@@ -1054,8 +1309,10 @@ sub station {
 						$self->render(
 							'departures',
 							user              => $user,
+							dbris             => $dbris_service,
 							efa              => $efa_service,
 							hafas             => $hafas_service,
+							motis             => $motis_service,
 							eva               => $status->{station_eva},
 							datetime          => $timestamp,
 							now_in_range      => $now_within_range,
@@ -1074,8 +1331,10 @@ sub station {
 						$self->render(
 							'departures',
 							user             => $user,
+							dbris            => $dbris_service,
 							efa              => $efa_service,
 							hafas            => $hafas_service,
+							motis            => $motis_service,
 							eva              => $status->{station_eva},
 							datetime         => $timestamp,
 							now_in_range     => $now_within_range,
@@ -1093,8 +1352,10 @@ sub station {
 				$self->render(
 					'departures',
 					user             => $user,
+					dbris            => $dbris_service,
 					efa              => $efa_service,
 					hafas            => $hafas_service,
+					motis            => $motis_service,
 					eva              => $status->{station_eva},
 					datetime         => $timestamp,
 					now_in_range     => $now_within_range,
@@ -1157,18 +1418,23 @@ sub station {
 					}
 				)->wait;
 			}
-			elsif ( $err =~ m{svcRes|connection close} ) {
+			elsif ( $err
+				=~ m{svcRes|connection close|Service Temporarily Unavailable|Forbidden}
+			  )
+			{
 				$self->render(
 					'bad_gateway',
-					message => $err,
-					status  => 502
+					message            => $err,
+					status             => 502,
+					select_new_backend => 1,
 				);
 			}
 			elsif ( $err =~ m{timeout}i ) {
 				$self->render(
 					'gateway_timeout',
-					message => $err,
-					status  => 504
+					message            => $err,
+					status             => 504,
+					select_new_backend => 1,
 				);
 			}
 			else {
@@ -1187,7 +1453,40 @@ sub redirect_to_station {
 	my ($self) = @_;
 	my $station = $self->param('station');
 
-	$self->redirect_to("/s/${station}");
+	if ( $self->param('backend_dbris') ) {
+		$self->render_later;
+		$self->dbris->get_station_id_p($station)->then(
+			sub {
+				my ($dbris_station) = @_;
+				$self->redirect_to( '/s/' . $dbris_station->{id} );
+			}
+		)->catch(
+			sub {
+				my ($err) = @_;
+				$self->redirect_to('/');
+			}
+		)->wait;
+	}
+	elsif ( $self->param('backend_motis') ) {
+		$self->render_later;
+		$self->motis->get_station_by_query(
+			service => $self->param('backend_motis'),
+			query   => $station,
+		)->then(
+			sub {
+				my ($motis_station) = @_;
+				$self->redirect_to( '/s/' . $motis_station->{id} );
+			}
+		)->catch(
+			sub {
+				my ($err) = @_;
+				$self->redirect_to('/');
+			}
+		)->wait;
+	}
+	else {
+		$self->redirect_to("/s/${station}");
+	}
 }
 
 sub cancelled {

@@ -1,6 +1,7 @@
 package Travelynx::Model::Stations;
 
 # Copyright (C) 2022 Birte Kristina Friesel
+# Copyright (C) 2025 networkException <git@nwex.de>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -25,11 +26,28 @@ sub get_backend_id {
 	if ( $opt{hafas} and $self->{backend_id}{hafas}{ $opt{hafas} } ) {
 		return $self->{backend_id}{hafas}{ $opt{hafas} };
 	}
+	if ( $opt{dbris} and $self->{backend_id}{dbris}{ $opt{dbris} } ) {
+		return $self->{backend_id}{dbris}{ $opt{dbris} };
+	}
+	if ( $opt{motis} and $self->{backend_id}{motis}{ $opt{motis} } ) {
+		return $self->{backend_id}{motis}{ $opt{motis} };
+	}
 
 	my $db         = $opt{db} // $self->{pg}->db;
 	my $backend_id = 0;
 
-	if ( $opt{hafas} ) {
+	if ( $opt{dbris} ) {
+		$backend_id = $db->select(
+			'backends',
+			['id'],
+			{
+				dbris => 1,
+				name  => $opt{dbris}
+			}
+		)->hash->{id};
+		$self->{backend_id}{dbris}{ $opt{dbris} } = $backend_id;
+	}
+	elsif ( $opt{hafas} ) {
 		$backend_id = $db->select(
 			'backends',
 			['id'],
@@ -40,35 +58,40 @@ sub get_backend_id {
 		)->hash->{id};
 		$self->{backend_id}{hafas}{ $opt{hafas} } = $backend_id;
 	}
+	elsif ( $opt{motis} ) {
+		$backend_id = $db->select(
+			'backends',
+			['id'],
+			{
+				motis => 1,
+				name  => $opt{motis}
+			}
+		)->hash->{id};
+		$self->{backend_id}{motis}{ $opt{motis} } = $backend_id;
+	}
 
 	return $backend_id;
 }
 
-sub get_hafas_name {
+sub get_backend {
 	my ( $self, %opt ) = @_;
 
-	if ( exists $self->{hafas_name}{ $opt{backend_id} } ) {
-		return $self->{hafas_name}{ $opt{backend_id} };
+	if ( $self->{backend_cache}{ $opt{backend_id} } ) {
+		return $self->{backend_cache}{ $opt{backend_id} };
 	}
 
-	my $db = $opt{db} // $self->{pg}->db;
-	my $hafas_name;
+	my $db  = $opt{db} // $self->{pg}->db;
 	my $ret = $db->select(
 		'backends',
-		['name'],
+		'*',
 		{
-			hafas => 1,
-			id    => $opt{backend_id},
+			id => $opt{backend_id},
 		}
 	)->hash;
 
-	if ($ret) {
-		$hafas_name = $ret->{name};
-	}
+	$self->{backend_cache}{ $opt{backend_id} } = $ret;
 
-	$self->{hafas_name}{ $opt{backend_id} } = $hafas_name;
-
-	return $hafas_name;
+	return $ret;
 }
 
 sub get_backends {
@@ -76,7 +99,8 @@ sub get_backends {
 
 	$opt{db} //= $self->{pg}->db;
 
-	my $res = $opt{db}->select( 'backends', [ 'id', 'name', 'efa', 'hafas', 'iris' ] );
+	my $res = $opt{db}->select( 'backends',
+		[ 'id', 'name', 'dbris', 'efa', 'hafas', 'iris', 'motis' ] );
 	my @ret;
 
 	while ( my $row = $res->hash ) {
@@ -85,9 +109,11 @@ sub get_backends {
 			{
 				id    => $row->{id},
 				name  => $row->{name},
+				dbris => $row->{dbris},
 				efa   => $row->{efa},
 				hafas => $row->{hafas},
 				iris  => $row->{iris},
+				motis => $row->{motis},
 			}
 		);
 	}
@@ -95,14 +121,104 @@ sub get_backends {
 	return @ret;
 }
 
+# Slow for MOTIS backends
 sub add_or_update {
 	my ( $self, %opt ) = @_;
 	my $stop = $opt{stop};
-	my $loc  = $stop->loc;
 	$opt{db} //= $self->{pg}->db;
 
 	$opt{backend_id} //= $self->get_backend_id(%opt);
 
+	if ( $opt{dbris} ) {
+		if (
+			my $s = $self->get_by_eva(
+				$stop->eva,
+				db         => $opt{db},
+				backend_id => $opt{backend_id}
+			)
+		  )
+		{
+			$opt{db}->update(
+				'stations',
+				{
+					name     => $stop->name,
+					lat      => $stop->lat,
+					lon      => $stop->lon,
+					archived => 0
+				},
+				{
+					eva    => $stop->eva,
+					source => $opt{backend_id}
+				}
+			);
+			return;
+		}
+		$opt{db}->insert(
+			'stations',
+			{
+				eva      => $stop->eva,
+				name     => $stop->name,
+				lat      => $stop->lat,
+				lon      => $stop->lon,
+				source   => $opt{backend_id},
+				archived => 0
+			}
+		);
+		return;
+	}
+
+	if ( $opt{motis} ) {
+		if (
+			my $s = $self->get_by_external_id(
+				external_id => $stop->id,
+				db          => $opt{db},
+				backend_id  => $opt{backend_id}
+			)
+		  )
+		{
+			$opt{db}->update(
+				'stations',
+				{
+					name     => $stop->name,
+					lat      => $stop->lat,
+					lon      => $stop->lon,
+					archived => 0
+				},
+				{
+					eva    => $s->{eva},
+					source => $opt{backend_id}
+				}
+			);
+
+			# MOTIS backends do not provide a numeric ID, so we set our ID here.
+			$stop->{eva} = $s->{eva};
+			return;
+		}
+
+		my $s = $opt{db}->query(
+			qq {
+				with new_station as (
+					insert into stations_external_ids (backend_id, external_id)
+					values (?, ?)
+					returning eva, backend_id
+				)
+
+				insert into stations (eva, name, lat, lon, source, archived)
+				values ((select eva from new_station), ?, ?, ?, (select backend_id from new_station), ?)
+				returning *
+			},
+			(
+				$opt{backend_id}, $stop->id,  $stop->name,
+				$stop->lat,       $stop->lon, 0,
+			)
+		);
+
+		# MOTIS backends do not provide a numeric ID, so we set our ID here.
+		$stop->{eva} = $s->hash->{eva};
+		return;
+	}
+
+	my $loc = $stop->loc;
 	if (
 		my $s = $self->get_by_eva(
 			$loc->eva,
@@ -137,6 +253,8 @@ sub add_or_update {
 			archived => 0
 		}
 	);
+
+	return;
 }
 
 sub add_meta {
@@ -225,6 +343,27 @@ sub get_by_eva {
 		{
 			eva    => $eva,
 			source => $opt{backend_id}
+		}
+	)->hash;
+}
+
+# Slow
+sub get_by_external_id {
+	my ( $self, %opt ) = @_;
+
+	if ( not $opt{external_id} ) {
+		return;
+	}
+
+	$opt{db}         //= $self->{pg}->db;
+	$opt{backend_id} //= $self->get_backend_id(%opt);
+
+	return $opt{db}->select(
+		'stations_with_external_ids',
+		'*',
+		{
+			external_id => $opt{external_id},
+			source      => $opt{backend_id},
 		}
 	)->hash;
 }

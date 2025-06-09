@@ -9,8 +9,14 @@
 	</div>
 	<div class="col s4 center-align">
 		% my $self_link = url_for('sstation', station => $station // param('station'));
-		% if (param('hafas')) {
+		% if (param('dbris')) {
+			<a href="/account/select_backend?redirect_to=<%= $self_link %>" class="btn-small btn-flat"><i class="material-icons left" aria-hidden="true">directions</i><%= param('dbris') %></a>
+		% }
+		% elsif (param('hafas')) {
 			<a href="/account/select_backend?redirect_to=<%= $self_link %>" class="btn-small btn-flat"><i class="material-icons left" aria-hidden="true">directions</i><%= param('hafas') %></a>
+		% }
+		% elsif (param('motis')) {
+			<a href="/account/select_backend?redirect_to=<%= $self_link %>" class="btn-small btn-flat"><i class="material-icons left" aria-hidden="true">directions</i><%= param('motis') %></a>
 		% }
 		% else {
 			% if ($user->{backend_id}) {
@@ -30,7 +36,13 @@
 			<div class="card">
 				<div class="card-content">
 					<span class="card-title">Aktuell eingecheckt</span>
-					<p>In <%= $user_status->{train_type} %> <%= $user_status->{train_no} %>
+					<p>In
+						% if ( not $user_status->{is_motis} ) {
+							<%= $user_status->{train_type} %>
+						% }
+
+						<%= $user_status->{train_line} // $user_status->{train_no} %>
+
 						% if ( $user_status->{arr_name}) {
 							von <%= $user_status->{dep_name} %> nach <%= $user_status->{arr_name} %>
 						% }
@@ -93,8 +105,8 @@
 
 <div class="row">
 	<div class="col s4 center-align">
-		% if ($hafas) {
-			<a class="btn-small" href="<%= url_for('sstation', station => param('station'))->query({hafas => $hafas, timestamp => $datetime->clone->subtract(hours => 1)->epoch}) %>"><i class="material-icons left" aria-hidden="true">chevron_left</i><span class="hide-on-small-only">früher</span></a>
+		% if ($dbris or $hafas or $motis) {
+			<a class="btn-small" href="<%= url_for('sstation', station => param('station'))->query({dbris => $dbris, hafas => $hafas, timestamp => $datetime->clone->subtract(hours => 1)->epoch}) %>"><i class="material-icons left" aria-hidden="true">chevron_left</i><span class="hide-on-small-only">früher</span></a>
 		% }
 	</div>
 	<div class="col s4 center-align">
@@ -103,8 +115,8 @@
 		% }
 	</div>
 	<div class="col s4 center-align">
-		% if ($hafas) {
-			<a class="btn-small" href="<%= url_for('sstation', station => param('station'))->query({hafas => $hafas, timestamp => $datetime->clone->add(hours => 1)->epoch}) %>"><span class="hide-on-small-only">später</span><i class="material-icons right" aria-hidden="true">chevron_right</i></a>
+		% if ($dbris or $hafas or $motis) {
+			<a class="btn-small" href="<%= url_for('sstation', station => param('station'))->query({dbris => $dbris, hafas => $hafas, timestamp => $datetime->clone->add(hours => 1)->epoch}) %>"><span class="hide-on-small-only">später</span><i class="material-icons right" aria-hidden="true">chevron_right</i></a>
 		% }
 	</div>
 </div>
@@ -134,20 +146,47 @@
 				Fahrt auswählen zum Einchecken.
 			% }
 			% else {
-				Keine Abfahrten gefunden. Ein Checkin ist frühestens 30 Minuten vor
-				und maximal 120 Minuten nach Abfahrt möglich.
+				% if ($dbris or $hafas) {
+					Keine Abfahrten im ausgewählten Zeitfenster
+					(<%= $datetime->strftime('%d.%m.%Y %H:%M') %> ± 30min).
+				% }
+				% else {
+					Keine Abfahrten gefunden. Ein Checkin ist frühestens 30 Minuten vor
+					und maximal 120 Minuten nach Abfahrt möglich.
+				% }
 			% }
 		</p>
 		% if (not $user_status->{checked_in} or ($can_check_out and $user_status->{arr_eva} and $user_status->{arrival_countdown} <= 0)) {
-			% if ($efa) {
+			% if ($dbris) {
+				%= include '_departures_dbris', results => $results, dbris => $dbris;
+			% }
+			% elsif ($efa) {
 				%= include '_departures_efa', results => $results, efa => $efa;
 			% }
 			% elsif ($hafas) {
 				%= include '_departures_hafas', results => $results, hafas => $hafas;
 			% }
+			% elsif ($motis) {
+				%= include '_departures_motis', results => $results, motis => $motis;
+			% }
 			% else {
 				%= include '_departures_iris', results => $results;
 			% }
+		% }
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s4 center-align">
+		% if ($dbris or $hafas) {
+			<a class="btn-small" href="<%= url_for('sstation', station => param('station'))->query({dbris => $dbris, hafas => $hafas, timestamp => $datetime->clone->subtract(hours => 1)->epoch}) %>"><i class="material-icons left" aria-hidden="true">chevron_left</i><span class="hide-on-small-only">früher</span></a>
+		% }
+	</div>
+	<div class="col s4 center-align">
+	</div>
+	<div class="col s4 center-align">
+		% if ($dbris or $hafas) {
+			<a class="btn-small" href="<%= url_for('sstation', station => param('station'))->query({dbris => $dbris, hafas => $hafas, timestamp => $datetime->clone->add(hours => 1)->epoch}) %>"><span class="hide-on-small-only">später</span><i class="material-icons right" aria-hidden="true">chevron_right</i></a>
 		% }
 	</div>
 </div>

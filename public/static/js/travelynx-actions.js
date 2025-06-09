@@ -194,9 +194,12 @@ function tvly_reg_handlers() {
 		var link = $(this);
 		var req = {
 			action: 'checkin',
+			dbris: link.data('dbris'),
 			hafas: link.data('hafas'),
+			motis: link.data('motis'),
 			station: link.data('station'),
 			train: link.data('train'),
+			suffix: link.data('suffix'),
 			dest: link.data('dest'),
 			ts: link.data('ts'),
 		};
@@ -206,7 +209,9 @@ function tvly_reg_handlers() {
 		var link = $(this);
 		var req = {
 			action: 'checkout',
+			dbris: link.data('dbris'),
 			hafas: link.data('hafas'),
+			motis: link.data('motis'),
 			station: link.data('station'),
 			force: link.data('force'),
 		};
@@ -237,7 +242,9 @@ function tvly_reg_handlers() {
 		var link = $(this);
 		var req = {
 			action: 'cancelled_from',
+			dbris: link.data('dbris'),
 			hafas: link.data('hafas'),
+			motis: link.data('motis'),
 			station: link.data('station'),
 			ts: link.data('ts'),
 			train: link.data('train'),
@@ -248,7 +255,9 @@ function tvly_reg_handlers() {
 		var link = $(this);
 		var req = {
 			action: 'cancelled_to',
+			dbris: link.data('dbris'),
 			hafas: link.data('hafas'),
+			motis: link.data('motis'),
 			station: link.data('station'),
 			force: true,
 		};
@@ -315,18 +324,18 @@ $(document).ready(function() {
 		$('nav .preloader-wrapper').addClass('active');
 	});
 	$('a[href="#now"]').keydown(function(event) {
-	    // also trigger click handler on keyboard enter
-	    if (event.keyCode == 13) {
-	        event.preventDefault();
-	        event.target.click();
-	    }
+		// also trigger click handler on keyboard enter
+		if (event.keyCode == 13) {
+			event.preventDefault();
+			event.target.click();
+		}
 	});
 	$('a[href="#now"]').click(function(event) {
-	    event.preventDefault();
-	    $('nav .preloader-wrapper').removeClass('active');
-	    now_el = $('#now')[0];
-	    now_el.previousElementSibling.querySelector(".dep-time").focus();
-	    now_el.scrollIntoView({behavior: "smooth", block: "center"});
+		event.preventDefault();
+		$('nav .preloader-wrapper').removeClass('active');
+		now_el = $('#now')[0];
+		now_el.previousElementSibling.querySelector(".dep-time").focus();
+		now_el.scrollIntoView({behavior: "smooth", block: "center"});
 	});
 	const elems = document.querySelectorAll('.carousel');
 	const instances = M.Carousel.init(elems, {

@@ -15,11 +15,11 @@
 				</tr>
 				<tr>
 					<td><i class="material-icons">train</i></td>
-					<td>Backend: DB IRIS. Bevorzugte Datenquelle für (mindestens teilweise) innerdeutsche Zugfahrten.</td>
+					<td>Backend: Deutsche Bahn (bahn.de oder IRIS-TTS).</td>
 				</tr>
 				<tr>
 					<td><i class="material-icons">directions</i></td>
-					<td>Backend: DB HAFAS. Bevorzugte Datenquelle für Nahverkehr und vollständig außerdeutsche Zugfahrten. Weniger detailliert als IRIS.</td>
+					<td>Backend: HAFAS.</td>
 				</tr>
 			</tbody>
 		</table>

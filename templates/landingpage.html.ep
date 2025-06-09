@@ -57,21 +57,17 @@
 						<div class="card-content">
 							<span class="card-title">Hallo, <%= $user->{name} %>!</span>
 							<p>Du bist gerade nicht eingecheckt.</p>
-							<div class="geolocation" data-recent="<%= join('|', map { $_->{eva} . ';' . $_->{name} . ';' . $_->{hafas} } @{stash('recent_targets') // []} ) %>" data-backend="<%= $user->{backend_id} %>">
+							<div class="geolocation" data-recent="<%= join('|', map { $_->{external_id_or_eva} . ';' . $_->{name} . ';' . $_->{dbris} . ';' . $_->{motis} . ';' . $_->{hafas} } @{stash('recent_targets') // []} ) %>" data-backend="<%= $user->{backend_id} %>">
 								<a class="btn waves-effect waves-light btn-flat request">Stationen in der Umgebung abfragen</a>
 							</div>
+							%= hidden_field backend_dbris => $user->{backend_dbris}
 							<div class="input-field">
 								%= text_field 'station', id => 'station', class => 'autocomplete contrast-color-text', autocomplete => 'off', required => undef
 								<label for="station">Manuelle Eingabe</label>
 							</div>
 						</div>
 						<div class="card-action">
-							% if ($user->{backend_id}) {
-								<a href="/account/select_backend?redirect_to=/" class="btn btn-flat"><i class="material-icons left" aria-hidden="true">directions</i><%= $user->{backend_name} %></a>
-							% }
-							% else {
-								<a href="/account/select_backend?redirect_to=/" class="btn btn-flat"><i class="material-icons left" aria-hidden="true">train</i>IRIS</a>
-							% }
+							<a href="/account/select_backend?redirect_to=/" class="btn btn-flat"><i class="material-icons left" aria-hidden="true"><%= $user->{backend_hafas} ? 'directions' : 'train' %></i><%= $user->{backend_name} // 'IRIS' %></a>
 							<button class="btn right waves-effect waves-light btn-flat" type="submit" name="action" value="departures">
 								<i class="material-icons left" aria-hidden="true">send</i>
 								Abfahrten
@@ -82,6 +78,25 @@
 			% }
 		</div>
 	</div>
+	% if (not $user->{backend_name}) {
+		<div class="row">
+			<div class="col s12">
+				<div class="card purple white-text">
+					<div class="card-content">
+						<span class="card-title">Legacy-Backend ausgewählt</span>
+						<p>
+							Das aktuell aktive IRIS-Backend wird nicht mehr weiterentwickelt und voraussichtlich bald von der Deutschen Bahn abgeschaltet.
+							Schon jetzt ist die Datenqualität wegen zunehmend schlechter Datenaufbereitungsmöglichkeiten oft unzureichend.
+							Das bahn.de-Backend ist in fast jeder Hinsicht besser geeignet; lediglich bei Verspätungs- und Servicemeldungen ist es geringfügig weniger detailliert und Checkin-Vorschläge werden derzeit nicht unterstützt.
+						</p>
+					</div>
+					<div class="card-action">
+						<a class="btn btn-flat" href="/account/select_backend?redirect_to=/">Backend wechseln</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	% }
 	<h2 style="margin-left: 0.75rem;">Letzte Fahrten</h2>
 	%= include '_history_trains', date_format => '%d.%m.%Y', journeys => [journeys->get(uid => $user->{id}, limit => 5, with_datetime => 1)];
 % }
@@ -89,9 +104,11 @@
 	<div class="row">
 		<div class="col s12">
 			<p>
-				Travelynx erlaubt das Einchecken in Züge im Netz der Deutschen
-				Bahn. So können die eigenen Fahrten später inklusive Echtzeitdaten
-				und eingetragenen Servicemeldungen nachvollzogen und brennende
+				Travelynx erlaubt das Einchecken in Verkehrsmittel (Busse,
+				Bahnen, Züge) unter anderem in Deutschland, Österreich, der
+				Schweiz, Luxemburg, Irland, Dänemark und Teilen der USA. So
+				können die eigenen Fahrten später inklusive Echtzeitdaten und
+				eingetragenen Servicemeldungen nachvollzogen und brennende
 				Fragen wie „Wie viele Stunden war ich letzten Monat unterwegs?“
 				beantwortet werden.
 			</p>
@@ -109,7 +126,7 @@
 					<li>Statistiken über Reisezeiten und Verspätungen</li>
 					<li>Unterstützung beim Ausfüllen von Fahrgastrechteformularen</li>
 					<li>Optional: Öffentlicher Reisestatus und öffentliche Angaben zu vergangenen Fahrten</li>
-					<li>Optional: Verknüpfung mit Träwelling</li>
+					<!-- <li>Optional: Verknüpfung mit Träwelling</li> -->
 				</ul>
 			</p>
 			<p>

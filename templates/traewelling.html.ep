@@ -41,30 +41,6 @@
 	</div>
 % }
 
-<div class="row">
-	<div class="col s12">
-		<div class="card purple">
-			<div class="card-content white-text">
-				<span class="card-title">Eingeschränkte Synchronisierung</span>
-				<p>
-					Träwelling und travelynx setzen unterschiedliche Schwerpunkte und haben unterschiedliche Features.
-					Kombiniert mit der Vielzahl an möglichen Randfällen heißt das, dass die Synchronisierung nicht immer funktioniert.
-					Diese Einschränkung ist bekannt und wird voraussichtlich bestehen bleiben.
-				</p>
-				<p>
-					Bei hohen Verspätungen, Ausfällen und nachträglichen Checkin-Änderungen ist die Synchronisierung u.U. nicht möglich und muss von Hand vorgenommen werden.
-					travelynx-Hooks werden bei via Träwelling vorgenommenen Checkins nicht ausgelöst.
-				</p>
-			</div>
-			<div class="card-action">
-				<a href="https://github.com/derf/travelynx/issues" class="waves-effect waves-light btn-flat white-text">
-					<i class="material-icons left" aria-hidden="true">bug_report</i>Bug melden
-				</a>
-			</div>
-		</div>
-	</div>
-</div>
-
 % if ($traewelling->{token} and ($traewelling->{expired} or $traewelling->{expiring})) {
 	<div class="row">
 		<div class="col s12">

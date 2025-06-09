@@ -1,0 +1,7 @@
+% if ($station->[2]{load}{SECOND}) {
+	% my ($first, $second) = load_icon($station->[2]{load});
+	% if ($first ne 'help_outline') {
+		<i class="material-icons tiny" aria-hidden="true"><%= $first %></i>
+	% }
+	<i class="material-icons tiny" aria-hidden="true"><%= $second %></i>
+% }

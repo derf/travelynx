@@ -6,7 +6,12 @@
 				<p>
 					Das von travelynx genutzte Backend hat nicht rechtzeitig reagiert.
 					travelynx hat keine Möglichkeiten, diese Situation zu beheben.
-					Vrsuche es in ein paar Sekunden bis Minuten noch einmal.
+					% if (stash('select_new_backend')) {
+						Versuche es in ein paar Sekunden bis Minuten noch einmal oder <a href="/account/select_backend">wähle ein anderes Backend</a>.
+					% }
+					% else {
+						Versuche es in ein paar Sekunden bis Minuten noch einmal.
+					% }
 				</p>
 			</div>
 		</div>

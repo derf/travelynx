@@ -1,10 +1,13 @@
 package Travelynx::Command::work;
 
 # Copyright (C) 2020-2023 Birte Kristina Friesel
+# Copyright (C) 2025 networkException <git@nwex.de>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 use Mojo::Base 'Mojolicious::Command';
 use Mojo::Promise;
+
+use utf8;
 
 use DateTime;
 use JSON;
@@ -33,7 +36,10 @@ sub run {
 		$self->app->log->debug("Removed ${num_incomplete} incomplete checkins");
 	}
 
-	my $errors = 0;
+	my $errors             = 0;
+	my $backend_issues     = 0;
+	my $rate_limit_counts  = 0;
+	my $dbris_rate_limited = 0;
 
 	for my $entry ( $self->app->in_transit->get_all_active ) {
 
@@ -46,6 +52,235 @@ sub run {
 		my $dep      = $entry->{dep_eva};
 		my $arr      = $entry->{arr_eva};
 		my $train_id = $entry->{train_id};
+
+		if ( $entry->{is_dbris} ) {
+
+			eval {
+
+				Mojo::Promise->timer( $dbris_rate_limited ? 4.5 : 1.0 )->then(
+					sub {
+						return $self->app->dbris->get_journey_p(
+							trip_id => $train_id );
+					}
+				)->then(
+					sub {
+						my ($journey) = @_;
+
+						$dbris_rate_limited = 0;
+
+						my $found_dep;
+						my $found_arr;
+						for my $stop ( $journey->route ) {
+							if ( $stop->eva == $dep ) {
+								$found_dep = $stop;
+							}
+							if ( $arr and $stop->eva == $arr ) {
+								$found_arr = $stop;
+								last;
+							}
+						}
+						if ( not $found_dep ) {
+							$self->app->log->debug(
+								"Did not find $dep within journey $train_id");
+							return;
+						}
+
+						if ( $found_dep->rt_dep ) {
+							$self->app->in_transit->update_departure_dbris(
+								uid      => $uid,
+								journey  => $journey,
+								stop     => $found_dep,
+								dep_eva  => $dep,
+								arr_eva  => $arr,
+								train_id => $train_id,
+							);
+						}
+						if (    $found_dep->sched_dep
+							and $found_dep->dep->epoch > $now->epoch )
+						{
+							$self->app->add_wagonorder(
+								uid          => $uid,
+								train_id     => $train_id,
+								is_departure => 1,
+								eva          => $dep,
+								datetime     => $found_dep->sched_dep,
+								train_type   => $journey->type,
+								train_no     => $journey->number,
+							);
+							$self->app->add_stationinfo( $uid, 1,
+								$train_id, $found_dep->eva );
+						}
+
+						if ( $found_arr and $found_arr->rt_arr ) {
+							$self->app->in_transit->update_arrival_dbris(
+								uid      => $uid,
+								journey  => $journey,
+								train_id => $train_id,
+								stop     => $found_arr,
+								dep_eva  => $dep,
+								arr_eva  => $arr
+							);
+							if ( $found_arr->arr->epoch - $now->epoch < 600 ) {
+								$self->app->add_wagonorder(
+									uid        => $uid,
+									train_id   => $train_id,
+									is_arrival => 1,
+									eva        => $arr,
+									datetime   => $found_arr->sched_dep,
+									train_type => $journey->type,
+									train_no   => $journey->number,
+								);
+								$self->app->add_stationinfo( $uid, 0,
+									$train_id, $found_dep->eva,
+									$found_arr->eva );
+							}
+						}
+						if ( $found_arr and $found_arr->is_cancelled ) {
+
+							# check out (adds a cancelled journey and resets journey state
+							# to destination selection)
+							$self->app->checkout_p(
+								station => $arr,
+								force   => 0,
+								dep_eva => $dep,
+								arr_eva => $arr,
+								uid     => $uid
+							)->wait;
+						}
+					}
+				)->catch(
+					sub {
+						my ($err) = @_;
+						$self->app->log->debug(
+"work($uid) @ DBRIS $entry->{backend_name}: journey: $err"
+						);
+						if ( $err =~ m{HTTP 429} ) {
+							$dbris_rate_limited = 1;
+							$rate_limit_counts += 1;
+						}
+						else {
+							$backend_issues += 1;
+						}
+					}
+				)->wait;
+
+				if (    $arr
+					and $entry->{real_arr_ts}
+					and $now->epoch - $entry->{real_arr_ts} > 600 )
+				{
+					$self->app->checkout_p(
+						station => $arr,
+						force   => 2,
+						dep_eva => $dep,
+						arr_eva => $arr,
+						uid     => $uid
+					)->wait;
+				}
+			};
+			if ($@) {
+				$errors += 1;
+				$self->app->log->error(
+					"work($uid) @ DBRIS $entry->{backend_name}: $@");
+			}
+			next;
+		}
+
+		if ( $entry->{is_motis} ) {
+
+			eval {
+				$self->app->motis->get_trip_p(
+					service => $entry->{backend_name},
+					trip_id => $train_id,
+				)->then(
+					sub {
+						my ($journey) = @_;
+
+						for my $stopover ( $journey->stopovers ) {
+							if ( not defined $stopover->stop->{eva} ) {
+
+								# Looks like MOTIS / transitous station IDs can change after the fact.
+								# So let's be safe rather than sorry, even if this causes way too many calls to the slow path
+								# (Stations::get_by_external_id uses string lookups).
+								# This function call implicitly sets $stopover->stop->{eva} for MOTIS backends.
+								$self->app->stations->add_or_update(
+									stop  => $stopover->stop,
+									motis => $entry->{backend_name},
+								);
+							}
+						}
+
+						my $found_departure;
+						my $found_arrival;
+						for my $stopover ( $journey->stopovers ) {
+							if ( $stopover->stop->{eva} == $dep ) {
+								$found_departure = $stopover;
+							}
+
+							if ( $arr and $stopover->stop->{eva} == $arr ) {
+								$found_arrival = $stopover;
+								last;
+							}
+						}
+
+						if ( not $found_departure ) {
+							$self->app->log->debug(
+								"Did not find $dep within trip $train_id");
+							return;
+						}
+
+						if ( $found_departure->realtime_departure ) {
+							$self->app->in_transit->update_departure_motis(
+								uid      => $uid,
+								journey  => $journey,
+								stopover => $found_departure,
+								dep_eva  => $dep,
+								arr_eva  => $arr,
+								train_id => $train_id,
+							);
+						}
+
+						if (    $found_arrival
+							and $found_arrival->realtime_arrival )
+						{
+							$self->app->in_transit->update_arrival_motis(
+								uid      => $uid,
+								journey  => $journey,
+								train_id => $train_id,
+								stopover => $found_arrival,
+								dep_eva  => $dep,
+								arr_eva  => $arr
+							);
+						}
+					}
+				)->catch(
+					sub {
+						my ($err) = @_;
+						$self->app->log->error(
+"work($uid) @ MOTIS $entry->{backend_name}: journey: $err"
+						);
+					}
+				)->wait;
+
+				if (    $arr
+					and $entry->{real_arr_ts}
+					and $now->epoch - $entry->{real_arr_ts} > 600 )
+				{
+					$self->app->checkout_p(
+						station => $arr,
+						force   => 2,
+						dep_eva => $dep,
+						arr_eva => $arr,
+						uid     => $uid
+					)->wait;
+				}
+			};
+			if ($@) {
+				$errors += 1;
+				$self->app->log->error(
+					"work($uid) @ MOTIS $entry->{backend_name}: $@");
+			}
+			next;
+		}
 
 		if ( $entry->{is_hafas} ) {
 
@@ -83,22 +318,27 @@ sub run {
 								dep_eva => $dep,
 								arr_eva => $arr
 							);
-							if (    $entry->{backend_id} <= 1
-								and $journey->class <= 16
-								and $found_dep->rt_dep->epoch > $now->epoch )
-							{
-								$self->app->add_wagonorder(
-									uid          => $uid,
-									train_id     => $journey->id,
-									is_departure => 1,
-									eva          => $dep,
-									datetime     => $found_dep->sched_dep,
-									train_type   => $journey->type,
-									train_no     => $journey->number,
-								);
-								$self->app->add_stationinfo( $uid, 1,
-									$journey->id, $found_dep->loc->eva );
-							}
+						}
+						if (
+							$found_dep->sched_dep
+							and (  $entry->{backend_id} <= 1
+								or $entry->{backend_name} eq 'VRN'
+								or $entry->{backend_name} eq 'ÖBB' )
+							and $journey->class <= 16
+							and $found_dep->dep->epoch > $now->epoch
+						  )
+						{
+							$self->app->add_wagonorder(
+								uid          => $uid,
+								train_id     => $journey->id,
+								is_departure => 1,
+								eva          => $dep,
+								datetime     => $found_dep->sched_dep,
+								train_type   => $journey->type =~ s{ +$}{}r,
+								train_no     => $journey->number,
+							);
+							$self->app->add_stationinfo( $uid, 1,
+								$journey->id, $found_dep->loc->eva );
 						}
 
 						if ( $found_arr and $found_arr->rt_arr ) {
@@ -109,10 +349,15 @@ sub run {
 								dep_eva => $dep,
 								arr_eva => $arr
 							);
-							if (    $entry->{backend_id} <= 1
+							if (
+								(
+									   $entry->{backend_id} <= 1
+									or $entry->{backend_name} eq 'VRN'
+									or $entry->{backend_name} eq 'ÖBB'
+								)
 								and $journey->class <= 16
-								and $found_arr->rt_arr->epoch - $now->epoch
-								< 600 )
+								and $found_arr->arr->epoch - $now->epoch < 600
+							  )
 							{
 								$self->app->add_wagonorder(
 									uid        => $uid,
@@ -132,10 +377,12 @@ sub run {
 				)->catch(
 					sub {
 						my ($err) = @_;
+						$backend_issues += 1;
 						if ( $err
-							=~ m{svcResL\[0\][.]err is (?:FAIL|PARAMETER)$} )
+							=~ m{svcResL\[0\][.]err is (?:FAIL|PARAMETER)$}
+							or $err =~ m{timeout} )
 						{
-							# HAFAS do be weird. These are not actionable.
+							# These are not actionable.
 							$self->app->log->debug(
 "work($uid) @ HAFAS $entry->{backend_name}: journey: $err"
 							);
@@ -340,6 +587,7 @@ sub run {
 				)->catch(
 					sub {
 						my ($error) = @_;
+						$backend_issues += 1;
 						$self->app->log->error(
 							"work($uid) @ IRIS: arrival: $error");
 						$errors += 1;
@@ -363,13 +611,13 @@ sub run {
 		if ( $self->app->mode eq 'development' ) {
 			$self->app->log->debug( 'POST '
 				  . $self->app->config->{influxdb}->{url}
-				  . " worker runtime_seconds=${worker_duration},errors=${errors}"
+				  . " worker runtime_seconds=${worker_duration},errors=${errors},backend_errors=${backend_issues},ratelimit_count=${rate_limit_counts}"
 			);
 		}
 		else {
 			$self->app->ua->post_p( $self->app->config->{influxdb}->{url},
-				"worker runtime_seconds=${worker_duration},errors=${errors}" )
-			  ->wait;
+"worker runtime_seconds=${worker_duration},errors=${errors},backend_errors=${backend_issues},ratelimit_count=${rate_limit_counts}"
+			)->wait;
 		}
 	}
 
