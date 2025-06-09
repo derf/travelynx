@@ -268,6 +268,7 @@ sub startup {
 				log        => $self->app->log,
 				cache      => $self->app->cache_iris_rt,
 				user_agent => $self->ua,
+				root_url   => $self->base_url_for('/')->to_abs,
 				version    => $self->app->config->{version},
 			);
 		}
