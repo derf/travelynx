@@ -3032,7 +3032,7 @@ qq{select distinct checkout_station_id from in_transit where backend_id = 0;}
 		$db->query(
 			qq{
 				alter table schema_version add column efa varchar(12);
-				update schema_version set version = 59;
+				update schema_version set version = 63;
 				update schema_version set efa = '0';
 			}
 		);
