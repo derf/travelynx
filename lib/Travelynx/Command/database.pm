@@ -3234,18 +3234,19 @@ sub sync_backends_efa {
 			'backends',
 			'count(*) as count',
 			{
-				efa => 1,
-				name  => $service->{shortname}
+				efa  => 1,
+				name => $service->{shortname}
 			}
 		)->hash->{count};
 		if ( not $present ) {
 			$db->insert(
 				'backends',
 				{
-					iris  => 0,
-					hafas => 0,
+					dbris => 0,
 					efa   => 1,
-					ris   => 0,
+					hafas => 0,
+					iris  => 0,
+					motis => 0,
 					name  => $service->{shortname},
 				},
 				{ on_conflict => undef }
@@ -3272,10 +3273,11 @@ sub sync_backends_hafas {
 			$db->insert(
 				'backends',
 				{
-					iris  => 0,
-					hafas => 1,
-					efa   => 0,
 					dbris => 0,
+					efa   => 0,
+					hafas => 1,
+					iris  => 0,
+					motis => 0,
 					name  => $service->{shortname},
 				},
 				{ on_conflict => undef }
@@ -3302,10 +3304,10 @@ sub sync_backends_motis {
 			$db->insert(
 				'backends',
 				{
-					iris  => 0,
-					hafas => 0,
-					efa   => 0,
 					dbris => 0,
+					efa   => 0,
+					hafas => 0,
+					iris  => 0,
 					motis => 1,
 					name  => $service->{shortname},
 				},
