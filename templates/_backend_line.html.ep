@@ -6,7 +6,7 @@
 		% }
 		% if ($backend->{has_area}) {
 			<br/>
-			<a href="https://dbf.finalrewind.org/coverage/HAFAS/<%= $backend->{name} %>"><%= join(q{, }, @{$backend->{regions} // []}) || '[Karte]' %></a>
+			<a href="https://dbf.finalrewind.org/coverage/<%= $backend->{type} %>/<%= $backend->{name} %>"><%= join(q{, }, @{$backend->{regions} // []}) || '[Karte]' %></a>
 		% }
 		% elsif ($backend->{regions}) {
 			<br/>

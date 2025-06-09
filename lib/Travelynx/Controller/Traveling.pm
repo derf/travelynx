@@ -1,6 +1,7 @@
 package Travelynx::Controller::Traveling;
 
 # Copyright (C) 2020-2023 Birte Kristina Friesel
+# Copyright (C) 2025 networkException <git@nwex.de>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 use Mojo::Base 'Mojolicious::Controller';
@@ -46,6 +47,11 @@ sub get_connecting_trains_p {
 
 		# We do get a little bit of via information, so this might work in some
 		# cases. But not reliably. Probably best to leave it out entirely then.
+		return $promise->reject;
+	}
+	if ( $user->{backend_motis} ) {
+
+		# FIXME: The following code can't handle external_ids currently
 		return $promise->reject;
 	}
 
@@ -408,8 +414,8 @@ sub homepage {
 			}
 		}
 		else {
-			@recent_targets = uniq_by { $_->{eva} }
-			$self->journeys->get_latest_checkout_stations( uid => $uid );
+			@recent_targets = uniq_by { $_->{external_id_or_eva} }
+				$self->journeys->get_latest_checkout_stations( uid => $uid );
 		}
 		$self->render(
 			'landingpage',
@@ -550,13 +556,16 @@ sub geolocation {
 		return;
 	}
 
-	my ( $dbris_service, $hafas_service );
+	my ( $dbris_service, $hafas_service, $motis_service );
 	my $backend = $self->stations->get_backend( backend_id => $backend_id );
 	if ( $backend->{dbris} ) {
 		$dbris_service = $backend->{name};
 	}
 	elsif ( $backend->{hafas} ) {
 		$hafas_service = $backend->{name};
+	}
+	elsif ( $backend->{motis} ) {
+		$motis_service = $backend->{name};
 	}
 
 	if ($dbris_service) {
@@ -654,6 +663,54 @@ sub geolocation {
 
 		return;
 	}
+	elsif ($motis_service) {
+		$self->render_later;
+
+		Travel::Status::MOTIS->new_p(
+			promise             => 'Mojo::Promise',
+			user_agent          => $self->ua,
+
+			service             => $motis_service,
+			stops_by_coordinate => {
+				lat => $lat,
+				lon => $lon
+			}
+		)->then(
+			sub {
+				my ($motis) = @_;
+				my @motis = map {
+					{
+						id       => $_->id,
+						name     => $_->name,
+						distance => 0,
+						motis    => $motis_service,
+					}
+				} $motis->results;
+
+				if ( @motis > 10 ) {
+					@motis = @motis[ 0 .. 9 ];
+				}
+
+				$self->render(
+					json => {
+						candidates => [@motis],
+					}
+				);
+			}
+		)->catch(
+			sub {
+				my ($err) = @_;
+				$self->render(
+					json => {
+						candidates => [],
+						warning    => $err,
+					}
+				);
+			}
+		)->wait;
+
+		return;
+	}
 
 	my @iris = map {
 		{
@@ -734,6 +791,7 @@ sub travel_action {
 				return $self->checkin_p(
 					dbris        => $params->{dbris},
 					hafas        => $params->{hafas},
+					motis        => $params->{motis},
 					station      => $params->{station},
 					train_id     => $params->{train},
 					train_suffix => $params->{suffix},
@@ -872,6 +930,13 @@ sub travel_action {
 					  . '?hafas='
 					  . $status->{backend_name};
 				}
+				elsif ( $status->{is_motis} ) {
+					$redir
+					  = '/s/'
+					  . $status->{dep_external_id}
+					  . '?motis='
+					  . $status->{backend_name};
+				}
 				else {
 					$redir = '/s/' . $status->{dep_ds100};
 				}
@@ -889,6 +954,7 @@ sub travel_action {
 		$self->checkin_p(
 			dbris    => $params->{dbris},
 			hafas    => $params->{hafas},
+			motis    => $params->{motis},
 			station  => $params->{station},
 			train_id => $params->{train},
 			ts       => $params->{ts},
@@ -1021,6 +1087,8 @@ sub station {
 	  // ( $user->{backend_dbris} ? $user->{backend_name} : undef );
 	my $hafas_service = $self->param('hafas')
 	  // ( $user->{backend_hafas} ? $user->{backend_name} : undef );
+	my $motis_service = $self->param('motis')
+	  // ( $user->{backend_motis} ? $user->{backend_name} : undef );
 	my $promise;
 	if ($dbris_service) {
 		if ( $station !~ m{ [@] L = \d+ }x ) {
@@ -1052,6 +1120,35 @@ sub station {
 			lookbehind => 30,
 			lookahead  => 30,
 		);
+	}
+	elsif ($motis_service) {
+		if ( $station !~ m/.*_.*/ ) {
+			$self->render_later;
+			$self->motis->get_station_by_query_p(
+				service => $motis_service,
+				query   => $station,
+			)->then(
+				sub {
+					my ($motis_station) = @_;
+					$self->redirect_to( '/s/' . $motis_station->{id} );
+				}
+			)->catch(
+				sub {
+					my ($err) = @_;
+					say "$err";
+
+					$self->redirect_to('/');
+				}
+			)->wait;
+			return;
+		}
+		$promise = $self->motis->get_departures_p(
+			service    => $motis_service,
+			station_id => $station,
+			timestamp  => $timestamp,
+			lookbehind => 30,
+			lookahead  => 30,
+		)
 	}
 	else {
 		$promise = $self->iris->get_departures_p(
@@ -1103,6 +1200,17 @@ sub station {
 						List::Util::reduce { length($a) < length($b) ? $a : $b }
 						@{ $status->station->{names} }
 					),
+					related_stations => [],
+				};
+			}
+			elsif ($motis_service) {
+				@results = map { $_->[0] }
+				  sort { $b->[1] <=> $a->[1] }
+				  map { [ $_, $_->stopover->departure->epoch ] } $status->results;
+
+				$status = {
+					station_eva      => $station,
+					station_name     => $status->{results}->[0]->stopover->stop->name,
 					related_stations => [],
 				};
 			}
@@ -1172,6 +1280,7 @@ sub station {
 							user              => $user,
 							dbris             => $dbris_service,
 							hafas             => $hafas_service,
+							motis             => $motis_service,
 							eva               => $status->{station_eva},
 							datetime          => $timestamp,
 							now_in_range      => $now_within_range,
@@ -1192,6 +1301,7 @@ sub station {
 							user             => $user,
 							dbris            => $dbris_service,
 							hafas            => $hafas_service,
+							motis            => $motis_service,
 							eva              => $status->{station_eva},
 							datetime         => $timestamp,
 							now_in_range     => $now_within_range,
@@ -1211,6 +1321,7 @@ sub station {
 					user             => $user,
 					dbris            => $dbris_service,
 					hafas            => $hafas_service,
+					motis            => $motis_service,
 					eva              => $status->{station_eva},
 					datetime         => $timestamp,
 					now_in_range     => $now_within_range,
@@ -1314,6 +1425,23 @@ sub redirect_to_station {
 			sub {
 				my ($dbris_station) = @_;
 				$self->redirect_to( '/s/' . $dbris_station->{id} );
+			}
+		)->catch(
+			sub {
+				my ($err) = @_;
+				$self->redirect_to('/');
+			}
+		)->wait;
+	}
+	elsif ( $self->param('backend_motis') ) {
+		$self->render_later;
+		$self->motis->get_station_by_query(
+			service => $self->param('backend_motis'),
+			query   => $station,
+		)->then(
+			sub {
+				my ($motis_station) = @_;
+				$self->redirect_to( '/s/' . $motis_station->{id} );
 			}
 		)->catch(
 			sub {
@@ -1892,7 +2020,7 @@ sub journey_details {
 				$delay = sprintf(
 					'mit %+d ',
 					(
-						    $journey->{rt_arrival}->epoch
+							$journey->{rt_arrival}->epoch
 						  - $journey->{sched_arrival}->epoch
 					) / 60
 				);

@@ -1,6 +1,7 @@
 package Travelynx;
 
 # Copyright (C) 2020-2023 Birte Kristina Friesel
+# Copyright (C) 2025 networkException <git@nwex.de>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -24,6 +25,7 @@ use Travelynx::Helper::DBDB;
 use Travelynx::Helper::DBRIS;
 use Travelynx::Helper::HAFAS;
 use Travelynx::Helper::IRIS;
+use Travelynx::Helper::MOTIS;
 use Travelynx::Helper::Sendmail;
 use Travelynx::Helper::Traewelling;
 use Travelynx::Model::InTransit;
@@ -260,6 +262,18 @@ sub startup {
 	);
 
 	$self->helper(
+		motis => sub {
+			my ($self) = @_;
+			state $motis = Travelynx::Helper::MOTIS->new(
+				log        => $self->app->log,
+				cache      => $self->app->cache_iris_rt,
+				user_agent => $self->ua,
+				version    => $self->app->config->{version},
+			);
+		}
+	);
+
+	$self->helper(
 		traewelling => sub {
 			my ($self) = @_;
 			state $trwl = Travelynx::Model::Traewelling->new( pg => $self->pg );
@@ -475,6 +489,9 @@ sub startup {
 				return Mojo::Promise->reject('You are already checked in');
 			}
 
+			if ( $opt{motis} ) {
+				return $self->_checkin_motis_p(%opt);
+			}
 			if ( $opt{dbris} ) {
 				return $self->_checkin_dbris_p(%opt);
 			}
@@ -548,6 +565,147 @@ sub startup {
 				sub {
 					my ( $err, $status ) = @_;
 					$promise->reject( $status->{errstr} );
+					return;
+				}
+			)->wait;
+
+			return $promise;
+		}
+	);
+
+	$self->helper(
+		'_checkin_motis_p' => sub {
+			my ( $self, %opt ) = @_;
+
+			my $station  = $opt{station};
+			my $train_id = $opt{train_id};
+			my $ts       = $opt{ts};
+			my $uid      = $opt{uid} // $self->current_user->{id};
+			my $db       = $opt{db}  // $self->pg->db;
+			my $hafas;
+
+			my $promise = Mojo::Promise->new;
+
+			$self->motis->get_trip_p(
+				service => $opt{motis},
+				trip_id => $train_id,
+			)->then(
+				sub {
+					my ($trip) = @_;
+					my $found_stopover;
+
+					for my $stopover ( $trip->stopovers ) {
+						if ( $stopover->stop->id eq $station ) {
+							$found_stopover = $stopover;
+
+							# Lines may serve the same stop several times.
+							# Keep looking until the scheduled departure
+							# matches the one passed while checking in.
+							if ( $ts and $stopover->scheduled_departure->epoch == $ts ) {
+								last;
+							}
+						}
+					}
+
+					if ( not $found_stopover ) {
+						$promise->reject("Did not find stopover at '$station' within trip '$train_id'");
+						return;
+					}
+
+					for my $stopover ( $trip->stopovers ) {
+						$self->stations->add_or_update(
+							stop  => $stopover->stop,
+							db    => $db,
+							motis => $opt{motis},
+						);
+					}
+
+					$self->stations->add_or_update(
+						stop  => $found_stopover->stop,
+						db    => $db,
+						motis => $opt{motis},
+					);
+
+					eval {
+						$self->in_transit->add(
+							uid        => $uid,
+							db         => $db,
+							journey    => $trip,
+							stopover   => $found_stopover,
+							data       => { trip_id => $train_id },
+							backend_id => $self->stations->get_backend_id(
+								motis => $opt{motis}
+							),
+						);
+					};
+
+					if ($@) {
+						$self->app->log->error("Checkin($uid): INSERT failed: $@");
+						$promise->reject( 'INSERT failed: ' . $@ );
+						return;
+					}
+
+					my $polyline;
+					if ( $trip->polyline ) {
+						my @station_list;
+						my @coordinate_list;
+						for my $coordinate ( $trip->polyline ) {
+							if ( $coordinate->{stop} ) {
+								if ( not defined $coordinate->{stop}->{eva} ) {
+									die()
+								}
+
+								push(
+									@coordinate_list,
+									[
+										$coordinate->{lon}, $coordinate->{lat},
+										$coordinate->{stop}->{eva}
+									]
+								);
+
+								push( @station_list, $coordinate->{stop}->name );
+							}
+							else {
+								push( @coordinate_list, [ $coordinate->{lon}, $coordinate->{lat} ] );
+							}
+						}
+
+						# equal length → polyline only consists of straight
+						# lines between stops. that's not helpful.
+						if ( @station_list == @coordinate_list ) {
+							$self->log->debug( 'Ignoring polyline for '
+								  . $trip->route_name
+								  . ' as it only consists of straight lines between stops.'
+							);
+						}
+						else {
+							$polyline = {
+								from_eva => ( $trip->stopovers )[0]->stop->{eva},
+								to_eva   => ( $trip->stopovers )[-1]->stop->{eva},
+								coords   => \@coordinate_list,
+							};
+						}
+					}
+
+					if ($polyline) {
+						$self->in_transit->set_polyline(
+							uid      => $uid,
+							db       => $db,
+							polyline => $polyline,
+						);
+					}
+
+					# mustn't be called during a transaction
+					if ( not $opt{in_transaction} ) {
+						$self->run_hook( $uid, 'checkin' );
+					}
+
+					$promise->resolve($trip);
+				}
+			)->catch(
+				sub {
+					my ($err) = @_;
+					$promise->reject($err);
 					return;
 				}
 			)->wait;
@@ -966,7 +1124,7 @@ sub startup {
 				return $promise->resolve( 0, 'race condition' );
 			}
 
-			if ( $user->{is_dbris} or $user->{is_hafas} ) {
+			if ( $user->{is_dbris} or $user->{is_hafas} or $user->{is_motis} ) {
 				return $self->_checkout_journey_p(%opt);
 			}
 
@@ -2052,6 +2210,7 @@ sub startup {
 					is_dbris        => $latest->{is_dbris},
 					is_iris         => $latest->{is_iris},
 					is_hafas        => $latest->{is_hafas},
+					is_motis        => $latest->{is_motis},
 					journey_id      => $latest->{journey_id},
 					timestamp       => $action_time,
 					timestamp_delta => $now->epoch - $action_time->epoch,
@@ -2063,6 +2222,7 @@ sub startup {
 					real_departure  => epoch_to_dt( $latest->{real_dep_ts} ),
 					dep_ds100       => $latest->{dep_ds100},
 					dep_eva         => $latest->{dep_eva},
+					dep_external_id => $latest->{dep_external_id},
 					dep_name        => $latest->{dep_name},
 					dep_lat         => $latest->{dep_lat},
 					dep_lon         => $latest->{dep_lon},
@@ -2071,6 +2231,7 @@ sub startup {
 					real_arrival    => epoch_to_dt( $latest->{real_arr_ts} ),
 					arr_ds100       => $latest->{arr_ds100},
 					arr_eva         => $latest->{arr_eva},
+					arr_external_id => $latest->{arr_external_id},
 					arr_name        => $latest->{arr_name},
 					arr_lat         => $latest->{arr_lat},
 					arr_lon         => $latest->{arr_lon},
@@ -2106,7 +2267,7 @@ sub startup {
 			my $ret = {
 				deprecated => \0,
 				checkedIn  => (
-					     $status->{checked_in}
+						 $status->{checked_in}
 					  or $status->{cancelled}
 				) ? \1 : \0,
 				comment => $status->{comment},
@@ -2114,6 +2275,7 @@ sub startup {
 					id => $status->{backend_id},
 					type => $status->{is_dbris} ? 'DBRIS'
 					: $status->{is_hafas} ? 'HAFAS'
+					: $status->{is_motis} ? 'MOTIS'
 					: 'IRIS-TTS',
 					name => $status->{backend_name},
 				},
@@ -2538,8 +2700,8 @@ sub startup {
 						color     => '#673ab7',
 						opacity   => @polylines
 						? $with_polyline
-						      ? 0.4
-						      : 0.6
+							  ? 0.4
+							  : 0.6
 						: 0.8,
 					},
 					{

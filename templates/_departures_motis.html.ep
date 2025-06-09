@@ -1,0 +1,54 @@
+<ul class="collection departures">
+% my $orientation_bar_shown = param('train');
+% my $now_epoch = now->epoch;
+% for my $result (@{$results}) {
+	% my $row_class = '';
+	% my $link_class = 'action-checkin';
+	% if ($result->is_cancelled) {
+		% $row_class = "cancelled";
+		% $link_class = 'action-cancelled-from';
+	% }
+	% if (not $orientation_bar_shown and $result->stopover->departure->epoch < $now_epoch) {
+		% $orientation_bar_shown = 1;
+		<li class="collection-item" id="now">
+			<strong class="dep-time">
+				%= now->strftime('%H:%M')
+			</strong>
+			<strong>— Anfragezeitpunkt —</strong>
+		</li>
+	% }
+	<li class="collection-item <%= $link_class %> <%= $row_class %>"
+		data-motis="<%= $motis %>"
+		data-station="<%= $result->stopover->stop->id %>"
+		data-train="<%= $result->id %>"
+		data-ts="<%= ($result->stopover->departure)->epoch %>"
+	>
+		<a class="dep-time" href="#">
+			%= $result->stopover->departure->strftime('%H:%M')
+			% if ($result->stopover->delay) {
+				(<%= sprintf('%+d', $result->stopover->delay) %>)
+			% }
+			% elsif (not $result->stopover->is_realtime and not $result->stopover->is_cancelled) {
+				<i class="material-icons" aria-label="Keine Echtzeitdaten vorhanden" style="font-size: 16px;">gps_off</i>
+			% }
+		</a>
+		<span class="dep-line <%= $result->mode %>" style="background-color: #<%= $result->route_color // q{} %>;">
+			%= $result->route_name
+		</span>
+		<span class="dep-dest">
+			% if ($result->is_cancelled) {
+				Fahrt nach <%= $result->headsign %> entfällt
+			% }
+			% else {
+				%= $result->headsign
+				% for my $checkin (@{$checkin_by_train->{$result->id} // []}) {
+					<span class="followee-checkin">
+						<i class="material-icons tiny" aria-label="Eine Person, der du folgst, ist hier eingecheckt">people</i>
+						<%= $checkin->{followee_name} %> → <%= $checkin->{arr_name} // '???' %>
+					</span>
+				% }
+			% }
+		</span>
+	</li>
+% }
+</ul>

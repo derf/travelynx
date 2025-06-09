@@ -15,6 +15,9 @@
 		% elsif (param('hafas')) {
 			<a href="/account/select_backend?redirect_to=<%= $self_link %>" class="btn-small btn-flat"><i class="material-icons left" aria-hidden="true">directions</i><%= param('hafas') %></a>
 		% }
+		% elsif (param('motis')) {
+			<a href="/account/select_backend?redirect_to=<%= $self_link %>" class="btn-small btn-flat"><i class="material-icons left" aria-hidden="true">directions</i><%= param('motis') %></a>
+		% }
 		% else {
 			% if ($user->{backend_id}) {
 				<a href="/account/select_backend?redirect_to=<%= $self_link %>" class="btn-small btn-flat"><i class="material-icons left" aria-hidden="true">directions</i><%= $user->{backend_name} %></a>
@@ -33,7 +36,13 @@
 			<div class="card">
 				<div class="card-content">
 					<span class="card-title">Aktuell eingecheckt</span>
-					<p>In <%= $user_status->{train_type} %> <%= $user_status->{train_no} %>
+					<p>In
+						% if ( not $user_status->{is_motis} ) {
+							<%= $user_status->{train_type} %>
+						% }
+
+						<%= $user_status->{train_line} // $user_status->{train_no} %>
+
 						% if ( $user_status->{arr_name}) {
 							von <%= $user_status->{dep_name} %> nach <%= $user_status->{arr_name} %>
 						% }
@@ -96,7 +105,7 @@
 
 <div class="row">
 	<div class="col s4 center-align">
-		% if ($dbris or $hafas) {
+		% if ($dbris or $hafas or $motis) {
 			<a class="btn-small" href="<%= url_for('sstation', station => param('station'))->query({dbris => $dbris, hafas => $hafas, timestamp => $datetime->clone->subtract(hours => 1)->epoch}) %>"><i class="material-icons left" aria-hidden="true">chevron_left</i><span class="hide-on-small-only">früher</span></a>
 		% }
 	</div>
@@ -106,7 +115,7 @@
 		% }
 	</div>
 	<div class="col s4 center-align">
-		% if ($dbris or $hafas) {
+		% if ($dbris or $hafas or $motis) {
 			<a class="btn-small" href="<%= url_for('sstation', station => param('station'))->query({dbris => $dbris, hafas => $hafas, timestamp => $datetime->clone->add(hours => 1)->epoch}) %>"><span class="hide-on-small-only">später</span><i class="material-icons right" aria-hidden="true">chevron_right</i></a>
 		% }
 	</div>
@@ -153,6 +162,9 @@
 			% }
 			% elsif ($hafas) {
 				%= include '_departures_hafas', results => $results, hafas => $hafas;
+			% }
+			% elsif ($motis) {
+				%= include '_departures_motis', results => $results, motis => $motis;
 			% }
 			% else {
 				%= include '_departures_iris', results => $results;
