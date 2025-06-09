@@ -2146,6 +2146,13 @@ sub startup {
 					}
 				}
 
+				if ( $in_transit->{data}{train_color} ) {
+					$ret->{train_color} = $in_transit->{data}{train_color};
+				}
+				if ( $in_transit->{data}{train_text_color} ) {
+					$ret->{train_text_color} = $in_transit->{data}{train_text_color};
+				}
+
 				return $ret;
 			}
 
@@ -2202,43 +2209,45 @@ sub startup {
 					$latest->{arr_name}  = $station->{name};
 				}
 				return {
-					checked_in      => 0,
-					cancelled       => 0,
-					cancellation    => $latest_cancellation,
-					backend_id      => $latest->{backend_id},
-					backend_name    => $latest->{backend_name},
-					is_dbris        => $latest->{is_dbris},
-					is_iris         => $latest->{is_iris},
-					is_hafas        => $latest->{is_hafas},
-					is_motis        => $latest->{is_motis},
-					journey_id      => $latest->{journey_id},
-					timestamp       => $action_time,
-					timestamp_delta => $now->epoch - $action_time->epoch,
-					train_type      => $latest->{train_type},
-					train_line      => $latest->{train_line},
-					train_no        => $latest->{train_no},
-					train_id        => $latest->{train_id},
-					sched_departure => epoch_to_dt( $latest->{sched_dep_ts} ),
-					real_departure  => epoch_to_dt( $latest->{real_dep_ts} ),
-					dep_ds100       => $latest->{dep_ds100},
-					dep_eva         => $latest->{dep_eva},
-					dep_external_id => $latest->{dep_external_id},
-					dep_name        => $latest->{dep_name},
-					dep_lat         => $latest->{dep_lat},
-					dep_lon         => $latest->{dep_lon},
-					dep_platform    => $latest->{dep_platform},
-					sched_arrival   => epoch_to_dt( $latest->{sched_arr_ts} ),
-					real_arrival    => epoch_to_dt( $latest->{real_arr_ts} ),
-					arr_ds100       => $latest->{arr_ds100},
-					arr_eva         => $latest->{arr_eva},
-					arr_external_id => $latest->{arr_external_id},
-					arr_name        => $latest->{arr_name},
-					arr_lat         => $latest->{arr_lat},
-					arr_lon         => $latest->{arr_lon},
-					arr_platform    => $latest->{arr_platform},
-					comment         => $latest->{user_data}{comment},
-					visibility      => $latest->{visibility},
-					visibility_str  => $latest->{visibility_str},
+					checked_in       => 0,
+					cancelled        => 0,
+					cancellation     => $latest_cancellation,
+					backend_id       => $latest->{backend_id},
+					backend_name     => $latest->{backend_name},
+					is_dbris         => $latest->{is_dbris},
+					is_iris          => $latest->{is_iris},
+					is_hafas         => $latest->{is_hafas},
+					is_motis         => $latest->{is_motis},
+					journey_id       => $latest->{journey_id},
+					timestamp        => $action_time,
+					timestamp_delta  => $now->epoch - $action_time->epoch,
+					train_type       => $latest->{train_type},
+					train_line       => $latest->{train_line},
+					train_no         => $latest->{train_no},
+					train_id         => $latest->{train_id},
+					train_color		 => $latest->{user_data}{train_color},
+					train_text_color => $latest->{user_data}{train_text_color},
+					sched_departure  => epoch_to_dt( $latest->{sched_dep_ts} ),
+					real_departure   => epoch_to_dt( $latest->{real_dep_ts} ),
+					dep_ds100        => $latest->{dep_ds100},
+					dep_eva          => $latest->{dep_eva},
+					dep_external_id  => $latest->{dep_external_id},
+					dep_name         => $latest->{dep_name},
+					dep_lat          => $latest->{dep_lat},
+					dep_lon          => $latest->{dep_lon},
+					dep_platform     => $latest->{dep_platform},
+					sched_arrival    => epoch_to_dt( $latest->{sched_arr_ts} ),
+					real_arrival     => epoch_to_dt( $latest->{real_arr_ts} ),
+					arr_ds100        => $latest->{arr_ds100},
+					arr_eva          => $latest->{arr_eva},
+					arr_external_id  => $latest->{arr_external_id},
+					arr_name         => $latest->{arr_name},
+					arr_lat          => $latest->{arr_lat},
+					arr_lon          => $latest->{arr_lon},
+					arr_platform     => $latest->{arr_platform},
+					comment          => $latest->{user_data}{comment},
+					visibility       => $latest->{visibility},
+					visibility_str   => $latest->{visibility_str},
 					effective_visibility     => $latest->{effective_visibility},
 					effective_visibility_str =>
 					  $latest->{effective_visibility_str},

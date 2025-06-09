@@ -328,6 +328,8 @@ sub add {
 				data            => JSON->new->encode(
 					{
 						rt => $stopover->{is_realtime} ? 1 : 0,
+						train_color => $journey->route_color,
+						train_text_color => $journey->route_text_color,
 						%{ $data // {} }
 					}
 				),

@@ -282,10 +282,17 @@ sub add_from_in_transit {
 	my ( $self, %opt ) = @_;
 	my $db      = $opt{db};
 	my $journey = $opt{journey};
+	my $data   = JSON->new->decode( $journey->{data} );
 
 	delete $journey->{data};
 	$journey->{edited}        = 0;
 	$journey->{checkout_time} = DateTime->now( time_zone => 'Europe/Berlin' );
+	$journey->{user_data} = JSON->new->encode(
+		{
+			train_color => $data->{train_color},
+			train_text_color => $data->{train_text_color},
+		}
+	);
 
 	return $db->insert( 'journeys', $journey, { returning => 'id' } )
 	  ->hash->{id};
