@@ -535,6 +535,45 @@ DISTRIBUTIONS
       strict 0
       warnings 0
       warnings::register 0
+  DateTime-Format-Builder-0.83
+    pathname: D/DR/DROLSKY/DateTime-Format-Builder-0.83.tar.gz
+    provides:
+      DateTime::Format::Builder 0.83
+      DateTime::Format::Builder::Parser 0.83
+      DateTime::Format::Builder::Parser::Dispatch 0.83
+      DateTime::Format::Builder::Parser::Quick 0.83
+      DateTime::Format::Builder::Parser::Regex 0.83
+      DateTime::Format::Builder::Parser::Strptime 0.83
+      DateTime::Format::Builder::Parser::generic 0.83
+    requirements:
+      Carp 0
+      DateTime 1.00
+      DateTime::Format::Strptime 1.04
+      ExtUtils::MakeMaker 0
+      Params::Validate 0.72
+      Scalar::Util 0
+      parent 0
+      strict 0
+      warnings 0
+  DateTime-Format-ISO8601-0.17
+    pathname: D/DR/DROLSKY/DateTime-Format-ISO8601-0.17.tar.gz
+    provides:
+      DateTime::Format::ISO8601 0.17
+      DateTime::Format::ISO8601::Types 0.17
+    requirements:
+      Carp 0
+      DateTime 1.45
+      DateTime::Format::Builder 0.77
+      ExtUtils::MakeMaker 0
+      Params::ValidationCompiler 0.26
+      Specio 0.18
+      Specio::Declare 0
+      Specio::Exporter 0
+      Specio::Library::Builtins 0
+      namespace::autoclean 0
+      parent 0
+      strict 0
+      warnings 0
   DateTime-Format-Strptime-1.79
     pathname: D/DR/DROLSKY/DateTime-Format-Strptime-1.79.tar.gz
     provides:
@@ -1444,18 +1483,18 @@ DISTRIBUTIONS
       Exporter 5.57
       ExtUtils::MakeMaker 0
       perl 5.008
-  IO-Socket-SSL-2.089
-    pathname: S/SU/SULLR/IO-Socket-SSL-2.089.tar.gz
+  IO-Socket-SSL-2.090
+    pathname: S/SU/SULLR/IO-Socket-SSL-2.090.tar.gz
     provides:
-      IO::Socket::SSL 2.089
+      IO::Socket::SSL 2.090
       IO::Socket::SSL::Intercept 2.056
-      IO::Socket::SSL::OCSP_Cache 2.089
-      IO::Socket::SSL::OCSP_Resolver 2.089
+      IO::Socket::SSL::OCSP_Cache 2.090
+      IO::Socket::SSL::OCSP_Resolver 2.090
       IO::Socket::SSL::PublicSuffix undef
-      IO::Socket::SSL::SSL_Context 2.089
-      IO::Socket::SSL::SSL_HANDLE 2.089
-      IO::Socket::SSL::Session_Cache 2.089
-      IO::Socket::SSL::Trace 2.089
+      IO::Socket::SSL::SSL_Context 2.090
+      IO::Socket::SSL::SSL_HANDLE 2.090
+      IO::Socket::SSL::Session_Cache 2.090
+      IO::Socket::SSL::Trace 2.090
       IO::Socket::SSL::Utils 2.015
     requirements:
       ExtUtils::MakeMaker 0
@@ -1721,10 +1760,10 @@ DISTRIBUTIONS
       Text::ParseWords 0
       perl 5.006001
       version 0.87
-  Module-Build-Tiny-0.051
-    pathname: L/LE/LEONT/Module-Build-Tiny-0.051.tar.gz
+  Module-Build-Tiny-0.052
+    pathname: L/LE/LEONT/Module-Build-Tiny-0.052.tar.gz
     provides:
-      Module::Build::Tiny 0.051
+      Module::Build::Tiny 0.052
     requirements:
       CPAN::Meta 0
       DynaLoader 0
@@ -1796,8 +1835,8 @@ DISTRIBUTIONS
       Mojolicious 8.50
       SQL::Abstract::Pg 1.0
       perl 5.016
-  Mojolicious-9.39
-    pathname: S/SR/SRI/Mojolicious-9.39.tar.gz
+  Mojolicious-9.40
+    pathname: S/SR/SRI/Mojolicious-9.40.tar.gz
     provides:
       Mojo undef
       Mojo::Asset undef
@@ -1866,7 +1905,7 @@ DISTRIBUTIONS
       Mojo::UserAgent::Transactor undef
       Mojo::Util undef
       Mojo::WebSocket undef
-      Mojolicious 9.39
+      Mojolicious 9.40
       Mojolicious::Command undef
       Mojolicious::Command::Author::cpanify undef
       Mojolicious::Command::Author::generate undef
@@ -2058,6 +2097,25 @@ DISTRIBUTIONS
       Scalar::Util 1.18
       XSLoader 0.22
       parent 0
+  Params-Validate-1.31
+    pathname: D/DR/DROLSKY/Params-Validate-1.31.tar.gz
+    provides:
+      Params::Validate 1.31
+      Params::Validate::Constants 1.31
+      Params::Validate::PP 1.31
+      Params::Validate::XS 1.31
+    requirements:
+      Carp 0
+      Exporter 0
+      ExtUtils::CBuilder 0
+      Module::Build 0.4227
+      Module::Implementation 0
+      Scalar::Util 1.10
+      XSLoader 0
+      perl 5.008001
+      strict 0
+      vars 0
+      warnings 0
   Params-ValidationCompiler-0.31
     pathname: D/DR/DROLSKY/Params-ValidationCompiler-0.31.tar.gz
     provides:
@@ -2631,6 +2689,32 @@ DISTRIBUTIONS
       Text::LevenshteinXS 0
       XML::LibXML 0
       perl v5.14.2
+  Travel-Status-MOTIS-0.01
+    pathname: D/DE/DERF/Travel-Status-MOTIS-0.01.tar.gz
+    provides:
+      Travel::Status::MOTIS 0.01
+      Travel::Status::MOTIS::Polyline 0.01
+      Travel::Status::MOTIS::Services 0.01
+      Travel::Status::MOTIS::Stop 0.01
+      Travel::Status::MOTIS::Stopover 0.01
+      Travel::Status::MOTIS::Trip 0.01
+      Travel::Status::MOTIS::TripAtStopover 0.01
+    requirements:
+      Carp 0
+      Class::Accessor 0.16
+      DateTime 0
+      DateTime::Format::ISO8601 0
+      Getopt::Long 0
+      JSON 0
+      LWP::Protocol::https 0
+      LWP::UserAgent 0
+      List::Util 0
+      Module::Build 0.4
+      Test::Compile 0
+      Test::More 0
+      Test::Pod 0
+      URI 0
+      perl v5.20.0
   Try-Tiny-0.32
     pathname: E/ET/ETHER/Try-Tiny-0.32.tar.gz
     provides:
@@ -2653,62 +2737,63 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       common::sense 0
-  URI-5.31
-    pathname: O/OA/OALDERS/URI-5.31.tar.gz
+  URI-5.32
+    pathname: O/OA/OALDERS/URI-5.32.tar.gz
     provides:
-      URI 5.31
-      URI::Escape 5.31
-      URI::Heuristic 5.31
-      URI::IRI 5.31
-      URI::QueryParam 5.31
-      URI::Split 5.31
-      URI::URL 5.31
-      URI::WithBase 5.31
-      URI::data 5.31
-      URI::file 5.31
-      URI::file::Base 5.31
-      URI::file::FAT 5.31
-      URI::file::Mac 5.31
-      URI::file::OS2 5.31
-      URI::file::QNX 5.31
-      URI::file::Unix 5.31
-      URI::file::Win32 5.31
-      URI::ftp 5.31
-      URI::ftpes 5.31
-      URI::ftps 5.31
-      URI::geo 5.31
-      URI::gopher 5.31
-      URI::http 5.31
-      URI::https 5.31
-      URI::icap 5.31
-      URI::icaps 5.31
-      URI::irc 5.31
-      URI::ircs 5.31
-      URI::ldap 5.31
-      URI::ldapi 5.31
-      URI::ldaps 5.31
-      URI::mailto 5.31
-      URI::mms 5.31
-      URI::news 5.31
-      URI::nntp 5.31
-      URI::nntps 5.31
-      URI::otpauth 5.31
-      URI::pop 5.31
-      URI::rlogin 5.31
-      URI::rsync 5.31
-      URI::rtsp 5.31
-      URI::rtspu 5.31
-      URI::scp 5.31
-      URI::sftp 5.31
-      URI::sip 5.31
-      URI::sips 5.31
-      URI::snews 5.31
-      URI::ssh 5.31
-      URI::telnet 5.31
-      URI::tn3270 5.31
-      URI::urn 5.31
-      URI::urn::isbn 5.31
-      URI::urn::oid 5.31
+      URI 5.32
+      URI::Escape 5.32
+      URI::Heuristic 5.32
+      URI::IRI 5.32
+      URI::QueryParam 5.32
+      URI::Split 5.32
+      URI::URL 5.32
+      URI::WithBase 5.32
+      URI::data 5.32
+      URI::file 5.32
+      URI::file::Base 5.32
+      URI::file::FAT 5.32
+      URI::file::Mac 5.32
+      URI::file::OS2 5.32
+      URI::file::QNX 5.32
+      URI::file::Unix 5.32
+      URI::file::Win32 5.32
+      URI::ftp 5.32
+      URI::ftpes 5.32
+      URI::ftps 5.32
+      URI::geo 5.32
+      URI::gopher 5.32
+      URI::http 5.32
+      URI::https 5.32
+      URI::icap 5.32
+      URI::icaps 5.32
+      URI::irc 5.32
+      URI::ircs 5.32
+      URI::ldap 5.32
+      URI::ldapi 5.32
+      URI::ldaps 5.32
+      URI::mailto 5.32
+      URI::mms 5.32
+      URI::news 5.32
+      URI::nntp 5.32
+      URI::nntps 5.32
+      URI::otpauth 5.32
+      URI::pop 5.32
+      URI::rlogin 5.32
+      URI::rsync 5.32
+      URI::rtsp 5.32
+      URI::rtspu 5.32
+      URI::scp 5.32
+      URI::sftp 5.32
+      URI::sip 5.32
+      URI::sips 5.32
+      URI::smb 5.32
+      URI::snews 5.32
+      URI::ssh 5.32
+      URI::telnet 5.32
+      URI::tn3270 5.32
+      URI::urn 5.32
+      URI::urn::isbn 5.32
+      URI::urn::oid 5.32
     requirements:
       Carp 0
       Cwd 0
