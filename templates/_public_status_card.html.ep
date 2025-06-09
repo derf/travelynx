@@ -183,21 +183,6 @@
 					</ul>
 				</div>
 			% }
-<<<<<<< HEAD
-		</div>
-		% if (not stash('from_timeline')) {
-			<div class="card-action">
-				% if ($journey->{traewelling_url}) {
-					<a style="margin-right: 0;" href="<%= $journey->{traewelling_url} %>"><i class="material-icons left">timeline</i> Träwelling</a>
-				% }
-				% elsif ($journey->{is_hafas}) {
-					% my $url = 'https://dbf.finalrewind.org/z/' . $journey->{train_id} =~ s{#}{%23}gr . '?hafas=' . $journey->{backend_name};
-					<a style="margin-right: 0;" href="<%= $url %>"><i class="material-icons left">timeline</i> Details</a>
-				% }
-				% elsif ($journey->{extra_data}{trip_id} and not ($journey->{is_dbris} or $journey->{is_motis})) {
-					% my $url = 'https://dbf.finalrewind.org/z/' . $journey->{extra_data}{trip_id} =~ s{#}{%23}gr;
-					<a style="margin-right: 0;" href="<%= $url %>"><i class="material-icons left">timeline</i> Zuglauf</a>
-=======
 			% if (@{$journey->{extra_data}{him_msg} // []}) {
 				<div style="margin-top: 2ex;">
 					<ul>
@@ -228,7 +213,6 @@
 							<br/>
 						% }
 					</div>
->>>>>>> main
 				% }
 				% else {
 					<div class="wagons" style="margin-top: 2ex;">
@@ -236,13 +220,6 @@
 						%= include '_wagons', wagongroups => $journey->{wagongroups};
 					</div>
 				% }
-<<<<<<< HEAD
-				% if ($journey->{extra_data}{trip_id}) {
-					<a class="right" style="margin-right: 0;" href="https://dbf.finalrewind.org/map/<%= $journey->{extra_data}{trip_id} =~ s{#}{%23}gr %>/<%= $journey->{train_line} || 0 %>?dbris=<%= $journey->{is_dbris} ? $journey->{backend_name} : q{} %>&amp;motis=<%= $journey->{is_motis} ? $journey->{backend_name} : q{} %>&amp;hafas=<%= $journey->{is_hafas} ? $journey->{backend_name} : q{} %>&amp;from=<%= $journey->{dep_name} %>&amp;to=<%= $journey->{arr_name} // '' %>"><i class="material-icons left" aria-hidden="true">map</i> Karte</a>
-				% }
-			</div>
-		% }
-=======
 			% }
 			% if (not stash('from_timeline')) {
 				<div style="margin-top: 2ex;">
@@ -293,7 +270,6 @@
 				</div>
 			% }
 		</div>
->>>>>>> main
 	</div>
 % }
 % else {
