@@ -188,7 +188,7 @@ sub run {
 		if ( $entry->{is_motis} ) {
 
 			eval {
-				$self->app->motis->trip_id(
+				$self->app->motis->get_trip_p(
 					service => $entry->{backend_name},
 					trip_id => $train_id,
 				)->then(
@@ -256,9 +256,6 @@ sub run {
 						$self->app->log->error(
 "work($uid) @ MOTIS $entry->{backend_name}: journey: $err"
 						);
-						if ( $err =~ m{HTTP 429} ) {
-							$dbris_rate_limited = 1;
-						}
 					}
 				)->wait;
 
