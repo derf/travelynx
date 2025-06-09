@@ -1,6 +1,5 @@
 package Travelynx::Model::InTransit;
 
-# Copyright (C) 2020-2023 Birte Kristina Friesel
 # Copyright (C) 2020-2025 Birte Kristina Friesel
 # Copyright (C) 2025 networkException <git@nwex.de>
 #
