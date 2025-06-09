@@ -1069,11 +1069,13 @@ sub backend_form {
 			$backend->{name}     = 'IRIS';
 			$backend->{longname} = 'Deutsche Bahn: IRIS-TTS';
 			$backend->{homepage} = 'https://www.bahn.de';
+			$backend->{legacy}   = 1;
 		}
 		elsif ( $backend->{dbris} ) {
-			$type                = 'DBRIS';
-			$backend->{longname} = 'Deutsche Bahn: bahn.de';
-			$backend->{homepage} = 'https://www.bahn.de';
+			$type                   = 'DBRIS';
+			$backend->{longname}    = 'Deutsche Bahn: bahn.de';
+			$backend->{homepage}    = 'https://www.bahn.de';
+			$backend->{recommended} = 1;
 		}
 		elsif ( $backend->{hafas} ) {
 
@@ -1104,6 +1106,13 @@ sub backend_form {
 				$backend->{regions}  = [ map { $place_map{$_} // $_ }
 					  @{ $s->{coverage}{regions} // [] } ];
 				$backend->{has_area} = $s->{coverage}{area} ? 1 : 0;
+
+				if ( $backend->{name} eq 'ÖBB' ) {
+					$backend->{recommended} = 1;
+				}
+				else {
+					$backend->{association} = 1;
+				}
 
 				if (
 					    $s->{coverage}{area}
@@ -1146,7 +1155,8 @@ sub backend_form {
 			$backend->{homepage} = $s->{homepage};
 			$backend->{regions}  = [ map { $place_map{$_} // $_ }
 				  @{ $s->{coverage}{regions} // [] } ];
-			$backend->{has_area} = $s->{coverage}{area} ? 1 : 0;
+			$backend->{has_area}     = $s->{coverage}{area} ? 1 : 0;
+			$backend->{experimental} = 1;
 
 			if ( $backend->{name} eq 'transitous' ) {
 				$backend->{regions} = ['Weltweit'];
