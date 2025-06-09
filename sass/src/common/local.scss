@@ -277,6 +277,17 @@ ul.route-history > li {
 	}
 }
 
+.status-card-progress-annot {
+	padding-bottom: 2ex;
+	border-bottom: 2px dashed #808080;
+}
+
+.timeline-in-transit {
+	.status-card-progress-annot {
+		border-bottom: none;
+	}
+}
+
 
 @media screen and (max-width: 600px) {
 	.collection.departures li {

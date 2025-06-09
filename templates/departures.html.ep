@@ -146,8 +146,14 @@
 				Fahrt auswählen zum Einchecken.
 			% }
 			% else {
-				Keine Abfahrten gefunden. Ein Checkin ist frühestens 30 Minuten vor
-				und maximal 120 Minuten nach Abfahrt möglich.
+				% if ($dbris or $hafas) {
+					Keine Abfahrten im ausgewählten Zeitfenster
+					(<%= $datetime->strftime('%d.%m.%Y %H:%M') %> ± 30min).
+				% }
+				% else {
+					Keine Abfahrten gefunden. Ein Checkin ist frühestens 30 Minuten vor
+					und maximal 120 Minuten nach Abfahrt möglich.
+				% }
 			% }
 		</p>
 		% if (not $user_status->{checked_in} or ($can_check_out and $user_status->{arr_eva} and $user_status->{arrival_countdown} <= 0)) {

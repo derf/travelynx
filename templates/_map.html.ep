@@ -1,16 +1,18 @@
-<div class="row">
-	<div class="col s12">
-		<div id="map" style="height: 70vh;">
+% if (stash('with_map_header') // 1) {
+	<div class="row">
+		<div class="col s12">
+			<div id="map" style="height: 70vh;">
+			</div>
 		</div>
 	</div>
-</div>
 
-<div class="row">
-	<div class="col s12">
-		<span style="color: #f03;">●</span> Ein-/Ausstiegsstation<br/>
-		<span style="color: #673ab7;">—</span> Streckenverlauf oder Luftlinie
+	<div class="row">
+		<div class="col s12">
+			<span style="color: #f03;">●</span> Ein-/Ausstiegsstation<br/>
+			<span style="color: #673ab7;">—</span> Streckenverlauf oder Luftlinie
+		</div>
 	</div>
-</div>
+% }
 
 <script>
 var map = L.map('map').setView([51.306, 9.712], 6);

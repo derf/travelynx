@@ -135,6 +135,18 @@ sub run {
 									$found_arr->eva );
 							}
 						}
+						if ( $found_arr and $found_arr->is_cancelled ) {
+
+							# check out (adds a cancelled journey and resets journey state
+							# to destination selection)
+							$self->app->checkout_p(
+								station => $arr,
+								force   => 0,
+								dep_eva => $dep,
+								arr_eva => $arr,
+								uid     => $uid
+							)->wait;
+						}
 					}
 				)->catch(
 					sub {
