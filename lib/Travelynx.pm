@@ -601,14 +601,19 @@ sub startup {
 							# Lines may serve the same stop several times.
 							# Keep looking until the scheduled departure
 							# matches the one passed while checking in.
-							if ( $ts and $stopover->scheduled_departure->epoch == $ts ) {
+							if (    $ts
+								and $stopover->scheduled_departure->epoch
+								== $ts )
+							{
 								last;
 							}
 						}
 					}
 
 					if ( not $found_stopover ) {
-						$promise->reject("Did not find stopover at '$station' within trip '$train_id'");
+						$promise->reject(
+"Did not find stopover at '$station' within trip '$train_id'"
+						);
 						return;
 					}
 
@@ -640,7 +645,8 @@ sub startup {
 					};
 
 					if ($@) {
-						$self->app->log->error("Checkin($uid): INSERT failed: $@");
+						$self->app->log->error(
+							"Checkin($uid): INSERT failed: $@");
 						$promise->reject( 'INSERT failed: ' . $@ );
 						return;
 					}
@@ -652,21 +658,25 @@ sub startup {
 						for my $coordinate ( $trip->polyline ) {
 							if ( $coordinate->{stop} ) {
 								if ( not defined $coordinate->{stop}->{eva} ) {
-									die()
+									die();
 								}
 
 								push(
 									@coordinate_list,
 									[
-										$coordinate->{lon}, $coordinate->{lat},
+										$coordinate->{lon},
+										$coordinate->{lat},
 										$coordinate->{stop}->{eva}
 									]
 								);
 
-								push( @station_list, $coordinate->{stop}->name );
+								push( @station_list,
+									$coordinate->{stop}->name );
 							}
 							else {
-								push( @coordinate_list, [ $coordinate->{lon}, $coordinate->{lat} ] );
+								push( @coordinate_list,
+									[ $coordinate->{lon}, $coordinate->{lat} ]
+								);
 							}
 						}
 
@@ -680,9 +690,10 @@ sub startup {
 						}
 						else {
 							$polyline = {
-								from_eva => ( $trip->stopovers )[0]->stop->{eva},
-								to_eva   => ( $trip->stopovers )[-1]->stop->{eva},
-								coords   => \@coordinate_list,
+								from_eva =>
+								  ( $trip->stopovers )[0]->stop->{eva},
+								to_eva => ( $trip->stopovers )[-1]->stop->{eva},
+								coords => \@coordinate_list,
 							};
 						}
 					}
@@ -2267,7 +2278,7 @@ sub startup {
 			my $ret = {
 				deprecated => \0,
 				checkedIn  => (
-						 $status->{checked_in}
+					     $status->{checked_in}
 					  or $status->{cancelled}
 				) ? \1 : \0,
 				comment => $status->{comment},
@@ -2572,7 +2583,6 @@ sub startup {
 				if ( $seen{$key} ) {
 					next;
 				}
-
 				$seen{$key} = 1;
 
 				# direction does not matter at the moment
@@ -2700,8 +2710,8 @@ sub startup {
 						color     => '#673ab7',
 						opacity   => @polylines
 						? $with_polyline
-							  ? 0.4
-							  : 0.6
+						      ? 0.4
+						      : 0.6
 						: 0.8,
 					},
 					{

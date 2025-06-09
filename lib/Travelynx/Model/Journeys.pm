@@ -872,8 +872,10 @@ sub get_latest_checkout_stations {
 	my $res = $db->select(
 		'journeys_str',
 		[
-			'arr_name',     'arr_eva',      'arr_external_id', 'train_id',
-			'backend_id',   'backend_name', 'is_dbris',        'is_hafas',
+			'arr_name',        'arr_eva',
+			'arr_external_id', 'train_id',
+			'backend_id',      'backend_name',
+			'is_dbris',        'is_hafas',
 			'is_motis'
 		],
 		{
@@ -898,11 +900,12 @@ sub get_latest_checkout_stations {
 			{
 				name               => $row->{arr_name},
 				eva                => $row->{arr_eva},
-				external_id_or_eva => $row->{arr_external_id} // $row->{arr_eva},
-				dbris              => $row->{is_dbris} ? $row->{backend_name} : 0,
-				hafas              => $row->{is_hafas} ? $row->{backend_name} : 0,
-				motis              => $row->{is_motis} ? $row->{backend_name} : 0,
-				backend_id         => $row->{backend_id},
+				external_id_or_eva => $row->{arr_external_id}
+				  // $row->{arr_eva},
+				dbris      => $row->{is_dbris} ? $row->{backend_name} : 0,
+				hafas      => $row->{is_hafas} ? $row->{backend_name} : 0,
+				motis      => $row->{is_motis} ? $row->{backend_name} : 0,
+				backend_id => $row->{backend_id},
 			}
 		);
 	}
@@ -1396,7 +1399,7 @@ sub compute_review {
 			if (
 				not $most_undelay
 				or $speedup > (
-						$most_undelay->{sched_duration}
+					    $most_undelay->{sched_duration}
 					  - $most_undelay->{rt_duration}
 				)
 			  )
@@ -1669,7 +1672,10 @@ sub compute_stats {
 					@inconsistencies,
 					{
 						conflict => {
-							train => ( $journey->{is_motis} ? '' : $journey->{type} ) . ' '
+							train => (
+								$journey->{is_motis} ? '' : $journey->{type}
+							  )
+							  . ' '
 							  . ( $journey->{line} // $journey->{no} ),
 							arr => epoch_to_dt( $journey->{rt_arr_ts} )
 							  ->strftime('%d.%m.%Y %H:%M'),
@@ -1695,7 +1701,8 @@ sub compute_stats {
 		$next_departure = $journey->{rt_dep_ts};
 		$next_id        = $journey->{id};
 		$next_train
-		  = ( $journey->{is_motis} ? '' : $journey->{type} ) . ' ' . ( $journey->{line} // $journey->{no} ),;
+		  = ( $journey->{is_motis} ? '' : $journey->{type} ) . ' '
+		  . ( $journey->{line} // $journey->{no} ),;
 	}
 	my $ret = {
 		km_route             => $km_route,
@@ -1744,7 +1751,7 @@ sub get_stats {
 	# checks out of a train or manually edits/adds a journey.
 
 	if (
-			not $opt{write_only}
+		    not $opt{write_only}
 		and not $opt{review}
 		and my $stats = $self->stats_cache->get(
 			uid   => $uid,

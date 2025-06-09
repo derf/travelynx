@@ -1027,11 +1027,11 @@ sub get_followers {
 				id             => $row->{id},
 				name           => $row->{name},
 				following_back => (
-						  $row->{inverse_predicate}
+					      $row->{inverse_predicate}
 					  and $row->{inverse_predicate} == $predicate_atoi{follows}
 				) ? 1 : 0,
 				followback_requested => (
-						  $row->{inverse_predicate}
+					      $row->{inverse_predicate}
 					  and $row->{inverse_predicate}
 					  == $predicate_atoi{requests_follow}
 				) ? 1 : 0,
@@ -1103,7 +1103,7 @@ sub get_followees {
 				id             => $row->{id},
 				name           => $row->{name},
 				following_back => (
-						  $row->{inverse_predicate}
+					      $row->{inverse_predicate}
 					  and $row->{inverse_predicate} == $predicate_atoi{follows}
 				) ? 1 : 0,
 			}

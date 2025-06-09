@@ -3270,7 +3270,8 @@ sub sync_backends_motis {
 		}
 	}
 
-	$db->update( 'schema_version', { motis => $Travel::Status::MOTIS::VERSION } );
+	$db->update( 'schema_version',
+		{ motis => $Travel::Status::MOTIS::VERSION } );
 }
 
 sub setup_db {

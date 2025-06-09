@@ -99,8 +99,8 @@ sub get_backends {
 
 	$opt{db} //= $self->{pg}->db;
 
-	my $res = $opt{db}
-	  ->select( 'backends', [ 'id', 'name', 'iris', 'hafas', 'dbris', 'motis' ] );
+	my $res = $opt{db}->select( 'backends',
+		[ 'id', 'name', 'iris', 'hafas', 'dbris', 'motis' ] );
 	my @ret;
 
 	while ( my $row = $res->hash ) {
@@ -206,12 +206,8 @@ sub add_or_update {
 				returning *
 			},
 			(
-				$opt{backend_id},
-				$stop->id,
-				$stop->name,
-				$stop->lat,
-				$stop->lon,
-				0,
+				$opt{backend_id}, $stop->id,  $stop->name,
+				$stop->lat,       $stop->lon, 0,
 			)
 		);
 

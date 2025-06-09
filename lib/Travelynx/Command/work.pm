@@ -197,10 +197,11 @@ sub run {
 
 						for my $stopover ( $journey->stopovers ) {
 							if ( not defined $stopover->stop->{eva} ) {
-								my $stop = $self->app->stations->get_by_external_id(
+								my $stop
+								  = $self->app->stations->get_by_external_id(
 									external_id => $stopover->stop->id,
 									motis       => $entry->{backend_name},
-								);
+								  );
 
 								$stopover->stop->{eva} = $stop->{eva};
 							}
@@ -220,7 +221,8 @@ sub run {
 						}
 
 						if ( not $found_departure ) {
-							$self->app->log->debug("Did not find $dep within trip $train_id");
+							$self->app->log->debug(
+								"Did not find $dep within trip $train_id");
 							return;
 						}
 
@@ -235,7 +237,9 @@ sub run {
 							);
 						}
 
-						if ( $found_arrival and $found_arrival->realtime_arrival ) {
+						if (    $found_arrival
+							and $found_arrival->realtime_arrival )
+						{
 							$self->app->in_transit->update_arrival_motis(
 								uid      => $uid,
 								journey  => $journey,

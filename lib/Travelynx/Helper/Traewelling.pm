@@ -78,7 +78,8 @@ sub get_status_p {
 	$self->{user_agent}->request_timeout(20)
 	  ->get_p(
 		"https://traewelling.de/api/v1/user/${username}/statuses?limit=1" =>
-		  $header )->then(
+		  $header )
+	  ->then(
 		sub {
 			my ($tx) = @_;
 			if ( my $err = $tx->error ) {
@@ -150,13 +151,13 @@ sub get_status_p {
 				}
 			}
 		}
-	)->catch(
+	  )->catch(
 		sub {
 			my ($err) = @_;
 			$promise->reject( { text => "v1/${username}/statuses: $err" } );
 			return;
 		}
-	)->wait;
+	  )->wait;
 
 	return $promise;
 }
@@ -238,13 +239,13 @@ sub logout_p {
 				return;
 			}
 		}
-	)->catch(
+	  )->catch(
 		sub {
 			my ($err) = @_;
 			$promise->reject("v1/auth/logout: $err");
 			return;
 		}
-	)->wait;
+	  )->wait;
 
 	return $promise;
 }
@@ -322,7 +323,8 @@ sub checkin_p {
 	$self->{user_agent}->request_timeout(20)
 	  ->post_p(
 		"https://traewelling.de/api/v1/trains/checkin" => $header => json =>
-		  $request )->then(
+		  $request )
+	  ->then(
 		sub {
 			my ($tx) = @_;
 			if ( my $err = $tx->error ) {
@@ -368,7 +370,7 @@ sub checkin_p {
 			# on the user status page
 			return;
 		}
-	)->catch(
+	  )->catch(
 		sub {
 			my ($err) = @_;
 			$self->{log}->debug("... $debug_prefix error: $err");
@@ -381,7 +383,7 @@ sub checkin_p {
 			$promise->reject( { connection => $err } );
 			return;
 		}
-	)->wait;
+	  )->wait;
 
 	return $promise;
 }

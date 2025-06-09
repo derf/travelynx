@@ -61,7 +61,8 @@ sub has_wagonorder_p {
 		}
 	}
 
-	$self->{user_agent}->request_timeout(5)->get_p( $url => $self->{header} )
+	$self->{user_agent}->request_timeout(5)
+	  ->get_p( $url => $self->{header} )
 	  ->then(
 		sub {
 			my ($tx) = @_;
@@ -81,7 +82,7 @@ sub has_wagonorder_p {
 			}
 			return;
 		}
-	)->catch(
+	  )->catch(
 		sub {
 			my ($err) = @_;
 			$self->{log}->debug("${debug_prefix}: n ($err)");
@@ -89,7 +90,7 @@ sub has_wagonorder_p {
 			$promise->reject;
 			return;
 		}
-	)->wait;
+	  )->wait;
 	return $promise;
 }
 
@@ -120,7 +121,8 @@ sub get_wagonorder_p {
 		return $promise;
 	}
 
-	$self->{user_agent}->request_timeout(5)->get_p( $url => $self->{header} )
+	$self->{user_agent}->request_timeout(5)
+	  ->get_p( $url => $self->{header} )
 	  ->then(
 		sub {
 			my ($tx) = @_;
@@ -139,14 +141,14 @@ sub get_wagonorder_p {
 			}
 			return;
 		}
-	)->catch(
+	  )->catch(
 		sub {
 			my ($err) = @_;
 			$self->{log}->debug("${debug_prefix}: error ${err}");
 			$promise->reject($err);
 			return;
 		}
-	)->wait;
+	  )->wait;
 	return $promise;
 }
 
@@ -163,7 +165,8 @@ sub get_stationinfo_p {
 		return $promise->resolve($content);
 	}
 
-	$self->{user_agent}->request_timeout(5)->get_p( $url => $self->{header} )
+	$self->{user_agent}->request_timeout(5)
+	  ->get_p( $url => $self->{header} )
 	  ->then(
 		sub {
 			my ($tx) = @_;
@@ -183,7 +186,7 @@ sub get_stationinfo_p {
 			$promise->resolve($json);
 			return;
 		}
-	)->catch(
+	  )->catch(
 		sub {
 			my ($err) = @_;
 			$self->{log}->debug("get_stationinfo_p(${eva}): Error ${err}");
@@ -191,7 +194,7 @@ sub get_stationinfo_p {
 			$promise->reject($err);
 			return;
 		}
-	)->wait;
+	  )->wait;
 	return $promise;
 }
 

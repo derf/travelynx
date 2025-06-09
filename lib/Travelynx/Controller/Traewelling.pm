@@ -29,7 +29,7 @@ sub oauth {
 			redirect_uri =>
 			  $self->base_url_for('/oauth/traewelling')->to_abs->scheme(
 				$self->app->mode eq 'development' ? 'http' : 'https'
-			)->to_string,
+			  )->to_string,
 			scope => 'read-statuses write-statuses'
 		}
 	)->then(

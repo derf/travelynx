@@ -1145,38 +1145,37 @@ sub backend_form {
 			$backend->{longname} = $s->{name};
 			$backend->{homepage} = $s->{homepage};
 			$backend->{regions}  = [ map { $place_map{$_} // $_ }
-					@{ $s->{coverage}{regions} // [] } ];
+				  @{ $s->{coverage}{regions} // [] } ];
 			$backend->{has_area} = $s->{coverage}{area} ? 1 : 0;
 
 			if ( $backend->{name} eq 'transitous' ) {
-				$backend->{regions} = [ 'Weltweit' ];
+				$backend->{regions} = ['Weltweit'];
 			}
 			if ( $backend->{name} eq 'RNV' ) {
 				$backend->{homepage} = 'https://rnv-online.de/';
 			}
 
 			if (
-					$s->{coverage}{area}
+				    $s->{coverage}{area}
 				and $s->{coverage}{area}{type} eq 'Polygon'
 				and $self->lonlat_in_polygon(
 					$s->{coverage}{area}{coordinates},
 					[ $user_lon, $user_lat ]
 				)
-				)
+			  )
 			{
 				push( @suggested_backends, $backend );
 			}
 			elsif ( $s->{coverage}{area}
 				and $s->{coverage}{area}{type} eq 'MultiPolygon' )
 			{
-				for my $s_poly (
-					@{ $s->{coverage}{area}{coordinates} // [] } )
+				for my $s_poly ( @{ $s->{coverage}{area}{coordinates} // [] } )
 				{
 					if (
 						$self->lonlat_in_polygon(
 							$s_poly, [ $user_lon, $user_lat ]
 						)
-						)
+					  )
 					{
 						push( @suggested_backends, $backend );
 						last;

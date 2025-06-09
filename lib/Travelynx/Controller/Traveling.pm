@@ -415,7 +415,7 @@ sub homepage {
 		}
 		else {
 			@recent_targets = uniq_by { $_->{external_id_or_eva} }
-				$self->journeys->get_latest_checkout_stations( uid => $uid );
+			$self->journeys->get_latest_checkout_stations( uid => $uid );
 		}
 		$self->render(
 			'landingpage',
@@ -667,8 +667,8 @@ sub geolocation {
 		$self->render_later;
 
 		Travel::Status::MOTIS->new_p(
-			promise             => 'Mojo::Promise',
-			user_agent          => $self->ua,
+			promise    => 'Mojo::Promise',
+			user_agent => $self->ua,
 
 			service             => $motis_service,
 			stops_by_coordinate => {
@@ -1148,7 +1148,7 @@ sub station {
 			timestamp  => $timestamp,
 			lookbehind => 30,
 			lookahead  => 30,
-		)
+		);
 	}
 	else {
 		$promise = $self->iris->get_departures_p(
@@ -1206,11 +1206,13 @@ sub station {
 			elsif ($motis_service) {
 				@results = map { $_->[0] }
 				  sort { $b->[1] <=> $a->[1] }
-				  map { [ $_, $_->stopover->departure->epoch ] } $status->results;
+				  map  { [ $_, $_->stopover->departure->epoch ] }
+				  $status->results;
 
 				$status = {
-					station_eva      => $station,
-					station_name     => $status->{results}->[0]->stopover->stop->name,
+					station_eva  => $station,
+					station_name =>
+					  $status->{results}->[0]->stopover->stop->name,
 					related_stations => [],
 				};
 			}
@@ -2020,7 +2022,7 @@ sub journey_details {
 				$delay = sprintf(
 					'mit %+d ',
 					(
-							$journey->{rt_arrival}->epoch
+						    $journey->{rt_arrival}->epoch
 						  - $journey->{sched_arrival}->epoch
 					) / 60
 				);

@@ -50,10 +50,10 @@ sub get_station_by_query_p {
 	my $promise = Mojo::Promise->new;
 
 	Travel::Status::MOTIS->new_p(
-		cache          => $self->{cache},
-		promise        => 'Mojo::Promise',
-		user_agent     => Mojo::UserAgent->new,
-		lwp_options    => {
+		cache       => $self->{cache},
+		promise     => 'Mojo::Promise',
+		user_agent  => Mojo::UserAgent->new,
+		lwp_options => {
 			timeout => 10,
 			agent   => $self->{header}{'User-Agent'},
 		},
@@ -106,10 +106,10 @@ sub get_departures_p {
 			agent   => $self->{header}{'User-Agent'},
 		},
 
-		service     => $opt{service},
-		timestamp   => $timestamp,
-		stop_id     => $opt{station_id},
-		results     => 60,
+		service   => $opt{service},
+		timestamp => $timestamp,
+		stop_id   => $opt{station_id},
+		results   => 60,
 	);
 }
 
@@ -126,8 +126,8 @@ sub get_trip_p {
 		promise       => 'Mojo::Promise',
 		user_agent    => Mojo::UserAgent->new,
 
-		service       => $opt{service},
-		trip_id       => $opt{trip_id},
+		service => $opt{service},
+		trip_id => $opt{trip_id},
 	)->then(
 		sub {
 			my ($motis) = @_;

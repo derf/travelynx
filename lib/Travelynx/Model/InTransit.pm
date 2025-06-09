@@ -293,16 +293,20 @@ sub add {
 				@route,
 				[
 					$journey_stopover->stop->name,
-					$journey_stopover->stop->{eva} // die('eva not set for stopover'),
+					$journey_stopover->stop->{eva}
+					  // die('eva not set for stopover'),
 					{
-						sched_arr => _epoch( $journey_stopover->scheduled_arrival ),
-						sched_dep => _epoch( $journey_stopover->scheduled_departure ),
-						rt_arr    => _epoch( $journey_stopover->realtime_arrival ),
-						rt_dep    => _epoch( $journey_stopover->realtime_departure ),
+						sched_arr =>
+						  _epoch( $journey_stopover->scheduled_arrival ),
+						sched_dep =>
+						  _epoch( $journey_stopover->scheduled_departure ),
+						rt_arr => _epoch( $journey_stopover->realtime_arrival ),
+						rt_dep =>
+						  _epoch( $journey_stopover->realtime_departure ),
 						arr_delay => $journey_stopover->arrival_delay,
 						dep_delay => $journey_stopover->departure_delay,
-						lat => $journey_stopover->stop->lat,
-						lon => $journey_stopover->stop->lon,
+						lat       => $journey_stopover->stop->lat,
+						lon       => $journey_stopover->stop->lon,
 					}
 				]
 			);
@@ -384,7 +388,7 @@ sub postprocess {
 		# Note that the departure stop may be present more than once in @route,
 		# e.g. when traveling along ring lines such as S41 / S42 in Berlin.
 		if (
-				$ret->{dep_name}
+			    $ret->{dep_name}
 			and $station->[0] eq $ret->{dep_name}
 			and not($station->[2]{sched_dep}
 				and $station->[2]{sched_dep} < $ret->{sched_dep_ts} )
@@ -1149,16 +1153,18 @@ sub update_arrival_motis {
 			@route,
 			[
 				$journey_stopover->stop->name,
-				$journey_stopover->stop->{eva} // die('eva not set for stopover'),
+				$journey_stopover->stop->{eva}
+				  // die('eva not set for stopover'),
 				{
 					sched_arr => _epoch( $journey_stopover->scheduled_arrival ),
-					sched_dep => _epoch( $journey_stopover->scheduled_departure ),
-					rt_arr    => _epoch( $journey_stopover->realtime_arrival ),
-					rt_dep    => _epoch( $journey_stopover->realtime_departure ),
+					sched_dep =>
+					  _epoch( $journey_stopover->scheduled_departure ),
+					rt_arr => _epoch( $journey_stopover->realtime_arrival ),
+					rt_dep => _epoch( $journey_stopover->realtime_departure ),
 					arr_delay => $journey_stopover->arrival_delay,
 					dep_delay => $journey_stopover->departure_delay,
-					lat => $journey_stopover->stop->lat,
-					lon => $journey_stopover->stop->lon,
+					lat       => $journey_stopover->stop->lat,
+					lon       => $journey_stopover->stop->lon,
 				}
 			]
 		);

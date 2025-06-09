@@ -122,12 +122,12 @@ sub push_sync {
 				my ($status) = @_;
 				$push_result{ $status->{http} } += 1;
 			}
-		)->catch(
+		  )->catch(
 			sub {
 				my ($status) = @_;
 				$push_result{ $status->{http} // 0 } += 1;
 			}
-		)->wait;
+		  )->wait;
 	}
 
 	return \%push_result;
