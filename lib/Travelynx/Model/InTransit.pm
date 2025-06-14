@@ -1012,8 +1012,6 @@ sub update_departure_efa {
 		$ephemeral_data->{rt} = 1;
 	}
 
-	say "UPDATE dep WHERE $uid $opt{trip_id} $dep_eva $arr_eva";
-
 	# selecting on user_id and train_no avoids a race condition if a user checks
 	# into a new train while we are fetching data for their previous journey. In
 	# this case, the new train would receive data from the previous journey.
@@ -1266,8 +1264,6 @@ sub update_arrival_efa {
 			]
 		);
 	}
-
-	say "UPDATE arr WHERE $uid $opt{trip_id} $dep_eva $arr_eva";
 
 	# selecting on user_id and train_no avoids a race condition if a user checks
 	# into a new train while we are fetching data for their previous journey. In
