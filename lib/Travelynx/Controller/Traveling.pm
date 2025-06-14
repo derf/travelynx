@@ -562,10 +562,13 @@ sub geolocation {
 		return;
 	}
 
-	my ( $dbris_service, $hafas_service, $motis_service );
+	my ( $dbris_service, $efa_service, $hafas_service, $motis_service );
 	my $backend = $self->stations->get_backend( backend_id => $backend_id );
 	if ( $backend->{dbris} ) {
 		$dbris_service = $backend->{name};
+	}
+	if ( $backend->{efa} ) {
+		$efa_service = $backend->{name};
 	}
 	elsif ( $backend->{hafas} ) {
 		$hafas_service = $backend->{name};
@@ -595,6 +598,50 @@ sub geolocation {
 						dbris    => $dbris_service,
 					}
 				} $dbris->results;
+				if ( @results > 10 ) {
+					@results = @results[ 0 .. 9 ];
+				}
+				$self->render(
+					json => {
+						candidates => [@results],
+					}
+				);
+			}
+		)->catch(
+			sub {
+				my ($err) = @_;
+				$self->render(
+					json => {
+						candidates => [],
+						warning    => $err,
+					}
+				);
+			}
+		)->wait;
+		return;
+	}
+	elsif ($efa_service) {
+		$self->render_later;
+
+		Travel::Status::DE::EFA->new_p(
+			promise    => 'Mojo::Promise',
+			user_agent => Mojo::UserAgent->new,
+			service    => $efa_service,
+			coord      => {
+				lat => $lat,
+				lon => $lon
+			}
+		)->then(
+			sub {
+				my ($efa) = @_;
+				my @results = map {
+					{
+						name     => $_->full_name,
+						eva      => $_->id_code,
+						distance => 0,
+						efa      => $efa_service,
+					}
+				} $efa->results;
 				if ( @results > 10 ) {
 					@results = @results[ 0 .. 9 ];
 				}
@@ -726,8 +773,6 @@ sub geolocation {
 			lon      => $_->[0][3],
 			lat      => $_->[0][4],
 			distance => $_->[1],
-			dbris    => 0,
-			hafas    => 0,
 		}
 	} Travel::Status::DE::IRIS::Stations::get_station_by_location( $lon,
 		$lat, 10 );
@@ -1310,7 +1355,7 @@ sub station {
 							'departures',
 							user              => $user,
 							dbris             => $dbris_service,
-							efa              => $efa_service,
+							efa               => $efa_service,
 							hafas             => $hafas_service,
 							motis             => $motis_service,
 							eva               => $status->{station_eva},

@@ -26,8 +26,6 @@ sub new {
 sub get_service {
 	my ( $self, $service ) = @_;
 
-	say "get_service $service";
-
 	return Travel::Status::DE::EFA::get_service($service);
 }
 
