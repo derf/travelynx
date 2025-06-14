@@ -195,6 +195,7 @@ function tvly_reg_handlers() {
 		var req = {
 			action: 'checkin',
 			dbris: link.data('dbris'),
+			efa: link.data('efa'),
 			hafas: link.data('hafas'),
 			motis: link.data('motis'),
 			station: link.data('station'),
@@ -210,6 +211,7 @@ function tvly_reg_handlers() {
 		var req = {
 			action: 'checkout',
 			dbris: link.data('dbris'),
+			efa: link.data('efa'),
 			hafas: link.data('hafas'),
 			motis: link.data('motis'),
 			station: link.data('station'),
@@ -243,6 +245,7 @@ function tvly_reg_handlers() {
 		var req = {
 			action: 'cancelled_from',
 			dbris: link.data('dbris'),
+			efa: link.data('efa'),
 			hafas: link.data('hafas'),
 			motis: link.data('motis'),
 			station: link.data('station'),
@@ -256,6 +259,7 @@ function tvly_reg_handlers() {
 		var req = {
 			action: 'cancelled_to',
 			dbris: link.data('dbris'),
+			efa: link.data('efa'),
 			hafas: link.data('hafas'),
 			motis: link.data('motis'),
 			station: link.data('station'),
