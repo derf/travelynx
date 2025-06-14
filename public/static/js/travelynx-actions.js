@@ -79,12 +79,12 @@ function odelay(sched, rt) {
 		return '';
 	}
 	if (sched < rt) {
-		return ' (+' + ((rt - sched) / 60) + ')';
+		return ' (+' + Math.round((rt - sched) / 60) + ')';
 	}
 	else if (sched == rt) {
 		return '';
 	}
-	return ' (' + ((rt - sched) / 60) + ')';
+	return ' (' + Math.round((rt - sched) / 60) + ')';
 }
 
 function tvly_run(link, req, err_callback) {
