@@ -1084,8 +1084,8 @@ sub backend_form {
 				$backend->{homepage} = $s->{homepage};
 				$backend->{regions}  = [ map { $place_map{$_} // $_ }
 					  @{ $s->{coverage}{regions} // [] } ];
-				$backend->{has_area}    = $s->{coverage}{area} ? 1 : 0;
-				$backend->{association} = 1;
+				$backend->{has_area}     = $s->{coverage}{area} ? 1 : 0;
+				$backend->{experimental} = 1;
 
 				if (
 					    $s->{coverage}{area}
