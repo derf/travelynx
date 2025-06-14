@@ -48,4 +48,55 @@ sub get_departures_p {
 	);
 }
 
+sub get_journey_p {
+	my ( $self, %opt ) = @_;
+
+	my $promise = Mojo::Promise->new;
+	my $agent   = $self->{user_agent};
+	my $stopseq;
+
+	if ( $opt{trip_id} =~ m{ ^ ([^@]*) @ ([^@]*) [(] ([^)]*) [)] (.*)  $ }x ) {
+		$stopseq = {
+			stateless => $1,
+			stop_id   => $2,
+			date      => $3,
+			key       => $4
+		};
+	}
+	else {
+		return $promise->reject("Invalid trip_id: $opt{trip_id}");
+	}
+
+	Travel::Status::DE::EFA->new_p(
+		service    => $opt{service},
+		stopseq    => $stopseq,
+		cache      => $self->{realtime_cache},
+		promise    => 'Mojo::Promise',
+		user_agent => $agent->request_timeout(10),
+	)->then(
+		sub {
+			my ($efa) = @_;
+			my $journey = $efa->result;
+
+			if ($journey) {
+				$self->{log}->debug("get_journey_p($opt{trip_id}): success");
+				$promise->resolve($journey);
+				return;
+			}
+			$self->{log}->debug("get_journey_p($opt{trip_id}): no journey");
+			$promise->reject('no journey');
+			return;
+		}
+	)->catch(
+		sub {
+			my ($err) = @_;
+			$self->{log}->debug("get_journey_p($opt{trip_id}): error $err");
+			$promise->reject($err);
+			return;
+		}
+	)->wait;
+
+	return $promise;
+}
+
 1;

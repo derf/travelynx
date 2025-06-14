@@ -110,8 +110,6 @@ sub add {
 	my $now  = DateTime->now( time_zone => 'Europe/Berlin' );
 
 	if ($train) {
-
-		# IRIS
 		$db->insert(
 			'in_transit',
 			{
@@ -142,9 +140,60 @@ sub add {
 			}
 		);
 	}
-	elsif ( $journey and $stop and $journey->can('product') ) {
-
-		# HAFAS
+	elsif ( $journey
+		and $stop
+		and ref($journey) eq 'Travel::Status::DE::EFA::Trip' )
+	{
+		my @route;
+		for my $j_stop ( $journey->route ) {
+			push(
+				@route,
+				[
+					$j_stop->full_name,
+					$j_stop->id_num,
+					{
+						sched_arr => _epoch( $j_stop->sched_arr ),
+						sched_dep => _epoch( $j_stop->sched_dep ),
+						rt_arr    => _epoch( $j_stop->rt_arr ),
+						rt_dep    => _epoch( $j_stop->rt_dep ),
+						arr_delay => $j_stop->arr_delay,
+						dep_delay => $j_stop->dep_delay,
+						efa_load  => $j_stop->occupancy,
+						lat       => $j_stop->latlon->[0],
+						lon       => $j_stop->latlon->[1],
+					}
+				]
+			);
+		}
+		$db->insert(
+			'in_transit',
+			{
+				user_id            => $uid,
+				cancelled          => 0,                                  # TODO
+				checkin_station_id => $stop->id_num,
+				checkin_time       => $now,
+				dep_platform       => $stop->platform,
+				train_type         => $journey->type // q{},
+				train_line         => $journey->line,
+				train_no           => $journey->number // q{},
+				train_id           => $journey->id,
+				sched_departure    => $stop->sched_dep,
+				real_departure     => $stop->rt_dep // $stop->sched_dep,
+				route              => $json->encode( \@route ),
+				data               => JSON->new->encode(
+					{
+						rt => $stop->rt_dep ? 1 : 0,
+						%{ $data // {} }
+					}
+				),
+				backend_id => $backend_id,
+			}
+		);
+	}
+	elsif ( $journey
+		and $stop
+		and ref($journey) eq 'Travel::Status::DE::HAFAS::Journey' )
+	{
 		my @route;
 		my $product = $journey->product_at( $stop->loc->eva )
 		  // $journey->product;
@@ -198,9 +247,10 @@ sub add {
 			}
 		);
 	}
-	elsif ( $journey and $stop ) {
-
-		# DBRIS
+	elsif ( $journey
+		and $stop
+		and ref($journey) eq 'Travel::Status::DE::DBRIS::Journey' )
+	{
 		my $number = $journey->train_no // $journey->number // $train_suffix;
 
 		my $line;
@@ -284,9 +334,10 @@ sub add {
 			}
 		);
 	}
-	elsif ( $journey and $stopover ) {
-
-		# MOTIS
+	elsif ( $journey
+		and $stopover
+		and ref($journey) eq 'Travel::Status::MOTIS::Trip' )
+	{
 		my @route;
 		for my $journey_stopover ( $journey->stopovers ) {
 			push(
@@ -340,7 +391,7 @@ sub add {
 		);
 	}
 	else {
-		die('neither train nor journey specified');
+		die('invalid arguments / argument types passed to InTransit->add');
 	}
 }
 

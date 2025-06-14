@@ -23,11 +23,14 @@ sub get_backend_id {
 		# special case
 		return 0;
 	}
-	if ( $opt{hafas} and $self->{backend_id}{hafas}{ $opt{hafas} } ) {
-		return $self->{backend_id}{hafas}{ $opt{hafas} };
-	}
 	if ( $opt{dbris} and $self->{backend_id}{dbris}{ $opt{dbris} } ) {
 		return $self->{backend_id}{dbris}{ $opt{dbris} };
+	}
+	if ( $opt{efa} and $self->{backend_id}{efa}{ $opt{efa} } ) {
+		return $self->{backend_id}{efa}{ $opt{efa} };
+	}
+	if ( $opt{hafas} and $self->{backend_id}{hafas}{ $opt{hafas} } ) {
+		return $self->{backend_id}{hafas}{ $opt{hafas} };
 	}
 	if ( $opt{motis} and $self->{backend_id}{motis}{ $opt{motis} } ) {
 		return $self->{backend_id}{motis}{ $opt{motis} };
@@ -46,6 +49,17 @@ sub get_backend_id {
 			}
 		)->hash->{id};
 		$self->{backend_id}{dbris}{ $opt{dbris} } = $backend_id;
+	}
+	elsif ( $opt{efa} ) {
+		$backend_id = $db->select(
+			'backends',
+			['id'],
+			{
+				efa  => 1,
+				name => $opt{efa}
+			}
+		)->hash->{id};
+		$self->{backend_id}{efa}{ $opt{efa} } = $backend_id;
 	}
 	elsif ( $opt{hafas} ) {
 		$backend_id = $db->select(
@@ -160,6 +174,44 @@ sub add_or_update {
 				name     => $stop->name,
 				lat      => $stop->lat,
 				lon      => $stop->lon,
+				source   => $opt{backend_id},
+				archived => 0
+			}
+		);
+		return;
+	}
+
+	if ( $opt{efa} ) {
+		if (
+			my $s = $self->get_by_eva(
+				$stop->id_num,
+				db         => $opt{db},
+				backend_id => $opt{backend_id}
+			)
+		  )
+		{
+			$opt{db}->update(
+				'stations',
+				{
+					name     => $stop->full_name,
+					lat      => $stop->latlon->[0],
+					lon      => $stop->latlon->[1],
+					archived => 0
+				},
+				{
+					eva    => $stop->id_num,
+					source => $opt{backend_id}
+				}
+			);
+			return;
+		}
+		$opt{db}->insert(
+			'stations',
+			{
+				eva      => $stop->id_num,
+				name     => $stop->full_name,
+				lat      => $stop->latlon->[0],
+				lon      => $stop->latlon->[1],
 				source   => $opt{backend_id},
 				archived => 0
 			}

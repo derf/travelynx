@@ -507,14 +507,17 @@ sub startup {
 				return Mojo::Promise->reject('You are already checked in');
 			}
 
-			if ( $opt{motis} ) {
-				return $self->_checkin_motis_p(%opt);
-			}
 			if ( $opt{dbris} ) {
 				return $self->_checkin_dbris_p(%opt);
 			}
+			if ( $opt{efa} ) {
+				return $self->_checkin_efa_p(%opt);
+			}
 			if ( $opt{hafas} ) {
 				return $self->_checkin_hafas_p(%opt);
+			}
+			if ( $opt{motis} ) {
+				return $self->_checkin_motis_p(%opt);
 			}
 
 			my $promise = Mojo::Promise->new;
@@ -886,6 +889,136 @@ sub startup {
 	);
 
 	$self->helper(
+		'_checkin_efa_p' => sub {
+			my ( $self, %opt ) = @_;
+			my $station = $opt{station};
+			my $trip_id = $opt{train_id};
+			my $ts      = $opt{ts};
+			my $uid     = $opt{uid} // $self->current_user->{id};
+			my $db      = $opt{db}  // $self->pg->db;
+
+			my $promise = Mojo::Promise->new;
+			$self->efa->get_journey_p(
+				service => $opt{efa},
+				trip_id => $trip_id
+			)->then(
+				sub {
+					my ($journey) = @_;
+
+					my $found;
+					for my $stop ( $journey->route ) {
+						if ( $stop->id_num == $station ) {
+							$found = $stop;
+
+							# Lines may serve the same stop several times.
+							# Keep looking until the scheduled departure
+							# matches the one passed while checking in.
+							if ( $ts and $stop->sched_dep->epoch == $ts ) {
+								last;
+							}
+						}
+					}
+					if ( not $found ) {
+						$promise->reject(
+"Did not find stop '$station' within journey '$trip_id'"
+						);
+						return;
+					}
+
+					for my $stop ( $journey->route ) {
+						$self->stations->add_or_update(
+							stop => $stop,
+							db   => $db,
+							efa  => $opt{efa},
+						);
+					}
+
+					eval {
+						$self->in_transit->add(
+							uid        => $uid,
+							db         => $db,
+							journey    => $journey,
+							stop       => $found,
+							backend_id => $self->stations->get_backend_id(
+								efa => $opt{efa}
+							),
+						);
+					};
+					if ($@) {
+						$self->app->log->error(
+							"Checkin($uid): INSERT failed: $@");
+						$promise->reject( 'INSERT failed: ' . $@ );
+						return;
+					}
+
+					my $polyline;
+					if ( $journey->polyline ) {
+						my @station_list;
+						my @coordinate_list;
+						for my $coord ( $journey->polyline ) {
+							if ( $coord->{stop} ) {
+								push(
+									@coordinate_list,
+									[
+										$coord->{lon}, $coord->{lat},
+										$coord->{stop}->id_num
+									]
+								);
+								push( @station_list,
+									$coord->{stop}->full_name );
+							}
+							else {
+								push( @coordinate_list,
+									[ $coord->{lon}, $coord->{lat} ] );
+							}
+						}
+
+						# equal length → polyline only consists of straight
+						# lines between stops. that's not helpful.
+						if ( @station_list == @coordinate_list ) {
+							$self->log->debug( 'Ignoring polyline for '
+								  . $journey->line
+								  . ' as it only consists of straight lines between stops.'
+							);
+						}
+						else {
+							$polyline = {
+								from_eva => ( $journey->route )[0]->id_num,
+								to_eva   => ( $journey->route )[-1]->id_num,
+								coords   => \@coordinate_list,
+							};
+						}
+					}
+
+					if ($polyline) {
+						$self->in_transit->set_polyline(
+							uid      => $uid,
+							db       => $db,
+							polyline => $polyline,
+						);
+					}
+
+					# mustn't be called during a transaction
+					if ( not $opt{in_transaction} ) {
+						$self->run_hook( $uid, 'checkin' );
+					}
+
+					$promise->resolve($journey);
+
+					return;
+				}
+			)->catch(
+				sub {
+					my ($err) = @_;
+					$promise->reject($err);
+					return;
+				}
+			)->wait;
+			return $promise;
+		}
+	);
+
+	$self->helper(
 		'_checkin_hafas_p' => sub {
 			my ( $self, %opt ) = @_;
 
@@ -894,7 +1027,6 @@ sub startup {
 			my $ts       = $opt{ts};
 			my $uid      = $opt{uid} // $self->current_user->{id};
 			my $db       = $opt{db}  // $self->pg->db;
-			my $hafas;
 
 			my $promise = Mojo::Promise->new;
 
@@ -1153,7 +1285,11 @@ sub startup {
 				return $promise->resolve( 0, 'race condition' );
 			}
 
-			if ( $user->{is_dbris} or $user->{is_hafas} or $user->{is_motis} ) {
+			if (   $user->{is_dbris}
+				or $user->{is_efa}
+				or $user->{is_hafas}
+				or $user->{is_motis} )
+			{
 				return $self->_checkout_journey_p(%opt);
 			}
 

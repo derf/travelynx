@@ -841,6 +841,7 @@ sub travel_action {
 			sub {
 				return $self->checkin_p(
 					dbris        => $params->{dbris},
+					efa          => $params->{efa},
 					hafas        => $params->{hafas},
 					motis        => $params->{motis},
 					station      => $params->{station},
@@ -876,6 +877,9 @@ sub travel_action {
 					my $station_link = '/s/' . $destination;
 					if ( $status->{is_dbris} ) {
 						$station_link .= '?dbris=' . $status->{backend_name};
+					}
+					elsif ( $status->{is_efa} ) {
+						$station_link .= '?efa=' . $status->{backend_name};
 					}
 					elsif ( $status->{is_hafas} ) {
 						$station_link .= '?hafas=' . $status->{backend_name};
@@ -915,6 +919,9 @@ sub travel_action {
 				my $station_link = '/s/' . $params->{station};
 				if ( $status->{is_dbris} ) {
 					$station_link .= '?dbris=' . $status->{backend_name};
+				}
+				elsif ( $status->{is_efa} ) {
+					$station_link .= '?efa=' . $status->{backend_name};
 				}
 				elsif ( $status->{is_hafas} ) {
 					$station_link .= '?hafas=' . $status->{backend_name};
@@ -974,6 +981,12 @@ sub travel_action {
 					  . '?dbris='
 					  . $status->{backend_name};
 				}
+				elsif ( $status->{is_efa} ) {
+					$redir
+					  = '/s/'
+					  . $status->{dep_eva} . '?efa='
+					  . $status->{backend_name};
+				}
 				elsif ( $status->{is_hafas} ) {
 					$redir
 					  = '/s/'
@@ -1004,6 +1017,7 @@ sub travel_action {
 		$self->render_later;
 		$self->checkin_p(
 			dbris    => $params->{dbris},
+			efa      => $params->{efa},
 			hafas    => $params->{hafas},
 			motis    => $params->{motis},
 			station  => $params->{station},
@@ -1165,19 +1179,19 @@ sub station {
 			lookbehind => 30,
 		);
 	}
-	elsif ($hafas_service) {
-		$promise = $self->hafas->get_departures_p(
-			service    => $hafas_service,
-			eva        => $station,
+	elsif ($efa_service) {
+		$promise = $self->efa->get_departures_p(
+			service    => $efa_service,
+			name       => $station,
 			timestamp  => $timestamp,
 			lookbehind => 30,
 			lookahead  => 30,
 		);
 	}
-	elsif ($efa_service) {
-		$promise = $self->efa->get_departures_p(
-			service    => $efa_service,
-			name       => $station,
+	elsif ($hafas_service) {
+		$promise = $self->hafas->get_departures_p(
+			service    => $hafas_service,
+			eva        => $station,
 			timestamp  => $timestamp,
 			lookbehind => 30,
 			lookahead  => 30,
