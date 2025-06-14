@@ -939,6 +939,7 @@ sub startup {
 							db         => $db,
 							journey    => $journey,
 							stop       => $found,
+							trip_id    => $trip_id,
 							backend_id => $self->stations->get_backend_id(
 								efa => $opt{efa}
 							),
