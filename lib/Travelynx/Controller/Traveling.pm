@@ -1225,8 +1225,8 @@ sub station {
 				  sort { $b->[1] <=> $a->[1] }
 				  map { [ $_, $_->datetime->epoch ] } $status->results;
 				$status = {
-					station_eva => $status->stop->id,
-					station_name => $status->stop->full_name,
+					station_eva      => $status->stop->id_num,
+					station_name     => $status->stop->full_name,
 					related_stations => [],
 				};
 			}
