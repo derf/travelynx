@@ -166,6 +166,14 @@
 						% }
 					</td>
 				</tr>
+				% if ($journey->{user_data}{operator} or scalar @{ $journey->{user_data}{operators} // [] }) {
+					<tr>
+						<th scope="row">Betrieb</th>
+						<td>
+							%= $journey->{user_data}{operator} // join(q{, }, @{$journey->{user_data}{operators}})
+						</td>
+					</tr>
+				% }
 				% if ($journey->{messages} and @{$journey->{messages}}) {
 					<tr>
 						<th scope="row">Meldungen</th>

@@ -165,6 +165,7 @@ sub add {
 				]
 			);
 		}
+		$persistent_data->{operator} = $journey->operator;
 		$db->insert(
 			'in_transit',
 			{
@@ -186,6 +187,7 @@ sub add {
 						%{ $data // {} }
 					}
 				),
+				user_data  => JSON->new->encode($persistent_data),
 				backend_id => $backend_id,
 			}
 		);
@@ -220,6 +222,9 @@ sub add {
 				$route[-1][2]{tz_offset} = $j_stop->tz_offset;
 			}
 		}
+		if ( scalar $journey->operators ) {
+			$persistent_data->{operators} = [ $journey->operators ];
+		}
 		$db->insert(
 			'in_transit',
 			{
@@ -243,6 +248,7 @@ sub add {
 						%{ $data // {} }
 					}
 				),
+				user_data  => JSON->new->encode($persistent_data),
 				backend_id => $backend_id,
 			}
 		);
