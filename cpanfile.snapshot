@@ -1483,18 +1483,18 @@ DISTRIBUTIONS
       Exporter 5.57
       ExtUtils::MakeMaker 0
       perl 5.008
-  IO-Socket-SSL-2.090
-    pathname: S/SU/SULLR/IO-Socket-SSL-2.090.tar.gz
+  IO-Socket-SSL-2.091
+    pathname: S/SU/SULLR/IO-Socket-SSL-2.091.tar.gz
     provides:
-      IO::Socket::SSL 2.090
+      IO::Socket::SSL 2.091
       IO::Socket::SSL::Intercept 2.056
-      IO::Socket::SSL::OCSP_Cache 2.090
-      IO::Socket::SSL::OCSP_Resolver 2.090
+      IO::Socket::SSL::OCSP_Cache 2.091
+      IO::Socket::SSL::OCSP_Resolver 2.091
       IO::Socket::SSL::PublicSuffix undef
-      IO::Socket::SSL::SSL_Context 2.090
-      IO::Socket::SSL::SSL_HANDLE 2.090
-      IO::Socket::SSL::Session_Cache 2.090
-      IO::Socket::SSL::Trace 2.090
+      IO::Socket::SSL::SSL_Context 2.091
+      IO::Socket::SSL::SSL_HANDLE 2.091
+      IO::Socket::SSL::Session_Cache 2.091
+      IO::Socket::SSL::Trace 2.091
       IO::Socket::SSL::Utils 2.015
     requirements:
       ExtUtils::MakeMaker 0
@@ -2689,6 +2689,31 @@ DISTRIBUTIONS
       Text::LevenshteinXS 0
       XML::LibXML 0
       perl v5.14.2
+  Travel-Status-DE-VRR-3.09
+    pathname: D/DE/DERF/Travel-Status-DE-VRR-3.09.tar.gz
+    provides:
+      Travel::Status::DE::EFA 3.09
+      Travel::Status::DE::EFA::Departure 3.09
+      Travel::Status::DE::EFA::Info 3.09
+      Travel::Status::DE::EFA::Line 3.09
+      Travel::Status::DE::EFA::Services 3.09
+      Travel::Status::DE::EFA::Stop 3.09
+      Travel::Status::DE::EFA::Trip 3.09
+      Travel::Status::DE::VRR 3.09
+    requirements:
+      Carp 0
+      Class::Accessor 0
+      DateTime 0
+      DateTime::Format::Strptime 0
+      File::Slurp 0
+      Getopt::Long 0
+      JSON 0
+      LWP::Protocol::https 0
+      LWP::UserAgent 0
+      List::Util 0
+      Module::Build 0.4
+      Test::More 0
+      perl v5.10.1
   Travel-Status-MOTIS-0.01
     pathname: D/DE/DERF/Travel-Status-MOTIS-0.01.tar.gz
     provides:
