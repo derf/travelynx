@@ -10,7 +10,8 @@
 			Experimentelle Unterstützung für Checkins via EFA-Backends.
 			Teilweise ist ein Checkin nur bei Fahrten mit Echtzeitdaten
 			möglich.  Hierbei handelt es sich nach aktuellem Stand um eine
-			Einschränkung der verwendeten Backends.
+			Einschränkung der verwendeten Backends.  Unterstützung für
+			ausfallende Fahrten folgt später.
 		</p>
 	</div>
 </div>
