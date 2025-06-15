@@ -1258,15 +1258,16 @@ sub update_arrival_efa {
 				$j_stop->full_name,
 				$j_stop->id_num,
 				{
-					sched_arr => _epoch( $j_stop->sched_arr ),
-					sched_dep => _epoch( $j_stop->sched_dep ),
-					rt_arr    => _epoch( $j_stop->rt_arr ),
-					rt_dep    => _epoch( $j_stop->rt_dep ),
-					arr_delay => $j_stop->arr_delay,
-					dep_delay => $j_stop->dep_delay,
-					efa_load  => $j_stop->occupancy,
-					lat       => $j_stop->latlon->[0],
-					lon       => $j_stop->latlon->[1],
+					sched_arr   => _epoch( $j_stop->sched_arr ),
+					sched_dep   => _epoch( $j_stop->sched_dep ),
+					rt_arr      => _epoch( $j_stop->rt_arr ),
+					rt_dep      => _epoch( $j_stop->rt_dep ),
+					isCancelled => $j_stop->is_cancelled,
+					arr_delay   => $j_stop->arr_delay,
+					dep_delay   => $j_stop->dep_delay,
+					efa_load    => $j_stop->occupancy,
+					lat         => $j_stop->latlon->[0],
+					lon         => $j_stop->latlon->[1],
 				}
 			]
 		);

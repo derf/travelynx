@@ -229,7 +229,12 @@ sub run {
 							);
 						}
 
-						if ( $found_arr and $found_arr->rt_arr ) {
+						if (
+							$found_arr
+							and
+							( $found_arr->rt_arr or $found_arr->is_cancelled )
+						  )
+						{
 							$self->app->in_transit->update_arrival_efa(
 								uid     => $uid,
 								journey => $journey,
@@ -238,6 +243,18 @@ sub run {
 								arr_eva => $arr,
 								trip_id => $train_id,
 							);
+						}
+						if ( $found_arr and $found_arr->is_cancelled ) {
+
+							# check out (adds a cancelled journey and resets journey state
+							# to destination selection)
+							$self->app->checkout_p(
+								station => $arr,
+								force   => 0,
+								dep_eva => $dep,
+								arr_eva => $arr,
+								uid     => $uid
+							)->wait;
 						}
 					}
 				)->catch(
