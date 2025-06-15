@@ -10,6 +10,7 @@ use DateTime;
 use File::Slurp qw(read_file);
 use List::Util  qw();
 use JSON;
+use Travel::Status::DE::EFA;
 use Travel::Status::DE::HAFAS;
 use Travel::Status::DE::IRIS::Stations;
 use Travel::Status::MOTIS;
@@ -3023,6 +3024,19 @@ qq{select distinct checkout_station_id from in_transit where backend_id = 0;}
 			}
 		);
 	},
+
+	# v62 -> v63
+	# Add EFA backend support
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				alter table schema_version add column efa varchar(12);
+				update schema_version set version = 63;
+				update schema_version set efa = '0';
+			}
+		);
+	},
 );
 
 sub sync_stations {
@@ -3213,6 +3227,37 @@ sub sync_stations {
 	}
 }
 
+sub sync_backends_efa {
+	my ($db) = @_;
+	for my $service ( Travel::Status::DE::EFA::get_services() ) {
+		my $present = $db->select(
+			'backends',
+			'count(*) as count',
+			{
+				efa  => 1,
+				name => $service->{shortname}
+			}
+		)->hash->{count};
+		if ( not $present ) {
+			$db->insert(
+				'backends',
+				{
+					dbris => 0,
+					efa   => 1,
+					hafas => 0,
+					iris  => 0,
+					motis => 0,
+					name  => $service->{shortname},
+				},
+				{ on_conflict => undef }
+			);
+		}
+	}
+
+	$db->update( 'schema_version',
+		{ efa => $Travel::Status::DE::EFA::VERSION } );
+}
+
 sub sync_backends_hafas {
 	my ($db) = @_;
 	for my $service ( Travel::Status::DE::HAFAS::get_services() ) {
@@ -3228,10 +3273,11 @@ sub sync_backends_hafas {
 			$db->insert(
 				'backends',
 				{
-					iris  => 0,
-					hafas => 1,
-					efa   => 0,
 					dbris => 0,
+					efa   => 0,
+					hafas => 1,
+					iris  => 0,
+					motis => 0,
 					name  => $service->{shortname},
 				},
 				{ on_conflict => undef }
@@ -3258,10 +3304,10 @@ sub sync_backends_motis {
 			$db->insert(
 				'backends',
 				{
-					iris  => 0,
-					hafas => 0,
-					efa   => 0,
 					dbris => 0,
+					efa   => 0,
+					hafas => 0,
+					iris  => 0,
 					motis => 1,
 					name  => $service->{shortname},
 				},
@@ -3359,6 +3405,17 @@ sub migrate_db {
 			}
 			exit(1);
 		}
+	}
+
+	my $efa_version = get_schema_version( $db, 'efa' );
+	say "Found backend table for EFA v${efa_version}";
+	if ( $efa_version eq $Travel::Status::DE::EFA::VERSION ) {
+		say 'Backend table is up-to-date';
+	}
+	else {
+		say
+"Synchronizing with Travel::Status::DE::EFA $Travel::Status::DE::EFA::VERSION";
+		sync_backends_efa($db);
 	}
 
 	my $hafas_version = get_schema_version( $db, 'hafas' );

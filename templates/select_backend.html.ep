@@ -66,19 +66,20 @@
 %= end
 <div class="row">
 	<div class="col s12">
-		<h2 id="help">Hilfe</h2>
+		<h2 id="help">Details</h2>
 		<p>
 			<strong>Deutsche Bahn: bahn.de</strong> ist eine gute Wahl für Fahrten des Nah-, Regional- und Fernverkehrs innerhalb Deutschlands.
-			Die Implementierung ist noch recht frisch, bietet jedoch prinzipiell akkurate Echtzeit- und Kartendaten sowie Wagenreihungen.
+			Dieses Backend bietet überwiegend korrekte Echtzeit- und Kartendaten sowie Wagenreihungen.
+			Bei Nahverkehrsfahrten sind die Echtzeit- und Kartendaten meist nicht so gut wie bei den APIs des jeweiligen Verkehrsverbunds.
 		<p>
-			<strong>Deutsche Bahn: IRIS-TTS</strong> liefert Echtzeitdaten (nur am Start- und Zielbahnhof), Wagenreihungen und Verspätungsmeldungen für Regional- und Fernverkehr in Deutschland. Kartendaten sind nur teilweise verfügbar.
 			<strong>ÖBB</strong> liefern Kartendaten und Wagenreihungen für Fernverkehr in Deutschland und Umgebung, jedoch keine Meldungen. Echtzeitdaten sind teilweise verfügbar.
 		</p>
 		<p>
-			Die restlichen Backends lohnen sich für Fahrten in den zugehörigen Verkehrsverbünden bzw. Ländern.
-			Im Gegensatz zu bahn.de liefern sie in vielen (aber nicht allen) Fällen auch detaillierte Kartendaten für die dem Verbund zugehörigen Verkehrsmittel.
-			In Einzelfällen (z.B. BVG) sind sogar Auslastungsdaten eingepflegt.
-			Bei Fahrten außerhalb von Deutschland und der Schweiz ist <strong>ÖBB</strong> zumeist die beste Wahl.
+			<strong>Deutsche Bahn: IRIS-TTS</strong> liefert Echtzeitdaten (nur am Start- und Zielbahnhof), Wagenreihungen und Verspätungsmeldungen für Regional- und Fernverkehr in Deutschland. Kartendaten und Angaben zu Unterwegshalten sind nur teilweise verfügbar. Dieses Backend wird nicht mehr weiterentwickelt. Die zugehörige API wird voraussichtlich im Laufe des Jahres 2025 abgeschaltet.
+		</p>
+		<p>
+			<strong>Transitous</strong> ist ein Aggregator für eine Vielzahl von Verkehrsunternehmen.
+			Die Datenqualität variiert.
 		</p>
 	</div>
 </div>

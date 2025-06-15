@@ -160,6 +160,9 @@
 			% if ($dbris) {
 				%= include '_departures_dbris', results => $results, dbris => $dbris;
 			% }
+			% elsif ($efa) {
+				%= include '_departures_efa', results => $results, efa => $efa;
+			% }
 			% elsif ($hafas) {
 				%= include '_departures_hafas', results => $results, hafas => $hafas;
 			% }

@@ -185,6 +185,85 @@ sub run {
 			next;
 		}
 
+		if ( $entry->{is_efa} ) {
+			eval {
+				$self->app->efa->get_journey_p(
+					trip_id => $train_id,
+					service => $entry->{backend_name}
+				)->then(
+					sub {
+						my ($journey) = @_;
+
+						my $found_dep;
+						my $found_arr;
+						for my $stop ( $journey->route ) {
+							if ( $stop->id_num == $dep ) {
+								$found_dep = $stop;
+							}
+							if ( $arr and $stop->id_num == $arr ) {
+								$found_arr = $stop;
+								last;
+							}
+						}
+						if ( not $found_dep ) {
+							$self->app->log->debug(
+								"Did not find $dep within journey $train_id");
+							return;
+						}
+
+						if ( $found_dep->rt_dep ) {
+							$self->app->in_transit->update_departure_efa(
+								uid     => $uid,
+								journey => $journey,
+								stop    => $found_dep,
+								dep_eva => $dep,
+								arr_eva => $arr,
+								trip_id => $train_id,
+							);
+						}
+
+						if ( $found_arr and $found_arr->rt_arr ) {
+							$self->app->in_transit->update_arrival_efa(
+								uid     => $uid,
+								journey => $journey,
+								stop    => $found_arr,
+								dep_eva => $dep,
+								arr_eva => $arr,
+								trip_id => $train_id,
+							);
+						}
+					}
+				)->catch(
+					sub {
+						my ($err) = @_;
+						$backend_issues += 1;
+						$self->app->log->error(
+"work($uid) @ EFA $entry->{backend_name}: journey: $err"
+						);
+					}
+				)->wait;
+
+				if (    $arr
+					and $entry->{real_arr_ts}
+					and $now->epoch - $entry->{real_arr_ts} > 600 )
+				{
+					$self->app->checkout_p(
+						station => $arr,
+						force   => 2,
+						dep_eva => $dep,
+						arr_eva => $arr,
+						uid     => $uid
+					)->wait;
+				}
+			};
+			if ($@) {
+				$errors += 1;
+				$self->app->log->error(
+					"work($uid) @ EFA $entry->{backend_name}: $@");
+			}
+			next;
+		}
+
 		if ( $entry->{is_motis} ) {
 
 			eval {

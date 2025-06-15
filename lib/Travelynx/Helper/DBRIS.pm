@@ -94,7 +94,6 @@ sub get_journey_p {
 	my ( $self, %opt ) = @_;
 
 	my $promise = Mojo::Promise->new;
-	my $now     = DateTime->now( time_zone => 'Europe/Berlin' );
 
 	my $agent = $self->{user_agent};
 	my $proxy;

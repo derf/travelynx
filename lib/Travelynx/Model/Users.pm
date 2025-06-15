@@ -418,7 +418,7 @@ sub get {
 		  . 'extract(epoch from registered_at) as registered_at_ts, '
 		  . 'extract(epoch from last_seen) as last_seen_ts, '
 		  . 'extract(epoch from deletion_requested) as deletion_requested_ts, '
-		  . 'backend_id, backend_name, hafas, dbris, motis',
+		  . 'backend_id, backend_name, dbris, efa, hafas, motis',
 		{ id => $uid }
 	)->hash;
 	if ($user) {
@@ -458,6 +458,7 @@ sub get {
 			backend_id    => $user->{backend_id},
 			backend_name  => $user->{backend_name},
 			backend_dbris => $user->{dbris},
+			backend_efa   => $user->{efa},
 			backend_hafas => $user->{hafas},
 			backend_motis => $user->{motis},
 		};

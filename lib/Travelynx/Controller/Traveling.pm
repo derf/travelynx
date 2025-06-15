@@ -562,10 +562,13 @@ sub geolocation {
 		return;
 	}
 
-	my ( $dbris_service, $hafas_service, $motis_service );
+	my ( $dbris_service, $efa_service, $hafas_service, $motis_service );
 	my $backend = $self->stations->get_backend( backend_id => $backend_id );
 	if ( $backend->{dbris} ) {
 		$dbris_service = $backend->{name};
+	}
+	if ( $backend->{efa} ) {
+		$efa_service = $backend->{name};
 	}
 	elsif ( $backend->{hafas} ) {
 		$hafas_service = $backend->{name};
@@ -595,6 +598,50 @@ sub geolocation {
 						dbris    => $dbris_service,
 					}
 				} $dbris->results;
+				if ( @results > 10 ) {
+					@results = @results[ 0 .. 9 ];
+				}
+				$self->render(
+					json => {
+						candidates => [@results],
+					}
+				);
+			}
+		)->catch(
+			sub {
+				my ($err) = @_;
+				$self->render(
+					json => {
+						candidates => [],
+						warning    => $err,
+					}
+				);
+			}
+		)->wait;
+		return;
+	}
+	elsif ($efa_service) {
+		$self->render_later;
+
+		Travel::Status::DE::EFA->new_p(
+			promise    => 'Mojo::Promise',
+			user_agent => Mojo::UserAgent->new,
+			service    => $efa_service,
+			coord      => {
+				lat => $lat,
+				lon => $lon
+			}
+		)->then(
+			sub {
+				my ($efa) = @_;
+				my @results = map {
+					{
+						name     => $_->full_name,
+						eva      => $_->id_code,
+						distance => 0,
+						efa      => $efa_service,
+					}
+				} $efa->results;
 				if ( @results > 10 ) {
 					@results = @results[ 0 .. 9 ];
 				}
@@ -726,8 +773,6 @@ sub geolocation {
 			lon      => $_->[0][3],
 			lat      => $_->[0][4],
 			distance => $_->[1],
-			dbris    => 0,
-			hafas    => 0,
 		}
 	} Travel::Status::DE::IRIS::Stations::get_station_by_location( $lon,
 		$lat, 10 );
@@ -796,6 +841,7 @@ sub travel_action {
 			sub {
 				return $self->checkin_p(
 					dbris        => $params->{dbris},
+					efa          => $params->{efa},
 					hafas        => $params->{hafas},
 					motis        => $params->{motis},
 					station      => $params->{station},
@@ -831,6 +877,9 @@ sub travel_action {
 					my $station_link = '/s/' . $destination;
 					if ( $status->{is_dbris} ) {
 						$station_link .= '?dbris=' . $status->{backend_name};
+					}
+					elsif ( $status->{is_efa} ) {
+						$station_link .= '?efa=' . $status->{backend_name};
 					}
 					elsif ( $status->{is_hafas} ) {
 						$station_link .= '?hafas=' . $status->{backend_name};
@@ -870,6 +919,9 @@ sub travel_action {
 				my $station_link = '/s/' . $params->{station};
 				if ( $status->{is_dbris} ) {
 					$station_link .= '?dbris=' . $status->{backend_name};
+				}
+				elsif ( $status->{is_efa} ) {
+					$station_link .= '?efa=' . $status->{backend_name};
 				}
 				elsif ( $status->{is_hafas} ) {
 					$station_link .= '?hafas=' . $status->{backend_name};
@@ -929,6 +981,12 @@ sub travel_action {
 					  . '?dbris='
 					  . $status->{backend_name};
 				}
+				elsif ( $status->{is_efa} ) {
+					$redir
+					  = '/s/'
+					  . $status->{dep_eva} . '?efa='
+					  . $status->{backend_name};
+				}
 				elsif ( $status->{is_hafas} ) {
 					$redir
 					  = '/s/'
@@ -959,6 +1017,7 @@ sub travel_action {
 		$self->render_later;
 		$self->checkin_p(
 			dbris    => $params->{dbris},
+			efa      => $params->{efa},
 			hafas    => $params->{hafas},
 			motis    => $params->{motis},
 			station  => $params->{station},
@@ -1091,6 +1150,8 @@ sub station {
 
 	my $dbris_service = $self->param('dbris')
 	  // ( $user->{backend_dbris} ? $user->{backend_name} : undef );
+	my $efa_service = $self->param('efa')
+	  // ( $user->{backend_efa} ? $user->{backend_name} : undef );
 	my $hafas_service = $self->param('hafas')
 	  // ( $user->{backend_hafas} ? $user->{backend_name} : undef );
 	my $motis_service = $self->param('motis')
@@ -1116,6 +1177,15 @@ sub station {
 			station    => $station,
 			timestamp  => $timestamp,
 			lookbehind => 30,
+		);
+	}
+	elsif ($efa_service) {
+		$promise = $self->efa->get_departures_p(
+			service    => $efa_service,
+			name       => $station,
+			timestamp  => $timestamp,
+			lookbehind => 30,
+			lookahead  => 30,
 		);
 	}
 	elsif ($hafas_service) {
@@ -1209,6 +1279,16 @@ sub station {
 					related_stations => [],
 				};
 			}
+			elsif ($efa_service) {
+				@results = map { $_->[0] }
+				  sort { $b->[1] <=> $a->[1] }
+				  map { [ $_, $_->datetime->epoch ] } $status->results;
+				$status = {
+					station_eva      => $status->stop->id_num,
+					station_name     => $status->stop->full_name,
+					related_stations => [],
+				};
+			}
 			elsif ($motis_service) {
 				@results = map { $_->[0] }
 				  sort { $b->[1] <=> $a->[1] }
@@ -1268,12 +1348,14 @@ sub station {
 						eva => $user_status->{cancellation}{dep_eva},
 						destination_name =>
 						  $user_status->{cancellation}{arr_name},
+						efa   => $efa_service,
 						hafas => $hafas_service,
 					);
 				}
 				else {
 					$connections_p = $self->get_connecting_trains_p(
 						eva   => $status->{station_eva},
+						efa   => $efa_service,
 						hafas => $hafas_service
 					);
 				}
@@ -1287,6 +1369,7 @@ sub station {
 							'departures',
 							user              => $user,
 							dbris             => $dbris_service,
+							efa               => $efa_service,
 							hafas             => $hafas_service,
 							motis             => $motis_service,
 							eva               => $status->{station_eva},
@@ -1308,6 +1391,7 @@ sub station {
 							'departures',
 							user             => $user,
 							dbris            => $dbris_service,
+							efa              => $efa_service,
 							hafas            => $hafas_service,
 							motis            => $motis_service,
 							eva              => $status->{station_eva},
@@ -1328,6 +1412,7 @@ sub station {
 					'departures',
 					user             => $user,
 					dbris            => $dbris_service,
+					efa              => $efa_service,
 					hafas            => $hafas_service,
 					motis            => $motis_service,
 					eva              => $status->{station_eva},
