@@ -170,7 +170,7 @@ sub add {
 			'in_transit',
 			{
 				user_id            => $uid,
-				cancelled          => 0,                                  # TODO
+				cancelled          => $stop->is_cancelled ? 1 : 0,
 				checkin_station_id => $stop->id_num,
 				checkin_time       => $now,
 				dep_platform       => $stop->platform,
