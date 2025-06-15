@@ -53,6 +53,13 @@ $(document).ready(function() {
 					const { id, name, motis } = candidate;
 
 					node = $('<a class="tablerow" href="/s/' + id + '?motis=' + motis + '"><span><i class="material-icons" aria-hidden="true">train</i>' + name + '</span></a>');
+				} else if (candidate.efa !== undefined) {
+					const eva = candidate.eva,
+						name = candidate.name,
+						efa = candidate.efa,
+						distance = candidate.distance.toFixed(1);
+
+					node = $('<a class="tablerow" href="/s/' + eva + '?efa=' + efa + '"><span><i class="material-icons" aria-hidden="true">directions</i>' + name + '</span></a>');
 				} else {
 					const eva = candidate.eva,
 						name = candidate.name,
