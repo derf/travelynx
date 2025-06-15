@@ -105,7 +105,7 @@
 
 <div class="row">
 	<div class="col s4 center-align">
-		% if ($dbris or $hafas or $motis) {
+		% if ($dbris or $efa or $hafas or $motis) {
 			<a class="btn-small" href="<%= url_for('sstation', station => param('station'))->query({dbris => $dbris, hafas => $hafas, timestamp => $datetime->clone->subtract(hours => 1)->epoch}) %>"><i class="material-icons left" aria-hidden="true">chevron_left</i><span class="hide-on-small-only">früher</span></a>
 		% }
 	</div>
@@ -115,7 +115,7 @@
 		% }
 	</div>
 	<div class="col s4 center-align">
-		% if ($dbris or $hafas or $motis) {
+		% if ($dbris or $efa or $hafas or $motis) {
 			<a class="btn-small" href="<%= url_for('sstation', station => param('station'))->query({dbris => $dbris, hafas => $hafas, timestamp => $datetime->clone->add(hours => 1)->epoch}) %>"><span class="hide-on-small-only">später</span><i class="material-icons right" aria-hidden="true">chevron_right</i></a>
 		% }
 	</div>
@@ -178,14 +178,14 @@
 
 <div class="row">
 	<div class="col s4 center-align">
-		% if ($dbris or $hafas) {
+		% if ($dbris or $efa or $hafas or $motis) {
 			<a class="btn-small" href="<%= url_for('sstation', station => param('station'))->query({dbris => $dbris, hafas => $hafas, timestamp => $datetime->clone->subtract(hours => 1)->epoch}) %>"><i class="material-icons left" aria-hidden="true">chevron_left</i><span class="hide-on-small-only">früher</span></a>
 		% }
 	</div>
 	<div class="col s4 center-align">
 	</div>
 	<div class="col s4 center-align">
-		% if ($dbris or $hafas) {
+		% if ($dbris or $efa or $hafas or $motis) {
 			<a class="btn-small" href="<%= url_for('sstation', station => param('station'))->query({dbris => $dbris, hafas => $hafas, timestamp => $datetime->clone->add(hours => 1)->epoch}) %>"><span class="hide-on-small-only">später</span><i class="material-icons right" aria-hidden="true">chevron_right</i></a>
 		% }
 	</div>
