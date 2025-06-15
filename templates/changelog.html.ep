@@ -2,6 +2,21 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		2.14
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left" aria-label="Neues Feature">add</i>
+			Experimentelle Unterstützung für Checkins via EFA-Backends.
+			Teilweise ist ein Checkin nur bei Fahrten mit Echtzeitdaten
+			möglich.  Hierbei handelt es sich nach aktuellem Stand um eine
+			Einschränkung der verwendeten Backends.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		2.13
 	</div>
 	<div class="col s12 m11 l11">
