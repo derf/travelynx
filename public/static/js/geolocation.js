@@ -24,9 +24,9 @@ $(document).ready(function() {
 			const res = $(document.createElement('p'));
 			$.each(stops, function(i, stop) {
 				const parts = stop.split(';');
-				const [ eva, name, dbris, motis, hafas ] = parts;
+				const [ eva, name, dbris, efa, hafas, motis ] = parts;
 
-				const node = $('<a class="tablerow" href="/s/' + eva + '?dbris=' + dbris + '&amp;motis=' + motis + '&amp;hafas=' + hafas + '"><span><i class="material-icons" aria-hidden="true">' + (dbris == '0' ? 'train' : 'directions') + '</i>' + name + '</span></a>');
+				const node = $('<a class="tablerow" href="/s/' + eva + '?dbris=' + dbris + '&amp;efa=' + efa + '&amp;hafas=' + hafas + '&amp;motis=' + motis + '"><span><i class="material-icons" aria-hidden="true">' + (dbris == '0' ? 'train' : 'directions') + '</i>' + name + '</span></a>');
 				node.click(function() {
 					$('nav .preloader-wrapper').addClass('active');
 				});

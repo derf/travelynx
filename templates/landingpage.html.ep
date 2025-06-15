@@ -57,7 +57,7 @@
 						<div class="card-content">
 							<span class="card-title">Hallo, <%= $user->{name} %>!</span>
 							<p>Du bist gerade nicht eingecheckt.</p>
-							<div class="geolocation" data-recent="<%= join('|', map { $_->{external_id_or_eva} . ';' . $_->{name} . ';' . $_->{dbris} . ';' . $_->{motis} . ';' . $_->{hafas} } @{stash('recent_targets') // []} ) %>" data-backend="<%= $user->{backend_id} %>">
+							<div class="geolocation" data-recent="<%= join('|', map { $_->{external_id_or_eva} . ';' . $_->{name} . ';' . $_->{dbris} . ';' . $_->{efa} . ';' . $_->{hafas} . ';' . $_->{motis} } @{stash('recent_targets') // []} ) %>" data-backend="<%= $user->{backend_id} %>">
 								<a class="btn waves-effect waves-light btn-flat request">Stationen in der Umgebung abfragen</a>
 							</div>
 							%= hidden_field backend_dbris => $user->{backend_dbris}

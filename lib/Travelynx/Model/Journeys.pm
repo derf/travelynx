@@ -875,8 +875,8 @@ sub get_latest_checkout_stations {
 			'arr_name',        'arr_eva',
 			'arr_external_id', 'train_id',
 			'backend_id',      'backend_name',
-			'is_dbris',        'is_hafas',
-			'is_motis'
+			'is_dbris',        'is_efa',
+			'is_hafas',        'is_motis'
 		],
 		{
 			user_id   => $uid,
@@ -903,6 +903,7 @@ sub get_latest_checkout_stations {
 				external_id_or_eva => $row->{arr_external_id}
 				  // $row->{arr_eva},
 				dbris      => $row->{is_dbris} ? $row->{backend_name} : 0,
+				efa        => $row->{is_efa}   ? $row->{backend_name} : 0,
 				hafas      => $row->{is_hafas} ? $row->{backend_name} : 0,
 				motis      => $row->{is_motis} ? $row->{backend_name} : 0,
 				backend_id => $row->{backend_id},
