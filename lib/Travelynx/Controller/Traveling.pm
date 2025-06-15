@@ -773,6 +773,7 @@ sub geolocation {
 			lon      => $_->[0][3],
 			lat      => $_->[0][4],
 			distance => $_->[1],
+			hafas    => 0,
 		}
 	} Travel::Status::DE::IRIS::Stations::get_station_by_location( $lon,
 		$lat, 10 );
