@@ -1564,11 +1564,13 @@ sub cancelled {
 		with_datetime       => 1,
 		with_route_datetime => 1
 	);
+	foreach (@journeys) { $_->{cancelled} = 1; }
 
 	$self->respond_to(
 		json => { json => [@journeys] },
 		any  => {
 			template => 'cancelled',
+			title => 'travelynx: Zugausfälle',
 			journeys => [@journeys]
 		}
 	);

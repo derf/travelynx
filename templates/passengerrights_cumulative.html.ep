@@ -1,0 +1,107 @@
+<h1>Fahrgastrechte Zeitkarten</h1>
+<div class="row">
+	<div class="col s12">
+		<p>Bei <b>Zeitkarten</b> können seit dem 7. Juni 2023 Verspätungen ab 20
+			Minuten während der Gültigkeitsdauer zusammengerechnet werden. Für jede 60
+			Minuten so kumulierte Verspätung gibt es im Nahverkehr 1,50 € in der zweiten
+			und 2,25 € in der ersten Klasse, beim Fernverkehr 5,00 € bzw. 7,50 €.
+			Die Anträge einer Zeitperiode müssen gemeinsam eingereicht werden.
+			Erstattungen unter 4,00 € werden nicht ausgezahlt, maximal können 25% des
+			Fahrkartenpreises erstattet werden. Travelynx kann für dich automatisch
+			zusammenrechnen, wieviele Verspätungsminuten du so gesammelt hast.
+		</p>
+	</div>
+</div>
+
+<form class="row">
+	<div class="col s12 m12 xl3">
+		<label for="ticket">Ich habe eine Zeitkarte für</label>
+		<select id="ticket" name="ticket_value">
+			<option value="150"
+				<%= $ticket_value == 150 ? 'selected' : '' %>
+			>Nahverkehr, 2. Kl. (1,50 €)</option>
+			<option value="225"
+				<%= $ticket_value == 225 ? 'selected' : '' %>
+			>Nahverkehr, 1. Kl. (2,25 €)</option>
+			<option value="500"
+				<%= $ticket_value == 500 ? 'selected' : '' %>
+			>Fernverkehr, 2. Kl. (5,00 €)</option>
+			<option value="750"
+				<%= $ticket_value == 750 ? 'selected' : '' %>
+			>Fernverkehr, 1. Kl. (7,50 €)</option>
+			<option value="1000"
+				<%= $ticket_value == 1000 ? 'selected' : '' %>
+			>BC100, 2. Kl. (10,00 €)</option>
+			<option value="1500"
+				<%= $ticket_value == 1500 ? 'selected' : '' %>
+			>BC100, 1. Kl. (15,00 €)</option>
+		</select>
+	</div>
+	<div class="col s12 m4 xl3">
+		<label for="start">Sie ist gültig vom</label>
+		<input id="start" name="start" type="date" value="<%= $start->ymd('-') %>" min="2023-06-07">
+	</div>
+	<div class="col s12 m4 xl3">
+		<label for="end">Bis zum</label>
+		<input id="end" name="end" type="date" value="<%= $end->ymd('-') %>">
+	</div>
+	<div class="col s12 m4 xl3">
+		<button class="btn waves-effect waves-light" type="submit">
+			Anzeigen
+			<i class="material-icons right" aria-hidden="true">send</i>
+		</button>
+	</div>
+</form>
+
+<div class="row">
+	<div class="col s12 m3 xl2">
+		Erstattungsbetrag:<br>
+		<span style="font-size:2rem">
+			% if ($compensation_amount < 400 and $compensation_amount > 0) {
+				%=  sprintf('(%.2f €)', $compensation_amount/100)
+			% } else {
+				%= sprintf('%.2f €', $compensation_amount/100)
+			% }
+		</span>
+	</div>
+	<div class="col s12 m9 xl10" style="padding-top: 2rem">
+		<div class="progress">
+			<div class="determinate" style="width: <%= $bar_fill %>%"></div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12">
+	% if ($compensation_amount < 400) {
+		<p>
+			Wegen der Bagatellgrenze von 4,00 € müssen bei einer Erstattung von
+			<%= sprintf('%.2f €', $ticket_value/100) %> pro Stunde
+			<b>mindestens <%= $min_delay_for_compensation %> Minuten</b> an
+			Verspätung während der Gültigkeitsdauer anfallen, damit eine Erstattung
+			ausgezahlt wird.
+		</p>
+		% }
+		<p>
+			Im Zeitraum vom <b><%= $start->dmy('.') %></b> bis zum
+			<b><%= $end->dmy('.') %></b> sind auf <%= $num_journeys %> Fahrten insgesamt
+			<b><%= $cumulative_delay %> Minuten</b> an Verspätung angefallen.
+			% if ($ticket_value < 500) {
+				Weil du eine Zeitkarte des Nahverkehrs ausgewählt hast, werden verspätete
+				Fernzüge nicht berücksichtigt.
+			% } elsif ($ticket_value < 1000) {
+				Du hast eine Zeitkarte des Fernverkehrs ausgewählt. Sie ist vermutlich
+				nicht für alle diese Fahrten gültig, kommt aber auch mit nur einer
+				Verspätung über die Bagatellgrenze.
+			% }
+		</p>
+			% if ($did_miss_connections) {
+				<p>Travelynx vermutet, dass du während der Gültigkeitsdauer eventuell
+				Anschlüsse verpasst hat, weiß aber nicht, welchen Zug du jeweils eigentlich
+				erreichen wolltest. Für diese Züge kann Travelynx die Verspätung nicht
+				automatisch berechnen.</p>
+			% }
+	</div>
+
+	%= include '_history_trains', date_format => '%d.%m.%Y', journeys => stash('journeys');
+</div>

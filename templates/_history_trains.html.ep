@@ -1,6 +1,10 @@
 <div class="row">
 	<div class="col s12">
-		<ul class="collection history">
+		% my $fgr_class = '';
+		% if (@{$journeys} && @{$journeys}[0]->{generate_fgr_target}) {
+			% $fgr_class = 'fgr';
+		%}
+		<ul class="collection history <%= $fgr_class %>">
 		% my $olddate = '';
 		% for my $travel (@{$journeys}) {
 			% my $detail_link = '/journey/' . $travel->{id};
@@ -15,7 +19,35 @@
 				% $olddate = $date
 			% }
 			<li class="collection-item">
-				<a href="<%= $detail_link %>">
+
+			% # passenger rights history listing only:
+			% # display substitute connection or next train after possible missed
+			% # connection if applicable
+			% if (my $substitute = $travel->{to_substitute} // $travel->{connection}) {
+				% my $subst_detail_link = '/journey/' . $substitute->{id};
+				% if (my $prefix = stash('link_prefix')) {
+					% $subst_detail_link = $prefix . $substitute->{id};
+				% }
+				<a href="<%= $subst_detail_link %>" class="history-line-link unmarked">
+					<span class="dep-line <%= $substitute->{type} // q{} %>">
+						<%= $substitute->{type} %> <%= $substitute->{line}  // $substitute->{no}%>
+					</span>
+				</a>
+				<ul class="route-history">
+					%= include '_route_history_item', stop_type => 'destination', travel => $substitute, link => $subst_detail_link
+					%= include '_route_history_item', stop_type => 'origin', travel => $substitute, link => $subst_detail_link
+				</ul>
+				<i class="fgr-reason">
+					% if ($travel->{has_substitute}) {
+						— Ersatzverbindung mit +<%= $travel->{substitute_delay}%> für —
+					% } elsif ($travel->{connection_missed}) {
+						— Erster Zug mit +<%= $travel->{delay}%>, eventuell in <%= $travel->{to_name} %> Anschluss verpasst —
+					% }
+				</i>
+			% }
+			% # end of passenger rights substitute connection
+
+				<a href="<%= $detail_link %>" class="history-line-link">
 					<span class="dep-line <%= $travel->{type} // q{} %>">
 						% if (not $travel->{is_motis}) {
 							<%= $travel->{type} %>
@@ -25,44 +57,18 @@
 				</a>
 
 				<ul class="route-history">
-					<li>
-						<i class="material-icons tiny" aria-label="nach">radio_button_unchecked</i>
-
-						<a href="<%= $detail_link %>" class="unmarked">
-						% if (param('cancelled') and $travel->{sched_arrival}->epoch != 0) {
-							%= $travel->{sched_arrival}->strftime('%H:%M')
-						% }
-						% else {
-							% if ($travel->{rt_arrival}->epoch == 0 and $travel->{sched_arrival}->epoch == 0) {
-								<i class="material-icons">timer_off</i>
-							% } else {
-								%= $travel->{rt_arrival}->strftime('%H:%M');
-								% if ($travel->{sched_arrival} != $travel->{rt_arrival}) {
-									(<%= sprintf('%+d', ($travel->{rt_arrival}->epoch - $travel->{sched_arrival}->epoch) / 60) %>)
-								% }
-							% }
-						% }
-						<strong><%= $travel->{to_name} %></strong>
-						</a>
-					</li>
-
-					<li>
-						<i class="material-icons tiny" aria-label="von">play_circle_filled</i>
-
-						<a href="<%= $detail_link %>" class="unmarked">
-						% if (param('cancelled')) {
-							%= $travel->{sched_departure}->strftime('%H:%M')
-						% }
-						% else {
-							<%= $travel->{rt_departure}->strftime('%H:%M') %>
-							% if ($travel->{sched_departure} != $travel->{rt_departure}) {
-								(<%= sprintf('%+d', ($travel->{rt_departure}->epoch - $travel->{sched_departure}->epoch) / 60) %>)
-							% }
-						% }
-						<strong><%= $travel->{from_name} %></strong>
-						</a>
-					</li>
+					%= include '_route_history_item', stop_type => 'destination', travel => $travel, link => $detail_link, cancelled => $travel->{cancelled}
+					%= include '_route_history_item', stop_type => 'origin', travel => $travel, link => $detail_link, cancelled => $travel->{cancelled}
 				</ul>
+				% if ($travel->{generate_fgr_target}) {
+					%= form_for $travel->{generate_fgr_target} => (method => 'POST') => (target => '_blank') => begin
+						%= csrf_field
+						%= hidden_field id => $travel->{id}
+						<button class="btn waves-effect waves-light grey darken-3" type="submit" name="action" value="generate">
+							<i class="material-icons" aria-label="Formular herunterladen">file_download</i>
+						</button>
+					%= end
+				% }
 			</li>
 		% }
 		</ul>

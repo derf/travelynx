@@ -1,0 +1,43 @@
+% my $icon = 'radio_button_unchecked';
+% my $label = '';
+% my ($scheduled, $real_time, $name);
+% my $cancelled_class = stash('cancelled') ? 'cancelled' : '';
+
+% if (my $stop_type = stash('stop_type')) {
+	% if ($stop_type eq 'origin') {
+		% $label = 'von';
+		% $scheduled = $travel->{sched_departure};
+		% $real_time = $travel->{rt_departure};
+		% $name = $travel->{from_name};
+	% } elsif ($stop_type eq 'destination') {
+		% $icon = stash('cancelled') ? 'close' : 'check_circle';
+		% $label = stash('cancelled') ? 'entfallener Zug nach' : 'nach';
+		% $scheduled = $travel->{sched_arrival};
+		% $real_time = $travel->{rt_arrival};
+		% $name = $travel->{to_name};
+	% }
+% }
+<li class="<%= $cancelled_class %>">
+	% if ($label) {
+		<i class="material-icons tiny" aria-label="<%= $label %>"><%= $icon %></i>
+	% } else {
+		<i class="material-icons tiny" aria-hidden="true"><%= $icon %></i>
+	% }
+
+	<a href="<%= $link %>" class="unmarked">
+	% if (param('cancelled') and $scheduled->epoch != 0) {
+		%= $scheduled->strftime('%H:%M')
+	% }
+	% else {
+		% if ($real_time->epoch == 0 and $scheduled->epoch == 0) {
+			<i class="material-icons" aria-label="Zeit unbekannt">timer_off</i>
+		% } else {
+			%= $real_time->strftime('%H:%M');
+			% if ($scheduled != $real_time) {
+				(<%= sprintf('%+d', ($real_time->epoch - $scheduled->epoch) / 60) %>)
+			% }
+		% }
+	% }
+	<strong><%= $name %></strong>
+	</a>
+</li>

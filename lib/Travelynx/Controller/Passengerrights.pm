@@ -6,6 +6,8 @@ package Travelynx::Controller::Passengerrights;
 use Mojo::Base 'Mojolicious::Controller';
 
 use DateTime;
+use List::Util;
+use POSIX;
 use CAM::PDF;
 
 # Internal Helpers
@@ -160,6 +162,132 @@ sub list_candidates {
 			journeys     => [@journeys],
 			abo_journeys => [@abo_journeys]
 		}
+	);
+}
+
+sub list_cumulative_delays {
+	my ($self) = @_;
+	my $parser = DateTime::Format::Strptime->new(
+		pattern   => '%Y-%m-%d',
+		locale    => 'de_DE',
+		time_zone => 'Europe/Berlin'
+	);
+	my @fv_types = qw(IC ICE EC ECE RJ RJX D IR NJ TGV WB FLX);
+	my @not_train_types = qw(Bus STR STB U);
+	my $ticket_value = $self->param('ticket_value') // 150;
+
+	my $start = $self->param('start') ?
+		$parser->parse_datetime($self->param('start')) :
+		$self->now->truncate(to=>'month');
+
+	my $end = $self->param('end') ?
+		$parser->parse_datetime($self->param('end')) :
+		$self->now->truncate(to=>'month')->add(months=>1)->subtract(days=>1);
+
+	my @journeys = $self->journeys->get(
+		uid           => $self->current_user->{id},
+		after         => $start->clone,
+		before        => $end->clone->add(days=>1),
+		with_datetime => 1,
+	);
+	# filter for realtime data
+	@journeys = grep { $_->{sched_arrival}->epoch and $_->{rt_arrival}->epoch }
+		@journeys;
+
+	# look for substitute connections after cancellation
+	# start by finding all canceled trains during ticket validity
+	my @cancelled = $self->journeys->get(
+		uid           => $self->current_user->{id},
+		after         => $start->clone,
+		before        => $end->clone->add(days=>1),
+		cancelled     => 1,
+		with_datetime => 1,
+	);
+	for my $journey (@cancelled) {
+		# filter out non-train transports not covered by FGR
+		if (List::Util::any {$journey->{type} eq $_} @not_train_types) {
+			next;
+		}
+		if ( not $journey->{sched_arrival}->epoch ) {
+			next;
+		}
+
+		# try to find a substitute connection for the canceled train
+		$journey->{cancelled} = 1;
+		$self->mark_substitute_connection($journey);
+		# if we have a substitute connection with real-time data, add the
+		# train to the eligible list
+		if ($journey->{has_substitute} and
+		$journey->{to_substitute}->{rt_arr_ts}) {
+			push( @journeys, $journey );
+		}
+	}
+
+	# sum up delays
+	my $cumulative_delay = 0;
+	for my $i ( 0 .. $#journeys ) {
+		my $journey = $journeys[$i];
+		# filter out non-train transports not covered by FGR
+		if (List::Util::any {$journey->{type} eq $_} @not_train_types) {
+			next;
+		}
+		# if we're using a regional ticket, filter out all long-distance trains
+		if ($ticket_value < 500 and List::Util::any {$journey->{type} eq $_} @fv_types) {
+			next;
+		}
+
+		$journey->{delay} = $journey->{substitute_delay} //
+			( $journey->{rt_arrival}->epoch - $journey->{sched_arrival}->epoch ) / 60;
+
+		# find candidates for missed connections - if we arrive with a delay and
+		# later check into a train again from the same station
+		# note that we can't assign a delay to potential missed connections
+		# because we don't know the planned arrival of the train we missed
+		if ( $i > 0 and $journey->{delay} >= 3) {
+			$self->mark_if_missed_connection( $journey, $journeys[ $i - 1 ] );
+		}
+
+		if ($journey->{delay} >= 20) {
+			# add up to 60 minutes of delay per journey
+			# not entirely clear if you could in theory get compensation
+			# for a single 180-minute-delayed journey, so let's play it safe
+			$cumulative_delay += ($journey->{delay} < 60) ? $journey->{delay} : 60;
+			$journey->{generate_fgr_target} = sprintf(
+				'/journey/passenger_rights/FGR %s %s %s.pdf',
+				$journey->{sched_departure}->ymd, $journey->{type}, $journey->{no}
+			);
+		} elsif ($journey->{connection_missed}) {
+			$journey->{generate_fgr_target} = sprintf(
+				'/journey/passenger_rights/FGR %s %s %s.pdf',
+				$journey->{sched_departure}->ymd, $journey->{type}, $journey->{no}
+			);
+		}
+	}
+	# filter out journeys with delay below +20
+	@journeys = grep { ($_->{delay} // 0) >= 20 or $_->{connection_missed} } @journeys;
+	# sort by departure - we did add all the substitute trains to the very back
+	@journeys = sort {$b->{rt_departure} cmp $a->{rt_departure}} @journeys;
+
+
+	my $compensation_amount = floor($cumulative_delay / 60) * $ticket_value;
+
+	my $min_delay_for_compensation = ceil(400/$ticket_value) * 60;
+	my $bar_fill = int( ($cumulative_delay/$min_delay_for_compensation) * 100);
+	$bar_fill = $bar_fill > 100 ? 100 : $bar_fill;
+
+	$self->render(
+		'passengerrights_cumulative',
+		title=>'travelynx: Fahrgastrechte Zeitkarten',
+		start=>$start,
+		end=>$end,
+		journeys=>[@journeys],
+		num_journeys=>scalar @journeys,
+		cumulative_delay=>$cumulative_delay,
+		compensation_amount=>$compensation_amount,
+		min_delay_for_compensation=>$min_delay_for_compensation,
+		bar_fill=>$bar_fill,
+		ticket_value=>$ticket_value,
+		did_miss_connections=>List::Util::any { $_->{connection_missed} } @journeys
 	);
 }
 
