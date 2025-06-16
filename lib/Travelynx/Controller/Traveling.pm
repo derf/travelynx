@@ -1192,8 +1192,8 @@ sub station {
 			service    => $efa_service,
 			name       => $station,
 			timestamp  => $timestamp,
-			lookbehind => 30,
-			lookahead  => 30,
+			lookbehind => 10,
+			lookahead  => 50,
 		);
 	}
 	elsif ($hafas_service) {
