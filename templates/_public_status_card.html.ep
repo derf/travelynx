@@ -8,7 +8,7 @@
 					Unterwegs mit <%= include '_format_train', journey => $journey %>
 				% }
 				% elsif (stash('from_timeline')) {
-					<a href="/p/<%= $name %>"><%= $name %></a>: <%= include '_format_train', journey => $journey %>
+					<a href="/status/<%= $name %>"><%= $name %></a>: <%= include '_format_train', journey => $journey %>
 				% }
 				% else {
 					<a href="/p/<%= $name %>"><%= $name %></a> ist unterwegs
