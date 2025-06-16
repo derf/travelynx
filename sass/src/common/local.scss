@@ -209,22 +209,22 @@ ul.route-history > li {
 	min-width: 6ch;
 	margin: 0 auto;
 
-	&.Bus, &.BUS, &.RUF, &.AST {
+	&.Bus, &.BUS, &.RUF, &.AST, &.Niederflurbus, &.Stadtbus, &.PlusBus, &.RegionalBus, &.ExpressBus, &.RufTaxi {
 		background-color: #a3167e;
 		border-radius: 5rem;
 		padding: .2rem .5rem;
 	}
-	&.STR, &.Tram, &.TRAM, &.Str, &.Strb, &.STB {
+	&.STR, &.Tram, &.TRAM, &.Str, &.Strb, &.STB, &.Straenbahn {
 		background-color: #c5161c;
 		border-radius: 5rem;
 		padding: .2rem .5rem;
 	}
-	&.S, &.RS, &.RER, &.SKW, &.METRO {
+	&.S, &.RS, &.RER, &.SKW, &.METRO, &.S-Bahn {
 		background-color: #008d4f;
 		border-radius: 5rem;
 		padding: .2rem .5rem;
 	}
-	&.U, &.M, &.SUBWAY {
+	&.U, &.M, &.SUBWAY, &.U-Bahn {
 		background-color: #014e8d;
 		border-radius: 5rem;
 		padding: .2rem .5rem;
@@ -232,7 +232,7 @@ ul.route-history > li {
 	&.RE, &.IRE, &.REX, &.REGIONAL_FAST_RAIL {
 		background-color: #ff4f00;
 	}
-	&.RB, &.MEX, &.TER, &.R, &.REGIONAL_RAIL {
+	&.RB, &.MEX, &.TER, &.R, &.REGIONAL_RAIL, &.Regionalzug, &.R-Bahn {
 		background-color: #1f4a87;
 	}
 	// DE
