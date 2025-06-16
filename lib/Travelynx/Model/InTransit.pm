@@ -370,6 +370,8 @@ sub add {
 			);
 		}
 
+		$persistent_data->{operator} = $journey->agency;
+
 		$db->insert(
 			'in_transit',
 			{
@@ -393,6 +395,7 @@ sub add {
 						%{ $data // {} }
 					}
 				),
+				user_data  => JSON->new->encode($persistent_data),
 				backend_id => $backend_id,
 			}
 		);
