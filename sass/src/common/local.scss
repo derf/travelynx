@@ -209,7 +209,7 @@ ul.route-history > li {
 	min-width: 6ch;
 	margin: 0 auto;
 
-	&.Bus, &.BUS, &.RUF, &.AST, &.Niederflurbus, &.Stadtbus, &.PlusBus, &.RegionalBus, &.ExpressBus, &.RufTaxi {
+	&.Bus, &.BUS, &.RUF, &.AST, &.Niederflurbus, &.Stadtbus, &.MetroBus, &.PlusBus, &.RegionalBus, &.ExpressBus, &.RufTaxi {
 		background-color: #a3167e;
 		border-radius: 5rem;
 		padding: .2rem .5rem;
