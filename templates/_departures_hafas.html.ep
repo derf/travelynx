@@ -41,6 +41,13 @@
 			% }
 			% else {
 				%= $result->destination
+				% if ($result->load and $result->load->{SECOND}) {
+					% my ($first, $second) = load_icon($result->load);
+					% if ($first ne 'help_outline') {
+						<i class="material-icons tiny" aria-hidden="true"><%= $first %></i>
+					% }
+					<i class="material-icons tiny" aria-hidden="true"><%= $second %></i>
+				% }
 				% for my $checkin (@{$checkin_by_train->{$result->id} // []}) {
 					<span class="followee-checkin">
 						<i class="material-icons tiny" aria-label="Eine Person, der du folgst, ist hier eingecheckt">people</i>

@@ -122,12 +122,12 @@ ul.suggestions {
 }
 .departures .dep-dest {
 	margin-left: 0.8rem;
+	i.material-icons {
+		vertical-align: middle;
+	}
 	.followee-checkin {
 		font-size: 0.9rem;
 		display: block;
-		i.material-icons {
-			vertical-align: middle;
-		}
 	}
 }
 
