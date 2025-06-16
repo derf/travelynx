@@ -47,6 +47,9 @@
 						<%= $checkin->{followee_name} %> → <%= $checkin->{arr_name} // '???' %>
 					</span>
 				% }
+				% if ($result->occupancy) {
+					<i class="material-icons tiny" aria-hidden="true"><%= efa_load_icon($result->occupancy) %></i>
+				% }
 			% }
 		</span>
 	</li>

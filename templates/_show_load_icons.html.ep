@@ -5,3 +5,7 @@
 	% }
 	<i class="material-icons tiny" aria-hidden="true"><%= $second %></i>
 % }
+% elsif ($station->[2]{efa_load}) {
+	% my ($icon) = efa_load_icon($station->[2]{efa_load});
+	<i class="material-icons tiny" aria-hidden="true"><%= $icon %></i>
+% }

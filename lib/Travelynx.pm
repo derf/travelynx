@@ -447,6 +447,32 @@ sub startup {
 	);
 
 	$self->helper(
+		'efa_load_icon' => sub {
+			my ( $self, $occupancy ) = @_;
+
+			my @symbols
+			  = (
+				qw(help_outline person_outline people priority_high not_interested)
+			  );
+
+			if ( $occupancy eq 'MANY_SEATS' ) {
+				$occupancy = 1;
+			}
+			elsif ( $occupancy eq 'FEW_SEATS' ) {
+				$occupancy = 2;
+			}
+			elsif ( $occupancy eq 'STANDING_ONLY' ) {
+				$occupancy = 3;
+			}
+			elsif ( $occupancy eq 'FULL' ) {
+				$occupancy = 4;
+			}
+
+			return $symbols[$occupancy] // 'help_outline';
+		}
+	);
+
+	$self->helper(
 		'load_icon' => sub {
 			my ( $self, $load ) = @_;
 			my $first  = $load->{FIRST}  // 0;
