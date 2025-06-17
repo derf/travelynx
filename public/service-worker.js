@@ -11,7 +11,6 @@ const FILES_TO_CACHE = [
   '/static/v91/js/jquery-3.4.1.min.js',
   '/static/v91/js/materialize.min.js',
   '/static/v91/js/travelynx-actions.min.js',
-  '/static/v91/js/autocomplete.min.js',
   '/static/v91/js/geolocation.min.js',
 ];
 
