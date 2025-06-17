@@ -440,7 +440,7 @@ sub get {
 			past_all    => $user->{public_level} & 0x10000 ? 1 : 0,
 			email       => $user->{email},
 			sb_template =>
-'https://dbf.finalrewind.org/{name}?rt=1&dbris={dbris}&hafas={hafas}#{id_or_tttn}',
+'https://dbf.finalrewind.org/{name}?dbris={dbris}&efa={efa}&hafas={hafas}&motis={motis}#{id_or_tttn}',
 			registered_at => DateTime->from_epoch(
 				epoch     => $user->{registered_at_ts},
 				time_zone => 'Europe/Berlin'

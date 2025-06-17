@@ -2142,7 +2142,9 @@ sub startup {
 			$ret =~ s{[{]tn[}]}{$opt{tn}}g;
 			$ret =~ s{[{]id[}]}{$opt{id}}g;
 			$ret =~ s{[{]dbris[}]}{$opt{dbris}}g;
+			$ret =~ s{[{]efa[}]}{$opt{efa}}g;
 			$ret =~ s{[{]hafas[}]}{$opt{hafas}}g;
+			$ret =~ s{[{]motis[}]}{$opt{motis}}g;
 
 			if ( $opt{id} and not $opt{is_iris} ) {
 				$ret =~ s{[{]id_or_tttn[}]}{$opt{id}}g;

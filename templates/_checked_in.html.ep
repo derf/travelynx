@@ -128,7 +128,7 @@
 						% }
 					</div>
 					<div style="float: right; text-align: right;">
-						<b><a href="<%= resolve_sb_template($user->{sb_template}, name => $journey->{arr_name}, eva => $journey->{arr_eva}, tt => $journey->{train_type} // q{x}, tn => $journey->{train_no}, id => $journey->{train_id} =~ s{[ #|]}{x}gr, dbris => $journey->{is_dbris} ? $journey->{backend_name} : q{}, hafas => $journey->{is_hafas} ? $journey->{backend_name} : q{}, is_iris => $journey->{is_iris}) %>" class="unmarked"><%= $journey->{arr_name} %></a></b><br/>
+						<b><a href="<%= resolve_sb_template($user->{sb_template}, name => $journey->{arr_name}, eva => $journey->{arr_eva}, tt => $journey->{train_type} // q{x}, tn => $journey->{train_no}, id => $journey->{train_id} =~ s{[ #|]}{x}gr, dbris => $journey->{is_dbris} ? $journey->{backend_name} : q{}, efa => $journey->{is_efa} ? $journey->{backend_name} : q{}, hafas => $journey->{is_hafas} ? $journey->{backend_name} : q{}, is_iris => $journey->{is_iris}, motis => $journey->{is_motis} ? $journey->{backend_name} : q{}) %>" class="unmarked"><%= $journey->{arr_name} %></a></b><br/>
 						% if ($journey->{real_arrival}->epoch) {
 							<b><%= $journey->{real_arrival}->strftime('%H:%M') %></b>
 							% if ($journey->{real_arrival}->epoch != $journey->{sched_arrival}->epoch) {
@@ -387,7 +387,7 @@
 						% }
 						</span>
 					</a>
-					<a class="nonflex" href="<%= resolve_sb_template($user->{sb_template}, name => $station->[0], eva => $station->[1], tt => $journey->{train_type} // q{x}, tn => $journey->{train_no}, id => $journey->{train_id} =~ s{[ #|]}{x}gr, dbris => $journey->{is_dbris} ? $journey->{backend_name} : q{}, hafas => $journey->{is_hafas} ? $journey->{backend_name} : q{}, is_iris => $journey->{is_iris}) %>"><i class="material-icons tiny"><%= $journey->{is_hafas} ? 'directions' : 'train' %></i></a>
+					<a class="nonflex" href="<%= resolve_sb_template($user->{sb_template}, name => $station->[0], eva => $station->[1], tt => $journey->{train_type} // q{x}, tn => $journey->{train_no}, id => $journey->{train_id} =~ s{[ #|]}{x}gr, dbris => $journey->{is_dbris} ? $journey->{backend_name} : q{}, efa => $journey->{is_efa} ? $journey->{backend_name} : q{}, hafas => $journey->{is_hafas} ? $journey->{backend_name} : q{}, is_iris => $journey->{is_iris}, motis => $journey->{is_motis} ? $journey->{backend_name} : q{}) %>"><i class="material-icons tiny"><%= $journey->{is_hafas} ? 'directions' : 'train' %></i></a>
 				% }
 				</div>
 			</div>
