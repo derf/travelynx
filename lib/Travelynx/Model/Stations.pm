@@ -205,6 +205,9 @@ sub add_or_update {
 			);
 			return;
 		}
+		if (not $stop->latlon) {
+			die('Backend Error: Stop "' . $stop->full_name . '" has no geo coordinates');
+		}
 		$opt{db}->insert(
 			'stations',
 			{
