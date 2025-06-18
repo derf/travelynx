@@ -730,6 +730,7 @@ sub geolocation {
 		Travel::Status::MOTIS->new_p(
 			promise    => 'Mojo::Promise',
 			user_agent => $self->ua,
+			time_zone  => 'Europe/Berlin',
 
 			service             => $motis_service,
 			stops_by_coordinate => {
