@@ -69,7 +69,7 @@ sub get_departures_p {
 
 	my $agent = $self->{user_agent};
 
-	if ( $opt{station} =~ m{ [@] L = (?<eva> \d+ ) [@] }x ) {
+	if ( $opt{station} =~ m{ [@] L = (?<eva> \d+ ) }x ) {
 		$opt{station} = {
 			eva => $+{eva},
 			id  => $opt{station},

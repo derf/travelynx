@@ -1340,7 +1340,7 @@ sub station {
 			}
 
 			my $connections_p;
-			if ( $trip_id and $hafas_service ) {
+			if ( $trip_id and ( $dbris_service or $hafas_service ) ) {
 				@results = grep { $_->id eq $trip_id } @results;
 			}
 			elsif ( $train and not $hafas_service ) {
