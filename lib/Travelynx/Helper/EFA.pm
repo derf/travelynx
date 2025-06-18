@@ -55,12 +55,15 @@ sub get_journey_p {
 	my $agent   = $self->{user_agent};
 	my $stopseq;
 
-	if ( $opt{trip_id} =~ m{ ^ ([^@]*) @ ([^@]*) [(] ([^)]*) [)] (.*)  $ }x ) {
+	if ( $opt{trip_id}
+		=~ m{ ^ ([^@]*) @ ([^@]*) [(] ([^T]*) T ([^)]*) [)] (.*) $ }x )
+	{
 		$stopseq = {
 			stateless => $1,
 			stop_id   => $2,
 			date      => $3,
-			key       => $4
+			time      => $4,
+			key       => $5
 		};
 	}
 	else {

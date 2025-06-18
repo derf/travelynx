@@ -49,7 +49,8 @@ sub get_connecting_trains_p {
 		# cases. But not reliably. Probably best to leave it out entirely then.
 		return $promise->reject;
 	}
-	if ($user->{backend_efa}) {
+	if ( $user->{backend_efa} ) {
+
 		# TODO
 		return $promise->reject;
 	}
