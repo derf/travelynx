@@ -53,6 +53,7 @@ sub get_station_by_query_p {
 		cache       => $self->{cache},
 		promise     => 'Mojo::Promise',
 		user_agent  => Mojo::UserAgent->new,
+		time_zone   => 'Europe/Berlin',
 		lwp_options => {
 			timeout => 10,
 			agent   => $self->{header}{'User-Agent'},
@@ -101,6 +102,7 @@ sub get_departures_p {
 		cache       => $self->{cache},
 		promise     => 'Mojo::Promise',
 		user_agent  => Mojo::UserAgent->new,
+		time_zone   => 'Europe/Berlin',
 		lwp_options => {
 			timeout => 10,
 			agent   => $self->{header}{'User-Agent'},
@@ -125,6 +127,7 @@ sub get_trip_p {
 		cache         => $self->{realtime_cache},
 		promise       => 'Mojo::Promise',
 		user_agent    => Mojo::UserAgent->new,
+		time_zone     => 'Europe/Berlin',
 
 		service => $opt{service},
 		trip_id => $opt{trip_id},

@@ -287,6 +287,7 @@ sub startup {
 				user_agent => $self->ua,
 				root_url   => $self->base_url_for('/')->to_abs,
 				version    => $self->app->config->{version},
+				time_zone  => 'Europe/Berlin',
 			);
 		}
 	);
