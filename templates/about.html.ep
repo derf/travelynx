@@ -7,10 +7,14 @@
 		Backends:
 		<a href="https://finalrewind.org/projects/Travel-Status-DE-DBRIS/">Travel::Status::DE::DBRIS</a>
 		v<%= $Travel::Status::DE::DBRIS::VERSION %>,
+		<a href="https://finalrewind.org/projects/Travel-Status-DE-EFA/">Travel::Status::DE::EFA</a>
+		v<%= $Travel::Status::DE::EFA::VERSION %>,
 		<a href="https://finalrewind.org/projects/Travel-Status-DE-HAFAS/">Travel::Status::DE::HAFAS</a>
-		v<%= $Travel::Status::DE::HAFAS::VERSION %> und
+		v<%= $Travel::Status::DE::HAFAS::VERSION %>,
 		<a href="https://finalrewind.org/projects/Travel-Status-DE-IRIS/">Travel::Status::DE::IRIS</a>
-		v<%= $Travel::Status::DE::IRIS::VERSION %><br/>
+		v<%= $Travel::Status::DE::IRIS::VERSION %> und
+		<a href="https://finalrewind.org/projects/Travel-Status-MOTIS/">Travel::Status::MOTIS</a>
+		v<%= $Travel::Status::MOTIS::VERSION %><br/>
 		Haltestellendaten
 		© DB Station&amp;Service AG,
 		Europaplatz 1,
