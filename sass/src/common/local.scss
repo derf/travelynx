@@ -209,12 +209,12 @@ ul.route-history > li {
 	min-width: 6ch;
 	margin: 0 auto;
 
-	&.Bus, &.BUS, &.RUF, &.AST, &.NachtBus, &.Niederflurbus, &.Stadtbus, &.MetroBus, &.PlusBus, &.RegionalBus, &.ExpressBus, &.RufTaxi {
+	&.Bus, &.BUS, &.RUF, &.AST, &.NachtBus, &.Niederflurbus, &.Stadtbus, &.MetroBus, &.PlusBus, &.Landbus, &.Regionalbus, &.RegionalBus, &.SB, &.ExpressBus, &.RufTaxi, &.Rufbus, &.Linientaxi, &.BSV, &.RVV-Bus-Linie {
 		background-color: #a3167e;
 		border-radius: 5rem;
 		padding: .2rem .5rem;
 	}
-	&.STR, &.Tram, &.TRAM, &.Str, &.Strb, &.STB, &.Straenbahn, &.NachtTram {
+	&.STR, &.Tram, &.TRAM, &.Str, &.Strb, &.STB, &.Straenbahn, &.NachtTram, &.Stadtbahn, &.Niederflurstrab {
 		background-color: #c5161c;
 		border-radius: 5rem;
 		padding: .2rem .5rem;
@@ -224,7 +224,7 @@ ul.route-history > li {
 		border-radius: 5rem;
 		padding: .2rem .5rem;
 	}
-	&.U, &.M, &.SUBWAY, &.U-Bahn {
+	&.U, &.M, &.SUBWAY, &.U-Bahn, &.UBAHN {
 		background-color: #014e8d;
 		border-radius: 5rem;
 		padding: .2rem .5rem;
