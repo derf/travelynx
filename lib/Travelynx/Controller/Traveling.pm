@@ -1157,14 +1157,35 @@ sub station {
 		$timestamp = DateTime->now( time_zone => 'Europe/Berlin' );
 	}
 
-	my $dbris_service = $self->param('dbris')
-	  // ( $user->{backend_dbris} ? $user->{backend_name} : undef );
-	my $efa_service = $self->param('efa')
-	  // ( $user->{backend_efa} ? $user->{backend_name} : undef );
-	my $hafas_service = $self->param('hafas')
-	  // ( $user->{backend_hafas} ? $user->{backend_name} : undef );
-	my $motis_service = $self->param('motis')
-	  // ( $user->{backend_motis} ? $user->{backend_name} : undef );
+	my ( $dbris_service, $efa_service, $hafas_service, $motis_service );
+
+	if ( $self->param('dbris') ) {
+		$dbris_service = $self->param('dbris');
+	}
+	elsif ( $self->param('efa') ) {
+		$efa_service = $self->param('efa');
+	}
+	elsif ( $self->param('hafas') ) {
+		$hafas_service = $self->param('hafas');
+	}
+	elsif ( $self->param('motis') ) {
+		$motis_service = $self->param('motis');
+	}
+	else {
+		if ( $user->{backend_dbris} ) {
+			$dbris_service = $user->{backend_name};
+		}
+		elsif ( $user->{backend_efa} ) {
+			$efa_service = $user->{backend_name};
+		}
+		elsif ( $user->{backend_hafas} ) {
+			$hafas_service = $user->{backend_name};
+		}
+		elsif ( $user->{backend_motis} ) {
+			$motis_service = $user->{backend_name};
+		}
+	}
+
 	my $promise;
 	if ($dbris_service) {
 		if ( $station !~ m{ [@] L = \d+ }x ) {
