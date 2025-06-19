@@ -1,6 +1,6 @@
 package Travelynx::Command::dumpstops;
 
-# Copyright (C) 2024 Birte Kristina Friesel
+# Copyright (C) 2024-2025 Birte Kristina Friesel
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -24,13 +24,13 @@ sub run {
 		  or die("open($filename): $!\n");
 
 		my $csv = Text::CSV->new( { eol => "\r\n" } );
-		$csv->combine(qw(name eva lat lon backend is_iris is_hafas));
+		$csv->combine(qw(name eva lat lon backend is_dbris is_efa is_iris is_hafas is_motis));
 		print $fh $csv->string;
 
 		my $iter = $self->app->stations->get_db_iterator;
 		while ( my $row = $iter->hash ) {
 			$csv->combine(
-				@{$row}{qw{name eva lat lon backend is_iris is_hafas}} );
+				@{$row}{qw{name eva lat lon backend is_dbris is_efa is_iris is_hafas is_motis}} );
 			print $fh $csv->string;
 		}
 		close($fh);
