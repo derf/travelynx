@@ -3184,6 +3184,30 @@ qq{select distinct checkout_station_id from in_transit where backend_id = 0;}
 			}
 		);
 	},
+
+	# v64 -> v65
+	# stations_str: add is_motis
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				drop view stations_str;
+				create view stations_str as
+				select stations.name as name,
+				eva, lat, lon,
+				backends.name as backend,
+				dbris as is_dbris,
+				efa as is_efa,
+				iris as is_iris,
+				hafas as is_hafas,
+				motis as is_motis
+				from stations
+				left join backends
+				on source = backends.id;
+				update schema_version set version = 65;
+			}
+		);
+	},
 );
 
 sub sync_stations {
