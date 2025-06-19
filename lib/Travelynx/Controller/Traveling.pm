@@ -1446,6 +1446,19 @@ sub station {
 					status      => 300,
 				);
 			}
+			elsif ( $efa_service
+				and $status
+				and scalar $status->name_candidates )
+			{
+				$self->render(
+					'disambiguation',
+					suggestions => [
+						map { { name => $_->name, eva => $_->id_num } }
+						  $status->name_candidates
+					],
+					status => 300,
+				);
+			}
 			elsif ( $hafas_service
 				and $status
 				and $status->errcode eq 'LOCATION' )
