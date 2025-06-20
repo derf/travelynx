@@ -26,7 +26,7 @@ $(document).ready(function() {
 				const parts = stop.split(';');
 				const [ eva, name, dbris, efa, hafas, motis ] = parts;
 
-				const node = $('<a class="tablerow" href="/s/' + eva + '?dbris=' + dbris + '&amp;efa=' + efa + '&amp;hafas=' + hafas + '&amp;motis=' + motis + '"><span><i class="material-icons" aria-hidden="true">' + (dbris == '0' ? 'train' : 'directions') + '</i>' + name + '</span></a>');
+				const node = $('<a class="tablerow" href="/s/' + (eva||0) + '?dbris=' + (dbris||0) + '&amp;efa=' + (efa||0) + '&amp;hafas=' + (hafas||0) + '&amp;motis=' + (motis||0) + '"><span><i class="material-icons" aria-hidden="true">' + (!(dbris||efa||motis) ? 'train' : 'directions') + '</i>' + name + '</span></a>');
 				node.click(function() {
 					$('nav .preloader-wrapper').addClass('active');
 				});
