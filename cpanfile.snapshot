@@ -329,6 +329,17 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       Storable 0
       perl 5.008001
+  Clone-PP-1.08
+    pathname: N/NE/NEILB/Clone-PP-1.08.tar.gz
+    provides:
+      Clone::PP 1.08
+    requirements:
+      Exporter 0
+      ExtUtils::MakeMaker 0
+      perl 5.006
+      strict 0
+      vars 0
+      warnings 0
   Const-Fast-0.014
     pathname: L/LE/LEONT/Const-Fast-0.014.tar.gz
     provides:
@@ -1483,18 +1494,18 @@ DISTRIBUTIONS
       Exporter 5.57
       ExtUtils::MakeMaker 0
       perl 5.008
-  IO-Socket-SSL-2.093
-    pathname: S/SU/SULLR/IO-Socket-SSL-2.093.tar.gz
+  IO-Socket-SSL-2.094
+    pathname: S/SU/SULLR/IO-Socket-SSL-2.094.tar.gz
     provides:
-      IO::Socket::SSL 2.093
+      IO::Socket::SSL 2.094
       IO::Socket::SSL::Intercept 2.056
-      IO::Socket::SSL::OCSP_Cache 2.093
-      IO::Socket::SSL::OCSP_Resolver 2.093
+      IO::Socket::SSL::OCSP_Cache 2.094
+      IO::Socket::SSL::OCSP_Resolver 2.094
       IO::Socket::SSL::PublicSuffix undef
-      IO::Socket::SSL::SSL_Context 2.093
-      IO::Socket::SSL::SSL_HANDLE 2.093
-      IO::Socket::SSL::Session_Cache 2.093
-      IO::Socket::SSL::Trace 2.093
+      IO::Socket::SSL::SSL_Context 2.094
+      IO::Socket::SSL::SSL_HANDLE 2.094
+      IO::Socket::SSL::Session_Cache 2.094
+      IO::Socket::SSL::Trace 2.094
       IO::Socket::SSL::Utils 2.015
     requirements:
       ExtUtils::MakeMaker 0
@@ -2212,53 +2223,57 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       SQL::Abstract 2.0
       perl 5.016
-  Specio-0.50
-    pathname: D/DR/DROLSKY/Specio-0.50.tar.gz
+  Specio-0.51
+    pathname: D/DR/DROLSKY/Specio-0.51.tar.gz
     provides:
-      Specio 0.50
-      Specio::Coercion 0.50
-      Specio::Constraint::AnyCan 0.50
-      Specio::Constraint::AnyDoes 0.50
-      Specio::Constraint::AnyIsa 0.50
-      Specio::Constraint::Enum 0.50
-      Specio::Constraint::Intersection 0.50
-      Specio::Constraint::ObjectCan 0.50
-      Specio::Constraint::ObjectDoes 0.50
-      Specio::Constraint::ObjectIsa 0.50
-      Specio::Constraint::Parameterizable 0.50
-      Specio::Constraint::Parameterized 0.50
-      Specio::Constraint::Role::CanType 0.50
-      Specio::Constraint::Role::DoesType 0.50
-      Specio::Constraint::Role::Interface 0.50
-      Specio::Constraint::Role::IsaType 0.50
-      Specio::Constraint::Simple 0.50
-      Specio::Constraint::Structurable 0.50
-      Specio::Constraint::Structured 0.50
-      Specio::Constraint::Union 0.50
-      Specio::Declare 0.50
-      Specio::DeclaredAt 0.50
-      Specio::Exception 0.50
-      Specio::Exporter 0.50
-      Specio::Helpers 0.50
-      Specio::Library::Builtins 0.50
-      Specio::Library::Numeric 0.50
-      Specio::Library::Perl 0.50
-      Specio::Library::String 0.50
-      Specio::Library::Structured 0.50
-      Specio::Library::Structured::Dict 0.50
-      Specio::Library::Structured::Map 0.50
-      Specio::Library::Structured::Tuple 0.50
-      Specio::OO 0.50
-      Specio::PartialDump 0.50
-      Specio::Registry 0.50
-      Specio::Role::Inlinable 0.50
-      Specio::Subs 0.50
-      Specio::TypeChecks 0.50
-      Test::Specio 0.50
+      Specio 0.51
+      Specio::Coercion 0.51
+      Specio::Constraint::AnyCan 0.51
+      Specio::Constraint::AnyDoes 0.51
+      Specio::Constraint::AnyIsa 0.51
+      Specio::Constraint::Enum 0.51
+      Specio::Constraint::Intersection 0.51
+      Specio::Constraint::ObjectCan 0.51
+      Specio::Constraint::ObjectDoes 0.51
+      Specio::Constraint::ObjectIsa 0.51
+      Specio::Constraint::Parameterizable 0.51
+      Specio::Constraint::Parameterized 0.51
+      Specio::Constraint::Role::CanType 0.51
+      Specio::Constraint::Role::DoesType 0.51
+      Specio::Constraint::Role::Interface 0.51
+      Specio::Constraint::Role::IsaType 0.51
+      Specio::Constraint::Simple 0.51
+      Specio::Constraint::Structurable 0.51
+      Specio::Constraint::Structured 0.51
+      Specio::Constraint::Union 0.51
+      Specio::Declare 0.51
+      Specio::DeclaredAt 0.51
+      Specio::Exception 0.51
+      Specio::Exporter 0.51
+      Specio::Helpers 0.51
+      Specio::Library::Builtins 0.51
+      Specio::Library::Numeric 0.51
+      Specio::Library::Perl 0.51
+      Specio::Library::String 0.51
+      Specio::Library::Structured 0.51
+      Specio::Library::Structured::Dict 0.51
+      Specio::Library::Structured::Map 0.51
+      Specio::Library::Structured::Tuple 0.51
+      Specio::OO 0.51
+      Specio::PP 0.51
+      Specio::PartialDump 0.51
+      Specio::Registry 0.51
+      Specio::Role::Inlinable 0.51
+      Specio::Subs 0.51
+      Specio::TypeChecks 0.51
+      Specio::XS 0.51
+      Test::Specio 0.51
     requirements:
       B 0
       Carp 0
       Clone 0
+      Clone::Choose 0
+      Clone::PP 0
       Devel::StackTrace 0
       Eval::Closure 0
       Exporter 0
@@ -2266,6 +2281,7 @@ DISTRIBUTIONS
       IO::File 0
       List::Util 1.33
       MRO::Compat 0
+      Module::Implementation 0
       Module::Runtime 0
       Role::Tiny 1.003003
       Role::Tiny::With 0
@@ -2689,17 +2705,17 @@ DISTRIBUTIONS
       Text::LevenshteinXS 0
       XML::LibXML 0
       perl v5.14.2
-  Travel-Status-DE-VRR-3.11
-    pathname: D/DE/DERF/Travel-Status-DE-VRR-3.11.tar.gz
+  Travel-Status-DE-VRR-3.13
+    pathname: D/DE/DERF/Travel-Status-DE-VRR-3.13.tar.gz
     provides:
-      Travel::Status::DE::EFA 3.11
-      Travel::Status::DE::EFA::Departure 3.11
-      Travel::Status::DE::EFA::Info 3.11
-      Travel::Status::DE::EFA::Line 3.11
-      Travel::Status::DE::EFA::Services 3.11
-      Travel::Status::DE::EFA::Stop 3.11
-      Travel::Status::DE::EFA::Trip 3.11
-      Travel::Status::DE::VRR 3.11
+      Travel::Status::DE::EFA 3.13
+      Travel::Status::DE::EFA::Departure 3.13
+      Travel::Status::DE::EFA::Info 3.13
+      Travel::Status::DE::EFA::Line 3.13
+      Travel::Status::DE::EFA::Services 3.13
+      Travel::Status::DE::EFA::Stop 3.13
+      Travel::Status::DE::EFA::Trip 3.13
+      Travel::Status::DE::VRR 3.13
     requirements:
       Carp 0
       Class::Accessor 0
@@ -2714,16 +2730,16 @@ DISTRIBUTIONS
       Module::Build 0.4
       Test::More 0
       perl v5.10.1
-  Travel-Status-MOTIS-0.01
-    pathname: D/DE/DERF/Travel-Status-MOTIS-0.01.tar.gz
+  Travel-Status-MOTIS-0.02
+    pathname: D/DE/DERF/Travel-Status-MOTIS-0.02.tar.gz
     provides:
-      Travel::Status::MOTIS 0.01
-      Travel::Status::MOTIS::Polyline 0.01
-      Travel::Status::MOTIS::Services 0.01
-      Travel::Status::MOTIS::Stop 0.01
-      Travel::Status::MOTIS::Stopover 0.01
-      Travel::Status::MOTIS::Trip 0.01
-      Travel::Status::MOTIS::TripAtStopover 0.01
+      Travel::Status::MOTIS 0.02
+      Travel::Status::MOTIS::Polyline 0.02
+      Travel::Status::MOTIS::Services 0.02
+      Travel::Status::MOTIS::Stop 0.02
+      Travel::Status::MOTIS::Stopover 0.02
+      Travel::Status::MOTIS::Trip 0.02
+      Travel::Status::MOTIS::TripAtStopover 0.02
     requirements:
       Carp 0
       Class::Accessor 0.16
