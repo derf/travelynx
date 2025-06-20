@@ -1522,7 +1522,7 @@ sub station {
 				)->wait;
 			}
 			elsif ( $err
-				=~ m{svcRes|connection close|Service Temporarily Unavailable|Forbidden}
+				=~ m{svcRes|connection close|Service Temporarily Unavailable|Forbidden|HTTP 500 Internal Server Error}
 			  )
 			{
 				$self->render(
