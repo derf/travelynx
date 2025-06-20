@@ -1,17 +1,17 @@
-const CACHE_NAME = 'static-cache-v94';
+const CACHE_NAME = 'static-cache-v95';
 const FILES_TO_CACHE = [
   '/favicon.ico',
   '/offline.html',
-  '/static/v94/css/light.min.css',
-  '/static/v94/css/dark.min.css',
-  '/static/v94/css/material-icons.css',
-  '/static/v94/fonts/MaterialIcons-Regular.woff2',
-  '/static/v94/fonts/MaterialIcons-Regular.woff',
-  '/static/v94/fonts/MaterialIcons-Regular.ttf',
-  '/static/v94/js/jquery-3.4.1.min.js',
-  '/static/v94/js/materialize.min.js',
-  '/static/v94/js/travelynx-actions.min.js',
-  '/static/v94/js/geolocation.min.js',
+  '/static/v95/css/light.min.css',
+  '/static/v95/css/dark.min.css',
+  '/static/v95/css/material-icons.css',
+  '/static/v95/fonts/MaterialIcons-Regular.woff2',
+  '/static/v95/fonts/MaterialIcons-Regular.woff',
+  '/static/v95/fonts/MaterialIcons-Regular.ttf',
+  '/static/v95/js/jquery-3.4.1.min.js',
+  '/static/v95/js/materialize.min.js',
+  '/static/v95/js/travelynx-actions.min.js',
+  '/static/v95/js/geolocation.min.js',
 ];
 
 self.addEventListener('install', (evt) => {
