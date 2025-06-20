@@ -1839,15 +1839,19 @@ sub csv_history {
 	my $buf = q{};
 
 	$csv->combine(
-		qw(Zugtyp Linie Nummer Start Ziel),
-		'Start (DS100)',
-		'Ziel (DS100)',
-		'Abfahrt (soll)',
-		'Abfahrt (ist)',
-		'Ankunft (soll)',
-		'Ankunft (ist)',
-		'Kommentar',
-		'ID'
+		qw(type line number),
+		'departure stop name',
+		'departure stop id',
+		'arrival stop name',
+		'arrival stop id',
+		'scheduled departure',
+		'real-time departure',
+		'scheduled arrival',
+		'real-time arrival',
+		'operator',
+		'carriage type',
+		'comment',
+		'id'
 	);
 	$buf .= $csv->string;
 
@@ -1864,13 +1868,17 @@ sub csv_history {
 				$journey->{line},
 				$journey->{no},
 				$journey->{from_name},
+				$journey->{from_eva},
 				$journey->{to_name},
-				$journey->{from_ds100},
-				$journey->{to_ds100},
-				$journey->{sched_departure}->strftime('%Y-%m-%d %H:%M'),
-				$journey->{rt_departure}->strftime('%Y-%m-%d %H:%M'),
-				$journey->{sched_arrival}->strftime('%Y-%m-%d %H:%M'),
-				$journey->{rt_arrival}->strftime('%Y-%m-%d %H:%M'),
+				$journey->{to_eva},
+				$journey->{sched_departure}->strftime('%Y-%m-%d %H:%M:%S'),
+				$journey->{rt_departure}->strftime('%Y-%m-%d %H:%M:%S'),
+				$journey->{sched_arrival}->strftime('%Y-%m-%d %H:%M:%S'),
+				$journey->{rt_arrival}->strftime('%Y-%m-%d %H:%M:%S'),
+				$journey->{user_data}{operator} // q{},
+				join( q{ + },
+					map { $_->{desc} // $_->{name} }
+					  @{ $journey->{user_data}{wagongroups} // [] } ),
 				$journey->{user_data}{comment} // q{},
 				$journey->{id}
 			)
