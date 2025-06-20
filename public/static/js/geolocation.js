@@ -54,7 +54,7 @@ $(document).ready(function() {
 						name = candidate.name,
 						dbris = candidate.dbris,
 						distance = candidate.distance.toFixed(1);
-					node = $('<a class="tablerow" href="/s/' + id + '?dbris=' + dbris + '"><span><i class="material-icons" aria-hidden="true">directions</i>' + name + '</span></a>');
+					node = $('<a class="tablerow" href="/s/' + eva + '?dbris=' + dbris + '"><span><i class="material-icons" aria-hidden="true">directions</i>' + name + '</span></a>');
 				} else if (candidate.efa) {
 					const eva = candidate.eva,
 						name = candidate.name,
