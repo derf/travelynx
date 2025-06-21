@@ -208,9 +208,20 @@ ul.route-history > li {
 	width: fit-content;
 	min-width: 6ch;
 	margin: 0 auto;
-
-	&.Bus, &.BUS, &.RUF, &.AST, &.NachtBus, &.Niederflurbus, &.Stadtbus, &.MetroBus, &.PlusBus, &.Landbus, &.Regionalbus, &.RegionalBus, &.SB, &.ExpressBus, &.RufTaxi, &.Rufbus, &.Linientaxi, &.BSV, &.RVV-Bus-Linie, &.Buslinie, &.Omnibus, &.RegioBus {
+	
+	&.Bus, &.BUS, &.NachtBus, &.Niederflurbus, &.Stadtbus, &.MetroBus, &.PlusBus, &.Landbus, &.Regionalbus, &.RegionalBus, &.SB, &.ExpressBus, &.BSV, &.RVV-Bus-Linie, &.Buslinie, &.Omnibus, &.RegioBus {
 		background-color: #a3167e;
+		border-radius: 5rem;
+		padding: .2rem .5rem;
+	}
+	&.RUF, &.AST, &.RufTaxi, &.Rufbus, &.Linientaxi {
+		background-color: #ffd800;
+		color: black;
+		border-radius: 5rem;
+		padding: .2rem .5rem;
+	}
+	&.Fhre, &.Fh, &.Schiff, &.SCH, &.KAT {
+		background-color: #309fd1;
 		border-radius: 5rem;
 		padding: .2rem .5rem;
 	}
@@ -224,7 +235,7 @@ ul.route-history > li {
 		border-radius: 5rem;
 		padding: .2rem .5rem;
 	}
-	&.U, &.M, &.SUBWAY, &.U-Bahn, &.UBAHN {
+	&.U, &.M, &.SUBWAY, &.U-Bahn, &.UBAHN, &.Schw-B, &.Schwebebahn, &.H-Bahn {
 		background-color: #014e8d;
 		border-radius: 5rem;
 		padding: .2rem .5rem;
