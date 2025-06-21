@@ -34,7 +34,19 @@
 				„ICE 100“, „S 1 31133“ oder „ABR RE11 26720“</li>
 			<li>Wenn Nummer nicht bekannt oder vorhanden: einen beliebigen Integer eintragen, z.B. „S 5X 0“ oder „U 11 0“</li>	
 			<li>Zeitangaben im Format DD.MM.YYYY HH:MM</li>
+			<li>Das ausgewählte Backend bestimmt die verfügbaren Halte für Start, Ziel und Route. Siehe auch <a href="/static/stops.csv">stops.csv</a></li>
 		</ul>
+	</div>
+</div>
+<div class="row">
+	<div class="col s12 center-align">
+		% my $self_link = url_for('add_journey');
+		% if (current_user->{backend_id}) {
+			<a href="/account/select_backend?redirect_to=<%= $self_link %>" class="btn-small btn-flat"><i class="material-icons left" aria-hidden="true">directions</i><%= current_user->{backend_name} %></a>
+		% }
+		% else {
+			<a href="/account/select_backend?redirect_to=<%= $self_link %>" class="btn-small btn-flat"><i class="material-icons left" aria-hidden="true">train</i>IRIS</a>
+		% }
 	</div>
 </div>
 %= form_for '/journey/add' => (method => 'POST') => begin
@@ -54,7 +66,7 @@
 	<div class="row">
 		<div class="input-field col s12">
 			%= text_field 'dep_station', id => 'dep_station', class => 'autocomplete validate', autocomplete => 'off', required => undef
-			<label for="dep_station">Start (Name oder DS100)</label>
+			<label for="dep_station">Start (Name oder ID)</label>
 		</div>
 		<div class="input-field col s12">
 			%= text_field 'sched_departure', id => 'sched_departure', class => 'validate', required => undef, pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
@@ -68,7 +80,7 @@
 	<div class="row">
 		<div class="input-field col s12">
 			%= text_field 'arr_station', id => 'arr_station', class => 'autocomplete validate', autocomplete => 'off', required => undef
-			<label for="arr_station">Ziel (Name oder DS100)</label>
+			<label for="arr_station">Ziel (Name oder ID)</label>
 		</div>
 		<div class="input-field col s12">
 			%= text_field 'sched_arrival', id => 'sched_arrival', class => 'validate', required => undef, pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'

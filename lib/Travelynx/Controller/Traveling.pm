@@ -2514,6 +2514,8 @@ sub edit_journey {
 sub add_journey_form {
 	my ($self) = @_;
 
+	$self->stash( backend_id => $self->current_user->{backend_id} );
+
 	if ( $self->param('action') and $self->param('action') eq 'save' ) {
 		my $parser = DateTime::Format::Strptime->new(
 			pattern   => '%d.%m.%Y %H:%M',
@@ -2536,7 +2538,7 @@ sub add_journey_form {
 				with_autocomplete => 1,
 				status            => 400,
 				error             =>
-'Zug muss als „Typ Nummer“ oder „Typ Linie Nummer“ eingegeben werden.'
+'Fahrt muss als „Typ Nummer“ oder „Typ Linie Nummer“ eingegeben werden.'
 			);
 			return;
 		}
@@ -2574,7 +2576,7 @@ sub add_journey_form {
 
 		$opt{db}         = $db;
 		$opt{uid}        = $self->current_user->{id};
-		$opt{backend_id} = 1;
+		$opt{backend_id} = $self->current_user->{backend_id};
 
 		my ( $journey_id, $error ) = $self->journeys->add(%opt);
 
