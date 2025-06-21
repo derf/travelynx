@@ -53,6 +53,23 @@ sub run {
 		my $arr      = $entry->{arr_eva};
 		my $train_id = $entry->{train_id};
 
+		if ( $train_id eq 'manual' ) {
+			if (    $arr
+				and $entry->{real_arr_ts}
+				and $now->epoch - $entry->{real_arr_ts} > 600 )
+			{
+				$self->app->checkout_p(
+					station => $arr,
+					force   => 2,
+					dep_eva => $dep,
+					arr_eva => $arr,
+					uid     => $uid
+				)->wait;
+			}
+
+			next;
+		}
+
 		if ( $entry->{is_dbris} ) {
 
 			eval {

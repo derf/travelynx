@@ -1,0 +1,87 @@
+<h1>Manuell einchecken</h1>
+% if ($error) {
+	<div class="row">
+		<div class="col s12">
+			<div class="card caution-color">
+				<div class="card-content white-text">
+					<span class="card-title">Ungültige Eingabe</span>
+					<p><%= $error %></p>
+				</div>
+			</div>
+		</div>
+	</div>
+% }
+<div class="row">
+	<div class="col s12">
+		<ul>
+			<li>Eingabe der Fahrt als „Typ Linie Nummer“ oder „Typ Nummer“, z.B.
+				„ICE 100“, „S 1 31133“ oder „ABR RE11 26720“</li>
+			<li>Wenn Nummer nicht bekannt oder vorhanden: einen beliebigen Integer eintragen, z.B. „S 5X 0“ oder „U 11 0“</li>	
+			<li>Zeitangaben im Format DD.MM.YYYY HH:MM</li>
+			<li>Das ausgewählte Backend bestimmt die verfügbaren Halte für Start, Ziel und Route. Siehe auch <a href="/static/stops.csv">stops.csv</a></li>
+		</ul>
+	</div>
+</div>
+<div class="row">
+	<div class="col s12 center-align">
+		% if (current_user->{backend_id}) {
+			<a href="/account/select_backend?redirect_to=/checkin/add" class="btn-small btn-flat"><i class="material-icons left" aria-hidden="true">directions</i><%= current_user->{backend_name} %></a>
+		% }
+		% else {
+			<a href="/account/select_backend?redirect_to=/checkin/add" class="btn-small btn-flat"><i class="material-icons left" aria-hidden="true">train</i>IRIS</a>
+		% }
+	</div>
+</div>
+%= form_for '/checkin/add' => (method => 'POST') => begin
+	%= csrf_field
+	<div class="row">
+		<div class="input-field col s12">
+			%= text_field 'train', id => 'train', class => 'validate', required => undef, pattern => '[0-9a-zA-Z]+ +[0-9a-zA-Z]* *[0-9]+'
+			<label for="train">Fahrt (Typ Linie Nummer)</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			%= text_field 'dep_station', id => 'dep_station', class => 'autocomplete validate', autocomplete => 'off', required => undef
+			<label for="dep_station">Start (Name oder ID)</label>
+		</div>
+		<div class="input-field col s12">
+			%= text_field 'sched_departure', id => 'sched_departure', class => 'validate', required => undef, pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
+			<label for="sched_departure">Geplante Abfahrt</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			%= text_field 'arr_station', id => 'arr_station', class => 'autocomplete validate', autocomplete => 'off', required => undef
+			<label for="arr_station">Ziel (Name oder ID)</label>
+		</div>
+		<div class="input-field col s12">
+			%= text_field 'sched_arrival', id => 'sched_arrival', class => 'validate', required => undef, pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
+			<label for="sched_arrival">Geplante Ankunft</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			%= text_area 'route', id => 'route', class => 'materialize-textarea'
+			<label for="route">Halte (optional, eine Station pro Zeile, wahlweise Unterwegshalte oder komplette Route)</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			%= text_field 'comment'
+			<label for="comment">Kommentar</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s3 m3 l3">
+		</div>
+		<div class="col s6 m6 l6 center-align">
+			<button class="btn waves-effect waves-light" type="submit" name="action" value="save">
+				Hinzufügen
+				<i class="material-icons right">send</i>
+			</button>
+		</div>
+		<div class="col s3 m3 l3">
+		</div>
+	</div>
+%= end

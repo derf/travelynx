@@ -283,8 +283,14 @@ sub add_from_in_transit {
 	my $db      = $opt{db};
 	my $journey = $opt{journey};
 
+	if ( $journey->{train_id} eq 'manual' ) {
+		$journey->{edited} = 0x3fff;
+	}
+	else {
+		$journey->{edited} = 0;
+	}
+
 	delete $journey->{data};
-	$journey->{edited}        = 0;
 	$journey->{checkout_time} = DateTime->now( time_zone => 'Europe/Berlin' );
 
 	return $db->insert( 'journeys', $journey, { returning => 'id' } )

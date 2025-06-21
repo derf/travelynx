@@ -1316,7 +1316,8 @@ sub startup {
 			if (   $user->{is_dbris}
 				or $user->{is_efa}
 				or $user->{is_hafas}
-				or $user->{is_motis} )
+				or $user->{is_motis}
+				or $train_id eq 'manual' )
 			{
 				return $self->_checkout_journey_p(%opt);
 			}
@@ -3004,6 +3005,7 @@ sub startup {
 	$authed_r->get('/ajax/status_card.html')->to('traveling#status_card');
 	$authed_r->get( '/cancelled' => [ format => [ 'html', 'json' ] ] )
 	  ->to( 'traveling#cancelled', format => undef );
+	$authed_r->get('/checkin/add')->to('traveling#add_intransit_form');
 	$authed_r->get('/fgr')->to('passengerrights#list_candidates');
 	$authed_r->get('/account/password')->to('account#password_form');
 	$authed_r->get('/account/mail')->to('account#change_mail');
@@ -3031,6 +3033,7 @@ sub startup {
 	$authed_r->post('/account/traewelling')->to('traewelling#settings');
 	$authed_r->post('/account/insight')->to('account#insight');
 	$authed_r->post('/account/select_backend')->to('account#change_backend');
+	$authed_r->post('/checkin/add')->to('traveling#add_intransit_form');
 	$authed_r->post('/journey/add')->to('traveling#add_journey_form');
 	$authed_r->post('/journey/comment')->to('traveling#comment_form');
 	$authed_r->post('/journey/visibility')->to('traveling#visibility_form');

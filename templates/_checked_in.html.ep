@@ -202,7 +202,10 @@
 			% if (@{$journey->{messages} // []} or @{$journey->{extra_data}{qos_msg} // []} or not $journey->{extra_data}{rt}) {
 				<p style="margin-bottom: 2ex;">
 					<ul>
-						% if (not $journey->{extra_data}{rt}) {
+						% if ($journey->{extra_data}{manual}) {
+							<li><i class="material-icons tiny">gps_off</i> Manueller Checkin ohne Echtzeitdaten
+						% }
+						% elsif (not $journey->{extra_data}{rt}) {
 							<li><i class="material-icons tiny">gps_off</i> Keine Echtzeitdaten vorhanden
 						% }
 						% for my $message (reverse @{$journey->{messages} // []}) {
@@ -362,41 +365,56 @@
 				%= include '_map', with_map_header => 0, station_coordinates => stash('station_coordinates'), polyline_groups => stash('polyline_groups')
 			</div>
 		</div>
-		<div class="card" style="margin-top: 3em;">
-			<div class="card-content">
-				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
-				<span class="card-title">Ziel ändern?</span>
-				<div class="targetlist">
-				% for my $station (@{$journey->{route_after}}) {
-					% my $is_dest = ($journey->{arr_name} and $station->[0] eq $journey->{arr_name});
-					<a class="action-checkout tablerow" style="<%= $is_dest? 'font-weight: bold;' : '' %>" data-station="<%= $station->[1] // $station->[0] %>">
-						<span><%= $station->[0] %></span>
-						<span>
-						%= include '_show_load_icons', station => $station
-						% if ($station->[2]{isCancelled}) {
-							entfällt
-						% }
-						% elsif ($station->[2]{rt_arr} or $station->[2]{sched_arr}) {
-							%= ($station->[2]{rt_arr} || $station->[2]{sched_arr})->strftime('%H:%M')
-						% }
-						% elsif ($station->[2]{rt_dep} or $station->[2]{sched_dep}) {
-							(<%= ($station->[2]{rt_dep} || $station->[2]{sched_dep})->strftime('%H:%M') %>)
-						% }
-						% elsif ($station->[2]{isAdditional}) {
-							Zusatzhalt
-						% }
-						</span>
+		% if ($journey->{extra_data}{manual}) {
+			<div class="card" style="margin-top: 3em;">
+				<div class="card-content">
+					<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
+					<span class="card-title">Manueller Checkin</span>
+				</div>
+				<div class="card-action">
+					<a class="action-undo blue-text" data-id="in_transit" data-checkints="<%= $journey->{timestamp}->epoch %>"  style="margin-right: 0;">
+						<i class="material-icons left" aria-hidden="true">undo</i> Checkin Rückgängig
 					</a>
-					<a class="nonflex" href="<%= resolve_sb_template($user->{sb_template}, name => $station->[0], eva => $station->[1], tt => $journey->{train_type} // q{x}, tn => $journey->{train_no}, id => $journey->{train_id} =~ s{[ #|]}{x}gr, dbris => $journey->{is_dbris} ? $journey->{backend_name} : q{}, efa => $journey->{is_efa} ? $journey->{backend_name} : q{}, hafas => $journey->{is_hafas} ? $journey->{backend_name} : q{}, is_iris => $journey->{is_iris}, motis => $journey->{is_motis} ? $journey->{backend_name} : q{}) %>"><i class="material-icons tiny"><%= $journey->{is_hafas} ? 'directions' : 'train' %></i></a>
-				% }
 				</div>
 			</div>
-			<div class="card-action">
-				<a class="action-undo blue-text" data-id="in_transit" data-checkints="<%= $journey->{timestamp}->epoch %>"  style="margin-right: 0;">
-					<i class="material-icons left" aria-hidden="true">undo</i> Checkin Rückgängig
-				</a>
+		% }
+		% else {
+			<div class="card" style="margin-top: 3em;">
+				<div class="card-content">
+					<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
+					<span class="card-title">Ziel ändern?</span>
+					<div class="targetlist">
+					% for my $station (@{$journey->{route_after}}) {
+						% my $is_dest = ($journey->{arr_name} and $station->[0] eq $journey->{arr_name});
+						<a class="action-checkout tablerow" style="<%= $is_dest? 'font-weight: bold;' : '' %>" data-station="<%= $station->[1] // $station->[0] %>">
+							<span><%= $station->[0] %></span>
+							<span>
+							%= include '_show_load_icons', station => $station
+							% if ($station->[2]{isCancelled}) {
+								entfällt
+							% }
+							% elsif ($station->[2]{rt_arr} or $station->[2]{sched_arr}) {
+								%= ($station->[2]{rt_arr} || $station->[2]{sched_arr})->strftime('%H:%M')
+							% }
+							% elsif ($station->[2]{rt_dep} or $station->[2]{sched_dep}) {
+								(<%= ($station->[2]{rt_dep} || $station->[2]{sched_dep})->strftime('%H:%M') %>)
+							% }
+							% elsif ($station->[2]{isAdditional}) {
+								Zusatzhalt
+							% }
+							</span>
+						</a>
+						<a class="nonflex" href="<%= resolve_sb_template($user->{sb_template}, name => $station->[0], eva => $station->[1], tt => $journey->{train_type} // q{x}, tn => $journey->{train_no}, id => $journey->{train_id} =~ s{[ #|]}{x}gr, dbris => $journey->{is_dbris} ? $journey->{backend_name} : q{}, efa => $journey->{is_efa} ? $journey->{backend_name} : q{}, hafas => $journey->{is_hafas} ? $journey->{backend_name} : q{}, is_iris => $journey->{is_iris}, motis => $journey->{is_motis} ? $journey->{backend_name} : q{}) %>"><i class="material-icons tiny"><%= $journey->{is_hafas} ? 'directions' : 'train' %></i></a>
+					% }
+					</div>
+				</div>
+				<div class="card-action">
+					<a class="action-undo blue-text" data-id="in_transit" data-checkints="<%= $journey->{timestamp}->epoch %>"  style="margin-right: 0;">
+						<i class="material-icons left" aria-hidden="true">undo</i> Checkin Rückgängig
+					</a>
+				</div>
 			</div>
-		</div>
+		% }
 		<p>
 			Falls das Backend ausgefallen ist oder die Fahrt aus anderen
 			Gründen verloren ging:

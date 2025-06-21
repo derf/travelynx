@@ -2612,4 +2612,216 @@ sub add_journey_form {
 	}
 }
 
+sub add_intransit_form {
+	my ($self) = @_;
+
+	$self->stash( backend_id => $self->current_user->{backend_id} );
+
+	if ( $self->param('action') and $self->param('action') eq 'save' ) {
+		my $parser = DateTime::Format::Strptime->new(
+			pattern   => '%d.%m.%Y %H:%M',
+			locale    => 'de_DE',
+			time_zone => 'Europe/Berlin'
+		);
+		my %opt;
+		my %trip;
+
+		my @parts = split( qr{\s+}, $self->param('train') );
+
+		if ( @parts == 2 ) {
+			@trip{ 'train_type', 'train_no' } = @parts;
+		}
+		elsif ( @parts == 3 ) {
+			@trip{ 'train_type', 'train_line', 'train_no' } = @parts;
+		}
+		else {
+			$self->render(
+				'add_intransit',
+				with_autocomplete => 1,
+				status            => 400,
+				error             =>
+'Fahrt muss als „Typ Nummer“ oder „Typ Linie Nummer“ eingegeben werden.'
+			);
+			return;
+		}
+
+		for my $key (qw(sched_departure sched_arrival)) {
+			if ( $self->param($key) ) {
+				my $datetime = $parser->parse_datetime( $self->param($key) );
+				if ( not $datetime ) {
+					$self->render(
+						'add_intransit',
+						with_autocomplete => 1,
+						status            => 400,
+						error => "${key}: Ungültiges Datums-/Zeitformat"
+					);
+					return;
+				}
+				$trip{$key} = $datetime;
+			}
+		}
+
+		for my $key (qw(dep_station arr_station route comment)) {
+			$trip{$key} = $self->param($key);
+		}
+
+		$opt{backend_id} = $self->current_user->{backend_id};
+
+		my $dep_stop = $self->stations->search( $trip{dep_station},
+			backend_id => $opt{backend_id} );
+		my $arr_stop = $self->stations->search( $trip{arr_station},
+			backend_id => $opt{backend_id} );
+
+		if ( defined $trip{route} ) {
+			$trip{route} = [ split( qr{\r?\n\r?}, $trip{route} ) ];
+		}
+
+		my $route_has_start = 0;
+		my $route_has_stop  = 0;
+
+		for my $station ( @{ $trip{route} || [] } ) {
+			if (   $station eq $dep_stop->{name}
+				or $station eq $dep_stop->{eva} )
+			{
+				$route_has_start = 1;
+			}
+			if (   $station eq $arr_stop->{name}
+				or $station eq $arr_stop->{eva} )
+			{
+				$route_has_stop = 1;
+			}
+		}
+
+		my @route;
+
+		if ( not $route_has_start ) {
+			push(
+				@route,
+				[
+					$dep_stop->{name},
+					$dep_stop->{eva},
+					{
+						lat => $dep_stop->{lat},
+						lon => $dep_stop->{lon},
+					}
+				]
+			);
+		}
+
+		if ( $trip{route} ) {
+			my @unknown_stations;
+			for my $station ( @{ $trip{route} } ) {
+				my $station_info = $self->stations->search( $station,
+					backend_id => $opt{backend_id} );
+				if ($station_info) {
+					push(
+						@route,
+						[
+							$station_info->{name},
+							$station_info->{eva},
+							{
+								lat => $station_info->{lat},
+								lon => $station_info->{lon},
+							}
+						]
+					);
+				}
+				else {
+					push( @route,            [ $station, undef, {} ] );
+					push( @unknown_stations, $station );
+				}
+			}
+
+			if ( @unknown_stations == 1 ) {
+				$self->render(
+					'add_intransit',
+					with_autocomplete => 1,
+					status            => 400,
+					error => "Unbekannter Unterwegshalt: $unknown_stations[0]"
+				);
+				return;
+			}
+			elsif (@unknown_stations) {
+				$self->render(
+					'add_intransit',
+					with_autocomplete => 1,
+					status            => 400,
+					error             => 'Unbekannte Unterwegshalte: '
+					  . join( ', ', @unknown_stations )
+				);
+				return;
+			}
+		}
+
+		if ( not $route_has_stop ) {
+			push(
+				@route,
+				[
+					$arr_stop->{name},
+					$arr_stop->{eva},
+					{
+						lat => $arr_stop->{lat},
+						lon => $arr_stop->{lon},
+					}
+				]
+			);
+		}
+
+		for my $station (@route) {
+			if (   $station->[0] eq $dep_stop->{name}
+				or $station->[1] eq $dep_stop->{eva} )
+			{
+				$station->[2]{sched_dep} = $trip{sched_departure}->epoch;
+			}
+			if (   $station->[0] eq $arr_stop->{name}
+				or $station->[1] eq $arr_stop->{eva} )
+			{
+				$station->[2]{sched_arr} = $trip{sched_arrival}->epoch;
+			}
+		}
+
+		my $error;
+		my $db = $self->pg->db;
+		my $tx = $db->begin;
+
+		$trip{dep_id} = $dep_stop->{eva};
+		$trip{arr_id} = $arr_stop->{eva};
+		$trip{route}  = \@route;
+
+		$opt{db}     = $db;
+		$opt{manual} = \%trip;
+		$opt{uid}    = $self->current_user->{id};
+
+		if ( not defined $trip{dep_id} ) {
+			$error = "Unknown departure stop '$trip{dep_station}'";
+		}
+		elsif ( not defined $trip{arr_id} ) {
+			$error = "Unknown arrival stop '$trip{arr_station}'";
+		}
+		else {
+			$error = $self->in_transit->add(%opt);
+		}
+
+		if ($error) {
+			$self->render(
+				'add_intransit',
+				with_autocomplete => 1,
+				status            => 400,
+				error             => $error,
+			);
+		}
+		else {
+			$tx->commit;
+			$self->redirect_to('/');
+		}
+	}
+	else {
+		$self->render(
+			'add_intransit',
+			with_autocomplete => 1,
+			error             => undef
+		);
+	}
+}
+
 1;

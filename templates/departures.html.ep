@@ -190,3 +190,11 @@
 		% }
 	</div>
 </div>
+
+% if (not $user_status->{checked_in}) {
+	<div class="row">
+		<div class="col s12 center-align">
+			<a class="btn-small" href="<%= url_for('checkinadd')->query({dbris => $dbris, efa => $efa, hafas => $hafas, motis => $motis, dep_station => $station}) %>"><i class="material-icons left" aria-hidden="true">add</i><span>manuell einchecken</span></a>
+		</div>
+	</div>
+% }

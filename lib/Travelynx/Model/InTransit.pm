@@ -101,6 +101,7 @@ sub add {
 	my $journey            = $opt{journey};
 	my $stop               = $opt{stop};
 	my $stopover           = $opt{stopover};
+	my $manual             = $opt{manual};
 	my $checkin_station_id = $opt{departure_eva};
 	my $route              = $opt{route};
 	my $data               = $opt{data};
@@ -389,16 +390,49 @@ sub add {
 				sched_departure => $stopover->scheduled_departure,
 				real_departure  => $stopover->departure,
 				route           => $json->encode( \@route ),
-				data            => JSON->new->encode(
+				data            => $json->encode(
 					{
 						rt => $stopover->{is_realtime} ? 1 : 0,
 						%{ $data // {} }
 					}
 				),
-				user_data  => JSON->new->encode($persistent_data),
+				user_data  => $json->encode($persistent_data),
 				backend_id => $backend_id,
 			}
 		);
+	}
+	elsif ($manual) {
+		if ( $manual->{comment} ) {
+			$persistent_data->{comment} = $manual->{comment};
+		}
+		$db->insert(
+			'in_transit',
+			{
+				user_id             => $uid,
+				cancelled           => 0,
+				checkin_station_id  => $manual->{dep_id},
+				checkout_station_id => $manual->{arr_id},
+				checkin_time => DateTime->now( time_zone => 'Europe/Berlin' ),
+				train_type   => $manual->{train_type},
+				train_no     => $manual->{train_no} || q{},
+				train_id     => 'manual',
+				train_line   => $manual->{train_line} || undef,
+				sched_departure => $manual->{sched_departure},
+				real_departure  => $manual->{sched_departure},
+				sched_arrival   => $manual->{sched_arrival},
+				real_arrival    => $manual->{sched_arrival},
+				route           => $json->encode( $manual->{route} // [] ),
+				data            => $json->encode(
+					{
+						manual => \1,
+						%{ $data // {} }
+					}
+				),
+				user_data  => $json->encode($persistent_data),
+				backend_id => $backend_id,
+			}
+		);
+		return;
 	}
 	else {
 		die('invalid arguments / argument types passed to InTransit->add');
