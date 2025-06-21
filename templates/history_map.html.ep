@@ -116,8 +116,8 @@
 <div class="row">
 	<div class="col s12">
 		<p>
-			Die eingezeichneten Routen stammen aus dem HAFAS und sind im Detail
-			oft fehlerbehaftet.
+			Die eingezeichneten Routen stammen aus dem Backend, mit dem die Fahrt aufgezeichnet wurde.
+			Die Datenqualität variiert.
 		</p>
 	</div>
 </div>
