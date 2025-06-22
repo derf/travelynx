@@ -2711,18 +2711,27 @@ sub add_intransit_form {
 		if ( $trip{route} ) {
 			my @unknown_stations;
 			for my $station ( @{ $trip{route} } ) {
+				my $ts;
+				my %station_data;
+				if ( $station
+					=~ m{ ^ (?<stop> [^@]+? ) \s* [@] \s* (?<timestamp> .+ ) $ }x
+				  )
+				{
+					$station = $+{stop};
+					$ts      = $parser->parse_datetime( $+{timestamp} );
+					$station_data{sched_arr} = $ts->epoch;
+					$station_data{sched_dep} = $ts->epoch;
+				}
 				my $station_info = $self->stations->search( $station,
 					backend_id => $opt{backend_id} );
+				$station_data{lat} = $station_info->{lat};
+				$station_data{lon} = $station_info->{lon};
 				if ($station_info) {
 					push(
 						@route,
 						[
-							$station_info->{name},
-							$station_info->{eva},
-							{
-								lat => $station_info->{lat},
-								lon => $station_info->{lon},
-							}
+							$station_info->{name}, $station_info->{eva},
+							\%station_data,
 						]
 					);
 				}

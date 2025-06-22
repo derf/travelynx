@@ -63,7 +63,9 @@
 	<div class="row">
 		<div class="input-field col s12">
 			%= text_area 'route', id => 'route', class => 'materialize-textarea'
-			<label for="route">Halte (optional, eine Station pro Zeile, wahlweise Unterwegshalte oder komplette Route)</label>
+			<label for="route">Halte (optional)</label><br/>
+			Eine Station pro Zeile, wahlweise Unterwegshalte oder komplette Route<br/>
+			Format: <i>Name</i> oder <i>Name</i> @ <i>Zeitpunkt</i> (inkl. Datum, siehe oben)
 		</div>
 	</div>
 	<div class="row">
