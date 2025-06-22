@@ -2798,6 +2798,9 @@ sub add_intransit_form {
 		elsif ( not defined $trip{arr_id} ) {
 			$error = "Unknown arrival stop '$trip{arr_station}'";
 		}
+		elsif ( $trip{sched_arrival} <= $trip{sched_departure} ) {
+			$error = 'Ankunftszeit muss nach Abfahrtszeit liegen';
+		}
 		else {
 			$error = $self->in_transit->add(%opt);
 		}
