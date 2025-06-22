@@ -2724,9 +2724,9 @@ sub add_intransit_form {
 				}
 				my $station_info = $self->stations->search( $station,
 					backend_id => $opt{backend_id} );
-				$station_data{lat} = $station_info->{lat};
-				$station_data{lon} = $station_info->{lon};
 				if ($station_info) {
+					$station_data{lat} = $station_info->{lat};
+					$station_data{lon} = $station_info->{lon};
 					push(
 						@route,
 						[
