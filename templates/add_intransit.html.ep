@@ -13,6 +13,10 @@
 % }
 <div class="row">
 	<div class="col s12">
+		<p>
+			Falls die gesuchte Abfahrt nicht vom ausgewählten Backend verfügbar ist, z.B. da es sich um eine Sonderfahrt handelt, ist hier ein manueller Checkin möglich.
+			Nach dem Checkin werden alle Daten so beibehalten wie sie eingegeben wurden; Änderungen sind erst nach dem Auschecken möglich.
+		</p>
 		<ul>
 			<li>Eingabe der Fahrt als „Typ Linie Nummer“ oder „Typ Nummer“, z.B.
 				„ICE 100“, „S 1 31133“ oder „ABR RE11 26720“</li>
