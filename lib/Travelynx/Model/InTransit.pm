@@ -1369,7 +1369,8 @@ sub update_arrival_motis {
 	$db->update(
 		'in_transit',
 		{
-			real_arrival => $stopover->{realtime_arrival},
+			real_arrival => $stopover->realtime_arrival,
+			arr_platform => $stopover->track,
 			route        => $json->encode( [@route] ),
 		},
 		{
