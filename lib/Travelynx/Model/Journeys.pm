@@ -4,16 +4,16 @@ package Travelynx::Model::Journeys;
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-use GIS::Distance;
-use List::MoreUtils qw(after_incl before_incl);
-
 use strict;
 use warnings;
 use 5.020;
 use utf8;
 
 use DateTime;
+use DateTime::Format::Strptime;
+use GIS::Distance;
 use JSON;
+use List::MoreUtils qw(after_incl before_incl);
 
 my %visibility_itoa = (
 	100 => 'public',
@@ -183,20 +183,36 @@ sub add {
 	}
 
 	if ( $opt{route} ) {
+		my $parser = DateTime::Format::Strptime->new(
+			pattern   => '%d.%m.%Y %H:%M',
+			locale    => 'de_DE',
+			time_zone => 'Europe/Berlin'
+		);
 		my @unknown_stations;
+
 		for my $station ( @{ $opt{route} } ) {
+			my $ts;
+			my %station_data;
+			if ( $station
+				=~ m{ ^ (?<stop> [^@]+? ) \s* [@] \s* (?<timestamp> .+ ) $ }x )
+			{
+				$station = $+{stop};
+				$ts      = $parser->parse_datetime( $+{timestamp} );
+				if ($ts) {
+					$station_data{sched_arr} = $ts->epoch;
+					$station_data{sched_dep} = $ts->epoch;
+				}
+			}
 			my $station_info = $self->{stations}
 			  ->search( $station, backend_id => $opt{backend_id} );
 			if ($station_info) {
+				$station_data{lat} = $station_info->{lat};
+				$station_data{lon} = $station_info->{lon};
 				push(
 					@route,
 					[
-						$station_info->{name},
-						$station_info->{eva},
-						{
-							lat => $station_info->{lat},
-							lon => $station_info->{lon},
-						}
+						$station_info->{name}, $station_info->{eva},
+						\%station_data,
 					]
 				);
 			}
