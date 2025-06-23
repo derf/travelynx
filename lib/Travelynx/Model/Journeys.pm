@@ -571,7 +571,7 @@ sub get {
 
 	my @select
 	  = (
-		qw(journey_id is_dbris is_iris is_hafas is_motis backend_name backend_id train_type train_line train_no checkin_ts sched_dep_ts real_dep_ts dep_eva dep_ds100 dep_name dep_lat dep_lon checkout_ts sched_arr_ts real_arr_ts arr_eva arr_ds100 arr_name arr_lat arr_lon cancelled edited route messages user_data visibility effective_visibility)
+		qw(journey_id is_dbris is_iris is_hafas is_motis backend_name backend_id train_type train_line train_no checkin_ts sched_dep_ts real_dep_ts dep_eva dep_ds100 dep_name dep_platform dep_lat dep_lon checkout_ts sched_arr_ts real_arr_ts arr_eva arr_ds100 arr_name arr_platform arr_lat arr_lon cancelled edited route messages user_data visibility effective_visibility)
 	  );
 	my %where = (
 		user_id   => $uid,
@@ -641,6 +641,7 @@ sub get {
 			from_eva             => $entry->{dep_eva},
 			from_ds100           => $entry->{dep_ds100},
 			from_name            => $entry->{dep_name},
+			from_platform        => $entry->{dep_platform},
 			from_latlon          => [ $entry->{dep_lat}, $entry->{dep_lon} ],
 			checkin_ts           => $entry->{checkin_ts},
 			sched_dep_ts         => $entry->{sched_dep_ts},
@@ -648,6 +649,7 @@ sub get {
 			to_eva               => $entry->{arr_eva},
 			to_ds100             => $entry->{arr_ds100},
 			to_name              => $entry->{arr_name},
+			to_platform          => $entry->{arr_platform},
 			to_latlon            => [ $entry->{arr_lat}, $entry->{arr_lon} ],
 			checkout_ts          => $entry->{checkout_ts},
 			sched_arr_ts         => $entry->{sched_arr_ts},

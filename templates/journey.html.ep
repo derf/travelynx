@@ -15,29 +15,17 @@
 		<div class="col s12">
 			<p>
 				% if (my $name = stash('username')) {
-					<b><a href="/p/<%= $name %>"><%= $name %></a></b>s
+					Checkin von <b><a href="/p/<%= $name %>"><%= $name %></a></b>
 				% }
-				% if ($journey->{cancelled}) {
-					Ausgefallene Fahrt
+				% elsif ($journey->{cancelled}) {
+					<b>Ausgefallene Fahrt</b> vom <%= $journey->{checkin}->strftime('%d.%m.%Y um %H:%M Uhr') %>
 				% }
 				% else {
-					Fahrt
+					Checkin vom <%= $journey->{checkin}->strftime('%d.%m.%Y um %H:%M Uhr') %>
 				% }
 				% if ($journey->{edited} & 0x0020) {
 					∗
 				% }
-				von
-				<b><%= $journey->{from_name} %></b>
-				% if ($journey->{edited} & 0x0004) {
-					∗
-				% }
-				nach
-				<b><%= $journey->{to_name} %></b>
-				% if ($journey->{edited} & 0x0400) {
-					∗
-				% }
-				am
-				<b><%= $journey->{sched_departure}->strftime('%d.%m.%Y') %></b>
 				% if (my $v = stash('journey_visibility')) {
 					% if (stash('username')) {
 						<i class="material-icons right"><%= visibility_icon($v) %></i>
@@ -78,19 +66,43 @@
 					</td>
 				</tr>
 				<tr>
+					<th scope="row">Von</th>
+					<td>
+						%= $journey->{from_name}
+						% if ($journey->{from_platform} and $journey->{to_platform}) {
+							(<%= $journey->{from_platform} %>)
+						% }
+						% if ($journey->{edited} & 0x0004) {
+							∗
+						% }
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">Nach</th>
+					<td>
+						<%= $journey->{to_name} %>
+						% if ($journey->{from_platform} and $journey->{to_platform}) {
+							(<%= $journey->{to_platform} %>)
+						% }
+						% if ($journey->{edited} & 0x0400) {
+							∗
+						% }
+					</td>
+				</tr>
+				<tr>
 					<th scope="row">Abfahrt</th>
 					<td>
 						% if ($journey->{cancelled}) {
 							<i class="material-icons">cancel</i>
-							(Plan: <%= $journey->{sched_departure}->strftime('%H:%M'); %>)
+							(Plan: <%= $journey->{sched_departure}->strftime('%d.%m.%Y %H:%M'); %>)
 						% }
 						% elsif ($journey->{rt_departure} != $journey->{sched_departure}) {
-							%= ($journey->{rt_departure}->epoch % 60) ? $journey->{rt_departure}->strftime('%H:%M:%S') : $journey->{rt_departure}->strftime('%H:%M');
+							%= ($journey->{rt_departure}->epoch % 60) ? $journey->{rt_departure}->strftime('%d.%m.%Y %H:%M:%S') : $journey->{rt_departure}->strftime('%d.%m.%Y %H:%M');
 							(<%= sprintf('%+d', ($journey->{rt_departure}->epoch - $journey->{sched_departure}->epoch) / 60) %>,
 							Plan: <%= ($journey->{sched_departure}->epoch % 60) ? $journey->{sched_departure}->strftime('%H:%M:%S') : $journey->{sched_departure}->strftime('%H:%M'); %>)
 						% }
 						% else {
-							%= ($journey->{sched_departure}->epoch % 60) ? $journey->{sched_departure}->strftime('%H:%M:%S') : $journey->{sched_departure}->strftime('%H:%M');
+							%= ($journey->{sched_departure}->epoch % 60) ? $journey->{sched_departure}->strftime('%d.%m.%Y %H:%M:%S') : $journey->{sched_departure}->strftime('%d.%m.%Y %H:%M');
 						% }
 						% if ($journey->{edited} & 0x0003) {
 							∗
@@ -103,19 +115,19 @@
 						% if ($journey->{cancelled}) {
 							<i class="material-icons">cancel</i>
 							% if ($journey->{sched_arrival}->epoch != 0) {
-								(Plan: <%= $journey->{sched_arrival}->strftime('%H:%M'); %>)
+								(Plan: <%= $journey->{sched_arrival}->strftime('%d.%m.%Y %H:%M'); %>)
 							% }
 						% }
 						% elsif ($journey->{rt_arrival}->epoch == 0 and $journey->{sched_arrival}->epoch == 0) {
 							<i class="material-icons">timer_off</i>
 						% }
 						% elsif ($journey->{rt_arrival} != $journey->{sched_arrival}) {
-							%= ($journey->{rt_arrival}->epoch % 60) ? $journey->{rt_arrival}->strftime('%H:%M:%S') : $journey->{rt_arrival}->strftime('%H:%M');
+							%= ($journey->{rt_arrival}->epoch % 60) ? $journey->{rt_arrival}->strftime('%d.%m.%Y %H:%M:%S') : $journey->{rt_arrival}->strftime('%d.%m.%Y %H:%M');
 							(<%= sprintf('%+d', ($journey->{rt_arrival}->epoch - $journey->{sched_arrival}->epoch) / 60) %>,
 							Plan: <%= ($journey->{sched_arrival}->epoch % 60) ? $journey->{sched_arrival}->strftime('%H:%M:%S') : $journey->{sched_arrival}->strftime('%H:%M'); %>)
 						% }
 						% else {
-							%= ($journey->{sched_arrival}->epoch % 60) ? $journey->{sched_arrival}->strftime('%H:%M:%S') : $journey->{sched_arrival}->strftime('%H:%M');
+							%= ($journey->{sched_arrival}->epoch % 60) ? $journey->{sched_arrival}->strftime('%d.%m.%Y %H:%M:%S') : $journey->{sched_arrival}->strftime('%d.%m.%Y %H:%M');
 						% }
 						% if ($journey->{edited} & 0x0300) {
 							∗
