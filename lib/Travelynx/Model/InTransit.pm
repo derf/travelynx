@@ -1252,8 +1252,8 @@ sub update_arrival_dbris {
 	$db->update(
 		'in_transit',
 		{
-			real_arrival => $stop->{rt_arr},
-			arr_platform => $stop->{platform},
+			real_arrival => $stop->rt_arr,
+			arr_platform => $stop->platform,
 			route        => $json->encode( [@route] ),
 			data         => $json->encode($ephemeral_data),
 			user_data    => $json->encode($persistent_data),
@@ -1318,6 +1318,7 @@ sub update_arrival_efa {
 		{
 			data         => $json->encode($ephemeral_data),
 			real_arrival => $stop->rt_arr,
+			arr_platform => $stop->platform,
 			route        => $json->encode( [@route] ),
 		},
 		{
@@ -1440,7 +1441,8 @@ sub update_arrival_hafas {
 		'in_transit',
 		{
 			data         => $json->encode($ephemeral_data),
-			real_arrival => $stop->{rt_arr},
+			real_arrival => $stop->rt_arr,
+			arr_platform => $stop->platform,
 			route        => $json->encode( [@route] ),
 		},
 		{
