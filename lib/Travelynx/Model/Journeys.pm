@@ -189,6 +189,7 @@ sub add {
 			time_zone => 'Europe/Berlin'
 		);
 		my @unknown_stations;
+		my $prev_epoch = 0;
 
 		for my $station ( @{ $opt{route} } ) {
 			my $ts;
@@ -199,8 +200,15 @@ sub add {
 				$station = $+{stop};
 				$ts      = $parser->parse_datetime( $+{timestamp} );
 				if ($ts) {
-					$station_data{sched_arr} = $ts->epoch;
-					$station_data{sched_dep} = $ts->epoch;
+					my $epoch = $ts->epoch;
+					if ( $epoch <= $prev_epoch ) {
+						return ( undef,
+'Zeitstempel der Unterwegshalte müssen streng monoton steigend sein (keine Zeitreisen und keine Portale)'
+						);
+					}
+					$station_data{sched_arr} = $epoch;
+					$station_data{sched_dep} = $epoch;
+					$prev_epoch              = $epoch;
 				}
 			}
 			my $station_info = $self->{stations}
