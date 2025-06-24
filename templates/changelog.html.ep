@@ -2,6 +2,39 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		2.15
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left" aria-label="Neues Feature">add</i>
+			Manuelle Checkins. Diese verhalten sich analog zu manuell
+			eingetragenen Fahrten, werden jedoch bis zur planmäßigen
+			Ankunftszeit als Checkin behandelt. Manuelle Echtzeitdaten-Updates
+			werden nicht unterstützt. Manuelle Checkins sind nur an Halten
+			möglich, die dem ausgewählten Backend bekannt sind. Ggf. wird
+			dieses Feature später um eine Möglichkeit für Echtzeitdaten-Updates
+			und/oder eine API erweitert.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Neues Feature">add</i>
+			Erfassung des Betreibers einer Fahrt, sofern verfügbar.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Verbesserung">star</i>
+			EFA-Backends werden nun fast vollständig unterstützt und sind nicht
+			mehr experimentell.
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="Bugfix">build</i>
+			Das manuelle Eintragen von Fahrten ist nun wieder möglich. Zudem
+			kann dabei nun ein beliebiges Backend ausgewählt werden; das
+			ausgewählte Backend bestimmt die verfügbaren Halte.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		2.14
 	</div>
 	<div class="col s12 m11 l11">
