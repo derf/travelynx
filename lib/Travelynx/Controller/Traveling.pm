@@ -2710,6 +2710,7 @@ sub add_intransit_form {
 
 		if ( $trip{route} ) {
 			my @unknown_stations;
+			my $prev_epoch;
 			for my $station ( @{ $trip{route} } ) {
 				my $ts;
 				my %station_data;
@@ -2719,8 +2720,20 @@ sub add_intransit_form {
 				{
 					$station = $+{stop};
 					$ts      = $parser->parse_datetime( $+{timestamp} );
-					$station_data{sched_arr} = $ts->epoch;
-					$station_data{sched_dep} = $ts->epoch;
+					if ( $ts and $ts->epoch > $prev_epoch ) {
+						$station_data{sched_arr} = $ts->epoch;
+						$station_data{sched_dep} = $ts->epoch;
+						$prev_epoch              = $ts->epoch;
+					}
+					else {
+						$self->render(
+							'add_intransit',
+							with_autocomplete => 1,
+							status            => 400,
+							error => "Ungültige Zeitangabe: $+{timestamp}"
+						);
+						return;
+					}
 				}
 				my $station_info = $self->stations->search( $station,
 					backend_id => $opt{backend_id} );
