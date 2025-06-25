@@ -201,9 +201,9 @@ sub add {
 				$ts      = $parser->parse_datetime( $+{timestamp} );
 				if ($ts) {
 					my $epoch = $ts->epoch;
-					if ( $epoch <= $prev_epoch ) {
+					if ( $epoch < $prev_epoch ) {
 						return ( undef,
-'Zeitstempel der Unterwegshalte müssen streng monoton steigend sein (keine Zeitreisen und keine Portale)'
+'Zeitstempel der Unterwegshalte müssen monoton steigend sein (keine Zeitreisen und keine Portale)'
 						);
 					}
 					$station_data{sched_arr} = $epoch;
