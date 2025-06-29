@@ -21,7 +21,7 @@
 			<li>Eingabe der Fahrt als „Typ Linie Nummer“ oder „Typ Nummer“, z.B.
 				„ICE 100“, „S 1 31133“ oder „ABR RE11 26720“</li>
 			<li>Wenn Nummer nicht bekannt oder vorhanden: einen beliebigen Integer eintragen, z.B. „S 5X 0“ oder „U 11 0“</li>	
-			<li>Zeitangaben im Format YYYY-MM-DDTHH:MM.</li>
+			<li>Zeitangaben im Format YYYY-MM-DDTHH:MM. Bei den Zwischenhalten kann auch nur HH:MM angegeben werden</li>
 			<li>Das ausgewählte Backend bestimmt die verfügbaren Halte für Start, Ziel und Route. Siehe auch <a href="/static/stops.csv">stops.csv</a></li>
 		</ul>
 	</div>
@@ -69,7 +69,7 @@
 			%= text_area 'route', id => 'route', class => 'materialize-textarea'
 			<label for="route">Halte (optional)</label><br/>
 			Eine Station pro Zeile, wahlweise Unterwegshalte oder komplette Route<br/>
-			Format: <i>Name</i> oder <i>Name</i> @ <i>Zeitpunkt</i> (inkl. Datum, siehe oben)
+			Format: <i>Name</i> oder <i>Name</i> @ <i>Zeitpunkt</i> (Format siehe oben, ein ggf. ausgelassenes Datum wird ergänzt)
 		</div>
 	</div>
 	<div class="row">
