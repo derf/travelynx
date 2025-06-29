@@ -17,7 +17,7 @@
 			<li class="collection-item">
 				<a href="<%= $detail_link %>">
 					<span class="dep-line <%= ($travel->{type} // q{}) =~ tr{a-zA-Z_-}{}cdr %>">
-						% if (not $travel->{is_motis}) {
+						% if (length($travel->{type}) < 5 and not $travel->{is_motis}) {
 							<%= $travel->{type} %>
 						% }
 						<%= $travel->{line}  // $travel->{no}%>
