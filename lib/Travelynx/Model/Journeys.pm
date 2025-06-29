@@ -691,6 +691,12 @@ sub get {
 			$ref->{checkout}      = epoch_to_dt( $ref->{checkout_ts} );
 			$ref->{sched_arrival} = epoch_to_dt( $ref->{sched_arr_ts} );
 			$ref->{rt_arrival}    = epoch_to_dt( $ref->{rt_arr_ts} );
+			if ( $ref->{rt_dep_ts} and $ref->{sched_dep_ts} ) {
+				$ref->{delay_dep} = $ref->{rt_dep_ts} - $ref->{sched_dep_ts};
+			}
+			if ( $ref->{rt_arr_ts} and $ref->{sched_arr_ts} ) {
+				$ref->{delay_arr} = $ref->{rt_arr_ts} - $ref->{sched_arr_ts};
+			}
 		}
 		if ( $opt{with_route_datetime} ) {
 			for my $stop ( @{ $ref->{route} } ) {
