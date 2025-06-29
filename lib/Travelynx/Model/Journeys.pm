@@ -643,7 +643,7 @@ sub get {
 			is_motis             => $entry->{is_motis},
 			backend_name         => $entry->{backend_name},
 			backend_id           => $entry->{backend_id},
-			type                 => $entry->{train_type},
+			type                 => $entry->{train_type} =~ s{ \s+ $ }{}rx,
 			line                 => $entry->{train_line},
 			no                   => $entry->{train_no},
 			from_eva             => $entry->{dep_eva},
