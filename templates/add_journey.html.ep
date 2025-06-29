@@ -69,12 +69,12 @@
 			<label for="dep_station">Start (Name oder ID)</label>
 		</div>
 		<div class="input-field col s12">
-			%= text_field 'sched_departure', id => 'sched_departure', class => 'validate', required => undef, pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
-			<label for="sched_departure">Geplante Abfahrt</label>
+			%= datetime_field 'sched_departure', id => 'sched_departure', class => 'validate', required => undef
+			<label for="sched_departure" class="active">Geplante Abfahrt</label>
 		</div>
 		<div class="input-field col s12">
-			%= text_field 'rt_departure', id => 'rt_departure', class => 'validate', pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
-			<label for="rt_departure">Tatsächliche Abfahrt (wenn leer: pünktlich)</label>
+			%= datetime_field 'rt_departure', id => 'rt_departure', class => 'validate'
+			<label for="rt_departure" class="active">Tatsächliche Abfahrt (wenn leer: pünktlich)</label>
 		</div>
 	</div>
 	<div class="row">
@@ -83,12 +83,12 @@
 			<label for="arr_station">Ziel (Name oder ID)</label>
 		</div>
 		<div class="input-field col s12">
-			%= text_field 'sched_arrival', id => 'sched_arrival', class => 'validate', required => undef, pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
-			<label for="sched_arrival">Geplante Ankunft</label>
+			%= datetime_field 'sched_arrival', id => 'sched_arrival', class => 'validate', required => undef
+			<label for="sched_arrival" class="active">Geplante Ankunft</label>
 		</div>
 		<div class="input-field col s12">
-			%= text_field 'rt_arrival', id => 'rt_arrival', class => 'validate', pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
-			<label for="rt_arrival">Tatsächliche Ankunft (wenn leer: pünktlich)</label>
+			%= datetime_field 'rt_arrival', id => 'rt_arrival', class => 'validate'
+			<label for="rt_arrival" class="active">Tatsächliche Ankunft (wenn leer: pünktlich)</label>
 		</div>
 	</div>
 	<div class="row">
