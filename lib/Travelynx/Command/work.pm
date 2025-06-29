@@ -75,12 +75,14 @@ sub run {
 
 			eval {
 
-				Mojo::Promise->timer( $dbris_rate_limited ? 4.5 : 1.0 )->then(
+				Mojo::Promise->timer(
+					$dbris_rate_limited ? 4.5 : ( $backend ? 2.0 : 1.0 ) )
+				  ->then(
 					sub {
 						return $self->app->dbris->get_journey_p(
 							trip_id => $train_id );
 					}
-				)->then(
+				  )->then(
 					sub {
 						my ($journey) = @_;
 
@@ -173,7 +175,7 @@ sub run {
 							)->wait;
 						}
 					}
-				)->catch(
+				  )->catch(
 					sub {
 						my ($err) = @_;
 						$self->app->log->debug(
@@ -187,7 +189,7 @@ sub run {
 							$backend_issues += 1;
 						}
 					}
-				)->wait;
+				  )->wait;
 
 				if (    $arr
 					and $entry->{real_arr_ts}
