@@ -2617,7 +2617,7 @@ sub add_intransit_form {
 
 	if ( $self->param('action') and $self->param('action') eq 'save' ) {
 		my $parser = DateTime::Format::Strptime->new(
-			pattern   => '%d.%m.%Y %H:%M',
+			pattern   => '%FT%H:%M',
 			locale    => 'de_DE',
 			time_zone => 'Europe/Berlin'
 		);
