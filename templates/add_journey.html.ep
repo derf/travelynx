@@ -33,7 +33,7 @@
 			<li>Eingabe der Fahrt als „Typ Linie Nummer“ oder „Typ Nummer“, z.B.
 				„ICE 100“, „S 1 31133“ oder „ABR RE11 26720“</li>
 			<li>Wenn Nummer nicht bekannt oder vorhanden: einen beliebigen Integer eintragen, z.B. „S 5X 0“ oder „U 11 0“</li>	
-			<li>Zeitangaben im Format DD.MM.YYYY HH:MM</li>
+			<li>Zeitangaben im Format YYYY-MM-DDTHH:MM</li>
 			<li>Das ausgewählte Backend bestimmt die verfügbaren Halte für Start, Ziel und Route. Siehe auch <a href="/static/stops.csv">stops.csv</a></li>
 		</ul>
 	</div>
