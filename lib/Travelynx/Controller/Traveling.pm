@@ -1745,13 +1745,12 @@ sub map_history {
 	my $with_polyline = $route_type eq 'beeline' ? 0 : 1;
 
 	my $parser = DateTime::Format::Strptime->new(
-		pattern   => '%d.%m.%Y',
+		pattern   => '%F',
 		locale    => 'de_DE',
 		time_zone => 'Europe/Berlin'
 	);
 
-	if (    $filter_from
-		and $filter_from =~ m{ ^ (\d+) [.] (\d+) [.] (\d+) $ }x )
+	if ( $filter_from )
 	{
 		$filter_from = $parser->parse_datetime($filter_from);
 	}
@@ -1759,8 +1758,7 @@ sub map_history {
 		$filter_from = undef;
 	}
 
-	if (    $filter_until
-		and $filter_until =~ m{ ^ (\d+) [.] (\d+) [.] (\d+) $ }x )
+	if ( $filter_until )
 	{
 		$filter_until = $parser->parse_datetime($filter_until)->set(
 			hour   => 23,

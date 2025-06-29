@@ -88,14 +88,14 @@
 	</p>
 	<div class="row">
 		<div class="input-field col s12">
-			%= text_field 'filter_from', id => 'filter_from', class => 'validate', pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9]( +[0-9][0-9]:[0-9][0-9])?'
-			<label for="filter_from">Abfahrt ab (DD.MM.YYYY)</label>
+			%= date_field 'filter_from', id => 'filter_from', class => 'validate'
+			<label for="filter_from" class="active">Abfahrt ab</label>
 		</div>
 	</div>
 	<div class="row">
 		<div class="input-field col s12">
-			%= text_field 'filter_to', id => 'filter_to', class => 'validate', pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9]( +[0-9][0-9]:[0-9][0-9])?'
-			<label for="filter_to">Abfahrt bis (DD.MM.YYYY)</label>
+			%= date_field 'filter_to', id => 'filter_to', class => 'validate'
+			<label for="filter_to" class="active">Abfahrt bis</label>
 		</div>
 	</div>
 	<div class="row">
