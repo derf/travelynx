@@ -76,7 +76,7 @@ sub run {
 			eval {
 
 				Mojo::Promise->timer(
-					$dbris_rate_limited ? 4.5 : ( $backend ? 2.0 : 1.0 ) )
+					$dbris_rate_limited ? 4.5 : ( $backend ? 1.2 : 1.0 ) )
 				  ->then(
 					sub {
 						return $self->app->dbris->get_journey_p(
