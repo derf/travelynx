@@ -2383,7 +2383,7 @@ sub edit_journey {
 
 	if ( $self->param('action') and $self->param('action') eq 'save' ) {
 		my $parser = DateTime::Format::Strptime->new(
-			pattern   => '%d.%m.%Y %H:%M',
+			pattern   => '%FT%H:%M',
 			locale    => 'de_DE',
 			time_zone => 'Europe/Berlin'
 		);
@@ -2486,7 +2486,7 @@ sub edit_journey {
 	for my $key (qw(sched_departure rt_departure sched_arrival rt_arrival)) {
 		if ( $journey->{$key} and $journey->{$key}->epoch ) {
 			$self->param(
-				$key => $journey->{$key}->strftime('%d.%m.%Y %H:%M') );
+				$key => $journey->{$key}->strftime('%FT%H:%M') );
 		}
 	}
 
