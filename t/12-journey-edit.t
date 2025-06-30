@@ -124,12 +124,19 @@ my ( $success, $error ) = $t->app->journeys->add(
 ok( $success, "journeys->add" );
 is( $error, undef, "journeys->add" );
 
-$t->get_ok('/journey/1')->status_is(200)->content_like(qr{M.nster\(Westf\)Hbf})
-  ->content_like(qr{Gelsenkirchen Hbf})->content_like(qr{RE 11238})
-  ->content_like(qr{Linie 42})->content_like(qr{..:36})
-  ->content_like(qr{..:34})->content_like(qr{ca[.] 62 km})
-  ->content_like(qr{Luftlinie: 62 km})->content_like(qr{64 km/h})
-  ->content_like(qr{Huhu})->content_like(qr{Daten wurden manuell eingetragen});
+$t->get_ok('/journey/1')
+  ->status_is(200)
+  ->content_like(qr{M.nster\(Westf\)Hbf})
+  ->content_like(qr{Gelsenkirchen Hbf})
+  ->content_like(qr{RE 11238})
+  ->content_like(qr{Linie 42})
+  ->content_like(qr{..:36})
+  ->content_like(qr{..:34})
+  ->content_like(qr{ca[.] 62 km})
+  ->content_like(qr{Luftlinie: 62 km})
+  ->content_like(qr{64 km/h})
+  ->content_like(qr{Huhu})
+  ->content_like(qr{Daten wurden manuell eingetragen});
 
 $t->post_ok(
 	'/journey/edit' => form => {
@@ -138,10 +145,14 @@ $t->post_ok(
 	}
 );
 
-$t->status_is(200)->content_like(qr{M.nster\(Westf\)Hbf})
-  ->content_like(qr{Gelsenkirchen Hbf})->content_like(qr{RE 11238})
-  ->content_like(qr{Linie 42})->content_like(qr{16.10.2018 ..:36})
-  ->content_like(qr{16.10.2018 ..:34})->content_like(qr{Huhu});
+$t->status_is(200)
+  ->content_like(qr{M.nster\(Westf\)Hbf})
+  ->content_like(qr{Gelsenkirchen Hbf})
+  ->content_like(qr{RE 11238})
+  ->content_like(qr{Linie 42})
+  ->content_like(qr{16.10.2018 ..:36})
+  ->content_like(qr{16.10.2018 ..:34})
+  ->content_like(qr{Huhu});
 
 $csrf_token = $t->tx->res->dom->at('input[name=csrf_token]')->attr('value');
 
@@ -161,12 +172,19 @@ $t->post_ok(
 
 $t->status_is(302)->header_is( location => '/journey/1' );
 
-$t->get_ok('/journey/1')->status_is(200)->content_like(qr{M.nster\(Westf\)Hbf})
-  ->content_like(qr{Gelsenkirchen Hbf})->content_like(qr{RE 11238})
-  ->content_like(qr{Linie 42})->content_like(qr{..:36})
-  ->content_like(qr{..:34})->content_like(qr{ca[.] 62 km})
-  ->content_like(qr{Luftlinie: 62 km})->content_like(qr{64 km/h})
-  ->content_like(qr{Huhu})->content_like(qr{Daten wurden manuell eingetragen});
+$t->get_ok('/journey/1')
+  ->status_is(200)
+  ->content_like(qr{M.nster\(Westf\)Hbf})
+  ->content_like(qr{Gelsenkirchen Hbf})
+  ->content_like(qr{RE 11238})
+  ->content_like(qr{Linie 42})
+  ->content_like(qr{..:36})
+  ->content_like(qr{..:34})
+  ->content_like(qr{ca[.] 62 km})
+  ->content_like(qr{Luftlinie: 62 km})
+  ->content_like(qr{64 km/h})
+  ->content_like(qr{Huhu})
+  ->content_like(qr{Daten wurden manuell eingetragen});
 
 $t->post_ok(
 	'/journey/edit' => form => {
@@ -175,10 +193,14 @@ $t->post_ok(
 	}
 );
 
-$t->status_is(200)->content_like(qr{M.nster\(Westf\)Hbf})
-  ->content_like(qr{Gelsenkirchen Hbf})->content_like(qr{RE 11238})
-  ->content_like(qr{Linie 42})->content_like(qr{16.10.2018 ..:36})
-  ->content_like(qr{16.10.2018 ..:34})->content_like(qr{Huhu});
+$t->status_is(200)
+  ->content_like(qr{M.nster\(Westf\)Hbf})
+  ->content_like(qr{Gelsenkirchen Hbf})
+  ->content_like(qr{RE 11238})
+  ->content_like(qr{Linie 42})
+  ->content_like(qr{16.10.2018 ..:36})
+  ->content_like(qr{16.10.2018 ..:34})
+  ->content_like(qr{Huhu});
 
 $csrf_token = $t->tx->res->dom->at('input[name=csrf_token]')->attr('value');
 
@@ -198,13 +220,18 @@ $t->post_ok(
 
 $t->status_is(302)->header_is( location => '/journey/1' );
 
-$t->get_ok('/journey/1')->status_is(200)->content_like(qr{M.nster\(Westf\)Hbf})
-  ->content_like(qr{Gelsenkirchen Hbf})->content_like(qr{RE 11238})
+$t->get_ok('/journey/1')
+  ->status_is(200)
+  ->content_like(qr{M.nster\(Westf\)Hbf})
+  ->content_like(qr{Gelsenkirchen Hbf})
+  ->content_like(qr{RE 11238})
   ->content_like(qr{Linie 42})
-  ->content_like(qr{..:42\s*\(\+6,\s*Plan: ..:36\)})
-  ->content_like(qr{..:33\s*\(-1,\s*Plan: ..:34\)})
-  ->content_like(qr{ca[.] 62 km})->content_like(qr{Luftlinie: 62 km})
-  ->content_like(qr{73 km/h})->content_like(qr{Huhu})
+  ->content_like(qr{..:42\s*\n*\s*\(\+6,\s*Plan: ..:36\)})
+  ->content_like(qr{..:33\s*\n*\s*\(-1,\s*Plan: ..:34\)})
+  ->content_like(qr{ca[.] 62 km})
+  ->content_like(qr{Luftlinie: 62 km})
+  ->content_like(qr{73 km/h})
+  ->content_like(qr{Huhu})
   ->content_like(qr{Daten wurden manuell eingetragen});
 
 $t->app->pg->db->query('drop schema travelynx_test_12 cascade');
