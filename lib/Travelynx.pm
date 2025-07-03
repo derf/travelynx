@@ -1615,6 +1615,13 @@ sub startup {
 						rt_arrival    =>
 						  ( $stop->[2]{rt_arr} || $stop->[2]{sched_arr} )
 					);
+					if ($stop->[2]{platform}) {
+						$self->in_transit->set_arrival_platform(
+							uid => $uid,
+							db => $db,
+							arrival_platform => $stop->[2]{platform}
+						);
+					}
 					if (
 						$now > ( $stop->[2]{rt_arr} || $stop->[2]{sched_arr} ) )
 					{

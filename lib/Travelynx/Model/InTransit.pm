@@ -160,6 +160,7 @@ sub add {
 						isCancelled => $j_stop->is_cancelled,
 						arr_delay   => $j_stop->arr_delay,
 						dep_delay   => $j_stop->dep_delay,
+						platform    => $j_stop->platform,
 						efa_load    => $j_stop->occupancy,
 						lat         => $j_stop->latlon->[0],
 						lon         => $j_stop->latlon->[1],
@@ -214,6 +215,7 @@ sub add {
 						rt_dep    => _epoch( $j_stop->rt_dep ),
 						arr_delay => $j_stop->arr_delay,
 						dep_delay => $j_stop->dep_delay,
+						platform  => $j_stop->platform,
 						load      => $j_stop->load,
 						lat       => $j_stop->loc->lat,
 						lon       => $j_stop->loc->lon,
@@ -284,6 +286,7 @@ sub add {
 						isCancelled => $j_stop->is_cancelled,
 						arr_delay   => $j_stop->arr_delay,
 						dep_delay   => $j_stop->dep_delay,
+						platform    => $j_stop->platform,
 						load        => {
 							FIRST  => $j_stop->occupancy_first,
 							SECOND => $j_stop->occupancy_second
@@ -364,6 +367,7 @@ sub add {
 						  _epoch( $journey_stopover->realtime_departure ),
 						arr_delay => $journey_stopover->arrival_delay,
 						dep_delay => $journey_stopover->departure_delay,
+						platform  => $journey_stopover->track,
 						lat       => $journey_stopover->stop->lat,
 						lon       => $journey_stopover->stop->lon,
 					}
@@ -765,6 +769,22 @@ sub set_arrival_eva {
 		'in_transit',
 		{
 			checkout_station_id => $checkout_station_id,
+		},
+		{ user_id => $uid }
+	);
+}
+
+sub set_arrival_platform {
+	my ( $self, %opt ) = @_;
+
+	my $uid      = $opt{uid};
+	my $db       = $opt{db} // $self->{pg}->db;
+	my $platform = $opt{arrival_platform};
+
+	$db->update(
+		'in_transit',
+		{
+			arr_platform => $platform,
 		},
 		{ user_id => $uid }
 	);
@@ -1235,6 +1255,7 @@ sub update_arrival_dbris {
 					isCancelled => $j_stop->is_cancelled,
 					arr_delay   => $j_stop->arr_delay,
 					dep_delay   => $j_stop->dep_delay,
+					platform    => $j_stop->platform,
 					load        => {
 						FIRST  => $j_stop->occupancy_first,
 						SECOND => $j_stop->occupancy_second
@@ -1302,6 +1323,7 @@ sub update_arrival_efa {
 					isCancelled => $j_stop->is_cancelled,
 					arr_delay   => $j_stop->arr_delay,
 					dep_delay   => $j_stop->dep_delay,
+					platform    => $j_stop->platform,
 					efa_load    => $j_stop->occupancy,
 					lat         => $j_stop->latlon->[0],
 					lon         => $j_stop->latlon->[1],
@@ -1356,6 +1378,7 @@ sub update_arrival_motis {
 					rt_dep => _epoch( $journey_stopover->realtime_departure ),
 					arr_delay => $journey_stopover->arrival_delay,
 					dep_delay => $journey_stopover->departure_delay,
+					platform  => $journey_stopover->track,
 					lat       => $journey_stopover->stop->lat,
 					lon       => $journey_stopover->stop->lon,
 				}
@@ -1416,6 +1439,7 @@ sub update_arrival_hafas {
 					rt_dep    => _epoch( $j_stop->rt_dep ),
 					arr_delay => $j_stop->arr_delay,
 					dep_delay => $j_stop->dep_delay,
+					platform  => $j_stop->platform,
 					load      => $j_stop->load,
 					lat       => $j_stop->loc->lat,
 					lon       => $j_stop->loc->lon,
