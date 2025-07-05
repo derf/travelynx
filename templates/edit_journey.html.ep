@@ -69,13 +69,13 @@
 					<tr>
 						<th scope="row">Geplante Abfahrt</th>
 						<td class="input-field">
-							%= text_field 'sched_departure', id => 'sched_departure', class => 'validate', required => undef, pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
+							%= datetime_field 'sched_departure', id => 'sched_departure', class => 'validate', required => undef
 						</td>
 					</tr>
 					<tr>
 						<th scope="row">Tatsächliche Abfahrt</th>
 						<td class="input-field">
-							%= text_field 'rt_departure', id => 'real_departure', class => 'validate', pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
+							%= datetime_field 'rt_departure', id => 'real_departure', class => 'validate'
 						</td>
 					</tr>
 					<tr>
@@ -87,13 +87,13 @@
 					<tr>
 						<th scope="row">Geplante Ankunft</th>
 						<td class="input-field">
-							%= text_field 'sched_arrival', id => 'sched_arrival', class => 'validate', required => undef, pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
+							%= datetime_field 'sched_arrival', id => 'sched_arrival', class => 'validate', required => undef
 						</td>
 					</tr>
 					<tr>
 						<th scope="row">Tatsächliche Ankunft</th>
 						<td class="input-field">
-							%= text_field 'rt_arrival', id => 'real_arrival', class => 'validate', pattern => '[0-9][0-9]?[.][0-9][0-9]?[.][0-9][0-9][0-9][0-9] +[0-9][0-9]:[0-9][0-9]'
+							%= datetime_field 'rt_arrival', id => 'real_arrival', class => 'validate'
 						</td>
 					</tr>
 					<tr>

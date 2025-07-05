@@ -145,14 +145,10 @@ $t->post_ok(
 	}
 );
 
-$t->status_is(200)
-  ->content_like(qr{M.nster\(Westf\)Hbf})
-  ->content_like(qr{Gelsenkirchen Hbf})
-  ->content_like(qr{RE 11238})
-  ->content_like(qr{Linie 42})
-  ->content_like(qr{16.10.2018 ..:36})
-  ->content_like(qr{16.10.2018 ..:34})
-  ->content_like(qr{Huhu});
+$t->status_is(200)->content_like(qr{M.nster\(Westf\)Hbf})
+  ->content_like(qr{Gelsenkirchen Hbf})->content_like(qr{RE 11238})
+  ->content_like(qr{Linie 42})->content_like(qr{2018-10-16T..:36})
+  ->content_like(qr{2018-10-16T..:34})->content_like(qr{Huhu});
 
 $csrf_token = $t->tx->res->dom->at('input[name=csrf_token]')->attr('value');
 
@@ -163,10 +159,10 @@ $t->post_ok(
 		csrf_token      => $csrf_token,
 		from_name       => 'Münster(Westf)Hbf',
 		to_name         => 'Gelsenkirchen Hbf',
-		sched_departure => '16.10.2018 17:36',
-		rt_departure    => '16.10.2018 17:36',
-		sched_arrival   => '16.10.2018 18:34',
-		rt_arrival      => '16.10.2018 18:34',
+		sched_departure => '2018-10-16T17:36',
+		rt_departure    => '2018-10-16T17:36',
+		sched_arrival   => '2018-10-16T18:34',
+		rt_arrival      => '2018-10-16T18:34',
 	}
 );
 
@@ -193,14 +189,10 @@ $t->post_ok(
 	}
 );
 
-$t->status_is(200)
-  ->content_like(qr{M.nster\(Westf\)Hbf})
-  ->content_like(qr{Gelsenkirchen Hbf})
-  ->content_like(qr{RE 11238})
-  ->content_like(qr{Linie 42})
-  ->content_like(qr{16.10.2018 ..:36})
-  ->content_like(qr{16.10.2018 ..:34})
-  ->content_like(qr{Huhu});
+$t->status_is(200)->content_like(qr{M.nster\(Westf\)Hbf})
+  ->content_like(qr{Gelsenkirchen Hbf})->content_like(qr{RE 11238})
+  ->content_like(qr{Linie 42})->content_like(qr{2018-10-16T..:36})
+  ->content_like(qr{2018-10-16T..:34})->content_like(qr{Huhu});
 
 $csrf_token = $t->tx->res->dom->at('input[name=csrf_token]')->attr('value');
 
@@ -211,10 +203,10 @@ $t->post_ok(
 		csrf_token      => $csrf_token,
 		from_name       => 'Münster(Westf)Hbf',
 		to_name         => 'Gelsenkirchen Hbf',
-		sched_departure => '16.10.2018 17:36',
-		rt_departure    => '16.10.2018 17:42',
-		sched_arrival   => '16.10.2018 18:34',
-		rt_arrival      => '16.10.2018 18:33',
+		sched_departure => '2018-10-16T17:36',
+		rt_departure    => '2018-10-16T17:42',
+		sched_arrival   => '2018-10-16T18:34',
+		rt_arrival      => '2018-10-16T18:33',
 	}
 );
 

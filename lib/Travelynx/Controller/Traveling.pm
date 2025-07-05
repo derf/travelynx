@@ -1745,13 +1745,12 @@ sub map_history {
 	my $with_polyline = $route_type eq 'beeline' ? 0 : 1;
 
 	my $parser = DateTime::Format::Strptime->new(
-		pattern   => '%d.%m.%Y',
+		pattern   => '%F',
 		locale    => 'de_DE',
 		time_zone => 'Europe/Berlin'
 	);
 
-	if (    $filter_from
-		and $filter_from =~ m{ ^ (\d+) [.] (\d+) [.] (\d+) $ }x )
+	if ( $filter_from )
 	{
 		$filter_from = $parser->parse_datetime($filter_from);
 	}
@@ -1759,8 +1758,7 @@ sub map_history {
 		$filter_from = undef;
 	}
 
-	if (    $filter_until
-		and $filter_until =~ m{ ^ (\d+) [.] (\d+) [.] (\d+) $ }x )
+	if ( $filter_until )
 	{
 		$filter_until = $parser->parse_datetime($filter_until)->set(
 			hour   => 23,
@@ -2383,7 +2381,7 @@ sub edit_journey {
 
 	if ( $self->param('action') and $self->param('action') eq 'save' ) {
 		my $parser = DateTime::Format::Strptime->new(
-			pattern   => '%d.%m.%Y %H:%M',
+			pattern   => '%FT%H:%M',
 			locale    => 'de_DE',
 			time_zone => 'Europe/Berlin'
 		);
@@ -2486,7 +2484,7 @@ sub edit_journey {
 	for my $key (qw(sched_departure rt_departure sched_arrival rt_arrival)) {
 		if ( $journey->{$key} and $journey->{$key}->epoch ) {
 			$self->param(
-				$key => $journey->{$key}->strftime('%d.%m.%Y %H:%M') );
+				$key => $journey->{$key}->strftime('%FT%H:%M') );
 		}
 	}
 
@@ -2518,7 +2516,7 @@ sub add_journey_form {
 
 	if ( $self->param('action') and $self->param('action') eq 'save' ) {
 		my $parser = DateTime::Format::Strptime->new(
-			pattern   => '%d.%m.%Y %H:%M',
+			pattern   => '%FT%H:%M',
 			locale    => 'de_DE',
 			time_zone => 'Europe/Berlin'
 		);
@@ -2619,7 +2617,12 @@ sub add_intransit_form {
 
 	if ( $self->param('action') and $self->param('action') eq 'save' ) {
 		my $parser = DateTime::Format::Strptime->new(
-			pattern   => '%d.%m.%Y %H:%M',
+			pattern   => '%FT%H:%M',
+			locale    => 'de_DE',
+			time_zone => 'Europe/Berlin'
+		);
+		my $time_parser = DateTime::Format::Strptime->new(
+			pattern   => '%H:%M',
 			locale    => 'de_DE',
 			time_zone => 'Europe/Berlin'
 		);
@@ -2710,7 +2713,7 @@ sub add_intransit_form {
 
 		if ( $trip{route} ) {
 			my @unknown_stations;
-			my $prev_epoch;
+			my $prev_ts = $trip{sched_departure};
 			for my $station ( @{ $trip{route} } ) {
 				my $ts;
 				my %station_data;
@@ -2719,11 +2722,30 @@ sub add_intransit_form {
 				  )
 				{
 					$station = $+{stop};
-					$ts      = $parser->parse_datetime( $+{timestamp} );
-					if ( $ts and $ts->epoch > $prev_epoch ) {
+					# attempt to parse "07:08" short timestamp first
+					$ts = $time_parser->parse_datetime( $+{timestamp} );
+					if ( $ts ) {
+						# fill in last stop's (or at the first stop, our departure's)
+						# date to complete the datetime
+						$ts = $ts->set(
+							year => $prev_ts->year,
+							month => $prev_ts->month,
+							day => $prev_ts->day
+						);
+						# if we go back in time with this, assume we went
+						# over midnight and add a day, e.g. in case of a stop
+						# at 23:00 followed by one at 01:30
+						if ($ts < $prev_ts) {
+							$ts = $ts->add( days => 1 );
+						}
+					} else {
+						# do a full datetime parse
+						$ts = $parser->parse_datetime( $+{timestamp} );
+					}
+					if ( $ts and $ts >= $prev_ts ) {
 						$station_data{sched_arr} = $ts->epoch;
 						$station_data{sched_dep} = $ts->epoch;
-						$prev_epoch              = $ts->epoch;
+						$prev_ts              = $ts;
 					}
 					else {
 						$self->render(

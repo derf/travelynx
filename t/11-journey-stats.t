@@ -82,11 +82,11 @@ $t->post_ok(
 		action          => 'save',
 		train           => 'RE 42 11238',
 		dep_station     => 'EMSTP',
-		sched_departure => '16.10.2018 17:36',
-		rt_departure    => '16.10.2018 17:36',
+		sched_departure => '2018-10-16T17:36',
+		rt_departure    => '2018-10-16T17:36',
 		arr_station     => 'EG',
-		sched_arrival   => '16.10.2018 18:34',
-		rt_arrival      => '16.10.2018 18:34',
+		sched_arrival   => '2018-10-16T18:34',
+		rt_arrival      => '2018-10-16T18:34',
 		comment         => 'Passierschein A38',
 	}
 );
@@ -123,11 +123,11 @@ $t->post_ok(
 		action          => 'save',
 		train           => 'RE 42 11238',
 		dep_station     => 'EMSTP',
-		sched_departure => '16.11.2018 17:36',
-		rt_departure    => '16.11.2018 17:45',
+		sched_departure => '2018-11-16T17:36',
+		rt_departure    => '2018-11-16T17:45',
 		arr_station     => 'EG',
-		sched_arrival   => '16.11.2018 18:34',
-		rt_arrival      => '16.11.2018 19:00',
+		sched_arrival   => '2018-11-16T18:34',
+		rt_arrival      => '2018-11-16T19:00',
 	}
 );
 $t->status_is(302)->header_is( location => '/journey/2' );
@@ -153,10 +153,10 @@ $t->post_ok(
 		action          => 'save',
 		train           => 'ICE 1',
 		dep_station     => 'EE',
-		sched_departure => '17.11.2018 15:42',
+		sched_departure => '2018-11-17T15:42',
 		rt_departure    => '',
 		arr_station     => 'BL',
-		sched_arrival   => '17.11.2018 19:42',
+		sched_arrival   => '2018-11-17T19:42',
 		rt_arrival      => '',
 	}
 );
