@@ -92,8 +92,11 @@ $t->post_ok(
 );
 $t->status_is(302)->header_is( location => '/journey/1' );
 
-$t->get_ok('/history/2018/10')->status_is(200)->content_like(qr{62 km})
-  ->content_like(qr{00:57 Stunden})->content_like(qr{nach Fahrplan: 00:58})
+$t->get_ok('/history/2018/10')
+  ->status_is(200)
+  ->content_like(qr{62 km})
+  ->content_like(qr{00:57 Stunden})
+  ->content_like(qr{nach Fahrplan: 00:58})
   ->content_like(qr{Bei Abfahrt: -00:01 Stunden})
   ->content_like(qr{Bei Ankunft: -00:02 Stunden});
 
