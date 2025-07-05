@@ -83,11 +83,11 @@ $t->post_ok(
 		action          => 'save',
 		train           => 'RE 42 11238',
 		dep_station     => 'EMSTP',
-		sched_departure => '16.10.2018 17:36',
-		rt_departure    => '16.10.2018 17:35',
+		sched_departure => '2018-10-16T17:36',
+		rt_departure    => '2018-10-16T17:35',
 		arr_station     => 'EG',
-		sched_arrival   => '16.10.2018 18:34',
-		rt_arrival      => '16.10.2018 18:32',
+		sched_arrival   => '2018-10-16T18:34',
+		rt_arrival      => '2018-10-16T18:32',
 	}
 );
 $t->status_is(302)->header_is( location => '/journey/1' );
