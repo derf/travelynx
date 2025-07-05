@@ -2380,7 +2380,12 @@ sub edit_journey {
 	my $error = undef;
 
 	if ( $self->param('action') and $self->param('action') eq 'save' ) {
-		my $parser = DateTime::Format::Strptime->new(
+		my $parser_sec = DateTime::Format::Strptime->new(
+			pattern   => '%FT%H:%M:%S',
+			locale    => 'de_DE',
+			time_zone => 'Europe/Berlin'
+		);
+		my $parser_min = DateTime::Format::Strptime->new(
 			pattern   => '%FT%H:%M',
 			locale    => 'de_DE',
 			time_zone => 'Europe/Berlin'
@@ -2391,7 +2396,8 @@ sub edit_journey {
 
 		for my $key (qw(sched_departure rt_departure sched_arrival rt_arrival))
 		{
-			my $datetime = $parser->parse_datetime( $self->param($key) );
+			my $datetime = $parser_sec->parse_datetime( $self->param($key) )
+			  // $parser_min->parse_datetime( $self->param($key) );
 			if ( $datetime and $datetime->epoch ne $journey->{$key}->epoch ) {
 				$error = $self->journeys->update(
 					uid  => $uid,
@@ -2483,8 +2489,13 @@ sub edit_journey {
 
 	for my $key (qw(sched_departure rt_departure sched_arrival rt_arrival)) {
 		if ( $journey->{$key} and $journey->{$key}->epoch ) {
-			$self->param(
-				$key => $journey->{$key}->strftime('%FT%H:%M') );
+			if ( $journey->{$key}->second ) {
+				$self->param(
+					$key => $journey->{$key}->strftime('%FT%H:%M:%S') );
+			}
+			else {
+				$self->param( $key => $journey->{$key}->strftime('%FT%H:%M') );
+			}
 		}
 	}
 
