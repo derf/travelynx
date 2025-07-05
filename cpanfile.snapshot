@@ -1846,8 +1846,8 @@ DISTRIBUTIONS
       Mojolicious 8.50
       SQL::Abstract::Pg 1.0
       perl 5.016
-  Mojolicious-9.40
-    pathname: S/SR/SRI/Mojolicious-9.40.tar.gz
+  Mojolicious-9.41
+    pathname: S/SR/SRI/Mojolicious-9.41.tar.gz
     provides:
       Mojo undef
       Mojo::Asset undef
@@ -1894,6 +1894,7 @@ DISTRIBUTIONS
       Mojo::Reactor undef
       Mojo::Reactor::EV undef
       Mojo::Reactor::Poll undef
+      Mojo::SSE undef
       Mojo::Server undef
       Mojo::Server::CGI undef
       Mojo::Server::Daemon undef
@@ -1916,7 +1917,7 @@ DISTRIBUTIONS
       Mojo::UserAgent::Transactor undef
       Mojo::Util undef
       Mojo::WebSocket undef
-      Mojolicious 9.40
+      Mojolicious 9.41
       Mojolicious::Command undef
       Mojolicious::Command::Author::cpanify undef
       Mojolicious::Command::Author::generate undef
@@ -2618,17 +2619,17 @@ DISTRIBUTIONS
       TimeDate 1.21
     requirements:
       ExtUtils::MakeMaker 0
-  Travel-Status-DE-DBRIS-0.11
-    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.11.tar.gz
+  Travel-Status-DE-DBRIS-0.12
+    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.12.tar.gz
     provides:
-      Travel::Status::DE::DBRIS 0.11
-      Travel::Status::DE::DBRIS::Formation 0.11
-      Travel::Status::DE::DBRIS::Formation::Carriage 0.11
-      Travel::Status::DE::DBRIS::Formation::Group 0.11
-      Travel::Status::DE::DBRIS::Formation::Sector 0.11
-      Travel::Status::DE::DBRIS::Journey 0.11
-      Travel::Status::DE::DBRIS::JourneyAtStop 0.11
-      Travel::Status::DE::DBRIS::Location 0.11
+      Travel::Status::DE::DBRIS 0.12
+      Travel::Status::DE::DBRIS::Formation 0.12
+      Travel::Status::DE::DBRIS::Formation::Carriage 0.12
+      Travel::Status::DE::DBRIS::Formation::Group 0.12
+      Travel::Status::DE::DBRIS::Formation::Sector 0.12
+      Travel::Status::DE::DBRIS::Journey 0.12
+      Travel::Status::DE::DBRIS::JourneyAtStop 0.12
+      Travel::Status::DE::DBRIS::Location 0.12
     requirements:
       Carp 0
       Class::Accessor 0.16
@@ -2644,18 +2645,18 @@ DISTRIBUTIONS
       Test::More 0
       Test::Pod 0
       perl v5.20.0
-  Travel-Status-DE-HAFAS-6.20
-    pathname: D/DE/DERF/Travel-Status-DE-HAFAS-6.20.tar.gz
+  Travel-Status-DE-HAFAS-6.21
+    pathname: D/DE/DERF/Travel-Status-DE-HAFAS-6.21.tar.gz
     provides:
-      Travel::Status::DE::HAFAS 6.20
-      Travel::Status::DE::HAFAS::Journey 6.20
-      Travel::Status::DE::HAFAS::Location 6.20
-      Travel::Status::DE::HAFAS::Message 6.20
-      Travel::Status::DE::HAFAS::Polyline 6.20
-      Travel::Status::DE::HAFAS::Product 6.20
-      Travel::Status::DE::HAFAS::Services 6.20
-      Travel::Status::DE::HAFAS::Stop 6.20
-      Travel::Status::DE::HAFAS::StopFinder 6.20
+      Travel::Status::DE::HAFAS 6.21
+      Travel::Status::DE::HAFAS::Journey 6.21
+      Travel::Status::DE::HAFAS::Location 6.21
+      Travel::Status::DE::HAFAS::Message 6.21
+      Travel::Status::DE::HAFAS::Polyline 6.21
+      Travel::Status::DE::HAFAS::Product 6.21
+      Travel::Status::DE::HAFAS::Services 6.21
+      Travel::Status::DE::HAFAS::Stop 6.21
+      Travel::Status::DE::HAFAS::StopFinder 6.21
     requirements:
       Carp 0
       Class::Accessor 0.16
@@ -2730,16 +2731,16 @@ DISTRIBUTIONS
       Module::Build 0.4
       Test::More 0
       perl v5.10.1
-  Travel-Status-MOTIS-0.02
-    pathname: D/DE/DERF/Travel-Status-MOTIS-0.02.tar.gz
+  Travel-Status-MOTIS-0.03
+    pathname: D/DE/DERF/Travel-Status-MOTIS-0.03.tar.gz
     provides:
-      Travel::Status::MOTIS 0.02
-      Travel::Status::MOTIS::Polyline 0.02
-      Travel::Status::MOTIS::Services 0.02
-      Travel::Status::MOTIS::Stop 0.02
-      Travel::Status::MOTIS::Stopover 0.02
-      Travel::Status::MOTIS::Trip 0.02
-      Travel::Status::MOTIS::TripAtStopover 0.02
+      Travel::Status::MOTIS 0.03
+      Travel::Status::MOTIS::Polyline 0.03
+      Travel::Status::MOTIS::Services 0.03
+      Travel::Status::MOTIS::Stop 0.03
+      Travel::Status::MOTIS::Stopover 0.03
+      Travel::Status::MOTIS::Trip 0.03
+      Travel::Status::MOTIS::TripAtStopover 0.03
     requirements:
       Carp 0
       Class::Accessor 0.16
@@ -3046,32 +3047,32 @@ DISTRIBUTIONS
       XSLoader 0
       lib 0
       perl 5.008001
-  libwww-perl-6.78
-    pathname: O/OA/OALDERS/libwww-perl-6.78.tar.gz
+  libwww-perl-6.79
+    pathname: O/OA/OALDERS/libwww-perl-6.79.tar.gz
     provides:
-      LWP 6.78
-      LWP::Authen::Basic 6.78
-      LWP::Authen::Digest 6.78
-      LWP::Authen::Ntlm 6.78
-      LWP::ConnCache 6.78
-      LWP::Debug 6.78
-      LWP::Debug::TraceHTTP 6.78
-      LWP::DebugFile 6.78
-      LWP::MemberMixin 6.78
-      LWP::Protocol 6.78
-      LWP::Protocol::cpan 6.78
-      LWP::Protocol::data 6.78
-      LWP::Protocol::file 6.78
-      LWP::Protocol::ftp 6.78
-      LWP::Protocol::gopher 6.78
-      LWP::Protocol::http 6.78
-      LWP::Protocol::loopback 6.78
-      LWP::Protocol::mailto 6.78
-      LWP::Protocol::nntp 6.78
-      LWP::Protocol::nogo 6.78
-      LWP::RobotUA 6.78
-      LWP::Simple 6.78
-      LWP::UserAgent 6.78
+      LWP 6.79
+      LWP::Authen::Basic 6.79
+      LWP::Authen::Digest 6.79
+      LWP::Authen::Ntlm 6.79
+      LWP::ConnCache 6.79
+      LWP::Debug 6.79
+      LWP::Debug::TraceHTTP 6.79
+      LWP::DebugFile 6.79
+      LWP::MemberMixin 6.79
+      LWP::Protocol 6.79
+      LWP::Protocol::cpan 6.79
+      LWP::Protocol::data 6.79
+      LWP::Protocol::file 6.79
+      LWP::Protocol::ftp 6.79
+      LWP::Protocol::gopher 6.79
+      LWP::Protocol::http 6.79
+      LWP::Protocol::loopback 6.79
+      LWP::Protocol::mailto 6.79
+      LWP::Protocol::nntp 6.79
+      LWP::Protocol::nogo 6.79
+      LWP::RobotUA 6.79
+      LWP::Simple 6.79
+      LWP::UserAgent 6.79
     requirements:
       Digest::MD5 0
       Encode 2.12
