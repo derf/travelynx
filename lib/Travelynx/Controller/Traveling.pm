@@ -2379,12 +2379,12 @@ sub edit_journey {
 
 	if ( $self->param('action') and $self->param('action') eq 'save' ) {
 		my $parser_sec = DateTime::Format::Strptime->new(
-			pattern   => '%FT%H:%M:%S',
+			pattern   => '%d.%m.%Y %H:%M:%S',
 			locale    => 'de_DE',
 			time_zone => 'Europe/Berlin'
 		);
 		my $parser_min = DateTime::Format::Strptime->new(
-			pattern   => '%FT%H:%M',
+			pattern   => '%d.%m.%Y %H:%M',
 			locale    => 'de_DE',
 			time_zone => 'Europe/Berlin'
 		);
@@ -2489,10 +2489,10 @@ sub edit_journey {
 		if ( $journey->{$key} and $journey->{$key}->epoch ) {
 			if ( $journey->{$key}->second ) {
 				$self->param(
-					$key => $journey->{$key}->strftime('%FT%H:%M:%S') );
+					$key => $journey->{$key}->strftime('%d.%m.%Y %H:%M:%S') );
 			}
 			else {
-				$self->param( $key => $journey->{$key}->strftime('%FT%H:%M') );
+				$self->param( $key => $journey->{$key}->strftime('%d.%m.%Y %H:%M') );
 			}
 		}
 	}
