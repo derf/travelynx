@@ -605,7 +605,7 @@ sub geolocation {
 						distance => 0,
 						dbris    => $dbris_service,
 					}
-				} $dbris->results;
+				} uniq_by { $_->name } $dbris->results;
 				if ( @results > 10 ) {
 					@results = @results[ 0 .. 9 ];
 				}
