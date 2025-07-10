@@ -39,6 +39,15 @@ var pl;
 	% }
 % }
 
+% for my $marker (@{stash('markers') // []}) {
+	% if ($marker->[0] and $marker->[0][0] and $marker->[1]) {
+		{
+			const marker = L.marker([<%= $marker->[0][0] %>, <%= $marker->[0][1] %>]).addTo(map);
+			marker.bindPopup('<%= $marker->[1] %>');
+		}
+	% }
+% }
+
 % if (my $b = stash('bounds')) {
 	map.fitBounds([[<%= $b->[0][0] %>,<%= $b->[0][1] %>],[<%= $b->[1][0] %>,<%= $b->[1][1] %>]]);
 % }
@@ -48,8 +57,8 @@ for (var station_id in stations) {
 		color: '#f03',
 		opacity: 0.7,
 		fillColor: '#f03',
-		fillOpacity: 0.5,
-		radius: 250
+		fillOpacity: 0.2,
+		radius: 200
 	}).bindPopup(stations[station_id][1]).addTo(map);
 }
 

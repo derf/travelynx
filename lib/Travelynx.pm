@@ -1615,10 +1615,10 @@ sub startup {
 						rt_arrival    =>
 						  ( $stop->[2]{rt_arr} || $stop->[2]{sched_arr} )
 					);
-					if ($stop->[2]{platform}) {
+					if ( $stop->[2]{platform} ) {
 						$self->in_transit->set_arrival_platform(
-							uid => $uid,
-							db => $db,
+							uid              => $uid,
+							db               => $db,
 							arrival_platform => $stop->[2]{platform}
 						);
 					}
@@ -2704,13 +2704,42 @@ sub startup {
 					latlon => $_->{from_latlon} // $_->{dep_latlon}
 				  }
 			} @journeys;
+			my @extra_stations;
+
+			if ( $opt{show_all_stops} ) {
+				for my $journey (@journeys) {
+					my @j_stops = map {
+						{
+							name   => $_->[2],
+							latlon => [ $_->[1], $_->[0] ]
+						}
+					} grep { defined $_->[2] }
+					  @{ $journey->{polyline} // [] };
+					@extra_stations
+					  = uniq_by { $_->{name} } ( @extra_stations, @j_stops );
+				}
+			}
 
 			my @station_coordinates
 			  = map { [ $_->{latlon}, $_->{name} ] } @stations;
+			my @extra_station_coordinates
+			  = map { [ $_->{latlon}, $_->{name} ] } @extra_stations;
+
+			my @now_coordinates = map {
+				[
+					$_->{now_latlon},
+					$_->{train_type} . ' '
+					  . ( $_->{train_line} // $_->{train_no} )
+				]
+			} @journeys;
 
 			my @station_pairs;
 			my @polylines;
 			my %seen;
+
+			# not part of the travelled route, but trip route before/after the journey.
+			# Only used if show_full_route is set.
+			my @extra_polylines;
 
 			my @skipped_journeys;
 			my @polyline_journeys = grep { $_->{polyline} } @journeys;
@@ -2787,12 +2816,28 @@ sub startup {
 				if ( $from_index > $to_index ) {
 					( $to_index, $from_index ) = ( $from_index, $to_index );
 				}
+				if ( $opt{show_full_route} ) {
+					my @pre_polyline  = @polyline[ 0 .. $from_index ];
+					my @post_polyline = @polyline[ $to_index .. $#polyline ];
+					my @pre_polyline_coords;
+					for my $coord (@pre_polyline) {
+						push( @pre_polyline_coords,
+							[ $coord->[1], $coord->[0] ] );
+					}
+					my @post_polyline_coords;
+					for my $coord (@post_polyline) {
+						push( @post_polyline_coords,
+							[ $coord->[1], $coord->[0] ] );
+					}
+					push( @extra_polylines,
+						( \@pre_polyline_coords, \@post_polyline_coords ) );
+				}
 				@polyline = @polyline[ $from_index .. $to_index ];
 				my @polyline_coords;
 				for my $coord (@polyline) {
 					push( @polyline_coords, [ $coord->[1], $coord->[0] ] );
 				}
-				push( @polylines, [@polyline_coords] );
+				push( @polylines, \@polyline_coords );
 			}
 
 			for my $journey (@beeline_journeys) {
@@ -2900,7 +2945,7 @@ sub startup {
 					{
 						polylines => $json->encode( \@station_pairs ),
 						color     => '#673ab7',
-						opacity   => @polylines
+						opacity   => scalar @polylines
 						? $with_polyline
 						      ? 0.4
 						      : 0.6
@@ -2910,8 +2955,14 @@ sub startup {
 						polylines => $json->encode( \@polylines ),
 						color     => '#673ab7',
 						opacity   => 0.8,
-					}
+					},
+					{
+						polylines => $json->encode( \@extra_polylines ),
+						color     => '#665577',
+						opacity   => 0.6,
+					},
 				],
+				markers => \@now_coordinates,
 			};
 
 			if (@station_coordinates) {
@@ -2923,6 +2974,13 @@ sub startup {
 				my $max_lon = List::Util::max @lons;
 				$ret->{bounds}
 				  = [ [ $min_lat, $min_lon ], [ $max_lat, $max_lon ] ];
+			}
+
+			if (@extra_station_coordinates) {
+				$ret->{station_coordinates} = [
+					uniq_by { $_->[1] }
+					( @station_coordinates, @extra_station_coordinates )
+				];
 			}
 
 			return $ret;

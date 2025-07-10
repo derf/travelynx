@@ -362,7 +362,7 @@
 				<span class="card-title">Karte</span>
 				<div id="map" style="height: 70vh;">
 				</div>
-				%= include '_map', with_map_header => 0, station_coordinates => stash('station_coordinates'), polyline_groups => stash('polyline_groups')
+				%= include '_map', with_map_header => 0, station_coordinates => stash('station_coordinates'), polyline_groups => stash('polyline_groups'), markers => stash('markers')
 			</div>
 		</div>
 		% if ($journey->{extra_data}{manual}) {

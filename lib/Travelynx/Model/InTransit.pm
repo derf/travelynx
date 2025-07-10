@@ -10,6 +10,7 @@ use warnings;
 use 5.020;
 
 use DateTime;
+use GIS::Distance;
 use JSON;
 
 my %visibility_itoa = (
@@ -633,6 +634,7 @@ sub get {
 	if ( $opt{with_polyline} and $ret ) {
 		$ret->{dep_latlon} = [ $ret->{dep_lat}, $ret->{dep_lon} ];
 		$ret->{arr_latlon} = [ $ret->{arr_lat}, $ret->{arr_lon} ];
+		$ret->{now_latlon} = $self->estimate_trip_position($ret);
 	}
 
 	if ( $opt{with_visibility} and $ret ) {
@@ -1547,6 +1549,137 @@ sub update_visibility {
 		{ visibility => $visibility },
 		{ user_id    => $uid }
 	);
+}
+
+sub estimate_trip_position_between_stops {
+	my ( $self, %opt ) = @_;
+
+	my $time_complete = $opt{now} - $opt{from_ts};
+	my $time_total    = $opt{to_ts} - $opt{from_ts};
+	my $ratio         = $time_complete / $time_total;
+
+	my $distance = GIS::Distance->new;
+	my $polyline = $opt{polyline};
+	my ( $i_from, $i_to );
+
+	for my $i ( 0 .. $#{$polyline} ) {
+		if (    not defined $i_from
+			and $polyline->[$i][2]
+			and $polyline->[$i][2] == $opt{from}[1] )
+		{
+			$i_from = $i;
+		}
+		elsif ( not defined $i_to
+			and $polyline->[$i][2]
+			and $polyline->[$i][2] == $opt{to}[1] )
+		{
+			$i_to = $i;
+			last;
+		}
+	}
+	if ( $i_from and $i_to ) {
+		my $total_distance = 0;
+		for my $i ( $i_from + 1 .. $i_to ) {
+			my $prev = $polyline->[ $i - 1 ];
+			my $this = $polyline->[$i];
+			if ( $prev and $this ) {
+				$total_distance
+				  += $distance->distance_metal( $prev->[1], $prev->[0],
+					$this->[1], $this->[0] );
+			}
+		}
+
+		my $marker_distance = $total_distance * $ratio;
+		$total_distance = 0;
+		for my $i ( $i_from + 1 .. $i_to ) {
+			my $prev = $polyline->[ $i - 1 ];
+			my $this = $polyline->[$i];
+			if ( $prev and $this ) {
+				my $prev_distance = $total_distance;
+				$total_distance
+				  += $distance->distance_metal( $prev->[1], $prev->[0],
+					$this->[1], $this->[0] );
+				if ( $total_distance > $marker_distance ) {
+					my $sub_ratio = 1;
+					if ( $total_distance != $prev_distance ) {
+						$sub_ratio = ( $marker_distance - $prev_distance )
+						  / ( $total_distance - $prev_distance );
+					}
+					return (
+						$prev->[1] + ( $this->[1] - $prev->[1] ) * $sub_ratio,
+						$prev->[0] + ( $this->[0] - $prev->[0] ) * $sub_ratio,
+					);
+				}
+			}
+		}
+	}
+	return (
+		$opt{from}[2]{lat} + ( $opt{to}[2]{lat} - $opt{from}[2]{lat} ) * $ratio,
+		$opt{from}[2]{lon} + ( $opt{to}[2]{lon} - $opt{from}[2]{lon} ) * $ratio
+	);
+}
+
+sub estimate_trip_position {
+	my ( $self, $in_transit ) = @_;
+
+	my @now_latlon;
+	my $next_stop;
+	my @route = @{ $in_transit->{route} };
+
+	# estimate_train_position runs before postprocess, so all route
+	# timestamps are provided in UNIX seconds and not as DateTime objects.
+	my $now = DateTime->now( time_zone => 'Europe/Berlin' )->epoch;
+
+	if (
+		0
+		and $now <= (
+			$route[0][2]{rt_arr} // $route[0][2]{sched_arr}
+			  // $route[0][2]{rt_dep} // $route[0][2]{sched_dep} // 0
+		)
+	  )
+	{
+		return [ $route[0][2]{lat}, $route[0][2]{lon} ];
+	}
+
+	my $prev_ts;
+	for my $i ( 0 .. $#route ) {
+		my $ts = $route[$i][2]{rt_arr} // $route[$i][2]{sched_arr}
+		  // $route[$i][2]{rt_dep} // $route[$i][2]{sched_dep} // 0;
+		if (    not $next_stop
+			and $ts
+			and $prev_ts
+			and $now > $prev_ts
+			and $now < $ts )
+		{
+			@now_latlon = $self->estimate_trip_position_between_stops(
+				now      => $now,
+				from     => $route[ $i - 1 ],
+				from_ts  => $prev_ts,
+				to       => $route[$i],
+				to_ts    => $ts,
+				polyline => $in_transit->{polyline},
+			);
+			$next_stop = {
+				type    => 'next',
+				station => $route[$i],
+			};
+		}
+		$prev_ts = $ts;
+	}
+
+	# Actually, the vehicle's position isn't well-known in this case.
+	#if (not @now_latlon and $in_transit->{sched_dep_ts} and $in_transit->{sched_arr_ts}) {
+	#	my $time_complete = $now - ($in_transit->{real_dep_ts} // $in_transit->{sched_dep_ts});
+	#	my $time_total = ($in_transit->{real_arr_ts} // $in_transit->{sched_arr_ts}) - ($in_transit->{real_dep_ts} // $in_transit->{sched_dep_ts});
+	#	my $completion = $time_complete / $time_total;
+	#	$completion = $completion < 0 ? 0 : $completion > 1 ? 1 : $completion;
+	#	@now_latlon = (
+	#		$in_transit->{dep_lat} + ($in_transit->{arr_lat} - $in_transit->{dep_lat}) * $completion,
+	#		$in_transit->{dep_lon} + ($in_transit->{arr_lon} - $in_transit->{dep_lon}) * $completion,
+	#	);
+	#}
+
+	return \@now_latlon;
 }
 
 1;

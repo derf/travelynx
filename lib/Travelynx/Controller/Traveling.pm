@@ -370,7 +370,8 @@ sub homepage {
 			my $map_data = {};
 			if ( $status->{arr_name} ) {
 				$map_data = $self->journeys_to_map_data(
-					journeys => [$status],
+					journeys        => [$status],
+					show_full_route => 1,
 				);
 			}
 			my $journey_visibility
@@ -460,7 +461,8 @@ sub status_card {
 		my $map_data = {};
 		if ( $status->{arr_name} ) {
 			$map_data = $self->journeys_to_map_data(
-				journeys => [$status],
+				journeys        => [$status],
+				show_full_route => 1,
 			);
 		}
 		my $journey_visibility
@@ -2492,7 +2494,8 @@ sub edit_journey {
 					$key => $journey->{$key}->strftime('%d.%m.%Y %H:%M:%S') );
 			}
 			else {
-				$self->param( $key => $journey->{$key}->strftime('%d.%m.%Y %H:%M') );
+				$self->param(
+					$key => $journey->{$key}->strftime('%d.%m.%Y %H:%M') );
 			}
 		}
 	}
