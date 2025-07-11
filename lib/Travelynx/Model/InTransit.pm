@@ -1667,17 +1667,26 @@ sub estimate_trip_position {
 		$prev_ts = $ts;
 	}
 
-	# Actually, the vehicle's position isn't well-known in this case.
-	#if (not @now_latlon and $in_transit->{sched_dep_ts} and $in_transit->{sched_arr_ts}) {
-	#	my $time_complete = $now - ($in_transit->{real_dep_ts} // $in_transit->{sched_dep_ts});
-	#	my $time_total = ($in_transit->{real_arr_ts} // $in_transit->{sched_arr_ts}) - ($in_transit->{real_dep_ts} // $in_transit->{sched_dep_ts});
-	#	my $completion = $time_complete / $time_total;
-	#	$completion = $completion < 0 ? 0 : $completion > 1 ? 1 : $completion;
-	#	@now_latlon = (
-	#		$in_transit->{dep_lat} + ($in_transit->{arr_lat} - $in_transit->{dep_lat}) * $completion,
-	#		$in_transit->{dep_lon} + ($in_transit->{arr_lon} - $in_transit->{dep_lon}) * $completion,
-	#	);
-	#}
+	if (    not @now_latlon
+		and $in_transit->{sched_dep_ts}
+		and $in_transit->{sched_arr_ts} )
+	{
+		my $time_complete = $now
+		  - ( $in_transit->{real_dep_ts} // $in_transit->{sched_dep_ts} );
+		my $time_total
+		  = ( $in_transit->{real_arr_ts} // $in_transit->{sched_arr_ts} )
+		  - ( $in_transit->{real_dep_ts} // $in_transit->{sched_dep_ts} );
+		my $completion = $time_complete / $time_total;
+		$completion = $completion < 0 ? 0 : $completion > 1 ? 1 : $completion;
+		@now_latlon = (
+			$in_transit->{dep_lat}
+			  + ( $in_transit->{arr_lat} - $in_transit->{dep_lat} )
+			  * $completion,
+			$in_transit->{dep_lon}
+			  + ( $in_transit->{arr_lon} - $in_transit->{dep_lon} )
+			  * $completion,
+		);
+	}
 
 	return \@now_latlon;
 }
