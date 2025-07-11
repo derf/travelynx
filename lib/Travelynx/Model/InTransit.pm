@@ -1630,17 +1630,6 @@ sub estimate_trip_position {
 	# timestamps are provided in UNIX seconds and not as DateTime objects.
 	my $now = DateTime->now( time_zone => 'Europe/Berlin' )->epoch;
 
-	if (
-		0
-		and $now <= (
-			$route[0][2]{rt_arr} // $route[0][2]{sched_arr}
-			  // $route[0][2]{rt_dep} // $route[0][2]{sched_dep} // 0
-		)
-	  )
-	{
-		return [ $route[0][2]{lat}, $route[0][2]{lon} ];
-	}
-
 	my $prev_ts;
 	for my $i ( 0 .. $#route ) {
 		my $ts = $route[$i][2]{rt_arr} // $route[$i][2]{sched_arr}
