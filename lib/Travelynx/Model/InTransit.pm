@@ -1577,7 +1577,7 @@ sub estimate_trip_position_between_stops {
 			last;
 		}
 	}
-	if ( $i_from and $i_to ) {
+	if ( defined $i_from and defined $i_to ) {
 		my $total_distance = 0;
 		for my $i ( $i_from + 1 .. $i_to ) {
 			my $prev = $polyline->[ $i - 1 ];
