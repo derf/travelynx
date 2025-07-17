@@ -1494,18 +1494,18 @@ DISTRIBUTIONS
       Exporter 5.57
       ExtUtils::MakeMaker 0
       perl 5.008
-  IO-Socket-SSL-2.094
-    pathname: S/SU/SULLR/IO-Socket-SSL-2.094.tar.gz
+  IO-Socket-SSL-2.095
+    pathname: S/SU/SULLR/IO-Socket-SSL-2.095.tar.gz
     provides:
-      IO::Socket::SSL 2.094
+      IO::Socket::SSL 2.095
       IO::Socket::SSL::Intercept 2.056
-      IO::Socket::SSL::OCSP_Cache 2.094
-      IO::Socket::SSL::OCSP_Resolver 2.094
+      IO::Socket::SSL::OCSP_Cache 2.095
+      IO::Socket::SSL::OCSP_Resolver 2.095
       IO::Socket::SSL::PublicSuffix undef
-      IO::Socket::SSL::SSL_Context 2.094
-      IO::Socket::SSL::SSL_HANDLE 2.094
-      IO::Socket::SSL::Session_Cache 2.094
-      IO::Socket::SSL::Trace 2.094
+      IO::Socket::SSL::SSL_Context 2.095
+      IO::Socket::SSL::SSL_HANDLE 2.095
+      IO::Socket::SSL::Session_Cache 2.095
+      IO::Socket::SSL::Trace 2.095
       IO::Socket::SSL::Utils 2.015
     requirements:
       ExtUtils::MakeMaker 0
@@ -2422,10 +2422,10 @@ DISTRIBUTIONS
       Test::Builder 0
       Test::More 0.96
       perl 5.012
-  Test-Differences-0.71
-    pathname: D/DC/DCANTRELL/Test-Differences-0.71.tar.gz
+  Test-Differences-0.72
+    pathname: D/DC/DCANTRELL/Test-Differences-0.72.tar.gz
     provides:
-      Test::Differences 0.71
+      Test::Differences 0.72
     requirements:
       Capture::Tiny 0.24
       Data::Dumper 2.126
@@ -2645,18 +2645,18 @@ DISTRIBUTIONS
       Test::More 0
       Test::Pod 0
       perl v5.20.0
-  Travel-Status-DE-HAFAS-6.21
-    pathname: D/DE/DERF/Travel-Status-DE-HAFAS-6.21.tar.gz
+  Travel-Status-DE-HAFAS-6.22
+    pathname: D/DE/DERF/Travel-Status-DE-HAFAS-6.22.tar.gz
     provides:
-      Travel::Status::DE::HAFAS 6.21
-      Travel::Status::DE::HAFAS::Journey 6.21
-      Travel::Status::DE::HAFAS::Location 6.21
-      Travel::Status::DE::HAFAS::Message 6.21
-      Travel::Status::DE::HAFAS::Polyline 6.21
-      Travel::Status::DE::HAFAS::Product 6.21
-      Travel::Status::DE::HAFAS::Services 6.21
-      Travel::Status::DE::HAFAS::Stop 6.21
-      Travel::Status::DE::HAFAS::StopFinder 6.21
+      Travel::Status::DE::HAFAS 6.22
+      Travel::Status::DE::HAFAS::Journey 6.22
+      Travel::Status::DE::HAFAS::Location 6.22
+      Travel::Status::DE::HAFAS::Message 6.22
+      Travel::Status::DE::HAFAS::Polyline 6.22
+      Travel::Status::DE::HAFAS::Product 6.22
+      Travel::Status::DE::HAFAS::Services 6.22
+      Travel::Status::DE::HAFAS::Stop 6.22
+      Travel::Status::DE::HAFAS::StopFinder 6.22
     requirements:
       Carp 0
       Class::Accessor 0.16
@@ -2706,17 +2706,17 @@ DISTRIBUTIONS
       Text::LevenshteinXS 0
       XML::LibXML 0
       perl v5.14.2
-  Travel-Status-DE-VRR-3.13
-    pathname: D/DE/DERF/Travel-Status-DE-VRR-3.13.tar.gz
+  Travel-Status-DE-VRR-3.14
+    pathname: D/DE/DERF/Travel-Status-DE-VRR-3.14.tar.gz
     provides:
-      Travel::Status::DE::EFA 3.13
-      Travel::Status::DE::EFA::Departure 3.13
-      Travel::Status::DE::EFA::Info 3.13
-      Travel::Status::DE::EFA::Line 3.13
-      Travel::Status::DE::EFA::Services 3.13
-      Travel::Status::DE::EFA::Stop 3.13
-      Travel::Status::DE::EFA::Trip 3.13
-      Travel::Status::DE::VRR 3.13
+      Travel::Status::DE::EFA 3.14
+      Travel::Status::DE::EFA::Departure 3.14
+      Travel::Status::DE::EFA::Info 3.14
+      Travel::Status::DE::EFA::Line 3.14
+      Travel::Status::DE::EFA::Services 3.14
+      Travel::Status::DE::EFA::Stop 3.14
+      Travel::Status::DE::EFA::Trip 3.14
+      Travel::Status::DE::VRR 3.14
     requirements:
       Carp 0
       Class::Accessor 0
