@@ -5,7 +5,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-# Global
+#
+# Global Strings
+#
+
+msgid "button.register"
+msgstr "Registrieren"
+
+msgid "button.login"
+msgstr "Anmelden"
 
 msgid "button.logout"
 msgstr "Abmelden"
@@ -30,6 +38,10 @@ msgstr "dunkel"
 
 msgid "footer.colour-scheme.auto"
 msgstr "automatisch"
+
+#
+# Templates
+#
 
 # account.html.ep
 
@@ -81,6 +93,67 @@ msgstr "offene Anfragen"
 msgid "account.interaction.disabled"
 msgstr "Accounts können dir nicht folgen"
 
+# login.html.ep
+
+msgid "login.accept-tos-pre"
+msgstr "Mit der Anmeldung stimmst du den"
+
+msgid "login.tos"
+msgstr "Nutzungsbedingungen"
+
+msgid "login.accept-tos-post"
+msgstr "zu."
+
+msgid "login.forgot-password"
+msgstr "Passwort vergessen"
+
+msgid "login.registration-disabled"
+msgstr "Diese Instanz erlaubt derzeit keine Registrierung neuer Accounts"
+
+# register.html.ep
+
+msgid "register.name"
+msgstr "Name (alphanumerisch)"
+
+msgid "register.mail"
+msgstr "E-Mail-Adresse"
+
+msgid "register.password"
+msgstr "Passwort"
+
+msgid "register.repeat-password"
+msgstr "Passwort wiederholen"
+
+msgid "register.accept-tos-pre"
+msgstr "Mit deiner Registrierung stimmst du den"
+
+msgid "register.tos"
+msgstr "Nutzungsbedingungen"
+
+msgid "register.accept-tos-post"
+msgstr "zu."
+
+msgid "register.expect-confirmation-link"
+msgstr "Nach der Registrierung wird ein für 48 Stunden gültiger Bestätigungslink an die angegebene Mail-Adresse geschickt. Eine Anmeldung ist erst nach Bestätigung der Mail-Adresse möglich."
+
+msgid "register.why-mail"
+msgstr "Die Mail-Adresse wird ausschließlich zur Bestätigung der Anmeldung, für die „Passwort vergessen“-Funktionalität und für wichtige Informationen über den Account verwendet und nicht an Dritte weitergegeben."
+
+msgid "register.privacy-pre"
+msgstr "Die"
+
+msgid "register.privacy"
+msgstr "Datenschutzerklärung"
+
+msgid "register.privacy-post"
+msgstr "beschreibt weitere erhobene Daten sowie deren Zweck und Speicherfristen."
+
+msgid "register.account-deletion"
+msgstr "Accounts werden nach einem Jahr ohne Aktivität per E-Mail über die bevorstehende Löschung informiert und nach vier weiteren Wochen ohne Aktivität automatisch gelöscht."
+
+msgid "register.disclaimer"
+msgstr "Bitte beachten: Travelynx ist ein privat betriebenes Projekt ohne Verfügbarkeitsgarantie. Unangekündigte Downtimes oder eine kurzfristige Einstellung dieser Seite sind nicht vorgesehen, aber möglich."
+
 # _public_status_card.html.ep
 
 msgid "status.is-checked-in"
@@ -89,6 +162,9 @@ msgstr "ist unterwegs"
 msgid "status.is-not-checked-in"
 msgstr "ist gerade nicht eingecheckt"
 
+msgid "status.share"
+msgstr "Teilen"
+
 msgid "status.arrival-in"
 msgstr "Ankunft in"
 
@@ -96,7 +172,10 @@ msgid "status.arrival-soon"
 msgstr "Ankunft in weniger als einer Minute"
 
 msgid "status.arrival-unknown"
-msgstr "Arrival unbekannt"
+msgstr "Ankunft unbekannt"
+
+msgid "status.arrived"
+msgstr "Ziel erreicht"
 
 msgid "status.carriages"
 msgstr "Wagen"
@@ -117,38 +196,3 @@ msgstr "nach"
 
 msgid "wagons.carriage"
 msgstr "Wagen"
-
-# Journeys.pm#min_to_human
-
-msgid "countdown.n-weeks"
-msgstr "%d Wochen"
-
-msgid "countdown.1-week"
-msgstr "1 Woche"
-
-msgid "countdown.n-days"
-msgstr "%d Tage"
-
-msgid "countdown.1-day"
-msgstr "1 Tag"
-
-msgid "countdown.n-hours"
-msgstr "%d Stunden"
-
-msgid "countdown.1-hour"
-msgstr "1 Stunde"
-
-msgid "countdown.n-minutes"
-msgstr "%d Minuten"
-
-msgid "countdown.1-minute"
-msgstr "1 Minute"
-
-msgid "countdown.0-minutes"
-msgstr "0 Minuten"
-
-msgid "countdown.concat"
-msgstr ", "
-
-msgid "countdown.concat-last"
-msgstr " und "

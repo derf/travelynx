@@ -433,7 +433,7 @@ sub startup {
 			elsif ( my $languages = $self->req->headers->accept_language ) {
 				for my $lang ( split( qr{ \s* , \s* }x, $languages ) ) {
 					if ( $lang =~ m{ ^ de }x ) {
-						push( @languages, 'en-GB' );
+						push( @languages, 'de-DE' );
 					}
 					elsif ( $lang =~ m{ ^ en }x ) {
 						push( @languages, 'en-GB' );

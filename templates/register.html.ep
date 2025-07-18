@@ -8,27 +8,29 @@
 		<div class="input-field col l6 m12 s12">
 			<i class="material-icons prefix">account_circle</i>
 			%= text_field 'user', id => 'account', class => 'validate', required => undef, pattern => '[0-9a-zA-Z_-]+', maxlength => 60, autocomplete => 'username'
-			<label for="account">Name (alphanumerisch)</label>
+			<label for="account"><%= L('register.name') %></label>
 		</div>
 		<div class="input-field col l6 m12 s12">
 			<i class="material-icons prefix">email</i>
 			%= email_field 'email', id => 'email', class => 'validate', required => undef, maxlength => 250
-			<label for="email">Mail-Adresse</label>
+			<label for="email"><%= L('register.mail') %></label>
 		</div>
 		<div class="input-field col l6 m12 s12">
 			<i class="material-icons prefix">lock</i>
 			%= password_field 'password', id => 'password', class => 'validate', required => undef, minlength => 8, maxlength => 10000, autocomplete => 'new-password'
-			<label for="password">Passwort</label>
+			<label for="password"><%= L('register.password') %></label>
 		</div>
 		<div class="input-field col l6 m12 s12">
 			<i class="material-icons prefix">lock</i>
 			%= password_field 'password2', id => 'password2', class => 'validate', required => undef, minlength => 8, maxlength => 10000, autocomplete => 'new-password'
-			<label for="password2">Passwort wiederholen</label>
+			<label for="password2"><%= L('register.repeat-password') %></label>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col s12 m12 l12">
-			Mit deiner Registrierung stimmst du den <a href="/tos">Nutzungsbedingungen</a> zu.
+			%= L('register.accept-tos-pre')
+			<a href="/tos"><%= L('register.tos') %></a>
+			%= L('register.accept-tos-post')
 		</div>
 	</div>
 	<div class="row">
@@ -36,7 +38,7 @@
 		</div>
 		<div class="col s6 m6 l6 center-align">
 			<button class="btn waves-effect waves-light" type="submit" name="action" value="register">
-				Registrieren
+				%= L('button.register')
 				<i class="material-icons right">send</i>
 			</button>
 		</div>
@@ -47,9 +49,7 @@
 <div class="row">
 	<div class="col s12">
 		<p>
-			Nach der Registrierung wird ein für 48 Stunden gültiger
-			Bestätigungslink an die angegebene Mail-Adresse geschickt. Eine
-			Anmeldung ist erst nach Bestätigung der Mail-Adresse möglich.
+			%= L('register.expect-confirmation-link')
 		</p>
 		<p>
 			Die Mail-Adresse wird ausschließlich zur Bestätigung der Anmeldung,
