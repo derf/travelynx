@@ -162,29 +162,7 @@ sub startup {
 		'before_render' => sub {
 			my ($self) = @_;
 
-			# TODO load languages from user profile, if set
-
-			my @languages;
-			if ( $self->is_user_authenticated
-				and @{ $self->current_user->{languages} } )
-			{
-				@languages = @{ $self->current_user->{languages} };
-			}
-			elsif ( my $languages = $self->req->headers->accept_language ) {
-				for my $lang ( split( qr{ \s* , \s* }x, $languages ) ) {
-					if ( $lang =~ m{ ^ de }x ) {
-						push( @languages, 'de-DE' );
-					}
-					elsif ( $lang =~ m{ ^ en }x ) {
-						push( @languages, 'en-GB' );
-					}
-				}
-			}
-
-			# de-DE is our fall-back language and thus always appended
-			$self->stash( loc_handle =>
-				  Travelynx::Helper::Locales->get_handle( @languages, 'de-DE' )
-			);
+			$self->stash( loc_handle => $self->loc_handle );
 		}
 	);
 
@@ -439,6 +417,33 @@ sub startup {
 				user_agent     => $self->ua,
 				version        => $self->app->config->{version},
 			);
+		}
+	);
+
+	$self->helper(
+		loc_handle => sub {
+			my ($self) = @_;
+
+			my @languages;
+			if ( $self->is_user_authenticated
+				and @{ $self->current_user->{languages} } )
+			{
+				@languages = @{ $self->current_user->{languages} };
+			}
+			elsif ( my $languages = $self->req->headers->accept_language ) {
+				for my $lang ( split( qr{ \s* , \s* }x, $languages ) ) {
+					if ( $lang =~ m{ ^ de }x ) {
+						push( @languages, 'en-GB' );
+					}
+					elsif ( $lang =~ m{ ^ en }x ) {
+						push( @languages, 'en-GB' );
+					}
+				}
+			}
+
+			# de-DE is our fall-back language and thus always appended
+			return Travelynx::Helper::Locales->get_handle( @languages,
+				'de-DE' );
 		}
 	);
 
@@ -3105,6 +3110,7 @@ sub startup {
 	$authed_r->get('/account/hooks')->to('account#webhook');
 	$authed_r->get('/account/traewelling')->to('traewelling#settings');
 	$authed_r->get('/account/insight')->to('account#insight');
+	$authed_r->get('/account/language')->to('account#change_language');
 	$authed_r->get('/ajax/status_card.html')->to('traveling#status_card');
 	$authed_r->get( '/cancelled' => [ format => [ 'html', 'json' ] ] )
 	  ->to( 'traveling#cancelled', format => undef );
@@ -3135,6 +3141,7 @@ sub startup {
 	$authed_r->post('/account/hooks')->to('account#webhook');
 	$authed_r->post('/account/traewelling')->to('traewelling#settings');
 	$authed_r->post('/account/insight')->to('account#insight');
+	$authed_r->post('/account/language')->to('account#change_language');
 	$authed_r->post('/account/select_backend')->to('account#change_backend');
 	$authed_r->post('/checkin/add')->to('traveling#add_intransit_form');
 	$authed_r->post('/journey/add')->to('traveling#add_journey_form');

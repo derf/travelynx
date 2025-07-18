@@ -216,6 +216,14 @@ sub set_backend {
 	);
 }
 
+sub set_language {
+	my ( $self, %opt ) = @_;
+	$opt{db} //= $self->{pg}->db;
+
+	$opt{db}
+	  ->update( 'users', { language => $opt{language} }, { id => $opt{uid} } );
+}
+
 sub set_privacy {
 	my ( $self, %opt ) = @_;
 	my $db           = $opt{db} // $self->{pg}->db;

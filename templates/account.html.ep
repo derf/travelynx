@@ -16,6 +16,9 @@
 					% elsif ($success eq 'password') {
 						<span class="card-title">Passwort geändert</span>
 					% }
+					% elsif ($success eq 'language') {
+						<span class="card-title">Sprache geändert</span>
+					% }
 					% elsif ($success eq 'privacy') {
 						<span class="card-title">Einstellungen zu öffentlichen Account-Daten geändert</span>
 					% }
@@ -59,6 +62,10 @@
 			<tr>
 				<th scope="row"><%= L('account.password') %></th>
 				<td><a href="/account/password"><i class="material-icons">edit</i></a></td>
+			</tr>
+			<tr>
+				<th scope="row"><%= L('account.language') %></th>
+				<td><a href="/account/language"><i class="material-icons">edit</i></a><%= $acc->{languages}[0] // q{} %></td>
 			</tr>
 			<tr>
 				<th scope="row"><%= L('account.connections') %></th>
