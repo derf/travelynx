@@ -11,7 +11,7 @@
 					<a href="/status/<%= $name %>"><%= $name %></a>: <%= include '_format_train', journey => $journey %>
 				% }
 				% else {
-					<a href="/p/<%= $name %>"><%= $name %></a> ist unterwegs
+					<a href="/p/<%= $name %>"><%= $name %></a> <%= L('status.is-checked-in') %>
 				% }
 				<i class="material-icons right"><%= visibility_icon($journey->{effective_visibility_str}) %></i>
 				% if (not $journey->{extra_data}{rt}) {
@@ -41,10 +41,10 @@
 					% }
 					% elsif (defined $journey->{arrival_countdown}) {
 						% if ($journey->{arrival_countdown} > 60) {
-							Ankunft in <%= journeys->min_to_human(int($journey->{arrival_countdown} / 60)) %>
+							<%= L('status.arrival-in') %> <%= journeys->min_to_human(int($journey->{arrival_countdown} / 60)) %>
 						% }
 						% elsif ($journey->{arrival_countdown} > 0) {
-							Ankunft in weniger als einer Minute
+							%= L('status.arrival-soon')
 						% }
 						% else {
 							Ziel erreicht
@@ -54,7 +54,7 @@
 						% }
 					% }
 					% elsif ($journey->{arr_name}) {
-						Ankunft in mehr als zwei Stunden
+						%= L('status.arrival-unknown')
 					% }
 				</div>
 				<div class="progress" style="height: 1ex;">
@@ -216,14 +216,14 @@
 				% }
 				% else {
 					<div class="wagons" style="margin-top: 2ex;">
-						Wagen:<br/>
+						<%= L('status.carriages') %>:<br/>
 						%= include '_wagons', wagongroups => $journey->{wagongroups};
 					</div>
 				% }
 			% }
 			% if (not stash('from_timeline')) {
 				<div style="margin-top: 2ex;">
-					Route:<br/>
+					<%= L('status.route') %>:<br/>
 					% my $before = 1;
 					% my $within = 0;
 					% my $at_startstop = 0;
@@ -280,7 +280,7 @@
 				<span class="card-title">Aktuell nicht eingecheckt</span>
 			% }
 			% else {
-				<span class="card-title"><a href="/p/<%= $name %>"><%= $name %></a> ist gerade nicht eingecheckt</span>
+				<span class="card-title"><a href="/p/<%= $name %>"><%= $name %></a> <%= L('status.is-not-checked-in') %></span>
 			% }
 			<div>
 			% if ($journey->{arr_name}) {

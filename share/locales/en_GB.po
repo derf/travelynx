@@ -83,5 +83,72 @@ msgstr "Accounts cannot follow you"
 
 # _public_status_card.html.ep
 
+msgid "status.is-checked-in"
+msgstr "is in transit"
+
 msgid "status.is-not-checked-in"
 msgstr "ist not in transit right now"
+
+msgid "status.arrival-in"
+msgstr "Arrival in"
+
+msgid "status.arrival-soon"
+msgstr "Arrival in less than one minute"
+
+msgid "status.arrival-unknown"
+msgstr "Arrival unknown"
+
+msgid "status.carriages"
+msgstr "Carriages"
+
+msgid "status.route"
+msgstr "Route"
+
+# _wagons.html.ep
+
+msgid "wagons.name-as-type"
+msgstr "running as"
+
+msgid "wagons.from"
+msgstr "from"
+
+msgid "wagons.to"
+msgstr "towards"
+
+msgid "wagons.carriage"
+msgstr "Carriage"
+
+# Journeys.pm#min_to_human
+
+msgid "countdown.n-weeks"
+msgstr "%d Wochen"
+
+msgid "countdown.1-week"
+msgstr "1 Woche"
+
+msgid "countdown.n-days"
+msgstr "%d Tage"
+
+msgid "countdown.1-day"
+msgstr "1 Tag"
+
+msgid "countdown.n-hours"
+msgstr "%d Stunden"
+
+msgid "countdown.1-hour"
+msgstr "1 Stunde"
+
+msgid "countdown.n-minutes"
+msgstr "%d Minuten"
+
+msgid "countdown.1-minute"
+msgstr "1 Minute"
+
+msgid "countdown.0-minutes"
+msgstr "0 Minuten"
+
+msgid "countdown.concat"
+msgstr ", "
+
+msgid "countdown.concat-last"
+msgstr " und "
