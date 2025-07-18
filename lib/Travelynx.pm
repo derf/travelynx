@@ -26,6 +26,7 @@ use Travelynx::Helper::DBRIS;
 use Travelynx::Helper::EFA;
 use Travelynx::Helper::HAFAS;
 use Travelynx::Helper::IRIS;
+use Travelynx::Helper::Locales;
 use Travelynx::Helper::MOTIS;
 use Travelynx::Helper::Sendmail;
 use Travelynx::Helper::Traewelling;
@@ -154,6 +155,31 @@ sub startup {
 					return;
 				}
 			}
+		}
+	);
+
+	$self->hook(
+		'before_render' => sub {
+			my ($self) = @_;
+
+			# TODO load languages from user profile, if set
+
+			my @languages = ('en-GB');
+			if ( my $languages = $self->req->headers->accept_language ) {
+				@languages = ();
+
+				#say "-- Accept-Language: $languages";
+				for my $lang ( split( qr{ \s* , \s* }x, $languages ) ) {
+					if ( $lang =~ m{ ^ de }x ) {
+						push( @languages, 'de-DE' );
+					}
+					elsif ( $lang =~ m{ ^ en }x ) {
+						push( @languages, 'en-GB' );
+					}
+				}
+			}
+			$self->stash( loc_handle =>
+				  Travelynx::Helper::Locales->get_handle(@languages) );
 		}
 	);
 
@@ -408,6 +434,13 @@ sub startup {
 				user_agent     => $self->ua,
 				version        => $self->app->config->{version},
 			);
+		}
+	);
+
+	$self->helper(
+		'L' => sub {
+			my ( $self, @args ) = @_;
+			$self->stash('loc_handle')->maketext(@args);
 		}
 	);
 
