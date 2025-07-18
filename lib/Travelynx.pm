@@ -165,7 +165,10 @@ sub startup {
 			# TODO load languages from user profile, if set
 
 			my @languages = ('en-GB');
-			if ( my $languages = $self->req->headers->accept_language ) {
+			if ( $self->is_user_authenticated ) {
+				@languages = @{ $self->current_user->{languages} };
+			}
+			elsif ( my $languages = $self->req->headers->accept_language ) {
 				@languages = ();
 
 				#say "-- Accept-Language: $languages";
@@ -178,8 +181,11 @@ sub startup {
 					}
 				}
 			}
+
+			# de-DE is our fall-back language and thus always appended
 			$self->stash( loc_handle =>
-				  Travelynx::Helper::Locales->get_handle(@languages) );
+				  Travelynx::Helper::Locales->get_handle( @languages, 'de-DE' )
+			);
 		}
 	);
 
