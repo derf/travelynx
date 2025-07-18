@@ -144,9 +144,9 @@
 		</div>
 		<div class="col s10 m10 l6 center-align">
 			% if (not app->config->{registration}{disabled}) {
-				<a href="/register" class="waves-effect waves-light btn"><i class="material-icons left" aria-hidden="true">add</i>Registrieren</a>
+				<a href="/register" class="waves-effect waves-light btn"><i class="material-icons left" aria-hidden="true">add</i><%= L('button.register') %></a>
 			% }
-			<a href="/login" class="waves-effect waves-light btn"><i class="material-icons left" aria-hidden="true">account_circle</i>Anmelden</a>
+			<a href="/login" class="waves-effect waves-light btn"><i class="material-icons left" aria-hidden="true">account_circle</i><%= L('button.login') %></a>
 		</div>
 		<div class="col s1 m1 l3">
 		</div>

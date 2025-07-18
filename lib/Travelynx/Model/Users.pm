@@ -216,6 +216,14 @@ sub set_backend {
 	);
 }
 
+sub set_language {
+	my ( $self, %opt ) = @_;
+	$opt{db} //= $self->{pg}->db;
+
+	$opt{db}
+	  ->update( 'users', { language => $opt{language} }, { id => $opt{uid} } );
+}
+
 sub set_privacy {
 	my ( $self, %opt ) = @_;
 	my $db           = $opt{db} // $self->{pg}->db;
@@ -413,7 +421,7 @@ sub get {
 
 	my $user = $db->select(
 		'users_with_backend',
-		'id, name, status, public_level, email, '
+		'id, name, status, public_level, email, language, '
 		  . 'accept_follows, notifications, '
 		  . 'extract(epoch from registered_at) as registered_at_ts, '
 		  . 'extract(epoch from last_seen) as last_seen_ts, '
@@ -423,10 +431,11 @@ sub get {
 	)->hash;
 	if ($user) {
 		return {
-			id                     => $user->{id},
-			name                   => $user->{name},
-			status                 => $user->{status},
-			notifications          => $user->{notifications},
+			id            => $user->{id},
+			name          => $user->{name},
+			languages     => [ split( qr{[|]}, $user->{language} // q{} ) ],
+			status        => $user->{status},
+			notifications => $user->{notifications},
 			accept_follows         => $user->{accept_follows} == 2 ? 1 : 0,
 			accept_follow_requests => $user->{accept_follows} == 1 ? 1 : 0,
 			default_visibility     => $user->{public_level} & 0x7f,

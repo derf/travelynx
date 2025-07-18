@@ -50,6 +50,8 @@ sub epoch_to_dt {
 	);
 }
 
+# TODO turn into a travelynx helper called from templates so that
+# loc_handle is available for localization
 sub min_to_human {
 	my ( $self, $minutes ) = @_;
 

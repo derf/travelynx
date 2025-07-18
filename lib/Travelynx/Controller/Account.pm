@@ -874,6 +874,35 @@ sub webhook {
 	$self->render( 'webhooks', hook => $hook );
 }
 
+sub change_language {
+	my ($self) = @_;
+
+	my $action   = $self->req->param('action');
+	my $language = $self->req->param('language');
+
+	if ( $action and $action eq 'save' ) {
+		if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
+			$self->render(
+				'bad_request',
+				csrf   => 1,
+				status => 400
+			);
+			return;
+		}
+		$self->users->set_language(
+			uid      => $self->current_user->{id},
+			language => $language,
+		);
+		$self->flash( success => 'language' );
+		$self->redirect_to('account');
+	}
+	else {
+		my @languages = @{ $self->current_user->{languages} };
+		$self->param( language => $languages[0] // q{} );
+		$self->render('language');
+	}
+}
+
 sub change_mail {
 	my ($self) = @_;
 

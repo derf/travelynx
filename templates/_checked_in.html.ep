@@ -32,13 +32,13 @@
 					% }
 					% elsif (defined $journey->{arrival_countdown}) {
 						% if ($journey->{arrival_countdown} > 60) {
-							Ankunft in <%= journeys->min_to_human(int($journey->{arrival_countdown} / 60)) %>
+							<%= L('status.arrival-in') %> <%= journeys->min_to_human(int($journey->{arrival_countdown} / 60)) %>
 						% }
 						% elsif ($journey->{arrival_countdown} > 0) {
-							Ankunft in weniger als einer Minute
+							%= L('status.arrival-soon')
 						% }
 						% else {
-							Ziel erreicht
+							%= L('status.arrived')
 						% }
 						% if ($journey->{arrival_countdown} < (60 * 15) and $journey->{arr_platform}) {
 							% if ($journey->{arr_direction} and $journey->{arr_direction} eq 'r') {
@@ -311,7 +311,7 @@
 						data-url="<%= url_for('/status')->to_abs->scheme('https') %>/<%= $user->{name} %>/<%= $journey->{sched_departure}->epoch %>?token=<%= $journey->{dep_eva} %>-<%= $journey->{timestamp}->epoch % 337 %>"
 					% }
 					>
-					<i class="material-icons left" aria-hidden="true">share</i> Teilen
+					<i class="material-icons left" aria-hidden="true">share</i> <%= L('status.share') %>
 				</a>
 			% }
 			% else {

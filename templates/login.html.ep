@@ -75,7 +75,9 @@
 	</div>
 	<div class="row">
 		<div class="col s12 m12 l12">
-			Mit der Anmeldung stimmst du den <a href="/tos">Nutzungsbedingungen</a> zu.
+			%= L('login.accept-tos-pre')
+			<a href="/tos"><%= L('login.tos') %></a>
+			%= L('login.accept-tos-post')
 		</div>
 	</div>
 	<div class="row">
@@ -83,7 +85,7 @@
 		</div>
 		<div class="col s6 m6 l6 center-align">
 			<button class="btn waves-effect waves-light" type="submit" name="action" value="login">
-				Anmelden
+				%= L('button.login')
 				<i class="material-icons right">send</i>
 			</button>
 		</div>
@@ -95,7 +97,7 @@
 		</div>
 		<div class="col s6 m6 l6 center-align">
 			<a href="/recover">
-				Passwort vergessen
+				%= L('login.forgot-password')
 			</a>
 		</div>
 		<div class="col s3 m3 l3">
@@ -104,7 +106,7 @@
 	% if (app->config->{registration}{disabled}) {
 	<div class="row" style="margin-top: 2em;">
 		<div class="col s12 center-align">
-			<em>Diese Instanz erlaubt derzeit keine Registrierung neuer Accounts</em>
+			<em><%= L('login.registration-disabled') %></em>
 		</div>
 	</div>
 	% }

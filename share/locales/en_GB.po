@@ -1,0 +1,180 @@
+msgid ""
+msgstr ""
+"Language: en-GB\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#
+# Global Strings
+#
+
+msgid "button.register"
+msgstr "Register"
+
+msgid "button.login"
+msgstr "Login"
+
+msgid "button.logout"
+msgstr "Logout"
+
+msgid "footer.imprint"
+msgstr "Imprint"
+
+msgid "footer.privacy"
+msgstr "Privacy"
+
+msgid "footer.legend"
+msgstr "Legend"
+
+msgid "footer.colour-scheme"
+msgstr "Display Mode"
+
+msgid "footer.colour-scheme.light"
+msgstr "light"
+
+msgid "footer.colour-scheme.dark"
+msgstr "dark"
+
+msgid "footer.colour-scheme.auto"
+msgstr "auto"
+
+#
+# Templates
+#
+
+# account.html.ep
+
+msgid "account.account"
+msgstr "Account"
+
+msgid "account.name"
+msgstr "Name"
+
+msgid "account.mail"
+msgstr "E-Mail"
+
+msgid "account.password"
+msgstr "Password"
+
+msgid "account.language"
+msgstr "Language"
+
+msgid "account.connections"
+msgstr "Connections"
+
+msgid "account.connections.enabled"
+msgstr "Suggestions enabled"
+
+msgid "account.connections.disabled"
+msgstr "Suggestions disabled"
+
+msgid "account.visibility"
+msgstr "Visibility"
+
+msgid "account.interaction"
+msgstr "Interaction"
+
+msgid "account.interaction.accept-follows"
+msgstr "Accounts may follow you"
+
+msgid "account.interaction.accept-follow-requests"
+msgstr "Accounts may send follow requests"
+
+msgid "account.interaction.one"
+msgstr "one"
+
+msgid "account.interaction.open-request"
+msgstr "open request"
+
+msgid "account.interaction.open-requests"
+msgstr "open requests"
+
+msgid "account.interaction.disabled"
+msgstr "Accounts cannot follow you"
+
+# login.html.ep
+
+msgid "login.tos"
+msgstr "terms of use"
+
+msgid "login.accept-tos-pre"
+msgstr "By logging in, you accept the"
+
+msgid "login.accept-tos-post"
+msgstr " "
+
+msgid "login.forgot-password"
+msgstr "Forgot password"
+
+msgid "login.registration-disabled"
+msgstr "This instance does not allow registration of new accounts at the moment"
+
+# register.html.ep
+
+msgid "register.name"
+msgstr "Name (alphanumeric)"
+
+msgid "register.mail"
+msgstr "E-Mail address"
+
+msgid "register.password"
+msgstr "Password"
+
+msgid "register.repeat-password"
+msgstr "Repeat password"
+
+msgid "register.tos"
+msgstr "terms of use"
+
+msgid "register.accept-tos-pre"
+msgstr "By submitting this registration form, you accept the"
+
+msgid "register.accept-tos-post"
+msgstr " "
+
+msgid "register.expect-confirmation-link"
+msgstr "After submitting the registration, a confirmation link will be sent to the provided E-Mail address. Logging into the new travelynx account is only possible after following that link. The link is valid for 48 hours."
+
+# _checked_in, _public_status_card.html.ep
+
+msgid "status.is-checked-in"
+msgstr "is in transit"
+
+msgid "status.is-not-checked-in"
+msgstr "ist not in transit right now"
+
+msgid "status.share"
+msgstr "Share"
+
+msgid "status.arrival-in"
+msgstr "Arrival in"
+
+msgid "status.arrival-soon"
+msgstr "Arrival in less than one minute"
+
+msgid "status.arrival-unknown"
+msgstr "Arrival unknown"
+
+msgid "status.arrived"
+msgstr "Arrived"
+
+msgid "status.carriages"
+msgstr "Carriages"
+
+msgid "status.route"
+msgstr "Route"
+
+# _wagons.html.ep
+
+msgid "wagons.name-as-type"
+msgstr "running as"
+
+msgid "wagons.from"
+msgstr "from"
+
+msgid "wagons.to"
+msgstr "towards"
+
+msgid "wagons.carriage"
+msgstr "Carriage"

@@ -16,6 +16,9 @@
 					% elsif ($success eq 'password') {
 						<span class="card-title">Passwort geändert</span>
 					% }
+					% elsif ($success eq 'language') {
+						<span class="card-title">Sprache geändert</span>
+					% }
 					% elsif ($success eq 'privacy') {
 						<span class="card-title">Einstellungen zu öffentlichen Account-Daten geändert</span>
 					% }
@@ -46,34 +49,38 @@
 % my $use_history = users->use_history(uid => $acc->{id});
 <div class="row">
 	<div class="col s12">
-		<h2>Account</h2>
+		<h2><%= L('account.account') %></h2>
 		<table class="striped">
 			<tr>
-				<th scope="row">Name</th>
+				<th scope="row"><%= L('account.name') %></th>
 				<td><a href="/account/name"><i class="material-icons">edit</i></a><%= $acc->{name} %></td>
 			</tr>
 			<tr>
-				<th scope="row">Mail</th>
+				<th scope="row"><%= L('account.mail') %></th>
 				<td><a href="/account/mail"><i class="material-icons">edit</i></a><%= $acc->{email} %></td>
 			</tr>
 			<tr>
-				<th scope="row">Passwort</th>
+				<th scope="row"><%= L('account.password') %></th>
 				<td><a href="/account/password"><i class="material-icons">edit</i></a></td>
 			</tr>
 			<tr>
-				<th scope="row">Verbindungen</th>
+				<th scope="row"><%= L('account.language') %></th>
+				<td><a href="/account/language"><i class="material-icons">edit</i></a><%= $acc->{languages}[0] // q{} %></td>
+			</tr>
+			<tr>
+				<th scope="row"><%= L('account.connections') %></th>
 				<td>
 					<a href="/account/insight"><i class="material-icons">edit</i></a>
 					% if ($use_history & 0x03) {
-						Vorschläge aktiv
+						%= L('account.connections.enabled')
 					% }
 					% else {
-						<span style="color: #999999;">Vorschläge deaktiviert</span>
+						<span style="color: #999999;"><%= L('account.connections.disabled') %></span>
 					% }
 				</td>
 			</tr>
 			<tr>
-				<th scope="row">Sichtbarkeit</th>
+				<th scope="row"><%= L('account.visibility') %></th>
 				<td>
 					<a href="/account/privacy"><i class="material-icons">edit</i></a>
 					<i class="material-icons">check</i><i class="material-icons"><%= visibility_icon($acc->{default_visibility_str}) %></i>
@@ -81,23 +88,23 @@
 				</td>
 			</tr>
 			<tr>
-				<th scope="row">Interaktion</th>
+				<th scope="row"><%= L('account.interaction') %></th>
 				<td>
 					<a href="/account/social"><i class="material-icons">edit</i></a>
 					% if ($acc->{accept_follows}) {
-						<span>Accounts können dir direkt folgen</span>
+						<span><%= L('account.interaction.accept-follows') %></span>
 					% }
 					% elsif ($acc->{accept_follow_requests}) {
-						<span>Accounts können dir auf Anfrage folgen
+						<span><%= L('account.interaction.accept-follow-requests') %>
 						% if ($num_rx_follow_requests == 1) {
-							– <a href="/account/social/follow-requests-received"><strong>eine</strong> offene Anfrage</a>
+							– <a href="/account/social/follow-requests-received"><strong><%= L('account.interaction.one') %></strong> <%= L('account.interaction.open-request') %></a>
 						% } elsif ($num_rx_follow_requests) {
-							– <a href="/account/social/follow-requests-received"><strong><%= $num_rx_follow_requests %></strong> offene Anfragen</a>
+							– <a href="/account/social/follow-requests-received"><strong><%= $num_rx_follow_requests %></strong> <%= L('account.interaction.open-requests') %></a>
 						% }
 						</span>
 					% }
 					% else {
-						<span style="color: #999999;">Accounts können dir nicht folgen</span>
+						<span style="color: #999999;"><%= L('account.interaction.disabled') %></span>
 					% }
 				</td>
 			</tr>
@@ -163,7 +170,7 @@
 		%= form_for 'logout' => begin
 			%= csrf_field
 			<button class="btn waves-effect waves-light" type="submit" name="action" value="logout">
-				Abmelden
+				%= L('button.logout')
 			</button>
 		%= end
 	</div>

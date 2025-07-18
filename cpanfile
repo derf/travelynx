@@ -9,6 +9,8 @@ requires 'GIS::Distance::Fast';
 requires 'IO::Socket::Socks', '>= 0.64';
 requires 'IO::Socket::SSL',   '>= 2.009';
 requires 'List::UtilsBy';
+requires 'Locale::Maketext';
+requires 'Locale::Maketext::Lexicon';
 requires 'Math::Polygon';
 requires 'MIME::Entity';
 requires 'Mojolicious';

@@ -131,21 +131,21 @@
 		<div class="col s12 center-align grey-text">
 			<a href="/about">travelynx</a> v<%= $version // '???' %>
 			<span style="margin-left: 0.5em; margin-right: 0.5em;">–</span>
-			<a href="/impressum">Impressum</a>
+			<a href="/impressum"><%= L('footer.imprint') %></a>
 			<span style="margin-left: 0.5em; margin-right: 0.5em;">–</span>
-			<a href="/impressum">Datenschutz</a>
+			<a href="/impressum"><%= L('footer.privacy') %></a>
 			<span style="margin-left: 0.5em; margin-right: 0.5em;">–</span>
-			<a href="/legend">Legende</a>
+			<a href="/legend"><%= L('footer.legend') %></a>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col s12 center-align grey-text config">
-			Farbschema:
-			<a onClick="javascript:setTheme('light')">hell</a>
+			<%= L('footer.colour-scheme') %>:
+			<a onClick="javascript:setTheme('light')"><%= L('footer.colour-scheme.light') %></a>
 			·
-			<a onClick="javascript:setTheme('dark')">dunkel</a>
+			<a onClick="javascript:setTheme('dark')"><%= L('footer.colour-scheme.dark') %></a>
 			·
-			<a onClick="javascript:setTheme('default')">automatisch</a>
+			<a onClick="javascript:setTheme('default')"><%= L('footer.colour-scheme.auto') %></a>
 		</div>
 	</div>
 </div>
