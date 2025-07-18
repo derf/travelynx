@@ -164,14 +164,13 @@ sub startup {
 
 			# TODO load languages from user profile, if set
 
-			my @languages = ('en-GB');
-			if ( $self->is_user_authenticated ) {
+			my @languages;
+			if ( $self->is_user_authenticated
+				and @{ $self->current_user->{languages} } )
+			{
 				@languages = @{ $self->current_user->{languages} };
 			}
 			elsif ( my $languages = $self->req->headers->accept_language ) {
-				@languages = ();
-
-				#say "-- Accept-Language: $languages";
 				for my $lang ( split( qr{ \s* , \s* }x, $languages ) ) {
 					if ( $lang =~ m{ ^ de }x ) {
 						push( @languages, 'de-DE' );
