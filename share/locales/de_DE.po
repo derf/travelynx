@@ -10,6 +10,27 @@ msgstr ""
 msgid "button.logout"
 msgstr "Abmelden"
 
+msgid "footer.imprint"
+msgstr "Impressum"
+
+msgid "footer.privacy"
+msgstr "Datenschutz"
+
+msgid "footer.legend"
+msgstr "Legende"
+
+msgid "footer.colour-scheme"
+msgstr "Farbschema"
+
+msgid "footer.colour-scheme.light"
+msgstr "hell"
+
+msgid "footer.colour-scheme.dark"
+msgstr "dunkel"
+
+msgid "footer.colour-scheme.auto"
+msgstr "automatisch"
+
 # account.html.ep
 
 msgid "account.account"
@@ -23,6 +44,9 @@ msgstr "E-Mail"
 
 msgid "account.password"
 msgstr "Passwort"
+
+msgid "account.language"
+msgstr "Sprache"
 
 msgid "account.connections"
 msgstr "Verbindungen"
@@ -56,3 +80,8 @@ msgstr "offene Anfragen"
 
 msgid "account.interaction.disabled"
 msgstr "Accounts können dir nicht folgen"
+
+# _public_status_card.html.ep
+
+msgid "status.is-not-checked-in"
+msgstr "ist gerade nicht eingecheckt"

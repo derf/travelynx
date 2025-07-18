@@ -10,6 +10,27 @@ msgstr ""
 msgid "button.logout"
 msgstr "Logout"
 
+msgid "footer.imprint"
+msgstr "Imprint"
+
+msgid "footer.privacy"
+msgstr "Privacy"
+
+msgid "footer.legend"
+msgstr "Legend"
+
+msgid "footer.colour-scheme"
+msgstr "Display Mode"
+
+msgid "footer.colour-scheme.light"
+msgstr "light"
+
+msgid "footer.colour-scheme.dark"
+msgstr "dark"
+
+msgid "footer.colour-scheme.auto"
+msgstr "auto"
+
 # account.html.ep
 
 msgid "account.account"
@@ -23,6 +44,9 @@ msgstr "E-Mail"
 
 msgid "account.password"
 msgstr "Password"
+
+msgid "account.language"
+msgstr "Language"
 
 msgid "account.connections"
 msgstr "Connections"
@@ -56,3 +80,8 @@ msgstr "open requests"
 
 msgid "account.interaction.disabled"
 msgstr "Accounts cannot follow you"
+
+# _public_status_card.html.ep
+
+msgid "status.is-not-checked-in"
+msgstr "ist not in transit right now"
