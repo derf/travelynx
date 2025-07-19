@@ -448,11 +448,15 @@ sub startup {
 			}
 
 			my $handle = Travelynx::Helper::Locales->get_handle(@languages);
-			my $fallback_handle
+			my $first_fallback
+			  = Travelynx::Helper::Locales->get_handle('en-GB');
+			my $second_fallback
 			  = Travelynx::Helper::Locales->get_handle('de-DE');
 
 			$handle->fail_with(
-				sub { $fallback_handle->maketext( @_[ 1 .. $#_ ] ) } );
+				sub { $first_fallback->maketext( @_[ 1 .. $#_ ] ) } );
+			$first_fallback->fail_with(
+				sub { $second_fallback->maketext( @_[ 1 .. $#_ ] ) } );
 			return $handle;
 		}
 	);
