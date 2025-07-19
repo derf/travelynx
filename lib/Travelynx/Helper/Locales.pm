@@ -3,11 +3,17 @@ package Travelynx::Helper::Locales;
 use strict;
 use warnings;
 
+#BEGIN { package Locale::Maketext; sub DEBUG() {1} };
+#BEGIN { package Locale::Maketext::Guts; sub DEBUG() {1} };
+
 use base qw(Locale::Maketext);
 
-our %Lexicon = (
-	_AUTO => 1,
-);
+# Uncomment this to show raw strings for untranslated content rather than
+# falling back to German.
+
+#our %Lexicon = (
+#	_AUTO => 1,
+#);
 
 use Locale::Maketext::Lexicon {
 	_decode => 1,

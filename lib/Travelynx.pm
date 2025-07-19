@@ -447,9 +447,13 @@ sub startup {
 				}
 			}
 
-			# de-DE is our fall-back language and thus always appended
-			return Travelynx::Helper::Locales->get_handle( @languages,
-				'de-DE' );
+			my $handle = Travelynx::Helper::Locales->get_handle(@languages);
+			my $fallback_handle
+			  = Travelynx::Helper::Locales->get_handle('de-DE');
+
+			$handle->fail_with(
+				sub { $fallback_handle->maketext( @_[ 1 .. $#_ ] ) } );
+			return $handle;
 		}
 	);
 
