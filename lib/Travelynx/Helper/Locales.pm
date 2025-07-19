@@ -5,7 +5,7 @@ use warnings;
 
 use base qw(Locale::Maketext);
 
-our %lexicon = (
+our %Lexicon = (
 	_AUTO => 1,
 );
 
