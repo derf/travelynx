@@ -25,6 +25,16 @@
 		<div class="input-field col s12">
 			<div>
 				<label>
+					%= radio_button language => 'fr-FR'
+					<span>fr-FR: français</span>
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="input-field col s12">
+			<div>
+				<label>
 					%= radio_button language => 'pl-PL'
 					<span>pl-PL: Polski</span>
 				</label>
