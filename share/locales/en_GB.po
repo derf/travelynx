@@ -43,6 +43,44 @@ msgstr "auto"
 # Templates
 #
 
+# about.html.ep
+
+msgid "about.developed-by.lead"
+msgstr "Developed by"
+
+msgid "about.developed-by.and"
+msgstr "and"
+
+msgid "about.developed-by.others"
+msgstr "others"
+
+msgid "about.developed-by.tail"
+msgstr " "
+
+msgid "about.source-code"
+msgstr "Source code"
+
+msgid "about.licence-agplv3"
+msgstr "available under the terms of AGPL v3"
+
+msgid "about.data-sources"
+msgstr "Backends"
+
+msgid "about.data-sources.last-and"
+msgstr ", and"
+
+msgid "about.disclaimer"
+msgstr "Travelynx is a hobby project. It is provided free of charge, without any kind of availability guarantees. Unexpected downtimes or a cancellation of the entire site on short notice are not planned, but always possible. Depending on available spare time and motivation, feature requests, bug reports, and other messages are processed promptly, with delay, or not at all."
+
+msgid "about.contact"
+msgstr "Contact"
+
+msgid "about.bugs"
+msgstr "Bugs"
+
+msgid "about.changelog"
+msgstr "Changelog"
+
 # account.html.ep
 
 msgid "account.account"

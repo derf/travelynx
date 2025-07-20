@@ -1,10 +1,10 @@
 <div class="row">
 	<div class="col s12">
 		<a href="https://finalrewind.org/projects/travelynx">travelynx</a> v<%= stash('version') // '???' %><br/>
-		Entwickelt von <a href="https://finalrewind.org">derf</a>
-		und <a href="https://github.com/derf/travelynx/graphs/contributors">weiteren</a><br/>
-		<a href="<%= app->config->{ref}{source} // 'https://git.finalrewind.org/travelynx' %>">Quelltext</a> lizensiert unter AGPL v3<br/><br/>
-		Backends:
+		<%= L('about.developed-by.lead') %> <a href="https://finalrewind.org">derf</a>
+		<%= L('about.developed-by.and') %> <a href="https://github.com/derf/travelynx/graphs/contributors"><%= L('about.developed-by.others') %></a> <%= L('about.developed-by.tail') %> <%= L('about.developed-by.tail') %><br/>
+		<a href="<%= app->config->{ref}{source} // 'https://git.finalrewind.org/travelynx' %>"><%= L('about.source-code') %></a> <%= L('about.licence-agplv3') %><br/><br/>
+		<%= L('about.data-sources') %>:
 		<a href="https://finalrewind.org/projects/Travel-Status-DE-DBRIS/">Travel::Status::DE::DBRIS</a>
 		v<%= $Travel::Status::DE::DBRIS::VERSION %>,
 		<a href="https://finalrewind.org/projects/Travel-Status-DE-EFA/">Travel::Status::DE::EFA</a>
@@ -12,40 +12,31 @@
 		<a href="https://finalrewind.org/projects/Travel-Status-DE-HAFAS/">Travel::Status::DE::HAFAS</a>
 		v<%= $Travel::Status::DE::HAFAS::VERSION %>,
 		<a href="https://finalrewind.org/projects/Travel-Status-DE-IRIS/">Travel::Status::DE::IRIS</a>
-		v<%= $Travel::Status::DE::IRIS::VERSION %> und
+		v<%= $Travel::Status::DE::IRIS::VERSION %><%= L('about.data-sources.last-and') %>
 		<a href="https://finalrewind.org/projects/Travel-Status-MOTIS/">Travel::Status::MOTIS</a>
 		v<%= $Travel::Status::MOTIS::VERSION %><br/>
-		Haltestellendaten
-		© DB Station&amp;Service AG,
-		Europaplatz 1,
-		10557 Berlin, lizensiert unter CC-BY 4.0
 	</div>
 </div>
 
 <div class="row">
 	<div class="col s12">
 		<p>
-			Travelynx ist ein kostenfreies, privat betriebenes Projekt ohne
-			Verfügbarkeitsgarantie. Unangekündigte Downtimes oder eine
-			kurzfristige Einstellung dieser Seite sind nicht vorgesehen, aber
-			möglich. Feature Requests, Bug Reports und sonstige Nachrichten
-			werden je nach Kapazität und Motivation zeitnah, verzögert oder gar
-			nicht bearbeitet / beantwortet.
+			%= L('about.disclaimer')
 		</p>
 	</div>
 </div>
 
 <div class="row">
 	<div class="col s12 m12 l4 center-align" style="margin-top: 1em;">
-		<a href="https://social.skyshaper.org/derf" class="waves-effect waves-light btn"><i class="material-icons left">message</i>Kontakt</a>
+		<a href="https://social.skyshaper.org/derf" class="waves-effect waves-light btn"><i class="material-icons left">message</i><%= L('about.contact') %></a>
 	</div>
 	<div class="col s12 m12 l4 center-align" style="margin-top: 1em;">
 		% if (my $issue_url = app->config->{ref}{issues}) {
-			<a href="<%= $issue_url %>" class="waves-effect waves-light btn"><i class="material-icons left">bug_report</i>Bugs?</a>
+			<a href="<%= $issue_url %>" class="waves-effect waves-light btn"><i class="material-icons left">bug_report</i><%= L('about.bugs') %></a>
 		% }
 	</div>
 	<div class="col s12 m12 l4 center-align" style="margin-top: 1em;">
-		<a href="/changelog" class="waves-effect waves-light btn"><i class="material-icons left">list</i>Changelog</a>
+		<a href="/changelog" class="waves-effect waves-light btn"><i class="material-icons left">list</i><%= L('about.changelog') %></a>
 	</div>
 </div>
 
