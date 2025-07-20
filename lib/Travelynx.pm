@@ -447,7 +447,13 @@ sub startup {
 				}
 			}
 
-			my $handle = Travelynx::Helper::Locales->get_handle(@languages);
+			# en-GB and de-DE serve as fall-back languages, both in case
+			# we do not have the handle we need (here) and in case a string
+			# has only been translated to some languages (below).
+
+			my $handle
+			  = Travelynx::Helper::Locales->get_handle( @languages, 'en-GB',
+				'de-DE' );
 			my $first_fallback
 			  = Travelynx::Helper::Locales->get_handle('en-GB');
 			my $second_fallback
