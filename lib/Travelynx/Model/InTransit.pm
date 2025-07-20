@@ -1665,6 +1665,11 @@ sub estimate_trip_position {
 		my $time_total
 		  = ( $in_transit->{real_arr_ts} // $in_transit->{sched_arr_ts} )
 		  - ( $in_transit->{real_dep_ts} // $in_transit->{sched_dep_ts} );
+
+		if ( $time_total == 0 ) {
+			return [ $in_transit->{dep_lat}, $in_transit->{dep_lon} ];
+		}
+
 		my $completion = $time_complete / $time_total;
 		$completion = $completion < 0 ? 0 : $completion > 1 ? 1 : $completion;
 		@now_latlon = (
