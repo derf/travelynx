@@ -283,29 +283,88 @@ msgstr "is in transit"
 msgid "status.is-not-checked-in"
 msgstr "ist not in transit right now"
 
+msgid "status.select-destination"
+msgstr "Choose destination"
+
 msgid "status.share"
 msgstr "Share"
 
 msgid "status.check-out"
 msgstr "check out"
 
-msgid "status.arrival-in"
-msgstr "Arrival in"
+msgid "status.boarding-in"
+msgstr "boarding in"
 
+msgid "status.boarding-soon"
+msgstr "now arriving"
+
+#, noun or verb
+msgid "status.departure-in"
+msgstr "departs in"
+
+#, noun or verb
+msgid "status.departure-soon"
+msgstr "departs in less than one minute"
+
+#, noun or verb
+msgid "status.arrival-in"
+msgstr "arrives in"
+
+#, noun or verb
 msgid "status.arrival-soon"
-msgstr "Arrival in less than one minute"
+msgstr "now arriving"
 
 msgid "status.arrival-unknown"
 msgstr "Arrival unknown"
 
 msgid "status.arrived"
-msgstr "Arrived"
+msgstr "arrived"
+
+msgid "status.depart-from"
+msgstr "from"
+
+msgid "status.arrive-on"
+msgstr "on"
+
+msgid "status.delayed-auto-checkout"
+msgstr "You will be automatically checked out about ten minutes after the expected arrival time."
+
+msgid "status.realtime-unavailable"
+msgstr "Real-time data unavailable"
+
+#, service messages related to the trip
+msgid "status.messages"
+msgstr "Notifications"
+
+msgid "status.map"
+msgstr "Map"
+
+msgid "status.change-destination"
+msgstr "Change destination"
 
 msgid "status.carriages"
 msgstr "Carriages"
 
 msgid "status.route"
 msgstr "Route"
+
+#, shown during destination selection
+msgid "status.undo"
+msgstr "Undo"
+
+#, shown during destination selection
+msgid "status.privacy-level"
+msgstr "Privacy"
+
+#, shown once check-in is completed
+msgid "status.undo-checkin"
+msgstr "Undo check-in"
+
+msgid "status.force-checkout-lead"
+msgstr "travelynx will perform an automatic check-out about ten minutes after arrival. In case of backend or data update issues:"
+
+msgid "status.force-checkout"
+msgstr "Force checkout"
 
 # _wagons.html.ep
 

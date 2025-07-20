@@ -283,15 +283,34 @@ msgstr "ist unterwegs"
 msgid "status.is-not-checked-in"
 msgstr "ist gerade nicht eingecheckt"
 
+msgid "status.select-destination"
+msgstr "Ziel wählen"
+
 msgid "status.share"
 msgstr "Teilen"
 
 msgid "status.check-out"
 msgstr "Auschecken"
 
+msgid "status.boarding-in"
+msgstr "Einfahrt in"
+
+msgid "status.boarding-soon"
+msgstr "fährt ein"
+
+#, noun or verb
+msgid "status.departure-in"
+msgstr "Abfahrt in"
+
+#, noun or verb
+msgid "status.departure-soon"
+msgstr "Abfahrt in weniger als einer Minute"
+
+#, noun or verb
 msgid "status.arrival-in"
 msgstr "Ankunft in"
 
+#, noun or verb
 msgid "status.arrival-soon"
 msgstr "Ankunft in weniger als einer Minute"
 
@@ -301,11 +320,51 @@ msgstr "Ankunft unbekannt"
 msgid "status.arrived"
 msgstr "Ziel erreicht"
 
+msgid "status.depart-from"
+msgstr "von"
+
+msgid "status.arrive-on"
+msgstr "auf"
+
+msgid "status.delayed-auto-checkout"
+msgstr "Der automatische Checkout erfolgt etwa zehn Minuten nach der Ankunft."
+
+msgid "status.realtime-unavailable"
+msgstr "Keine Echtzeitdaten vorhanden"
+
+#, service messages related to the trip
+msgid "status.messages"
+msgstr "Meldungen"
+
+msgid "status.map"
+msgstr "Karte"
+
+msgid "status.change-destination"
+msgstr "Ziel ändern?"
+
 msgid "status.carriages"
 msgstr "Wagen"
 
 msgid "status.route"
 msgstr "Route"
+
+#, shown during destination selection
+msgid "status.undo"
+msgstr "Rückgängig"
+
+#, shown during destination selection
+msgid "status.privacy-level"
+msgstr "Sichtbarkeit"
+
+#, shown once check-in is completed
+msgid "status.undo-checkin"
+msgstr "Checkin rückgängig"
+
+msgid "status.force-checkout-lead"
+msgstr "Etwa zehn Minuten nach der Ankunft erfolgt ein automatischer Checkout. Falls das Backend ausgefallen ist oder die Fahrt aus anderen Gründen verloren ging:"
+
+msgid "status.force-checkout"
+msgstr "Jetzt auschecken"
 
 # _wagons.html.ep
 

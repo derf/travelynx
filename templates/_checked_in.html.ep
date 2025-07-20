@@ -4,7 +4,7 @@
 		<div class="card-content">
 			<i class="material-icons right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
 			% if (not $journey->{arr_name}) {
-				<span class="card-title center-align">Ziel wählen</span>
+				<span class="card-title center-align"><%= L('status.select-destination') %></span>
 			% }
 			<span class="card-title center-align">
 				%= include '_format_train', journey => $journey
@@ -19,16 +19,16 @@
 					data-dest="<%= $journey->{arr_name} %>"
 					>
 					% if ($journey->{boarding_countdown} > 60) {
-						Einfahrt in <%= journeys->min_to_human(int($journey->{boarding_countdown} / 60)) %><br/>
+						<%= L('status.boarding-in') %> <%= journeys->min_to_human(int($journey->{boarding_countdown} / 60)) %><br/>
 					% }
 					% elsif ($journey->{boarding_countdown} > 0) {
-						Fährt ein<br/>
+						<%= L('status.boarding-soon') %><br/>
 					% }
 					% if ($journey->{departure_countdown} > 60) {
-						Abfahrt in <%= journeys->min_to_human(int($journey->{departure_countdown} / 60)) %>
+						<%= L('status.departure-in') %> <%= journeys->min_to_human(int($journey->{departure_countdown} / 60)) %>
 					% }
 					% elsif ($journey->{departure_countdown} > 0) {
-						Abfahrt in weniger als einer Minute
+						%= L('status.departure-soon')
 					% }
 					% elsif (defined $journey->{arrival_countdown}) {
 						% if ($journey->{arrival_countdown} > 60) {
@@ -48,7 +48,7 @@
 								<br/>◀ <%= $journey->{platform_type} %> <%= $journey->{arr_platform} %>
 							% }
 							% else {
-								<br/>auf <%= $journey->{platform_type} %> <%= $journey->{arr_platform} %>
+								<br/><%= L('status.arrive-on') %> <%= $journey->{platform_type} %> <%= $journey->{arr_platform} %>
 							% }
 						% }
 					% }
@@ -63,7 +63,7 @@
 							<br/>◀ <%= $journey->{platform_type} %> <%= $journey->{dep_platform} %>
 						% }
 						% else {
-							<br/>von <%= $journey->{platform_type} %> <%= $journey->{dep_platform} %>
+							<br/><%= L('status.depart-from') %> <%= $journey->{platform_type} %> <%= $journey->{dep_platform} %>
 						% }
 					% }
 					% if (my $wr = $journey->{wagonorder}) {
@@ -206,7 +206,7 @@
 							<li><i class="material-icons tiny">gps_off</i> Manueller Checkin ohne Echtzeitdaten
 						% }
 						% elsif (not $journey->{extra_data}{rt}) {
-							<li><i class="material-icons tiny">gps_off</i> Keine Echtzeitdaten vorhanden
+							<li><i class="material-icons tiny">gps_off</i> <%= L('status.realtime-unavailable') %>
 						% }
 						% for my $message (reverse @{$journey->{messages} // []}) {
 							% if ($journey->{sched_departure}->epoch - $message->[0]->epoch < 1800) {
@@ -235,8 +235,7 @@
 			% }
 			% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} <= 0) {
 				<p style="margin-top: 2ex;">
-					Der automatische Checkout erfolgt wegen teilweise langsamer
-					Echtzeitdatenupdates erst etwa zehn Minuten nach der Ankunft.
+					%= L('status.delayed-auto-checkout')
 				</p>
 			% }
 			% elsif (not $journey->{arr_name}) {
@@ -275,7 +274,7 @@
 			% }
 			% else {
 				<a class="action-undo blue-text" data-id="in_transit" data-checkints="<%= $journey->{timestamp}->epoch %>" style="margin-right: 0;">
-					<i class="material-icons left" aria-hidden="true">undo</i> Rückgängig
+					<i class="material-icons left" aria-hidden="true">undo</i> <%= L('status.undo') %>
 				</a>
 			% }
 			% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} <= 0) {
@@ -316,7 +315,7 @@
 			% }
 			% else {
 				<a class="right" href="/journey/visibility">
-					<i class="material-icons left"><%= visibility_icon($journey_visibility) %></i> Sichtbarkeit
+					<i class="material-icons left"><%= visibility_icon($journey_visibility) %></i> <%= L('status.privacy-level') %>
 				</a>
 			% }
 		</div>
@@ -328,7 +327,7 @@
 		<div class="card" style="margin-top: <%= scalar @{stash('timeline') // []} ? '1.5rem' : '3em' %>;">
 			<div class="card-content">
 				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
-				<span class="card-title">Meldungen</span>
+				<span class="card-title"><%= L('status.messages') %></span>
 				% if (@{$journey->{extra_data}{him_msg} // []}) {
 					<p style="margin-bottom: 2ex;">
 						<ul>
@@ -359,7 +358,7 @@
 		<div class="card" style="margin-top: 3em;">
 			<div class="card-content">
 				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
-				<span class="card-title">Karte</span>
+				<span class="card-title"><%= L('status.map') %></span>
 				<div id="map" style="height: 70vh;">
 				</div>
 				%= include '_map', with_map_header => 0, station_coordinates => stash('station_coordinates'), polyline_groups => stash('polyline_groups'), markers => stash('markers')
@@ -373,7 +372,7 @@
 				</div>
 				<div class="card-action">
 					<a class="action-undo blue-text" data-id="in_transit" data-checkints="<%= $journey->{timestamp}->epoch %>"  style="margin-right: 0;">
-						<i class="material-icons left" aria-hidden="true">undo</i> Checkin Rückgängig
+						<i class="material-icons left" aria-hidden="true">undo</i> <%= L('status.undo-checkin') %>
 					</a>
 				</div>
 			</div>
@@ -382,7 +381,7 @@
 			<div class="card" style="margin-top: 3em;">
 				<div class="card-content">
 					<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
-					<span class="card-title">Ziel ändern?</span>
+					<span class="card-title"><%= L('status.change-destination') %></span>
 					<div class="targetlist">
 					% for my $station (@{$journey->{route_after}}) {
 						% my $is_dest = ($journey->{arr_name} and $station->[0] eq $journey->{arr_name});
@@ -410,19 +409,18 @@
 				</div>
 				<div class="card-action">
 					<a class="action-undo blue-text" data-id="in_transit" data-checkints="<%= $journey->{timestamp}->epoch %>"  style="margin-right: 0;">
-						<i class="material-icons left" aria-hidden="true">undo</i> Checkin Rückgängig
+						<i class="material-icons left" aria-hidden="true">undo</i> <%= L('status.undo-checkin') %>
 					</a>
 				</div>
 			</div>
 		% }
 		<p>
-			Falls das Backend ausgefallen ist oder die Fahrt aus anderen
-			Gründen verloren ging:
+			%= L('status.force-checkout-lead')
 		</p>
 		<p class="center-align">
 			<a class="action-checkout waves-light btn"
 			data-force="1" data-station="<%= $journey->{arr_name}
-			%>">Ohne Echtzeitdaten auschecken</a>
+			%>"><%= L('status.force-checkout') %></a>
 		</p>
 	% }
 </div>
