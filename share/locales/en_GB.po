@@ -105,25 +105,52 @@ msgid "landingpage.not-checked-in"
 msgstr "You are not checked in at the moment"
 
 msgid "landingpage.about"
-msgstr ""
+msgstr "Travelynx facilitates checkins into public transit (such as buses, trams, or trains) in Germany, Austria, Switzerlanz, Luxembourg, Ireland, Denmark, parts of the USA, and more. This way, you can track your own journeys (often including map and real-time data), share them with others, and examine highly relevant questions such as “how many hours did I spend in public transit in the past month?”."
 
 msgid "landingpage.traewelling.pre"
-msgstr ""
+msgstr "The idea for such a service was first proposed and implemented by"
 
 msgid "landingpage.traewelling.post"
-msgstr ""
+msgstr " "
+
+msgid "landingpage.features"
+msgstr "Features:"
+
+msgid "landingpage.features.log"
+msgstr "Log of scheduled and real-time departure and arrival times at departure and destination stop"
+
+msgid "landingpage.features.share"
+msgstr "Sharing the current check-in and past journeys with others"
+
+msgid "landingpage.features.api-pre"
+msgstr "Web-Hooks and an"
+
+msgid "landingpage.features.api-link"
+msgstr "API"
+
+msgid "landingpage.features.api-post"
+msgstr "for automatic check-ins and passing the current status to other applications"
+
+msgid "landingpage.features.stats"
+msgstr "Stats about journey times and delays"
+
+msgid "landingpage.features.passenger-rights"
+msgstr "Support when dealing with passenger rights forms"
+
+msgid "landingpage.features.public"
+msgstr "Optional: public travel status and public data about past journeys"
 
 msgid "landingpage.disclaimer.lead"
-msgstr ""
+msgstr "Travelynx is a hobby project. It is provided free of charge, without any kind of availability guarantees. Unexpected downtimes or a cancellation of the entire site on short notice are not planned, but always possible."
 
 msgid "landingpage.disclaimer.source-pre"
-msgstr ""
+msgstr "If you like, you can download the"
 
 msgid "landingpage.disclaimer.source-link"
-msgstr ""
+msgstr "source code"
 
 msgid "landingpage.disclaimer.source-post"
-msgstr ""
+msgstr "and host your own instance."
 
 # login.html.ep
 
