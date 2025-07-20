@@ -125,6 +125,14 @@ msgstr ""
 msgid "landingpage.disclaimer.source-post"
 msgstr ""
 
+# language.html.ep
+
+msgid "language.language"
+msgstr ""
+
+msgid "language.browser-default"
+msgstr ""
+
 # login.html.ep
 
 msgid "login.tos"

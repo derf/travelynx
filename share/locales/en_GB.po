@@ -152,6 +152,14 @@ msgstr "source code"
 msgid "landingpage.disclaimer.source-post"
 msgstr "and host your own instance."
 
+# language.html.ep
+
+msgid "language.language"
+msgstr "Language"
+
+msgid "language.browser-default"
+msgstr "Use language(s) requested by browser"
+
 # login.html.ep
 
 msgid "login.tos"

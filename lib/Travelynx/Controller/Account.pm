@@ -891,14 +891,14 @@ sub change_language {
 		}
 		$self->users->set_language(
 			uid      => $self->current_user->{id},
-			language => $language,
+			language => $language eq 'none' ? undef : $language,
 		);
 		$self->flash( success => 'language' );
 		$self->redirect_to('account');
 	}
 	else {
 		my @languages = @{ $self->current_user->{languages} };
-		$self->param( language => $languages[0] // q{} );
+		$self->param( language => $languages[0] // 'none' );
 		$self->render('language');
 	}
 }

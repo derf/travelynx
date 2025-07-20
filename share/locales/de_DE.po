@@ -152,6 +152,14 @@ msgstr "Quelltext"
 msgid "landingpage.disclaimer.source-post"
 msgstr "laden und eine eigene Instanz aufsetzen."
 
+# language.html.ep
+
+msgid "language.language"
+msgstr "Sprache"
+
+msgid "language.browser-default"
+msgstr "Gleiche Sprache wie Web-Browser"
+
 # login.html.ep
 
 msgid "login.accept-tos-pre"
