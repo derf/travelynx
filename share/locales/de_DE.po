@@ -142,6 +142,22 @@ msgstr "!"
 msgid "landingpage.not-checked-in"
 msgstr "Du bist gerade nicht eingecheckt"
 
+msgid "landingpage.stop-geosearch"
+msgstr "Stationen in der Umgebung suchen"
+
+msgid "landingpage.manual-stop-entry"
+msgstr "Manuelle Eingabe"
+
+#, As short as possible
+msgid "landingpage.departures"
+msgstr "Abfahrten"
+
+msgid "landingpage.latest-trips"
+msgstr "Letzte Fahrten"
+
+msgid "landingpage.date-format"
+msgstr "%d.%m.%Y"
+
 msgid "landingpage.about"
 msgstr "Travelynx erlaubt das Einchecken in Verkehrsmittel (Busse, Bahnen, Züge) unter anderem in Deutschland, Österreich, der Schweiz, Luxemburg, Irland, Dänemark und Teilen der USA. So können die eigenen Fahrten später inklusive Echtzeitdaten und eingetragenen Servicemeldungen nachvollzogen und brennende Fragen wie „Wie viele Stunden war ich letzten Monat unterwegs?“ beantwortet werden."
 

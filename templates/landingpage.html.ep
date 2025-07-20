@@ -58,19 +58,19 @@
 							<span class="card-title"><%= L('landingpage.greeting-prefix') %> <%= $user->{name} %><%= L('landingpage.greeting-suffix') %></span>
 							<p><%= L('landingpage.not-checked-in') %>.</p>
 							<div class="geolocation" data-recent="<%= join('|', map { $_->{external_id_or_eva} . ';' . $_->{name} . ';' . $_->{dbris} . ';' . $_->{efa} . ';' . $_->{hafas} . ';' . $_->{motis} } @{stash('recent_targets') // []} ) %>" data-backend="<%= $user->{backend_id} %>">
-								<a class="btn waves-effect waves-light btn-flat request">Stationen in der Umgebung abfragen</a>
+								<a class="btn waves-effect waves-light btn-flat request"><%= L('landingpage.stop-geosearch') %></a>
 							</div>
 							%= hidden_field backend_dbris => $user->{backend_dbris}
 							<div class="input-field">
 								%= text_field 'station', id => 'station', class => 'autocomplete contrast-color-text', autocomplete => 'off', required => undef
-								<label for="station">Manuelle Eingabe</label>
+								<label for="station"><%= L('landingpage.manual-stop-entry') %></label>
 							</div>
 						</div>
 						<div class="card-action">
 							<a href="/account/select_backend?redirect_to=/" class="btn btn-flat"><i class="material-icons left" aria-hidden="true"><%= $user->{backend_hafas} ? 'directions' : 'train' %></i><%= $user->{backend_name} // 'IRIS' %></a>
 							<button class="btn right waves-effect waves-light btn-flat" type="submit" name="action" value="departures">
 								<i class="material-icons left" aria-hidden="true">send</i>
-								Abfahrten
+								%= L('landingpage.departures')
 							</button>
 						</div>
 					</div>
@@ -97,8 +97,8 @@
 			</div>
 		</div>
 	% }
-	<h2 style="margin-left: 0.75rem;">Letzte Fahrten</h2>
-	%= include '_history_trains', date_format => '%d.%m.%Y', journeys => [journeys->get(uid => $user->{id}, limit => 5, with_datetime => 1)];
+	<h2 style="margin-left: 0.75rem;"><%= L('landingpage.latest-trips') %></h2>
+	%= include '_history_trains', date_format => L('landingpage.date-format'), journeys => [journeys->get(uid => $user->{id}, limit => 5, with_datetime => 1)];
 % }
 % else {
 	<div class="row">

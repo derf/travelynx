@@ -142,6 +142,22 @@ msgstr "!"
 msgid "landingpage.not-checked-in"
 msgstr "You are not checked in at the moment"
 
+msgid "landingpage.stop-geosearch"
+msgstr "Look for stops nearby"
+
+msgid "landingpage.manual-stop-entry"
+msgstr "Enter stop manually"
+
+#, As short as possible
+msgid "landingpage.departures"
+msgstr "Departures"
+
+msgid "landingpage.latest-trips"
+msgstr "Latest Trips"
+
+msgid "landingpage.date-format"
+msgstr "%b %d %Y"
+
 msgid "landingpage.about"
 msgstr "Travelynx facilitates checkins into public transit (such as buses, trams, or trains) in Germany, Austria, Switzerlanz, Luxembourg, Ireland, Denmark, parts of the USA, and more. This way, you can track your own journeys (often including map and real-time data), share them with others, and examine highly relevant questions such as “how many hours did I spend in public transit in the past month?”."
 
