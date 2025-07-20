@@ -110,30 +110,40 @@ sub test_intransit_visibility {
 		$opt{effective_visibility_str}, $desc );
 
 	if ( $opt{public} ) {
-		$t->get_ok('/status/test1')->status_is(200)->content_like(qr{DPN\s*667});
-		$t->get_ok('/ajax/status/test1.html')->status_is(200)
+		$t->get_ok('/status/test1')
+		  ->status_is(200)
+		  ->content_like(qr{DPN\s*667});
+		$t->get_ok('/ajax/status/test1.html')
+		  ->status_is(200)
 		  ->content_like(qr{DPN\s*667});
 		$t->get_ok('/p/test1')->status_is(200)->content_like(qr{DPN\s*667});
 	}
 	else {
-		$t->get_ok('/status/test1')->status_is(200)
+		$t->get_ok('/status/test1')
+		  ->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
-		$t->get_ok('/ajax/status/test1.html')->status_is(200)
+		$t->get_ok('/ajax/status/test1.html')
+		  ->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
-		$t->get_ok('/p/test1')->status_is(200)
+		$t->get_ok('/p/test1')
+		  ->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
 	}
 
 	if ( $opt{with_token} ) {
-		$t->get_ok("/status/test1/$token")->status_is(200)
+		$t->get_ok("/status/test1/$token")
+		  ->status_is(200)
 		  ->content_like(qr{DPN\s*667});
-		$t->get_ok("/ajax/status/test1.html?token=$j_token")->status_is(200)
+		$t->get_ok("/ajax/status/test1.html?token=$j_token")
+		  ->status_is(200)
 		  ->content_like(qr{DPN\s*667});
 	}
 	else {
-		$t->get_ok("/status/test1/$token")->status_is(200)
+		$t->get_ok("/status/test1/$token")
+		  ->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
-		$t->get_ok("/ajax/status/test1.html?token=$j_token")->status_is(200)
+		$t->get_ok("/ajax/status/test1.html?token=$j_token")
+		  ->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
 	}
 
@@ -144,31 +154,41 @@ sub test_intransit_visibility {
 
 	# users can see their own status if visibility is >= followrs
 	if ( $opt{effective_visibility} >= 60 ) {
-		$t->get_ok('/status/test1')->status_is(200)->content_like(qr{DPN\s*667});
-		$t->get_ok('/ajax/status/test1.html')->status_is(200)
+		$t->get_ok('/status/test1')
+		  ->status_is(200)
+		  ->content_like(qr{DPN\s*667});
+		$t->get_ok('/ajax/status/test1.html')
+		  ->status_is(200)
 		  ->content_like(qr{DPN\s*667});
 		$t->get_ok('/p/test1')->status_is(200)->content_like(qr{DPN\s*667});
 	}
 	else {
-		$t->get_ok('/status/test1')->status_is(200)
+		$t->get_ok('/status/test1')
+		  ->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
-		$t->get_ok('/ajax/status/test1.html')->status_is(200)
+		$t->get_ok('/ajax/status/test1.html')
+		  ->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
-		$t->get_ok('/p/test1')->status_is(200)
+		$t->get_ok('/p/test1')
+		  ->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
 	}
 
 	# users can see their own status with token if visibility is >= unlisted
 	if ( $opt{effective_visibility} >= 30 ) {
-		$t->get_ok("/status/test1/$token")->status_is(200)
+		$t->get_ok("/status/test1/$token")
+		  ->status_is(200)
 		  ->content_like(qr{DPN\s*667});
-		$t->get_ok("/ajax/status/test1.html?token=$j_token")->status_is(200)
+		$t->get_ok("/ajax/status/test1.html?token=$j_token")
+		  ->status_is(200)
 		  ->content_like(qr{DPN\s*667});
 	}
 	else {
-		$t->get_ok("/status/test1/$token")->status_is(200)
+		$t->get_ok("/status/test1/$token")
+		  ->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
-		$t->get_ok("/ajax/status/test1.html?token=$j_token")->status_is(200)
+		$t->get_ok("/ajax/status/test1.html?token=$j_token")
+		  ->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
 	}
 
@@ -180,31 +200,41 @@ sub test_intransit_visibility {
 
 	# uid2 can see uid1 if visibility is >= followers
 	if ( $opt{effective_visibility} >= 60 ) {
-		$t->get_ok('/status/test1')->status_is(200)->content_like(qr{DPN\s*667});
-		$t->get_ok('/ajax/status/test1.html')->status_is(200)
+		$t->get_ok('/status/test1')
+		  ->status_is(200)
+		  ->content_like(qr{DPN\s*667});
+		$t->get_ok('/ajax/status/test1.html')
+		  ->status_is(200)
 		  ->content_like(qr{DPN\s*667});
 		$t->get_ok('/p/test1')->status_is(200)->content_like(qr{DPN\s*667});
 	}
 	else {
-		$t->get_ok('/status/test1')->status_is(200)
+		$t->get_ok('/status/test1')
+		  ->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
-		$t->get_ok('/ajax/status/test1.html')->status_is(200)
+		$t->get_ok('/ajax/status/test1.html')
+		  ->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
-		$t->get_ok('/p/test1')->status_is(200)
+		$t->get_ok('/p/test1')
+		  ->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
 	}
 
 	# uid2 can see uid1 with token if visibility is >= unlisted
 	if ( $opt{effective_visibility} >= 30 ) {
-		$t->get_ok("/status/test1/$token")->status_is(200)
+		$t->get_ok("/status/test1/$token")
+		  ->status_is(200)
 		  ->content_like(qr{DPN\s*667});
-		$t->get_ok("/ajax/status/test1.html?token=$j_token")->status_is(200)
+		$t->get_ok("/ajax/status/test1.html?token=$j_token")
+		  ->status_is(200)
 		  ->content_like(qr{DPN\s*667});
 	}
 	else {
-		$t->get_ok("/status/test1/$token")->status_is(200)
+		$t->get_ok("/status/test1/$token")
+		  ->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
-		$t->get_ok("/ajax/status/test1.html?token=$j_token")->status_is(200)
+		$t->get_ok("/ajax/status/test1.html?token=$j_token")
+		  ->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
 	}
 
@@ -216,31 +246,41 @@ sub test_intransit_visibility {
 
 	# uid3 can see uid1 if visibility is >= travelynx
 	if ( $opt{effective_visibility} >= 80 ) {
-		$t->get_ok('/status/test1')->status_is(200)->content_like(qr{DPN\s*667});
-		$t->get_ok('/ajax/status/test1.html')->status_is(200)
+		$t->get_ok('/status/test1')
+		  ->status_is(200)
+		  ->content_like(qr{DPN\s*667});
+		$t->get_ok('/ajax/status/test1.html')
+		  ->status_is(200)
 		  ->content_like(qr{DPN\s*667});
 		$t->get_ok('/p/test1')->status_is(200)->content_like(qr{DPN\s*667});
 	}
 	else {
-		$t->get_ok('/status/test1')->status_is(200)
+		$t->get_ok('/status/test1')
+		  ->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
-		$t->get_ok('/ajax/status/test1.html')->status_is(200)
+		$t->get_ok('/ajax/status/test1.html')
+		  ->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
-		$t->get_ok('/p/test1')->status_is(200)
+		$t->get_ok('/p/test1')
+		  ->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
 	}
 
 	# uid3 can see uid1 with token if visibility is >= unlisted
 	if ( $opt{effective_visibility} >= 30 ) {
-		$t->get_ok("/status/test1/$token")->status_is(200)
+		$t->get_ok("/status/test1/$token")
+		  ->status_is(200)
 		  ->content_like(qr{DPN\s*667});
-		$t->get_ok("/ajax/status/test1.html?token=$j_token")->status_is(200)
+		$t->get_ok("/ajax/status/test1.html?token=$j_token")
+		  ->status_is(200)
 		  ->content_like(qr{DPN\s*667});
 	}
 	else {
-		$t->get_ok("/status/test1/$token")->status_is(200)
+		$t->get_ok("/status/test1/$token")
+		  ->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
-		$t->get_ok("/ajax/status/test1.html?token=$j_token")->status_is(200)
+		$t->get_ok("/ajax/status/test1.html?token=$j_token")
+		  ->status_is(200)
 		  ->content_like(qr{nicht eingecheckt});
 	}
 

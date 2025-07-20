@@ -112,20 +112,24 @@ sub test_journey_visibility {
 		$opt{effective_visibility_str}, $desc );
 
 	if ( $opt{public} ) {
-		$t->get_ok("/p/test1/j/$jid")->status_is(200)
+		$t->get_ok("/p/test1/j/$jid")
+		  ->status_is(200)
 		  ->content_like(qr{DPN\s*667});
 	}
 	else {
-		$t->get_ok("/p/test1/j/$jid")->status_is(404)
+		$t->get_ok("/p/test1/j/$jid")
+		  ->status_is(404)
 		  ->content_like(qr{Fahrt nicht gefunden.});
 	}
 
 	if ( $opt{with_token} ) {
-		$t->get_ok("/p/test1/j/$jid$token")->status_is(200)
+		$t->get_ok("/p/test1/j/$jid$token")
+		  ->status_is(200)
 		  ->content_like(qr{DPN\s*667});
 	}
 	else {
-		$t->get_ok("/p/test1/j/$jid$token")->status_is(404)
+		$t->get_ok("/p/test1/j/$jid$token")
+		  ->status_is(404)
 		  ->content_like(qr{Fahrt nicht gefunden.});
 	}
 
@@ -136,21 +140,25 @@ sub test_journey_visibility {
 
 	# users can see their own status if visibility is >= followrs
 	if ( $opt{effective_visibility} >= 60 ) {
-		$t->get_ok("/p/test1/j/$jid")->status_is(200)
+		$t->get_ok("/p/test1/j/$jid")
+		  ->status_is(200)
 		  ->content_like(qr{DPN\s*667});
 	}
 	else {
-		$t->get_ok("/p/test1/j/$jid")->status_is(404)
+		$t->get_ok("/p/test1/j/$jid")
+		  ->status_is(404)
 		  ->content_like(qr{Fahrt nicht gefunden.});
 	}
 
 	# users can see their own status with token if visibility is >= unlisted
 	if ( $opt{effective_visibility} >= 30 ) {
-		$t->get_ok("/p/test1/j/$jid$token")->status_is(200)
+		$t->get_ok("/p/test1/j/$jid$token")
+		  ->status_is(200)
 		  ->content_like(qr{DPN\s*667});
 	}
 	else {
-		$t->get_ok("/p/test1/j/$jid$token")->status_is(404)
+		$t->get_ok("/p/test1/j/$jid$token")
+		  ->status_is(404)
 		  ->content_like(qr{Fahrt nicht gefunden.});
 	}
 
@@ -162,21 +170,25 @@ sub test_journey_visibility {
 
 	# uid2 can see uid1 if visibility is >= followers
 	if ( $opt{effective_visibility} >= 60 ) {
-		$t->get_ok("/p/test1/j/$jid")->status_is(200)
+		$t->get_ok("/p/test1/j/$jid")
+		  ->status_is(200)
 		  ->content_like(qr{DPN\s*667});
 	}
 	else {
-		$t->get_ok("/p/test1/j/$jid")->status_is(404)
+		$t->get_ok("/p/test1/j/$jid")
+		  ->status_is(404)
 		  ->content_like(qr{Fahrt nicht gefunden.});
 	}
 
 	# uid2 can see uid1 with token if visibility is >= unlisted
 	if ( $opt{effective_visibility} >= 30 ) {
-		$t->get_ok("/p/test1/j/$jid$token")->status_is(200)
+		$t->get_ok("/p/test1/j/$jid$token")
+		  ->status_is(200)
 		  ->content_like(qr{DPN\s*667});
 	}
 	else {
-		$t->get_ok("/p/test1/j/$jid$token")->status_is(404)
+		$t->get_ok("/p/test1/j/$jid$token")
+		  ->status_is(404)
 		  ->content_like(qr{Fahrt nicht gefunden.});
 	}
 
@@ -188,21 +200,25 @@ sub test_journey_visibility {
 
 	# uid3 can see uid1 if visibility is >= travelynx
 	if ( $opt{effective_visibility} >= 80 ) {
-		$t->get_ok("/p/test1/j/$jid")->status_is(200)
+		$t->get_ok("/p/test1/j/$jid")
+		  ->status_is(200)
 		  ->content_like(qr{DPN\s*667});
 	}
 	else {
-		$t->get_ok("/p/test1/j/$jid")->status_is(404)
+		$t->get_ok("/p/test1/j/$jid")
+		  ->status_is(404)
 		  ->content_like(qr{Fahrt nicht gefunden.});
 	}
 
 	# uid3 can see uid1 with token if visibility is >= unlisted
 	if ( $opt{effective_visibility} >= 30 ) {
-		$t->get_ok("/p/test1/j/$jid$token")->status_is(200)
+		$t->get_ok("/p/test1/j/$jid$token")
+		  ->status_is(200)
 		  ->content_like(qr{DPN\s*667});
 	}
 	else {
-		$t->get_ok("/p/test1/j/$jid$token")->status_is(404)
+		$t->get_ok("/p/test1/j/$jid$token")
+		  ->status_is(404)
 		  ->content_like(qr{Fahrt nicht gefunden.});
 	}
 

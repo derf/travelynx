@@ -117,11 +117,13 @@ sub test_history_visibility {
 	  = "history vis=$opt{set_past_visibility} journey=$jid vis=$journey->{effective_visibility_str}";
 
 	if ( $opt{public} ) {
-		$t->get_ok('/p/test1')->status_is(200)
+		$t->get_ok('/p/test1')
+		  ->status_is(200)
 		  ->content_like( qr{DPN\s*667}, "public $desc" );
 	}
 	else {
-		$t->get_ok('/p/test1')->status_is(200)
+		$t->get_ok('/p/test1')
+		  ->status_is(200)
 		  ->content_unlike( qr{DPN\s*667}, "public $desc" );
 	}
 
@@ -131,11 +133,13 @@ sub test_history_visibility {
 	);
 
 	if ( $opt{self} ) {
-		$t->get_ok('/p/test1')->status_is(200)
+		$t->get_ok('/p/test1')
+		  ->status_is(200)
 		  ->content_like( qr{DPN\s*667}, "self $desc" );
 	}
 	else {
-		$t->get_ok('/p/test1')->status_is(200)
+		$t->get_ok('/p/test1')
+		  ->status_is(200)
 		  ->content_unlike( qr{DPN\s*667}, "self $desc" );
 	}
 
@@ -146,11 +150,13 @@ sub test_history_visibility {
 	);
 
 	if ( $opt{followers} ) {
-		$t->get_ok('/p/test1')->status_is(200)
+		$t->get_ok('/p/test1')
+		  ->status_is(200)
 		  ->content_like( qr{DPN\s*667}, "follower $desc" );
 	}
 	else {
-		$t->get_ok('/p/test1')->status_is(200)
+		$t->get_ok('/p/test1')
+		  ->status_is(200)
 		  ->content_unlike( qr{DPN\s*667}, "follower $desc" );
 	}
 
@@ -161,11 +167,13 @@ sub test_history_visibility {
 	);
 
 	if ( $opt{travelynx} ) {
-		$t->get_ok('/p/test1')->status_is(200)
+		$t->get_ok('/p/test1')
+		  ->status_is(200)
 		  ->content_like( qr{DPN\s*667}, "travelynx $desc" );
 	}
 	else {
-		$t->get_ok('/p/test1')->status_is(200)
+		$t->get_ok('/p/test1')
+		  ->status_is(200)
 		  ->content_unlike( qr{DPN\s*667}, "travelynx $desc" );
 	}
 
