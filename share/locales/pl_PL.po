@@ -93,6 +93,38 @@ msgstr "otwarte prośby"
 msgid "account.interaction.disabled"
 msgstr "Inne konta nie mogą cię obserwować"
 
+# landingpage.html.ep
+
+msgid "landingpage.greeting-prefix"
+msgstr ""
+
+msgid "landingpage.greeting-suffix"
+msgstr ""
+
+msgid "landingpage.not-checked-in"
+msgstr ""
+
+msgid "landingpage.about"
+msgstr ""
+
+msgid "landingpage.traewelling.pre"
+msgstr ""
+
+msgid "landingpage.traewelling.post"
+msgstr ""
+
+msgid "landingpage.disclaimer.lead"
+msgstr ""
+
+msgid "landingpage.disclaimer.source-pre"
+msgstr ""
+
+msgid "landingpage.disclaimer.source-link"
+msgstr ""
+
+msgid "landingpage.disclaimer.source-post"
+msgstr ""
+
 # login.html.ep
 
 msgid "login.tos"
@@ -136,7 +168,25 @@ msgstr " "
 msgid "register.expect-confirmation-link"
 msgstr "Po przesłaniu rejestracji na podany adres e-mail zostanie wysłany link potwierdzający. Zalogowanie się do konta travelynx jest możliwe dopiero po kliknięciu tego linku. Link jest ważny przez 48 godzin."
 
-# _checked_in, _public_status_card.html.ep
+msgid "register.why-mail"
+msgstr ""
+
+msgid "register.privacy-pre"
+msgstr ""
+
+msgid "register.privacy"
+msgstr ""
+
+msgid "register.privacy-post"
+msgstr ""
+
+msgid "register.account-deletion"
+msgstr "."
+
+msgid "register.disclaimer"
+msgstr ""
+
+# _checked_in.html.ep, _public_status_card.html.ep
 
 msgid "status.is-checked-in"
 msgstr "jest w podróży"

@@ -55,8 +55,8 @@
 				%= form_for 'list_departures' => begin
 					<div class="card">
 						<div class="card-content">
-							<span class="card-title">Hallo, <%= $user->{name} %>!</span>
-							<p>Du bist gerade nicht eingecheckt.</p>
+							<span class="card-title"><%= L('landingpage.greeting-prefix') %> <%= $user->{name} %><%= L('landingpage.greeting-suffix') %></span>
+							<p><%= L('landingpage.not-checked-in') %>.</p>
 							<div class="geolocation" data-recent="<%= join('|', map { $_->{external_id_or_eva} . ';' . $_->{name} . ';' . $_->{dbris} . ';' . $_->{efa} . ';' . $_->{hafas} . ';' . $_->{motis} } @{stash('recent_targets') // []} ) %>" data-backend="<%= $user->{backend_id} %>">
 								<a class="btn waves-effect waves-light btn-flat request">Stationen in der Umgebung abfragen</a>
 							</div>
@@ -104,38 +104,30 @@
 	<div class="row">
 		<div class="col s12">
 			<p>
-				Travelynx erlaubt das Einchecken in Verkehrsmittel (Busse,
-				Bahnen, Züge) unter anderem in Deutschland, Österreich, der
-				Schweiz, Luxemburg, Irland, Dänemark und Teilen der USA. So
-				können die eigenen Fahrten später inklusive Echtzeitdaten und
-				eingetragenen Servicemeldungen nachvollzogen und brennende
-				Fragen wie „Wie viele Stunden war ich letzten Monat unterwegs?“
-				beantwortet werden.
+				%= L('landingpage.about')
 			</p>
 			<p>
-				Die Idee dazu kommt von <a
-				href="https://traewelling.de/">Träwelling</a>.
+				%= L('landingpage.traewelling.pre')
+				<a href="https://traewelling.de/">Träwelling</a>
+				%= L('landingpage.traewelling.post')
 			</p>
 			<p>
-				Features:
+				%= L('landingpage.features')
 				<ul>
-					<li>Protokoll von Fahrplan- und Echtzeitdaten an Start- und
-						Zielbahnhof</li>
-					<li>Teilen von aktuellen und vergangenen Fahrten mit anderen Personen</li>
-					<li>Web-Hooks und <a href="/api">API</a> zum automatisierten Einchecken und Auslesen des aktuellen Status</li>
-					<li>Statistiken über Reisezeiten und Verspätungen</li>
-					<li>Unterstützung beim Ausfüllen von Fahrgastrechteformularen</li>
-					<li>Optional: Öffentlicher Reisestatus und öffentliche Angaben zu vergangenen Fahrten</li>
-					<!-- <li>Optional: Verknüpfung mit Träwelling</li> -->
+					<li><%= L('landingpage.features.log') %></li>
+					<li><%= L('landingpage.features.share') %></li>
+					<li><%= L('landingpage.features.share') %></li>
+					<li><%= L('landingpage.features.api-pre') %> <a href="/api"><%= L('landingpage.features.api-link') %></a> <%= L('landingpage.features.api-post') %></li>
+					<li><%= L('landingpage.features.stats') %></li>
+					<li><%= L('landingpage.features.passenger-rights') %></li>
+					<li><%= L('landingpage.features.public') %></li>
 				</ul>
 			</p>
 			<p>
-				Travelynx ist ein kostenfreies, privat betriebenes Projekt ohne
-				Verfügbarkeitsgarantie. Unangekündigte Downtimes oder eine
-				kurzfristige Einstellung dieser Seite sind nicht vorgesehen, aber
-				möglich. Wer mag, kann auch den
-				<a href="https://finalrewind.org/projects/travelynx">Quelltext</a>
-				laden und eine eigene Instanz aufsetzen.
+				%= L('landingpage.disclaimer.lead')
+				%= L('landingpage.disclaimer.source-pre')
+				<a href="https://finalrewind.org/projects/travelynx"><%= L('landingpage.disclaimer.source-link') %></a>
+				%= L('landingpage.disclaimer.source-post')
 			</p>
 		</div>
 	</div>

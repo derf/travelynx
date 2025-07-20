@@ -93,6 +93,65 @@ msgstr "offene Anfragen"
 msgid "account.interaction.disabled"
 msgstr "Accounts können dir nicht folgen"
 
+# landingpage.html.ep
+
+msgid "landingpage.greeting-prefix"
+msgstr "Hallo,"
+
+msgid "landingpage.greeting-suffix"
+msgstr "!"
+
+msgid "landingpage.not-checked-in"
+msgstr "Du bist gerade nicht eingecheckt"
+
+msgid "landingpage.about"
+msgstr "Travelynx erlaubt das Einchecken in Verkehrsmittel (Busse, Bahnen, Züge) unter anderem in Deutschland, Österreich, der Schweiz, Luxemburg, Irland, Dänemark und Teilen der USA. So können die eigenen Fahrten später inklusive Echtzeitdaten und eingetragenen Servicemeldungen nachvollzogen und brennende Fragen wie „Wie viele Stunden war ich letzten Monat unterwegs?“ beantwortet werden."
+
+msgid "landingpage.traewelling.pre"
+msgstr "Die Idee dazu kommt von"
+
+msgid "landingpage.traewelling.post"
+msgstr " "
+
+msgid "landingpage.features"
+msgstr "Features:"
+
+msgid "landingpage.features.log"
+msgstr "Protokoll von Fahrplan- und Echtzeitdaten an Start- und Zielbahnhof"
+
+msgid "landingpage.features.share"
+msgstr "Teilen von aktuellen und vergangenen Fahrten mit anderen Personen"
+
+msgid "landingpage.features.api-pre"
+msgstr "Web-Hooks und"
+
+msgid "landingpage.features.api-link"
+msgstr "API"
+
+msgid "landingpage.features.api-post"
+msgstr "zum automatisierten Einchecken und Auslesen des aktuellen Status"
+
+msgid "landingpage.features.stats"
+msgstr "Statistiken über Reisezeiten und Verspätungen"
+
+msgid "landingpage.features.passenger-rights"
+msgstr "Unterstützung beim Ausfüllen von Fahrgastrechteformularen"
+
+msgid "landingpage.features.public"
+msgstr "Optional: Öffentlicher Reisestatus und öffentliche Angaben zu vergangenen Fahrten"
+
+msgid "landingpage.disclaimer.lead"
+msgstr "Travelynx ist ein kostenfreies, privat betriebenes Projekt ohne Verfügbarkeitsgarantie. Unangekündigte Downtimes oder eine kurzfristige Einstellung dieser Seite sind nicht vorgesehen, aber möglich."
+
+msgid "landingpage.disclaimer.source-pre"
+msgstr "Wer mag, kann auch den"
+
+msgid "landingpage.disclaimer.source-link"
+msgstr "Quelltext"
+
+msgid "landingpage.disclaimer.source-post"
+msgstr "laden und eine eigene Instanz aufsetzen."
+
 # login.html.ep
 
 msgid "login.accept-tos-pre"
@@ -154,7 +213,7 @@ msgstr "Accounts werden nach einem Jahr ohne Aktivität per E-Mail über die bev
 msgid "register.disclaimer"
 msgstr "Bitte beachten: Travelynx ist ein privat betriebenes Projekt ohne Verfügbarkeitsgarantie. Unangekündigte Downtimes oder eine kurzfristige Einstellung dieser Seite sind nicht vorgesehen, aber möglich."
 
-# _public_status_card.html.ep
+# _checked_in.html.ep, _public_status_card.html.ep
 
 msgid "status.is-checked-in"
 msgstr "ist unterwegs"
@@ -164,6 +223,9 @@ msgstr "ist gerade nicht eingecheckt"
 
 msgid "status.share"
 msgstr "Teilen"
+
+msgid "status.check-out"
+msgstr "Auschecken"
 
 msgid "status.arrival-in"
 msgstr "Ankunft in"

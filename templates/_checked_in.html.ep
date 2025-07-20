@@ -284,7 +284,7 @@
 					style="margin-right: 0;"
 					data-station="<%= $journey->{arr_name}%>">
 						<i class="material-icons left">done</i>
-						Auschecken
+						%= L('status.check-out')
 					</a>
 			% }
 			% elsif ($journey->{arr_name}) {
