@@ -15,6 +15,8 @@ require "$FindBin::Bin/../index.pl";
 
 my $t = Test::Mojo->new('Travelynx');
 
+$t->ua->on( start => sub { $_[1]->req->headers->accept_language('de-DE') } );
+
 $t->get_ok('/')->status_is(200);
 $t->text_like( 'a[href="/register"]' => qr{Registrieren} );
 $t->text_like( 'a[href="/login"]'    => qr{Anmelden} );

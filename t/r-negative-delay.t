@@ -17,6 +17,8 @@ require "$FindBin::Bin/../index.pl";
 
 my $t = Test::Mojo->new('Travelynx');
 
+$t->ua->on( start => sub { $_[1]->req->headers->accept_language('de-DE') } );
+
 if ( not $t->app->config->{db} ) {
 	plan( skip_all => 'No database configured' );
 }

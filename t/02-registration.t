@@ -17,6 +17,8 @@ require "$FindBin::Bin/../index.pl";
 
 my $t = Test::Mojo->new('Travelynx');
 
+$t->ua->on( start => sub { $_[1]->req->headers->accept_language('de-DE') } );
+
 if ( not $t->app->config->{db} ) {
 	plan( skip_all => 'No database configured' );
 }
@@ -206,7 +208,8 @@ $res = $t->app->pg->db->select( 'pending_passwords', ['token'],
 	{ user_id => $uid } );
 $token = $res->hash->{token};
 
-$t->get_ok("/recover/${uid}/${token}")->status_is(200)
+$t->get_ok("/recover/${uid}/${token}")
+  ->status_is(200)
   ->content_like(qr{Neues Passwort eintragen});
 
 $t->post_ok(
