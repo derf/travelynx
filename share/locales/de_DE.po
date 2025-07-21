@@ -173,7 +173,7 @@ msgstr "Betrieb"
 
 #, short
 msgid "journey.messages"
-msgstr "Melungen"
+msgstr "Meldungen"
 
 #, short
 msgid "journey.comment"
