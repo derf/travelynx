@@ -39,6 +39,9 @@ msgstr "dark"
 msgid "footer.colour-scheme.auto"
 msgstr "auto"
 
+msgid "header.error"
+msgstr "Fehler"
+
 #
 # Templates
 #
@@ -130,6 +133,68 @@ msgstr "open requests"
 
 msgid "account.interaction.disabled"
 msgstr "Accounts cannot follow you"
+
+# journey.html.ep
+
+msgid "journey.not-found"
+msgstr "Trip not found."
+
+#, short
+msgid "journey.trip"
+msgstr "Trip"
+
+#, short
+msgid "journey.from"
+msgstr "From"
+
+#, short
+msgid "journey.to"
+msgstr "To"
+
+#, short
+msgid "journey.departure"
+msgstr "Departure"
+
+#, short
+msgid "journey.arrival"
+msgstr "Arrival"
+
+#, short
+msgid "journey.distance"
+msgstr "Distance"
+
+#, short
+msgid "journey.speed"
+msgstr "Speed"
+
+#, short
+msgid "journey.operator"
+msgstr "Operator"
+
+#, short
+msgid "journey.messages"
+msgstr "Messages"
+
+#, short
+msgid "journey.comment"
+msgstr "Comment"
+
+#, short
+msgid "journey.carriages"
+msgstr "Carriages"
+
+#, short
+msgid "journey.route"
+msgstr "Route"
+
+msgid "journey.share"
+msgstr "Share"
+
+msgid "journey.edit"
+msgstr "Edit"
+
+msgid "journey.delete"
+msgstr "Delete"
 
 # landingpage.html.ep
 

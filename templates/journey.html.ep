@@ -3,8 +3,8 @@
 		<div class="col s12">
 			<div class="card caution-color">
 				<div class="card-content white-text">
-					<span class="card-title">Fehler</span>
-					<p>Fahrt nicht gefunden.</p>
+					<span class="card-title"><%= L('header.error') %></span>
+					<p><%= L('journey.not-found') %></p>
 				</div>
 			</div>
 		</div>
@@ -57,7 +57,7 @@
 			% }
 			<table class="striped">
 				<tr>
-					<th scope="row">Fahrt</th>
+					<th scope="row"><%= L('journey.trip') %></th>
 					<td>
 						<%= $journey->{type} %> <%= $journey->{no} %>
 						% if ($journey->{line}) {
@@ -66,7 +66,7 @@
 					</td>
 				</tr>
 				<tr>
-					<th scope="row">Von</th>
+					<th scope="row"><%= L('journey.from') %></th>
 					<td>
 						%= $journey->{from_name}
 						% if ($journey->{from_platform} and $journey->{to_platform}) {
@@ -78,7 +78,7 @@
 					</td>
 				</tr>
 				<tr>
-					<th scope="row">Nach</th>
+					<th scope="row"><%= L('journey.to') %></th>
 					<td>
 						<%= $journey->{to_name} %>
 						% if ($journey->{from_platform} and $journey->{to_platform}) {
@@ -90,7 +90,7 @@
 					</td>
 				</tr>
 				<tr>
-					<th scope="row">Abfahrt</th>
+					<th scope="row"><%= L('journey.departure') %></th>
 					<td>
 						% if ($journey->{cancelled}) {
 							<i class="material-icons">cancel</i>
@@ -115,7 +115,7 @@
 					</td>
 				</tr>
 				<tr>
-					<th scope="row">Ankunft</th>
+					<th scope="row"><%= L('journey.arrival') %></th>
 					<td>
 						% if ($journey->{cancelled}) {
 							<i class="material-icons">cancel</i>
@@ -145,7 +145,7 @@
 					</td>
 				</tr>
 				<tr>
-					<th scope="row">Strecke</th>
+					<th scope="row"><%= L('journey.distance') %></th>
 					<td>
 						% if ($journey->{skip_route}) {
 							<i class="material-icons right">location_off</i>
@@ -167,7 +167,7 @@
 					</td>
 				</tr>
 				<tr>
-					<th scope="row">Tempo</th>
+					<th scope="row"><%= L('journey.speed') %></th>
 					<td>
 						% if ($journey->{skip_route}) {
 							<i class="material-icons right">location_off</i>
@@ -190,7 +190,7 @@
 				</tr>
 				% if ($journey->{user_data}{operator} or scalar @{ $journey->{user_data}{operators} // [] }) {
 					<tr>
-						<th scope="row">Betrieb</th>
+						<th scope="row"><%= L('journey.operator') %></th>
 						<td>
 							%= $journey->{user_data}{operator} // join(q{, }, @{$journey->{user_data}{operators}})
 						</td>
@@ -198,7 +198,7 @@
 				% }
 				% if ($journey->{messages} and @{$journey->{messages}}) {
 					<tr>
-						<th scope="row">Meldungen</th>
+						<th scope="row"><%= L('journey.messages') %></th>
 						<td>
 							% for my $message (@{$journey->{messages} // []}) {
 								% my ($ts, $msg) = @{$message};
@@ -209,7 +209,7 @@
 				% }
 				% if ($journey->{user_data}{him_msg} and @{$journey->{user_data}{him_msg}}) {
 					<tr>
-						<th scope="row">Meldungen</th>
+						<th scope="row"><%= L('journey.messages') %></th>
 						<td>
 							% for my $message (@{$journey->{user_data}{him_msg} // []}) {
 								<i class="material-icons tiny"><%= ($message->{prio} and $message->{prio} eq 'HOCH') ? 'warning' : 'info' %></i> <%= $message->{header} %> <%= $message->{lead} %><br/>
@@ -219,7 +219,7 @@
 				% }
 				% if ($journey->{user_data} and $journey->{user_data}{comment}) {
 					<tr>
-						<th scope="row">Kommentar</th>
+						<th scope="row"><%= L('journey.comment') %></th>
 						<td>
 							<%= $journey->{user_data}{comment} %>
 						</td>
@@ -227,7 +227,7 @@
 				% }
 				% if ($journey->{user_data} and $journey->{user_data}{wagongroups} and not exists $journey->{user_data}{wagons}) {
 				<tr>
-					<th scope="row">Rollmaterial</th>
+					<th scope="row"><%= L('journey.carriages') %></th>
 					<td class="wagons">
 						%= include '_wagons', wagongroups => $journey->{user_data}{wagongroups};
 					</td>
@@ -235,7 +235,7 @@
 				% }
 				% elsif ($journey->{user_data} and $journey->{user_data}{wagons}) {
 				<tr>
-					<th scope="row">Rollmaterial</th>
+					<th scope="row"><%= L('journey.carriages') %></th>
 					<td class="wagons">
 						% for my $wagongroup (@{$journey->{user_data}{wagongroups} // []}) {
 							Wagenverbund <%= $wagongroup %><br/>
@@ -252,7 +252,7 @@
 				</tr>
 				% }
 				<tr>
-					<th scope="row">Route</th>
+					<th scope="row"><%= L('journey.route') %></th>
 					<td>
 						% my $before = 1;
 						% my $within = 0;
@@ -329,7 +329,8 @@
 						% }
 						data-text="<%= stash('share_text') %>"
 						>
-						<i class="material-icons left" aria-hidden="true">share</i> Teilen
+						<i class="material-icons left" aria-hidden="true">share</i>
+						%= L('journey.share')
 					</a>
 				</div>
 			</div>
@@ -341,7 +342,7 @@
 						data-checkin="<%= $journey->{checkin}->epoch %>"
 						data-checkout="<%= $journey->{checkout}->epoch %>">
 					<i class="material-icons left">delete_forever</i>
-					Löschen
+					%= L('journey.delete')
 				</a>
 			</div>
 			<div class="col s12 m6 l6 center-align">
@@ -349,7 +350,7 @@
 					%= hidden_field 'journey_id' => param('journey_id')
 					<button class="btn waves-effect waves-light" type="submit" name="action" value="edit">
 						<i class="material-icons left" aria-hidden="true">edit</i>
-						Bearbeiten
+						%= L('journey.edit')
 					</button>
 				%= end
 			</div>
@@ -360,7 +361,7 @@
 					%= hidden_field 'journey_id' => param('journey_id')
 					<button class="btn waves-effect waves-light" type="submit" name="action" value="edit">
 						<i class="material-icons left" aria-hidden="true">edit</i>
-						Bearbeiten
+						%= L('journey.edit')
 					</button>
 				%= end
 			</div>
@@ -370,7 +371,7 @@
 						data-checkin="<%= $journey->{checkin}->epoch %>"
 						data-checkout="<%= $journey->{checkout}->epoch %>">
 					<i class="material-icons left" aria-hidden="true">delete_forever</i>
-					Löschen
+					%= L('journey.delete')
 				</a>
 			</div>
 		</div>
