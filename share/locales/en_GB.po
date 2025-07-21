@@ -40,7 +40,7 @@ msgid "footer.colour-scheme.auto"
 msgstr "auto"
 
 msgid "header.error"
-msgstr "Fehler"
+msgstr "Error"
 
 #
 # Templates
