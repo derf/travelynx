@@ -441,6 +441,9 @@ sub startup {
 					elsif ( $lang =~ m{ ^ fr }x ) {
 						push( @languages, 'fr-FR' );
 					}
+					elsif ( $lang =~ m{ ^ hu }x ) {
+						push( @languages, 'hu-HU' );
+					}
 					elsif ( $lang =~ m{ ^ pl }x ) {
 						push( @languages, 'pl-PL' );
 					}

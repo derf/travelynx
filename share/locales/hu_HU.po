@@ -1,0 +1,446 @@
+msgid ""
+msgstr ""
+"Language: hu-HU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#
+# Global Strings
+#
+
+msgid "button.register"
+msgstr "Regisztrálás"
+
+msgid "button.login"
+msgstr "Bejelentkezés"
+
+msgid "button.logout"
+msgstr "Kijelentkezés"
+
+msgid "footer.imprint"
+msgstr "Impresszum"
+
+msgid "footer.privacy"
+msgstr "Adatvédelem"
+
+msgid "footer.legend"
+msgstr "Jelmagyarázat"
+
+msgid "footer.colour-scheme"
+msgstr "Színséma"
+
+msgid "footer.colour-scheme.light"
+msgstr "világos"
+
+msgid "footer.colour-scheme.dark"
+msgstr "sötét"
+
+msgid "footer.colour-scheme.auto"
+msgstr "automatikus"
+
+msgid "header.error"
+msgstr "Hiba"
+
+#
+# Templates
+#
+
+# about.html.ep
+
+msgid "about.developed-by.lead"
+msgstr "Fejlesztették:"
+
+msgid "about.developed-by.and"
+msgstr ","
+
+msgid "about.developed-by.others"
+msgstr "többiek"
+
+msgid "about.developed-by.tail"
+msgstr " "
+
+msgid "about.source-code"
+msgstr "A Forráskód"
+
+msgid "about.licence-agplv3"
+msgstr "az AGPL v3 licensz alatt elérhető"
+
+msgid "about.data-sources"
+msgstr "Backendek:"
+
+msgid "about.data-sources.last-and"
+msgstr " és"
+
+msgid "about.disclaimer"
+msgstr "Travelynx egy ingyenes és bármi rendelkezésre állási garacia nélküli hobbi projekt. Be nem tervezett leállások, illetve a teljes oldal hírtelen bezárása nincs tervben, de bármikor előfordulhat. Feature requesteket, bug reportokat és egyéb üzeneteket kapacitástól és motivációtól függően azonnal, megkésve vagy akár soha sem lesznek feldolgozva."
+
+msgid "about.contact"
+msgstr "Kapcsolat"
+
+msgid "about.bugs"
+msgstr "Bugok"
+
+msgid "about.changelog"
+msgstr "Changelog"
+
+# account.html.ep
+
+msgid "account.account"
+msgstr "Fiók"
+
+msgid "account.name"
+msgstr "Név"
+
+msgid "account.mail"
+msgstr "E-Mail"
+
+msgid "account.password"
+msgstr "Jelszó"
+
+msgid "account.language"
+msgstr "Nyelv"
+
+msgid "account.connections"
+msgstr "Átszállások"
+
+msgid "account.connections.enabled"
+msgstr "Javaslatok aktiválva"
+
+msgid "account.connections.disabled"
+msgstr "Javaslatok deaktiválva"
+
+msgid "account.visibility"
+msgstr "Láthatóság"
+
+msgid "account.interaction"
+msgstr "Interakció"
+
+msgid "account.interaction.accept-follows"
+msgstr "Bárki követhet" # means "Anyone can follow" - because adding "Accounts" here sounds weird, though I could change it to "Users can follow" if the distinciton between anyone vs users is important
+
+msgid "account.interaction.accept-follow-requests"
+msgstr "Bárki küldhet követési kéréseket" # means "Anyone can send follow requests" - see above
+
+msgid "account.interaction.one"
+msgstr "egy"
+
+msgid "account.interaction.open-request"
+msgstr "követési kérés"
+
+msgid "account.interaction.open-requests"
+msgstr "követési kérések"
+
+msgid "account.interaction.disabled"
+msgstr "Senki sem követhet" # means "No one can follow" - see line 120
+
+# journey.html.ep
+
+msgid "journey.not-found"
+msgstr "Utazás nem találva."
+
+#, short
+msgid "journey.trip"
+msgstr "Utazás"
+
+#, short
+msgid "journey.from"
+msgstr "Honnan"
+
+#, short
+msgid "journey.to"
+msgstr "Hova"
+
+#, short
+msgid "journey.departure"
+msgstr "Indulás"
+
+#, short
+msgid "journey.arrival"
+msgstr "Érkezés"
+
+#, short
+msgid "journey.distance"
+msgstr "Távolság"
+
+#, short
+msgid "journey.speed"
+msgstr "Sebesség"
+
+#, short
+msgid "journey.operator"
+msgstr "Üzemeltető"
+
+#, short
+msgid "journey.messages"
+msgstr "Jelentések" # closer to the word "reports" than "messages" but I think it fits better, considering these are infos that might affect your journey
+
+#, short
+msgid "journey.comment"
+msgstr "Megjegyzés"
+
+#, short
+msgid "journey.carriages"
+msgstr "Járművek"
+
+#, short
+msgid "journey.route"
+msgstr "Útvonal"
+
+msgid "journey.share"
+msgstr "Megosztás"
+
+msgid "journey.edit"
+msgstr "Szerkesztés"
+
+msgid "journey.delete"
+msgstr "Törlés"
+
+# landingpage.html.ep
+
+msgid "landingpage.greeting-prefix"
+msgstr "Üdv,"
+
+msgid "landingpage.greeting-suffix"
+msgstr "!"
+
+msgid "landingpage.not-checked-in"
+msgstr "Jelenleg nem vagy becsekkolva"
+
+msgid "landingpage.stop-geosearch"
+msgstr "Közeledben lévő megállók keresése"
+
+msgid "landingpage.manual-stop-entry"
+msgstr "Manuális bevitel"
+
+#, As short as possible
+msgid "landingpage.departures"
+msgstr "Indulások"
+
+msgid "landingpage.latest-trips"
+msgstr "Legutóbbi utazások"
+
+msgid "landingpage.date-format"
+msgstr "%Y.%m.%d"
+
+msgid "landingpage.about"
+msgstr "Travelynx-el tömegközlekedési eszközökre (pl. Buszokra, Villamosokra, Vonatokra) be lehet csekkolni, többek között Németországban, Ausztriában, der Svájcban, Luxemburgban, Írországban, Dániában és az USA egyes részeiben. Így nyomon követheted az utazásaidat (gyakran térképes és valós idejű adatokkal együtt), megoszthatod azokat másokkal, és a rendkívüli fontos kérdéseidre, mint például „hány órát tömegközlekedtem az elmúlt hónapban?”, is kapsz választ.
+
+msgid "landingpage.traewelling.pre"
+msgstr "Az elsők akiknek hasonló ötlete volt és azt kivitelezték a"
+
+msgid "landingpage.traewelling.post"
+msgstr " volt"
+
+msgid "landingpage.features"
+msgstr "Fícsörök:" # not sure if this or rather "Feature-ök" I've seen both be used before.
+
+msgid "landingpage.features.log"
+msgstr "Menetrend szerinti és valós idejű adatok naplózása. (indulási és célállomásokon)"
+
+msgid "landingpage.features.share"
+msgstr "Jelenlegi és korábbi utazások megosztása másokkal"
+
+msgid "landingpage.features.api-pre"
+msgstr "Web-Hook-ok és egy"
+
+msgid "landingpage.features.api-link"
+msgstr "API"
+
+msgid "landingpage.features.api-post"
+msgstr "az automatikus becsekkeléshez és az aktuális státusz leolvasásához"
+
+msgid "landingpage.features.stats"
+msgstr "Statisztikák az utazások időtartamáról és a késésekről"
+
+msgid "landingpage.features.passenger-rights"
+msgstr "Támogatás az utasjogi formanyomtatványok kitöltéséhez"
+
+msgid "landingpage.features.public"
+msgstr "Opcionális: utazási státusz és a korábbi utazásokról szóló adatok nyilvánosítása"
+
+msgid "landingpage.disclaimer.lead"
+msgstr "Travelynx egy ingyenes és bármi rendelkezésre állási garacia nélküli hobbi projekt. Be nem tervezett leállások, illetve a teljes oldal hírtelen bezárása nincs tervben, de bármikor előfordulhat."
+
+msgid "landingpage.disclaimer.source-pre"
+msgstr "Aki szeretné az letöltheti a"
+
+msgid "landingpage.disclaimer.source-link"
+msgstr "forráskódot"
+
+msgid "landingpage.disclaimer.source-post"
+msgstr "is és saját szervert működtethet." # not 100% sure about this one, there's no good equivalent for "instancce" so I used "server" here, and "web-page" elsewhere
+
+# language.html.ep
+
+msgid "language.language"
+msgstr "Nyelv"
+
+msgid "language.browser-default"
+msgstr "A webböngésző nyelve(i)"
+
+# login.html.ep
+
+msgid "login.accept-tos-pre"
+msgstr "A bejelentkezéssel elfogadod a"
+
+msgid "login.tos"
+msgstr "használati feltételeket"
+
+msgid "login.accept-tos-post"
+msgstr " "
+
+msgid "login.forgot-password"
+msgstr "Elfelejtett jelszó"
+
+msgid "login.registration-disabled"
+msgstr "Ez a weboldal jelenleg nem fogad új felhasználókat" # means "this web-page currently does not accept new users"
+
+# register.html.ep
+
+msgid "register.name"
+msgstr "Név (alfanumerikus)"
+
+msgid "register.mail"
+msgstr "E-Mail cím"
+
+msgid "register.password"
+msgstr "Jelszó"
+
+msgid "register.repeat-password"
+msgstr "Jelszó újra"
+
+msgid "register.accept-tos-pre"
+msgstr "A regisztrálással elfogadod a"
+
+msgid "register.tos"
+msgstr "használati feltételeket"
+
+msgid "register.accept-tos-post"
+msgstr " "
+
+msgid "register.expect-confirmation-link"
+msgstr "A regisztráció elküldése után egy megerősítő linket küldünk a megadott e-mail címre. Az új travelynx-fiókba való bejelentkezés csak a link követése után lehetséges. A link 48 órán át érvényes."
+
+msgid "register.why-mail"
+msgstr "Az e-mail címet csak a regisztráció megerősítésére, az „Elfelejtett jelszó” funkcióhoz és a fiókkal kapcsolatos fontos információkhoz használjuk, és nem adjuk tovább harmadik félnek."
+
+msgid "register.privacy-pre"
+msgstr "Az"
+
+msgid "register.privacy"
+msgstr "adatkezelési tájékoztató"
+
+msgid "register.privacy-post"
+msgstr "leírja az egyéb begyűjtött adatokat, valamit azok célját és tárolási időtartamát."
+
+msgid "register.account-deletion"
+msgstr "A fiókokat egy év inaktivitás után e-mailben értesítjük a közelgő törlésről, és további négy hét inaktivitás után automatikusan törlődnek."
+
+msgid "register.disclaimer"
+msgstr "Kérjük, vedd figyelembe: Travelynx egy ingyenes és bármi rendelkezésre állási garacia nélküli hobbi projekt. Be nem tervezett leállások, illetve a teljes oldal hírtelen bezárása nincs tervben, de bármikor előfordulhat."
+
+# _checked_in.html.ep, _public_status_card.html.ep
+
+msgid "status.is-checked-in"
+msgstr "útban van"
+
+msgid "status.is-not-checked-in"
+msgstr "jelenleg nincs becsekkolva"
+
+msgid "status.select-destination"
+msgstr "Cél kiválasztása"
+
+msgid "status.share"
+msgstr "Megosztás"
+
+msgid "status.check-out"
+msgstr "Kicsekkelés"
+
+msgid "status.boarding-in"
+msgstr "Beszállás:" # ideally would need a `borading-in.pre` and `boarding-in.post` because the correcct way would be something "A beszállás 5 percen belül következik." or "5 Perc múlva kezdődik a beszállás.", but understandable if out of scope
+
+msgid "status.boarding-soon"
+msgstr "A beszállás hamarosan következik"
+
+#, noun or verb
+msgid "status.departure-in"
+msgstr "Indulás:" # see line 361 again
+
+#, noun or verb
+msgid "status.departure-soon"
+msgstr "Egy percen belül indul"
+
+#, noun or verb
+msgid "status.arrival-in"
+msgstr "Érkezés:" # see line 361 again
+
+#, noun or verb
+msgid "status.arrival-soon"
+msgstr "Egy percen belül érkezik"
+
+msgid "status.arrival-unknown"
+msgstr "Érkezési időpont ismeretlen"
+
+msgid "status.arrived"
+msgstr "Cél elérve"
+
+msgid "status.depart-from"
+msgstr "vágányról indul:" # means "starts from platform:" - because again Hungarian is funny with sentence ordering when numbers come into play, and from/on/to are usually suffixes attached onto other words... so "6. vágányról" would be "from platform 6"
+
+msgid "status.arrive-on"
+msgstr "vágányra érkezik:" # means "arrives to platform:" - let's see if these solutions seem okay when using it live though, maybe they're fine as is.
+
+msgid "status.delayed-auto-checkout"
+msgstr "Körülbelül tíz perccel az érkezés után automatikusan kicsekkolódsz."
+
+msgid "status.realtime-unavailable"
+msgstr "Valós idejű adatok nem állnak rendelkezésre"
+
+#, service messages related to the trip
+msgid "status.messages"
+msgstr "Jelentések" # see line 176
+
+msgid "status.map"
+msgstr "Térkép"
+
+msgid "status.change-destination"
+msgstr "Célváltás?"
+
+msgid "status.carriages"
+msgstr "Kocsik"
+
+msgid "status.route"
+msgstr "Útvonal"
+
+#, shown during destination selection
+msgid "status.undo"
+msgstr "Visszavonás"
+
+#, shown during destination selection
+msgid "status.privacy-level"
+msgstr "Láthatóság"
+
+#, shown once check-in is completed
+msgid "status.undo-checkin"
+msgstr "Becsekkelés visszavonása"
+
+msgid "status.force-checkout-lead"
+msgstr "Körülbelül tíz perccel az érkezés után automatikusan kicsekkolódsz. Ha a backend leállt, vagy az utazás más okokból elveszlett:"
+
+msgid "status.force-checkout"
+msgstr "Most kicsekkelni"
+
+# _wagons.html.ep
+
+msgid "wagons.name-as-type"
+msgstr "közlekedik mint:" # `name-as-type.post` would be useful here again, because properly it would be for example "TGV-ként közlekedik"
+
+msgid "wagons.from"
+msgstr "innen:" # `.post` would be useful here too, though not sure where this used exactly?
+
+msgid "wagons.to"
+msgstr "eddig:" # `.post` would be useful here too
+
+msgid "wagons.carriage"
+msgstr "Kocsi"
