@@ -357,23 +357,37 @@ msgstr "Megosztás"
 msgid "status.check-out"
 msgstr "Kicsekkelés"
 
-msgid "status.boarding-in"
-msgstr "Beszállás:" # ideally would need a `borading-in.pre` and `boarding-in.post` because the correcct way would be something "A beszállás 5 percen belül következik." or "5 Perc múlva kezdődik a beszállás.", but understandable if out of scope
+#, noun or verb
+msgid "status.boarding-in.pre"
+msgstr "Beszállás"
 
+#, noun or verb
+msgid "status.boarding-in.post"
+msgstr "-en belül"
+
+#, noun or verb
 msgid "status.boarding-soon"
 msgstr "A beszállás hamarosan következik"
 
 #, noun or verb
-msgid "status.departure-in"
-msgstr "Indulás:" # see line 361 again
+msgid "status.departure-in.pre"
+msgstr " "
+
+#, noun or verb
+msgid "status.departure-in.post"
+msgstr "-en belül indul"
 
 #, noun or verb
 msgid "status.departure-soon"
 msgstr "Egy percen belül indul"
 
 #, noun or verb
-msgid "status.arrival-in"
-msgstr "Érkezés:" # see line 361 again
+msgid "status.arrival-in.pre"
+msgstr " "
+
+#, noun or verb
+msgid "status.arrival-in.post"
+msgstr "-en belül érkezik"
 
 #, noun or verb
 msgid "status.arrival-soon"
@@ -385,11 +399,17 @@ msgstr "Érkezési időpont ismeretlen"
 msgid "status.arrived"
 msgstr "Cél elérve"
 
-msgid "status.depart-from"
-msgstr "vágányról indul:" # means "starts from platform:" - because again Hungarian is funny with sentence ordering when numbers come into play, and from/on/to are usually suffixes attached onto other words... so "6. vágányról" would be "from platform 6"
+msgid "status.depart-from.pre"
+msgstr " "
 
-msgid "status.arrive-on"
-msgstr "vágányra érkezik:" # means "arrives to platform:" - let's see if these solutions seem okay when using it live though, maybe they're fine as is.
+msgid "status.depart-from.post"
+msgstr "vágányról indul"
+
+msgid "status.arrive-on.pre"
+msgstr " "
+
+msgid "status.arrive-on.post"
+msgstr "vágányra érkezik"
 
 msgid "status.delayed-auto-checkout"
 msgstr "Körülbelül tíz perccel az érkezés után automatikusan kicsekkolódsz."
@@ -434,13 +454,19 @@ msgstr "Most kicsekkelni"
 # _wagons.html.ep
 
 msgid "wagons.name-as-type"
-msgstr "közlekedik mint:" # `name-as-type.post` would be useful here again, because properly it would be for example "TGV-ként közlekedik"
+msgstr "közlekedik mint:"
 
-msgid "wagons.from"
-msgstr "innen:" # `.post` would be useful here too, though not sure where this used exactly?
+msgid "wagons.from.pre"
+msgstr " "
 
-msgid "wagons.to"
-msgstr "eddig:" # `.post` would be useful here too
+msgid "wagons.from.post"
+msgstr "-tól"
+
+msgid "wagons.to.pre"
+msgstr " "
+
+msgid "wagons.to.post"
+msgstr "-ig"
 
 msgid "wagons.carriage"
 msgstr "Kocsi"
