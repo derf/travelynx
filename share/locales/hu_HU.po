@@ -117,10 +117,10 @@ msgid "account.interaction"
 msgstr "Interakció"
 
 msgid "account.interaction.accept-follows"
-msgstr "Bárki követhet" # means "Anyone can follow" - because adding "Accounts" here sounds weird, though I could change it to "Users can follow" if the distinciton between anyone vs users is important
+msgstr "Bárki követhet"
 
 msgid "account.interaction.accept-follow-requests"
-msgstr "Bárki küldhet követési kéréseket" # means "Anyone can send follow requests" - see above
+msgstr "Bárki küldhet követési kéréseket"
 
 msgid "account.interaction.one"
 msgstr "egy"
@@ -132,7 +132,7 @@ msgid "account.interaction.open-requests"
 msgstr "követési kérések"
 
 msgid "account.interaction.disabled"
-msgstr "Senki sem követhet" # means "No one can follow" - see line 120
+msgstr "Senki sem követhet"
 
 # journey.html.ep
 
@@ -173,7 +173,7 @@ msgstr "Üzemeltető"
 
 #, short
 msgid "journey.messages"
-msgstr "Jelentések" # closer to the word "reports" than "messages" but I think it fits better, considering these are infos that might affect your journey
+msgstr "Jelentések"
 
 #, short
 msgid "journey.comment"
@@ -269,7 +269,7 @@ msgid "landingpage.disclaimer.source-link"
 msgstr "forráskódot"
 
 msgid "landingpage.disclaimer.source-post"
-msgstr "is és saját szervert működtethet." # not 100% sure about this one, there's no good equivalent for "instancce" so I used "server" here, and "web-page" elsewhere
+msgstr "is és saját szervert működtethet."
 
 # language.html.ep
 
@@ -294,7 +294,7 @@ msgid "login.forgot-password"
 msgstr "Elfelejtett jelszó"
 
 msgid "login.registration-disabled"
-msgstr "Ez a weboldal jelenleg nem fogad új felhasználókat" # means "this web-page currently does not accept new users"
+msgstr "Ez a weboldal jelenleg nem fogad új felhasználókat"
 
 # register.html.ep
 
@@ -399,7 +399,7 @@ msgstr "Valós idejű adatok nem állnak rendelkezésre"
 
 #, service messages related to the trip
 msgid "status.messages"
-msgstr "Jelentések" # see line 176
+msgstr "Jelentések"
 
 msgid "status.map"
 msgstr "Térkép"
