@@ -19,20 +19,20 @@
 					data-dest="<%= $journey->{arr_name} %>"
 					>
 					% if ($journey->{boarding_countdown} > 60) {
-						<%= L('status.boarding-in') %> <%= journeys->min_to_human(int($journey->{boarding_countdown} / 60)) %><br/>
+						<%= L('status.boarding-in.pre') %> <%= journeys->min_to_human(int($journey->{boarding_countdown} / 60)) %> <%= L('status.boarding-in.post') %><br/>
 					% }
 					% elsif ($journey->{boarding_countdown} > 0) {
 						<%= L('status.boarding-soon') %><br/>
 					% }
 					% if ($journey->{departure_countdown} > 60) {
-						<%= L('status.departure-in') %> <%= journeys->min_to_human(int($journey->{departure_countdown} / 60)) %>
+						<%= L('status.departure-in.pre') %> <%= journeys->min_to_human(int($journey->{departure_countdown} / 60)) %> <%= L('status.departure-in.post') %>
 					% }
 					% elsif ($journey->{departure_countdown} > 0) {
 						%= L('status.departure-soon')
 					% }
 					% elsif (defined $journey->{arrival_countdown}) {
 						% if ($journey->{arrival_countdown} > 60) {
-							<%= L('status.arrival-in') %> <%= journeys->min_to_human(int($journey->{arrival_countdown} / 60)) %>
+							<%= L('status.arrival-in.pre') %> <%= journeys->min_to_human(int($journey->{arrival_countdown} / 60)) %> <%= L('status.arrival-in.post') %> 
 						% }
 						% elsif ($journey->{arrival_countdown} > 0) {
 							%= L('status.arrival-soon')
@@ -48,7 +48,7 @@
 								<br/>◀ <%= $journey->{platform_type} %> <%= $journey->{arr_platform} %>
 							% }
 							% else {
-								<br/><%= L('status.arrive-on') %> <%= $journey->{platform_type} %> <%= $journey->{arr_platform} %>
+								<br/><%= L('status.arrive-on.pre') %> <%= $journey->{platform_type} %> <%= $journey->{arr_platform} %> <%= L('status.arrive-on.post') %>
 							% }
 						% }
 					% }
@@ -63,7 +63,7 @@
 							<br/>◀ <%= $journey->{platform_type} %> <%= $journey->{dep_platform} %>
 						% }
 						% else {
-							<br/><%= L('status.depart-from') %> <%= $journey->{platform_type} %> <%= $journey->{dep_platform} %>
+							<br/><%= L('status.depart-from.pre') %> <%= $journey->{platform_type} %> <%= $journey->{dep_platform} %> <%= L('status.depart-from.post') %>
 						% }
 					% }
 					% if (my $wr = $journey->{wagonorder}) {

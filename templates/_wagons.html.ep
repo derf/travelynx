@@ -9,10 +9,10 @@
 	% }
 	<%= L('wagons.name-as-type') %> <b><%= $wagongroup->{type} // $journey->{type} %> <%= $wagongroup->{no} %></b>
 	% if ($wagongroup->{from}) {
-		<%= L('wagons.from') %> <b><%= $wagongroup->{from} %></b>
+		<%= L('wagons.from.pre') %> <b><%= $wagongroup->{from} %></b> <%= L('wagons.from.post') %>
 	% }
 	% if ($wagongroup->{to}) {
-		<%= L('wagons.to') %> <b><%= $wagongroup->{to} %></b>
+		<%= L('wagons.to.pre') %> <b><%= $wagongroup->{to} %></b> <%= L('wagons.to.post') %>
 	% }
 	<br/>
 	% for my $wagon (@{$wagongroup->{wagons}}) {

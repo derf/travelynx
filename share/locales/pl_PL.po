@@ -205,8 +205,11 @@ msgstr "nie jest w tej chwili w podróży"
 msgid "status.share"
 msgstr "Udostępnij"
 
-msgid "status.arrival-in"
+msgid "status.arrival-in.pre"
 msgstr "Przyjazd za"
+
+msgid "status.arrival-in.post"
+msgstr " "
 
 msgid "status.arrival-soon"
 msgstr "Przyjazd za mniej niż minutę"
@@ -228,11 +231,17 @@ msgstr "Trasa"
 msgid "wagons.name-as-type"
 msgstr "jedzie jako"
 
-msgid "wagons.from"
+msgid "wagons.from.pre"
 msgstr "z"
 
-msgid "wagons.to"
+msgid "wagons.from.post"
+msgstr " "
+
+msgid "wagons.to.pre"
 msgstr "do"
+
+msgid "wagons.to.post"
+msgstr " "
 
 msgid "wagons.carriage"
 msgstr "Wagon"
