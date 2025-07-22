@@ -119,15 +119,16 @@ Setup with Docker
 Note that travelynx Docker support is experimental and, in its current form,
 far from best practices. Pull requests are appreciated.
 
-First, you need to set up a PostgreSQL database so that travelynx can store
-user accounts and journeys. It must be at least version 9.4 and must use a
-UTF-8 locale. See above (or `examples/docker/postgres-init.sh`) for database
-initialization. You do not need to perform the `database migrate` step.
+There's a simple `docker-compose.yml` along with some basic configuration in the `docker`
+subfolder, which can be used as an entrypoint. However, be aware, that the current
+setup is primarly targeted towards developers and does not include:
 
-Next, you need to prepare three files that will be mounted into the travelynx
-container: travelynx configuration, e-mail configuration, and imprint and
-privacy policy. For the sake of this readme, we assume that you are using the
-`local/` directory to store these
+- A mail server to send mails (they are logged to the console)
+- The correct information for the imprint and the privacy policy.
+- Any API keys to external services.
+
+If you want to run travelynx in a container-based setup, you should change the configuration.
+This is roughly done by following the steps below:
 
 * `mkdir local`
 * copy examples/travelynx.conf to local/travelynx.conf and configure it.
