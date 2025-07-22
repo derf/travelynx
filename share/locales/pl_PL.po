@@ -205,8 +205,11 @@ msgstr "nie jest w tej chwili w podróży"
 msgid "status.share"
 msgstr "Udostępnij"
 
-msgid "status.arrival-in"
+msgid "status.arrival-in.pre"
 msgstr "Przyjazd za"
+
+msgid "status.arrival-in.post"
+msgstr " "
 
 msgid "status.arrival-soon"
 msgstr "Przyjazd za mniej niż minutę"
