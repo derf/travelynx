@@ -357,23 +357,37 @@ msgstr "Share"
 msgid "status.check-out"
 msgstr "check out"
 
-msgid "status.boarding-in"
+#, noun or verb
+msgid "status.boarding-in.pre"
 msgstr "boarding in"
 
+#, noun or verb
+msgid "status.boarding-in.post"
+msgstr " "
+
+#, noun or verb
 msgid "status.boarding-soon"
 msgstr "now arriving"
 
 #, noun or verb
-msgid "status.departure-in"
+msgid "status.departure-in.pre"
 msgstr "departs in"
+
+#, noun or verb
+msgid "status.departure-in.post"
+msgstr " "
 
 #, noun or verb
 msgid "status.departure-soon"
 msgstr "departs in less than one minute"
 
 #, noun or verb
-msgid "status.arrival-in"
+msgid "status.arrival-in.pre"
 msgstr "arrives in"
+
+#, noun or verb
+msgid "status.arrival-in.post"
+msgstr " "
 
 #, noun or verb
 msgid "status.arrival-soon"
@@ -385,11 +399,17 @@ msgstr "Arrival unknown"
 msgid "status.arrived"
 msgstr "arrived"
 
-msgid "status.depart-from"
+msgid "status.depart-from.pre"
 msgstr "from"
 
-msgid "status.arrive-on"
+msgid "status.depart-from.post"
+msgstr " "
+
+msgid "status.arrive-on.pre"
 msgstr "on"
+
+msgid "status.arrive-on.post"
+msgstr " "
 
 msgid "status.delayed-auto-checkout"
 msgstr "You will be automatically checked out about ten minutes after the expected arrival time."
