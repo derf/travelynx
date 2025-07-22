@@ -224,7 +224,7 @@ msgid "landingpage.date-format"
 msgstr "%Y.%m.%d"
 
 msgid "landingpage.about"
-msgstr "Travelynx-el tömegközlekedési eszközökre (pl. Buszokra, Villamosokra, Vonatokra) be lehet csekkolni, többek között Németországban, Ausztriában, der Svájcban, Luxemburgban, Írországban, Dániában és az USA egyes részeiben. Így nyomon követheted az utazásaidat (gyakran térképes és valós idejű adatokkal együtt), megoszthatod azokat másokkal, és a rendkívüli fontos kérdéseidre, mint például „hány órát tömegközlekedtem az elmúlt hónapban?”, is kapsz választ.
+msgstr "Travelynx-el tömegközlekedési eszközökre (pl. Buszokra, Villamosokra, Vonatokra) be lehet csekkolni, többek között Németországban, Ausztriában, Svájcban, Luxemburgban, Írországban, Dániában és az USA egyes részeiben. Így nyomon követheted az utazásaidat (gyakran térképes és valós idejű adatokkal együtt), megoszthatod azokat másokkal, és a rendkívüli fontos kérdéseidre, mint például „hány órát tömegközlekedtem az elmúlt hónapban?”, is kapsz választ.
 
 msgid "landingpage.traewelling.pre"
 msgstr "Az elsők akiknek hasonló ötlete volt és azt kivitelezték a"
