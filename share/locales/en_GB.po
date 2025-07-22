@@ -456,11 +456,17 @@ msgstr "Force checkout"
 msgid "wagons.name-as-type"
 msgstr "running as"
 
-msgid "wagons.from"
+msgid "wagons.from.pre"
 msgstr "from"
 
-msgid "wagons.to"
+msgid "wagons.from.post"
+msgstr " "
+
+msgid "wagons.to.pre"
 msgstr "towards"
+
+msgid "wagons.to.post"
+msgstr " "
 
 msgid "wagons.carriage"
 msgstr "Carriage"

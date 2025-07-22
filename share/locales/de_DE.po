@@ -456,11 +456,17 @@ msgstr "Jetzt auschecken"
 msgid "wagons.name-as-type"
 msgstr "als"
 
-msgid "wagons.from"
+msgid "wagons.from.pre"
 msgstr "von"
 
-msgid "wagons.to"
+msgid "wagons.from.post"
+msgstr " "
+
+msgid "wagons.to.pre"
 msgstr "nach"
+
+msgid "wagons.to.post"
+msgstr " "
 
 msgid "wagons.carriage"
 msgstr "Wagen"

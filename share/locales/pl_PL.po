@@ -228,11 +228,17 @@ msgstr "Trasa"
 msgid "wagons.name-as-type"
 msgstr "jedzie jako"
 
-msgid "wagons.from"
+msgid "wagons.from.pre"
 msgstr "z"
 
-msgid "wagons.to"
+msgid "wagons.from.post"
+msgstr " "
+
+msgid "wagons.to.pre"
 msgstr "do"
+
+msgid "wagons.to.post"
+msgstr " "
 
 msgid "wagons.carriage"
 msgstr "Wagon"

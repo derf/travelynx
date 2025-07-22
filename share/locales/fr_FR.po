@@ -228,11 +228,17 @@ msgstr "Route"
 msgid "wagons.name-as-type"
 msgstr "sous le nom de"
 
-msgid "wagons.from"
+msgid "wagons.from.pre"
 msgstr "en provenance de"
 
-msgid "wagons.to"
+msgid "wagons.from.post"
+msgstr " "
+
+msgid "wagons.to.pre"
 msgstr "à destination de"
+
+msgid "wagons.to.post"
+msgstr " "
 
 msgid "wagons.carriage"
 msgstr "Voiture"
