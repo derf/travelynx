@@ -163,6 +163,12 @@ msgstr "Ankunft"
 msgid "journey.distance"
 msgstr "Strecke"
 
+msgid "journey.beeline.pre"
+msgstr "(Luftlinie: "
+
+msgid "journey.beeline.post"
+msgstr ")"
+
 #, short
 msgid "journey.speed"
 msgstr "Tempo"

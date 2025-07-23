@@ -163,6 +163,12 @@ msgstr "Arrival"
 msgid "journey.distance"
 msgstr "Distance"
 
+msgid "journey.beeline.pre"
+msgstr "("
+
+msgid "journey.beeline.post"
+msgstr " as the crow flies)"
+
 #, short
 msgid "journey.speed"
 msgstr "Speed"
