@@ -163,6 +163,12 @@ msgstr "Érkezés"
 msgid "journey.distance"
 msgstr "Távolság"
 
+msgid "journey.beeline.pre"
+msgstr "(Légvonalban: "
+
+msgid "journey.beeline.post"
+msgstr ")"
+
 #, short
 msgid "journey.speed"
 msgstr "Sebesség"
