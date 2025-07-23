@@ -41,7 +41,7 @@
 					% }
 					% elsif (defined $journey->{arrival_countdown}) {
 						% if ($journey->{arrival_countdown} > 60) {
-							<%= L('status.arrival-in') %> <%= journeys->min_to_human(int($journey->{arrival_countdown} / 60)) %>
+							<%= L('status.arrival-in.pre') %> <%= journeys->min_to_human(int($journey->{arrival_countdown} / 60)) %> <%= L('status.arrival-in.post') %>
 						% }
 						% elsif ($journey->{arrival_countdown} > 0) {
 							%= L('status.arrival-soon')
