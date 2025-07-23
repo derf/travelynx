@@ -153,10 +153,10 @@
 						% }
 						% if ($journey->{km_route} > 0.1) {
 							ca. <%= sprintf_km($journey->{km_route}) %>
-							(Luftlinie: <%= sprintf_km($journey->{km_beeline}) %>)
+							<%= L('journey.beeline.pre') %><%= sprintf_km($journey->{km_beeline}) %><%= L('journey.beeline.post') %>
 						% }
 						% elsif ($journey->{km_beeline} > 0.1) {
-							(Luftlinie: <%= sprintf_km($journey->{km_beeline}) %>)
+							<%= L('journey.beeline.pre') %><%= sprintf_km($journey->{km_beeline}) %><%= L('journey.beeline.post') %>
 						% }
 						% else {
 							?
