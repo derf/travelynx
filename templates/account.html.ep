@@ -159,8 +159,8 @@
 				</tr>
 			% }
 			<tr>
-				<td><%= $acc->{registered_at}->strftime('%d.%m.%Y %H:%M') %></td>
 				<th scope="row"><%= L('account.registration_date') %></th>
+				<td><%= $acc->{registered_at}->strftime(L('strftime.datetime')) %></td>
 			</tr>
 		</table>
 	</div>

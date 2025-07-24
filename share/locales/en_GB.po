@@ -9,6 +9,9 @@ msgstr ""
 # Global Strings
 #
 
+msgid "strftime.datetime"
+msgstr "%Y-%m-%d %H:%M %Z"
+
 msgid "button.register"
 msgstr "Register"
 
