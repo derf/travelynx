@@ -113,6 +113,27 @@ msgstr "Suggestions disabled"
 msgid "account.visibility"
 msgstr "Visibility"
 
+msgid "account.webhook"
+msgstr "Webhook"
+
+msgid "account.webhook.disabled"
+msgstr "No webhook was configured"
+
+msgid "account.webhook.active_pending"
+msgstr "Active and Pending"
+
+msgid "account.webhook.active_error"
+msgstr "Active with Error"
+
+msgid "account.webhook.active"
+msgstr "Active"
+
+msgid "account.traewelling.unsupported"
+msgstr "Unsupported due to incompatibility with bahn.de and transitous"
+
+msgid "account.registration_date"
+msgstr "Registered on"
+
 msgid "account.interaction"
 msgstr "Interaction"
 

@@ -109,20 +109,20 @@
 				</td>
 			</tr>
 			<tr>
-				<th scope="row">Web Hook</th>
+				<th scope="row"><%= L('account.webhook') %></th>
 				<td>
 					<a href="/account/hooks"><i class="material-icons">edit</i></a>
 					% if (not $hook->{enabled}) {
-						<span style="color: #999999;">Nicht eingerichtet</span>
+						<span style="color: #999999;"><%= L('account.webhook.disabled') %></span>
 					% }
 					% elsif ($hook->{latest_run}->epoch == 0) {
-						Aktiv, noch nicht ausgeführt
+						<%= L('account.webhook.active_pending') %>
 					% }
 					% elsif ($hook->{errored}) {
-						Aktiv, fehlerhaft <i class="material-icons" aria-hidden="true">error</i>
+						<%= L('account.webhook.active_error') %> <i class="material-icons" aria-hidden="true">error</i>
 					% }
 					% else {
-						Aktiv
+						<%= L('account.webhook.active') %>
 					% }
 				</td>
 			</tr>
@@ -130,7 +130,7 @@
 				<tr>
 					<th scope="row">Träwelling</th>
 					<td>
-						Wird wegen Inkompatibilität zwischen bahn.de und transitous derzeit nicht unterstützt
+						<%= L('account.traewelling.unsupported') %>
 					<!--
 						<a href="/account/traewelling"><i class="material-icons">edit</i></a>
 						% if (not ($traewelling->{token})) {
@@ -159,8 +159,8 @@
 				</tr>
 			% }
 			<tr>
-				<th scope="row">Registriert am</th>
 				<td><%= $acc->{registered_at}->strftime('%d.%m.%Y %H:%M') %></td>
+				<th scope="row"><%= L('account.registration_date') %></th>
 			</tr>
 		</table>
 	</div>

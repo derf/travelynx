@@ -113,6 +113,27 @@ msgstr "Vorschläge deaktiviert"
 msgid "account.visibility"
 msgstr "Sichtbarkeit"
 
+msgid "account.webhook"
+msgstr "Webhook"
+
+msgid "account.webhook.disabled"
+msgstr "Nicht eingerichtet"
+
+msgid "account.webhook.active_pending"
+msgstr "Aktiv, noch nicht ausgeführt"
+
+msgid "account.webhook.active_error"
+msgstr "Aktiv, fehlerhaft"
+
+msgid "account.webhook.active"
+msgstr "Aktiv"
+
+msgid "account.traewelling.unsupported"
+msgstr "Wird wegen Inkompatibilität zwischen bahn.de und transitous derzeit nicht unterstützt"
+
+msgid "account.registration_date"
+msgstr "Registriert am"
+
 msgid "account.interaction"
 msgstr "Interaktion"
 
