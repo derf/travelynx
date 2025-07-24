@@ -308,7 +308,7 @@ msgid "register.name"
 msgstr "Name (alphanumeric)"
 
 msgid "register.mail"
-msgstr "E-Mail address"
+msgstr "Email address"
 
 msgid "register.password"
 msgstr "Password"
@@ -323,28 +323,28 @@ msgid "register.accept-tos-pre"
 msgstr "By submitting this registration form, you accept the"
 
 msgid "register.accept-tos-post"
-msgstr " "
-
-msgid "register.expect-confirmation-link"
-msgstr "After submitting the registration, a confirmation link will be sent to the provided E-Mail address. Logging into the new travelynx account is only possible after following that link. The link is valid for 48 hours."
-
-msgid "register.why-mail"
-msgstr ""
-
-msgid "register.privacy-pre"
-msgstr ""
-
-msgid "register.privacy"
-msgstr ""
-
-msgid "register.privacy-post"
-msgstr ""
-
-msgid "register.account-deletion"
 msgstr "."
 
+msgid "register.expect-confirmation-link"
+msgstr "After submitting the registration, a confirmation link will be sent to the provided email address. Logging into the new travelynx account is only possible after following that link. The link is valid for 48 hours."
+
+msgid "register.why-mail"
+msgstr "We collect your email address solely fo the purposes of confirming your registration, resetting your password and providing you with important information about your account. Your email address will never be shared with third parties."
+
+msgid "register.privacy-pre"
+msgstr "Our"
+
+msgid "register.privacy"
+msgstr "privacy policy"
+
+msgid "register.privacy-post"
+msgstr "describes additional data that we collect, how we store it and for what purpose."
+
+msgid "register.account-deletion"
+msgstr "Accounts are automatically deleted after a year without activity. You will receive an email informing you about the deletion and giving you four weeks to intervene."
+
 msgid "register.disclaimer"
-msgstr ""
+msgstr "Please be aware: Travelynx is a non-commerical personal project and is provided as is. We do not make guarantees in regards to availability of the service or a sudden end of the project."
 
 # _checked_in.html.ep, _public_status_card.html.ep
 
