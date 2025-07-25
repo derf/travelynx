@@ -45,7 +45,7 @@
 		<div class="input-field col s12">
 			<div>
 				<label>
-					%= radio_button language => 'fr-FR'
+					%= radio_button language => 'hu-HU'
 					<span>hu-HU: magyar</span>
 				</label>
 			</div>
