@@ -21,16 +21,22 @@ $t->get_ok('/')->status_is(200);
 $t->text_like( 'a[href="/register"]' => qr{Registrieren} );
 $t->text_like( 'a[href="/login"]'    => qr{Anmelden} );
 
-$t->get_ok('/register')->status_is(200);
-$t->element_exists('input[name="csrf_token"]');
-$t->element_exists('a[href="/impressum"]');
-$t->text_like( 'button' => qr{Registrieren} );
+$t->get_ok('/about')->status_is(200);
+$t->get_ok('/api')->status_is(200);
+$t->get_ok('/changelog')->status_is(200);
+$t->get_ok('/legend')->status_is(200);
+$t->get_ok('/offline.html')->status_is(200);
 
 $t->get_ok('/login')->status_is(200);
 $t->element_exists('input[name="csrf_token"]');
 $t->text_like( 'button' => qr{Anmelden} );
 
-$t->get_ok('/about')->status_is(200);
+$t->get_ok('/recover')->status_is(200);
+
+$t->get_ok('/register')->status_is(200);
+$t->element_exists('input[name="csrf_token"]');
+$t->element_exists('a[href="/impressum"]');
+$t->text_like( 'button' => qr{Registrieren} );
 
 # Protected sites should redirect to login form
 
