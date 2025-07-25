@@ -409,7 +409,7 @@ msgstr " "
 
 #, noun or verb
 msgid "status.departure-soon"
-msgstr "Abfahrt in weniger als einer Minute"
+msgstr "fährt ab"
 
 #, noun or verb
 msgid "status.arrival-in.pre"

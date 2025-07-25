@@ -389,7 +389,7 @@ msgstr "check out"
 
 #, noun or verb
 msgid "status.boarding-in.pre"
-msgstr "boarding in"
+msgstr "arrives in"
 
 #, noun or verb
 msgid "status.boarding-in.post"
@@ -409,7 +409,7 @@ msgstr " "
 
 #, noun or verb
 msgid "status.departure-soon"
-msgstr "departs in less than one minute"
+msgstr "now departing"
 
 #, noun or verb
 msgid "status.arrival-in.pre"
