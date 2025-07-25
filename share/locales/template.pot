@@ -1,0 +1,501 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#
+# Global Strings
+#
+
+msgid "strftime.datetime"
+msgstr ""
+
+msgid "button.register"
+msgstr ""
+
+msgid "button.login"
+msgstr ""
+
+msgid "button.logout"
+msgstr ""
+
+msgid "footer.imprint"
+msgstr ""
+
+msgid "footer.privacy"
+msgstr ""
+
+msgid "footer.legend"
+msgstr ""
+
+msgid "footer.colour-scheme"
+msgstr ""
+
+msgid "footer.colour-scheme.light"
+msgstr ""
+
+msgid "footer.colour-scheme.dark"
+msgstr ""
+
+msgid "footer.colour-scheme.auto"
+msgstr ""
+
+msgid "header.error"
+msgstr ""
+
+#
+# Templates
+#
+
+# about.html.ep
+
+msgid "about.developed-by.lead"
+msgstr ""
+
+msgid "about.developed-by.and"
+msgstr ""
+
+msgid "about.developed-by.others"
+msgstr ""
+
+msgid "about.developed-by.tail"
+msgstr ""
+
+msgid "about.source-code"
+msgstr ""
+
+msgid "about.licence-agplv3"
+msgstr ""
+
+msgid "about.data-sources"
+msgstr ""
+
+msgid "about.data-sources.last-and"
+msgstr ""
+
+msgid "about.disclaimer"
+msgstr ""
+
+msgid "about.contact"
+msgstr ""
+
+msgid "about.bugs"
+msgstr ""
+
+msgid "about.changelog"
+msgstr ""
+
+# account.html.ep
+
+msgid "account.account"
+msgstr ""
+
+msgid "account.name"
+msgstr ""
+
+msgid "account.mail"
+msgstr ""
+
+msgid "account.password"
+msgstr ""
+
+msgid "account.language"
+msgstr ""
+
+msgid "account.connections"
+msgstr ""
+
+msgid "account.connections.enabled"
+msgstr ""
+
+msgid "account.connections.disabled"
+msgstr ""
+
+msgid "account.visibility"
+msgstr ""
+
+msgid "account.webhook"
+msgstr ""
+
+msgid "account.webhook.disabled"
+msgstr ""
+
+msgid "account.webhook.active_pending"
+msgstr ""
+
+msgid "account.webhook.active_error"
+msgstr ""
+
+msgid "account.webhook.active"
+msgstr ""
+
+msgid "account.traewelling.unsupported"
+msgstr ""
+
+msgid "account.registration_date"
+msgstr ""
+
+msgid "account.interaction"
+msgstr ""
+
+msgid "account.interaction.accept-follows"
+msgstr ""
+
+msgid "account.interaction.accept-follow-requests"
+msgstr ""
+
+msgid "account.interaction.one"
+msgstr ""
+
+msgid "account.interaction.open-request"
+msgstr ""
+
+msgid "account.interaction.open-requests"
+msgstr ""
+
+msgid "account.interaction.disabled"
+msgstr ""
+
+# journey.html.ep
+
+msgid "journey.not-found"
+msgstr ""
+
+#, short
+msgid "journey.trip"
+msgstr ""
+
+#, short
+msgid "journey.from"
+msgstr ""
+
+#, short
+msgid "journey.to"
+msgstr ""
+
+#, short
+msgid "journey.departure"
+msgstr ""
+
+#, short
+msgid "journey.arrival"
+msgstr ""
+
+#, short
+msgid "journey.distance"
+msgstr ""
+
+msgid "journey.beeline.pre"
+msgstr ""
+
+msgid "journey.beeline.post"
+msgstr ""
+
+#, short
+msgid "journey.speed"
+msgstr ""
+
+#, short
+msgid "journey.operator"
+msgstr ""
+
+#, short
+msgid "journey.messages"
+msgstr ""
+
+#, short
+msgid "journey.comment"
+msgstr ""
+
+#, short
+msgid "journey.carriages"
+msgstr ""
+
+#, short
+msgid "journey.route"
+msgstr ""
+
+msgid "journey.share"
+msgstr ""
+
+msgid "journey.edit"
+msgstr ""
+
+msgid "journey.delete"
+msgstr ""
+
+# landingpage.html.ep
+
+msgid "landingpage.greeting-prefix"
+msgstr ""
+
+msgid "landingpage.greeting-suffix"
+msgstr ""
+
+msgid "landingpage.not-checked-in"
+msgstr ""
+
+msgid "landingpage.stop-geosearch"
+msgstr ""
+
+msgid "landingpage.manual-stop-entry"
+msgstr ""
+
+#, As short as possible
+msgid "landingpage.departures"
+msgstr ""
+
+msgid "landingpage.latest-trips"
+msgstr ""
+
+msgid "landingpage.date-format"
+msgstr ""
+
+msgid "landingpage.about"
+msgstr ""
+
+msgid "landingpage.traewelling.pre"
+msgstr ""
+
+msgid "landingpage.traewelling.post"
+msgstr ""
+
+msgid "landingpage.features"
+msgstr ""
+
+msgid "landingpage.features.log"
+msgstr ""
+
+msgid "landingpage.features.share"
+msgstr ""
+
+msgid "landingpage.features.api-pre"
+msgstr ""
+
+msgid "landingpage.features.api-link"
+msgstr ""
+
+msgid "landingpage.features.api-post"
+msgstr ""
+
+msgid "landingpage.features.stats"
+msgstr ""
+
+msgid "landingpage.features.passenger-rights"
+msgstr ""
+
+msgid "landingpage.features.public"
+msgstr ""
+
+msgid "landingpage.disclaimer.lead"
+msgstr ""
+
+msgid "landingpage.disclaimer.source-pre"
+msgstr ""
+
+msgid "landingpage.disclaimer.source-link"
+msgstr ""
+
+msgid "landingpage.disclaimer.source-post"
+msgstr ""
+
+# language.html.ep
+
+msgid "language.language"
+msgstr ""
+
+msgid "language.browser-default"
+msgstr ""
+
+# login.html.ep
+
+msgid "login.accept-tos-pre"
+msgstr ""
+
+msgid "login.tos"
+msgstr ""
+
+msgid "login.accept-tos-post"
+msgstr ""
+
+msgid "login.forgot-password"
+msgstr ""
+
+msgid "login.registration-disabled"
+msgstr ""
+
+# register.html.ep
+
+msgid "register.name"
+msgstr ""
+
+msgid "register.mail"
+msgstr ""
+
+msgid "register.password"
+msgstr ""
+
+msgid "register.repeat-password"
+msgstr ""
+
+msgid "register.accept-tos-pre"
+msgstr ""
+
+msgid "register.tos"
+msgstr ""
+
+msgid "register.accept-tos-post"
+msgstr ""
+
+msgid "register.expect-confirmation-link"
+msgstr ""
+
+msgid "register.why-mail"
+msgstr ""
+
+msgid "register.privacy-pre"
+msgstr ""
+
+msgid "register.privacy"
+msgstr ""
+
+msgid "register.privacy-post"
+msgstr ""
+
+msgid "register.account-deletion"
+msgstr ""
+
+msgid "register.disclaimer"
+msgstr ""
+
+# _checked_in.html.ep, _public_status_card.html.ep
+
+msgid "status.is-checked-in"
+msgstr ""
+
+msgid "status.is-not-checked-in"
+msgstr ""
+
+msgid "status.select-destination"
+msgstr ""
+
+msgid "status.share"
+msgstr ""
+
+msgid "status.check-out"
+msgstr ""
+
+#, noun or verb
+msgid "status.boarding-in.pre"
+msgstr ""
+
+#, noun or verb
+msgid "status.boarding-in.post"
+msgstr ""
+
+#, noun or verb
+msgid "status.boarding-soon"
+msgstr ""
+
+#, noun or verb
+msgid "status.departure-in.pre"
+msgstr ""
+
+#, noun or verb
+msgid "status.departure-in.post"
+msgstr ""
+
+#, noun or verb
+msgid "status.departure-soon"
+msgstr ""
+
+#, noun or verb
+msgid "status.arrival-in.pre"
+msgstr ""
+
+#, noun or verb
+msgid "status.arrival-in.post"
+msgstr ""
+
+#, noun or verb
+msgid "status.arrival-soon"
+msgstr ""
+
+msgid "status.arrival-unknown"
+msgstr ""
+
+msgid "status.arrived"
+msgstr ""
+
+msgid "status.depart-from.pre"
+msgstr ""
+
+msgid "status.depart-from.post"
+msgstr ""
+
+msgid "status.arrive-on.pre"
+msgstr ""
+
+msgid "status.arrive-on.post"
+msgstr ""
+
+msgid "status.delayed-auto-checkout"
+msgstr ""
+
+msgid "status.realtime-unavailable"
+msgstr ""
+
+#, service messages related to the trip
+msgid "status.messages"
+msgstr ""
+
+msgid "status.map"
+msgstr ""
+
+msgid "status.change-destination"
+msgstr ""
+
+msgid "status.carriages"
+msgstr ""
+
+msgid "status.route"
+msgstr ""
+
+#, shown during destination selection
+msgid "status.undo"
+msgstr ""
+
+#, shown during destination selection
+msgid "status.privacy-level"
+msgstr ""
+
+#, shown once check-in is completed
+msgid "status.undo-checkin"
+msgstr ""
+
+msgid "status.force-checkout-lead"
+msgstr ""
+
+msgid "status.force-checkout"
+msgstr ""
+
+# _wagons.html.ep
+
+msgid "wagons.name-as-type"
+msgstr ""
+
+msgid "wagons.from.pre"
+msgstr ""
+
+msgid "wagons.from.post"
+msgstr ""
+
+msgid "wagons.to.pre"
+msgstr ""
+
+msgid "wagons.to.post"
+msgstr ""
+
+msgid "wagons.carriage"
+msgstr ""
