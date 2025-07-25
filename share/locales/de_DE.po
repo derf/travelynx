@@ -89,6 +89,36 @@ msgstr "Änderungen"
 
 # account.html.ep
 
+msgid "account.changed-name"
+msgstr "Name geändert"
+
+msgid "account.changed-mail"
+msgstr "Mail-Adresse geändert"
+
+msgid "account.changed-password"
+msgstr "Passwort geändert"
+
+msgid "account.changed-language"
+msgstr "Sprache geändert"
+
+msgid "account.changed-privacy"
+msgstr "Einstellungen zu öffentlichen Account-Daten geändert"
+
+msgid "account.changed-social"
+msgstr "Einstellungen zur Interaktionen mit anderen Accounts geändert"
+
+msgid "account.changed-traewelling"
+msgstr "Träwelling-Verknüpfung aktualisiert"
+
+msgid "account.changed-history"
+msgstr "Einstellungen zu vorgeschlagenen Verbindungen geändert"
+
+msgid "account.changed-webhook"
+msgstr "Web Hook aktualisiert"
+
+msgid "account.cleared-notifications"
+msgstr "Benachrichtigungen gelesen"
+
 msgid "account.account"
 msgstr "Account"
 

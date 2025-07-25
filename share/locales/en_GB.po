@@ -89,6 +89,36 @@ msgstr "Changelog"
 
 # account.html.ep
 
+msgid "account.changed-name"
+msgstr "Updated name"
+
+msgid "account.changed-mail"
+msgstr "Updated email address"
+
+msgid "account.changed-password"
+msgstr "Updated password"
+
+msgid "account.changed-language"
+msgstr "Changed language"
+
+msgid "account.changed-privacy"
+msgstr "Privacy settings have been saved"
+
+msgid "account.changed-social"
+msgstr "Social settings have been saved"
+
+msgid "account.changed-traewelling"
+msgstr "Träwelling settings have been saved"
+
+msgid "account.changed-history"
+msgstr "Connection suggestion settings have been saved"
+
+msgid "account.changed-webhook"
+msgstr "Web Hook has been updated"
+
+msgid "account.cleared-notifications"
+msgstr "Notifications have been cleared"
+
 msgid "account.account"
 msgstr "Account"
 

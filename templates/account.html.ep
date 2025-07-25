@@ -8,34 +8,34 @@
 			<div class="card success-color">
 				<div class="card-content white-text">
 					% if ($success eq 'name') {
-						<span class="card-title">Name geändert</span>
+						<span class="card-title"><%= L('account.changed-name') %></span>
 					% }
 					% elsif ($success eq 'mail') {
-						<span class="card-title">Mail-Adresse geändert</span>
+						<span class="card-title"><%= L('account.changed-mail') %></span>
 					% }
 					% elsif ($success eq 'password') {
-						<span class="card-title">Passwort geändert</span>
+						<span class="card-title"><%= L('account.changed-password') %></span>
 					% }
 					% elsif ($success eq 'language') {
-						<span class="card-title">Sprache geändert</span>
+						<span class="card-title"><%= L('account.changed-language') %></span>
 					% }
 					% elsif ($success eq 'privacy') {
-						<span class="card-title">Einstellungen zu öffentlichen Account-Daten geändert</span>
+						<span class="card-title"><%= L('account.changed-privacy') %</span>
 					% }
 					% elsif ($success eq 'social') {
-						<span class="card-title">Einstellungen zur Interaktionen mit anderen Accounts geändert</span>
+						<span class="card-title"><%= L('account.changed-social') %></span>
 					% }
 					% elsif ($success eq 'traewelling') {
-						<span class="card-title">Träwelling-Verknüpfung aktualisiert</span>
+						<span class="card-title"><%= L('account.changed-traewelling') %></span>
 					% }
 					% elsif ($success eq 'use_history') {
-						<span class="card-title">Einstellungen zu vorgeschlagenen Verbindungen geändert</span>
+						<span class="card-title"><%= L('account.changed-history') %></span>
 					% }
 					% elsif ($success eq 'webhook') {
-						<span class="card-title">Web Hook aktualisiert</span>
+						<span class="card-title"><%= L('account.changed-webhook') %></span>
 					% }
 					% elsif ($success eq 'clear_notifications') {
-						<span class="card-title">Benachrichtigungen gelesen</span>
+						<span class="card-title"><%= L('account.cleared-notifications') %></span>
 					% }
 				</div>
 			</div>
