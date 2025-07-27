@@ -2,9 +2,9 @@
 
 * de-DE: 100.0% complete (0 missing)
 * en-GB: 100.0% complete (0 missing)
-* fr-FR: 36.2% complete (102 missing)
-* hu-HU: 87.5% complete (20 missing)
-* pl-PL: 36.2% complete (102 missing)
+* fr-FR: 35.4% complete (106 missing)
+* hu-HU: 85.4% complete (24 missing)
+* pl-PL: 35.4% complete (106 missing)
 
 ### 
 
@@ -497,6 +497,40 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * fr-FR: Aucun compte ne peut vous suivre
 * hu-HU: Senki sem követhet
 * pl-PL: Inne konta nie mogą cię obserwować
+
+## changelog.html.ep
+
+### changelog.added
+
+* de-DE: Neues Feature
+* en-GB: New Feature
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### changelog.bugfix
+
+* de-DE: Bugfix
+* en-GB: Bugfix
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### changelog.2-16.1
+
+* de-DE: Infrastruktur zur Übersetzung von travelynx in andere Sprachen. Der Großteil der Website ist noch Deutsch; einzelne Seiten sind bereits auf Englisch und Teilmengen davon zusätzlich auf Französisch, Polnisch und Ungarisch verfügbar. Weitere Übersetzungen und ggf. Sprachen sowie Dokumentation zur Unterstützung dabei folgen bei Zeiten. Die Sprache wird auf Basis des Accept-Language-Headers ausgewählt und kann zusätzlich in den Account-Einstellungen konfiguriert werden.
+* en-GB: Localization support. Parts of travelynx are now available in English, and a subset of those is also available in French, Hungarian, and Polish. Further translations, languages, and translation how-tos will follow in due time. Locale selection respects the Accept-Language header and can be configured on the account settings page.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### changelog.2-16.2
+
+* de-DE: Korrekte Berechnung und Visualisierung der Wegstrecke bei Fahrten mit Ringlinien. Die Anzeige der Fahrten in der Fahrtenkarte ist noch teilweise fehlerhaft.
+* en-GB: Fix distance calculation and visualization of ring line trips. Trips shown in the history map are still partially incorrect.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
 
 ## journey.html.ep
 
