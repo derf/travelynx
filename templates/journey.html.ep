@@ -269,10 +269,10 @@
 							% }
 							<span style="color: #808080;">
 								% if ($before and $station->[2]{sched_dep}) {
-									%= $station->[2]{sched_dep}->strftime('%H:%M')
+									%= $station->[2]{sched_dep_dt}->strftime('%H:%M')
 								% }
 								% elsif (not $before and $station->[2]{sched_arr}) {
-									%= $station->[2]{sched_arr}->strftime('%H:%M')
+									%= $station->[2]{sched_arr_dt}->strftime('%H:%M')
 								% }
 							</span>
 							% if ($at_startstop or $within) {

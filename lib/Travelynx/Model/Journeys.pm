@@ -704,7 +704,7 @@ sub get {
 			for my $stop ( @{ $ref->{route} } ) {
 				for my $k (qw(rt_arr rt_dep sched_arr sched_dep)) {
 					if ( $stop->[2]{$k} ) {
-						$stop->[2]{$k} = epoch_to_dt( $stop->[2]{$k} );
+						$stop->[2]{"${k}_dt"} = epoch_to_dt( $stop->[2]{$k} );
 					}
 				}
 			}
@@ -1265,8 +1265,7 @@ sub get_travel_distance {
 		(
 			( $_->[1] and $_->[1] == $from_eva or $_->[0] eq $from )
 			  and ( not( defined $_->[2]{sched_dep} or defined $_->[2]{rt_dep} )
-				or ( $_->[2]{sched_dep} // $_->[2]{rt_dep} )->epoch
-				== $from_ts )
+				or ( $_->[2]{sched_dep} // $_->[2]{rt_dep} ) == $from_ts )
 		)
 	}
 	@{$route_ref};
@@ -1274,7 +1273,7 @@ sub get_travel_distance {
 		(
 			( $_->[1] and $_->[1] == $to_eva or $_->[0] eq $to )
 			  and ( not( defined $_->[2]{sched_arr} or defined $_->[2]{rt_arr} )
-				or ( $_->[2]{sched_arr} // $_->[2]{rt_arr} )->epoch == $to_ts )
+				or ( $_->[2]{sched_arr} // $_->[2]{rt_arr} ) == $to_ts )
 		)
 	}
 	@route;
