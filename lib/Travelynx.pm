@@ -2829,10 +2829,14 @@ sub startup {
 				my $from_eva = $journey->{from_eva} // $journey->{dep_eva};
 				my $to_eva   = $journey->{to_eva}   // $journey->{arr_eva};
 
-				my $from_index
-				  = first_index { $_->[2] and $_->[2] == $from_eva } @polyline;
-				my $to_index
-				  = first_index { $_->[2] and $_->[2] == $to_eva } @polyline;
+				# poly_dep_index, poly_arr_index are only available for
+				# journeys that were processed by get_travel_distance
+				# beforehand. However, they are much less error-prone than this
+				# first_index / last_index kludge when it comes to ring lines.
+				my $from_index = $journey->{poly_dep_index}
+				  // first_index { $_->[2] and $_->[2] == $from_eva } @polyline;
+				my $to_index = $journey->{poly_arr_index}
+				  // first_index { $_->[2] and $_->[2] == $to_eva } @polyline;
 
 				# Work around inconsistencies caused by a multiple EVA IDs mapping to the same station name
 				if ( $from_index == -1 ) {

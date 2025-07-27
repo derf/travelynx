@@ -1296,7 +1296,7 @@ sub get_travel_distance {
 
 	# Assumption: polyline entries are always [lat, lon] or [lat, lon, stop ID]
 	%seen = ();
-	for my $entry ( @{$polyline_ref} ) {
+	for my $entry ( @{ $polyline_ref // [] } ) {
 		if ( $entry->[2] ) {
 			$seen{ $entry->[2] } //= 1;
 			$entry->[3] = $seen{ $entry->[2] };
@@ -1311,17 +1311,19 @@ sub get_travel_distance {
 
 	# Just like the route, the polyline may contain the same stop more than
 	# once. So we need to select based on the seen counter.
-	my @polyline = after_incl {
+	my $poly_start = first_index {
 		$_->[2] and $_->[2] == $from_eva and $_->[3] == $route[0][2]{n}
 	}
 	@{ $polyline_ref // [] };
-	@polyline = before_incl {
+	my $poly_end = first_index {
 		$_->[2] and $_->[2] == $to_eva and $_->[3] == $route[-1][2]{n}
 	}
-	@polyline;
+	@{ $polyline_ref // [] };
 
-	# ensure that before_incl matched -- otherwise, @polyline is too long
-	if ( @polyline and $polyline[-1][2] == $to_eva ) {
+	if ( defined $poly_start and defined $poly_end ) {
+		$journey->{poly_dep_index} = $poly_start;
+		$journey->{poly_arr_index} = $poly_end;
+		my @polyline     = @{$polyline_ref}[ $poly_start .. $poly_end ];
 		my $prev_station = shift @polyline;
 		for my $station (@polyline) {
 			$distance_polyline += $geo->distance_metal(
