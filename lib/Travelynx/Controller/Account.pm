@@ -1119,6 +1119,7 @@ sub backend_form {
 				if (
 					    $s->{coverage}{area}
 					and $s->{coverage}{area}{type} eq 'Polygon'
+					and defined $user_lon
 					and $self->lonlat_in_polygon(
 						$s->{coverage}{area}{coordinates},
 						[ $user_lon, $user_lat ]
@@ -1128,7 +1129,8 @@ sub backend_form {
 					push( @suggested_backends, $backend );
 				}
 				elsif ( $s->{coverage}{area}
-					and $s->{coverage}{area}{type} eq 'MultiPolygon' )
+					and $s->{coverage}{area}{type} eq 'MultiPolygon'
+					and defined $user_lon )
 				{
 					for my $s_poly (
 						@{ $s->{coverage}{area}{coordinates} // [] } )
@@ -1189,6 +1191,7 @@ sub backend_form {
 				if (
 					    $s->{coverage}{area}
 					and $s->{coverage}{area}{type} eq 'Polygon'
+					and defined $user_lon
 					and $self->lonlat_in_polygon(
 						$s->{coverage}{area}{coordinates},
 						[ $user_lon, $user_lat ]
@@ -1198,7 +1201,8 @@ sub backend_form {
 					push( @suggested_backends, $backend );
 				}
 				elsif ( $s->{coverage}{area}
-					and $s->{coverage}{area}{type} eq 'MultiPolygon' )
+					and $s->{coverage}{area}{type} eq 'MultiPolygon'
+					and defined $user_lon )
 				{
 					for my $s_poly (
 						@{ $s->{coverage}{area}{coordinates} // [] } )
@@ -1240,6 +1244,7 @@ sub backend_form {
 			if (
 				    $s->{coverage}{area}
 				and $s->{coverage}{area}{type} eq 'Polygon'
+				and defined $user_lon
 				and $self->lonlat_in_polygon(
 					$s->{coverage}{area}{coordinates},
 					[ $user_lon, $user_lat ]
@@ -1249,7 +1254,8 @@ sub backend_form {
 				push( @suggested_backends, $backend );
 			}
 			elsif ( $s->{coverage}{area}
-				and $s->{coverage}{area}{type} eq 'MultiPolygon' )
+				and $s->{coverage}{area}{type} eq 'MultiPolygon'
+				and defined $user_lon )
 			{
 				for my $s_poly ( @{ $s->{coverage}{area}{coordinates} // [] } )
 				{
