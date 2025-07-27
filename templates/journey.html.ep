@@ -335,6 +335,16 @@
 				</div>
 			</div>
 		% }
+		<div class="row">
+			<div class="col s12 m6 l6">
+			</div>
+			<div class="col s12 m6 l6 center-align">
+				<a class="btn waves-effect waves-light" href="<%= url_for('journey', id => $journey->{id}, format => 'json' ) %>">
+					<i class="material-icons left" aria-hidden="true">file_download</i>
+					%= L('journey.export')
+				</a>
+			</div>
+		</div>
 		<div class="row hide-on-small-only">
 			<div class="col s12 m6 l6 center-align">
 				<a class="waves-effect waves-light red btn action-delete"

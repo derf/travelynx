@@ -3157,7 +3157,9 @@ sub startup {
 	$authed_r->get('/journey/add')->to('traveling#add_journey_form');
 	$authed_r->get('/journey/comment')->to('traveling#comment_form');
 	$authed_r->get('/journey/visibility')->to('traveling#visibility_form');
-	$authed_r->get('/journey/:id')->to('traveling#journey_details');
+	$authed_r->get( '/journey/:id' => [ format => [ 'html', 'json' ] ] )
+	  ->to( 'traveling#journey_details', format => undef )
+	  ->name('journey');
 	$authed_r->get('/s/*station')->to('traveling#station');
 	$authed_r->get('/confirm_mail/:token')->to('account#confirm_mail');
 	$authed_r->post('/account/privacy')->to('account#privacy');

@@ -250,6 +250,9 @@ msgstr "Route"
 msgid "journey.share"
 msgstr "Share"
 
+msgid "journey.export"
+msgstr "Export"
+
 msgid "journey.edit"
 msgstr "Edit"
 
