@@ -92,7 +92,8 @@ __END__
 
 =head1 SYNOPSIS
 
-  Usage: index.pl dumpstops <format> <filename>
+  Usage: index.pl translation <command>
 
-  Exports known stops to <filename>.
-  Right now, only the "csv" format is supported.
+  Supported commands:
+
+  * update-ref: update share/locales/reference.md
