@@ -1260,7 +1260,8 @@ sub get_travel_distance {
 	# majority of trips do not pass the same stop multiple times, it's better
 	# to risk having a few inaccurate distances than not calculating the
 	# distance for any journey that lacks sched_dep/rt_dep or
-	# schep_from/rt_from.
+	# sched_from/rt_from.
+
 	my @route = after_incl {
 		(
 			( $_->[1] and $_->[1] == $from_eva or $_->[0] eq $from )
@@ -1289,6 +1290,11 @@ sub get_travel_distance {
 		return ( 0, 0, $distance_beeline );
 	}
 
+	# TODO this always selects the first stop entry.
+	# Gotta count how many duplicates we need to skip...
+	# Approach: build dict route id -> polyline id of corresponding stop
+	# (and bail out if route stops ≠ polyline stops),
+	# then find indexes from route and select polyline range from those
 	my @polyline = after_incl { $_->[2] and $_->[2] == $from_eva }
 	@{ $polyline_ref // [] };
 	@polyline
