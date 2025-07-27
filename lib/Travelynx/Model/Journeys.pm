@@ -1190,9 +1190,11 @@ sub get_travel_distance {
 	my $from         = $journey->{from_name};
 	my $from_eva     = $journey->{from_eva};
 	my $from_latlon  = $journey->{from_latlon};
+	my $from_ts      = $journey->{sched_dep_ts} // $journey->{rt_dep_ts};
 	my $to           = $journey->{to_name};
 	my $to_eva       = $journey->{to_eva};
 	my $to_latlon    = $journey->{to_latlon};
+	my $to_ts        = $journey->{sched_arr_ts} // $journey->{rt_arr_ts};
 	my $route_ref    = $journey->{route};
 	my $polyline_ref = $journey->{polyline};
 
