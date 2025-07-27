@@ -1283,31 +1283,38 @@ sub get_travel_distance {
 		return ( 0, 0, $distance_beeline );
 	}
 
+	my %seen;
+	for my $stop ( @{$route_ref} ) {
+		$seen{ $stop->[1] } //= 1;
+		$stop->[2]{n} = $seen{ $stop->[1] };
+		$seen{ $stop->[1] } += 1;
+	}
+
+	# Assumption: polyline entries are always [lat, lon] or [lat, lon, stop ID]
+	%seen = undef;
+	for my $entry ( @{$polyline_ref} ) {
+		if ( $entry->[2] ) {
+			$seen{ $entry->[2] } //= 1;
+			$entry->[3] = $seen{ $entry->[2] };
+			$seen{ $entry->[2] } += 1;
+		}
+	}
+
 	$journey->{route_dep_index} = $route_start;
 	$journey->{route_arr_index} = $route_end;
 
 	my @route = @{$route_ref}[ $route_start .. $route_end ];
 
-	if (
-		@route < 2
-		or ( $route[-1][0] ne $to
-			and ( not $route[-1][1] or $route[-1][1] != $to_eva ) )
-	  )
-	{
-
-		# I AM ERROR
-		return ( 0, 0, $distance_beeline );
+	# Just like the route, the polyline may contain the same stop more than
+	# once. So we need to select based on the seen counter.
+	my @polyline = after_incl {
+		$_->[2] and $_->[2] == $from_eva and $_->[3] == $route[0][2]{n}
 	}
-
-	# TODO this always selects the first stop entry.
-	# Gotta count how many duplicates we need to skip...
-	# Approach: build dict route id -> polyline id of corresponding stop
-	# (and bail out if route stops ≠ polyline stops),
-	# then find indexes from route and select polyline range from those
-	my @polyline = after_incl { $_->[2] and $_->[2] == $from_eva }
 	@{ $polyline_ref // [] };
-	@polyline
-	  = before_incl { $_->[2] and $_->[2] == $to_eva } @polyline;
+	@polyline = before_incl {
+		$_->[2] and $_->[2] == $to_eva and $_->[3] == $route[-1][2]{n}
+	}
+	@polyline;
 
 	# ensure that before_incl matched -- otherwise, @polyline is too long
 	if ( @polyline and $polyline[-1][2] == $to_eva ) {
