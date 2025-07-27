@@ -15,6 +15,7 @@ for EFA instances and bahn.de is under way.
 You can use the public instance on [travelynx.de](https://travelynx.de) or
 host your own. Further reading:
 
+* [Contributing](doc/contributing.md) to travelynx development
 * [Setup](doc/setup.md) for hosting your own instance
 * [Usage](doc/usage.md) primer (what is this whole “checking in” about?)
 
