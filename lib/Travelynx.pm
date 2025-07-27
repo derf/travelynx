@@ -2477,6 +2477,7 @@ sub startup {
 					backend_id      => $latest->{backend_id},
 					backend_name    => $latest->{backend_name},
 					is_dbris        => $latest->{is_dbris},
+					is_efa          => $latest->{is_efa},
 					is_iris         => $latest->{is_iris},
 					is_hafas        => $latest->{is_hafas},
 					is_motis        => $latest->{is_motis},
@@ -2543,6 +2544,7 @@ sub startup {
 				backend => {
 					id => $status->{backend_id},
 					type => $status->{is_dbris} ? 'DBRIS'
+					: $status->{is_efa}   ? 'EFA'
 					: $status->{is_hafas} ? 'HAFAS'
 					: $status->{is_motis} ? 'MOTIS'
 					: 'IRIS-TTS',
