@@ -1,5 +1,11 @@
 # Translation Status
 
+* de-DE: 100.0% complete (0 missing)
+* en-GB: 100.0% complete (0 missing)
+* fr-FR: 36.2% complete (102 missing)
+* hu-HU: 87.5% complete (20 missing)
+* pl-PL: 36.2% complete (102 missing)
+
 ### 
 
 * de-DE: Language: de-DE
@@ -504,6 +510,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### journey.trip
 
+*short*
+
 * de-DE: Fahrt
 * en-GB: Trip
 * fr-FR *missing*
@@ -511,6 +519,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * pl-PL *missing*
 
 ### journey.from
+
+*short*
 
 * de-DE: Von
 * en-GB: From
@@ -520,6 +530,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### journey.to
 
+*short*
+
 * de-DE: Nach
 * en-GB: To
 * fr-FR *missing*
@@ -527,6 +539,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * pl-PL *missing*
 
 ### journey.departure
+
+*short*
 
 * de-DE: Abfahrt
 * en-GB: Departure
@@ -536,6 +550,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### journey.arrival
 
+*short*
+
 * de-DE: Ankunft
 * en-GB: Arrival
 * fr-FR *missing*
@@ -543,6 +559,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * pl-PL *missing*
 
 ### journey.distance
+
+*short*
 
 * de-DE: Strecke
 * en-GB: Distance
@@ -568,6 +586,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### journey.speed
 
+*short*
+
 * de-DE: Tempo
 * en-GB: Speed
 * fr-FR *missing*
@@ -575,6 +595,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * pl-PL *missing*
 
 ### journey.operator
+
+*short*
 
 * de-DE: Betrieb
 * en-GB: Operator
@@ -584,6 +606,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### journey.messages
 
+*short*
+
 * de-DE: Meldungen
 * en-GB: Messages
 * fr-FR *missing*
@@ -591,6 +615,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * pl-PL *missing*
 
 ### journey.comment
+
+*short*
 
 * de-DE: Kommentar
 * en-GB: Comment
@@ -600,6 +626,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### journey.carriages
 
+*short*
+
 * de-DE: Rollmaterial
 * en-GB: Carriages
 * fr-FR *missing*
@@ -607,6 +635,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * pl-PL *missing*
 
 ### journey.route
+
+*short*
 
 * de-DE: Route
 * en-GB: Route
@@ -689,6 +719,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * pl-PL *missing*
 
 ### landingpage.departures
+
+*As short as possible*
 
 * de-DE: Abfahrten
 * en-GB: Departures
@@ -1058,6 +1090,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### status.boarding-in.pre
 
+*noun or verb*
+
 * de-DE: Einfahrt in
 * en-GB: arrives in
 * fr-FR *missing*
@@ -1065,6 +1099,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * pl-PL *missing*
 
 ### status.boarding-in.post
+
+*noun or verb*
 
 * de-DE:  
 * en-GB:  
@@ -1074,6 +1110,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### status.boarding-soon
 
+*noun or verb*
+
 * de-DE: fährt ein
 * en-GB: now arriving
 * fr-FR *missing*
@@ -1081,6 +1119,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * pl-PL *missing*
 
 ### status.departure-in.pre
+
+*noun or verb*
 
 * de-DE: Abfahrt in
 * en-GB: departs in
@@ -1090,6 +1130,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### status.departure-in.post
 
+*noun or verb*
+
 * de-DE:  
 * en-GB:  
 * fr-FR *missing*
@@ -1097,6 +1139,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * pl-PL *missing*
 
 ### status.departure-soon
+
+*noun or verb*
 
 * de-DE: fährt ab
 * en-GB: now departing
@@ -1106,6 +1150,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### status.arrival-in.pre
 
+*noun or verb*
+
 * de-DE: Ankunft in
 * en-GB: arrives in
 * fr-FR: Arrive dans
@@ -1114,6 +1160,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### status.arrival-in.post
 
+*noun or verb*
+
 * de-DE:  
 * en-GB:  
 * fr-FR:  
@@ -1121,6 +1169,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * pl-PL:  
 
 ### status.arrival-soon
+
+*noun or verb*
 
 * de-DE: Ankunft in weniger als einer Minute
 * en-GB: now arriving
@@ -1194,6 +1244,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### status.messages
 
+*service messages related to the trip*
+
 * de-DE: Meldungen
 * en-GB: Notifications
 * fr-FR *missing*
@@ -1234,6 +1286,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### status.undo
 
+*shown during destination selection*
+
 * de-DE: Rückgängig
 * en-GB: Undo
 * fr-FR *missing*
@@ -1242,6 +1296,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### status.privacy-level
 
+*shown during destination selection*
+
 * de-DE: Sichtbarkeit
 * en-GB: Privacy
 * fr-FR *missing*
@@ -1249,6 +1305,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * pl-PL *missing*
 
 ### status.undo-checkin
+
+*shown once check-in is completed*
 
 * de-DE: Checkin rückgängig
 * en-GB: Undo check-in

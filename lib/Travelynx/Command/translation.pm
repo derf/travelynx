@@ -16,10 +16,12 @@ sub run {
 
 	my @locales = (qw(de-DE en-GB fr-FR hu-HU pl-PL));
 
+	my %count;
 	my %handle;
 	for my $locale (@locales) {
 		$handle{$locale} = Travelynx::Helper::Locales->get_handle($locale);
 		$handle{$locale}->fail_with('failure_handler_auto');
+		$count{$locale} = 0;
 	}
 
 	binmode( STDOUT, ':encoding(utf-8)' );
@@ -27,32 +29,55 @@ sub run {
 	if ( not $command ) {
 		$self->help;
 	}
-	elsif ( $command eq 'status' ) {
-		say '# Translation Status';
-		say q{};
+	elsif ( $command eq 'update-ref' ) {
+		my @buf;
 
 		open( my $fh, '<:encoding(utf-8)', 'share/locales/de_DE.po' );
+		my $comment;
 		for my $line (<$fh>) {
 			chomp $line;
 			if ( $line =~ m{ ^ [#] \s+ (.*) $ }x ) {
-				say "## $1";
-				say q{};
+				push( @buf, "## $1\n" );
+			}
+			elsif ( $line =~ m{ ^ [#] , \s+ (.*) $ }x ) {
+				$comment = $1;
 			}
 			elsif ( $line =~ m{ ^ msgid \s+ " (.*) " $ }x ) {
 				my $id = $1;
-				say "### ${id}";
-				say q{};
+				push( @buf, "### ${id}\n" );
+				if ($comment) {
+					push( @buf, '*' . $comment . "*\n" );
+					$comment = undef;
+				}
 				for my $locale (@locales) {
 					my $translation = $handle{$locale}->maketext($id);
 					if ( $translation ne $id ) {
-						say "* ${locale}: ${translation}";
+						push( @buf, "* ${locale}: ${translation}" );
+						$count{$locale} += 1;
 					}
 					else {
-						say "* ${locale} *missing*";
+						push( @buf, "* ${locale} *missing*" );
 					}
 				}
-				say q{};
+				push( @buf, q{} );
 			}
+		}
+		close($fh);
+
+		open( $fh, '>:encoding(utf-8)', 'share/locales/reference.md' );
+		say $fh '# Translation Status';
+		say $fh q{};
+		for my $locale (@locales) {
+			say $fh sprintf(
+				'* %s: %.1f%% complete (%d missing)',
+				$locale,
+				$count{$locale} * 100 / $count{'de-DE'},
+				$count{'de-DE'} - $count{$locale},
+			);
+		}
+		say $fh q{};
+		for my $line (@buf) {
+			say $fh $line;
 		}
 		close($fh);
 	}
