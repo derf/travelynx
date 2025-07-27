@@ -1248,16 +1248,34 @@ sub get_travel_distance {
 	my $geo                   = GIS::Distance->new();
 	my $distance_beeline
 	  = $geo->distance_metal( @{$from_latlon}, @{$to_latlon} );
+
+	# A trip may pass the same stop multiple times.
+	# Thus, two criteria must be met to select the start/end of the actual route:
+	# * stop name or ID matches, and
+	# * one of:
+	#   - arrival/departure time at the stop matches, or
+	#   - the stop does not have arrival/departure time
+	# In the latter case, we still face the risk of selecting the wrong
+	# start/end stop. However, we have no way of finding the right one. As the
+	# majority of trips do not pass the same stop multiple times, it's better
+	# to risk having a few inaccurate distances than not calculating the
+	# distance for any journey that lacks sched_dep/rt_dep or
+	# schep_from/rt_from.
 	my @route = after_incl {
-		(         ( $_->[1] and $_->[1] == $from_eva or $_->[0] eq $from )
-			  and ( defined $_->[2]{sched_dep} or defined $_->[2]{rt_dep} )
-			  and ( $_->[2]{sched_dep} // $_->[2]{rt_dep} )->epoch == $from_ts )
+		(
+			( $_->[1] and $_->[1] == $from_eva or $_->[0] eq $from )
+			  and ( not( defined $_->[2]{sched_dep} or defined $_->[2]{rt_dep} )
+				or ( $_->[2]{sched_dep} // $_->[2]{rt_dep} )->epoch
+				== $from_ts )
+		)
 	}
 	@{$route_ref};
 	@route = before_incl {
-		(         ( $_->[1] and $_->[1] == $to_eva or $_->[0] eq $to )
-			  and ( defined $_->[2]{sched_arr} or defined $_->[2]{rt_arr} )
-			  and ( $_->[2]{sched_arr} // $_->[2]{rt_arr} )->epoch == $to_ts )
+		(
+			( $_->[1] and $_->[1] == $to_eva or $_->[0] eq $to )
+			  and ( not( defined $_->[2]{sched_arr} or defined $_->[2]{rt_arr} )
+				or ( $_->[2]{sched_arr} // $_->[2]{rt_arr} )->epoch == $to_ts )
+		)
 	}
 	@route;
 
