@@ -188,6 +188,20 @@ msgstr "offene Anfragen"
 msgid "account.interaction.disabled"
 msgstr "Accounts können dir nicht folgen"
 
+# changelog.html.ep
+
+msgid "changelog.added"
+msgstr "Neues Feature"
+
+msgid "changelog.bugfix"
+msgstr "Bugfix"
+
+msgid "changelog.2-16.1"
+msgstr "Infrastruktur zur Übersetzung von travelynx in andere Sprachen. Der Großteil der Website ist noch Deutsch; einzelne Seiten sind bereits auf Englisch und Teilmengen davon zusätzlich auf Französisch, Polnisch und Ungarisch verfügbar. Weitere Übersetzungen und ggf. Sprachen sowie Dokumentation zur Unterstützung dabei folgen bei Zeiten. Die Sprache wird auf Basis des Accept-Language-Headers ausgewählt und kann zusätzlich in den Account-Einstellungen konfiguriert werden."
+
+msgid "changelog.2-16.2"
+msgstr "Korrekte Berechnung und Visualisierung der Wegstrecke bei Fahrten mit Ringlinien. Die Anzeige der Fahrten in der Fahrtenkarte ist noch teilweise fehlerhaft."
+
 # journey.html.ep
 
 msgid "journey.not-found"

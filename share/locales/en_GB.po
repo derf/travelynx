@@ -188,6 +188,20 @@ msgstr "open requests"
 msgid "account.interaction.disabled"
 msgstr "Accounts cannot follow you"
 
+# changelog.html.ep
+
+msgid "changelog.added"
+msgstr "New Feature"
+
+msgid "changelog.bugfix"
+msgstr "Bugfix"
+
+msgid "changelog.2-16.1"
+msgstr "Localization support. Parts of travelynx are now available in English, and a subset of those is also available in French, Hungarian, and Polish. Further translations, languages, and translation how-tos will follow in due time. Locale selection respects the Accept-Language header and can be configured on the account settings page."
+
+msgid "changelog.2-16.2"
+msgstr "Fix distance calculation and visualization of ring line trips. Trips shown in the history map are still partially incorrect."
+
 # journey.html.ep
 
 msgid "journey.not-found"
