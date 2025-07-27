@@ -13,7 +13,7 @@ use DateTime;
 use DateTime::Format::Strptime;
 use GIS::Distance;
 use JSON;
-use List::MoreUtils qw(after_incl before_incl first_index);
+use List::MoreUtils qw(after_incl before_incl first_index last_index);
 
 my %visibility_itoa = (
 	100 => 'public',
@@ -1270,7 +1270,11 @@ sub get_travel_distance {
 		)
 	}
 	@{$route_ref};
-	my $route_end = first_index {
+
+	# Here, we need to use last_index. In case of ring lines, the first index
+	# will not have sched_arr/rt_arr set, but we should not select it as route
+	# end...
+	my $route_end = last_index {
 		(
 			( $_->[1] and $_->[1] == $to_eva or $_->[0] eq $to )
 			  and ( not( defined $_->[2]{sched_arr} or defined $_->[2]{rt_arr} )
@@ -1291,7 +1295,7 @@ sub get_travel_distance {
 	}
 
 	# Assumption: polyline entries are always [lat, lon] or [lat, lon, stop ID]
-	%seen = undef;
+	%seen = ();
 	for my $entry ( @{$polyline_ref} ) {
 		if ( $entry->[2] ) {
 			$seen{ $entry->[2] } //= 1;
