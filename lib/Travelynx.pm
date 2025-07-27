@@ -3118,10 +3118,17 @@ sub startup {
 			if ( $self->is_user_authenticated ) {
 				return 1;
 			}
-			$self->render(
-				'login',
-				redirect_to => $self->req->url,
-				from        => 'auth_required'
+			$self->respond_to(
+				json => {
+					json   => { error => 'authentication required' },
+					status => 401
+				},
+				any => {
+					template    => 'login',
+					status      => 401,
+					redirect_to => $self->req->url,
+					from        => 'auth_required'
+				}
 			);
 			return undef;
 		}
