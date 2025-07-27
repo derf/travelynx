@@ -20,7 +20,7 @@
 						<span class="card-title"><%= L('account.changed-language') %></span>
 					% }
 					% elsif ($success eq 'privacy') {
-						<span class="card-title"><%= L('account.changed-privacy') %</span>
+						<span class="card-title"><%= L('account.changed-privacy') %></span>
 					% }
 					% elsif ($success eq 'social') {
 						<span class="card-title"><%= L('account.changed-social') %></span>
