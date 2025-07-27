@@ -15,7 +15,7 @@ Note that travelynx does _not_ use Weblate.
 
 ### Updating or Extending Translations
 
-* Look at the [translation reference](/share/locales/reference.md)
+* Look at the [translation reference](../share/locales/reference.md)
 * Pick a language that you'd like to fix / update / extend
 * Adjust the corresponding `share/locales/ab-CD.po` file
 * Open a merge request, either on [Codeberg](https://codeberg.org/derf/travelynx/pulls) or [GitHub](https://github.com/derf/travelynx/pulls)
