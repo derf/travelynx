@@ -23,7 +23,8 @@ Note that travelynx does _not_ use Weblate.
 ### Adding a new Language
 
 * Copy `share/locales/template.pot` to `share/locales/ab-CD.po`, replacing ab-CD with the appropriate language code
-* Add the language / locale to  `$self->helper(loc_handle …` in `lib/Travelynx.pm` and `templates/language.html.ep`
+* Add the language / locale to  `$self->helper(loc_handle …` in `lib/Travelynx.pm`
+* Add the language / locale to  `templates/language.html.ep`
 * Provide as many translations as you feel comfortable with – partial translation files are fine; any entry left as `msgstr ""` will cause travelynx to fall back to English or German.
 * Open a merge request, either on [Codeberg](https://codeberg.org/derf/travelynx/pulls) or [GitHub](https://github.com/derf/travelynx/pulls)
 
