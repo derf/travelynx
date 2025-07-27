@@ -1246,11 +1246,17 @@ sub get_travel_distance {
 	my $geo                   = GIS::Distance->new();
 	my $distance_beeline
 	  = $geo->distance_metal( @{$from_latlon}, @{$to_latlon} );
-	my @route
-	  = after_incl { ( $_->[1] and $_->[1] == $from_eva ) or $_->[0] eq $from }
+	my @route = after_incl {
+		(         ( $_->[1] and $_->[1] == $from_eva or $_->[0] eq $from )
+			  and ( defined $_->[2]{sched_dep} or defined $_->[2]{rt_dep} )
+			  and ( $_->[2]{sched_dep} // $_->[2]{rt_dep} )->epoch == $from_ts )
+	}
 	@{$route_ref};
-	@route
-	  = before_incl { ( $_->[1] and $_->[1] == $to_eva ) or $_->[0] eq $to }
+	@route = before_incl {
+		(         ( $_->[1] and $_->[1] == $to_eva or $_->[0] eq $to )
+			  and ( defined $_->[2]{sched_arr} or defined $_->[2]{rt_arr} )
+			  and ( $_->[2]{sched_arr} // $_->[2]{rt_arr} )->epoch == $to_ts )
+	}
 	@route;
 
 	if (
