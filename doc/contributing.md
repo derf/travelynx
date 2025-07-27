@@ -11,6 +11,7 @@ If you are planning a more involved patch set, please get in touch first.
 ## Translations
 
 This is probably the easiest way to improve the life of any travelynx users who are not native German speakers.
+Note that travelynx does _not_ use Weblate.
 
 ### Updating or Extending Translations
 
