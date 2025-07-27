@@ -257,11 +257,12 @@
 						% my $before = 1;
 						% my $within = 0;
 						% my $at_startstop = 0;
+						% my $i = 0;
 						% for my $station (@{$journey->{route}}) {
-							% if (($station->[1] and $station->[1] == $journey->{from_eva}) or $station->[0] eq $journey->{from_name}) {
+							% if ($i == $journey->{route_dep_index}) {
 								% $within = 1; $at_startstop = 1;
 							% }
-							% elsif (($station->[1] and $station->[1] == $journey->{to_eva}) or $station->[0] eq $journey->{to_name}) {
+							% elsif ($i == $journey->{route_arr_index}) {
 								% $within = 0; $at_startstop = 1;
 							% }
 							% else {
@@ -298,6 +299,7 @@
 								% $before = 0;
 							% }
 							<br/>
+							% $i += 1;
 						% }
 					</td>
 				</tr>

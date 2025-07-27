@@ -13,7 +13,7 @@ use DateTime;
 use DateTime::Format::Strptime;
 use GIS::Distance;
 use JSON;
-use List::MoreUtils qw(after_incl before_incl);
+use List::MoreUtils qw(after_incl before_incl first_index);
 
 my %visibility_itoa = (
 	100 => 'public',
@@ -1262,7 +1262,7 @@ sub get_travel_distance {
 	# distance for any journey that lacks sched_dep/rt_dep or
 	# sched_from/rt_from.
 
-	my @route = after_incl {
+	my $route_start = first_index {
 		(
 			( $_->[1] and $_->[1] == $from_eva or $_->[0] eq $from )
 			  and ( not( defined $_->[2]{sched_dep} or defined $_->[2]{rt_dep} )
@@ -1270,14 +1270,23 @@ sub get_travel_distance {
 		)
 	}
 	@{$route_ref};
-	@route = before_incl {
+	my $route_end = first_index {
 		(
 			( $_->[1] and $_->[1] == $to_eva or $_->[0] eq $to )
 			  and ( not( defined $_->[2]{sched_arr} or defined $_->[2]{rt_arr} )
 				or ( $_->[2]{sched_arr} // $_->[2]{rt_arr} ) == $to_ts )
 		)
 	}
-	@route;
+	@{$route_ref};
+
+	if ( not defined $route_start and defined $route_end ) {
+		return ( 0, 0, $distance_beeline );
+	}
+
+	$journey->{route_dep_index} = $route_start;
+	$journey->{route_arr_index} = $route_end;
+
+	my @route = @{$route_ref}[ $route_start .. $route_end ];
 
 	if (
 		@route < 2
