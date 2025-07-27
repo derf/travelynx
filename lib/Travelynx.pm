@@ -2793,13 +2793,16 @@ sub startup {
 			my @extra_station_coordinates
 			  = map { [ $_->{latlon}, $_->{name} ] } @extra_stations;
 
-			my @now_coordinates = map {
-				[
-					$_->{now_latlon},
-					$_->{train_type} . ' '
-					  . ( $_->{train_line} // $_->{train_no} )
-				]
-			} @journeys;
+			my @now_coordinates;
+			if ( $opt{with_now_markers} ) {
+				@now_coordinates = map {
+					[
+						$_->{now_latlon},
+						$_->{train_type} . ' '
+						  . ( $_->{train_line} // $_->{train_no} )
+					]
+				} @journeys;
+			}
 
 			my @station_pairs;
 			my @polylines;

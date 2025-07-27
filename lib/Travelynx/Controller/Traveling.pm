@@ -370,8 +370,9 @@ sub homepage {
 			my $map_data = {};
 			if ( $status->{arr_name} ) {
 				$map_data = $self->journeys_to_map_data(
-					journeys        => [$status],
-					show_full_route => 1,
+					journeys         => [$status],
+					show_full_route  => 1,
+					with_now_markers => 1,
 				);
 			}
 			my $journey_visibility
@@ -461,8 +462,9 @@ sub status_card {
 		my $map_data = {};
 		if ( $status->{arr_name} ) {
 			$map_data = $self->journeys_to_map_data(
-				journeys        => [$status],
-				show_full_route => 1,
+				journeys         => [$status],
+				show_full_route  => 1,
+				with_now_markers => 1,
 			);
 		}
 		my $journey_visibility

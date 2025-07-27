@@ -114,7 +114,8 @@ sub profile {
 	my $map_data = {};
 	if ( $status->{checked_in} ) {
 		$map_data = $self->journeys_to_map_data(
-			journeys => [$status],
+			journeys         => [$status],
+			with_now_markers => 1,
 		);
 	}
 
@@ -506,7 +507,8 @@ sub user_status {
 	my $map_data = {};
 	if ( $status->{checked_in} ) {
 		$map_data = $self->journeys_to_map_data(
-			journeys => [$status],
+			journeys         => [$status],
+			with_now_markers => 1,
 		);
 	}
 
@@ -600,7 +602,8 @@ sub status_card {
 
 	if ( $status->{checked_in} ) {
 		$map_data = $self->journeys_to_map_data(
-			journeys => [$status],
+			journeys         => [$status],
+			with_now_markers => 1,
 		);
 	}
 
