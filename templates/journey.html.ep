@@ -258,10 +258,16 @@
 						% my $within = 0;
 						% my $at_startstop = 0;
 						% for my $station (@{$journey->{route}}) {
-							% if (($station->[1] and $station->[1] == $journey->{from_eva}) or $station->[0] eq $journey->{from_name}) {
+							% my $station_is_from_eva = ($station->[1] and $station->[1] == $journey->{from_eva});
+							% my $station_is_to_eva = ($station->[1] and $station->[1] == $journey->{to_eva});
+							% my $station_is_from_name = ($station->[0] eq $journey->{from_name});
+							% my $station_is_to_name = ($station->[0] eq $journey->{to_name});
+							% my $station_is_dep_time = (!$station->[2]{sched_dep} or DateTime->compare($station->[2]{sched_dep}, $journey->{sched_departure}) == 0);
+							% my $station_is_arr_time = (!$station->[2]{sched_arr} or DateTime->compare($station->[2]{sched_arr}, $journey->{sched_arrival}) == 0);
+							% if (($station_is_from_eva or $station_is_from_name) and $station_is_dep_time) {
 								% $within = 1; $at_startstop = 1;
 							% }
-							% elsif (($station->[1] and $station->[1] == $journey->{to_eva}) or $station->[0] eq $journey->{to_name}) {
+							% elsif (($station_is_to_eva or $station_is_to_name) and $station_is_arr_time and $within) {
 								% $within = 0; $at_startstop = 1;
 							% }
 							% else {
@@ -294,7 +300,7 @@
 									% }
 								</span>
 							% }
-							% if (($station->[1] and $station->[1] == $journey->{from_eva}) or $station->[0] eq $journey->{from_name}) {
+							% if (($station_is_from_eva or $station_is_from_name) and $station_is_dep_time) {
 								% $before = 0;
 							% }
 							<br/>
