@@ -92,7 +92,7 @@ $t->post_ok(
 		rt_arrival      => '2018-10-16T18:32',
 	}
 );
-$t->status_is(302)->header_is( location => '/journey/1' );
+$t->status_is(302)->header_is( location => '/journey/1' )->content_is(q{});
 
 $t->get_ok('/history/2018/10')
   ->status_is(200)
