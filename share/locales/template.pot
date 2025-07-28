@@ -152,10 +152,10 @@ msgstr ""
 msgid "account.webhook.disabled"
 msgstr ""
 
-msgid "account.webhook.active_pending"
+msgid "account.webhook.active-ppending"
 msgstr ""
 
-msgid "account.webhook.active_error"
+msgid "account.webhook.active-error"
 msgstr ""
 
 msgid "account.webhook.active"
@@ -164,7 +164,7 @@ msgstr ""
 msgid "account.traewelling.unsupported"
 msgstr ""
 
-msgid "account.registration_date"
+msgid "account.registration-date"
 msgstr ""
 
 msgid "account.interaction"

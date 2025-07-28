@@ -116,10 +116,10 @@
 						<span style="color: #999999;"><%= L('account.webhook.disabled') %></span>
 					% }
 					% elsif ($hook->{latest_run}->epoch == 0) {
-						<%= L('account.webhook.active_pending') %>
+						<%= L('account.webhook.active-pending') %>
 					% }
 					% elsif ($hook->{errored}) {
-						<%= L('account.webhook.active_error') %> <i class="material-icons" aria-hidden="true">error</i>
+						<%= L('account.webhook.active-error') %> <i class="material-icons" aria-hidden="true">error</i>
 					% }
 					% else {
 						<%= L('account.webhook.active') %>
@@ -159,7 +159,7 @@
 				</tr>
 			% }
 			<tr>
-				<th scope="row"><%= L('account.registration_date') %></th>
+				<th scope="row"><%= L('account.registration-date') %></th>
 				<td><%= $acc->{registered_at}->strftime(L('strftime.datetime')) %></td>
 			</tr>
 		</table>

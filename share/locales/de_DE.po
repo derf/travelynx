@@ -152,10 +152,10 @@ msgstr "Webhook"
 msgid "account.webhook.disabled"
 msgstr "Nicht eingerichtet"
 
-msgid "account.webhook.active_pending"
+msgid "account.webhook.active-pending"
 msgstr "Aktiv, noch nicht ausgeführt"
 
-msgid "account.webhook.active_error"
+msgid "account.webhook.active-error"
 msgstr "Aktiv, fehlerhaft"
 
 msgid "account.webhook.active"
@@ -164,7 +164,7 @@ msgstr "Aktiv"
 msgid "account.traewelling.unsupported"
 msgstr "Wird wegen Inkompatibilität zwischen bahn.de und transitous derzeit nicht unterstützt"
 
-msgid "account.registration_date"
+msgid "account.registration-date"
 msgstr "Registriert am"
 
 msgid "account.interaction"

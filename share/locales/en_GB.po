@@ -150,13 +150,13 @@ msgid "account.webhook"
 msgstr "Webhook"
 
 msgid "account.webhook.disabled"
-msgstr "No webhook was configured"
+msgstr "No webhook configured"
 
-msgid "account.webhook.active_pending"
-msgstr "Active and Pending"
+msgid "account.webhook.active-pending"
+msgstr "Active; pending"
 
-msgid "account.webhook.active_error"
-msgstr "Active with Error"
+msgid "account.webhook.active-error"
+msgstr "Active; erroneous"
 
 msgid "account.webhook.active"
 msgstr "Active"
@@ -164,7 +164,7 @@ msgstr "Active"
 msgid "account.traewelling.unsupported"
 msgstr "Unsupported due to incompatibility with bahn.de and transitous"
 
-msgid "account.registration_date"
+msgid "account.registration-date"
 msgstr "Registered on"
 
 msgid "account.interaction"
