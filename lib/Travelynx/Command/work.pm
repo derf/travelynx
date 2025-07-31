@@ -381,7 +381,7 @@ sub run {
 				)->catch(
 					sub {
 						my ($err) = @_;
-						$self->app->log->error(
+						$self->app->log->debug(
 "work($uid) @ MOTIS $entry->{backend_name}: journey: $err"
 						);
 					}
@@ -402,7 +402,7 @@ sub run {
 			};
 			if ($@) {
 				$errors += 1;
-				$self->app->log->debug(
+				$self->app->log->error(
 					"work($uid) @ MOTIS $entry->{backend_name}: $@");
 			}
 		}
