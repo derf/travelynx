@@ -402,7 +402,7 @@ sub run {
 			};
 			if ($@) {
 				$errors += 1;
-				$self->app->log->error(
+				$self->app->log->debug(
 					"work($uid) @ MOTIS $entry->{backend_name}: $@");
 			}
 		}
