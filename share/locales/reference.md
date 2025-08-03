@@ -3,10 +3,10 @@
 * de-DE: 100.0% complete (0 missing)
 * en-GB: 100.0% complete (0 missing)
 * fr-FR: 35.4% complete (106 missing)
-* hu-HU: 85.4% complete (24 missing)
+* hu-HU: 100.0% complete (0 missing)
 * pl-PL: 35.4% complete (106 missing)
 
-### 
+###
 
 * de-DE: Language: de-DE
 MIME-Version: 1.0
@@ -26,7 +26,7 @@ Plural-Forms: nplurals=2; plural=(n > 1);
 * hu-HU: Language: hu-HU
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Plural-Forms: nplurals=2; plural=n != 1;
+Plural-Forms: nplurals=2; plural=(n > 1);
 
 * pl-PL: Language: pl-PL
 MIME-Version: 1.0
@@ -41,7 +41,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: %d.%m.%Y %H:%M %Z
 * en-GB: %Y-%m-%d %H:%M %Z
 * fr-FR: %d/%m/%Y %Hh%M %Z
-* hu-HU *missing*
+* hu-HU: %Y.%m.%d %H:%M %Z
 * pl-PL: %d.%m.%Y %H:%M %Z
 
 ### button.register
@@ -162,10 +162,10 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### about.developed-by.tail
 
-* de-DE:  
-* en-GB:  
+* de-DE:
+* en-GB:
 * fr-FR *missing*
-* hu-HU:  
+* hu-HU:
 * pl-PL *missing*
 
 ### about.source-code
@@ -239,7 +239,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Name geändert
 * en-GB: Updated name
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: Név frissítve
 * pl-PL *missing*
 
 ### account.changed-mail
@@ -247,7 +247,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Mail-Adresse geändert
 * en-GB: Updated email address
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: E-Mail cím frissítve
 * pl-PL *missing*
 
 ### account.changed-password
@@ -255,7 +255,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Passwort geändert
 * en-GB: Updated password
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: Jelszó frissítve
 * pl-PL *missing*
 
 ### account.changed-language
@@ -263,7 +263,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Sprache geändert
 * en-GB: Changed language
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: Nyelv változtatva
 * pl-PL *missing*
 
 ### account.changed-privacy
@@ -271,7 +271,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Einstellungen zu öffentlichen Account-Daten geändert
 * en-GB: Privacy settings have been saved
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: Láthatósági beállítások mentve
 * pl-PL *missing*
 
 ### account.changed-social
@@ -279,7 +279,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Einstellungen zur Interaktionen mit anderen Accounts geändert
 * en-GB: Social settings have been saved
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: Interakciós beállítások mentve
 * pl-PL *missing*
 
 ### account.changed-traewelling
@@ -287,7 +287,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Träwelling-Verknüpfung aktualisiert
 * en-GB: Träwelling settings have been saved
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: Träwelling beállítások mentve
 * pl-PL *missing*
 
 ### account.changed-history
@@ -295,7 +295,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Einstellungen zu vorgeschlagenen Verbindungen geändert
 * en-GB: Connection suggestion settings have been saved
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: Átszállásos javaslati beállítások mentve
 * pl-PL *missing*
 
 ### account.changed-webhook
@@ -303,7 +303,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Web Hook aktualisiert
 * en-GB: Web Hook has been updated
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: Web Hook frissítve
 * pl-PL *missing*
 
 ### account.cleared-notifications
@@ -311,7 +311,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Benachrichtigungen gelesen
 * en-GB: Notifications have been cleared
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: Értesítések törölve
 * pl-PL *missing*
 
 ### account.account
@@ -391,31 +391,31 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Webhook
 * en-GB: Webhook
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: Webhook
 * pl-PL *missing*
 
 ### account.webhook.disabled
 
 * de-DE: Nicht eingerichtet
-* en-GB: No webhook was configured
+* en-GB: No webhook configured
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: Nincs beállitva
 * pl-PL *missing*
 
 ### account.webhook.active_pending
 
 * de-DE: Aktiv, noch nicht ausgeführt
-* en-GB: Active and Pending
+* en-GB: Active; pending
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: Aktív, jóváhagyás folyamatban
 * pl-PL *missing*
 
 ### account.webhook.active_error
 
 * de-DE: Aktiv, fehlerhaft
-* en-GB: Active with Error
+* en-GB: Active; erroneous
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: Aktív, hibás
 * pl-PL *missing*
 
 ### account.webhook.active
@@ -423,7 +423,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Aktiv
 * en-GB: Active
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: Aktív
 * pl-PL *missing*
 
 ### account.traewelling.unsupported
@@ -431,7 +431,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Wird wegen Inkompatibilität zwischen bahn.de und transitous derzeit nicht unterstützt
 * en-GB: Unsupported due to incompatibility with bahn.de and transitous
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: Jelenleg nem támogatott a bahn.de és a transitous közötti inkompatibilitás miatt
 * pl-PL *missing*
 
 ### account.registration_date
@@ -439,7 +439,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Registriert am
 * en-GB: Registered on
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: Regisztrálva
 * pl-PL *missing*
 
 ### account.interaction
@@ -505,7 +505,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Neues Feature
 * en-GB: New Feature
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: Új fícsör
 * pl-PL *missing*
 
 ### changelog.bugfix
@@ -513,7 +513,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Bugfix
 * en-GB: Bugfix
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: Bugfix
 * pl-PL *missing*
 
 ### changelog.2-16.1
@@ -521,7 +521,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Infrastruktur zur Übersetzung von travelynx in andere Sprachen. Der Großteil der Website ist noch Deutsch; einzelne Seiten sind bereits auf Englisch und Teilmengen davon zusätzlich auf Französisch, Polnisch und Ungarisch verfügbar. Weitere Übersetzungen und ggf. Sprachen sowie Dokumentation zur Unterstützung dabei folgen bei Zeiten. Die Sprache wird auf Basis des Accept-Language-Headers ausgewählt und kann zusätzlich in den Account-Einstellungen konfiguriert werden.
 * en-GB: Localization support. Parts of travelynx are now available in English, and a subset of those is also available in French, Hungarian, and Polish. Further translations, languages, and translation how-tos will follow in due time. Locale selection respects the Accept-Language header and can be configured on the account settings page.
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: Lokalizáció. A travelynx most már angolul, részben pedig franciául, magyarul és lengyelül is elérhető. További fordítások, nyelvek és fordítási útmutatók következnek majd a megfelelő időben. A lokalizáció kiválasztása tiszteletben tartja az Accept-Language fejlécet, és a fiókbeállítások oldalon is beállítható.
 * pl-PL *missing*
 
 ### changelog.2-16.2
@@ -529,7 +529,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Korrekte Berechnung und Visualisierung der Wegstrecke bei Fahrten mit Ringlinien. Die Anzeige der Fahrten in der Fahrtenkarte ist noch teilweise fehlerhaft.
 * en-GB: Fix distance calculation and visualization of ring line trips. Trips shown in the history map are still partially incorrect.
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: A távolságszámítás és a gyűrűsvonali utazások megjelenítése javítva lett. Az előzménytérképen megjelenített utazások még mindig részben hibásak.
 * pl-PL *missing*
 
 ## journey.html.ep
@@ -604,10 +604,10 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### journey.beeline.pre
 
-* de-DE: (Luftlinie: 
+* de-DE: (Luftlinie:
 * en-GB: (
 * fr-FR *missing*
-* hu-HU: (Légvonalban: 
+* hu-HU: (Légvonalban:
 * pl-PL *missing*
 
 ### journey.beeline.post
@@ -691,7 +691,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Exportieren
 * en-GB: Export
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: Exportálás
 * pl-PL *missing*
 
 ### journey.edit
@@ -796,8 +796,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### landingpage.traewelling.post
 
-* de-DE:  
-* en-GB:  
+* de-DE:
+* en-GB:
 * fr-FR *missing*
 * hu-HU:  volt
 * pl-PL *missing*
@@ -807,7 +807,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Features:
 * en-GB: Features:
 * fr-FR *missing*
-* hu-HU *missing*
+* hu-HU: Fícsörök:
 * pl-PL *missing*
 
 ### landingpage.features.log
@@ -945,10 +945,10 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 ### login.accept-tos-post
 
 * de-DE: zu.
-* en-GB:  
-* fr-FR:  
-* hu-HU:  
-* pl-PL:  
+* en-GB:
+* fr-FR:
+* hu-HU:
+* pl-PL:
 
 ### login.forgot-password
 
@@ -1020,9 +1020,9 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: zu.
 * en-GB: .
-* fr-FR:  
-* hu-HU:  
-* pl-PL:  
+* fr-FR:
+* hu-HU:
+* pl-PL:
 
 ### register.expect-confirmation-link
 
@@ -1136,8 +1136,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 *noun or verb*
 
-* de-DE:  
-* en-GB:  
+* de-DE:
+* en-GB:
 * fr-FR *missing*
 * hu-HU: -en belül
 * pl-PL *missing*
@@ -1159,15 +1159,15 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Abfahrt in
 * en-GB: departs in
 * fr-FR *missing*
-* hu-HU:  
+* hu-HU:
 * pl-PL *missing*
 
 ### status.departure-in.post
 
 *noun or verb*
 
-* de-DE:  
-* en-GB:  
+* de-DE:
+* en-GB:
 * fr-FR *missing*
 * hu-HU: -en belül indul
 * pl-PL *missing*
@@ -1189,18 +1189,18 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Ankunft in
 * en-GB: arrives in
 * fr-FR: Arrive dans
-* hu-HU:  
+* hu-HU:
 * pl-PL: Przyjazd za
 
 ### status.arrival-in.post
 
 *noun or verb*
 
-* de-DE:  
-* en-GB:  
-* fr-FR:  
+* de-DE:
+* en-GB:
+* fr-FR:
 * hu-HU: -en belül érkezik
-* pl-PL:  
+* pl-PL:
 
 ### status.arrival-soon
 
@@ -1233,13 +1233,13 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: von
 * en-GB: from
 * fr-FR *missing*
-* hu-HU:  
+* hu-HU:
 * pl-PL *missing*
 
 ### status.depart-from.post
 
-* de-DE:  
-* en-GB:  
+* de-DE:
+* en-GB:
 * fr-FR *missing*
 * hu-HU: vágányról indul
 * pl-PL *missing*
@@ -1249,13 +1249,13 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: auf
 * en-GB: on
 * fr-FR *missing*
-* hu-HU:  
+* hu-HU:
 * pl-PL *missing*
 
 ### status.arrive-on.post
 
-* de-DE:  
-* en-GB:  
+* de-DE:
+* en-GB:
 * fr-FR *missing*
 * hu-HU: vágányra érkezik
 * pl-PL *missing*
@@ -1379,32 +1379,32 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: von
 * en-GB: from
 * fr-FR: en provenance de
-* hu-HU:  
+* hu-HU:
 * pl-PL: z
 
 ### wagons.from.post
 
-* de-DE:  
-* en-GB:  
-* fr-FR:  
+* de-DE:
+* en-GB:
+* fr-FR:
 * hu-HU: -tól
-* pl-PL:  
+* pl-PL:
 
 ### wagons.to.pre
 
 * de-DE: nach
 * en-GB: towards
 * fr-FR: à destination de
-* hu-HU:  
+* hu-HU:
 * pl-PL: do
 
 ### wagons.to.post
 
-* de-DE:  
-* en-GB:  
-* fr-FR:  
+* de-DE:
+* en-GB:
+* fr-FR:
 * hu-HU: -ig
-* pl-PL:  
+* pl-PL:
 
 ### wagons.carriage
 
@@ -1413,4 +1413,3 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * fr-FR: Voiture
 * hu-HU: Kocsi
 * pl-PL: Wagon
-
