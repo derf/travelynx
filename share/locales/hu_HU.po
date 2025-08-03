@@ -3,11 +3,14 @@ msgstr ""
 "Language: hu-HU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #
 # Global Strings
 #
+
+msgid "strftime.datetime"
+msgstr "%Y.%m.%d %H:%M %Z"
 
 msgid "button.register"
 msgstr "Regisztrálás"
@@ -86,6 +89,36 @@ msgstr "Changelog"
 
 # account.html.ep
 
+msgid "account.changed-name"
+msgstr "Név frissítve"
+
+msgid "account.changed-mail"
+msgstr "E-Mail cím frissítve"
+
+msgid "account.changed-password"
+msgstr "Jelszó frissítve"
+
+msgid "account.changed-language"
+msgstr "Nyelv változtatva"
+
+msgid "account.changed-privacy"
+msgstr "Láthatósági beállítások mentve"
+
+msgid "account.changed-social"
+msgstr "Interakciós beállítások mentve"
+
+msgid "account.changed-traewelling"
+msgstr "Träwelling beállítások mentve"
+
+msgid "account.changed-history"
+msgstr "Átszállásos javaslati beállítások mentve"
+
+msgid "account.changed-webhook"
+msgstr "Web Hook frissítve"
+
+msgid "account.cleared-notifications"
+msgstr "Értesítések törölve"
+
 msgid "account.account"
 msgstr "Fiók"
 
@@ -113,6 +146,27 @@ msgstr "Javaslatok deaktiválva"
 msgid "account.visibility"
 msgstr "Láthatóság"
 
+msgid "account.webhook"
+msgstr "Webhook"
+
+msgid "account.webhook.disabled"
+msgstr "Nincs beállitva"
+
+msgid "account.webhook.active-pending"
+msgstr "Aktív, jóváhagyás folyamatban"
+
+msgid "account.webhook.active-error"
+msgstr "Aktív, hibás"
+
+msgid "account.webhook.active"
+msgstr "Aktív"
+
+msgid "account.traewelling.unsupported"
+msgstr "Jelenleg nem támogatott a bahn.de és a transitous közötti inkompatibilitás miatt"
+
+msgid "account.registration-date"
+msgstr "Regisztrálva"
+
 msgid "account.interaction"
 msgstr "Interakció"
 
@@ -133,6 +187,20 @@ msgstr "követési kérések"
 
 msgid "account.interaction.disabled"
 msgstr "Senki sem követhet"
+
+# changelog.html.ep
+
+msgid "changelog.added"
+msgstr "Új fícsör"
+
+msgid "changelog.bugfix"
+msgstr "Bugfix"
+
+msgid "changelog.2-16.1"
+msgstr "Lokalizáció. A travelynx most már angolul, részben pedig franciául, magyarul és lengyelül is elérhető. További fordítások, nyelvek és fordítási útmutatók következnek majd a megfelelő időben. A lokalizáció kiválasztása tiszteletben tartja az Accept-Language fejlécet, és a fiókbeállítások oldalon is beállítható."
+
+msgid "changelog.2-16.2"
+msgstr "A távolságszámítás és a gyűrűsvonali utazások megjelenítése javítva lett. Az előzménytérképen megjelenített utazások még mindig részben hibásak."
 
 # journey.html.ep
 
@@ -196,6 +264,9 @@ msgstr "Útvonal"
 msgid "journey.share"
 msgstr "Megosztás"
 
+msgid "journey.export"
+msgstr "Exportálás"
+
 msgid "journey.edit"
 msgstr "Szerkesztés"
 
@@ -217,11 +288,11 @@ msgid "landingpage.stop-geosearch"
 msgstr "Közeledben lévő megállók keresése"
 
 msgid "landingpage.manual-stop-entry"
-msgstr "Manuális bevitel"
+msgstr "Megálló manuális bevitele"
 
 #, As short as possible
 msgid "landingpage.departures"
-msgstr "Indulások"
+msgstr "Járatok innen"
 
 msgid "landingpage.latest-trips"
 msgstr "Legutóbbi utazások"
@@ -365,11 +436,11 @@ msgstr "Kicsekkelés"
 
 #, noun or verb
 msgid "status.boarding-in.pre"
-msgstr "Beszállás"
+msgstr " "
 
 #, noun or verb
 msgid "status.boarding-in.post"
-msgstr "-en belül"
+msgstr "-en belül érkezik"
 
 #, noun or verb
 msgid "status.boarding-soon"
