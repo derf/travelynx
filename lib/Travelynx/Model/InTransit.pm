@@ -1623,7 +1623,6 @@ sub estimate_trip_position {
 	my ( $self, $in_transit ) = @_;
 
 	my @now_latlon;
-	my $next_stop;
 	my @route = @{ $in_transit->{route} };
 
 	# estimate_train_position runs before postprocess, so all route
@@ -1634,8 +1633,9 @@ sub estimate_trip_position {
 	for my $i ( 0 .. $#route ) {
 		my $ts = $route[$i][2]{rt_arr} // $route[$i][2]{sched_arr}
 		  // $route[$i][2]{rt_dep} // $route[$i][2]{sched_dep} // 0;
-		if (    not $next_stop
-			and $ts
+		my $ts_dep = $route[$i][2]{rt_dep} // $route[$i][2]{sched_dep}
+		  // $route[$i][2]{rt_arr} // $route[$i][2]{sched_arr} // 0;
+		if (    $ts
 			and $prev_ts
 			and $now > $prev_ts
 			and $now < $ts )
@@ -1648,12 +1648,9 @@ sub estimate_trip_position {
 				to_ts    => $ts,
 				polyline => $in_transit->{polyline},
 			);
-			$next_stop = {
-				type    => 'next',
-				station => $route[$i],
-			};
+			last;
 		}
-		$prev_ts = $ts;
+		$prev_ts = $ts_dep;
 	}
 
 	if (    not @now_latlon
