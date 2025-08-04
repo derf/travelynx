@@ -3,14 +3,15 @@ travelynx - Railway Travel Logger
 
 [travelynx](https://finalrewind.org/projects/travelynx/) allows checking into
 individual public transit vehicles (e.g. buses, ferries, trams, trains) across
-most of Germany, Switzerland, Austria, Luxembourg, Ireland, and parts of the
-USA. Thus, it provides a log of your railway journeys annotated with real-time
-delays and service messages, if available. It supports german railways and
-trains exposed by the Deutsche Bahn [IRIS
-Interface](https://finalrewind.org/projects/Travel-Status-DE-IRIS/) as well as
-regional and local transit exposed by supported [HAFAS
-Instances](https://finalrewind.org/projects/Travel-Status-DE-HAFAS/).  Support
-for EFA instances and bahn.de is under way.
+most of Germany, Switzerland, Austria, Luxembourg, Ireland, Denmark, and parts
+of the USA. Thus, it provides a log of your railway journeys annotated with
+real-time delays and service messages, if available. It supports German
+long-distance, regional and local transit exposed by the Deutsche Bahn [bahn.de
+interface](https://finalrewind.org/projects/Travel-Status-DE-DBRIS/), a variety
+of [EFA](https://finalrewind.org/projects/Travel-Status-DE-VRR/) and
+[HAFAS](https://finalrewind.org/projects/Travel-Status-DE-HAFAS/) interfaces,
+andt [MOTIS](https://finalrewind.org/projects/Travel-Status-MOTIS/) APIs
+including the [transitous](https://transitous.org/) aggregator.
 
 You can use the public instance on [travelynx.de](https://travelynx.de) or
 host your own. Further reading:
