@@ -460,8 +460,9 @@ sub run {
 								is_departure => 1,
 								eva          => $dep,
 								datetime     => $found_dep->sched_dep,
-								train_type   => $journey->type =~ s{ +$}{}r,
-								train_no     => $journey->number,
+								train_type   => ( $journey->type // q{} )
+								  =~ s{ +$}{}r,
+								train_no => $journey->number,
 							);
 							$self->app->add_stationinfo( $uid, 1,
 								$journey->id, $found_dep->loc->eva );
