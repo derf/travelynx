@@ -11,6 +11,20 @@
 	% if (stash('redirect_to')) {
 		%= hidden_field 'redirect_to' => stash('redirect_to')
 	% }
+	% if (@{stash('frequent') // []}) {
+		<div class="row">
+			<div class="col s12">
+				<h3>Häufig genutzt</h3>
+				<p style="text-align: justify;">
+					Die folgenden Backends wurden innerhalb der letzten vier
+					Monate für Checkins verwendet.
+				</p>
+			</div>
+		</div>
+		% for my $backend (@{ stash('frequent') // [] }) {
+			%= include '_backend_line', user => $user, backend => $backend
+		% }
+	% }
 	% if (@{stash('suggestions') // []}) {
 		<div class="row">
 			<div class="col s12">

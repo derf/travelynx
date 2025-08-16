@@ -1055,6 +1055,7 @@ sub backend_form {
 	my ($self) = @_;
 	my $user = $self->current_user;
 
+	my %backend_by_id;
 	my @backends = $self->stations->get_backends;
 	my @suggested_backends;
 
@@ -1272,7 +1273,12 @@ sub backend_form {
 			}
 		}
 		$backend->{type} = $type;
+
+		$backend_by_id{ $backend->{id} } = $backend;
 	}
+
+	my @frequent_backends = map { $backend_by_id{$_} }
+	  $self->journeys->get_frequent_backend_ids( uid => $user->{id} );
 
 	@backends = map { $_->[1] }
 	  sort { $a->[0] cmp $b->[0] }
@@ -1281,6 +1287,7 @@ sub backend_form {
 	$self->render(
 		'select_backend',
 		suggestions => \@suggested_backends,
+		frequent    => \@frequent_backends,
 		backends    => \@backends,
 		user        => $user,
 		redirect_to => $self->req->param('redirect_to') // '/',

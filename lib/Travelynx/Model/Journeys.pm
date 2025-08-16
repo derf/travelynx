@@ -1943,6 +1943,36 @@ sub get_latest_dest_ids {
 	);
 }
 
+sub get_frequent_backend_ids {
+	my ( $self, %opt ) = @_;
+
+	my $uid       = $opt{uid};
+	my $threshold = $opt{threshold}
+	  // DateTime->now( time_zone => 'Europe/Berlin' )->subtract( months => 4 );
+	my $limit = $opt{limit} // 5;
+	my $db    = $opt{db} //= $self->{pg}->db;
+
+	my $res = $db->select(
+		'journeys',
+		'count(*) as count, backend_id',
+		{
+			user_id        => $uid,
+			real_departure => { '>', $threshold },
+		},
+		{
+			group_by => ['backend_id'],
+			order_by => { -desc => 'count' },
+			limit    => $limit,
+		}
+	);
+
+	my @backend_ids = $res->hashes->map( sub { shift->{backend_id} } )->each;
+
+	say join( ' ', @backend_ids );
+
+	return @backend_ids;
+}
+
 # Returns a listref of {eva, name} hashrefs for the specified backend.
 sub get_connection_targets {
 	my ( $self, %opt ) = @_;
