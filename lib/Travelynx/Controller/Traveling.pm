@@ -8,13 +8,15 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use DateTime;
 use DateTime::Format::Strptime;
+use GIS::Distance;
 use List::Util      qw(uniq min max);
 use List::UtilsBy   qw(max_by uniq_by);
-use List::MoreUtils qw(first_index);
+use List::MoreUtils qw(first_index last_index);
 use Mojo::UserAgent;
 use Mojo::Promise;
 use Text::CSV;
 use Travel::Status::DE::IRIS::Stations;
+use XML::LibXML;
 
 # Internal Helpers
 
@@ -2563,6 +2565,188 @@ sub edit_journey {
 		error             => $error,
 		journey           => $journey
 	);
+}
+
+sub polyline_add_stops {
+	my ( $self, %opt ) = @_;
+
+	my $polyline = $opt{polyline};
+	my $route    = $opt{route};
+
+	my $distance = GIS::Distance->new;
+
+	my %min_dist;
+	for my $stop ( @{$route} ) {
+		for my $polyline_index ( 0 .. $#{$polyline} ) {
+			my $pl = $polyline->[$polyline_index];
+			my $dist
+			  = $distance->distance_metal( $stop->[2]{lat}, $stop->[2]{lon},
+				$pl->[1], $pl->[0] );
+			if ( not $min_dist{ $stop->[1] }
+				or $min_dist{ $stop->[1] }{dist} > $dist )
+			{
+				$min_dist{ $stop->[1] } = {
+					dist  => $dist,
+					index => $polyline_index,
+				};
+			}
+		}
+	}
+	for my $stop ( @{$route} ) {
+		if ( $min_dist{ $stop->[1] } ) {
+			if ( defined $polyline->[ $min_dist{ $stop->[1] }{index} ][2] ) {
+				return sprintf(
+					'Error: Stop IDs %d and %d both map to lon %f, lat %f',
+					$polyline->[ $min_dist{ $stop->[1] }{index} ][2],
+					$stop->[1],
+					$polyline->[ $min_dist{ $stop->[1] }{index} ][0],
+					$polyline->[ $min_dist{ $stop->[1] }{index} ][1]
+				);
+			}
+			$polyline->[ $min_dist{ $stop->[1] }{index} ][2]
+			  = $stop->[1];
+		}
+	}
+	return;
+}
+
+sub set_polyline {
+	my ($self) = @_;
+
+	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
+		$self->render(
+			'bad_request',
+			csrf   => 1,
+			status => 400
+		);
+		return;
+	}
+
+	my $journey_id = $self->param('id');
+	my $uid        = $self->current_user->{id};
+
+	# Ensure that the journey exists and belongs to the user
+	my $journey = $self->journeys->get_single(
+		uid        => $uid,
+		journey_id => $journey_id,
+	);
+
+	if ( not $journey ) {
+		$self->render(
+			'bad_request',
+			message => 'Invalid journey ID',
+			status  => 400,
+		);
+		return;
+	}
+
+	if ( my $upload = $self->req->upload('file') ) {
+		my $root;
+		eval {
+			$root = XML::LibXML->load_xml( string => $upload->asset->slurp );
+		};
+
+		if ($@) {
+			$self->render(
+				'bad_request',
+				message => "Invalid GPX file: Invalid XML: $@",
+				status  => 400,
+			);
+			return;
+		}
+
+		my $context = XML::LibXML::XPathContext->new($root);
+		$context->registerNs( 'gpx', 'http://www.topografix.com/GPX/1/1' );
+
+		use Data::Dumper;
+
+		my @polyline;
+		for my $point (
+			$context->findnodes('/gpx:gpx/gpx:trk/gpx:trkseg/gpx:trkpt') )
+		{
+			push(
+				@polyline,
+				[
+					0.0 + $point->getAttribute('lon'),
+					0.0 + $point->getAttribute('lat')
+				]
+			);
+		}
+
+		if ( not @polyline ) {
+			$self->render(
+				'bad_request',
+				message => 'Invalid GPX file: found no track points',
+				status  => 400,
+			);
+			return;
+		}
+
+		my @route = @{ $journey->{route} };
+
+		if ( $self->param('upload-partial') ) {
+			my $route_start = first_index {
+				(
+					(
+						     $_->[1] and $_->[1] == $journey->{from_eva}
+						  or $_->[0] eq $journey->{from_name}
+					)
+					  and (
+						not(   defined $_->[2]{sched_dep}
+							or defined $_->[2]{rt_dep} )
+						or ( $_->[2]{sched_dep} // $_->[2]{rt_dep} )
+						== $journey->{sched_dep_ts}
+					  )
+				)
+			}
+			@route;
+
+			my $route_end = last_index {
+				(
+					(
+						     $_->[1] and $_->[1] == $journey->{to_eva}
+						  or $_->[0] eq $journey->{to_name}
+					)
+					  and (
+						not(   defined $_->[2]{sched_arr}
+							or defined $_->[2]{rt_arr} )
+						or ( $_->[2]{sched_arr} // $_->[2]{rt_arr} )
+						== $journey->{sched_arr_ts}
+					  )
+				)
+			}
+			@route;
+
+			if ( $route_start > -1 and $route_end > -1 ) {
+				@route = @route[ $route_start .. $route_end ];
+			}
+		}
+
+		my $err = $self->polyline_add_stops(
+			polyline => \@polyline,
+			route    => \@route,
+		);
+
+		if ($err) {
+			$self->render(
+				'bad_request',
+				message => $err,
+				status  => 400,
+			);
+			return;
+		}
+
+		$self->journeys->set_polyline(
+			uid        => $uid,
+			journey_id => $journey_id,
+			edited     => $journey->{edited},
+			polyline   => \@polyline,
+			from_eva   => $route[0][1],
+			to_eva     => $route[-1][1],
+		);
+	}
+
+	$self->redirect_to("/journey/${journey_id}");
 }
 
 sub add_journey_form {

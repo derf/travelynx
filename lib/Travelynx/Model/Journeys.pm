@@ -569,6 +569,78 @@ sub pop {
 	return $journey;
 }
 
+sub set_polyline {
+	my ( $self, %opt ) = @_;
+
+	my $uid      = $opt{uid};
+	my $db       = $opt{db} // $self->{pg}->db;
+	my $polyline = $opt{polyline};
+
+	my $from_eva = $opt{from_eva};
+	my $to_eva   = $opt{to_eva};
+
+	my $polyline_str = JSON->new->encode($polyline);
+
+	my $pl_res = $db->select(
+		'polylines',
+		['id'],
+		{
+			origin_eva      => $from_eva,
+			destination_eva => $to_eva,
+			polyline        => $polyline_str,
+		},
+		{ limit => 1 }
+	);
+
+	my $polyline_id;
+	if ( my $h = $pl_res->hash ) {
+		$polyline_id = $h->{id};
+	}
+	else {
+		$polyline_id = $db->insert(
+			'polylines',
+			{
+				origin_eva      => $from_eva,
+				destination_eva => $to_eva,
+				polyline        => $polyline_str
+			},
+			{ returning => 'id' }
+		)->hash->{id};
+	}
+	if ($polyline_id) {
+		$self->set_polyline_id(
+			uid         => $uid,
+			db          => $db,
+			polyline_id => $polyline_id,
+			journey_id  => $opt{journey_id},
+			edited      => $opt{edited},
+		);
+	}
+
+}
+
+sub set_polyline_id {
+	my ( $self, %opt ) = @_;
+
+	my $uid         = $opt{uid};
+	my $db          = $opt{db} // $self->{pg}->db;
+	my $polyline_id = $opt{polyline_id};
+	my $journey_id  = $opt{journey_id};
+	my $edited      = $opt{edited};
+
+	$db->update(
+		'journeys',
+		{
+			polyline_id => $polyline_id,
+			edited      => $edited | 0x0040
+		},
+		{
+			user_id => $uid,
+			id      => $opt{journey_id}
+		}
+	);
+}
+
 sub get {
 	my ( $self, %opt ) = @_;
 

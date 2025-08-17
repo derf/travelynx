@@ -279,8 +279,17 @@ msgstr "Download"
 msgid "journey.map.upload"
 msgstr "Upload"
 
-msgid "journey.map.info"
-msgstr "JSON format: [[lon, lat, station ID], ...], with lon/lat in WGS84 coordinates. GPX files are compatible with BRouter. Uploads may cover either the entire route or just the route segment that belongs to this checkin; station IDs are optional when uploading map data."
+msgid "journey.map.upload-full"
+msgstr "Upload full route"
+
+msgid "journey.map.upload-partial"
+msgstr "Upload travelled segment"
+
+msgid "journey.map.info.download"
+msgstr "JSON format: [[lon, lat, station ID], ...], with lon/lat in WGS84 coordinates. GPX files are compatible with BRouter."
+
+msgid "journey.map.info.upload"
+msgstr "GPX uploads must contain a single track with a single track segment (such as provided by BRouter's export). They must cover either the full route or just the travelled route segment that belongs to this checkin. Please use the appropriate upload button, otherwise chaos may ensue. There is no need to specify station IDs when uploading tracks. Note that uploads irreversibly replace previously stored map data."
 
 msgid "journey.danger"
 msgstr "Danger Zone"

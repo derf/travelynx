@@ -270,6 +270,30 @@ msgstr "Exportieren"
 msgid "journey.edit"
 msgstr "Bearbeiten"
 
+msgid "journey.map-data"
+msgstr "Kartendaten"
+
+msgid "journey.map.download"
+msgstr "Herunterladen"
+
+msgid "journey.map.upload"
+msgstr "Hochladen"
+
+msgid "journey.map.upload-full"
+msgstr "Komplette Route"
+
+msgid "journey.map.upload-partial"
+msgstr "Gefahrenes Segment"
+
+msgid "journey.map.info.download"
+msgstr "JSON-Format: [[lon, lat, ID], ...] in WGS84-Koordinaten. GPX-Dateien sind mit BRouter kompatibel."
+
+msgid "journey.map.info.upload"
+msgstr "GPX-Uploads müssen ein einzelnes track-Element mit einem einzelnen track segment enthalten. Ein BRouter-GPX-Export erfüllt diese Vorgaben. Uploads müssen entweder die komplette Route des Verkehrsmittels oder nur den zu diesem Checkin zugehörigen Abschnitt enthalten. Beim Hochladen bitte die passende Schaltfläche auswählen. IDs von Halten müssen beim Upload nicht angegeben werden. Bitte beachten: Beim Einspielen eigener Kartendaten werden die zuvor gespeicherten unwiderruflich gelöscht."
+
+msgid "journey.danger"
+msgstr "Danger Zone"
+
 msgid "journey.delete"
 msgstr "Löschen"
 

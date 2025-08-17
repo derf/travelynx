@@ -3193,6 +3193,7 @@ sub startup {
 	$authed_r->post('/account/select_backend')->to('account#change_backend');
 	$authed_r->post('/checkin/add')->to('traveling#add_intransit_form');
 	$authed_r->post('/journey/add')->to('traveling#add_journey_form');
+	$authed_r->post('/polyline/set')->to('traveling#set_polyline');
 	$authed_r->post('/journey/comment')->to('traveling#comment_form');
 	$authed_r->post('/journey/visibility')->to('traveling#visibility_form');
 	$authed_r->post('/journey/edit')->to('traveling#edit_journey');
