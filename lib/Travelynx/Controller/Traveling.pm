@@ -2149,6 +2149,32 @@ sub journey_details {
 	);
 
 	if ($journey) {
+
+		if ( $self->stash('polyline_export') ) {
+			delete $self->stash->{layout};
+			my $xml = $self->render_to_string(
+				template => 'polyline',
+				name     => sprintf( '%s %s: %s → %s',
+					$journey->{type},      $journey->{no},
+					$journey->{from_name}, $journey->{to_name} ),
+				polyline => $journey->{polyline}
+			);
+			$self->respond_to(
+				gpx => {
+					text   => $xml,
+					format => 'gpx'
+				},
+				json => {
+					json => [
+						map {
+							$_->[2] ? [ $_->[0], $_->[1], int( $_->[2] ) ] : $_
+						} @{ $journey->{polyline} }
+					]
+				},
+			);
+			return;
+		}
+
 		my $map_data = $self->journeys_to_map_data(
 			journeys       => [$journey],
 			include_manual => 1,

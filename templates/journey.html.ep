@@ -317,11 +317,24 @@
 		</div>
 	</div>
 	% if (not stash('readonly')) {
-		% if (stash('with_share')) {
-			<div class="row">
-				<div class="col s12 m6 l6">
-				</div>
-				<div class="col s12 m6 l6 center-align">
+		<div class="row">
+			<div class="col s12 m6 l4 center-align">
+				<a class="btn waves-effect waves-light" href="<%= url_for('journey', id => $journey->{id}, format => 'json' ) %>">
+					<i class="material-icons left" aria-hidden="true">file_download</i>
+					%= L('journey.export')
+				</a>
+			</div>
+			<div class="col s12 m6 l4 center-align">
+				%= form_for '/journey/edit' => (method => 'POST') => begin
+					%= hidden_field 'journey_id' => param('journey_id')
+					<button class="btn waves-effect waves-light" type="submit" name="action" value="edit">
+						<i class="material-icons left" aria-hidden="true">edit</i>
+						%= L('journey.edit')
+					</button>
+				%= end
+			</div>
+			<div class="col s12 m6 l4 center-align">
+				% if (stash('with_share')) {
 					<a class="btn waves-effect waves-light action-share"
 						% if (stash('journey_visibility') eq 'public') {
 							data-url="<%= url_for('public_journey', name => current_user()->{name}, id => $journey->{id} )->to_abs->scheme('https'); %>"
@@ -334,50 +347,46 @@
 						<i class="material-icons left" aria-hidden="true">share</i>
 						%= L('journey.share')
 					</a>
-				</div>
+				% }
 			</div>
-		% }
+		</div>
+		<h2><%= L('journey.map-data') %></h2>
 		<div class="row">
-			<div class="col s12 m6 l6">
-			</div>
 			<div class="col s12 m6 l6 center-align">
-				<a class="btn waves-effect waves-light" href="<%= url_for('journey', id => $journey->{id}, format => 'json' ) %>">
-					<i class="material-icons left" aria-hidden="true">file_download</i>
-					%= L('journey.export')
-				</a>
-			</div>
-		</div>
-		<div class="row hide-on-small-only">
-			<div class="col s12 m6 l6 center-align">
-				<a class="waves-effect waves-light red btn action-delete"
-						data-id="<%= $journey->{id} %>"
-						data-checkin="<%= $journey->{checkin}->epoch %>"
-						data-checkout="<%= $journey->{checkout}->epoch %>">
-					<i class="material-icons left">delete_forever</i>
-					%= L('journey.delete')
+				<a class="btn waves-effect waves-light" href="<%= url_for('polyline_download', id => $journey->{id}, format => 'json' ) %>">
+					<i class="material-icons left" aria-label="<%= L('journey.map.download') %>">file_download</i>
+					JSON
 				</a>
 			</div>
 			<div class="col s12 m6 l6 center-align">
-				%= form_for '/journey/edit' => (method => 'POST') => begin
-					%= hidden_field 'journey_id' => param('journey_id')
-					<button class="btn waves-effect waves-light" type="submit" name="action" value="edit">
-						<i class="material-icons left" aria-hidden="true">edit</i>
-						%= L('journey.edit')
-					</button>
-				%= end
+				<a class="btn waves-effect waves-light" href="<%= url_for('polyline_download', id => $journey->{id}, format => 'gpx' ) %>">
+					<i class="material-icons left" aria-label="<%= L('journey.map.download') %>">file_download</i>
+					GPX
+				</a>
 			</div>
 		</div>
-		<div class="row hide-on-med-and-up">
+		<div class="row">
 			<div class="col s12 m6 l6 center-align">
-				%= form_for '/journey/edit' => (method => 'POST') => begin
-					%= hidden_field 'journey_id' => param('journey_id')
-					<button class="btn waves-effect waves-light" type="submit" name="action" value="edit">
-						<i class="material-icons left" aria-hidden="true">edit</i>
-						%= L('journey.edit')
-					</button>
-				%= end
+				<a class="btn disabled waves-effect waves-light" href="<%= url_for('journey', id => $journey->{id}, format => 'json' ) %>">
+					<i class="material-icons left" aria-label="<%= L('journey.map.upload') %>">file_upload</i>
+					JSON
+				</a>
 			</div>
-			<div class="col s12 m6 l6 center-align" style="margin-top: 1em;">
+			<div class="col s12 m6 l6 center-align">
+				<a class="btn disabled waves-effect waves-light" href="<%= url_for('journey', id => $journey->{id}, format => 'json' ) %>">
+					<i class="material-icons left" aria-label="<%= L('journey.map.upload') %>">file_upload</i>
+					GPX
+				</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col s12">
+				%= L('journey.map.info')
+			</div>
+		</div>
+		<h2><%= L('journey.danger') %></h2>
+		<div class="row">
+			<div class="col s12 m12 l12 center-align" style="margin-top: 1em;">
 				<a class="waves-effect waves-light red btn action-delete"
 						data-id="<%= $journey->{id} %>"
 						data-checkin="<%= $journey->{checkin}->epoch %>"

@@ -270,6 +270,21 @@ msgstr "Export"
 msgid "journey.edit"
 msgstr "Edit"
 
+msgid "journey.map-data"
+msgstr "Map Data"
+
+msgid "journey.map.download"
+msgstr "Download"
+
+msgid "journey.map.upload"
+msgstr "Upload"
+
+msgid "journey.map.info"
+msgstr "JSON format: [[lon, lat, station ID], ...], with lon/lat in WGS84 coordinates. GPX files are compatible with BRouter. Uploads may cover either the entire route or just the route segment that belongs to this checkin; station IDs are optional when uploading map data."
+
+msgid "journey.danger"
+msgstr "Danger Zone"
+
 msgid "journey.delete"
 msgstr "Delete"
 

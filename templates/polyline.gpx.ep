@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx
+ xmlns="http://www.topografix.com/GPX/1/1"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+ version="1.1"
+ creator="travelynx <%= $version %>">
+ <trk>
+  <name><%= $name %></name>
+  <trkseg>
+  % for my $entry (@{$polyline // []}) {
+   <trkpt lon="<%= $entry->[0] %>" lat="<%= $entry->[1] %>">
+   % if ($entry->[2]) {
+     <name><%= $entry->[2] %></name>
+   % }
+   </trkpt>
+  % }
+  </trkseg>
+ </trk>
+</gpx>

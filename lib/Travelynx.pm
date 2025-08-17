@@ -69,6 +69,8 @@ sub startup {
 
 	$self->types->type( csv  => 'text/csv; charset=utf-8' );
 	$self->types->type( json => 'application/json; charset=utf-8' );
+	$self->types->type( gpx  => 'application/gpx+xml; charset=utf-8' );
+	$self->types->type( xml  => 'text/xml; charset=utf-8' );
 
 	$self->plugin('Config');
 
@@ -3174,6 +3176,11 @@ sub startup {
 	$authed_r->get( '/journey/:id' => [ format => [ 'html', 'json' ] ] )
 	  ->to( 'traveling#journey_details', format => undef )
 	  ->name('journey');
+	$authed_r->get( '/polyline/:id' => [ format => [ 'gpx', 'json' ] ] )->to(
+		'traveling#journey_details',
+		format          => undef,
+		polyline_export => 1
+	)->name('polyline_download');
 	$authed_r->get('/s/*station')->to('traveling#station');
 	$authed_r->get('/confirm_mail/:token')->to('account#confirm_mail');
 	$authed_r->post('/account/privacy')->to('account#privacy');
