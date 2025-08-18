@@ -1277,7 +1277,8 @@ sub backend_form {
 		$backend_by_id{ $backend->{id} } = $backend;
 	}
 
-	my @frequent_backends = map { $backend_by_id{$_} }
+	my @frequent_backends = grep { $_->{type} }
+	  map { $backend_by_id{$_} }
 	  $self->journeys->get_frequent_backend_ids( uid => $user->{id} );
 
 	@backends = map { $_->[1] }
