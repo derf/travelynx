@@ -615,6 +615,11 @@ sub set_polyline {
 			journey_id  => $opt{journey_id},
 			edited      => $opt{edited},
 		);
+		$self->stats_cache->invalidate(
+			ts  => epoch_to_dt( $opt{stats_ts} ),
+			db  => $db,
+			uid => $uid
+		);
 	}
 
 }

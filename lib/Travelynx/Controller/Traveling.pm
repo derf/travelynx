@@ -2743,6 +2743,7 @@ sub set_polyline {
 			polyline   => \@polyline,
 			from_eva   => $route[0][1],
 			to_eva     => $route[-1][1],
+			stats_ts   => $journey->{rt_dep_ts},
 		);
 	}
 
