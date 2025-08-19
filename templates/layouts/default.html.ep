@@ -90,7 +90,7 @@
 					</div>
 				</li>
 				% if ($acc) {
-					<li class="<%= navbar_class('/history') %>"><a href='/history' title="Vergangene Zugfahrten"><i class="material-icons" aria-label="Vergangene Zugfahrten">history</i></a></li>
+					<li class="<%= navbar_class('/history') %>"><a href='/history' title="Vergangene Fahrten"><i class="material-icons" aria-label="Vergangene Fahrten">history</i></a></li>
 					<li class="<%= navbar_class('/account') %>"><a href="/account" title="Account"><i class="material-icons" aria-label="Account"><%= $acc->{notifications} ? 'notifications' : 'account_circle' %></i></a></li>
 				% }
 				% else {
