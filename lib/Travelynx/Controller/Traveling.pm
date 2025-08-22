@@ -2153,7 +2153,15 @@ sub journey_details {
 	if ($journey) {
 
 		if ( $self->stash('polyline_export') ) {
+
+			if ( not( $journey->{polyline} and @{ $journey->{polyline} } ) ) {
+				$journey->{polyline}
+				  = [ map { [ $_->[2]{lon}, $_->[2]{lat}, $_->[1] ] }
+					  @{ $journey->{route} } ];
+			}
+
 			delete $self->stash->{layout};
+
 			my $xml = $self->render_to_string(
 				template => 'polyline',
 				name     => sprintf( '%s %s: %s → %s',
