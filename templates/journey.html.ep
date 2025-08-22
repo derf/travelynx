@@ -350,12 +350,12 @@
 				% }
 			</div>
 		</div>
-		<h2><%= L('journey.map-data') %>
-			% if ($journey->{edited} & 0x0040) {
-				∗
-			% }
-		</h2>
-		% if ($journey->{polyline}) {
+		% if ($journey->{polyline} or $journey->{km_route} > 0.1) {
+			<h2><%= L('journey.map-data') %>
+				% if ($journey->{edited} & 0x0040) {
+					∗
+				% }
+			</h2>
 			<div class="row">
 				<div class="col s12 m6 l6 center-align">
 					<a class="btn waves-effect waves-light" href="<%= url_for('polyline_download', id => $journey->{id}, format => 'json' ) %>">
@@ -370,39 +370,37 @@
 					</a>
 				</div>
 			</div>
-		% }
-		<div class="row">
-			<div class="col s12">
-				% if ($journey->{polyline}) {
-					%= L('journey.map.info.download')
-				% }
-				%= L('journey.map.info.upload')
-			</div>
-		</div>
-		%= form_for '/polyline/set' => (method => 'post', enctype => 'multipart/form-data') => begin
-		%= csrf_field
-		%= hidden_field id => $journey->{id}
 			<div class="row">
 				<div class="col s12">
-					<div class="file-field input-field">
-						<div class="btn">
-							<span><i class="material-icons left" aria-label="<%= L('journey.map.upload') %>">file_upload</i> GPX</span>
-							<input type="file">
-						</div>
-						<div class="file-path-wrapper">
-							<input class="file-path validate" type="text" name="file">
-						</div>
-						%= file_field 'file'
-					</div>
-				</div>
-				<div class="col s12 m6 center-align">
-					%= submit_button L('journey.map.upload-full'), class => 'waves-effect waves-light btn', name => 'upload-full'
-				</div>
-				<div class="col s12 m6 center-align">
-					%= submit_button L('journey.map.upload-partial'), class => 'waves-effect waves-light btn', name => 'upload-partial'
+					%= L('journey.map.info.download')
+					%= L('journey.map.info.upload')
 				</div>
 			</div>
-		%= end
+			%= form_for '/polyline/set' => (method => 'post', enctype => 'multipart/form-data') => begin
+			%= csrf_field
+			%= hidden_field id => $journey->{id}
+				<div class="row">
+					<div class="col s12">
+						<div class="file-field input-field">
+							<div class="btn">
+								<span><i class="material-icons left" aria-label="<%= L('journey.map.upload') %>">file_upload</i> GPX</span>
+								<input type="file">
+							</div>
+							<div class="file-path-wrapper">
+								<input class="file-path validate" type="text" name="file">
+							</div>
+							%= file_field 'file'
+						</div>
+					</div>
+					<div class="col s12 m6 center-align">
+						%= submit_button L('journey.map.upload-full'), class => 'waves-effect waves-light btn', name => 'upload-full'
+					</div>
+					<div class="col s12 m6 center-align">
+						%= submit_button L('journey.map.upload-partial'), class => 'waves-effect waves-light btn', name => 'upload-partial'
+					</div>
+				</div>
+			%= end
+		% }
 		<h2><%= L('journey.danger') %></h2>
 		<div class="row">
 			<div class="col s12 m12 l12 center-align" style="margin-top: 1em;">
