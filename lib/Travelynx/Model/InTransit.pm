@@ -1635,6 +1635,12 @@ sub estimate_trip_position {
 		  // $route[$i][2]{rt_dep} // $route[$i][2]{sched_dep} // 0;
 		my $ts_dep = $route[$i][2]{rt_dep} // $route[$i][2]{sched_dep}
 		  // $route[$i][2]{rt_arr} // $route[$i][2]{sched_arr} // 0;
+		if ( $ts and $ts_dep and $now >= $ts and $now <= $ts_dep ) {
+
+			# Currently at a stop
+			@now_latlon = ( $route[$i][2]{lat}, $route[$i][2]{lon} );
+			last;
+		}
 		if (    $ts
 			and $prev_ts
 			and $now > $prev_ts
