@@ -225,7 +225,7 @@ ul.route-history > li {
 		border-radius: 5rem;
 		padding: .2rem .5rem;
 	}
-	&.STR, &.Tram, &.TRAM, &.Str, &.Strb, &.STB, &.Straenbahn, &.NachtTram, &.Stadtbahn, &.Niederflurstrab {
+	&.STR, &.Tram, &.TRAM, &.Str, &.Strb, &.STB, &.Straenbahn, &.NachtTram, &.Stadtbahn, &.Niederflurstrab, &.Trm {
 		background-color: #c5161c;
 		border-radius: 5rem;
 		padding: .2rem .5rem;
@@ -246,6 +246,8 @@ ul.route-history > li {
 	&.RB, &.MEX, &.TER, &.R, &.REGIONAL_RAIL, &.Regionalzug, &.R-Bahn, &.BRB {
 		background-color: #1f4a87;
 	}
+	// BE
+	&.ECD,
 	// DE
 	&.IC, &.ICE, &.EC, &.ECE, &.D,
 	// CH
