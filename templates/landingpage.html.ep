@@ -116,7 +116,6 @@
 				<ul>
 					<li><%= L('landingpage.features.log') %></li>
 					<li><%= L('landingpage.features.share') %></li>
-					<li><%= L('landingpage.features.share') %></li>
 					<li><%= L('landingpage.features.api-pre') %> <a href="/api"><%= L('landingpage.features.api-link') %></a> <%= L('landingpage.features.api-post') %></li>
 					<li><%= L('landingpage.features.stats') %></li>
 					<li><%= L('landingpage.features.passenger-rights') %></li>
