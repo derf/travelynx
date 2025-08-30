@@ -3,13 +3,13 @@
 	<div class="col s12">
 		<p>
 			Ab 60 Minuten Verspätung am Ziel besteht in einigen Fällen ein
-			Entschädigungsanspruch gegenüber dem Eisenbahnverkehrsunternehmen.
+			Entschädigungsanspruch gegenüber dem Verkehrsunternehmen.
 			Dieser kann mit dem Fahrgastrechteformular oder online geltend
 			gemacht werden.
 		</p>
 		<p>
-			Die folgenden Zugfahrten sind wahrscheinliche Kandidaten dafür.
-			Details zur jeweiligen Zugfahrt sind bereits im Formular eingetragen.
+			Die folgenden Fahrten sind wahrscheinliche Kandidaten dafür.
+			Details zur jeweiligen Fahrt sind bereits im Formular eingetragen.
 		</p>
 	</div>
 </div>
@@ -20,7 +20,7 @@
 			<thead>
 				<tr>
 					<th>Datum</th>
-					<th>Zug</th>
+					<th>Fahrt</th>
 					<th>Grund</th>
 					<th>Formular</th>
 				</tr>
@@ -79,7 +79,7 @@
 		<p>
 			Bei Abo-Tickets besteht teilweise die Möglichkeit, bereits ab 20
 			Minuten Verspätung Fahrten gesammelt zu Entschädigungszwecken
-			einzureichen. Die folgenden Zugfahrten sind Kandidaten dafür.
+			einzureichen. Die folgenden Fahrten sind Kandidaten dafür.
 			Fahrten mit einer Verspätung von 60 Minuten oder mehr werden hier
 			nicht aufgeführt.
 		</p>
@@ -92,7 +92,7 @@
 			<thead>
 				<tr>
 					<th>Datum</th>
-					<th>Zug</th>
+					<th>Fahrt</th>
 					<th>Verspätung</th>
 				</tr>
 			</thead>
