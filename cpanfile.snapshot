@@ -2047,13 +2047,13 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       Module::Runtime 0.014
-  Net-HTTP-6.23
-    pathname: O/OA/OALDERS/Net-HTTP-6.23.tar.gz
+  Net-HTTP-6.24
+    pathname: O/OA/OALDERS/Net-HTTP-6.24.tar.gz
     provides:
-      Net::HTTP 6.23
-      Net::HTTP::Methods 6.23
-      Net::HTTP::NB 6.23
-      Net::HTTPS 6.23
+      Net::HTTP 6.24
+      Net::HTTP::Methods 6.24
+      Net::HTTP::NB 6.24
+      Net::HTTPS 6.24
     requirements:
       Carp 0
       Compress::Raw::Zlib 0
@@ -2733,17 +2733,17 @@ DISTRIBUTIONS
       Text::LevenshteinXS 0
       XML::LibXML 0
       perl v5.14.2
-  Travel-Status-DE-VRR-3.14
-    pathname: D/DE/DERF/Travel-Status-DE-VRR-3.14.tar.gz
+  Travel-Status-DE-VRR-3.15
+    pathname: D/DE/DERF/Travel-Status-DE-VRR-3.15.tar.gz
     provides:
-      Travel::Status::DE::EFA 3.14
-      Travel::Status::DE::EFA::Departure 3.14
-      Travel::Status::DE::EFA::Info 3.14
-      Travel::Status::DE::EFA::Line 3.14
-      Travel::Status::DE::EFA::Services 3.14
-      Travel::Status::DE::EFA::Stop 3.14
-      Travel::Status::DE::EFA::Trip 3.14
-      Travel::Status::DE::VRR 3.14
+      Travel::Status::DE::EFA 3.15
+      Travel::Status::DE::EFA::Departure 3.15
+      Travel::Status::DE::EFA::Info 3.15
+      Travel::Status::DE::EFA::Line 3.15
+      Travel::Status::DE::EFA::Services 3.15
+      Travel::Status::DE::EFA::Stop 3.15
+      Travel::Status::DE::EFA::Trip 3.15
+      Travel::Status::DE::VRR 3.15
     requirements:
       Carp 0
       Class::Accessor 0
