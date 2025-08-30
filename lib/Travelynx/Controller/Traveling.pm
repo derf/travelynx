@@ -2575,6 +2575,7 @@ sub edit_journey {
 	);
 }
 
+# Taken from Travel::Status::DE::EFA::Trip#polyline
 sub polyline_add_stops {
 	my ( $self, %opt ) = @_;
 
@@ -2584,36 +2585,42 @@ sub polyline_add_stops {
 	my $distance = GIS::Distance->new;
 
 	my %min_dist;
+	my $route_i = 0;
 	for my $stop ( @{$route} ) {
 		for my $polyline_index ( 0 .. $#{$polyline} ) {
 			my $pl = $polyline->[$polyline_index];
 			my $dist
 			  = $distance->distance_metal( $stop->[2]{lat}, $stop->[2]{lon},
 				$pl->[1], $pl->[0] );
-			if ( not $min_dist{ $stop->[1] }
-				or $min_dist{ $stop->[1] }{dist} > $dist )
+			my $key = $route_i . ';' . $stop->[1];
+			if ( not $min_dist{$key}
+				or $min_dist{$key}{dist} > $dist )
 			{
-				$min_dist{ $stop->[1] } = {
+				$min_dist{$key} = {
 					dist  => $dist,
 					index => $polyline_index,
 				};
 			}
 		}
+		$route_i += 1;
 	}
+	$route_i = 0;
 	for my $stop ( @{$route} ) {
-		if ( $min_dist{ $stop->[1] } ) {
-			if ( defined $polyline->[ $min_dist{ $stop->[1] }{index} ][2] ) {
+		my $key = $route_i . ';' . $stop->[1];
+		if ( $min_dist{$key} ) {
+			if ( defined $polyline->[ $min_dist{$key}{index} ][2] ) {
 				return sprintf(
 					'Error: Stop IDs %d and %d both map to lon %f, lat %f',
-					$polyline->[ $min_dist{ $stop->[1] }{index} ][2],
+					$polyline->[ $min_dist{$key}{index} ][2],
 					$stop->[1],
-					$polyline->[ $min_dist{ $stop->[1] }{index} ][0],
-					$polyline->[ $min_dist{ $stop->[1] }{index} ][1]
+					$polyline->[ $min_dist{$key}{index} ][0],
+					$polyline->[ $min_dist{$key}{index} ][1]
 				);
 			}
-			$polyline->[ $min_dist{ $stop->[1] }{index} ][2]
+			$polyline->[ $min_dist{$key}{index} ][2]
 			  = $stop->[1];
 		}
+		$route_i += 1;
 	}
 	return;
 }
