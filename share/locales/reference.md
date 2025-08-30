@@ -2,11 +2,11 @@
 
 * de-DE: 100.0% complete (0 missing)
 * en-GB: 100.0% complete (0 missing)
-* fr-FR: 35.4% complete (106 missing)
-* hu-HU: 100.0% complete (0 missing)
-* pl-PL: 35.4% complete (106 missing)
+* fr-FR: 33.5% complete (115 missing)
+* hu-HU: 94.2% complete (10 missing)
+* pl-PL: 33.5% complete (115 missing)
 
-###
+### 
 
 * de-DE: Language: de-DE
 MIME-Version: 1.0
@@ -162,10 +162,10 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### about.developed-by.tail
 
-* de-DE:
-* en-GB:
+* de-DE:  
+* en-GB:  
 * fr-FR *missing*
-* hu-HU:
+* hu-HU:  
 * pl-PL *missing*
 
 ### about.source-code
@@ -402,7 +402,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * hu-HU: Nincs beállitva
 * pl-PL *missing*
 
-### account.webhook.active_pending
+### account.webhook.active-pending
 
 * de-DE: Aktiv, noch nicht ausgeführt
 * en-GB: Active; pending
@@ -410,7 +410,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * hu-HU: Aktív, jóváhagyás folyamatban
 * pl-PL *missing*
 
-### account.webhook.active_error
+### account.webhook.active-error
 
 * de-DE: Aktiv, fehlerhaft
 * en-GB: Active; erroneous
@@ -434,7 +434,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * hu-HU: Jelenleg nem támogatott a bahn.de és a transitous közötti inkompatibilitás miatt
 * pl-PL *missing*
 
-### account.registration_date
+### account.registration-date
 
 * de-DE: Registriert am
 * en-GB: Registered on
@@ -532,6 +532,14 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * hu-HU: A távolságszámítás és a gyűrűsvonali utazások megjelenítése javítva lett. Az előzménytérképen megjelenített utazások még mindig részben hibásak.
 * pl-PL *missing*
 
+### changelog.2-17.1
+
+* de-DE: Kartendaten („Polylines“) zu einzelnen Fahrten können nun als GPX ex- und importiert werden. Somit können Kartendaten nachträglich korrigiert oder nachgepflegt werden. Das GPX-Datenformat ist mit BRouter-Web kompatibel.
+* en-GB: Map data (“polylines”) for individual trips can now be exported and imported in the GPX format. This allows map data to be corrected or augmented after the fact. The GPX import/export is compatible with BRouter-Web.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
 ## journey.html.ep
 
 ### journey.not-found
@@ -604,10 +612,10 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### journey.beeline.pre
 
-* de-DE: (Luftlinie:
+* de-DE: (Luftlinie: 
 * en-GB: (
 * fr-FR *missing*
-* hu-HU: (Légvonalban:
+* hu-HU: (Légvonalban: 
 * pl-PL *missing*
 
 ### journey.beeline.post
@@ -702,6 +710,70 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * hu-HU: Szerkesztés
 * pl-PL *missing*
 
+### journey.map-data
+
+* de-DE: Kartendaten
+* en-GB: Map Data
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### journey.map.download
+
+* de-DE: Herunterladen
+* en-GB: Download
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### journey.map.upload
+
+* de-DE: Hochladen
+* en-GB: Upload
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### journey.map.upload-full
+
+* de-DE: Komplette Route
+* en-GB: Upload full route
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### journey.map.upload-partial
+
+* de-DE: Gefahrenes Segment
+* en-GB: Upload travelled segment
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### journey.map.info.download
+
+* de-DE: JSON-Format: [[lon, lat, ID], ...] in WGS84-Koordinaten. GPX-Dateien sind mit BRouter kompatibel.
+* en-GB: JSON format: [[lon, lat, station ID], ...], with lon/lat in WGS84 coordinates. GPX files are compatible with BRouter.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### journey.map.info.upload
+
+* de-DE: GPX-Uploads müssen ein einzelnes track-Element mit einem einzelnen track segment enthalten. Ein BRouter-GPX-Export erfüllt diese Vorgaben. Uploads müssen entweder die komplette Route des Verkehrsmittels oder nur den zu diesem Checkin zugehörigen Abschnitt enthalten. Beim Hochladen bitte die passende Schaltfläche auswählen. IDs von Halten müssen beim Upload nicht angegeben werden. Bitte beachten: Beim Einspielen eigener Kartendaten werden die zuvor gespeicherten unwiderruflich gelöscht.
+* en-GB: GPX uploads must contain a single track with a single track segment (such as provided by BRouter's export). They must cover either the full route or just the travelled route segment that belongs to this checkin. Please use the appropriate upload button, otherwise chaos may ensue. There is no need to specify station IDs when uploading tracks. Note that uploads irreversibly replace previously stored map data.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### journey.danger
+
+* de-DE: Danger Zone
+* en-GB: Danger Zone
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
 ### journey.delete
 
 * de-DE: Löschen
@@ -749,7 +821,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Manuelle Eingabe
 * en-GB: Enter stop manually
 * fr-FR *missing*
-* hu-HU: Manuális bevitel
+* hu-HU: Megálló manuális bevitele
 * pl-PL *missing*
 
 ### landingpage.departures
@@ -759,7 +831,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Abfahrten
 * en-GB: Departures
 * fr-FR *missing*
-* hu-HU: Indulások
+* hu-HU: Járatok innen
 * pl-PL *missing*
 
 ### landingpage.latest-trips
@@ -796,8 +868,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### landingpage.traewelling.post
 
-* de-DE:
-* en-GB:
+* de-DE:  
+* en-GB:  
 * fr-FR *missing*
 * hu-HU:  volt
 * pl-PL *missing*
@@ -807,7 +879,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Features:
 * en-GB: Features:
 * fr-FR *missing*
-* hu-HU: Fícsörök:
+* hu-HU *missing*
 * pl-PL *missing*
 
 ### landingpage.features.log
@@ -945,10 +1017,10 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 ### login.accept-tos-post
 
 * de-DE: zu.
-* en-GB:
-* fr-FR:
-* hu-HU:
-* pl-PL:
+* en-GB:  
+* fr-FR:  
+* hu-HU:  
+* pl-PL:  
 
 ### login.forgot-password
 
@@ -1020,9 +1092,9 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: zu.
 * en-GB: .
-* fr-FR:
-* hu-HU:
-* pl-PL:
+* fr-FR:  
+* hu-HU:  
+* pl-PL:  
 
 ### register.expect-confirmation-link
 
@@ -1129,17 +1201,17 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Einfahrt in
 * en-GB: arrives in
 * fr-FR *missing*
-* hu-HU: Beszállás
+* hu-HU:  
 * pl-PL *missing*
 
 ### status.boarding-in.post
 
 *noun or verb*
 
-* de-DE:
-* en-GB:
+* de-DE:  
+* en-GB:  
 * fr-FR *missing*
-* hu-HU: -en belül
+* hu-HU: -en belül érkezik
 * pl-PL *missing*
 
 ### status.boarding-soon
@@ -1159,15 +1231,15 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Abfahrt in
 * en-GB: departs in
 * fr-FR *missing*
-* hu-HU:
+* hu-HU:  
 * pl-PL *missing*
 
 ### status.departure-in.post
 
 *noun or verb*
 
-* de-DE:
-* en-GB:
+* de-DE:  
+* en-GB:  
 * fr-FR *missing*
 * hu-HU: -en belül indul
 * pl-PL *missing*
@@ -1189,18 +1261,18 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Ankunft in
 * en-GB: arrives in
 * fr-FR: Arrive dans
-* hu-HU:
+* hu-HU:  
 * pl-PL: Przyjazd za
 
 ### status.arrival-in.post
 
 *noun or verb*
 
-* de-DE:
-* en-GB:
-* fr-FR:
+* de-DE:  
+* en-GB:  
+* fr-FR:  
 * hu-HU: -en belül érkezik
-* pl-PL:
+* pl-PL:  
 
 ### status.arrival-soon
 
@@ -1233,13 +1305,13 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: von
 * en-GB: from
 * fr-FR *missing*
-* hu-HU:
+* hu-HU:  
 * pl-PL *missing*
 
 ### status.depart-from.post
 
-* de-DE:
-* en-GB:
+* de-DE:  
+* en-GB:  
 * fr-FR *missing*
 * hu-HU: vágányról indul
 * pl-PL *missing*
@@ -1249,13 +1321,13 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: auf
 * en-GB: on
 * fr-FR *missing*
-* hu-HU:
+* hu-HU:  
 * pl-PL *missing*
 
 ### status.arrive-on.post
 
-* de-DE:
-* en-GB:
+* de-DE:  
+* en-GB:  
 * fr-FR *missing*
 * hu-HU: vágányra érkezik
 * pl-PL *missing*
@@ -1379,32 +1451,32 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: von
 * en-GB: from
 * fr-FR: en provenance de
-* hu-HU:
+* hu-HU:  
 * pl-PL: z
 
 ### wagons.from.post
 
-* de-DE:
-* en-GB:
-* fr-FR:
+* de-DE:  
+* en-GB:  
+* fr-FR:  
 * hu-HU: -tól
-* pl-PL:
+* pl-PL:  
 
 ### wagons.to.pre
 
 * de-DE: nach
 * en-GB: towards
 * fr-FR: à destination de
-* hu-HU:
+* hu-HU:  
 * pl-PL: do
 
 ### wagons.to.post
 
-* de-DE:
-* en-GB:
-* fr-FR:
+* de-DE:  
+* en-GB:  
+* fr-FR:  
 * hu-HU: -ig
-* pl-PL:
+* pl-PL:  
 
 ### wagons.carriage
 
@@ -1413,3 +1485,4 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * fr-FR: Voiture
 * hu-HU: Kocsi
 * pl-PL: Wagon
+
