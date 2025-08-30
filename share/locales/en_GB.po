@@ -202,6 +202,9 @@ msgstr "Localization support. Parts of travelynx are now available in English, a
 msgid "changelog.2-16.2"
 msgstr "Fix distance calculation and visualization of ring line trips. Trips shown in the history map are still partially incorrect."
 
+msgid "changelog.2-17.1"
+msgstr "Map data (“polylines”) for individual trips can now be exported and imported in the GPX format. This allows map data to be corrected or augmented after the fact. The GPX import/export is compatible with BRouter-Web."
+
 # journey.html.ep
 
 msgid "journey.not-found"

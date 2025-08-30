@@ -202,6 +202,9 @@ msgstr "Infrastruktur zur Übersetzung von travelynx in andere Sprachen. Der Gro
 msgid "changelog.2-16.2"
 msgstr "Korrekte Berechnung und Visualisierung der Wegstrecke bei Fahrten mit Ringlinien. Die Anzeige der Fahrten in der Fahrtenkarte ist noch teilweise fehlerhaft."
 
+msgid "changelog.2-17.1"
+msgstr "Kartendaten („Polylines“) zu einzelnen Fahrten können nun als GPX ex- und importiert werden. Somit können Kartendaten nachträglich korrigiert oder nachgepflegt werden. Das GPX-Datenformat ist mit BRouter-Web kompatibel."
+
 # journey.html.ep
 
 msgid "journey.not-found"

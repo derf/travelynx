@@ -2045,8 +2045,6 @@ sub get_frequent_backend_ids {
 
 	my @backend_ids = $res->hashes->map( sub { shift->{backend_id} } )->each;
 
-	say join( ' ', @backend_ids );
-
 	return @backend_ids;
 }
 
