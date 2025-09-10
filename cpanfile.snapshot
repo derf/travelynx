@@ -985,6 +985,14 @@ DISTRIBUTIONS
       perl 5.008004
       strict 0
       warnings 0
+  Devel-GlobalDestruction-0.14
+    pathname: H/HA/HAARG/Devel-GlobalDestruction-0.14.tar.gz
+    provides:
+      Devel::GlobalDestruction 0.14
+    requirements:
+      ExtUtils::MakeMaker 0
+      Sub::Exporter::Progressive 0.001011
+      perl 5.006
   Devel-StackTrace-2.05
     pathname: D/DR/DROLSKY/Devel-StackTrace-2.05.tar.gz
     provides:
@@ -1539,10 +1547,10 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       Test::More 0
-  JSON-XS-4.03
-    pathname: M/ML/MLEHMANN/JSON-XS-4.03.tar.gz
+  JSON-XS-4.04
+    pathname: M/ML/MLEHMANN/JSON-XS-4.04.tar.gz
     provides:
-      JSON::XS 4.03
+      JSON::XS 4.04
     requirements:
       Canary::Stability 0
       ExtUtils::MakeMaker 6.52
@@ -1644,6 +1652,49 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 6.30
       Locale::Maketext 1.17
+  Log-Report-1.40
+    pathname: M/MA/MARKOV/Log-Report-1.40.tar.gz
+    provides:
+      Dancer2::Logger::LogReport 1.40
+      Dancer2::Plugin::LogReport 1.40
+      Dancer2::Plugin::LogReport::Message 1.40
+      Dancer::Logger::LogReport 1.40
+      Log::Report 1.40
+      Log::Report::DBIC::Profiler 1.40
+      Log::Report::Die 1.40
+      Log::Report::Dispatcher 1.40
+      Log::Report::Dispatcher::Callback 1.40
+      Log::Report::Dispatcher::File 1.40
+      Log::Report::Dispatcher::Log4perl 1.40
+      Log::Report::Dispatcher::LogDispatch 1.40
+      Log::Report::Dispatcher::Perl 1.40
+      Log::Report::Dispatcher::Syslog 1.40
+      Log::Report::Dispatcher::Try 1.40
+      Log::Report::Domain 1.40
+      Log::Report::Exception 1.40
+      Log::Report::Message 1.40
+      Log::Report::Translator 1.40
+      MojoX::Log::Report 1.40
+    requirements:
+      Devel::GlobalDestruction 0.09
+      Encode 2.00
+      ExtUtils::MakeMaker 0
+      Log::Report::Optional 1.07
+      Scalar::Util 0
+      String::Print 0.91
+      Sys::Syslog 0.27
+      Test::More 0.86
+  Log-Report-Optional-1.07
+    pathname: M/MA/MARKOV/Log-Report-Optional-1.07.tar.gz
+    provides:
+      Log::Report::Minimal 1.07
+      Log::Report::Minimal::Domain 1.07
+      Log::Report::Optional 1.07
+      Log::Report::Util 1.07
+    requirements:
+      ExtUtils::MakeMaker 0
+      String::Print 0.91
+      Test::More 0.86
   MIME-Base32-1.303
     pathname: R/RE/REHSACK/MIME-Base32-1.303.tar.gz
     provides:
@@ -1653,6 +1704,16 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       perl 5.008001
       utf8 0
+  MIME-Charset-1.013.1
+    pathname: N/NE/NEZUMI/MIME-Charset-1.013.1.tar.gz
+    provides:
+      MIME::Charset v1.13.1
+    requirements:
+      CPAN 0
+      Encode 1.98
+      ExtUtils::MakeMaker 6.42
+      Test::More 0
+      perl 5.005
   MIME-tools-5.515
     pathname: D/DS/DSKOLL/MIME-tools-5.515.tar.gz
     provides:
@@ -1740,17 +1801,18 @@ DISTRIBUTIONS
       Net::Domain 1.05
       Net::SMTP 1.28
       Test::More 0
-  Math-Polygon-1.11
-    pathname: M/MA/MARKOV/Math-Polygon-1.11.tar.gz
+  Math-Polygon-2.00
+    pathname: M/MA/MARKOV/Math-Polygon-2.00.tar.gz
     provides:
-      Math::Polygon 1.11
-      Math::Polygon::Calc 1.11
-      Math::Polygon::Clip 1.11
-      Math::Polygon::Convex 1.11
-      Math::Polygon::Surface 1.11
-      Math::Polygon::Transform 1.11
+      Math::Polygon 2.00
+      Math::Polygon::Calc 2.00
+      Math::Polygon::Clip 2.00
+      Math::Polygon::Convex 2.00
+      Math::Polygon::Surface 2.00
+      Math::Polygon::Transform 2.00
     requirements:
       ExtUtils::MakeMaker 0
+      Log::Report 0
       Math::Trig 0
       Scalar::Util 1.13
       Test::More 0.47
@@ -2326,6 +2388,17 @@ DISTRIBUTIONS
       strict 0
       version 0.83
       warnings 0
+  String-Print-0.94
+    pathname: M/MA/MARKOV/String-Print-0.94.tar.gz
+    provides:
+      String::Print 0.94
+    requirements:
+      Date::Parse 2.3
+      Encode 0
+      ExtUtils::MakeMaker 0
+      HTML::Entities 0
+      Test::More 0.86
+      Unicode::GCString 0
   Sub-Exporter-0.991
     pathname: R/RJ/RJBS/Sub-Exporter-0.991.tar.gz
     provides:
@@ -2672,18 +2745,18 @@ DISTRIBUTIONS
       Test::More 0
       Test::Pod 0
       perl v5.20.0
-  Travel-Status-DE-HAFAS-6.22
-    pathname: D/DE/DERF/Travel-Status-DE-HAFAS-6.22.tar.gz
+  Travel-Status-DE-HAFAS-6.23
+    pathname: D/DE/DERF/Travel-Status-DE-HAFAS-6.23.tar.gz
     provides:
-      Travel::Status::DE::HAFAS 6.22
-      Travel::Status::DE::HAFAS::Journey 6.22
-      Travel::Status::DE::HAFAS::Location 6.22
-      Travel::Status::DE::HAFAS::Message 6.22
-      Travel::Status::DE::HAFAS::Polyline 6.22
-      Travel::Status::DE::HAFAS::Product 6.22
-      Travel::Status::DE::HAFAS::Services 6.22
-      Travel::Status::DE::HAFAS::Stop 6.22
-      Travel::Status::DE::HAFAS::StopFinder 6.22
+      Travel::Status::DE::HAFAS 6.23
+      Travel::Status::DE::HAFAS::Journey 6.23
+      Travel::Status::DE::HAFAS::Location 6.23
+      Travel::Status::DE::HAFAS::Message 6.23
+      Travel::Status::DE::HAFAS::Polyline 6.23
+      Travel::Status::DE::HAFAS::Product 6.23
+      Travel::Status::DE::HAFAS::Services 6.23
+      Travel::Status::DE::HAFAS::Stop 6.23
+      Travel::Status::DE::HAFAS::StopFinder 6.23
     requirements:
       Carp 0
       Class::Accessor 0.16
@@ -2895,6 +2968,18 @@ DISTRIBUTIONS
       POSIX 0
       Test::More 0
       Time::HiRes 0
+  Unicode-LineBreak-2019.001
+    pathname: N/NE/NEZUMI/Unicode-LineBreak-2019.001.tar.gz
+    provides:
+      Text::LineFold 2018.012
+      Unicode::GCString 2013.10
+      Unicode::LineBreak 2019.001
+    requirements:
+      Encode 1.98
+      ExtUtils::MakeMaker 6.26
+      MIME::Charset v1.6.2
+      Test::More 0.45
+      perl 5.008
   Variable-Magic-0.64
     pathname: V/VP/VPIT/Variable-Magic-0.64.tar.gz
     provides:
