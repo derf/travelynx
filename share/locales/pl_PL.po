@@ -99,42 +99,42 @@ msgstr "Inne konta nie mogą cię obserwować"
 # landingpage.html.ep
 
 msgid "landingpage.greeting-prefix"
-msgstr ""
+msgstr "Cześć,"
 
 msgid "landingpage.greeting-suffix"
-msgstr ""
+msgstr "!"
 
 msgid "landingpage.not-checked-in"
-msgstr ""
+msgstr "Nie jesteś obecnie zameldowany."
 
 msgid "landingpage.about"
-msgstr ""
+msgstr "Travelynx umożliwia zameldowanie się w środkach transportu (autobusy, tramwaje, pociągi) między innymi w Niemczech, Austrii, Szwajcarii, Luksemburgu, Irlandii, Danii i niektórych częściach Stanów Zjednoczonych. Dzięki temu można później śledzić własne podróże wraz z danymi w czasie rzeczywistym i  komunikatami serwisowymi oraz uzyskać odpowiedzi na palące pytania, takie jak „Ile godzin spędziłem w podróży w zeszłym miesiącu?”."
 
 msgid "landingpage.traewelling.pre"
-msgstr ""
+msgstr "Pomysł pochodzi od"
 
 msgid "landingpage.traewelling.post"
-msgstr ""
+msgstr " "
 
 msgid "landingpage.disclaimer.lead"
-msgstr ""
+msgstr "Travelynx jest bezpłatnym, prywatnym projektem bez gwarancji dostępności. Nieprzewidziane przerwy w działaniu lub krótkoterminowe wyłączenie tej strony nie są planowane, ale są możliwe."
 
 msgid "landingpage.disclaimer.source-pre"
-msgstr ""
+msgstr "Kto chce, może również pobrać"
 
 msgid "landingpage.disclaimer.source-link"
-msgstr ""
+msgstr "kod źródłowy"
 
 msgid "landingpage.disclaimer.source-post"
-msgstr ""
+msgstr "i skonfigurować własną instancję."
 
 # language.html.ep
 
 msgid "language.language"
-msgstr ""
+msgstr "Język"
 
 msgid "language.browser-default"
-msgstr ""
+msgstr "Ten sam język co przeglądarka internetowa"
 
 # login.html.ep
 
@@ -180,22 +180,22 @@ msgid "register.expect-confirmation-link"
 msgstr "Po przesłaniu rejestracji na podany adres e-mail zostanie wysłany link potwierdzający. Zalogowanie się do konta travelynx jest możliwe dopiero po kliknięciu tego linku. Link jest ważny przez 48 godzin."
 
 msgid "register.why-mail"
-msgstr ""
+msgstr "Adres e-mail będzie wykorzystywany wyłącznie do potwierdzenia rejestracji, funkcji „Zapomniałem hasła” oraz ważnych informacji dotyczących konta i nie będzie udostępniany osobom trzecim."
 
 msgid "register.privacy-pre"
 msgstr ""
 
 msgid "register.privacy"
-msgstr ""
+msgstr "Polityka prywatności"
 
 msgid "register.privacy-post"
-msgstr ""
+msgstr "opisuje inne gromadzone dane, a także ich cel i okresy przechowywania."
 
 msgid "register.account-deletion"
-msgstr "."
+msgstr "Po roku braku aktywności użytkownicy otrzymują wiadomość e-mail z informacją o zbliżającym się usunięciu konta, a po kolejnych czterech tygodniach braku aktywności konta są automatycznie usuwane."
 
 msgid "register.disclaimer"
-msgstr ""
+msgstr "Uwaga: Travelynx jest prywatnym projektem bez gwarancji dostępności. Niezapowiedziane przerwy w działaniu lub krótkoterminowe wyłączenie tej strony nie są planowane, ale są możliwe."
 
 # _checked_in.html.ep, _public_status_card.html.ep
 
