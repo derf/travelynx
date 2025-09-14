@@ -108,7 +108,7 @@ msgid "landingpage.not-checked-in"
 msgstr "Nie jesteś obecnie zameldowany."
 
 msgid "landingpage.about"
-msgstr "Travelynx umożliwia zameldowanie się w środkach transportu (autobusy, tramwaje, pociągi) między innymi w Niemczech, Austrii, Szwajcarii, Luksemburgu, Irlandii, Danii i niektórych częściach Stanów Zjednoczonych. Dzięki temu można później śledzić własne podróże wraz z danymi w czasie rzeczywistym i  komunikatami serwisowymi oraz uzyskać odpowiedzi na palące pytania, takie jak „Ile godzin spędziłem w podróży w zeszłym miesiącu?”."
+msgstr "Travelynx umożliwia zameldowanie się w środkach transportu (autobusach, tramwajach, pociągach) między innymi w Niemczech, Austrii, Szwajcarii, Luksemburgu, Irlandii, Danii i niektórych częściach Stanów Zjednoczonych. Dzięki temu można później śledzić własne podróże wraz z danymi w czasie rzeczywistym i komunikatami serwisowymi oraz uzyskać odpowiedzi na palące pytania, takie jak „Ile godzin spędziłem w podróży w zeszłym miesiącu?”."
 
 msgid "landingpage.traewelling.pre"
 msgstr "Pomysł pochodzi od"
