@@ -443,10 +443,11 @@ sub update {
 				}
 			}
 
-			# Otherwise, we need to fetch stop IDs so that polylines remain usable
-			# (This is still TODO)
+			# Otherwise, fetch stop IDs so that polylines remain usable
 			if ( @new_route != @{ $opt{route} } ) {
-				@new_route = map { [ $_, undef, {} ] } @{ $opt{route} };
+				my %stop_id = map { $_->{name} => $_->{eva} }
+				  $self->{stations}->get_by_names( @{ $opt{route} } );
+				@new_route = map { [ $_, $stop_id{$_}, {} ] } @{ $opt{route} };
 			}
 
 			$rows = $db->update(
