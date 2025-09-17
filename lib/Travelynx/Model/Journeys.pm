@@ -333,11 +333,10 @@ sub update {
 	my $rows;
 
 	my $journey = $self->get_single(
-		uid                 => $uid,
-		db                  => $db,
-		journey_id          => $journey_id,
-		with_datetime       => 1,
-		with_route_datetime => 1,
+		uid           => $uid,
+		db            => $db,
+		journey_id    => $journey_id,
+		with_datetime => 1,
 	);
 
 	eval {
@@ -431,7 +430,25 @@ sub update {
 			)->rows;
 		}
 		if ( exists $opt{route} ) {
-			my @new_route = map { [ $_, undef, {} ] } @{ $opt{route} };
+
+			# If $opt{route} is a subset of $journey->{route}, we can recycle all data
+			my @new_route;
+			my $new_route_i = 0;
+			for my $old_route_i ( 0 .. $#{ $journey->{route} } ) {
+				if ( $journey->{route}[$old_route_i][0] eq
+					$opt{route}[$new_route_i] )
+				{
+					$new_route_i += 1;
+					push( @new_route, $journey->{route}[$old_route_i] );
+				}
+			}
+
+			# Otherwise, we need to fetch stop IDs so that polylines remain usable
+			# (This is still TODO)
+			if ( @new_route != @{ $opt{route} } ) {
+				@new_route = map { [ $_, undef, {} ] } @{ $opt{route} };
+			}
+
 			$rows = $db->update(
 				'journeys',
 				{
