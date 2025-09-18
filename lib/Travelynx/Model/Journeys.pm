@@ -445,8 +445,12 @@ sub update {
 
 			# Otherwise, fetch stop IDs so that polylines remain usable
 			if ( @new_route != @{ $opt{route} } ) {
-				my %stop_id = map { $_->{name} => $_->{eva} }
-				  $self->{stations}->get_by_names( @{ $opt{route} } );
+				my %stop_id
+				  = map { $_->{name} => $_->{eva} }
+				  $self->{stations}->get_by_names(
+					backend_id => $journey->{backend_id},
+					names      => [ $opt{route} ]
+				  );
 				@new_route = map { [ $_, $stop_id{$_}, {} ] } @{ $opt{route} };
 			}
 
@@ -1268,9 +1272,10 @@ sub sanity_check {
 		  . ' Stimmt das wirklich?';
 	}
 	if ( $journey->{edited} & 0x0010 and not $lax ) {
-		my @unknown_stations
-		  = $self->{stations}
-		  ->grep_unknown( map { $_->[0] } @{ $journey->{route} } );
+		my @unknown_stations = $self->{stations}->grep_unknown(
+			backend_id => $journey->{backend_id},
+			names      => [ map { $_->[0] } @{ $journey->{route} } ]
+		);
 		if (@unknown_stations) {
 			return 'Unbekannte Station(en): ' . join( ', ', @unknown_stations );
 		}

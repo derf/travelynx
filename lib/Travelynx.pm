@@ -1516,7 +1516,9 @@ sub startup {
 							if ($has_arrived) {
 								my @unknown_stations
 								  = $self->stations->grep_unknown(
-									$train->route );
+									backend_id => $user->{backend_id},
+									names      => [ $train->route ]
+								  );
 								if (@unknown_stations) {
 									$self->app->log->warn(
 										sprintf(
