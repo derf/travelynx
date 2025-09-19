@@ -154,20 +154,22 @@ sub add {
 					$j_stop->full_name,
 					$j_stop->id_num,
 					{
-						sched_arr   => _epoch( $j_stop->sched_arr ),
-						sched_dep   => _epoch( $j_stop->sched_dep ),
-						rt_arr      => _epoch( $j_stop->rt_arr ),
-						rt_dep      => _epoch( $j_stop->rt_dep ),
-						isCancelled => $j_stop->is_cancelled,
-						arr_delay   => $j_stop->arr_delay,
-						dep_delay   => $j_stop->dep_delay,
-						platform    => $j_stop->platform,
-						efa_load    => $j_stop->occupancy,
-						lat         => $j_stop->latlon->[0],
-						lon         => $j_stop->latlon->[1],
+						sched_arr => _epoch( $j_stop->sched_arr ),
+						sched_dep => _epoch( $j_stop->sched_dep ),
+						rt_arr    => _epoch( $j_stop->rt_arr ),
+						rt_dep    => _epoch( $j_stop->rt_dep ),
+						arr_delay => $j_stop->arr_delay,
+						dep_delay => $j_stop->dep_delay,
+						platform  => $j_stop->platform,
+						efa_load  => $j_stop->occupancy,
+						lat       => $j_stop->latlon->[0],
+						lon       => $j_stop->latlon->[1],
 					}
 				]
 			);
+			if ( $j_stop->is_cancelled ) {
+				$route[-1][2]{isCancelled} = 1;
+			}
 		}
 		$persistent_data->{operator} = $journey->operator;
 		$db->insert(
@@ -280,15 +282,14 @@ sub add {
 					$j_stop->name,
 					$j_stop->eva,
 					{
-						sched_arr   => _epoch( $j_stop->sched_arr ),
-						sched_dep   => _epoch( $j_stop->sched_dep ),
-						rt_arr      => _epoch( $j_stop->rt_arr ),
-						rt_dep      => _epoch( $j_stop->rt_dep ),
-						isCancelled => $j_stop->is_cancelled,
-						arr_delay   => $j_stop->arr_delay,
-						dep_delay   => $j_stop->dep_delay,
-						platform    => $j_stop->platform,
-						load        => {
+						sched_arr => _epoch( $j_stop->sched_arr ),
+						sched_dep => _epoch( $j_stop->sched_dep ),
+						rt_arr    => _epoch( $j_stop->rt_arr ),
+						rt_dep    => _epoch( $j_stop->rt_dep ),
+						arr_delay => $j_stop->arr_delay,
+						dep_delay => $j_stop->dep_delay,
+						platform  => $j_stop->platform,
+						load      => {
 							FIRST  => $j_stop->occupancy_first,
 							SECOND => $j_stop->occupancy_second
 						},
@@ -297,6 +298,12 @@ sub add {
 					}
 				]
 			);
+			if ( $j_stop->is_additional ) {
+				$route[-1][2]{isAdditional} = 1;
+			}
+			if ( $j_stop->is_cancelled ) {
+				$route[-1][2]{isCancelled} = 1;
+			}
 		}
 		my @messages;
 		for my $msg ( $journey->messages ) {
@@ -516,6 +523,14 @@ sub postprocess {
 	$ret->{extra_data}         = $ret->{data};
 	$ret->{comment}            = $ret->{user_data}{comment};
 	$ret->{wagongroups}        = $ret->{user_data}{wagongroups};
+
+	if ( $ret->{sched_dep_ts} and $ret->{real_dep_ts} ) {
+		$ret->{dep_delay} = $ret->{real_dep_ts} - $ret->{sched_dep_ts};
+	}
+
+	if ( $ret->{sched_arr_ts} and $ret->{real_arr_ts} ) {
+		$ret->{arr_delay} = $ret->{real_arr_ts} - $ret->{sched_arr_ts};
+	}
 
 	$ret->{platform_type} = 'Gleis';
 	if ( $ret->{train_type} and $ret->{train_type} =~ m{ ast | bus | ruf }ix ) {
@@ -1249,16 +1264,15 @@ sub update_arrival_dbris {
 				$j_stop->name,
 				$j_stop->eva,
 				{
-					sched_arr   => _epoch( $j_stop->sched_arr ),
-					sched_dep   => _epoch( $j_stop->sched_dep ),
-					rt_arr      => _epoch( $j_stop->rt_arr ),
-					rt_dep      => _epoch( $j_stop->rt_dep ),
-					platform    => $j_stop->platform,
-					isCancelled => $j_stop->is_cancelled,
-					arr_delay   => $j_stop->arr_delay,
-					dep_delay   => $j_stop->dep_delay,
-					platform    => $j_stop->platform,
-					load        => {
+					sched_arr => _epoch( $j_stop->sched_arr ),
+					sched_dep => _epoch( $j_stop->sched_dep ),
+					rt_arr    => _epoch( $j_stop->rt_arr ),
+					rt_dep    => _epoch( $j_stop->rt_dep ),
+					platform  => $j_stop->platform,
+					arr_delay => $j_stop->arr_delay,
+					dep_delay => $j_stop->dep_delay,
+					platform  => $j_stop->platform,
+					load      => {
 						FIRST  => $j_stop->occupancy_first,
 						SECOND => $j_stop->occupancy_second
 					},
@@ -1267,6 +1281,12 @@ sub update_arrival_dbris {
 				}
 			]
 		);
+		if ( $j_stop->is_additional ) {
+			$route[-1][2]{isAdditional} = 1;
+		}
+		if ( $j_stop->is_cancelled ) {
+			$route[-1][2]{isCancelled} = 1;
+		}
 	}
 
 	# selecting on user_id and train_no avoids a race condition if a user checks
@@ -1318,21 +1338,26 @@ sub update_arrival_efa {
 				$j_stop->full_name,
 				$j_stop->id_num,
 				{
-					sched_arr   => _epoch( $j_stop->sched_arr ),
-					sched_dep   => _epoch( $j_stop->sched_dep ),
-					rt_arr      => _epoch( $j_stop->rt_arr ),
-					rt_dep      => _epoch( $j_stop->rt_dep ),
-					isCancelled => $j_stop->is_cancelled,
-					arr_delay   => $j_stop->arr_delay,
-					dep_delay   => $j_stop->dep_delay,
-					platform    => $j_stop->platform,
-					efa_load    => $j_stop->occupancy,
-					lat         => $j_stop->latlon->[0],
-					lon         => $j_stop->latlon->[1],
+					sched_arr => _epoch( $j_stop->sched_arr ),
+					sched_dep => _epoch( $j_stop->sched_dep ),
+					rt_arr    => _epoch( $j_stop->rt_arr ),
+					rt_dep    => _epoch( $j_stop->rt_dep ),
+					arr_delay => $j_stop->arr_delay,
+					dep_delay => $j_stop->dep_delay,
+					platform  => $j_stop->platform,
+					efa_load  => $j_stop->occupancy,
+					lat       => $j_stop->latlon->[0],
+					lon       => $j_stop->latlon->[1],
 				}
 			]
 		);
+		if ( $j_stop->is_cancelled ) {
+			$route[-1][2]{isCancelled} = 1;
+		}
 	}
+
+	# TODO set efa_load from old route entry if missing in current route entry
+	# (at least in VVO, occupancy data is only provided for future stops)
 
 	# selecting on user_id and train_no avoids a race condition if a user checks
 	# into a new train while we are fetching data for their previous journey. In
