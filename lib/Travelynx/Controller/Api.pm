@@ -188,10 +188,13 @@ sub travel_v1 {
 		my $to_station   = sanitize( q{}, $payload->{toStation} );
 		my $train_id;
 		my $dbris = sanitize( undef, $payload->{dbris} );
+		my $efa   = sanitize( undef, $payload->{efa} );
 		my $hafas = sanitize( undef, $payload->{hafas} );
 		my $motis = sanitize( undef, $payload->{motis} );
 
-		if ( not $hafas and exists $payload->{train}{journeyID} ) {
+		if ( not( $efa or $hafas or $motis )
+			and exists $payload->{train}{journeyID} )
+		{
 			$dbris //= 'bahn.de';
 		}
 
@@ -216,8 +219,7 @@ sub travel_v1 {
 			return;
 		}
 
-		if (    not $hafas
-			and not $dbris
+		if (    not( $dbris or $efa or $hafas or $motis )
 			and not $self->stations->search( $from_station, backend_id => 1 ) )
 		{
 			$self->render(
@@ -233,8 +235,7 @@ sub travel_v1 {
 		}
 
 		if (    $to_station
-			and not $hafas
-			and not $dbris
+			and not( $dbris or $efa or $hafas or $motis )
 			and not $self->stations->search( $to_station, backend_id => 1 ) )
 		{
 			$self->render(
@@ -297,8 +298,9 @@ sub travel_v1 {
 					station  => $from_station,
 					train_id => $train_id,
 					uid      => $uid,
-					hafas    => $hafas,
 					dbris    => $dbris,
+					efa      => $efa,
+					hafas    => $hafas,
 					motis    => $motis,
 				);
 			}
