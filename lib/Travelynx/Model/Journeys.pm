@@ -445,13 +445,23 @@ sub update {
 
 			# Otherwise, fetch stop IDs so that polylines remain usable
 			if ( @new_route != @{ $opt{route} } ) {
-				my %stop_id
-				  = map { $_->{name} => $_->{eva} }
-				  $self->{stations}->get_by_names(
+				my %stop
+				  = map { $_->{name} => $_ } $self->{stations}->get_by_names(
 					backend_id => $journey->{backend_id},
 					names      => [ $opt{route} ]
 				  );
-				@new_route = map { [ $_, $stop_id{$_}, {} ] } @{ $opt{route} };
+				@new_route = map {
+					[
+						$_,
+						$stop{$_}{eva},
+						defined $stop{$_}{eva}
+						? {
+							lat => $stop{$_}{lat},
+							lon => $stop{$_}{lon}
+						  }
+						: {}
+					]
+				} @{ $opt{route} };
 			}
 
 			$rows = $db->update(
