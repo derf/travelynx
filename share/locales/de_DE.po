@@ -516,7 +516,7 @@ msgid "status.arrive-on.post"
 msgstr " "
 
 msgid "status.delayed-auto-checkout"
-msgstr "Der automatische Checkout erfolgt etwa zehn Minuten nach der Ankunft."
+msgstr "Der automatische Checkout erfolgt spätestens eine halbe Stunde nach der Ankunft."
 
 msgid "status.realtime-unavailable"
 msgstr "Keine Echtzeitdaten vorhanden"
@@ -550,7 +550,7 @@ msgid "status.undo-checkin"
 msgstr "Checkin rückgängig"
 
 msgid "status.force-checkout-lead"
-msgstr "Etwa zehn Minuten nach der Ankunft erfolgt ein automatischer Checkout. Falls das Backend ausgefallen ist oder die Fahrt aus anderen Gründen verloren ging:"
+msgstr "Maximal eine halbe Stunde nach der Ankunft erfolgt ein automatischer Checkout. Falls das Backend ausgefallen ist oder die Fahrt aus anderen Gründen verloren ging:"
 
 msgid "status.force-checkout"
 msgstr "Jetzt auschecken"

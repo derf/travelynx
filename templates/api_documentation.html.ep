@@ -89,23 +89,25 @@
 	<div class="col s12">
 		<p>
 			Checkin per API. Sobald eine Zielstation bekannt ist, erfolgt der
-			Checkout wie beim Webinterface automatisch zehn Minuten nach Ankunft.
-			Bitte beachten: Es wird nicht überprüft, ob die angegebene Zielstation
-			in der vorgesehenen Route der Fahrt vorkommt oder nicht.
+			Checkout wie beim Webinterface automatisch spätestens eine halbe
+			Stunde nach Ankunft.  Bitte beachten: Es wird nicht überprüft, ob
+			die angegebene Zielstation in der vorgesehenen Route der Fahrt
+			vorkommt oder nicht.
 		</p>
 		<p>
-			Falls du zum Checkinzeitpunkt bereits in eine andere Fahrt eingecheckt
-			bist, wirst du zunächst am gewählten Startbahnhof aus diesem ausgecheckt.
-			Der Checkout erfolgt unabhängig davon, ob die vorherige Fahrt an dieser
-			Station verkehrt oder nicht. Falls nach einem Checkin ohne Zielwahl
-			innerhalb von 48 Stunden kein Zielbahnhof nachgetragen wird, wird der
-			Checkin automatisch rückgängig gemacht.
+			Falls du zum Checkinzeitpunkt bereits in eine andere Fahrt
+			eingecheckt bist, wirst du zunächst am gewählten Startbahnhof aus
+			diesem ausgecheckt.  Der Checkout erfolgt unabhängig davon, ob die
+			vorherige Fahrt an dieser Station verkehrt oder nicht. Falls nach
+			einem Checkin ohne Zielwahl innerhalb von 48 Stunden kein
+			Zielbahnhof nachgetragen wird, wird der Checkin automatisch
+			rückgängig gemacht.
 		</p>
 		<p>
 			Das Verhalten des Checkout-Endpunkts hängt vom Zeitpunkt ab. Wenn die
 			Fahrt den angegebenen Zielbahnhof bereits erreicht hat, wird dort
-			ausgecheckt. Andernfalls wird das Reiseziel aktualisiert und etwa zehn
-			Minuten nach Ankunft automatisch ausgecheckt.
+			ausgecheckt. Andernfalls wird das Reiseziel aktualisiert und
+			spätestens eine halbe Stunde nach Ankunft automatisch ausgecheckt.
 		</p>
 		<p style="font-family: Monospace;">
 			curl -X POST -H "Content-Type: application/json" -d '{"token":"<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>"}' <%= $api_root %>/travel
