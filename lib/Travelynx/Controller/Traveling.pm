@@ -2570,6 +2570,7 @@ sub edit_journey {
 	$self->render(
 		'edit_journey',
 		with_autocomplete => 1,
+		backend_id        => $journey->{backend_id},
 		error             => $error,
 		journey           => $journey
 	);

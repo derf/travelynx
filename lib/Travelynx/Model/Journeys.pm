@@ -341,7 +341,8 @@ sub update {
 
 	eval {
 		if ( exists $opt{from_name} ) {
-			my $from_station = $self->{stations}->search( $opt{from_name} );
+			my $from_station = $self->{stations}
+			  ->search( $opt{from_name}, backend_id => $journey->{backend_id} );
 			if ( not $from_station ) {
 				die("Unbekannter Startbahnhof\n");
 			}
@@ -357,7 +358,8 @@ sub update {
 			)->rows;
 		}
 		if ( exists $opt{to_name} ) {
-			my $to_station = $self->{stations}->search( $opt{to_name} );
+			my $to_station = $self->{stations}
+			  ->search( $opt{to_name}, backend_id => $journey->{backend_id} );
 			if ( not $to_station ) {
 				die("Unbekannter Zielbahnhof\n");
 			}
