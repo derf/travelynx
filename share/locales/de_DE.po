@@ -555,6 +555,35 @@ msgstr "Maximal eine halbe Stunde nach der Ankunft erfolgt ein automatischer Che
 msgid "status.force-checkout"
 msgstr "Jetzt auschecken"
 
+# _history_stats.html.ep
+
+msgid "stats.trips"
+msgstr "Fahrten"
+
+msgid "stats.distance"
+msgstr "Entfernung"
+
+msgid "stats.time"
+msgstr "Fahrtzeit"
+
+msgid "stats.hours"
+msgstr "Stunden"
+
+msgid "stats.per-schedule"
+msgstr "nach Fahrplan"
+
+msgid "stats.transfer-time"
+msgstr "Wartezeit (Umstiege)"
+
+msgid "stats.total-delay"
+msgstr "Kumulierte Verspätung"
+
+msgid "stats.on-dep"
+msgstr "Bei Abfahrt"
+
+msgid "stats.on-arr"
+msgstr "Bei Ankunft"
+
 # _wagons.html.ep
 
 msgid "wagons.name-as-type"

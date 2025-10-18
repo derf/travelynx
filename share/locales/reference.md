@@ -2,9 +2,9 @@
 
 * de-DE: 100.0% complete (0 missing)
 * en-GB: 100.0% complete (0 missing)
-* fr-FR: 33.5% complete (115 missing)
-* hu-HU: 94.2% complete (10 missing)
-* pl-PL: 33.5% complete (115 missing)
+* fr-FR: 31.2% complete (128 missing)
+* hu-HU: 87.6% complete (23 missing)
+* pl-PL: 39.8% complete (112 missing)
 
 ### 
 
@@ -790,7 +790,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Hello,
 * fr-FR *missing*
 * hu-HU: Üdv,
-* pl-PL *missing*
+* pl-PL: Cześć,
 
 ### landingpage.greeting-suffix
 
@@ -798,7 +798,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: !
 * fr-FR *missing*
 * hu-HU: !
-* pl-PL *missing*
+* pl-PL: !
 
 ### landingpage.not-checked-in
 
@@ -806,7 +806,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: You are not checked in at the moment
 * fr-FR *missing*
 * hu-HU: Jelenleg nem vagy becsekkolva
-* pl-PL *missing*
+* pl-PL: Nie jesteś obecnie zameldowany.
 
 ### landingpage.stop-geosearch
 
@@ -856,7 +856,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Travelynx facilitates checkins into public transit (such as buses, trams, or trains) in Germany, Austria, Switzerlanz, Luxembourg, Ireland, Denmark, parts of the USA, and more. This way, you can track your own journeys (often including map and real-time data), share them with others, and examine highly relevant questions such as “how many hours did I spend in public transit in the past month?”.
 * fr-FR *missing*
 * hu-HU: Travelynx-el tömegközlekedési eszközökre (pl. Buszokra, Villamosokra, Vonatokra) be lehet csekkolni, többek között Németországban, Ausztriában, Svájcban, Luxemburgban, Írországban, Dániában és az USA egyes részeiben. Így nyomon követheted az utazásaidat (gyakran térképes és valós idejű adatokkal együtt), megoszthatod azokat másokkal, és a rendkívüli fontos kérdéseidre, mint például „hány órát tömegközlekedtem az elmúlt hónapban?”, is kapsz választ.
-* pl-PL *missing*
+* pl-PL: Travelynx umożliwia zameldowanie się w środkach transportu (autobusach, tramwajach, pociągach) między innymi w Niemczech, Austrii, Szwajcarii, Luksemburgu, Irlandii, Danii i niektórych częściach Stanów Zjednoczonych. Dzięki temu można później śledzić własne podróże wraz z danymi w czasie rzeczywistym i komunikatami serwisowymi oraz uzyskać odpowiedzi na palące pytania, takie jak „Ile godzin spędziłem w podróży w zeszłym miesiącu?”.
 
 ### landingpage.traewelling.pre
 
@@ -864,7 +864,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: The idea for such a service was first proposed and implemented by
 * fr-FR *missing*
 * hu-HU: Az elsők akiknek hasonló ötlete volt és azt kivitelezték a
-* pl-PL *missing*
+* pl-PL: Pomysł pochodzi od
 
 ### landingpage.traewelling.post
 
@@ -872,7 +872,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  
 * fr-FR *missing*
 * hu-HU:  volt
-* pl-PL *missing*
+* pl-PL:  
 
 ### landingpage.features
 
@@ -952,7 +952,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Travelynx is a hobby project. It is provided free of charge, without any kind of availability guarantees. Unexpected downtimes or a cancellation of the entire site on short notice are not planned, but always possible.
 * fr-FR *missing*
 * hu-HU: Travelynx egy ingyenes és bármi rendelkezésre állási garacia nélküli hobbi projekt. Be nem tervezett leállások, illetve a teljes oldal hírtelen bezárása nincs tervben, de bármikor előfordulhat.
-* pl-PL *missing*
+* pl-PL: Travelynx jest bezpłatnym, prywatnym projektem bez gwarancji dostępności. Nieprzewidziane przerwy w działaniu lub krótkoterminowe wyłączenie tej strony nie są planowane, ale są możliwe.
 
 ### landingpage.disclaimer.source-pre
 
@@ -960,7 +960,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: If you like, you can download the
 * fr-FR *missing*
 * hu-HU: Aki szeretné az letöltheti a
-* pl-PL *missing*
+* pl-PL: Kto chce, może również pobrać
 
 ### landingpage.disclaimer.source-link
 
@@ -968,7 +968,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: source code
 * fr-FR *missing*
 * hu-HU: forráskódot
-* pl-PL *missing*
+* pl-PL: kod źródłowy
 
 ### landingpage.disclaimer.source-post
 
@@ -976,7 +976,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: and host your own instance.
 * fr-FR *missing*
 * hu-HU: is és saját szervert működtethet.
-* pl-PL *missing*
+* pl-PL: i skonfigurować własną instancję.
 
 ## language.html.ep
 
@@ -986,7 +986,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Language
 * fr-FR *missing*
 * hu-HU: Nyelv
-* pl-PL *missing*
+* pl-PL: Język
 
 ### language.browser-default
 
@@ -994,7 +994,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Use language(s) requested by browser
 * fr-FR *missing*
 * hu-HU: A webböngésző nyelve(i)
-* pl-PL *missing*
+* pl-PL: Ten sam język co przeglądarka internetowa
 
 ## login.html.ep
 
@@ -1110,7 +1110,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: We collect your email address solely fo the purposes of confirming your registration, resetting your password and providing you with important information about your account. Your email address will never be shared with third parties.
 * fr-FR *missing*
 * hu-HU: Az e-mail címet csak a regisztráció megerősítésére, az „Elfelejtett jelszó” funkcióhoz és a fiókkal kapcsolatos fontos információkhoz használjuk, és nem adjuk tovább harmadik félnek.
-* pl-PL *missing*
+* pl-PL: Adres e-mail będzie wykorzystywany wyłącznie do potwierdzenia rejestracji, funkcji „Zapomniałem hasła” oraz ważnych informacji dotyczących konta i nie będzie udostępniany osobom trzecim.
 
 ### register.privacy-pre
 
@@ -1126,7 +1126,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: privacy policy
 * fr-FR *missing*
 * hu-HU: adatkezelési tájékoztató
-* pl-PL *missing*
+* pl-PL: Polityka prywatności
 
 ### register.privacy-post
 
@@ -1134,7 +1134,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: describes additional data that we collect, how we store it and for what purpose.
 * fr-FR *missing*
 * hu-HU: leírja az egyéb begyűjtött adatokat, valamit azok célját és tárolási időtartamát.
-* pl-PL *missing*
+* pl-PL: opisuje inne gromadzone dane, a także ich cel i okresy przechowywania.
 
 ### register.account-deletion
 
@@ -1142,7 +1142,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Accounts are automatically deleted after a year without activity. You will receive an email informing you about the deletion and giving you four weeks to intervene.
 * fr-FR: .
 * hu-HU: A fiókokat egy év inaktivitás után e-mailben értesítjük a közelgő törlésről, és további négy hét inaktivitás után automatikusan törlődnek.
-* pl-PL: .
+* pl-PL: Po roku braku aktywności użytkownicy otrzymują wiadomość e-mail z informacją o zbliżającym się usunięciu konta, a po kolejnych czterech tygodniach braku aktywności konta są automatycznie usuwane.
 
 ### register.disclaimer
 
@@ -1150,7 +1150,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Please be aware: Travelynx is a non-commerical personal project and is provided as is. We do not make guarantees in regards to availability of the service or a sudden end of the project.
 * fr-FR *missing*
 * hu-HU: Kérjük, vedd figyelembe: Travelynx egy ingyenes és bármi rendelkezésre állási garacia nélküli hobbi projekt. Be nem tervezett leállások, illetve a teljes oldal hírtelen bezárása nincs tervben, de bármikor előfordulhat.
-* pl-PL *missing*
+* pl-PL: Uwaga: Travelynx jest prywatnym projektem bez gwarancji dostępności. Niezapowiedziane przerwy w działaniu lub krótkoterminowe wyłączenie tej strony nie są planowane, ale są możliwe.
 
 ## _checked_in.html.ep, _public_status_card.html.ep
 
@@ -1334,8 +1334,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### status.delayed-auto-checkout
 
-* de-DE: Der automatische Checkout erfolgt etwa zehn Minuten nach der Ankunft.
-* en-GB: You will be automatically checked out about ten minutes after the expected arrival time.
+* de-DE: Der automatische Checkout erfolgt spätestens eine halbe Stunde nach der Ankunft.
+* en-GB: You will be automatically checked out no less than half an hour after the expected arrival time.
 * fr-FR *missing*
 * hu-HU: Körülbelül tíz perccel az érkezés után automatikusan kicsekkolódsz.
 * pl-PL *missing*
@@ -1422,8 +1422,8 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 ### status.force-checkout-lead
 
-* de-DE: Etwa zehn Minuten nach der Ankunft erfolgt ein automatischer Checkout. Falls das Backend ausgefallen ist oder die Fahrt aus anderen Gründen verloren ging:
-* en-GB: travelynx will perform an automatic check-out about ten minutes after arrival. In case of backend or data update issues:
+* de-DE: Maximal eine halbe Stunde nach der Ankunft erfolgt ein automatischer Checkout. Falls das Backend ausgefallen ist oder die Fahrt aus anderen Gründen verloren ging:
+* en-GB: travelynx will perform an automatic check-out no less than half an hour after arrival. In case of backend or data update issues:
 * fr-FR *missing*
 * hu-HU: Körülbelül tíz perccel az érkezés után automatikusan kicsekkolódsz. Ha a backend leállt, vagy az utazás más okokból elveszlett:
 * pl-PL *missing*
@@ -1434,6 +1434,80 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Force checkout
 * fr-FR *missing*
 * hu-HU: Most kicsekkelni
+* pl-PL *missing*
+
+## _history_stats.html.ep
+
+### stats.trips
+
+* de-DE: Fahrten
+* en-GB: Trips
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### stats.distance
+
+* de-DE: Entfernung
+* en-GB: Distance
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### stats.time
+
+* de-DE: Fahrtzeit
+* en-GB: Travel Time
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### stats.hours
+
+* de-DE: Stunden
+* en-GB: hours
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### stats.per-schedule
+
+* de-DE: nach Fahrplan
+* en-GB: scheduled
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### stats.transfer-time
+
+* de-DE: Wartezeit (Umstiege)
+* en-GB: Transfer Time
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### stats.total-delay
+
+* de-DE: Kumulierte Verspätung
+* en-GB: Total Delay
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### stats.on-dep
+
+* de-DE: Bei Abfahrt
+* en-GB: on departure
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### stats.on-arr
+
+* de-DE: Bei Ankunft
+* en-GB: on arrival
+* fr-FR *missing*
+* hu-HU *missing*
 * pl-PL *missing*
 
 ## _wagons.html.ep

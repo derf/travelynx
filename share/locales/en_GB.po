@@ -555,6 +555,35 @@ msgstr "travelynx will perform an automatic check-out no less than half an hour 
 msgid "status.force-checkout"
 msgstr "Force checkout"
 
+# _history_stats.html.ep
+
+msgid "stats.trips"
+msgstr "Trips"
+
+msgid "stats.distance"
+msgstr "Distance"
+
+msgid "stats.time"
+msgstr "Travel Time"
+
+msgid "stats.hours"
+msgstr "hours"
+
+msgid "stats.per-schedule"
+msgstr "scheduled"
+
+msgid "stats.total-delay"
+msgstr "Total Delay"
+
+msgid "stats.transfer-time"
+msgstr "Transfer Time"
+
+msgid "stats.on-dep"
+msgstr "on departure"
+
+msgid "stats.on-arr"
+msgstr "on arrival"
+
 # _wagons.html.ep
 
 msgid "wagons.name-as-type"
