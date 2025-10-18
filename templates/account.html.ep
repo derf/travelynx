@@ -179,32 +179,32 @@
 % if ($num_rx_follow_requests or $num_tx_follow_requests or $num_followers or $num_following or $num_blocked) {
 	<div class="row">
 		<div class="col s12">
-			<h2>Interaktion</h2>
+			<h2><%= L('account.interaction') %></h2>
 			<p>
-				<a href="/p/<%= $acc->{name} %>">Öffentliches Profil</a>
+				<a href="/p/<%= $acc->{name} %>"><%= L('account.profile') %></a>
 			</p>
 			<table class="striped">
 				<tr>
-					<th scope="row">Anfragen</th>
+					<th scope="row"><%= L('account.interaction.requests') %></th>
 					<td>
 						% if ($num_rx_follow_requests == 0) {
-							<span style="color: #999999;">keine eingehend</span>
+							<span style="color: #999999;"><%= L('account.interaction.requests.incoming.none') %></span>
 						% }
 						% elsif ($num_rx_follow_requests == 1) {
-							<a href="/account/social/follow-requests-received"><strong>eine</strong> eingehend</a>
+							<a href="/account/social/follow-requests-received"><strong><%= L('account.interaction.one') %></strong> <%= L('account.interaction.requests.incoming.some') %></a>
 						% }
 						% else {
-							<a href="/account/social/follow-requests-received"><strong><%= $num_rx_follow_requests %></strong> eingehend</a>
+							<a href="/account/social/follow-requests-received"><strong><%= $num_rx_follow_requests %></strong> <%= L('account.interaction.requests.incoming.some') %></a>
 						% }
 						<br/>
 						% if ($num_tx_follow_requests == 0) {
-							<span style="color: #999999;">keine ausgehend</span>
+							<span style="color: #999999;"><%= L('account.interaction.requests.outgoing.none') %></span>
 						% }
 						% elsif ($num_tx_follow_requests == 1) {
-							<a href="/account/social/follow-requests-sent"><strong>eine</strong> ausgehend</a>
+							<a href="/account/social/follow-requests-sent"><strong><%= L('account.interaction.one') %></strong> <%= L('account.interaction.requests.outgoing.some') %></a>
 						% }
 						% else {
-							<a href="/account/social/follow-requests-sent"><strong><%= $num_tx_follow_requests %></strong> ausgehend</a>
+							<a href="/account/social/follow-requests-sent"><strong><%= $num_tx_follow_requests %></strong> <%= L('account.interaction.requests.outgoing.some') %></a>
 						% }
 					</td>
 				</tr>

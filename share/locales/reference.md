@@ -2,9 +2,9 @@
 
 * de-DE: 100.0% complete (0 missing)
 * en-GB: 100.0% complete (0 missing)
-* fr-FR: 31.2% complete (128 missing)
-* hu-HU: 87.6% complete (23 missing)
-* pl-PL: 39.8% complete (112 missing)
+* fr-FR: 30.9% complete (130 missing)
+* hu-HU: 86.7% complete (25 missing)
+* pl-PL: 39.4% complete (114 missing)
 
 ### 
 
@@ -497,6 +497,54 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * fr-FR: Aucun compte ne peut vous suivre
 * hu-HU: Senki sem követhet
 * pl-PL: Inne konta nie mogą cię obserwować
+
+### account.profile
+
+* de-DE: Öffentliches Profil
+* en-GB: Public profile page
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### account.interaction.requests
+
+* de-DE: Offene anfragen
+* en-GB: Pending requests
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### account.interaction.requests.incoming.none
+
+* de-DE: keine eingehend
+* en-GB: none incoming
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### account.interaction.requests.incoming.some
+
+* de-DE: eingehend
+* en-GB: incoming
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### account.interaction.requests.outgoing.none
+
+* de-DE: keine ausgehend
+* en-GB: none outgoing
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### account.interaction.requests.outgoing.some
+
+* de-DE: ausgehend
+* en-GB: outgoing
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
 
 ## changelog.html.ep
 

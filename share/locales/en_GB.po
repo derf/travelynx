@@ -188,6 +188,24 @@ msgstr "open requests"
 msgid "account.interaction.disabled"
 msgstr "Accounts cannot follow you"
 
+msgid "account.profile"
+msgstr "Public profile page"
+
+msgid "account.interaction.requests"
+msgstr "Pending requests"
+
+msgid "account.interaction.requests.incoming.none"
+msgstr "none incoming"
+
+msgid "account.interaction.requests.incoming.some"
+msgstr "incoming"
+
+msgid "account.interaction.requests.outgoing.none"
+msgstr "none outgoing"
+
+msgid "account.interaction.requests.outgoing.some"
+msgstr "outgoing"
+
 # changelog.html.ep
 
 msgid "changelog.added"
