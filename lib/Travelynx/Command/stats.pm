@@ -33,7 +33,7 @@ sub refresh_all {
 			write_only => 1,
 		);
 		if ( $i == $total or ( $i % 10 ) == 0 ) {
-			printf( "%.f%% complete", $i * 100 / $total );
+			printf( "%.f%% complete\n", $i * 100 / $total );
 		}
 		$i++;
 	}
