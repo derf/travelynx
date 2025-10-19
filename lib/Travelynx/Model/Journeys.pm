@@ -1401,6 +1401,9 @@ sub get_travel_distance {
 
 	my %seen;
 	for my $stop ( @{$route_ref} ) {
+		if ( not defined $stop->[1] ) {
+			return ( 0, 0, $distance_beeline );
+		}
 		$seen{ $stop->[1] } //= 1;
 		$stop->[2]{n} = $seen{ $stop->[1] };
 		$seen{ $stop->[1] } += 1;
