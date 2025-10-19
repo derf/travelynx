@@ -35,6 +35,7 @@ sub refresh_all {
 		if ( $i == $total or ( $i % 10 ) == 0 ) {
 			printf( "%.f%% complete", $i * 100 / $total );
 		}
+		$i++;
 	}
 }
 
