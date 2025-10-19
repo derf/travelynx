@@ -1229,7 +1229,7 @@ sub startup {
 					# mustn't be called during a transaction
 					if ( not $opt{in_transaction} ) {
 						$self->run_hook( $uid, 'checkin' );
-						if ( $opt{hafas} eq 'DB' and $journey->class <= 16 ) {
+						if ( $opt{hafas} eq 'ÖBB' and $journey->class <= 16 ) {
 							$self->add_wagonorder(
 								uid          => $uid,
 								train_id     => $journey->id,
