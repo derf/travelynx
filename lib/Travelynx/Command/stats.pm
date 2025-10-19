@@ -26,13 +26,12 @@ sub refresh_all {
 	for
 	  my $user ( $db->select( 'users', ['id'], { status => 1 } )->hashes->each )
 	{
-		my $tx = $db->begin;
 		$self->app->journeys->generate_missing_stats( uid => $user->{id} );
 		$self->app->journeys->get_stats(
-			uid  => $user->{id},
-			year => $now->year
+			uid        => $user->{id},
+			year       => $now->year,
+			write_only => 1,
 		);
-		$tx->commit;
 		if ( $i == $total or ( $i % 10 ) == 0 ) {
 			printf( "%.f%% complete", $i * 100 / $total );
 		}
