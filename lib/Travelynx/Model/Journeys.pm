@@ -1174,6 +1174,8 @@ sub generate_missing_stats {
 
 	my $stats_index = 0;
 
+	my %need_year;
+
 	for my $journey_index ( 0 .. $#journey_months ) {
 		if (    $stats_index < @stats_months
 			and $journey_months[$journey_index][0]
@@ -1185,6 +1187,7 @@ sub generate_missing_stats {
 		}
 		else {
 			my ( $year, $month ) = @{ $journey_months[$journey_index] };
+			$need_year{$year} = 1;
 			$self->get_stats(
 				uid        => $uid,
 				db         => $db,
@@ -1193,6 +1196,14 @@ sub generate_missing_stats {
 				write_only => 1
 			);
 		}
+	}
+	for my $year ( keys %need_year ) {
+		$self->get_stats(
+			uid        => $uid,
+			db         => $db,
+			year       => $year,
+			write_only => 1
+		);
 	}
 }
 
