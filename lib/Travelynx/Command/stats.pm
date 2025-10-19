@@ -14,16 +14,17 @@ has usage => sub { shift->extract_usage };
 sub refresh_all {
 	my ($self) = @_;
 
-	my $db = $self->app->pg->db;
+	my $db  = $self->app->pg->db;
 	my $now = DateTime->now( time_zone => 'Europe/Berlin' );
 
 	say 'Refreshing all stats, this may take a while ...';
 
-	my $total = $db->select( 'users', 'count(*) as count', { status => 1 } )->hash->{count};
+	my $total = $db->select( 'users', 'count(*) as count', { status => 1 } )
+	  ->hash->{count};
 	my $i = 1;
 
 	for
-	my $user ( $db->select( 'users', ['id'], { status => 1 } )->hashes->each )
+	  my $user ( $db->select( 'users', ['id'], { status => 1 } )->hashes->each )
 	{
 		my $tx = $db->begin;
 		$self->app->journeys->generate_missing_stats( uid => $user->{id} );
@@ -32,8 +33,8 @@ sub refresh_all {
 			year => $now->year
 		);
 		$tx->commit;
-		if ($i == $total or ($i % 100) == 0) {
-			printf("%.f%% complete", $i * 100 / $total);
+		if ( $i == $total or ( $i % 10 ) == 0 ) {
+			printf( "%.f%% complete", $i * 100 / $total );
 		}
 	}
 }
@@ -41,7 +42,7 @@ sub refresh_all {
 sub run {
 	my ( $self, $cmd, @arg ) = @_;
 
-	if ($cmd eq 'refresh-all') {
+	if ( $cmd eq 'refresh-all' ) {
 		$self->refresh_all(@arg);
 	}
 
