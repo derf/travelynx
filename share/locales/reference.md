@@ -128,9 +128,9 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Fehler
 * en-GB: Error
-* fr-FR Erreur
+* fr-FR: Erreur
 * hu-HU: Hiba
-* pl-PL Błąd
+* pl-PL: Błąd
 
 ## Templates
 
@@ -142,7 +142,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Developed by
 * fr-FR *missing*
 * hu-HU: Fejlesztették:
-* pl-PL *missing*
+* pl-PL: Stworzone przez
 
 ### about.developed-by.and
 
@@ -150,7 +150,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: and
 * fr-FR *missing*
 * hu-HU: ,
-* pl-PL *missing*
+* pl-PL: i
 
 ### about.developed-by.others
 
@@ -158,7 +158,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: others
 * fr-FR *missing*
 * hu-HU: többiek
-* pl-PL *missing*
+* pl-PL: innych
 
 ### about.developed-by.tail
 
@@ -166,7 +166,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  
 * fr-FR *missing*
 * hu-HU:  
-* pl-PL *missing*
+* pl-PL:
 
 ### about.source-code
 
@@ -174,7 +174,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Source code
 * fr-FR *missing*
 * hu-HU: A Forráskód
-* pl-PL *missing*
+* pl-PL: Kod źródłowy
 
 ### about.licence-agplv3
 
@@ -182,7 +182,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: available under the terms of AGPL v3
 * fr-FR *missing*
 * hu-HU: az AGPL v3 licensz alatt elérhető
-* pl-PL *missing*
+* pl-PL: objęty licencją AGPL v3
 
 ### about.data-sources
 
@@ -190,7 +190,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Backends
 * fr-FR *missing*
 * hu-HU: Backendek:
-* pl-PL *missing*
+* pl-PL: Backends
 
 ### about.data-sources.last-and
 
@@ -198,7 +198,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: , and
 * fr-FR *missing*
 * hu-HU:  és
-* pl-PL *missing*
+* pl-PL:  i
 
 ### about.disclaimer
 
@@ -206,7 +206,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Travelynx is a hobby project. It is provided free of charge, without any kind of availability guarantees. Unexpected downtimes or a cancellation of the entire site on short notice are not planned, but always possible. Depending on available spare time and motivation, feature requests, bug reports, and other messages are processed promptly, with delay, or not at all.
 * fr-FR *missing*
 * hu-HU: Travelynx egy ingyenes és bármi rendelkezésre állási garacia nélküli hobbi projekt. Be nem tervezett leállások, illetve a teljes oldal hírtelen bezárása nincs tervben, de bármikor előfordulhat. Feature requesteket, bug reportokat és egyéb üzeneteket kapacitástól és motivációtól függően azonnal, megkésve vagy akár soha sem lesznek feldolgozva.
-* pl-PL *missing*
+* pl-PL: Travelynx to bezpłatny, prywatnie prowadzony projekt, który nie gwarantuje dostępności. Nieplanowane przerwy w działaniu lub nagłe zakończenie działania strony nie są przewidziane, ale mogą się zdarzyć. Prośby o nowe funkcje, zgłoszenia błędów oraz inne wiadomości są rozpatrywane i odpowiadane w zależności od dostępnych zasobów i motywacji — szybko, z opóźnieniem lub wcale.
 
 ### about.contact
 
@@ -214,7 +214,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Contact
 * fr-FR *missing*
 * hu-HU: Kapcsolat
-* pl-PL *missing*
+* pl-PL: Kontakt
 
 ### about.bugs
 
@@ -222,7 +222,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Bugs
 * fr-FR *missing*
 * hu-HU: Bugok
-* pl-PL *missing*
+* pl-PL: Błędy
 
 ### about.changelog
 
@@ -230,7 +230,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Changelog
 * fr-FR *missing*
 * hu-HU: Changelog
-* pl-PL *missing*
+* pl-PL: Zmiany
 
 ## account.html.ep
 
@@ -240,7 +240,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Updated name
 * fr-FR *missing*
 * hu-HU: Név frissítve
-* pl-PL *missing*
+* pl-PL: Nazwa została zmieniona
 
 ### account.changed-mail
 
@@ -248,7 +248,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Updated email address
 * fr-FR *missing*
 * hu-HU: E-Mail cím frissítve
-* pl-PL *missing*
+* pl-PL: Adres e-mail został zmieniony
 
 ### account.changed-password
 
@@ -256,7 +256,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Updated password
 * fr-FR *missing*
 * hu-HU: Jelszó frissítve
-* pl-PL *missing*
+* pl-PL: Hasło zostało zmienione
 
 ### account.changed-language
 
@@ -264,7 +264,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Changed language
 * fr-FR *missing*
 * hu-HU: Nyelv változtatva
-* pl-PL *missing*
+* pl-PL: Język został zmieniony
 
 ### account.changed-privacy
 
@@ -272,7 +272,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Privacy settings have been saved
 * fr-FR *missing*
 * hu-HU: Láthatósági beállítások mentve
-* pl-PL *missing*
+* pl-PL: Zmieniono ustawienia dotyczące publicznych danych konta
 
 ### account.changed-social
 
@@ -280,7 +280,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Social settings have been saved
 * fr-FR *missing*
 * hu-HU: Interakciós beállítások mentve
-* pl-PL *missing*
+* pl-PL: Zmieniono ustawienia dotyczące interakcji z innymi kontami
 
 ### account.changed-traewelling
 
@@ -288,7 +288,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Träwelling settings have been saved
 * fr-FR *missing*
 * hu-HU: Träwelling beállítások mentve
-* pl-PL *missing*
+* pl-PL: Zaktualizowano powiązanie z Träwelling
 
 ### account.changed-history
 
@@ -296,7 +296,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Connection suggestion settings have been saved
 * fr-FR *missing*
 * hu-HU: Átszállásos javaslati beállítások mentve
-* pl-PL *missing*
+* pl-PL: Zmieniono ustawienia dotyczące proponowanych połączeń
 
 ### account.changed-webhook
 
@@ -304,7 +304,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Web Hook has been updated
 * fr-FR *missing*
 * hu-HU: Web Hook frissítve
-* pl-PL *missing*
+* pl-PL: Zaktualizowano Webhook
 
 ### account.cleared-notifications
 
@@ -312,7 +312,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Notifications have been cleared
 * fr-FR *missing*
 * hu-HU: Értesítések törölve
-* pl-PL *missing*
+* pl-PL: Powiadomienia zostały przeczytane
 
 ### account.account
 
@@ -392,7 +392,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Webhook
 * fr-FR *missing*
 * hu-HU: Webhook
-* pl-PL *missing*
+* pl-PL: Webhook
 
 ### account.webhook.disabled
 
@@ -400,7 +400,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: No webhook configured
 * fr-FR *missing*
 * hu-HU: Nincs beállitva
-* pl-PL *missing*
+* pl-PL: Nie skonfigurowano
 
 ### account.webhook.active-pending
 
@@ -408,7 +408,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Active; pending
 * fr-FR *missing*
 * hu-HU: Aktív, jóváhagyás folyamatban
-* pl-PL *missing*
+* pl-PL: Aktywny, jeszcze nie wykonany
 
 ### account.webhook.active-error
 
@@ -416,7 +416,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Active; erroneous
 * fr-FR *missing*
 * hu-HU: Aktív, hibás
-* pl-PL *missing*
+* pl-PL: Aktywny, błąd wykonania
 
 ### account.webhook.active
 
@@ -424,7 +424,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Active
 * fr-FR *missing*
 * hu-HU: Aktív
-* pl-PL *missing*
+* pl-PL: Aktywny
 
 ### account.traewelling.unsupported
 
@@ -432,7 +432,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Unsupported due to incompatibility with bahn.de and transitous
 * fr-FR *missing*
 * hu-HU: Jelenleg nem támogatott a bahn.de és a transitous közötti inkompatibilitás miatt
-* pl-PL *missing*
+* pl-PL: Obecnie nieobsługiwane z powodu niekompatybilności między bahn.de a transitous
 
 ### account.registration-date
 
@@ -440,7 +440,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Registered on
 * fr-FR *missing*
 * hu-HU: Regisztrálva
-* pl-PL *missing*
+* pl-PL: Zarejestrowano dnia
 
 ### account.interaction
 
@@ -504,7 +504,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Public profile page
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Profil publiczny
 
 ### account.interaction.requests
 
@@ -512,7 +512,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Pending requests
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Otwarte zapytania
 
 ### account.interaction.requests.incoming.none
 
@@ -520,7 +520,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: none incoming
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: brak przychodzących
 
 ### account.interaction.requests.incoming.some
 
@@ -528,7 +528,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: incoming
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: przychodzące
 
 ### account.interaction.requests.outgoing.none
 
@@ -536,7 +536,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: none outgoing
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: brak wychodzących
 
 ### account.interaction.requests.outgoing.some
 
@@ -544,7 +544,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: outgoing
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: wychodzące
 
 ## changelog.html.ep
 
@@ -554,7 +554,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: New Feature
 * fr-FR *missing*
 * hu-HU: Új fícsör
-* pl-PL *missing*
+* pl-PL: Nowa funkcja
 
 ### changelog.bugfix
 
@@ -562,7 +562,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Bugfix
 * fr-FR *missing*
 * hu-HU: Bugfix
-* pl-PL *missing*
+* pl-PL: Poprawka błędu
 
 ### changelog.2-16.1
 
@@ -570,7 +570,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Localization support. Parts of travelynx are now available in English, and a subset of those is also available in French, Hungarian, and Polish. Further translations, languages, and translation how-tos will follow in due time. Locale selection respects the Accept-Language header and can be configured on the account settings page.
 * fr-FR *missing*
 * hu-HU: Lokalizáció. A travelynx most már angolul, részben pedig franciául, magyarul és lengyelül is elérhető. További fordítások, nyelvek és fordítási útmutatók következnek majd a megfelelő időben. A lokalizáció kiválasztása tiszteletben tartja az Accept-Language fejlécet, és a fiókbeállítások oldalon is beállítható.
-* pl-PL *missing*
+* pl-PL: Infrastruktura do tłumaczenia Travelynx na inne języki. Większość strony nadal jest po niemiecku; pojedyncze strony są już dostępne po angielsku, a ich częściowo także po francusku, polsku i węgiersku. Kolejne tłumaczenia oraz ewentualne nowe języki i dokumentacja wspierająca ten proces pojawią się z czasem. Język jest wybierany na podstawie nagłówka Accept-Language i może być dodatkowo skonfigurowany w ustawieniach konta.
 
 ### changelog.2-16.2
 
@@ -578,7 +578,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Fix distance calculation and visualization of ring line trips. Trips shown in the history map are still partially incorrect.
 * fr-FR *missing*
 * hu-HU: A távolságszámítás és a gyűrűsvonali utazások megjelenítése javítva lett. Az előzménytérképen megjelenített utazások még mindig részben hibásak.
-* pl-PL *missing*
+* pl-PL: Poprawne obliczanie i wizualizacja trasy przejazdu dla linii okrężnych. Wyświetlanie przejazdów na mapie podróży nadal zawiera częściowe błędy.
 
 ### changelog.2-17.1
 
@@ -586,7 +586,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Map data (“polylines”) for individual trips can now be exported and imported in the GPX format. This allows map data to be corrected or augmented after the fact. The GPX import/export is compatible with BRouter-Web.
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Dane mapy („Polylines”) dla pojedynczych przejazdów można teraz eksportować i importować jako pliki GPX. Dzięki temu dane mapy można później poprawić lub uzupełnić. Format danych GPX jest kompatybilny z BRouter-Web.
 
 ## journey.html.ep
 
@@ -596,7 +596,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Trip not found.
 * fr-FR *missing*
 * hu-HU: Utazás nem találva.
-* pl-PL *missing*
+* pl-PL: Przejazd nie został znaleziony.
 
 ### journey.trip
 
@@ -606,7 +606,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Trip
 * fr-FR *missing*
 * hu-HU: Utazás
-* pl-PL *missing*
+* pl-PL: Przejazd
 
 ### journey.from
 
@@ -616,7 +616,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: From
 * fr-FR *missing*
 * hu-HU: Honnan
-* pl-PL *missing*
+* pl-PL: Z
 
 ### journey.to
 
@@ -626,7 +626,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: To
 * fr-FR *missing*
 * hu-HU: Hova
-* pl-PL *missing*
+* pl-PL: Do
 
 ### journey.departure
 
@@ -636,7 +636,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Departure
 * fr-FR *missing*
 * hu-HU: Indulás
-* pl-PL *missing*
+* pl-PL: Odjazd
 
 ### journey.arrival
 
@@ -646,7 +646,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Arrival
 * fr-FR *missing*
 * hu-HU: Érkezés
-* pl-PL *missing*
+* pl-PL: Przyjazd
 
 ### journey.distance
 
@@ -656,7 +656,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Distance
 * fr-FR *missing*
 * hu-HU: Távolság
-* pl-PL *missing*
+* pl-PL: Dystans
 
 ### journey.beeline.pre
 
@@ -664,7 +664,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: (
 * fr-FR *missing*
 * hu-HU: (Légvonalban: 
-* pl-PL *missing*
+* pl-PL: (Linia prosta: 
 
 ### journey.beeline.post
 
@@ -672,7 +672,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  as the crow flies)
 * fr-FR *missing*
 * hu-HU: )
-* pl-PL *missing*
+* pl-PL: )
 
 ### journey.speed
 
@@ -682,7 +682,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Speed
 * fr-FR *missing*
 * hu-HU: Sebesség
-* pl-PL *missing*
+* pl-PL: Prędkość
 
 ### journey.operator
 
@@ -692,7 +692,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Operator
 * fr-FR *missing*
 * hu-HU: Üzemeltető
-* pl-PL *missing*
+* pl-PL: Operator
 
 ### journey.messages
 
@@ -702,7 +702,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Messages
 * fr-FR *missing*
 * hu-HU: Jelentések
-* pl-PL *missing*
+* pl-PL: Komunikaty
 
 ### journey.comment
 
@@ -712,7 +712,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Comment
 * fr-FR *missing*
 * hu-HU: Megjegyzés
-* pl-PL *missing*
+* pl-PL: Komentarz
 
 ### journey.carriages
 
@@ -722,7 +722,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Carriages
 * fr-FR *missing*
 * hu-HU: Járművek
-* pl-PL *missing*
+* pl-PL: Skład pociągu
 
 ### journey.route
 
@@ -732,7 +732,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Route
 * fr-FR *missing*
 * hu-HU: Útvonal
-* pl-PL *missing*
+* pl-PL: Trasa
 
 ### journey.share
 
@@ -740,7 +740,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Share
 * fr-FR *missing*
 * hu-HU: Megosztás
-* pl-PL *missing*
+* pl-PL: Udostępnij
 
 ### journey.export
 
@@ -748,7 +748,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Export
 * fr-FR *missing*
 * hu-HU: Exportálás
-* pl-PL *missing*
+* pl-PL: Eksportuj
 
 ### journey.edit
 
@@ -756,7 +756,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Edit
 * fr-FR *missing*
 * hu-HU: Szerkesztés
-* pl-PL *missing*
+* pl-PL: Edytuj
 
 ### journey.map-data
 
@@ -764,7 +764,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Map Data
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Dane mapy
 
 ### journey.map.download
 
@@ -772,7 +772,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Download
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Pobierz
 
 ### journey.map.upload
 
@@ -780,7 +780,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Upload
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Prześlij
 
 ### journey.map.upload-full
 
@@ -788,7 +788,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Upload full route
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Cała trasa
 
 ### journey.map.upload-partial
 
@@ -796,7 +796,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Upload travelled segment
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Przejechany odcinek
 
 ### journey.map.info.download
 
@@ -804,7 +804,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: JSON format: [[lon, lat, station ID], ...], with lon/lat in WGS84 coordinates. GPX files are compatible with BRouter.
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Format JSON: [[lon, lat, ID], ...] w współrzędnych WGS84. Pliki GPX są kompatybilne z BRouter.
 
 ### journey.map.info.upload
 
@@ -812,7 +812,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: GPX uploads must contain a single track with a single track segment (such as provided by BRouter's export). They must cover either the full route or just the travelled route segment that belongs to this checkin. Please use the appropriate upload button, otherwise chaos may ensue. There is no need to specify station IDs when uploading tracks. Note that uploads irreversibly replace previously stored map data.
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Pliki GPX muszą zawierać jeden element track z jednym segmentem track. Eksport GPX z BRouter spełnia te wymagania. Przesyłane dane muszą zawierać całą trasę środka transportu lub tylko odcinek odpowiadający temu checkinowi. Przy przesyłaniu wybierz odpowiedni przycisk. ID przystanków nie muszą być podane. Uwaga: przesłanie własnych danych mapy bezpowrotnie usuwa wcześniej zapisane dane.
 
 ### journey.danger
 
@@ -820,7 +820,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Danger Zone
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Danger Zone
 
 ### journey.delete
 
@@ -828,7 +828,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Delete
 * fr-FR *missing*
 * hu-HU: Törlés
-* pl-PL *missing*
+* pl-PL: Usuń
 
 ## landingpage.html.ep
 
@@ -862,7 +862,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Look for stops nearby
 * fr-FR *missing*
 * hu-HU: Közeledben lévő megállók keresése
-* pl-PL *missing*
+* pl-PL: Szukaj stacji w pobliżu
 
 ### landingpage.manual-stop-entry
 
@@ -870,7 +870,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Enter stop manually
 * fr-FR *missing*
 * hu-HU: Megálló manuális bevitele
-* pl-PL *missing*
+* pl-PL: Wprowadź ręcznie
 
 ### landingpage.departures
 
@@ -880,7 +880,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Departures
 * fr-FR *missing*
 * hu-HU: Járatok innen
-* pl-PL *missing*
+* pl-PL: Odjazdy
 
 ### landingpage.latest-trips
 
@@ -888,7 +888,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Latest Trips
 * fr-FR *missing*
 * hu-HU: Legutóbbi utazások
-* pl-PL *missing*
+* pl-PL: Ostatnie przejazdy
 
 ### landingpage.date-format
 
@@ -896,7 +896,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: %b %d %Y
 * fr-FR *missing*
 * hu-HU: %Y.%m.%d
-* pl-PL *missing*
+* pl-PL: %d.%m.%Y
 
 ### landingpage.about
 
@@ -928,7 +928,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Features:
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Funkcje:
 
 ### landingpage.features.log
 
@@ -936,7 +936,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Log of scheduled and real-time departure and arrival times at departure and destination stop
 * fr-FR *missing*
 * hu-HU: Menetrend szerinti és valós idejű adatok naplózása. (indulási és célállomásokon)
-* pl-PL *missing*
+* pl-PL: Protokół danych rozkładu jazdy i danych w czasie rzeczywistym na stacji początkowej i końcowej
 
 ### landingpage.features.share
 
@@ -944,7 +944,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Sharing the current check-in and past journeys with others
 * fr-FR *missing*
 * hu-HU: Jelenlegi és korábbi utazások megosztása másokkal
-* pl-PL *missing*
+* pl-PL: Udostępnianie aktualnych i przeszłych przejazdów innym osobom
 
 ### landingpage.features.api-pre
 
@@ -952,7 +952,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Web-Hooks and an
 * fr-FR *missing*
 * hu-HU: Web-Hook-ok és egy
-* pl-PL *missing*
+* pl-PL: Webhooki oraz
 
 ### landingpage.features.api-link
 
@@ -960,7 +960,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: API
 * fr-FR *missing*
 * hu-HU: API
-* pl-PL *missing*
+* pl-PL: API
 
 ### landingpage.features.api-post
 
@@ -968,7 +968,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: for automatic check-ins and passing the current status to other applications
 * fr-FR *missing*
 * hu-HU: az automatikus becsekkeléshez és az aktuális státusz leolvasásához
-* pl-PL *missing*
+* pl-PL: do automatycznego zameldowania się i odczytu aktualnego statusu
 
 ### landingpage.features.stats
 
@@ -976,7 +976,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Stats about journey times and delays
 * fr-FR *missing*
 * hu-HU: Statisztikák az utazások időtartamáról és a késésekről
-* pl-PL *missing*
+* pl-PL: Statystyki dotyczące czasu podróży i opóźnień
 
 ### landingpage.features.passenger-rights
 
@@ -984,7 +984,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Support when dealing with passenger rights forms
 * fr-FR *missing*
 * hu-HU: Támogatás az utasjogi formanyomtatványok kitöltéséhez
-* pl-PL *missing*
+* pl-PL: Wsparcie przy wypełnianiu formularzy praw pasażera
 
 ### landingpage.features.public
 
@@ -992,7 +992,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Optional: public travel status and public data about past journeys
 * fr-FR *missing*
 * hu-HU: Opcionális: utazási státusz és a korábbi utazásokról szóló adatok nyilvánosítása
-* pl-PL *missing*
+* pl-PL: Opcjonalnie: publiczny status podróży i publiczne dane o przeszłych przejazdach
 
 ### landingpage.disclaimer.lead
 
@@ -1166,7 +1166,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Our
 * fr-FR *missing*
 * hu-HU: Az
-* pl-PL *missing*
+* pl-PL:
 
 ### register.privacy
 
@@ -1224,7 +1224,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Choose destination
 * fr-FR *missing*
 * hu-HU: Cél kiválasztása
-* pl-PL *missing*
+* pl-PL: Wybierz cel
 
 ### status.share
 
@@ -1240,7 +1240,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: check out
 * fr-FR *missing*
 * hu-HU: Kicsekkelés
-* pl-PL *missing*
+* pl-PL: Wymelduj się
 
 ### status.boarding-in.pre
 
@@ -1250,7 +1250,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: arrives in
 * fr-FR *missing*
 * hu-HU:  
-* pl-PL *missing*
+* pl-PL: Wjazd za
 
 ### status.boarding-in.post
 
@@ -1260,7 +1260,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  
 * fr-FR *missing*
 * hu-HU: -en belül érkezik
-* pl-PL *missing*
+* pl-PL:  
 
 ### status.boarding-soon
 
@@ -1270,7 +1270,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: now arriving
 * fr-FR *missing*
 * hu-HU: A beszállás hamarosan következik
-* pl-PL *missing*
+* pl-PL: wjeżdża
 
 ### status.departure-in.pre
 
@@ -1280,7 +1280,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: departs in
 * fr-FR *missing*
 * hu-HU:  
-* pl-PL *missing*
+* pl-PL: Odjazd za
 
 ### status.departure-in.post
 
@@ -1290,7 +1290,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  
 * fr-FR *missing*
 * hu-HU: -en belül indul
-* pl-PL *missing*
+* pl-PL:  
 
 ### status.departure-soon
 
@@ -1300,7 +1300,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: now departing
 * fr-FR *missing*
 * hu-HU: Egy percen belül indul
-* pl-PL *missing*
+* pl-PL: odjeżdża
 
 ### status.arrival-in.pre
 
@@ -1310,7 +1310,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: arrives in
 * fr-FR: Arrive dans
 * hu-HU:  
-* pl-PL: Przyjazd za
+* pl-PL: Dojazd za
 
 ### status.arrival-in.post
 
@@ -1330,7 +1330,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: now arriving
 * fr-FR: Arrive dans moins d'une minute
 * hu-HU: Egy percen belül érkezik
-* pl-PL: Przyjazd za mniej niż minutę
+* pl-PL: Dojazd za mniej niż minutę
 
 ### status.arrival-unknown
 
@@ -1338,7 +1338,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Arrival unknown
 * fr-FR: Heure d'arrivée inconnue
 * hu-HU: Érkezési időpont ismeretlen
-* pl-PL: Przyjazd nieznany
+* pl-PL: Czas dojazdu nieznany
 
 ### status.arrived
 
@@ -1346,7 +1346,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: arrived
 * fr-FR: Arrivé
 * hu-HU: Cél elérve
-* pl-PL: U celu
+* pl-PL: Cel osiągnięty
 
 ### status.depart-from.pre
 
@@ -1354,7 +1354,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: from
 * fr-FR *missing*
 * hu-HU:  
-* pl-PL *missing*
+* pl-PL: z
 
 ### status.depart-from.post
 
@@ -1362,7 +1362,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  
 * fr-FR *missing*
 * hu-HU: vágányról indul
-* pl-PL *missing*
+* pl-PL:  
 
 ### status.arrive-on.pre
 
@@ -1370,7 +1370,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: on
 * fr-FR *missing*
 * hu-HU:  
-* pl-PL *missing*
+* pl-PL: na
 
 ### status.arrive-on.post
 
@@ -1378,7 +1378,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  
 * fr-FR *missing*
 * hu-HU: vágányra érkezik
-* pl-PL *missing*
+* pl-PL:  
 
 ### status.delayed-auto-checkout
 
@@ -1386,7 +1386,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: You will be automatically checked out no less than half an hour after the expected arrival time.
 * fr-FR *missing*
 * hu-HU: Körülbelül tíz perccel az érkezés után automatikusan kicsekkolódsz.
-* pl-PL *missing*
+* pl-PL: Automatyczne wymeldowanie nastąpi najpóźniej pół godziny po przyjeździe.
 
 ### status.realtime-unavailable
 
@@ -1394,7 +1394,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Real-time data unavailable
 * fr-FR *missing*
 * hu-HU: Valós idejű adatok nem állnak rendelkezésre
-* pl-PL *missing*
+* pl-PL: Brak danych w czasie rzeczywistym
 
 ### status.messages
 
@@ -1404,7 +1404,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Notifications
 * fr-FR *missing*
 * hu-HU: Jelentések
-* pl-PL *missing*
+* pl-PL: Komunikaty
 
 ### status.map
 
@@ -1412,7 +1412,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Map
 * fr-FR *missing*
 * hu-HU: Térkép
-* pl-PL *missing*
+* pl-PL: Mapa
 
 ### status.change-destination
 
@@ -1420,7 +1420,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Change destination
 * fr-FR *missing*
 * hu-HU: Célváltás?
-* pl-PL *missing*
+* pl-PL: Zmień cel?
 
 ### status.carriages
 
@@ -1446,7 +1446,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Undo
 * fr-FR *missing*
 * hu-HU: Visszavonás
-* pl-PL *missing*
+* pl-PL: Cofnij
 
 ### status.privacy-level
 
@@ -1456,7 +1456,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Privacy
 * fr-FR *missing*
 * hu-HU: Láthatóság
-* pl-PL *missing*
+* pl-PL: Widoczność
 
 ### status.undo-checkin
 
@@ -1466,7 +1466,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Undo check-in
 * fr-FR *missing*
 * hu-HU: Becsekkelés visszavonása
-* pl-PL *missing*
+* pl-PL: Cofnij meldowanie
 
 ### status.force-checkout-lead
 
@@ -1474,7 +1474,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: travelynx will perform an automatic check-out no less than half an hour after arrival. In case of backend or data update issues:
 * fr-FR *missing*
 * hu-HU: Körülbelül tíz perccel az érkezés után automatikusan kicsekkolódsz. Ha a backend leállt, vagy az utazás más okokból elveszlett:
-* pl-PL *missing*
+* pl-PL: Automatyczne wymeldowanie nastąpi najpóźniej pół godziny po przyjeździe. Jeśli backend nie działa lub przejazd został utracony z innych powodów:
 
 ### status.force-checkout
 
@@ -1482,7 +1482,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Force checkout
 * fr-FR *missing*
 * hu-HU: Most kicsekkelni
-* pl-PL *missing*
+* pl-PL: Wymelduj się teraz
 
 ## _history_stats.html.ep
 
@@ -1492,7 +1492,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Trips
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Ilość przejazdów
 
 ### stats.distance
 
@@ -1500,7 +1500,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Distance
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Dystans
 
 ### stats.time
 
@@ -1508,7 +1508,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Travel Time
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Czas przejazdów
 
 ### stats.hours
 
@@ -1516,7 +1516,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: hours
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: godzin
 
 ### stats.per-schedule
 
@@ -1524,7 +1524,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: scheduled
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: zgodnie z rozkładem
 
 ### stats.transfer-time
 
@@ -1532,7 +1532,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Transfer Time
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Czas oczekiwania (przesiadki)
 
 ### stats.total-delay
 
@@ -1540,7 +1540,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Total Delay
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Skumulowane opóźnienie
 
 ### stats.on-dep
 
@@ -1548,7 +1548,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: on departure
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Przy odjeździe
 
 ### stats.on-arr
 
@@ -1556,7 +1556,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: on arrival
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Przy przyjeździe
 
 ## _wagons.html.ep
 
@@ -1607,4 +1607,3 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * fr-FR: Voiture
 * hu-HU: Kocsi
 * pl-PL: Wagon
-
