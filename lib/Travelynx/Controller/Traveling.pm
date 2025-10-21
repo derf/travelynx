@@ -1528,7 +1528,7 @@ sub station {
 				)->wait;
 			}
 			elsif ( $err
-				=~ m{svcRes|connection close|Service Temporarily Unavailable|Forbidden|HTTP 500 Internal Server Error}
+				=~ m{svcRes|connection close|Service Temporarily Unavailable|Forbidden|HTTP 500 Internal Server Error|HTTP 429 Too Many Requests}
 			  )
 			{
 				$self->render(
@@ -2570,6 +2570,7 @@ sub edit_journey {
 	$self->render(
 		'edit_journey',
 		with_autocomplete => 1,
+		backend_id        => $journey->{backend_id},
 		error             => $error,
 		journey           => $journey
 	);

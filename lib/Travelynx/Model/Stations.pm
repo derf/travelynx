@@ -461,11 +461,16 @@ sub get_by_name {
 
 # Slow
 sub get_by_names {
-	my ( $self, @names ) = @_;
+	my ( $self, %opt ) = @_;
 
-	my @ret
-	  = $self->{pg}->db->select( 'stations', '*', { name => { '=', \@names } } )
-	  ->hashes->each;
+	my @ret = $self->{pg}->db->select(
+		'stations',
+		'*',
+		{
+			name   => { '=', $opt{names} },
+			source => $opt{backend_id}
+		}
+	)->hashes->each;
 	return @ret;
 }
 
@@ -506,10 +511,10 @@ sub search {
 
 # Slow
 sub grep_unknown {
-	my ( $self, @stations ) = @_;
+	my ( $self, %opt ) = @_;
 
-	my %station = map { $_->{name} => 1 } $self->get_by_names(@stations);
-	my @unknown_stations = grep { not $station{$_} } @stations;
+	my %station          = map  { $_->{name} => 1 } $self->get_by_names(%opt);
+	my @unknown_stations = grep { not $station{$_} } @{ $opt{names} };
 
 	return @unknown_stations;
 }

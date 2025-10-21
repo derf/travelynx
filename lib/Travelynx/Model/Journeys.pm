@@ -333,16 +333,16 @@ sub update {
 	my $rows;
 
 	my $journey = $self->get_single(
-		uid                 => $uid,
-		db                  => $db,
-		journey_id          => $journey_id,
-		with_datetime       => 1,
-		with_route_datetime => 1,
+		uid           => $uid,
+		db            => $db,
+		journey_id    => $journey_id,
+		with_datetime => 1,
 	);
 
 	eval {
 		if ( exists $opt{from_name} ) {
-			my $from_station = $self->{stations}->search( $opt{from_name} );
+			my $from_station = $self->{stations}
+			  ->search( $opt{from_name}, backend_id => $journey->{backend_id} );
 			if ( not $from_station ) {
 				die("Unbekannter Startbahnhof\n");
 			}
@@ -358,7 +358,8 @@ sub update {
 			)->rows;
 		}
 		if ( exists $opt{to_name} ) {
-			my $to_station = $self->{stations}->search( $opt{to_name} );
+			my $to_station = $self->{stations}
+			  ->search( $opt{to_name}, backend_id => $journey->{backend_id} );
 			if ( not $to_station ) {
 				die("Unbekannter Zielbahnhof\n");
 			}
@@ -431,7 +432,40 @@ sub update {
 			)->rows;
 		}
 		if ( exists $opt{route} ) {
-			my @new_route = map { [ $_, undef, {} ] } @{ $opt{route} };
+
+			# If $opt{route} is a subset of $journey->{route}, we can recycle all data
+			my @new_route;
+			my $new_route_i = 0;
+			for my $old_route_i ( 0 .. $#{ $journey->{route} } ) {
+				if ( $journey->{route}[$old_route_i][0] eq
+					$opt{route}[$new_route_i] )
+				{
+					$new_route_i += 1;
+					push( @new_route, $journey->{route}[$old_route_i] );
+				}
+			}
+
+			# Otherwise, fetch stop IDs so that polylines remain usable
+			if ( @new_route != @{ $opt{route} } ) {
+				my %stop
+				  = map { $_->{name} => $_ } $self->{stations}->get_by_names(
+					backend_id => $journey->{backend_id},
+					names      => [ $opt{route} ]
+				  );
+				@new_route = map {
+					[
+						$_,
+						$stop{$_}{eva},
+						defined $stop{$_}{eva}
+						? {
+							lat => $stop{$_}{lat},
+							lon => $stop{$_}{lon}
+						  }
+						: {}
+					]
+				} @{ $opt{route} };
+			}
+
 			$rows = $db->update(
 				'journeys',
 				{
@@ -1140,6 +1174,8 @@ sub generate_missing_stats {
 
 	my $stats_index = 0;
 
+	my %need_year;
+
 	for my $journey_index ( 0 .. $#journey_months ) {
 		if (    $stats_index < @stats_months
 			and $journey_months[$journey_index][0]
@@ -1151,6 +1187,7 @@ sub generate_missing_stats {
 		}
 		else {
 			my ( $year, $month ) = @{ $journey_months[$journey_index] };
+			$need_year{$year} = 1;
 			$self->get_stats(
 				uid        => $uid,
 				db         => $db,
@@ -1159,6 +1196,14 @@ sub generate_missing_stats {
 				write_only => 1
 			);
 		}
+	}
+	for my $year ( keys %need_year ) {
+		$self->get_stats(
+			uid        => $uid,
+			db         => $db,
+			year       => $year,
+			write_only => 1
+		);
 	}
 }
 
@@ -1250,9 +1295,10 @@ sub sanity_check {
 		  . ' Stimmt das wirklich?';
 	}
 	if ( $journey->{edited} & 0x0010 and not $lax ) {
-		my @unknown_stations
-		  = $self->{stations}
-		  ->grep_unknown( map { $_->[0] } @{ $journey->{route} } );
+		my @unknown_stations = $self->{stations}->grep_unknown(
+			backend_id => $journey->{backend_id},
+			names      => [ map { $_->[0] } @{ $journey->{route} } ]
+		);
 		if (@unknown_stations) {
 			return 'Unbekannte Station(en): ' . join( ', ', @unknown_stations );
 		}
@@ -1366,6 +1412,9 @@ sub get_travel_distance {
 
 	my %seen;
 	for my $stop ( @{$route_ref} ) {
+		if ( not defined $stop->[1] ) {
+			return ( 0, 0, $distance_beeline );
+		}
 		$seen{ $stop->[1] } //= 1;
 		$stop->[2]{n} = $seen{ $stop->[1] };
 		$seen{ $stop->[1] } += 1;

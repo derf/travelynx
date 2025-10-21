@@ -1216,10 +1216,10 @@ DISTRIBUTIONS
       Text::ParseWords 3.24
       strict 0
       warnings 0
-  ExtUtils-InstallPaths-0.014
-    pathname: L/LE/LEONT/ExtUtils-InstallPaths-0.014.tar.gz
+  ExtUtils-InstallPaths-0.015
+    pathname: L/LE/LEONT/ExtUtils-InstallPaths-0.015.tar.gz
     provides:
-      ExtUtils::InstallPaths 0.014
+      ExtUtils::InstallPaths 0.015
     requirements:
       Carp 0
       ExtUtils::Config 0.009
@@ -1652,29 +1652,29 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 6.30
       Locale::Maketext 1.17
-  Log-Report-1.40
-    pathname: M/MA/MARKOV/Log-Report-1.40.tar.gz
+  Log-Report-1.41
+    pathname: M/MA/MARKOV/Log-Report-1.41.tar.gz
     provides:
-      Dancer2::Logger::LogReport 1.40
-      Dancer2::Plugin::LogReport 1.40
-      Dancer2::Plugin::LogReport::Message 1.40
-      Dancer::Logger::LogReport 1.40
-      Log::Report 1.40
-      Log::Report::DBIC::Profiler 1.40
-      Log::Report::Die 1.40
-      Log::Report::Dispatcher 1.40
-      Log::Report::Dispatcher::Callback 1.40
-      Log::Report::Dispatcher::File 1.40
-      Log::Report::Dispatcher::Log4perl 1.40
-      Log::Report::Dispatcher::LogDispatch 1.40
-      Log::Report::Dispatcher::Perl 1.40
-      Log::Report::Dispatcher::Syslog 1.40
-      Log::Report::Dispatcher::Try 1.40
-      Log::Report::Domain 1.40
-      Log::Report::Exception 1.40
-      Log::Report::Message 1.40
-      Log::Report::Translator 1.40
-      MojoX::Log::Report 1.40
+      Dancer2::Logger::LogReport 1.41
+      Dancer2::Plugin::LogReport 1.41
+      Dancer2::Plugin::LogReport::Message 1.41
+      Dancer::Logger::LogReport 1.41
+      Log::Report 1.41
+      Log::Report::DBIC::Profiler 1.41
+      Log::Report::Die 1.41
+      Log::Report::Dispatcher 1.41
+      Log::Report::Dispatcher::Callback 1.41
+      Log::Report::Dispatcher::File 1.41
+      Log::Report::Dispatcher::Log4perl 1.41
+      Log::Report::Dispatcher::LogDispatch 1.41
+      Log::Report::Dispatcher::Perl 1.41
+      Log::Report::Dispatcher::Syslog 1.41
+      Log::Report::Dispatcher::Try 1.41
+      Log::Report::Domain 1.41
+      Log::Report::Exception 1.41
+      Log::Report::Message 1.41
+      Log::Report::Translator 1.41
+      MojoX::Log::Report 1.41
     requirements:
       Devel::GlobalDestruction 0.09
       Encode 2.00
@@ -1684,13 +1684,13 @@ DISTRIBUTIONS
       String::Print 0.91
       Sys::Syslog 0.27
       Test::More 0.86
-  Log-Report-Optional-1.07
-    pathname: M/MA/MARKOV/Log-Report-Optional-1.07.tar.gz
+  Log-Report-Optional-1.08
+    pathname: M/MA/MARKOV/Log-Report-Optional-1.08.tar.gz
     provides:
-      Log::Report::Minimal 1.07
-      Log::Report::Minimal::Domain 1.07
-      Log::Report::Optional 1.07
-      Log::Report::Util 1.07
+      Log::Report::Minimal 1.08
+      Log::Report::Minimal::Domain 1.08
+      Log::Report::Optional 1.08
+      Log::Report::Util 1.08
     requirements:
       ExtUtils::MakeMaker 0
       String::Print 0.91
@@ -1921,10 +1921,10 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       perl 5.006000
-  Mojo-Pg-4.27
-    pathname: S/SR/SRI/Mojo-Pg-4.27.tar.gz
+  Mojo-Pg-4.28
+    pathname: S/SR/SRI/Mojo-Pg-4.28.tar.gz
     provides:
-      Mojo::Pg 4.27
+      Mojo::Pg 4.28
       Mojo::Pg::Database undef
       Mojo::Pg::Migrations undef
       Mojo::Pg::PubSub undef
@@ -1936,8 +1936,8 @@ DISTRIBUTIONS
       Mojolicious 8.50
       SQL::Abstract::Pg 1.0
       perl 5.016
-  Mojolicious-9.41
-    pathname: S/SR/SRI/Mojolicious-9.41.tar.gz
+  Mojolicious-9.42
+    pathname: S/SR/SRI/Mojolicious-9.42.tar.gz
     provides:
       Mojo undef
       Mojo::Asset undef
@@ -2007,7 +2007,7 @@ DISTRIBUTIONS
       Mojo::UserAgent::Transactor undef
       Mojo::Util undef
       Mojo::WebSocket undef
-      Mojolicious 9.41
+      Mojolicious 9.42
       Mojolicious::Command undef
       Mojolicious::Command::Author::cpanify undef
       Mojolicious::Command::Author::generate undef
@@ -2314,51 +2314,51 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       SQL::Abstract 2.0
       perl 5.016
-  Specio-0.52
-    pathname: D/DR/DROLSKY/Specio-0.52.tar.gz
+  Specio-0.53
+    pathname: D/DR/DROLSKY/Specio-0.53.tar.gz
     provides:
-      Specio 0.52
-      Specio::Coercion 0.52
-      Specio::Constraint::AnyCan 0.52
-      Specio::Constraint::AnyDoes 0.52
-      Specio::Constraint::AnyIsa 0.52
-      Specio::Constraint::Enum 0.52
-      Specio::Constraint::Intersection 0.52
-      Specio::Constraint::ObjectCan 0.52
-      Specio::Constraint::ObjectDoes 0.52
-      Specio::Constraint::ObjectIsa 0.52
-      Specio::Constraint::Parameterizable 0.52
-      Specio::Constraint::Parameterized 0.52
-      Specio::Constraint::Role::CanType 0.52
-      Specio::Constraint::Role::DoesType 0.52
-      Specio::Constraint::Role::Interface 0.52
-      Specio::Constraint::Role::IsaType 0.52
-      Specio::Constraint::Simple 0.52
-      Specio::Constraint::Structurable 0.52
-      Specio::Constraint::Structured 0.52
-      Specio::Constraint::Union 0.52
-      Specio::Declare 0.52
-      Specio::DeclaredAt 0.52
-      Specio::Exception 0.52
-      Specio::Exporter 0.52
-      Specio::Helpers 0.52
-      Specio::Library::Builtins 0.52
-      Specio::Library::Numeric 0.52
-      Specio::Library::Perl 0.52
-      Specio::Library::String 0.52
-      Specio::Library::Structured 0.52
-      Specio::Library::Structured::Dict 0.52
-      Specio::Library::Structured::Map 0.52
-      Specio::Library::Structured::Tuple 0.52
-      Specio::OO 0.52
-      Specio::PP 0.52
-      Specio::PartialDump 0.52
-      Specio::Registry 0.52
-      Specio::Role::Inlinable 0.52
-      Specio::Subs 0.52
-      Specio::TypeChecks 0.52
-      Specio::XS 0.52
-      Test::Specio 0.52
+      Specio 0.53
+      Specio::Coercion 0.53
+      Specio::Constraint::AnyCan 0.53
+      Specio::Constraint::AnyDoes 0.53
+      Specio::Constraint::AnyIsa 0.53
+      Specio::Constraint::Enum 0.53
+      Specio::Constraint::Intersection 0.53
+      Specio::Constraint::ObjectCan 0.53
+      Specio::Constraint::ObjectDoes 0.53
+      Specio::Constraint::ObjectIsa 0.53
+      Specio::Constraint::Parameterizable 0.53
+      Specio::Constraint::Parameterized 0.53
+      Specio::Constraint::Role::CanType 0.53
+      Specio::Constraint::Role::DoesType 0.53
+      Specio::Constraint::Role::Interface 0.53
+      Specio::Constraint::Role::IsaType 0.53
+      Specio::Constraint::Simple 0.53
+      Specio::Constraint::Structurable 0.53
+      Specio::Constraint::Structured 0.53
+      Specio::Constraint::Union 0.53
+      Specio::Declare 0.53
+      Specio::DeclaredAt 0.53
+      Specio::Exception 0.53
+      Specio::Exporter 0.53
+      Specio::Helpers 0.53
+      Specio::Library::Builtins 0.53
+      Specio::Library::Numeric 0.53
+      Specio::Library::Perl 0.53
+      Specio::Library::String 0.53
+      Specio::Library::Structured 0.53
+      Specio::Library::Structured::Dict 0.53
+      Specio::Library::Structured::Map 0.53
+      Specio::Library::Structured::Tuple 0.53
+      Specio::OO 0.53
+      Specio::PP 0.53
+      Specio::PartialDump 0.53
+      Specio::Registry 0.53
+      Specio::Role::Inlinable 0.53
+      Specio::Subs 0.53
+      Specio::TypeChecks 0.53
+      Specio::XS 0.53
+      Test::Specio 0.53
     requirements:
       B 0
       Carp 0
@@ -2388,10 +2388,10 @@ DISTRIBUTIONS
       strict 0
       version 0.83
       warnings 0
-  String-Print-0.94
-    pathname: M/MA/MARKOV/String-Print-0.94.tar.gz
+  String-Print-0.96
+    pathname: M/MA/MARKOV/String-Print-0.96.tar.gz
     provides:
-      String::Print 0.94
+      String::Print 0.96
     requirements:
       Date::Parse 2.3
       Encode 0
@@ -2719,17 +2719,17 @@ DISTRIBUTIONS
       TimeDate 1.21
     requirements:
       ExtUtils::MakeMaker 0
-  Travel-Status-DE-DBRIS-0.13
-    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.13.tar.gz
+  Travel-Status-DE-DBRIS-0.14
+    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.14.tar.gz
     provides:
-      Travel::Status::DE::DBRIS 0.13
-      Travel::Status::DE::DBRIS::Formation 0.13
-      Travel::Status::DE::DBRIS::Formation::Carriage 0.13
-      Travel::Status::DE::DBRIS::Formation::Group 0.13
-      Travel::Status::DE::DBRIS::Formation::Sector 0.13
-      Travel::Status::DE::DBRIS::Journey 0.13
-      Travel::Status::DE::DBRIS::JourneyAtStop 0.13
-      Travel::Status::DE::DBRIS::Location 0.13
+      Travel::Status::DE::DBRIS 0.14
+      Travel::Status::DE::DBRIS::Formation 0.14
+      Travel::Status::DE::DBRIS::Formation::Carriage 0.14
+      Travel::Status::DE::DBRIS::Formation::Group 0.14
+      Travel::Status::DE::DBRIS::Formation::Sector 0.14
+      Travel::Status::DE::DBRIS::Journey 0.14
+      Travel::Status::DE::DBRIS::JourneyAtStop 0.14
+      Travel::Status::DE::DBRIS::Location 0.14
     requirements:
       Carp 0
       Class::Accessor 0.16
@@ -2774,12 +2774,12 @@ DISTRIBUTIONS
       Test::More 0
       Test::Pod 0
       perl v5.14.0
-  Travel-Status-DE-IRIS-1.98
-    pathname: D/DE/DERF/Travel-Status-DE-IRIS-1.98.tar.gz
+  Travel-Status-DE-IRIS-2.00
+    pathname: D/DE/DERF/Travel-Status-DE-IRIS-2.00.tar.gz
     provides:
-      Travel::Status::DE::IRIS 1.98
-      Travel::Status::DE::IRIS::Result 1.98
-      Travel::Status::DE::IRIS::Stations 1.98
+      Travel::Status::DE::IRIS 2.00
+      Travel::Status::DE::IRIS::Result 2.00
+      Travel::Status::DE::IRIS::Stations 2.00
     requirements:
       Carp 0
       Class::Accessor 0
@@ -2806,17 +2806,17 @@ DISTRIBUTIONS
       Text::LevenshteinXS 0
       XML::LibXML 0
       perl v5.14.2
-  Travel-Status-DE-VRR-3.15
-    pathname: D/DE/DERF/Travel-Status-DE-VRR-3.15.tar.gz
+  Travel-Status-DE-VRR-3.17
+    pathname: D/DE/DERF/Travel-Status-DE-VRR-3.17.tar.gz
     provides:
-      Travel::Status::DE::EFA 3.15
-      Travel::Status::DE::EFA::Departure 3.15
-      Travel::Status::DE::EFA::Info 3.15
-      Travel::Status::DE::EFA::Line 3.15
-      Travel::Status::DE::EFA::Services 3.15
-      Travel::Status::DE::EFA::Stop 3.15
-      Travel::Status::DE::EFA::Trip 3.15
-      Travel::Status::DE::VRR 3.15
+      Travel::Status::DE::EFA 3.17
+      Travel::Status::DE::EFA::Departure 3.17
+      Travel::Status::DE::EFA::Info 3.17
+      Travel::Status::DE::EFA::Line 3.17
+      Travel::Status::DE::EFA::Services 3.17
+      Travel::Status::DE::EFA::Stop 3.17
+      Travel::Status::DE::EFA::Trip 3.17
+      Travel::Status::DE::VRR 3.17
     requirements:
       Carp 0
       Class::Accessor 0
@@ -2830,6 +2830,7 @@ DISTRIBUTIONS
       List::Util 0
       Module::Build 0.4
       Test::More 0
+      URI::Escape 0
       perl v5.10.1
   Travel-Status-MOTIS-0.03
     pathname: D/DE/DERF/Travel-Status-MOTIS-0.03.tar.gz
@@ -2879,63 +2880,66 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       common::sense 0
-  URI-5.32
-    pathname: O/OA/OALDERS/URI-5.32.tar.gz
+  URI-5.34
+    pathname: O/OA/OALDERS/URI-5.34.tar.gz
     provides:
-      URI 5.32
-      URI::Escape 5.32
-      URI::Heuristic 5.32
-      URI::IRI 5.32
-      URI::QueryParam 5.32
-      URI::Split 5.32
-      URI::URL 5.32
-      URI::WithBase 5.32
-      URI::data 5.32
-      URI::file 5.32
-      URI::file::Base 5.32
-      URI::file::FAT 5.32
-      URI::file::Mac 5.32
-      URI::file::OS2 5.32
-      URI::file::QNX 5.32
-      URI::file::Unix 5.32
-      URI::file::Win32 5.32
-      URI::ftp 5.32
-      URI::ftpes 5.32
-      URI::ftps 5.32
-      URI::geo 5.32
-      URI::gopher 5.32
-      URI::http 5.32
-      URI::https 5.32
-      URI::icap 5.32
-      URI::icaps 5.32
-      URI::irc 5.32
-      URI::ircs 5.32
-      URI::ldap 5.32
-      URI::ldapi 5.32
-      URI::ldaps 5.32
-      URI::mailto 5.32
-      URI::mms 5.32
-      URI::news 5.32
-      URI::nntp 5.32
-      URI::nntps 5.32
-      URI::otpauth 5.32
-      URI::pop 5.32
-      URI::rlogin 5.32
-      URI::rsync 5.32
-      URI::rtsp 5.32
-      URI::rtspu 5.32
-      URI::scp 5.32
-      URI::sftp 5.32
-      URI::sip 5.32
-      URI::sips 5.32
-      URI::smb 5.32
-      URI::snews 5.32
-      URI::ssh 5.32
-      URI::telnet 5.32
-      URI::tn3270 5.32
-      URI::urn 5.32
-      URI::urn::isbn 5.32
-      URI::urn::oid 5.32
+      URI 5.34
+      URI::Escape 5.34
+      URI::Heuristic 5.34
+      URI::IRI 5.34
+      URI::QueryParam 5.34
+      URI::Split 5.34
+      URI::URL 5.34
+      URI::WithBase 5.34
+      URI::data 5.34
+      URI::file 5.34
+      URI::file::Base 5.34
+      URI::file::FAT 5.34
+      URI::file::Mac 5.34
+      URI::file::OS2 5.34
+      URI::file::QNX 5.34
+      URI::file::Unix 5.34
+      URI::file::Win32 5.34
+      URI::ftp 5.34
+      URI::ftpes 5.34
+      URI::ftps 5.34
+      URI::geo 5.34
+      URI::gopher 5.34
+      URI::http 5.34
+      URI::https 5.34
+      URI::icap 5.34
+      URI::icaps 5.34
+      URI::irc 5.34
+      URI::ircs 5.34
+      URI::ldap 5.34
+      URI::ldapi 5.34
+      URI::ldaps 5.34
+      URI::mailto 5.34
+      URI::mms 5.34
+      URI::news 5.34
+      URI::nntp 5.34
+      URI::nntps 5.34
+      URI::otpauth 5.34
+      URI::pop 5.34
+      URI::rlogin 5.34
+      URI::rsync 5.34
+      URI::rtsp 5.34
+      URI::rtspu 5.34
+      URI::scp 5.34
+      URI::sftp 5.34
+      URI::sip 5.34
+      URI::sips 5.34
+      URI::smb 5.34
+      URI::smtp 5.34
+      URI::snews 5.34
+      URI::ssh 5.34
+      URI::telnet 5.34
+      URI::tn3270 5.34
+      URI::urn 5.34
+      URI::urn::isbn 5.34
+      URI::urn::oid 5.34
+      URI::ws 5.34
+      URI::wss 5.34
     requirements:
       Carp 0
       Cwd 0
@@ -3159,32 +3163,32 @@ DISTRIBUTIONS
       XSLoader 0
       lib 0
       perl 5.008001
-  libwww-perl-6.79
-    pathname: O/OA/OALDERS/libwww-perl-6.79.tar.gz
+  libwww-perl-6.80
+    pathname: O/OA/OALDERS/libwww-perl-6.80.tar.gz
     provides:
-      LWP 6.79
-      LWP::Authen::Basic 6.79
-      LWP::Authen::Digest 6.79
-      LWP::Authen::Ntlm 6.79
-      LWP::ConnCache 6.79
-      LWP::Debug 6.79
-      LWP::Debug::TraceHTTP 6.79
-      LWP::DebugFile 6.79
-      LWP::MemberMixin 6.79
-      LWP::Protocol 6.79
-      LWP::Protocol::cpan 6.79
-      LWP::Protocol::data 6.79
-      LWP::Protocol::file 6.79
-      LWP::Protocol::ftp 6.79
-      LWP::Protocol::gopher 6.79
-      LWP::Protocol::http 6.79
-      LWP::Protocol::loopback 6.79
-      LWP::Protocol::mailto 6.79
-      LWP::Protocol::nntp 6.79
-      LWP::Protocol::nogo 6.79
-      LWP::RobotUA 6.79
-      LWP::Simple 6.79
-      LWP::UserAgent 6.79
+      LWP 6.80
+      LWP::Authen::Basic 6.80
+      LWP::Authen::Digest 6.80
+      LWP::Authen::Ntlm 6.80
+      LWP::ConnCache 6.80
+      LWP::Debug 6.80
+      LWP::Debug::TraceHTTP 6.80
+      LWP::DebugFile 6.80
+      LWP::MemberMixin 6.80
+      LWP::Protocol 6.80
+      LWP::Protocol::cpan 6.80
+      LWP::Protocol::data 6.80
+      LWP::Protocol::file 6.80
+      LWP::Protocol::ftp 6.80
+      LWP::Protocol::gopher 6.80
+      LWP::Protocol::http 6.80
+      LWP::Protocol::loopback 6.80
+      LWP::Protocol::mailto 6.80
+      LWP::Protocol::nntp 6.80
+      LWP::Protocol::nogo 6.80
+      LWP::RobotUA 6.80
+      LWP::Simple 6.80
+      LWP::UserAgent 6.80
     requirements:
       Digest::MD5 0
       Encode 2.12

@@ -76,7 +76,8 @@ sub run {
 
 		my %notified;
 		my $rename = $self->app->renamed_station;
-		my $res    = $db->select( 'journeys', [ 'route', 'edited' ] )->expand;
+		my $res = $db->select( 'journeys', [ 'backend_id', 'route', 'edited' ] )
+		  ->expand;
 
 		while ( my $j = $res->hash ) {
 			if ( $j->{edited} & 0x0010 ) {
@@ -89,8 +90,10 @@ sub run {
 					$stop->[0] = $rename->{ $stop->[0] };
 				}
 			}
-			my @unknown
-			  = $self->app->stations->grep_unknown( map { $_->[0] } @stops );
+			my @unknown = $self->app->stations->grep_unknown(
+				backend_id => $j->{backend_id},
+				names      => [ map { $_->[0] } @stops ]
+			);
 			for my $stop_name (@unknown) {
 				if ( not $notified{$stop_name} ) {
 					if ( not $found ) {

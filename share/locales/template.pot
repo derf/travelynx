@@ -152,7 +152,7 @@ msgstr ""
 msgid "account.webhook.disabled"
 msgstr ""
 
-msgid "account.webhook.active-ppending"
+msgid "account.webhook.active-pending"
 msgstr ""
 
 msgid "account.webhook.active-error"
@@ -188,6 +188,24 @@ msgstr ""
 msgid "account.interaction.disabled"
 msgstr ""
 
+msgid "account.profile"
+msgstr ""
+
+msgid "account.interaction.requests"
+msgstr ""
+
+msgid "account.interaction.requests.incoming.none"
+msgstr ""
+
+msgid "account.interaction.requests.incoming.some"
+msgstr ""
+
+msgid "account.interaction.requests.outgoing.none"
+msgstr ""
+
+msgid "account.interaction.requests.outgoing.some"
+msgstr ""
+
 # changelog.html.ep
 
 msgid "changelog.added"
@@ -200,6 +218,9 @@ msgid "changelog.2-16.1"
 msgstr ""
 
 msgid "changelog.2-16.2"
+msgstr ""
+
+msgid "changelog.2-17.1"
 msgstr ""
 
 # journey.html.ep
@@ -268,6 +289,30 @@ msgid "journey.export"
 msgstr ""
 
 msgid "journey.edit"
+msgstr ""
+
+msgid "journey.map-data"
+msgstr ""
+
+msgid "journey.map.download"
+msgstr ""
+
+msgid "journey.map.upload"
+msgstr ""
+
+msgid "journey.map.upload-full"
+msgstr ""
+
+msgid "journey.map.upload-partial"
+msgstr ""
+
+msgid "journey.map.info.download"
+msgstr ""
+
+msgid "journey.map.info.upload"
+msgstr ""
+
+msgid "journey.danger"
 msgstr ""
 
 msgid "journey.delete"
@@ -526,6 +571,35 @@ msgid "status.force-checkout-lead"
 msgstr ""
 
 msgid "status.force-checkout"
+msgstr ""
+
+# _history_stats.html.ep
+
+msgid "stats.trips"
+msgstr ""
+
+msgid "stats.distance"
+msgstr ""
+
+msgid "stats.time"
+msgstr ""
+
+msgid "stats.hours"
+msgstr ""
+
+msgid "stats.per-schedule"
+msgstr ""
+
+msgid "stats.transfer-time"
+msgstr ""
+
+msgid "stats.total-delay"
+msgstr ""
+
+msgid "stats.on-dep"
+msgstr ""
+
+msgid "stats.on-arr"
 msgstr ""
 
 # _wagons.html.ep

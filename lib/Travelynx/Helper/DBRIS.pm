@@ -31,6 +31,23 @@ sub new {
 
 sub get_station_id_p {
 	my ( $self, $station_name ) = @_;
+
+	my $agent = $self->{user_agent};
+	my $proxy;
+	if ( my @proxies = @{ $self->{service_config}{'bahn.de'}{proxies} // [] } )
+	{
+		$proxy = $proxies[ int( rand( scalar @proxies ) ) ];
+	}
+	elsif ( my $p = $self->{service_config}{'bahn.de'}{proxy} ) {
+		$proxy = $p;
+	}
+
+	if ($proxy) {
+		$agent = Mojo::UserAgent->new;
+		$agent->proxy->http($proxy);
+		$agent->proxy->https($proxy);
+	}
+
 	my $promise = Mojo::Promise->new;
 	Travel::Status::DE::DBRIS->new_p(
 		locationSearch => $station_name,
@@ -40,7 +57,7 @@ sub get_station_id_p {
 			agent   => $self->{header}{'User-Agent'},
 		},
 		promise    => 'Mojo::Promise',
-		user_agent => Mojo::UserAgent->new,
+		user_agent => $agent,
 	)->then(
 		sub {
 			my ($dbris) = @_;
@@ -68,6 +85,20 @@ sub get_departures_p {
 	my ( $self, %opt ) = @_;
 
 	my $agent = $self->{user_agent};
+	my $proxy;
+	if ( my @proxies = @{ $self->{service_config}{'bahn.de'}{proxies} // [] } )
+	{
+		$proxy = $proxies[ int( rand( scalar @proxies ) ) ];
+	}
+	elsif ( my $p = $self->{service_config}{'bahn.de'}{proxy} ) {
+		$proxy = $p;
+	}
+
+	if ($proxy) {
+		$agent = Mojo::UserAgent->new;
+		$agent->proxy->http($proxy);
+		$agent->proxy->https($proxy);
+	}
 
 	if ( $opt{station} =~ m{ [@] L = (?<eva> \d+ ) }x ) {
 		$opt{station} = {

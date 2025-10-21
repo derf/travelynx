@@ -55,7 +55,7 @@
 					%= end
 				</div>
 			% }
-			<table class="striped">
+			<table class="striped journey">
 				<tr>
 					<th scope="row"><%= L('journey.trip') %></th>
 					<td>
@@ -253,7 +253,7 @@
 				% }
 				<tr>
 					<th scope="row"><%= L('journey.route') %></th>
-					<td>
+					<td class="route">
 						% my $before = 1;
 						% my $within = 0;
 						% my $at_startstop = 0;
@@ -281,6 +281,12 @@
 							% }
 							% else {
 								<span style="color: #808080;"><%= $station->[0] %></span>
+							% }
+							% if ($station->[2]{isAdditional}) {
+								<span style="color: #808080;">⊕</span>
+							% }
+							% elsif ($station->[2]{isCancelled}) {
+								<span style="color: #808080;">∅</span>
 							% }
 							% if ($journey->{edited} & 0x0010) {
 								∗

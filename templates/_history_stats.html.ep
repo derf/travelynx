@@ -2,22 +2,23 @@
 	<div class="col s12">
 		<table class="striped">
 			<tr>
-				<th scope="row">Fahrten</th>
+				<th scope="row"><%= L('stats.trips') %></th>
 				<td><%= $stats->{num_trains} %></td>
 			</tr>
 			<tr>
-				<th scope="row">Entfernung</th>
-				<td>ca. <%= sprintf('%.f', $stats->{km_route}) %> km
-					(Luftlinie: <%= sprintf('%.f', $stats->{km_beeline}) %> km)</td>
+				<th scope="row"><%= L('stats.distance') %></th>
+				<td>≈ <%= sprintf('%.f', $stats->{km_route}) %> km
+					<%= L('journey.beeline.pre') %><%= sprintf('%.f', $stats->{km_beeline}) %> km<%= L('journey.beeline.post') %></td>
 			</tr>
 			<tr>
-				<th scope="row">Fahrtzeit</th>
-				<td><%= $stats->{min_travel_real_strf} %> Stunden
-					(nach Fahrplan: <%= $stats->{min_travel_sched_strf} %>)</td>
+				<th scope="row"><%= L('stats.time') %></th>
+				<td><%= $stats->{min_travel_real_strf} %> <%= L('stats.hours') %>
+					(<%= L('stats.per-schedule') %>: <%= $stats->{min_travel_sched_strf} %>)</td>
 			</tr>
 			<tr>
-				<th scope="row">Wartezeit (nur Umstiege)</th>
-				<td><%= $stats->{min_interchange_real_strf} %> Stunden
+				<th scope="row"><%= L('stats.transfer-time') %></th>
+				<td><%= $stats->{min_interchange_real_strf} %> <%= L('stats.hours') %>
+				<!--
 					% if (@{$stats->{inconsistencies}}) {
 						<br/><br/>Für Wartezeitberechnung nicht berücksichtigte Fahrten:<br/>
 						% for my $field (@{$stats->{inconsistencies}}) {
@@ -25,12 +26,13 @@
 								(Konflikt: <a href="/journey/<%= $field->{conflict}{id} %>"><%= $field->{conflict}{train} %> an <%= $field->{conflict}{arr} %></a>)<br/>
 						% }
 					% }
+				-->
 				</td>
 			</tr>
 			<tr>
-				<th scope="row">Kumulierte Verspätung</th>
-				<td>Bei Abfahrt: <%= $stats->{delay_dep_strf} %> Stunden<br/>
-					Bei Ankunft: <%= $stats->{delay_arr_strf} %> Stunden</td>
+				<th scope="row"><%= L('stats.total-delay') %></th>
+				<td><%= L('stats.on-dep') %>: <%= $stats->{delay_dep_strf} %> <%= L('stats.hours') %><br/>
+					<%= L('stats.on-arr') %>: <%= $stats->{delay_arr_strf} %> <%= L('stats.hours') %></td>
 			</tr>
 		</table>
 	</div>

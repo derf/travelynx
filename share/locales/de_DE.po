@@ -188,6 +188,24 @@ msgstr "offene Anfragen"
 msgid "account.interaction.disabled"
 msgstr "Accounts können dir nicht folgen"
 
+msgid "account.profile"
+msgstr "Öffentliches Profil"
+
+msgid "account.interaction.requests"
+msgstr "Offene anfragen"
+
+msgid "account.interaction.requests.incoming.none"
+msgstr "keine eingehend"
+
+msgid "account.interaction.requests.incoming.some"
+msgstr "eingehend"
+
+msgid "account.interaction.requests.outgoing.none"
+msgstr "keine ausgehend"
+
+msgid "account.interaction.requests.outgoing.some"
+msgstr "ausgehend"
+
 # changelog.html.ep
 
 msgid "changelog.added"
@@ -516,7 +534,7 @@ msgid "status.arrive-on.post"
 msgstr " "
 
 msgid "status.delayed-auto-checkout"
-msgstr "Der automatische Checkout erfolgt etwa zehn Minuten nach der Ankunft."
+msgstr "Der automatische Checkout erfolgt spätestens eine halbe Stunde nach der Ankunft."
 
 msgid "status.realtime-unavailable"
 msgstr "Keine Echtzeitdaten vorhanden"
@@ -550,10 +568,39 @@ msgid "status.undo-checkin"
 msgstr "Checkin rückgängig"
 
 msgid "status.force-checkout-lead"
-msgstr "Etwa zehn Minuten nach der Ankunft erfolgt ein automatischer Checkout. Falls das Backend ausgefallen ist oder die Fahrt aus anderen Gründen verloren ging:"
+msgstr "Maximal eine halbe Stunde nach der Ankunft erfolgt ein automatischer Checkout. Falls das Backend ausgefallen ist oder die Fahrt aus anderen Gründen verloren ging:"
 
 msgid "status.force-checkout"
 msgstr "Jetzt auschecken"
+
+# _history_stats.html.ep
+
+msgid "stats.trips"
+msgstr "Fahrten"
+
+msgid "stats.distance"
+msgstr "Entfernung"
+
+msgid "stats.time"
+msgstr "Fahrtzeit"
+
+msgid "stats.hours"
+msgstr "Stunden"
+
+msgid "stats.per-schedule"
+msgstr "nach Fahrplan"
+
+msgid "stats.transfer-time"
+msgstr "Wartezeit (Umstiege)"
+
+msgid "stats.total-delay"
+msgstr "Kumulierte Verspätung"
+
+msgid "stats.on-dep"
+msgstr "Bei Abfahrt"
+
+msgid "stats.on-arr"
+msgstr "Bei Ankunft"
 
 # _wagons.html.ep
 

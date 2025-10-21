@@ -1229,7 +1229,7 @@ sub startup {
 					# mustn't be called during a transaction
 					if ( not $opt{in_transaction} ) {
 						$self->run_hook( $uid, 'checkin' );
-						if ( $opt{hafas} eq 'DB' and $journey->class <= 16 ) {
+						if ( $opt{hafas} eq 'ÖBB' and $journey->class <= 16 ) {
 							$self->add_wagonorder(
 								uid          => $uid,
 								train_id     => $journey->id,
@@ -1516,7 +1516,9 @@ sub startup {
 							if ($has_arrived) {
 								my @unknown_stations
 								  = $self->stations->grep_unknown(
-									$train->route );
+									backend_id => $user->{backend_id},
+									names      => [ $train->route ]
+								  );
 								if (@unknown_stations) {
 									$self->app->log->warn(
 										sprintf(

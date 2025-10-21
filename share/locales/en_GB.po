@@ -188,6 +188,24 @@ msgstr "open requests"
 msgid "account.interaction.disabled"
 msgstr "Accounts cannot follow you"
 
+msgid "account.profile"
+msgstr "Public profile page"
+
+msgid "account.interaction.requests"
+msgstr "Pending requests"
+
+msgid "account.interaction.requests.incoming.none"
+msgstr "none incoming"
+
+msgid "account.interaction.requests.incoming.some"
+msgstr "incoming"
+
+msgid "account.interaction.requests.outgoing.none"
+msgstr "none outgoing"
+
+msgid "account.interaction.requests.outgoing.some"
+msgstr "outgoing"
+
 # changelog.html.ep
 
 msgid "changelog.added"
@@ -516,7 +534,7 @@ msgid "status.arrive-on.post"
 msgstr " "
 
 msgid "status.delayed-auto-checkout"
-msgstr "You will be automatically checked out about ten minutes after the expected arrival time."
+msgstr "You will be automatically checked out no less than half an hour after the expected arrival time."
 
 msgid "status.realtime-unavailable"
 msgstr "Real-time data unavailable"
@@ -550,10 +568,39 @@ msgid "status.undo-checkin"
 msgstr "Undo check-in"
 
 msgid "status.force-checkout-lead"
-msgstr "travelynx will perform an automatic check-out about ten minutes after arrival. In case of backend or data update issues:"
+msgstr "travelynx will perform an automatic check-out no less than half an hour after arrival. In case of backend or data update issues:"
 
 msgid "status.force-checkout"
 msgstr "Force checkout"
+
+# _history_stats.html.ep
+
+msgid "stats.trips"
+msgstr "Trips"
+
+msgid "stats.distance"
+msgstr "Distance"
+
+msgid "stats.time"
+msgstr "Travel Time"
+
+msgid "stats.hours"
+msgstr "hours"
+
+msgid "stats.per-schedule"
+msgstr "scheduled"
+
+msgid "stats.total-delay"
+msgstr "Total Delay"
+
+msgid "stats.transfer-time"
+msgstr "Transfer Time"
+
+msgid "stats.on-dep"
+msgstr "on departure"
+
+msgid "stats.on-arr"
+msgstr "on arrival"
 
 # _wagons.html.ep
 
