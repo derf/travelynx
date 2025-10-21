@@ -42,6 +42,9 @@ msgstr "sombre"
 msgid "footer.colour-scheme.auto"
 msgstr "auto"
 
+msgid "header.error"
+msgstr "erreur"
+
 #
 # Templates
 #

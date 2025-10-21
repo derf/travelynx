@@ -128,9 +128,9 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Fehler
 * en-GB: Error
-* fr-FR *missing*
+* fr-FR Erreur
 * hu-HU: Hiba
-* pl-PL *missing*
+* pl-PL Błąd
 
 ## Templates
 
