@@ -10,6 +10,7 @@ use 5.020;
 
 use Encode qw(decode);
 use Mojo::Promise;
+use Mojo::UserAgent;
 use JSON;
 
 sub new {
