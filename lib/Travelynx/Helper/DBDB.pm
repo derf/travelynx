@@ -61,9 +61,23 @@ sub has_wagonorder_p {
 		}
 	}
 
-	$self->{user_agent}->request_timeout(5)
-	  ->get_p( $url => $self->{header} )
-	  ->then(
+	my $agent = $self->{user_agent};
+	my $proxy;
+	if ( my @proxies = @{ $self->{service_config}{'bahn.de'}{proxies} // [] } )
+	{
+		$proxy = $proxies[ int( rand( scalar @proxies ) ) ];
+	}
+	elsif ( my $p = $self->{service_config}{'bahn.de'}{proxy} ) {
+		$proxy = $p;
+	}
+
+	if ($proxy) {
+		$agent = Mojo::UserAgent->new;
+		$agent->proxy->http($proxy);
+		$agent->proxy->https($proxy);
+	}
+
+	$agent->request_timeout(5)->get_p( $url => $self->{header} )->then(
 		sub {
 			my ($tx) = @_;
 			if ( $tx->result->is_success ) {
@@ -82,7 +96,7 @@ sub has_wagonorder_p {
 			}
 			return;
 		}
-	  )->catch(
+	)->catch(
 		sub {
 			my ($err) = @_;
 			$self->{log}->debug("${debug_prefix}: n ($err)");
@@ -90,7 +104,7 @@ sub has_wagonorder_p {
 			$promise->reject;
 			return;
 		}
-	  )->wait;
+	)->wait;
 	return $promise;
 }
 
@@ -121,9 +135,23 @@ sub get_wagonorder_p {
 		return $promise;
 	}
 
-	$self->{user_agent}->request_timeout(5)
-	  ->get_p( $url => $self->{header} )
-	  ->then(
+	my $agent = $self->{user_agent};
+	my $proxy;
+	if ( my @proxies = @{ $self->{service_config}{'bahn.de'}{proxies} // [] } )
+	{
+		$proxy = $proxies[ int( rand( scalar @proxies ) ) ];
+	}
+	elsif ( my $p = $self->{service_config}{'bahn.de'}{proxy} ) {
+		$proxy = $p;
+	}
+
+	if ($proxy) {
+		$agent = Mojo::UserAgent->new;
+		$agent->proxy->http($proxy);
+		$agent->proxy->https($proxy);
+	}
+
+	$agent->request_timeout(5)->get_p( $url => $self->{header} )->then(
 		sub {
 			my ($tx) = @_;
 
@@ -141,14 +169,14 @@ sub get_wagonorder_p {
 			}
 			return;
 		}
-	  )->catch(
+	)->catch(
 		sub {
 			my ($err) = @_;
 			$self->{log}->debug("${debug_prefix}: error ${err}");
 			$promise->reject($err);
 			return;
 		}
-	  )->wait;
+	)->wait;
 	return $promise;
 }
 
