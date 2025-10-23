@@ -63,11 +63,10 @@ sub has_wagonorder_p {
 
 	my $agent = $self->{user_agent};
 	my $proxy;
-	if ( my @proxies = @{ $self->{service_config}{'bahn.de'}{proxies} // [] } )
-	{
+	if ( my @proxies = @{ $self->{dbris_config}{'bahn.de'}{proxies} // [] } ) {
 		$proxy = $proxies[ int( rand( scalar @proxies ) ) ];
 	}
-	elsif ( my $p = $self->{service_config}{'bahn.de'}{proxy} ) {
+	elsif ( my $p = $self->{dbris_config}{'bahn.de'}{proxy} ) {
 		$proxy = $p;
 	}
 
@@ -137,11 +136,10 @@ sub get_wagonorder_p {
 
 	my $agent = $self->{user_agent};
 	my $proxy;
-	if ( my @proxies = @{ $self->{service_config}{'bahn.de'}{proxies} // [] } )
-	{
+	if ( my @proxies = @{ $self->{dbris_config}{'bahn.de'}{proxies} // [] } ) {
 		$proxy = $proxies[ int( rand( scalar @proxies ) ) ];
 	}
-	elsif ( my $p = $self->{service_config}{'bahn.de'}{proxy} ) {
+	elsif ( my $p = $self->{dbris_config}{'bahn.de'}{proxy} ) {
 		$proxy = $p;
 	}
 

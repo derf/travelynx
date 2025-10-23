@@ -413,6 +413,7 @@ sub startup {
 			my ($self) = @_;
 			state $dbdb = Travelynx::Helper::DBDB->new(
 				log            => $self->app->log,
+				dbris_config   => $self->app->config->{dbris},
 				main_cache     => $self->app->cache_iris_main,
 				realtime_cache => $self->app->cache_iris_rt,
 				root_url       => $self->base_url_for('/')->to_abs,
