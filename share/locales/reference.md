@@ -2,9 +2,9 @@
 
 * de-DE: 100.0% complete (0 missing)
 * en-GB: 100.0% complete (0 missing)
-* fr-FR: 30.9% complete (130 missing)
+* fr-FR: 30.9% complete (129 missing)
 * hu-HU: 86.7% complete (25 missing)
-* pl-PL: 39.4% complete (114 missing)
+* pl-PL: 100.0% complete (0 missing)
 
 ### 
 
