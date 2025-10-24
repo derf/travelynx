@@ -630,7 +630,10 @@ sub geolocation {
 						error      => $err,
 					},
 
-					#status => 502,
+					# The frontend JavaScript does not have an XHR error handler yet
+					# (and if it did, I do not know whether it would have access to our JSON body).
+					# So, for now, we do the bad thing™ and return HTTP 200 even though the request to the backend was not successful.
+					# status => 502,
 				);
 			}
 		)->wait;
@@ -676,7 +679,8 @@ sub geolocation {
 						error      => $err,
 					},
 
-					#status => 502
+					# See above
+					# status => 502
 				);
 			}
 		)->wait;
@@ -729,6 +733,7 @@ sub geolocation {
 						error      => $err,
 					},
 
+					# See above
 					#status => 502
 				);
 			}
@@ -780,6 +785,7 @@ sub geolocation {
 						error      => $err,
 					},
 
+					# See above
 					#status => 502
 				);
 			}
