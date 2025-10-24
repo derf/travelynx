@@ -29,8 +29,9 @@ sub new {
 	return bless( \%opt, $class );
 }
 
-sub geosearch_p {
-	my ( $self, %opt ) = @_;
+sub get_agent {
+	my ($self) = @_;
+
 	my $agent = $self->{user_agent};
 	my $proxy;
 	if ( my @proxies = @{ $self->{service_config}{'bahn.de'}{proxies} // [] } )
@@ -47,9 +48,15 @@ sub geosearch_p {
 		$agent->proxy->https($proxy);
 	}
 
+	return $agent;
+}
+
+sub geosearch_p {
+	my ( $self, %opt ) = @_;
+
 	return Travel::Status::DE::DBRIS->new_p(
 		promise    => 'Mojo::Promise',
-		user_agent => $agent,
+		user_agent => $self->get_agent,
 		geoSearch  => \%opt,
 	);
 }
@@ -57,23 +64,8 @@ sub geosearch_p {
 sub get_station_id_p {
 	my ( $self, $station_name ) = @_;
 
-	my $agent = $self->{user_agent};
-	my $proxy;
-	if ( my @proxies = @{ $self->{service_config}{'bahn.de'}{proxies} // [] } )
-	{
-		$proxy = $proxies[ int( rand( scalar @proxies ) ) ];
-	}
-	elsif ( my $p = $self->{service_config}{'bahn.de'}{proxy} ) {
-		$proxy = $p;
-	}
-
-	if ($proxy) {
-		$agent = Mojo::UserAgent->new;
-		$agent->proxy->http($proxy);
-		$agent->proxy->https($proxy);
-	}
-
 	my $promise = Mojo::Promise->new;
+
 	Travel::Status::DE::DBRIS->new_p(
 		locationSearch => $station_name,
 		cache          => $self->{cache},
@@ -82,7 +74,7 @@ sub get_station_id_p {
 			agent   => $self->{header}{'User-Agent'},
 		},
 		promise    => 'Mojo::Promise',
-		user_agent => $agent,
+		user_agent => $self->get_agent,
 	)->then(
 		sub {
 			my ($dbris) = @_;
@@ -109,22 +101,6 @@ sub get_station_id_p {
 sub get_departures_p {
 	my ( $self, %opt ) = @_;
 
-	my $agent = $self->{user_agent};
-	my $proxy;
-	if ( my @proxies = @{ $self->{service_config}{'bahn.de'}{proxies} // [] } )
-	{
-		$proxy = $proxies[ int( rand( scalar @proxies ) ) ];
-	}
-	elsif ( my $p = $self->{service_config}{'bahn.de'}{proxy} ) {
-		$proxy = $p;
-	}
-
-	if ($proxy) {
-		$agent = Mojo::UserAgent->new;
-		$agent->proxy->http($proxy);
-		$agent->proxy->https($proxy);
-	}
-
 	if ( $opt{station} =~ m{ [@] L = (?<eva> \d+ ) }x ) {
 		$opt{station} = {
 			eva => $+{eva},
@@ -137,12 +113,13 @@ sub get_departures_p {
 		? $opt{timestamp}->clone
 		: DateTime->now( time_zone => 'Europe/Berlin' )
 	)->subtract( minutes => $opt{lookbehind} );
+
 	return Travel::Status::DE::DBRIS->new_p(
 		station    => $opt{station},
 		datetime   => $when,
 		cache      => $self->{cache},
 		promise    => 'Mojo::Promise',
-		user_agent => $agent->request_timeout(10),
+		user_agent => $self->get_agent->request_timeout(10),
 	);
 }
 
@@ -151,28 +128,12 @@ sub get_journey_p {
 
 	my $promise = Mojo::Promise->new;
 
-	my $agent = $self->{user_agent};
-	my $proxy;
-	if ( my @proxies = @{ $self->{service_config}{'bahn.de'}{proxies} // [] } )
-	{
-		$proxy = $proxies[ int( rand( scalar @proxies ) ) ];
-	}
-	elsif ( my $p = $self->{service_config}{'bahn.de'}{proxy} ) {
-		$proxy = $p;
-	}
-
-	if ($proxy) {
-		$agent = Mojo::UserAgent->new;
-		$agent->proxy->http($proxy);
-		$agent->proxy->https($proxy);
-	}
-
 	Travel::Status::DE::DBRIS->new_p(
 		journey       => $opt{trip_id},
 		with_polyline => $opt{with_polyline},
 		cache         => $self->{realtime_cache},
 		promise       => 'Mojo::Promise',
-		user_agent    => $agent->request_timeout(10),
+		user_agent    => $self->get_agent->request_timeout(10),
 	)->then(
 		sub {
 			my ($dbris) = @_;
