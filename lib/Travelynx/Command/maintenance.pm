@@ -121,7 +121,7 @@ sub run {
 	push( @uids_to_delete,
 		$to_delete->arrays->map( sub { shift->[0] } )->each );
 
-	if ( @uids_to_delete > 10 ) {
+	if ( @uids_to_delete > 60 ) {
 		printf STDERR (
 			"About to delete %d accounts, which is quite a lot.\n",
 			scalar @uids_to_delete
