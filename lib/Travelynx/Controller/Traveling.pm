@@ -594,13 +594,9 @@ sub geolocation {
 	if ($dbris_service) {
 		$self->render_later;
 
-		Travel::Status::DE::DBRIS->new_p(
-			promise    => 'Mojo::Promise',
-			user_agent => Mojo::UserAgent->new,
-			geoSearch  => {
-				latitude  => $lat,
-				longitude => $lon
-			}
+		$self->dbris->geosearch_p(
+			latitude  => $lat,
+			longitude => $lon
 		)->then(
 			sub {
 				my ($dbris) = @_;
@@ -2486,7 +2482,7 @@ sub edit_journey {
 					uid  => $uid,
 					db   => $db,
 					id   => $journey->{id},
-					$key => $self->param($key)
+					$key => $self->param($key),
 				);
 				if ($error) {
 					last;

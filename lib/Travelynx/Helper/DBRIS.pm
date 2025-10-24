@@ -29,6 +29,31 @@ sub new {
 	return bless( \%opt, $class );
 }
 
+sub geosearch_p {
+	my ( $self, %opt ) = @_;
+	my $agent = $self->{user_agent};
+	my $proxy;
+	if ( my @proxies = @{ $self->{service_config}{'bahn.de'}{proxies} // [] } )
+	{
+		$proxy = $proxies[ int( rand( scalar @proxies ) ) ];
+	}
+	elsif ( my $p = $self->{service_config}{'bahn.de'}{proxy} ) {
+		$proxy = $p;
+	}
+
+	if ($proxy) {
+		$agent = Mojo::UserAgent->new;
+		$agent->proxy->http($proxy);
+		$agent->proxy->https($proxy);
+	}
+
+	return Travel::Status::DE::DBRIS->new_p(
+		promise    => 'Mojo::Promise',
+		user_agent => $agent,
+		geoSearch  => \%opt,
+	);
+}
+
 sub get_station_id_p {
 	my ( $self, $station_name ) = @_;
 
