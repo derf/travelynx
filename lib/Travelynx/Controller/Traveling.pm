@@ -627,8 +627,10 @@ sub geolocation {
 				$self->render(
 					json => {
 						candidates => [],
-						warning    => $err,
-					}
+						error      => $err,
+					},
+
+					#status => 502,
 				);
 			}
 		)->wait;
@@ -671,8 +673,10 @@ sub geolocation {
 				$self->render(
 					json => {
 						candidates => [],
-						warning    => $err,
-					}
+						error      => $err,
+					},
+
+					#status => 502
 				);
 			}
 		)->wait;
@@ -722,8 +726,10 @@ sub geolocation {
 				$self->render(
 					json => {
 						candidates => [],
-						warning    => $err,
-					}
+						error      => $err,
+					},
+
+					#status => 502
 				);
 			}
 		)->wait;
@@ -771,8 +777,10 @@ sub geolocation {
 				$self->render(
 					json => {
 						candidates => [],
-						warning    => $err,
-					}
+						error      => $err,
+					},
+
+					#status => 502
 				);
 			}
 		)->wait;
