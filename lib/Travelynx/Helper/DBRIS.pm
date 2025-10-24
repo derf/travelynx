@@ -29,8 +29,8 @@ sub new {
 	return bless( \%opt, $class );
 }
 
-sub get_station_id_p {
-	my ( $self, $station_name ) = @_;
+sub get_agent {
+	my ($self) = @_;
 
 	my $agent = $self->{user_agent};
 	my $proxy;
@@ -48,16 +48,33 @@ sub get_station_id_p {
 		$agent->proxy->https($proxy);
 	}
 
+	return $agent;
+}
+
+sub geosearch_p {
+	my ( $self, %opt ) = @_;
+
+	return Travel::Status::DE::DBRIS->new_p(
+		promise    => 'Mojo::Promise',
+		user_agent => $self->get_agent,
+		geoSearch  => \%opt,
+	);
+}
+
+sub get_station_id_p {
+	my ( $self, $station_name ) = @_;
+
 	my $promise = Mojo::Promise->new;
+
 	Travel::Status::DE::DBRIS->new_p(
 		locationSearch => $station_name,
-		cache          => $self->{cache},
+		cache          => $self->{realtime_cache},
 		lwp_options    => {
 			timeout => 10,
 			agent   => $self->{header}{'User-Agent'},
 		},
 		promise    => 'Mojo::Promise',
-		user_agent => $agent,
+		user_agent => $self->get_agent,
 	)->then(
 		sub {
 			my ($dbris) = @_;
@@ -84,22 +101,6 @@ sub get_station_id_p {
 sub get_departures_p {
 	my ( $self, %opt ) = @_;
 
-	my $agent = $self->{user_agent};
-	my $proxy;
-	if ( my @proxies = @{ $self->{service_config}{'bahn.de'}{proxies} // [] } )
-	{
-		$proxy = $proxies[ int( rand( scalar @proxies ) ) ];
-	}
-	elsif ( my $p = $self->{service_config}{'bahn.de'}{proxy} ) {
-		$proxy = $p;
-	}
-
-	if ($proxy) {
-		$agent = Mojo::UserAgent->new;
-		$agent->proxy->http($proxy);
-		$agent->proxy->https($proxy);
-	}
-
 	if ( $opt{station} =~ m{ [@] L = (?<eva> \d+ ) }x ) {
 		$opt{station} = {
 			eva => $+{eva},
@@ -112,12 +113,13 @@ sub get_departures_p {
 		? $opt{timestamp}->clone
 		: DateTime->now( time_zone => 'Europe/Berlin' )
 	)->subtract( minutes => $opt{lookbehind} );
+
 	return Travel::Status::DE::DBRIS->new_p(
 		station    => $opt{station},
 		datetime   => $when,
-		cache      => $self->{cache},
+		cache      => $self->{realtime_cache},
 		promise    => 'Mojo::Promise',
-		user_agent => $agent->request_timeout(10),
+		user_agent => $self->get_agent->request_timeout(10),
 	);
 }
 
@@ -126,28 +128,12 @@ sub get_journey_p {
 
 	my $promise = Mojo::Promise->new;
 
-	my $agent = $self->{user_agent};
-	my $proxy;
-	if ( my @proxies = @{ $self->{service_config}{'bahn.de'}{proxies} // [] } )
-	{
-		$proxy = $proxies[ int( rand( scalar @proxies ) ) ];
-	}
-	elsif ( my $p = $self->{service_config}{'bahn.de'}{proxy} ) {
-		$proxy = $p;
-	}
-
-	if ($proxy) {
-		$agent = Mojo::UserAgent->new;
-		$agent->proxy->http($proxy);
-		$agent->proxy->https($proxy);
-	}
-
 	Travel::Status::DE::DBRIS->new_p(
 		journey       => $opt{trip_id},
 		with_polyline => $opt{with_polyline},
 		cache         => $self->{realtime_cache},
 		promise       => 'Mojo::Promise',
-		user_agent    => $agent->request_timeout(10),
+		user_agent    => $self->get_agent->request_timeout(10),
 	)->then(
 		sub {
 			my ($dbris) = @_;
@@ -171,6 +157,132 @@ sub get_journey_p {
 		}
 	)->wait;
 
+	return $promise;
+}
+
+sub has_wagonorder_p {
+	my ( $self, %opt ) = @_;
+
+	$opt{train_type} //= q{};
+	my $datetime = $opt{datetime}->clone->set_time_zone('UTC');
+	my %param    = (
+		administrationId => 80,
+		category         => $opt{train_type},
+		date             => $datetime->strftime('%Y-%m-%d'),
+		evaNumber        => $opt{eva},
+		number           => $opt{train_no},
+		time             => $datetime->rfc3339 =~ s{(?=Z)}{.000}r
+	);
+
+	my $url = sprintf( '%s?%s',
+'https://www.bahn.de/web/api/reisebegleitung/wagenreihung/vehicle-sequence',
+		join( '&', map { $_ . '=' . $param{$_} } sort keys %param ) );
+
+	my $promise = Mojo::Promise->new;
+	my $debug_prefix
+	  = "has_wagonorder_p($opt{train_type} $opt{train_no} @ $opt{eva})";
+
+	if ( my $content = $self->{main_cache}->get("HEAD $url")
+		// $self->{realtime_cache}->get("HEAD $url") )
+	{
+		if ( $content eq 'n' ) {
+			$self->{log}->debug("${debug_prefix}: n (cached)");
+			return $promise->reject;
+		}
+		else {
+			$self->{log}->debug("${debug_prefix}: ${content} (cached)");
+			return $promise->resolve($content);
+		}
+	}
+
+	$self->get_agent->request_timeout(5)
+	  ->get_p( $url => $self->{header} )
+	  ->then(
+		sub {
+			my ($tx) = @_;
+			if ( $tx->result->is_success ) {
+				$self->{log}->debug("${debug_prefix}: a");
+				$self->{main_cache}->set( "HEAD $url", 'a' );
+				my $body = decode( 'utf-8', $tx->res->body );
+				my $json = JSON->new->decode($body);
+				$self->{main_cache}->freeze( $url, $json );
+				$promise->resolve('a');
+			}
+			else {
+				my $code = $tx->res->code;
+				$self->{log}->debug("${debug_prefix}: n (HTTP $code)");
+				$self->{realtime_cache}->set( "HEAD $url", 'n' );
+				$promise->reject;
+			}
+			return;
+		}
+	  )->catch(
+		sub {
+			my ($err) = @_;
+			$self->{log}->debug("${debug_prefix}: n ($err)");
+			$self->{realtime_cache}->set( "HEAD $url", 'n' );
+			$promise->reject;
+			return;
+		}
+	  )->wait;
+	return $promise;
+}
+
+sub get_wagonorder_p {
+	my ( $self, %opt ) = @_;
+
+	my $datetime = $opt{datetime}->clone->set_time_zone('UTC');
+	my %param    = (
+		administrationId => 80,
+		category         => $opt{train_type},
+		date             => $datetime->strftime('%Y-%m-%d'),
+		evaNumber        => $opt{eva},
+		number           => $opt{train_no},
+		time             => $datetime->rfc3339 =~ s{(?=Z)}{.000}r
+	);
+
+	my $url = sprintf( '%s?%s',
+'https://www.bahn.de/web/api/reisebegleitung/wagenreihung/vehicle-sequence',
+		join( '&', map { $_ . '=' . $param{$_} } sort keys %param ) );
+	my $debug_prefix
+	  = "get_wagonorder_p($opt{train_type} $opt{train_no} @ $opt{eva})";
+
+	my $promise = Mojo::Promise->new;
+
+	if ( my $content = $self->{main_cache}->thaw($url) ) {
+		$self->{log}->debug("${debug_prefix}: (cached)");
+		$promise->resolve($content);
+		return $promise;
+	}
+
+	$self->get_agent->request_timeout(5)
+	  ->get_p( $url => $self->{header} )
+	  ->then(
+		sub {
+			my ($tx) = @_;
+
+			if ( $tx->result->is_success ) {
+				my $body = decode( 'utf-8', $tx->res->body );
+				my $json = JSON->new->decode($body);
+				$self->{log}->debug("${debug_prefix}: success");
+				$self->{main_cache}->freeze( $url, $json );
+				$promise->resolve($json);
+			}
+			else {
+				my $code = $tx->res->code;
+				$self->{log}->debug("${debug_prefix}: HTTP ${code}");
+				$promise->reject("HTTP ${code}");
+			}
+			return;
+		}
+	  )->catch(
+		sub {
+			my ($err) = @_;
+			$self->{log}->debug("${debug_prefix}: error ${err}");
+			$promise->reject($err);
+			return;
+		}
+	  )->wait;
 	return $promise;
 }
 

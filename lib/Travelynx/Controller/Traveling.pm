@@ -594,13 +594,9 @@ sub geolocation {
 	if ($dbris_service) {
 		$self->render_later;
 
-		Travel::Status::DE::DBRIS->new_p(
-			promise    => 'Mojo::Promise',
-			user_agent => Mojo::UserAgent->new,
-			geoSearch  => {
-				latitude  => $lat,
-				longitude => $lon
-			}
+		$self->dbris->geosearch_p(
+			latitude  => $lat,
+			longitude => $lon
 		)->then(
 			sub {
 				my ($dbris) = @_;
@@ -627,8 +623,13 @@ sub geolocation {
 				$self->render(
 					json => {
 						candidates => [],
-						warning    => $err,
-					}
+						error      => $err,
+					},
+
+					# The frontend JavaScript does not have an XHR error handler yet
+					# (and if it did, I do not know whether it would have access to our JSON body).
+					# So, for now, we do the bad thing™ and return HTTP 200 even though the request to the backend was not successful.
+					# status => 502,
 				);
 			}
 		)->wait;
@@ -671,8 +672,11 @@ sub geolocation {
 				$self->render(
 					json => {
 						candidates => [],
-						warning    => $err,
-					}
+						error      => $err,
+					},
+
+					# See above
+					# status => 502
 				);
 			}
 		)->wait;
@@ -722,8 +726,11 @@ sub geolocation {
 				$self->render(
 					json => {
 						candidates => [],
-						warning    => $err,
-					}
+						error      => $err,
+					},
+
+					# See above
+					#status => 502
 				);
 			}
 		)->wait;
@@ -771,8 +778,11 @@ sub geolocation {
 				$self->render(
 					json => {
 						candidates => [],
-						warning    => $err,
-					}
+						error      => $err,
+					},
+
+					# See above
+					#status => 502
 				);
 			}
 		)->wait;
@@ -2472,7 +2482,7 @@ sub edit_journey {
 					uid  => $uid,
 					db   => $db,
 					id   => $journey->{id},
-					$key => $self->param($key)
+					$key => $self->param($key),
 				);
 				if ($error) {
 					last;
