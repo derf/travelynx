@@ -42,11 +42,82 @@ msgstr "ciemny"
 msgid "footer.colour-scheme.auto"
 msgstr "automatyczny"
 
+msgid "header.error"
+msgstr "Błąd"
+
 #
 # Templates
 #
 
+# about.html.ep
+
+msgid "about.developed-by.lead"
+msgstr "Stworzone przez"
+
+msgid "about.developed-by.and"
+msgstr "i"
+
+msgid "about.developed-by.others"
+msgstr "innych"
+
+msgid "about.developed-by.tail"
+msgstr " "
+
+msgid "about.source-code"
+msgstr "Kod źródłowy"
+
+msgid "about.licence-agplv3"
+msgstr "objęty licencją AGPL v3"
+
+msgid "about.data-sources"
+msgstr "Backends"
+
+msgid "about.data-sources.last-and"
+msgstr " i"
+
+msgid "about.disclaimer"
+msgstr "Travelynx to bezpłatny, prywatnie prowadzony projekt, który nie gwarantuje dostępności. Nieplanowane przerwy w działaniu lub nagłe zakończenie działania strony nie są przewidziane, ale mogą się zdarzyć. Prośby o nowe funkcje, zgłoszenia błędów oraz inne wiadomości są rozpatrywane i odpowiadane w zależności od dostępnych zasobów i motywacji — szybko, z opóźnieniem lub wcale."
+
+msgid "about.contact"
+msgstr "Kontakt"
+
+msgid "about.bugs"
+msgstr "Błędy"
+
+msgid "about.changelog"
+msgstr "Zmiany"
+
 # account.html.ep
+
+msgid "account.changed-name"
+msgstr "Nazwa została zmieniona"
+
+msgid "account.changed-mail"
+msgstr "Adres e-mail został zmieniony"
+
+msgid "account.changed-password"
+msgstr "Hasło zostało zmienione"
+
+msgid "account.changed-language"
+msgstr "Język został zmieniony"
+
+msgid "account.changed-privacy"
+msgstr "Zmieniono ustawienia dotyczące publicznych danych konta"
+
+msgid "account.changed-social"
+msgstr "Zmieniono ustawienia dotyczące interakcji z innymi kontami"
+
+msgid "account.changed-traewelling"
+msgstr "Zaktualizowano powiązanie z Träwelling"
+
+msgid "account.changed-history"
+msgstr "Zmieniono ustawienia dotyczące proponowanych połączeń"
+
+msgid "account.changed-webhook"
+msgstr "Zaktualizowano Webhook"
+
+msgid "account.cleared-notifications"
+msgstr "Powiadomienia zostały przeczytane"
 
 msgid "account.account"
 msgstr "Konto"
@@ -75,6 +146,27 @@ msgstr "Sugestie wyłączone"
 msgid "account.visibility"
 msgstr "Widoczność"
 
+msgid "account.webhook"
+msgstr "Webhook"
+
+msgid "account.webhook.disabled"
+msgstr "Nie skonfigurowano"
+
+msgid "account.webhook.active-pending"
+msgstr "Aktywny, jeszcze nie wykonany"
+
+msgid "account.webhook.active-error"
+msgstr "Aktywny, błąd wykonania"
+
+msgid "account.webhook.active"
+msgstr "Aktywny"
+
+msgid "account.traewelling.unsupported"
+msgstr "Obecnie nieobsługiwane z powodu niekompatybilności między bahn.de a transitous"
+
+msgid "account.registration-date"
+msgstr "Zarejestrowano dnia"
+
 msgid "account.interaction"
 msgstr "Interakcje"
 
@@ -96,6 +188,136 @@ msgstr "otwarte prośby"
 msgid "account.interaction.disabled"
 msgstr "Inne konta nie mogą cię obserwować"
 
+msgid "account.profile"
+msgstr "Profil publiczny"
+
+msgid "account.interaction.requests"
+msgstr "Otwarte zapytania"
+
+msgid "account.interaction.requests.incoming.none"
+msgstr "brak przychodzących"
+
+msgid "account.interaction.requests.incoming.some"
+msgstr "przychodzące"
+
+msgid "account.interaction.requests.outgoing.none"
+msgstr "brak wychodzących"
+
+msgid "account.interaction.requests.outgoing.some"
+msgstr "wychodzące"
+
+# changelog.html.ep
+
+msgid "changelog.added"
+msgstr "Nowa funkcja"
+
+msgid "changelog.bugfix"
+msgstr "Poprawka błędu"
+
+msgid "changelog.2-16.1"
+msgstr "Infrastruktura do tłumaczenia Travelynx na inne języki. Większość strony nadal jest po niemiecku; pojedyncze strony są już dostępne po angielsku, a ich częściowo także po francusku, polsku i węgiersku. Kolejne tłumaczenia oraz ewentualne nowe języki i dokumentacja wspierająca ten proces pojawią się z czasem. Język jest wybierany na podstawie nagłówka Accept-Language i może być dodatkowo skonfigurowany w ustawieniach konta."
+
+msgid "changelog.2-16.2"
+msgstr "Poprawne obliczanie i wizualizacja trasy przejazdu dla linii okrężnych. Wyświetlanie przejazdów na mapie podróży nadal zawiera częściowe błędy."
+
+msgid "changelog.2-17.1"
+msgstr "Dane mapy („Polylines”) dla pojedynczych przejazdów można teraz eksportować i importować jako pliki GPX. Dzięki temu dane mapy można później poprawić lub uzupełnić. Format danych GPX jest kompatybilny z BRouter-Web."
+
+# journey.html.ep
+
+msgid "journey.not-found"
+msgstr "Przejazd nie został znaleziony."
+
+#, short
+msgid "journey.trip"
+msgstr "Przejazd"
+
+#, short
+msgid "journey.from"
+msgstr "Z"
+
+#, short
+msgid "journey.to"
+msgstr "Do"
+
+#, short
+msgid "journey.departure"
+msgstr "Odjazd"
+
+#, short
+msgid "journey.arrival"
+msgstr "Przyjazd"
+
+#, short
+msgid "journey.distance"
+msgstr "Dystans"
+
+msgid "journey.beeline.pre"
+msgstr "(Linia prosta: "
+
+msgid "journey.beeline.post"
+msgstr ")"
+
+#, short
+msgid "journey.speed"
+msgstr "Prędkość"
+
+#, short
+msgid "journey.operator"
+msgstr "Operator"
+
+#, short
+msgid "journey.messages"
+msgstr "Komunikaty"
+
+#, short
+msgid "journey.comment"
+msgstr "Komentarz"
+
+#, short
+msgid "journey.carriages"
+msgstr "Skład pociągu"
+
+#, short
+msgid "journey.route"
+msgstr "Trasa"
+
+msgid "journey.share"
+msgstr "Udostępnij"
+
+msgid "journey.export"
+msgstr "Eksportuj"
+
+msgid "journey.edit"
+msgstr "Edytuj"
+
+msgid "journey.map-data"
+msgstr "Dane mapy"
+
+msgid "journey.map.download"
+msgstr "Pobierz"
+
+msgid "journey.map.upload"
+msgstr "Prześlij"
+
+msgid "journey.map.upload-full"
+msgstr "Cała trasa"
+
+msgid "journey.map.upload-partial"
+msgstr "Przejechany odcinek"
+
+msgid "journey.map.info.download"
+msgstr "Format JSON: [[lon, lat, ID], ...] w współrzędnych WGS84. Pliki GPX są kompatybilne z BRouter."
+
+msgid "journey.map.info.upload"
+msgstr "Pliki GPX muszą zawierać jeden element track z jednym segmentem track. Eksport GPX z BRouter spełnia te wymagania. Przesyłane dane muszą zawierać całą trasę środka transportu lub tylko odcinek odpowiadający temu checkinowi. Przy przesyłaniu wybierz odpowiedni przycisk. ID przystanków nie muszą być podane. Uwaga: przesłanie własnych danych mapy bezpowrotnie usuwa wcześniej zapisane dane."
+
+msgid "journey.danger"
+msgstr "Danger Zone"
+
+msgid "journey.delete"
+msgstr "Usuń"
+
 # landingpage.html.ep
 
 msgid "landingpage.greeting-prefix"
@@ -107,6 +329,22 @@ msgstr "!"
 msgid "landingpage.not-checked-in"
 msgstr "Nie jesteś obecnie zameldowany."
 
+msgid "landingpage.stop-geosearch"
+msgstr "Szukaj stacji w pobliżu"
+
+msgid "landingpage.manual-stop-entry"
+msgstr "Wprowadź ręcznie"
+
+#, As short as possible
+msgid "landingpage.departures"
+msgstr "Odjazdy"
+
+msgid "landingpage.latest-trips"
+msgstr "Ostatnie przejazdy"
+
+msgid "landingpage.date-format"
+msgstr "%d.%m.%Y"
+
 msgid "landingpage.about"
 msgstr "Travelynx umożliwia zameldowanie się w środkach transportu (autobusach, tramwajach, pociągach) między innymi w Niemczech, Austrii, Szwajcarii, Luksemburgu, Irlandii, Danii i niektórych częściach Stanów Zjednoczonych. Dzięki temu można później śledzić własne podróże wraz z danymi w czasie rzeczywistym i komunikatami serwisowymi oraz uzyskać odpowiedzi na palące pytania, takie jak „Ile godzin spędziłem w podróży w zeszłym miesiącu?”."
 
@@ -115,6 +353,33 @@ msgstr "Pomysł pochodzi od"
 
 msgid "landingpage.traewelling.post"
 msgstr " "
+
+msgid "landingpage.features"
+msgstr "Funkcje:"
+
+msgid "landingpage.features.log"
+msgstr "Protokół danych rozkładu jazdy i danych w czasie rzeczywistym na stacji początkowej i końcowej"
+
+msgid "landingpage.features.share"
+msgstr "Udostępnianie aktualnych i przeszłych przejazdów innym osobom"
+
+msgid "landingpage.features.api-pre"
+msgstr "Webhooki oraz"
+
+msgid "landingpage.features.api-link"
+msgstr "API"
+
+msgid "landingpage.features.api-post"
+msgstr "do automatycznego zameldowania się i odczytu aktualnego statusu"
+
+msgid "landingpage.features.stats"
+msgstr "Statystyki dotyczące czasu podróży i opóźnień"
+
+msgid "landingpage.features.passenger-rights"
+msgstr "Wsparcie przy wypełnianiu formularzy praw pasażera"
+
+msgid "landingpage.features.public"
+msgstr "Opcjonalnie: publiczny status podróży i publiczne dane o przeszłych przejazdach"
 
 msgid "landingpage.disclaimer.lead"
 msgstr "Travelynx jest bezpłatnym, prywatnym projektem bez gwarancji dostępności. Nieprzewidziane przerwy w działaniu lub krótkoterminowe wyłączenie tej strony nie są planowane, ale są możliwe."
@@ -205,29 +470,137 @@ msgstr "jest w podróży"
 msgid "status.is-not-checked-in"
 msgstr "nie jest w tej chwili w podróży"
 
+msgid "status.select-destination"
+msgstr "Wybierz cel"
+
 msgid "status.share"
 msgstr "Udostępnij"
 
-msgid "status.arrival-in.pre"
-msgstr "Przyjazd za"
+msgid "status.check-out"
+msgstr "Wymelduj się"
 
+#, noun or verb
+msgid "status.boarding-in.pre"
+msgstr "Wjazd za"
+
+#, noun or verb
+msgid "status.boarding-in.post"
+msgstr " "
+
+#, noun or verb
+msgid "status.boarding-soon"
+msgstr "wjeżdża"
+
+#, noun or verb
+msgid "status.departure-in.pre"
+msgstr "Odjazd za"
+
+#, noun or verb
+msgid "status.departure-in.post"
+msgstr " "
+
+#, noun or verb
+msgid "status.departure-soon"
+msgstr "odjeżdża"
+
+#, noun or verb
+msgid "status.arrival-in.pre"
+msgstr "Dojazd za"
+
+#, noun or verb
 msgid "status.arrival-in.post"
 msgstr " "
 
+#, noun or verb
 msgid "status.arrival-soon"
-msgstr "Przyjazd za mniej niż minutę"
+msgstr "Dojazd za mniej niż minutę"
 
 msgid "status.arrival-unknown"
-msgstr "Przyjazd nieznany"
+msgstr "Czas dojazdu nieznany"
 
 msgid "status.arrived"
-msgstr "U celu"
+msgstr "Cel osiągnięty"
+
+msgid "status.depart-from.pre"
+msgstr "z"
+
+msgid "status.depart-from.post"
+msgstr " "
+
+msgid "status.arrive-on.pre"
+msgstr "na"
+
+msgid "status.arrive-on.post"
+msgstr " "
+
+msgid "status.delayed-auto-checkout"
+msgstr "Automatyczne wymeldowanie nastąpi najpóźniej pół godziny po przyjeździe."
+
+msgid "status.realtime-unavailable"
+msgstr "Brak danych w czasie rzeczywistym"
+
+#, service messages related to the trip
+msgid "status.messages"
+msgstr "Komunikaty"
+
+msgid "status.map"
+msgstr "Mapa"
+
+msgid "status.change-destination"
+msgstr "Zmień cel?"
 
 msgid "status.carriages"
 msgstr "Wagony"
 
 msgid "status.route"
 msgstr "Trasa"
+
+#, shown during destination selection
+msgid "status.undo"
+msgstr "Cofnij"
+
+#, shown during destination selection
+msgid "status.privacy-level"
+msgstr "Widoczność"
+
+#, shown once check-in is completed
+msgid "status.undo-checkin"
+msgstr "Cofnij meldowanie"
+
+msgid "status.force-checkout-lead"
+msgstr "Automatyczne wymeldowanie nastąpi najpóźniej pół godziny po przyjeździe. Jeśli backend nie działa lub przejazd został utracony z innych powodów:"
+
+msgid "status.force-checkout"
+msgstr "Wymelduj się teraz"
+
+# _history_stats.html.ep
+
+msgid "stats.trips"
+msgstr "Ilość przejazdów"
+
+msgid "stats.distance"
+msgstr "Dystans"
+
+msgid "stats.time"
+msgstr "Czas przejazdów"
+
+msgid "stats.hours"
+msgstr "godzin"
+
+msgid "stats.per-schedule"
+msgstr "Zgodnie z rozkładem"
+
+msgid "stats.transfer-time"
+msgstr "Czas oczekiwania (przesiadki)"
+
+msgid "stats.total-delay"
+msgstr "Skumulowane opóźnienie"
+
+msgid "stats.on-dep"
+msgstr "Przy odjeździe"
+
+msgid "stats.on-arr"
+msgstr "Przy przyjeździe"
 
 # _wagons.html.ep
 
