@@ -1886,31 +1886,20 @@ sub startup {
 			my $db = $self->pg->db;
 
 			if ( $datetime and $train_no ) {
-				$self->dbris->has_wagonorder_p(%opt)->then(
+				$self->dbris->get_wagonorder_p(%opt)->then(
 					sub {
-						return $self->dbris->get_wagonorder_p(%opt);
-					}
-				)->then(
-					sub {
-						my ($wagonorder) = @_;
+						my ($status) = @_;
+						my $wr = $status->result;
 
 						my $data      = {};
 						my $user_data = {};
 
-						my $wr;
-						eval {
-							$wr
-							  = Travel::Status::DE::DBRIS::Formation->new(
-								json => $wagonorder );
-						};
-
 						if (    $opt{is_departure}
-							and $wr
-							and not exists $wagonorder->{error} )
+							and $wr )
 						{
 							my $dt
 							  = $opt{datetime}->clone->set_time_zone('UTC');
-							$data->{wagonorder_dep}   = $wagonorder;
+							$data->{wagonorder_dep}   = $status->{raw_json};
 							$data->{wagonorder_param} = {
 								time      => $dt->rfc3339 =~ s{(?=Z)}{.000}r,
 								number    => $opt{train_no},
@@ -1964,10 +1953,8 @@ sub startup {
 								train_id  => $train_id,
 							);
 						}
-						elsif ( $opt{is_arrival}
-							and not exists $wagonorder->{error} )
-						{
-							$data->{wagonorder_arr} = $wagonorder;
+						elsif ( $opt{is_arrival} ) {
+							$data->{wagonorder_arr} = $status->{raw_json};
 							$self->in_transit->update_data(
 								uid      => $uid,
 								db       => $db,
@@ -1979,6 +1966,10 @@ sub startup {
 					}
 				)->catch(
 					sub {
+						my ($err) = @_;
+						$self->log->debug(
+							"add_wagonorder: promise rejected with ${err}");
+
 						# no wagonorder? no problem.
 						return;
 					}
