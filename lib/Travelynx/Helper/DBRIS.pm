@@ -55,9 +55,10 @@ sub geosearch_p {
 	my ( $self, %opt ) = @_;
 
 	return Travel::Status::DE::DBRIS->new_p(
-		promise    => 'Mojo::Promise',
-		user_agent => $self->get_agent,
-		geoSearch  => \%opt,
+		promise        => 'Mojo::Promise',
+		user_agent     => $self->get_agent,
+		geoSearch      => \%opt,
+		developer_mode => $self->{log}->is_level('debug') ? 1 : 0,
 	);
 }
 
@@ -73,8 +74,9 @@ sub get_station_id_p {
 			timeout => 10,
 			agent   => $self->{header}{'User-Agent'},
 		},
-		promise    => 'Mojo::Promise',
-		user_agent => $self->get_agent,
+		promise        => 'Mojo::Promise',
+		user_agent     => $self->get_agent,
+		developer_mode => $self->{log}->is_level('debug') ? 1 : 0,
 	)->then(
 		sub {
 			my ($dbris) = @_;
@@ -115,11 +117,12 @@ sub get_departures_p {
 	)->subtract( minutes => $opt{lookbehind} );
 
 	return Travel::Status::DE::DBRIS->new_p(
-		station    => $opt{station},
-		datetime   => $when,
-		cache      => $self->{realtime_cache},
-		promise    => 'Mojo::Promise',
-		user_agent => $self->get_agent->request_timeout(10),
+		station        => $opt{station},
+		datetime       => $when,
+		cache          => $self->{realtime_cache},
+		promise        => 'Mojo::Promise',
+		user_agent     => $self->get_agent->request_timeout(10),
+		developer_mode => $self->{log}->is_level('debug') ? 1 : 0,
 	);
 }
 
@@ -129,11 +132,12 @@ sub get_journey_p {
 	my $promise = Mojo::Promise->new;
 
 	Travel::Status::DE::DBRIS->new_p(
-		journey       => $opt{trip_id},
-		with_polyline => $opt{with_polyline},
-		cache         => $self->{realtime_cache},
-		promise       => 'Mojo::Promise',
-		user_agent    => $self->get_agent->request_timeout(10),
+		journey        => $opt{trip_id},
+		with_polyline  => $opt{with_polyline},
+		cache          => $self->{realtime_cache},
+		promise        => 'Mojo::Promise',
+		user_agent     => $self->get_agent->request_timeout(10),
+		developer_mode => $self->{log}->is_level('debug') ? 1 : 0,
 	)->then(
 		sub {
 			my ($dbris) = @_;
