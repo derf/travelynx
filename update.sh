@@ -4,6 +4,7 @@
 # as necessary.
 
 git pull
+git submodule update --init
 
 if [ "$1" = "with-deps" ]; then
 	mkdir local.new
