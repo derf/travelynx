@@ -7,7 +7,7 @@ package Travelynx::Command::database;
 use Mojo::Base 'Mojolicious::Command';
 
 use DateTime;
-use File::Slurp qw(read_file);
+use File::Slurp qw(read_dir read_file);
 use List::Util  qw();
 use JSON;
 use Travel::Status::DE::EFA;
@@ -3535,7 +3535,94 @@ qq{select distinct checkout_station_id from in_transit where backend_id = 0;}
 			}
 		);
 	},
+
+	# v68 -> v69
+	# Incorporate dbdb (entry/exit direction) data into travelynx
+	# This avoids having to make web requests to lib.finalrewind.org/dbdb,
+	# and allows for also showing the exit direction for intermediate stops.
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				alter table schema_version
+					add column dbdb varchar(12);
+				create table bahn_platform_directions (
+					eva integer primary key,
+					data jsonb not null
+				);
+			}
+		);
+		sync_dbdb($db);
+		$db->query(
+			qq{
+				update schema_version set version = 69;
+				update schema_version set dbdb = '2025-10-27';
+			}
+		);
+	},
 );
+
+sub sync_dbdb {
+	my ($db) = @_;
+
+	my $json = JSON->new;
+
+	for my $file ( read_dir( 'ext/dbdb/s', prefix => 1 ) ) {
+		if ( $file !~ m{\.txt$} ) {
+			next;
+		}
+
+		my %station;
+		for my $line ( read_file( $file, { binmode => ':encoding(utf-8)' } ) ) {
+			if ( $line
+				=~ m{ ^ \s* (?<platform> \d+ ) \s+ (?<type> \S+ ) \s+ (?<direction> \S+ ) }x
+			  )
+			{
+				$station{ $+{platform} } = {
+					kopfgleis => $+{type} eq 'K' ? \1 : \0,
+					direction => $+{direction},
+				};
+			}
+			elsif ( $line
+				=~ m{ ^ @ \s* (?<stations> [^:]+ ) : \s* (?<platforms> .+ ) $ }x
+			  )
+			{
+				my $stations_raw  = $+{stations};
+				my $platforms_raw = $+{platforms};
+				my @stations      = split( qr{, }, $stations_raw );
+				my @platforms     = split( qr{, }, $platforms_raw );
+				for my $platform (@platforms) {
+					my ( $number, $direction ) = split( qr{ }, $platform );
+					for my $from_station (@stations) {
+						$station{$number}{direction_from}{$from_station}
+						  = $direction;
+					}
+				}
+			}
+		}
+		my ($station_name) = ( $file =~ m{ s / ([^.]*) . txt $ }x );
+		my ($station)
+		  = Travel::Status::DE::IRIS::Stations::get_station($station_name);
+		if ( $station and $station->[0] eq $station_name ) {
+			$db->insert(
+				'bahn_platform_directions',
+				{
+					eva  => $station->[2],
+					data => $json->encode( \%station )
+				},
+				{ on_conflict => \'(eva) do update set data = EXCLUDED.data' }
+			);
+		}
+		elsif ( not $station ) {
+			say STDERR "DBDB import: unknown station: $station_name";
+		}
+		else {
+			say STDERR
+"DBDB import: station mismatch: wanted to import $station_name, but got "
+			  . $station->[0];
+		}
+	}
+}
 
 sub sync_stations {
 	my ( $db, $iris_version ) = @_;

@@ -21,7 +21,6 @@ use List::Util;
 use List::UtilsBy   qw(uniq_by);
 use List::MoreUtils qw(first_index);
 use Travel::Status::DE::DBRIS::Formation;
-use Travelynx::Helper::DBDB;
 use Travelynx::Helper::DBRIS;
 use Travelynx::Helper::EFA;
 use Travelynx::Helper::HAFAS;
@@ -406,20 +405,6 @@ sub startup {
 		users => sub {
 			my ($self) = @_;
 			state $users = Travelynx::Model::Users->new( pg => $self->pg );
-		}
-	);
-
-	$self->helper(
-		dbdb => sub {
-			my ($self) = @_;
-			state $dbdb = Travelynx::Helper::DBDB->new(
-				log            => $self->app->log,
-				main_cache     => $self->app->cache_iris_main,
-				realtime_cache => $self->app->cache_iris_rt,
-				root_url       => $self->base_url_for('/')->to_abs,
-				user_agent     => $self->ua,
-				version        => $self->app->config->{version},
-			);
 		}
 	);
 
@@ -2157,47 +2142,36 @@ sub startup {
 
 			my $db = $self->pg->db;
 			if ($is_departure) {
-				$self->dbdb->get_stationinfo_p($dep_eva)->then(
-					sub {
-						my ($station_info) = @_;
-						my $data = { stationinfo_dep => $station_info };
+				if ( my $si
+					= $self->stations->get_bahn_stationinfo( eva => $dep_eva ) )
+				{
+					my $data = { stationinfo_dep => $si };
 
-						$self->in_transit->update_data(
-							uid      => $uid,
-							db       => $db,
-							data     => $data,
-							train_id => $train_id,
-						);
-						return;
-					}
-				)->catch(
-					sub {
-						# no stationinfo? no problem.
-						return;
-					}
-				)->wait;
+					$self->in_transit->update_data(
+						uid      => $uid,
+						db       => $db,
+						data     => $data,
+						train_id => $train_id,
+					);
+					return;
+				}
 			}
 
 			if ( $arr_eva and not $is_departure ) {
-				$self->dbdb->get_stationinfo_p($arr_eva)->then(
-					sub {
-						my ($station_info) = @_;
-						my $data = { stationinfo_arr => $station_info };
+				if ( my $si
+					= $self->stations->get_bahn_stationinfo( eva => $arr_eva ) )
+				{
 
-						$self->in_transit->update_data(
-							uid      => $uid,
-							db       => $db,
-							data     => $data,
-							train_id => $train_id,
-						);
-						return;
-					}
-				)->catch(
-					sub {
-						# no stationinfo? no problem.
-						return;
-					}
-				)->wait;
+					my $data = { stationinfo_arr => $si };
+
+					$self->in_transit->update_data(
+						uid      => $uid,
+						db       => $db,
+						data     => $data,
+						train_id => $train_id,
+					);
+					return;
+				}
 			}
 		}
 	);

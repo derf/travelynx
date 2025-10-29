@@ -519,4 +519,19 @@ sub grep_unknown {
 	return @unknown_stations;
 }
 
+sub get_bahn_stationinfo {
+	my ( $self, %opt ) = @_;
+	$opt{db} //= $self->{pg}->db;
+
+	my $res
+	  = $opt{db}
+	  ->select( 'bahn_platform_directions', ['data'], { eva => $opt{eva} } )
+	  ->expand->hash;
+
+	if ($res) {
+		return $res->{data};
+	}
+	return;
+}
+
 1;
