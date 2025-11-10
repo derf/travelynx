@@ -3136,7 +3136,9 @@ sub startup {
 	$authed_r->get('/history/:year')->to('traveling#yearly_history');
 	$authed_r->get('/history/:year/review')->to('traveling#year_in_review');
 	$authed_r->get('/history/:year/:month')->to('traveling#monthly_history');
-	$authed_r->get('/journey/add')->to('traveling#add_journey_form');
+	$authed_r->get('/journey/add')
+	  ->to('traveling#add_journey_form')
+	  ->name('add_journey');
 	$authed_r->get('/journey/comment')->to('traveling#comment_form');
 	$authed_r->get('/journey/visibility')->to('traveling#visibility_form');
 	$authed_r->get( '/journey/:id' => [ format => [ 'html', 'json' ] ] )
