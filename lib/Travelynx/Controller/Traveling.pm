@@ -2600,6 +2600,13 @@ sub polyline_add_stops {
 	for my $stop ( @{$route} ) {
 		for my $polyline_index ( 0 .. $#{$polyline} ) {
 			my $pl = $polyline->[$polyline_index];
+			if ( not( defined $stop->[2]{lat} and defined $stop->[2]{lon} ) ) {
+				my $err
+				  = sprintf(
+"Cannot match uploaded polyline with the  journey's route: route stop %s (ID %s) has no lat/lon\n",
+					$stop->[0], $stop->[1] // 'unknown' );
+				die($err);
+			}
 			my $dist
 			  = $distance->distance_metal( $stop->[2]{lat}, $stop->[2]{lon},
 				$pl->[1], $pl->[0] );
