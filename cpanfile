@@ -23,7 +23,7 @@ requires 'Text::CSV';
 requires 'Text::Markdown';
 requires 'Travel::Status::DE::EFA', '>= 3.13';
 requires 'Travel::Status::MOTIS', '>= 0.01';
-requires 'Travel::Status::DE::DBRIS', '>= 0.10';
+requires 'Travel::Status::DE::DBRIS', '>= 0.17';
 requires 'Travel::Status::DE::HAFAS', '>= 6.20';
 requires 'Travel::Status::DE::IRIS';
 requires 'UUID::Tiny';

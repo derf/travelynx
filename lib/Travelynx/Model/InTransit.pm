@@ -325,6 +325,9 @@ sub add {
 				);
 			}
 		}
+		if ( scalar $journey->operators ) {
+			$persistent_data->{operators} = [ $journey->operators ];
+		}
 		$db->insert(
 			'in_transit',
 			{
