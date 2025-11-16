@@ -2628,11 +2628,22 @@ sub polyline_add_stops {
 		if ( $min_dist{$key} ) {
 			if ( defined $polyline->[ $min_dist{$key}{index} ][2] ) {
 				return sprintf(
-					'Error: Stop IDs %d and %d both map to lon %f, lat %f',
+'Error: Route stops %d and %d both map to polyline lon/lat %f/%f. '
+					  . 'The uploaded polyline must cover the following route stops: %s',
 					$polyline->[ $min_dist{$key}{index} ][2],
 					$stop->[1],
 					$polyline->[ $min_dist{$key}{index} ][0],
-					$polyline->[ $min_dist{$key}{index} ][1]
+					$polyline->[ $min_dist{$key}{index} ][1],
+					join(
+						q{ · },
+						map {
+							sprintf(
+								'%s (ID %s) @ %f/%f',
+								$_->[0],      $_->[1] // 'unknown',
+								$_->[2]{lon}, $_->[2]{lat}
+							)
+						} @{$route}
+					),
 				);
 			}
 			$polyline->[ $min_dist{$key}{index} ][2]
