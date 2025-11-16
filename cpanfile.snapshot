@@ -1652,29 +1652,25 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 6.30
       Locale::Maketext 1.17
-  Log-Report-1.41
-    pathname: M/MA/MARKOV/Log-Report-1.41.tar.gz
+  Log-Report-1.42
+    pathname: M/MA/MARKOV/Log-Report-1.42.tar.gz
     provides:
-      Dancer2::Logger::LogReport 1.41
-      Dancer2::Plugin::LogReport 1.41
-      Dancer2::Plugin::LogReport::Message 1.41
-      Dancer::Logger::LogReport 1.41
-      Log::Report 1.41
-      Log::Report::DBIC::Profiler 1.41
-      Log::Report::Die 1.41
-      Log::Report::Dispatcher 1.41
-      Log::Report::Dispatcher::Callback 1.41
-      Log::Report::Dispatcher::File 1.41
-      Log::Report::Dispatcher::Log4perl 1.41
-      Log::Report::Dispatcher::LogDispatch 1.41
-      Log::Report::Dispatcher::Perl 1.41
-      Log::Report::Dispatcher::Syslog 1.41
-      Log::Report::Dispatcher::Try 1.41
-      Log::Report::Domain 1.41
-      Log::Report::Exception 1.41
-      Log::Report::Message 1.41
-      Log::Report::Translator 1.41
-      MojoX::Log::Report 1.41
+      Log::Report 1.42
+      Log::Report::DBIC::Profiler 1.42
+      Log::Report::Die 1.42
+      Log::Report::Dispatcher 1.42
+      Log::Report::Dispatcher::Callback 1.42
+      Log::Report::Dispatcher::File 1.42
+      Log::Report::Dispatcher::Log4perl 1.42
+      Log::Report::Dispatcher::LogDispatch 1.42
+      Log::Report::Dispatcher::Perl 1.42
+      Log::Report::Dispatcher::Syslog 1.42
+      Log::Report::Dispatcher::Try 1.42
+      Log::Report::Domain 1.42
+      Log::Report::Exception 1.42
+      Log::Report::Message 1.42
+      Log::Report::Translator 1.42
+      MojoX::Log::Report 1.42
     requirements:
       Devel::GlobalDestruction 0.09
       Encode 2.00
@@ -1683,7 +1679,6 @@ DISTRIBUTIONS
       Scalar::Util 0
       String::Print 0.91
       Sys::Syslog 0.27
-      Test::More 0.86
   Log-Report-Optional-1.08
     pathname: M/MA/MARKOV/Log-Report-Optional-1.08.tar.gz
     provides:
@@ -2548,17 +2543,17 @@ DISTRIBUTIONS
       perl 5.006001
       strict 0
       warnings 0
-  Test-Fatal-0.017
-    pathname: R/RJ/RJBS/Test-Fatal-0.017.tar.gz
+  Test-Fatal-0.018
+    pathname: R/RJ/RJBS/Test-Fatal-0.018.tar.gz
     provides:
-      Test::Fatal 0.017
+      Test::Fatal 0.018
     requirements:
       Carp 0
       Exporter 5.57
       ExtUtils::MakeMaker 6.78
       Test::Builder 0
       Try::Tiny 0.07
-      strict 0
+      perl 5.012
       warnings 0
   Test-Number-Delta-1.06
     pathname: D/DA/DAGOLDEN/Test-Number-Delta-1.06.tar.gz
@@ -2719,22 +2714,24 @@ DISTRIBUTIONS
       TimeDate 1.21
     requirements:
       ExtUtils::MakeMaker 0
-  Travel-Status-DE-DBRIS-0.15
-    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.15.tar.gz
+  Travel-Status-DE-DBRIS-0.17
+    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.17.tar.gz
     provides:
-      Travel::Status::DE::DBRIS 0.15
-      Travel::Status::DE::DBRIS::Formation 0.15
-      Travel::Status::DE::DBRIS::Formation::Carriage 0.15
-      Travel::Status::DE::DBRIS::Formation::Group 0.15
-      Travel::Status::DE::DBRIS::Formation::Sector 0.15
-      Travel::Status::DE::DBRIS::Journey 0.15
-      Travel::Status::DE::DBRIS::JourneyAtStop 0.15
-      Travel::Status::DE::DBRIS::Location 0.15
+      Travel::Status::DE::DBRIS 0.17
+      Travel::Status::DE::DBRIS::Formation 0.17
+      Travel::Status::DE::DBRIS::Formation::Carriage 0.17
+      Travel::Status::DE::DBRIS::Formation::Group 0.17
+      Travel::Status::DE::DBRIS::Formation::Sector 0.17
+      Travel::Status::DE::DBRIS::Journey 0.17
+      Travel::Status::DE::DBRIS::JourneyAtStop 0.17
+      Travel::Status::DE::DBRIS::Location 0.17
+      Travel::Status::DE::DBRIS::Operators 0.17
     requirements:
       Carp 0
       Class::Accessor 0.16
       DateTime 0
       DateTime::Format::Strptime 0
+      File::Slurp 9999.19
       Getopt::Long 0
       JSON 0
       LWP::Protocol::https 0
