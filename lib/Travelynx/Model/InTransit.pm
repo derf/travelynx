@@ -325,6 +325,9 @@ sub add {
 				);
 			}
 		}
+		if ( scalar $journey->admin_ids ) {
+			$persistent_data->{admin_ids} = [ $journey->admin_ids ];
+		}
 		if ( scalar $journey->operators ) {
 			$persistent_data->{operators} = [ $journey->operators ];
 		}
