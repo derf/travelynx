@@ -36,6 +36,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: 'true'
       - name: perl -V
         run: perl -V
       - name: Setup Repo
