@@ -39,6 +39,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 	libssl-dev \
 	make \
 	zlib1g-dev \
+	libxml2 \
+	libxml2-dev \
 	&& cpanm -in --no-man-pages --installdeps . \
 	&& rm -rf ~/.cpanm \
 	&& apt-get purge -y \
