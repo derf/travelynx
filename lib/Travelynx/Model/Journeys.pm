@@ -2104,9 +2104,14 @@ sub get_connection_targets {
 	my $uid       = $opt{uid};
 	my $threshold = $opt{threshold}
 	  // DateTime->now( time_zone => 'Europe/Berlin' )->subtract( months => 4 );
-	my $db        = $opt{db} //= $self->{pg}->db;
-	my $min_count = $opt{min_count} // 3;
-	my $dest_id   = $opt{eva};
+	my $db         = $opt{db} //= $self->{pg}->db;
+	my $min_count  = $opt{min_count} // 3;
+	my $backend_id = $opt{backend_id};
+	my $dest_id    = $opt{eva};
+
+	$self->{log}->debug(
+"get_connection_targets(uid => $uid, backend_id => $backend_id, dest_id => $dest_id)"
+	);
 
 	if ( $opt{destination_name} ) {
 		return {
@@ -2114,8 +2119,6 @@ sub get_connection_targets {
 			name => $opt{destination_name}
 		};
 	}
-
-	my $backend_id = $opt{backend_id};
 
 	if ( not $dest_id ) {
 		( $dest_id, $backend_id ) = $self->get_latest_dest_ids(%opt);

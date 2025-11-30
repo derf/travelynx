@@ -1,0 +1,54 @@
+<ul class="collection departures connections">
+	% for my $res (@{$suggestions}) {
+		% my ($dep, $dest) = @{$res};
+		% my $row_class = '';
+		% my $link_class = 'action-checkin';
+		% if ($dep->is_cancelled) {
+			% $row_class = 'cancelled';
+			% $link_class = 'action-cancelled-from';
+		% }
+		% if ($checkin_from) {
+			<li class="collection-item <%= $row_class %> <%= $link_class %>"
+			data-dbris="<%= $dbris %>"
+			data-station="<%= $dep->stop_eva %>"
+			data-train="<%= $dep->id %>"
+			data-suffix="<%= $dep->maybe_line_no %>"
+			data-ts="<%= ($dep->sched_dep // $dep->dep)->epoch %>"
+			data-dest="<%= $dest->{name} %>">
+		% }
+		% else {
+			<li class="collection-item <%= $row_class %>">
+		% }
+			<a class="dep-time" href="#">
+				% if ($dep->is_cancelled) {
+					%= $dep->sched_dep->strftime('%H:%M')
+				% }
+				% else {
+					%= $dep->dep->strftime('%H:%M')
+				% }
+				% if ($dep->delay) {
+					%= sprintf('(%+d)', $dep->delay)
+				% }
+			</a>
+			<span class="connect-platform-wrapper">
+				% if ($dep->platform) {
+					<span>
+						% if (($dep->type // q{}) =~ m{ ast | bus | ruf }ix) {
+							Steig
+						% }
+						% else {
+							Gleis
+						% }
+						%= $dep->platform
+					</span>
+				% }
+				<span class="dep-line <%= $dep->type // q{} %>">
+					%= $dep->line
+				</span>
+			</span>
+			<span class="dep-dest">
+				%= $dest->{name}
+			</span>
+		</li>
+	% }
+</ul>

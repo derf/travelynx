@@ -1203,6 +1203,8 @@ sub station {
 		}
 	}
 
+	my @suggestions;
+
 	my $promise;
 	if ($dbris_service) {
 		if ( $station !~ m{ [@] L = \d+ }x ) {
@@ -1304,6 +1306,36 @@ sub station {
 				if ( $station =~ m{ [@] O = (?<name> [^@]+ ) [@] }x ) {
 					$status->{station_name} = $+{name};
 				}
+
+				my ($eva) = ( $station =~ m{ [@] L = (\d+) }x );
+				my $backend_id
+				  = $self->stations->get_backend_id( dbris => $dbris_service );
+				my @destinations = $self->journeys->get_connection_targets(
+					uid        => $uid,
+					backend_id => $backend_id,
+					eva        => $eva
+				);
+
+				for my $dep (@results) {
+					destination: for my $dest (@destinations) {
+						if (    $dep->destination
+							and $dep->destination eq $dest->{name} )
+						{
+							push( @suggestions, [ $dep, $dest ] );
+							next destination;
+						}
+						for my $via_name ( $dep->via ) {
+							if ( $via_name eq $dest->{name} ) {
+								push( @suggestions, [ $dep, $dest ] );
+								next destination;
+							}
+						}
+					}
+				}
+
+				@suggestions = map { $_->[0] }
+				  sort { $a->[1] <=> $b->[1] }
+				  map { [ $_, $_->[0]->dep->epoch ] } @suggestions;
 			}
 			elsif ($hafas_service) {
 
@@ -1449,6 +1481,7 @@ sub station {
 							related_stations => $status->{related_stations},
 							user_status      => $user_status,
 							can_check_out    => $can_check_out,
+							suggestions      => \@suggestions,
 							title => "travelynx: $status->{station_name}",
 						);
 					}

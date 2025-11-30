@@ -88,7 +88,7 @@
 		</div>
 	</div>
 % }
-% elsif (not param('train') and (@{stash('connections_iris') // []} or @{stash('connections_hafas') // []}) ) {
+% elsif (not param('train') and (@{stash('connections_iris') // []} or @{stash('connections_hafas') // []} or @{stash('suggestions') // []}) ) {
 	% $have_connections = 1;
 	<div class="row">
 		<div class="col s12">
@@ -98,6 +98,11 @@
 			% }
 			% if (@{stash('connections_hafas') // []}) {
 				%= include '_connections_hafas', connections => stash('connections_hafas'), checkin_from => $eva;
+			% }
+			% if (@{stash('suggestions') // []}) {
+				% if ($dbris) {
+					%= include '_suggestions_dbris', suggestions => stash('suggestions'), checkin_from => $eva;
+				% }
 			% }
 		</div>
 	</div>
