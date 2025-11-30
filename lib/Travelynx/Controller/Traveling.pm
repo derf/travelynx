@@ -1335,7 +1335,8 @@ sub station {
 
 				@suggestions = map { $_->[0] }
 				  sort { $a->[1] <=> $b->[1] }
-				  map { [ $_, $_->[0]->dep->epoch ] } @suggestions;
+				  grep { $_->[1] >= $now - 300 }
+				  map  { [ $_, $_->[0]->dep->epoch ] } @suggestions;
 			}
 			elsif ($hafas_service) {
 
