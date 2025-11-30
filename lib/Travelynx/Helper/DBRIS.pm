@@ -119,6 +119,7 @@ sub get_departures_p {
 	return Travel::Status::DE::DBRIS->new_p(
 		station        => $opt{station},
 		datetime       => $when,
+		num_vias       => 42,
 		cache          => $self->{realtime_cache},
 		promise        => 'Mojo::Promise',
 		user_agent     => $self->get_agent->request_timeout(10),
