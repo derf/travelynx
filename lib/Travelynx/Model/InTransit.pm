@@ -264,7 +264,11 @@ sub add {
 		and $stop
 		and ref($journey) eq 'Travel::Status::DE::DBRIS::Journey' )
 	{
-		my $number = $journey->train_no // $journey->number // $train_suffix;
+		my $trip_no
+		  = $journey->trip_no_at( $stop->eva,
+			$stop->sched_dep ? $stop->sched_dep->epoch : undef )
+		  // $journey->train_no;
+		my $number = $trip_no // $journey->number // $train_suffix;
 
 		my $line;
 		if ( defined $journey->line_no and $journey->line_no ne $number ) {
