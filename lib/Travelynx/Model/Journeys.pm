@@ -2150,10 +2150,15 @@ sub get_connection_targets {
 			order_by => { -desc => 'count' }
 		}
 	);
-	my @destinations
-	  = $res->hashes->grep( sub { shift->{count} >= $min_count } )
-	  ->map( sub { shift->{dest} } )
-	  ->each;
+	my @all_destinations = $res->hashes->each;
+	my @destinations;
+
+	while ( not @destinations and $min_count > 0 ) {
+		@destinations = map { $_->{dest} }
+		  grep { $_->{count} >= $min_count } @all_destinations;
+		$min_count--;
+	}
+
 	@destinations = $self->{stations}->get_by_evas(
 		backend_id => $opt{backend_id},
 		evas       => [@destinations]
