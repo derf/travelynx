@@ -103,6 +103,9 @@
 				% if ($dbris) {
 					%= include '_suggestions_dbris', suggestions => stash('suggestions'), checkin_from => $eva;
 				% }
+				% elsif ($efa) {
+					%= include '_suggestions_efa', suggestions => stash('suggestions'), checkin_from => $eva;
+				% }
 			% }
 		</div>
 	</div>
