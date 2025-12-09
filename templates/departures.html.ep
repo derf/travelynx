@@ -81,13 +81,6 @@
 		</div>
 	</div>
 % }
-% elsif ($user_status->{timestamp_delta} < 180) {
-	<div class="row">
-		<div class="col s12">
-			%= include '_checked_out', journey => $user_status;
-		</div>
-	</div>
-% }
 % elsif (not param('train') and (@{stash('connections_iris') // []} or @{stash('connections_hafas') // []} or @{stash('suggestions') // []}) ) {
 	% $have_connections = 1;
 	<div class="row">
@@ -107,6 +100,13 @@
 					%= include '_suggestions_efa', suggestions => stash('suggestions'), checkin_from => $eva;
 				% }
 			% }
+		</div>
+	</div>
+% }
+% if ($user_status->{timestamp_delta} < 180) {
+	<div class="row">
+		<div class="col s12">
+			%= include '_checked_out', journey => $user_status;
 		</div>
 	</div>
 % }
