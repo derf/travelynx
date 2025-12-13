@@ -1419,10 +1419,12 @@ sub station {
 			my $user_status = $self->get_user_status;
 
 			my $can_check_out = 0;
+			my ($eva) = ( $station =~ m{ [@] L = (\d+) }x );
+			$eva //= $status->{station_eva};
 			if ( $user_status->{checked_in} ) {
 				for my $stop ( @{ $user_status->{route_after} } ) {
 					if (
-						$stop->[1] eq $status->{station_eva}
+						$stop->[1] eq $eva
 						or List::Util::any { $stop->[1] eq $_->{uic} }
 						@{ $status->{related_stations} }
 					  )
