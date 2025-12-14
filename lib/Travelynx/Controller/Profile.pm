@@ -369,6 +369,21 @@ sub user_status {
 		return;
 	}
 
+	if ( not $ts =~ m{ ^ \d+ [.]? \d* $ }x ) {
+		$self->respond_to(
+			json => {
+				json   => { error => 'bad request (invalid timestamp)' },
+				status => 400,
+			},
+			any => {
+				template => 'bad_request',
+				message  => 'Invalid timestamp',
+				status   => 400
+			}
+		);
+		return;
+	}
+
 	my $my_user;
 	my $relation;
 	my $inverse_relation;
