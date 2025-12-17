@@ -1,9 +1,12 @@
 % if ($journey->{extra_data}{wagonorder_pride}) {
 	🏳️‍🌈
 % }
-<span class="dep-line <%= ($journey->{train_type} // q{}) =~ tr{a-zA-Z_-}{}cdr %>">
+<span class="dep-line <%= ($journey->{train_type} // q{}) =~ tr{a-zA-Z_-}{}cdr %> <%= ($journey->{train_line} // q{}) =~ s{ ^ \D+ \K \d .* $ }{}rx %>">
 	% if (not $journey->{is_motis}) {
 		<%= $journey->{train_type} %>
+	% }
+	% if ($journey->{train_type} and $journey->{train_line}) {
+		% $journey->{train_line} =~ s{ ^ \Q$journey->{train_type}\E (?= \d ) }{}x;
 	% }
 	<%= $journey->{train_line}  // $journey->{train_no}%>
 </span>
