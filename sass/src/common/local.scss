@@ -209,7 +209,7 @@ ul.route-history > li {
 	min-width: 6ch;
 	margin: 0 auto;
 	
-	&.Bus, &.BUS, &.NachtBus, &.Niederflurbus, &.Stadtbus, &.MetroBus, &.PlusBus, &.Landbus, &.Regionalbus, &.RegionalBus, &.SB, &.ExpressBus, &.BSV, &.RVV-Bus-Linie, &.Buslinie, &.Omnibus, &.RegioBus {
+	&.Bus, &.BUS, &.NachtBus, &.Niederflurbus, &.Stadtbus, &.StadtBus, &.MetroBus, &.PlusBus, &.Landbus, &.Regionalbus, &.RegionalBus, &.SB, &.ExpressBus, &.BSV, &.RVV-Bus-Linie, &.Buslinie, &.Omnibus, &.RegioBus {
 		background-color: #a3167e;
 		border-radius: 5rem;
 		padding: .2rem .5rem;
