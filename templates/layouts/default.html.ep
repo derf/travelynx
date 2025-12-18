@@ -13,7 +13,7 @@
 	% while (my ($key, $value) = each %{stash('opengraph') // {}}) {
 		<meta property="og:<%= $key %>" content="<%= $value %>">
 	% }
-	% my $av = 'v99'; # asset version
+	% my $av = 'v100'; # asset version
 	<link rel="icon" type="image/png" href="/static/<%= $av %>/icons/icon-16x16.png" sizes="16x16">
 	<link rel="icon" type="image/png" href="/static/<%= $av %>/icons/icon-32x32.png" sizes="32x32">
 	<link rel="icon" type="image/png" href="/static/<%= $av %>/icons/icon-96x96.png" sizes="96x96">
