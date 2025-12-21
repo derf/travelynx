@@ -7,7 +7,7 @@
 		<%= L('about.data-sources') %>:
 		<a href="https://finalrewind.org/projects/Travel-Status-DE-DBRIS/">Travel::Status::DE::DBRIS</a>
 		v<%= $Travel::Status::DE::DBRIS::VERSION %>,
-		<a href="https://finalrewind.org/projects/Travel-Status-DE-EFA/">Travel::Status::DE::EFA</a>
+		<a href="https://finalrewind.org/projects/Travel-Status-DE-VRR/">Travel::Status::DE::EFA</a>
 		v<%= $Travel::Status::DE::EFA::VERSION %>,
 		<a href="https://finalrewind.org/projects/Travel-Status-DE-HAFAS/">Travel::Status::DE::HAFAS</a>
 		v<%= $Travel::Status::DE::HAFAS::VERSION %>,
