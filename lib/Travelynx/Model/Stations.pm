@@ -138,7 +138,8 @@ sub get_backends {
 # Slow for MOTIS backends
 sub add_or_update {
 	my ( $self, %opt ) = @_;
-	my $stop = $opt{stop};
+	my $stop      = $opt{stop};
+	my $keep_name = $opt{keep_name};
 	$opt{db} //= $self->{pg}->db;
 
 	$opt{backend_id} //= $self->get_backend_id(%opt);
@@ -285,7 +286,7 @@ sub add_or_update {
 		$opt{db}->update(
 			'stations',
 			{
-				name     => $loc->name,
+				( $keep_name ? () : ( name => $loc->name ) ),
 				lat      => $loc->lat,
 				lon      => $loc->lon,
 				archived => 0

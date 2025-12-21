@@ -2028,6 +2028,7 @@ sub startup {
 						$self->stations->add_or_update(
 							stop => $stop,
 							db   => $db,
+							keep_name => 1,
 							iris => 1,
 						);
 					}
