@@ -530,6 +530,63 @@ msgstr "."
 msgid "review.next-page"
 msgstr "Swip here or click below for next page"
 
+msgid "review.mean-trip.header"
+msgstr "An average Trip"
+
+msgid "review.mean-trip-3.pre"
+msgstr "… meant taking"
+
+msgid "review.mean-trip-3.mid"
+msgstr "within the"
+
+msgid "review.mean-trip-3.post"
+msgstr " triangle."
+
+msgid "review.mean-trip-2.pre"
+msgstr "… was always along your commute between"
+
+msgid "review.mean-trip-2.mid"
+msgstr "and"
+
+msgid "review.mean-trip-2.post"
+msgstr "."
+
+msgid "review.time-distance.pre"
+msgstr "On average, it took"
+
+msgid "review.time-distance.mid"
+msgstr "to cover approx."
+
+msgid "review.time-distance.post"
+msgstr "."
+
+msgid "review.on-time"
+msgstr "It was consistently <strong>on time</strong>. Impressive!"
+
+msgid "review.delay-decreasing.pre"
+msgstr "It departed"
+
+msgid "review.delay-decreasing.mid"
+msgstr "later than scheduled, but managed to partially make up for that. When reahing its destination, it was delayed by only"
+
+msgid "review.delay-decreasing.post"
+msgstr "."
+
+msgid "review.delay-constant.pre"
+msgstr "It departured"
+
+msgid "review.delay-constant.post"
+msgstr " too late and arrived with the same delay."
+
+msgid "review.delay-increasing.pre"
+msgstr "It departed with a delay of"
+
+msgid "review.delay-increasing.mid"
+msgstr "and increased it to"
+
+msgid "review.delay-increasing.post"
+msgstr " at the destination."
+
 # _checked_in.html.ep, _public_status_card.html.ep
 
 msgid "status.is-checked-in"

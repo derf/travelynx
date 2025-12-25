@@ -530,6 +530,63 @@ msgstr "."
 msgid "review.next-page"
 msgstr "Hier streichen oder unten klicken für nächste Seite"
 
+msgid "review.mean-trip.header"
+msgstr "Eine typische Fahrt"
+
+msgid "review.mean-trip-3.pre"
+msgstr "… führte dich mit"
+
+msgid "review.mean-trip-3.mid"
+msgstr "durch das Dreieck"
+
+msgid "review.mean-trip-3.post"
+msgstr "."
+
+msgid "review.mean-trip-2.pre"
+msgstr "… befand sich jederzeit auf deiner Pendelstrecke zwischen"
+
+msgid "review.mean-trip-2.mid"
+msgstr "und"
+
+msgid "review.mean-trip-2.post"
+msgstr "."
+
+msgid "review.time-distance.pre"
+msgstr "Im Mittel benötigte sie"
+
+msgid "review.time-distance.mid"
+msgstr "für eine Entfernung von ca."
+
+msgid "review.time-distance.post"
+msgstr "."
+
+msgid "review.on-time"
+msgstr "Außerdem war sie <strong>komplett pünktlich</strong>. Beeindruckend!"
+
+msgid "review.delay-decreasing.pre"
+msgstr "Sie fuhr"
+
+msgid "review.delay-decreasing.mid"
+msgstr "zu spät ab, konnte aber einen Teil der Verspätung wieder herausholen. Ihr Ziel erreichte sie nur noch"
+
+msgid "review.delay-decreasing.post"
+msgstr " später als vorgesehen."
+
+msgid "review.delay-constant.pre"
+msgstr "Sie fuhr"
+
+msgid "review.delay-constant.post"
+msgstr " zu spät ab und kam mit der gleichen Verspätung am Ziel an."
+
+msgid "review.delay-increasing.pre"
+msgstr "Sie fuhr"
+
+msgid "review.delay-increasing.mid"
+msgstr "zu spät ab und schlich mit"
+
+msgid "review.delay-increasing.post"
+msgstr " ins Ziel."
+
 # _checked_in.html.ep, _public_status_card.html.ep
 
 msgid "status.is-checked-in"

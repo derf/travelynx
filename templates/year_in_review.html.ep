@@ -46,40 +46,55 @@
 				</p>
 			</div>
 			<div class="carousel-item" href="#two">
-				<h2>Eine typische Fahrt</h2>
+				<h2><%= L('review.mean-trip.header') %></h2>
 				<p>
 					% if ($review->{typical_stops_3} and $review->{typical_type_1}) {
-						… führte dich mit
-						% if ($review->{typical_type_1} eq 'S') {
-							einer <strong>S-Bahn</strong>
+						%= L('review.mean-trip-3.pre')
+						<strong><%= $review->{typical_type_1} %></strong>
+						% if ($review->{typical_type_2}) {
+							/
+							<strong><%= $review->{typical_type_2} %></strong>
 						% }
-						% else {
-							einem <strong><%= $review->{typical_type_1} %></strong>
-						% }
-						durch das Dreieck <strong><%= join(' / ', @{$review->{typical_stops_3}}) %></strong>.
+						%= L('review.mean-trip-3.mid')
+						<strong><%= join(' / ', @{$review->{typical_stops_3}}) %></strong><%= L('review.mean-trip-3.post') %>
 					% }
 					% elsif ($review->{typical_stops_2}) {
-						… befand sich jederzeit auf deiner Pendelstrecke zwischen <strong><%= $review->{typical_stops_2}[0] %></strong> und <strong><%= $review->{typical_stops_2}[1] %></strong>.
+						%= L('review.mean-trip-2.pre')
+						<strong><%= $review->{typical_stops_2}[0] %></strong>
+						%= L('review.mean-trip-2.mid')
+						<strong><%= $review->{typical_stops_2}[1] %></strong><%= L('review.mean-trip-2.post') %>
 					% }
 				</p>
 				<p>
-					Im Mittel benötigte sie <strong><%= $review->{typical_time} %></strong> für eine Entfernung von ca. <strong><%= $review->{typical_km} %> km</strong> (<%= $review->{typical_kmh} %> km/h).
+					%= L('review.time-distance.pre')
+					<strong><%= $review->{typical_time} %></strong>
+					%= L('review.time-distance.mid')
+					<strong><%= $review->{typical_km} %> km</strong> (<%= $review->{typical_kmh} %> km/h)<%= L('review.time-distance.post') %>
 				</p>
 				% if ($review->{typical_delay_dep} == 0 and $review->{typical_delay_arr} == 0) {
-					<p>Außerdem war sie <strong>komplett pünktlich</strong>. Beeindruckend!</p>
+					<p>
+						%== L('review.on-time')
+					</p>
 				% }
 				% elsif ($review->{typical_delay_dep} > 0 and $review->{typical_delay_arr} > 0) {
-					<p>Sie fuhr <strong><%= $review->{typical_delay_dep_h} %></strong> zu spät
-					% if ($review->{typical_delay_arr} < $review->{typical_delay_dep}) {
-						ab, konnte aber einen Teil der Verspätung wieder herausholen.
-						Ihr Ziel erreichte sie nur noch <strong><%= $review->{typical_delay_arr_h} %></strong> später als vorgesehen.
-					% }
-					% elsif ($review->{typical_delay_arr} == $review->{typical_delay_dep}) {
-						ab und kam mit der gleichen Verspätung am Ziel an.
-					% }
-					% else {
-						ab und schlich mit <strong>+<%= $review->{typical_delay_arr} %></strong> ins Ziel.
-					% }
+					<p>
+						% if ($review->{typical_delay_arr} < $review->{typical_delay_dep}) {
+							%= L('review.delay-decreasing.pre')
+							<strong><%= $review->{typical_delay_dep_h} %></strong>
+							%= L('review.delay-decreasing.mid')
+							<strong><%= $review->{typical_delay_arr_h} %></strong><%= L('review.delay-decreasing.post') %>
+						% }
+						% elsif ($review->{typical_delay_arr} == $review->{typical_delay_dep}) {
+							%= L('review.delay-constant.pre')
+							<strong><%= $review->{typical_delay_dep_h} %></strong><%= L('review.delay-constant.post') %>
+						% }
+						% else {
+							%= L('review.delay-increasing.pre')
+							<strong><%= $review->{typical_delay_dep_h} %></strong>
+							%= L('review.delay-increasing.mid')
+							<strong>+<%= $review->{typical_delay_arr} %></strong><%= L('review.delay-increasing.post') %>
+						% }
+					</p>
 				% }
 			</div>
 			<div class="carousel-item" href="#three">
