@@ -853,7 +853,7 @@ sub get {
 			  : undef;
 			my ( $km_polyline, $km_route, $km_beeline, $skip )
 			  = $self->get_travel_distance($ref);
-			$ref->{km_route}     = $km_polyline || $km_route;
+			$ref->{km_route}     = $km_polyline || $km_route || $km_beeline;
 			$ref->{skip_route}   = $km_polyline ? 0 : $skip;
 			$ref->{km_beeline}   = $km_beeline;
 			$ref->{skip_beeline} = $skip;
