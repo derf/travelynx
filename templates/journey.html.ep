@@ -259,10 +259,10 @@
 						% my $at_startstop = 0;
 						% my $i = 0;
 						% for my $station (@{$journey->{route}}) {
-							% if ($i == $journey->{route_dep_index}) {
+							% if (defined $journey->{route_dep_index} and $i == $journey->{route_dep_index}) {
 								% $within = 1; $at_startstop = 1;
 							% }
-							% elsif ($i == $journey->{route_arr_index}) {
+							% elsif (defined $journey->{route_arr_index} and $i == $journey->{route_arr_index}) {
 								% $within = 0; $at_startstop = 1;
 							% }
 							% else {
