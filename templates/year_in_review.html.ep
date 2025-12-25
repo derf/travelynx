@@ -2,33 +2,47 @@
 	<div class="col s12 m12 l12">
 		<div class="carousel carousel-slider center">
 			<div class="carousel-item" href="#one">
-				<h2>Jahresrückblick <%= $year %></h2>
+				<h2><%= L('review.header.pre') %> <%= $year %> <%= L('review.header.post') %></h2>
 				<p>
-					Du hast in diesem Jahr <strong><%= $stats->{num_trains} %> Fahrten</strong> von und zu <strong><%= $review->{num_stops} %> Betriebsstellen</strong> in travelynx erfasst.
+					%= L('review.trips-stops.pre')
+					<strong><%= $stats->{num_trains} %> <%= L('review.trips') %></strong>
+					%= L('review.trips-stops.mid')
+					<strong><%= $review->{num_stops} %> <%= L('review.stops') %></strong><%= L('review.trips-stops.post') %>
 					% if ($stats->{num_trains} > 365) {
-						Das sind mehr als <strong><%= $review->{trains_per_day} %> Fahrten pro Tag</strong>!
+						%= L('review.trips-per-day.pre')
+						<strong><%= $review->{trains_per_day} %> <%= L('review.trips-per-day') %></strong><%= L('review.trips-per-day.post') %>
 					% }
 				</p>
 				<p>
 					% if ($review->{traveling_min_total} > 525) {
-						Insgesamt hast du mindestens <strong><%= $review->{traveling_percentage_year} %> des Jahres</strong>
-						(<%= $review->{traveling_time_year} %>) unterwegs verbracht.
+						%= L('review.travel-time.pre')
+						<strong><%= $review->{traveling_percentage_year} %> <%= L('review.travel-time.of-year') %></strong>
+						(<%= $review->{traveling_time_year} %>)
+						%= L('review.travel-time.post')
 					% }
 					% else {
-						Insgesamt hast du mindestens <strong><%= $review->{traveling_time_year} %></strong> unterwegs verbracht.
+						%= L('review.travel-time.pre')
+						<strong><%= $review->{traveling_time_year} %></strong>
+						%= L('review.travel-time.post')
 					% }
 				</p>
 				<p>
-					Dabei hast du ca. <strong><%= $review->{km_route} %> km</strong> (Luftlinie: <%= $review->{km_beeline} %> km) zurückgelegt.
+					%= L('review.travel-distance.pre')
+					<strong><%= $review->{km_route} %> km</strong>
+					<%= L('journey.beeline.pre') %><%= $review->{km_beeline} %> km<%= L('journey.beeline.post') %><%= L('review.travel-distance.post') %>
 					% if ($review->{km_circle} > 1) {
-						Das entspricht <strong><%= $review->{km_circle_h} %> Fahrten um die Erde</strong>.
+						%= L('review.equivalent-circumference.pre')
+						<strong><%= $review->{km_circle_h} %> <%= L('review.equivalent-circumference.mid') %></strong><%= L('review.equivalent-circumference.post') %>
 					% }
 					% elsif ($review->{km_diag} > 1) {
-						Das entspricht <strong><%= $review->{km_diag_h} %> Reisen zum Mittelpunkt der Erde und zurück</strong>.
+						%= L('review.equivalent-diagonal.pre')
+						<strong><%= $review->{km_diag_h} %>  <%= L('review.equivalent-diagonal.mid') %></strong><%= L('review.equivalent-diagonal.post') %>
 					% }
 				</p>
 				<p>
-					<em>Hier streichen</em> 🐈 <em>oder unten klicken für nächste Seite</em>
+					<em>
+						%= L('review.next-page')
+					</em>
 				</p>
 			</div>
 			<div class="carousel-item" href="#two">

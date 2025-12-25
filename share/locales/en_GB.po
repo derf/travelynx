@@ -462,6 +462,74 @@ msgstr "Accounts are automatically deleted after a year without activity. You wi
 msgid "register.disclaimer"
 msgstr "Please be aware: Travelynx is a non-commerical personal project and is provided as is. We do not make guarantees in regards to availability of the service or a sudden end of the project."
 
+# year_in_review.html.ep
+
+msgid "review.header.pre"
+msgstr " "
+
+msgid "review.header.post"
+msgstr "in Review"
+
+msgid "review.trips-stops.pre"
+msgstr "You have logged"
+
+msgid "review.trips-stops.mid"
+msgstr "across"
+
+msgid "review.trips-stops.post"
+msgstr "."
+
+msgid "review.trips"
+msgstr "trips"
+
+msgid "review.stops"
+msgstr "stops"
+
+msgid "review.trips-per-day.pre"
+msgstr "This comes down to more than"
+
+msgid "review.trips-per-day"
+msgstr "trips per day"
+
+msgid "review.trips-per-day.post"
+msgstr "!"
+
+msgid "review.travel-time.pre"
+msgstr "In total, you spent at least"
+
+msgid "review.travel-time.of-year"
+msgstr "of the entire year"
+
+msgid "review.travel-time.post"
+msgstr "in transit."
+
+msgid "review.travel-distance.pre"
+msgstr "In doing so, you traversed a total distance of approx."
+
+msgid "review.travel-distance.post"
+msgstr "."
+
+msgid "review.equivalent-circumference.pre"
+msgstr "This equals"
+
+msgid "review.equivalent-circumference.mid"
+msgstr "trips around the earth"
+
+msgid "review.equivalent-circumference.post"
+msgstr "."
+
+msgid "review.equivalent-diagonal.pre"
+msgstr "This equals"
+
+msgid "review.equivalent-diagonal.mid"
+msgstr "journeys to the centre of the earth and back"
+
+msgid "review.equivalent-diagonal.post"
+msgstr "."
+
+msgid "review.next-page"
+msgstr "Swip here or click below for next page"
+
 # _checked_in.html.ep, _public_status_card.html.ep
 
 msgid "status.is-checked-in"

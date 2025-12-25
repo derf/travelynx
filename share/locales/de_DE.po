@@ -462,6 +462,74 @@ msgstr "Accounts werden nach einem Jahr ohne Aktivität per E-Mail über die bev
 msgid "register.disclaimer"
 msgstr "Bitte beachten: Travelynx ist ein privat betriebenes Projekt ohne Verfügbarkeitsgarantie. Unangekündigte Downtimes oder eine kurzfristige Einstellung dieser Seite sind nicht vorgesehen, aber möglich."
 
+# year_in_review.html.ep
+
+msgid "review.header.pre"
+msgstr "Jahresrückblick"
+
+msgid "review.header.post"
+msgstr " "
+
+msgid "review.trips-stops.pre"
+msgstr "Du hast in diesem Jahr"
+
+msgid "review.trips-stops.mid"
+msgstr "von und zu"
+
+msgid "review.trips-stops.post"
+msgstr " in travelynx erfasst."
+
+msgid "review.trips"
+msgstr "Fahrten"
+
+msgid "review.stops"
+msgstr "Betriebsstellen"
+
+msgid "review.trips-per-day.pre"
+msgstr "Das sind mehr als"
+
+msgid "review.trips-per-day"
+msgstr "Fahrten pro Tag"
+
+msgid "review.trips-per-day.post"
+msgstr "!"
+
+msgid "review.travel-time.pre"
+msgstr "Insgesamt hast du mindestens"
+
+msgid "review.travel-time.of-year"
+msgstr "des Jahres"
+
+msgid "review.travel-time.post"
+msgstr "unterwegs verbracht."
+
+msgid "review.travel-distance.pre"
+msgstr "Dabei hast du ca."
+
+msgid "review.travel-distance.post"
+msgstr " zurückgelegt."
+
+msgid "review.equivalent-circumference.pre"
+msgstr "Das entspricht"
+
+msgid "review.equivalent-circumference.mid"
+msgstr "Fahrten um die Erde"
+
+msgid "review.equivalent-circumference.post"
+msgstr "."
+
+msgid "review.equivalent-diagonal.pre"
+msgstr "Das entspricht"
+
+msgid "review.equivalent-diagonal.mid"
+msgstr "Reisen zum Mittelpunkt der Erde und zurück"
+
+msgid "review.equivalent-diagonal.post"
+msgstr "."
+
+msgid "review.next-page"
+msgstr "Hier streichen oder unten klicken für nächste Seite"
+
 # _checked_in.html.ep, _public_status_card.html.ep
 
 msgid "status.is-checked-in"
