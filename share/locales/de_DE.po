@@ -223,6 +223,11 @@ msgstr "Korrekte Berechnung und Visualisierung der Wegstrecke bei Fahrten mit Ri
 msgid "changelog.2-17.1"
 msgstr "Kartendaten („Polylines“) zu einzelnen Fahrten können nun als GPX ex- und importiert werden. Somit können Kartendaten nachträglich korrigiert oder nachgepflegt werden. Das GPX-Datenformat ist mit BRouter-Web kompatibel."
 
+# history.html.ep
+
+msgid "history.review"
+msgstr "Rückblick"
+
 # journey.html.ep
 
 msgid "journey.not-found"

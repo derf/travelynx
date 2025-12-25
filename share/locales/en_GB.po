@@ -223,6 +223,11 @@ msgstr "Fix distance calculation and visualization of ring line trips. Trips sho
 msgid "changelog.2-17.1"
 msgstr "Map data (“polylines”) for individual trips can now be exported and imported in the GPX format. This allows map data to be corrected or augmented after the fact. The GPX import/export is compatible with BRouter-Web."
 
+
+# history.html.ep
+msgid "history.review"
+msgstr "Review"
+
 # journey.html.ep
 
 msgid "journey.not-found"
