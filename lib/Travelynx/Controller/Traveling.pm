@@ -1379,7 +1379,8 @@ sub station {
 					destination: for my $dest (@destinations) {
 						for my $stop ( $dep->route_post ) {
 							if ( $stop->full_name eq $dest->{name} ) {
-								push( @suggestions, [ $dep, $dest ] );
+								push( @suggestions,
+									[ $dep, $dest, $stop->arr ] );
 								next destination;
 							}
 						}
