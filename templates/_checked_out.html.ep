@@ -4,16 +4,6 @@
 		<p>Aus
 			%= include '_format_train', journey => $journey
 			bis <a href="/s/<%= $journey->{arr_eva} %>?hafas=<%= $journey->{is_hafas} ? $journey->{backend_name} : q{} %>"><%= $journey->{arr_name} %></a></p>
-		% if (@{stash('connections_iris') // [] } or @{stash('connections_hafas') // []}) {
-			<span class="card-title" style="margin-top: 2ex;">Verbindungen</span>
-			<p>Fahrt auswählen zum Einchecken mit Zielwahl.</p>
-			% if (@{stash('connections_iris') // [] }) {
-				%= include '_connections', connections => stash('connections_iris'), checkin_from => $journey->{arr_eva};
-			% }
-			% if (@{stash('connections_hafas') // [] }) {
-				%= include '_connections_hafas', connections => stash('connections_hafas'), checkin_from => $journey->{arr_eva};
-			% }
-		% }
 	</div>
 	<div class="card-action">
 		<a class="action-undo" data-id="<%= $journey->{journey_id} %>">

@@ -5,9 +5,5 @@
 			in <a href="/s/<%= $journey->{dep_eva} %>"><%= $journey->{dep_name} %></a>
 			entfällt. Der Ausfall der Fahrt nach <%= $journey->{arr_name} %> wurde bereits dokumentiert.
 		</p>
-		% if (my @connections = @{stash('connections_iris') // []}) {
-			<p>Alternative Reisemöglichkeiten:</p>
-			%= include '_connections', connections => \@connections, checkin_from => $journey->{dep_eva};
-		% }
 	</div>
 </div>

@@ -2026,10 +2026,10 @@ sub startup {
 
 					for my $stop ( $journey->route ) {
 						$self->stations->add_or_update(
-							stop => $stop,
-							db   => $db,
+							stop      => $stop,
+							db        => $db,
 							keep_name => 1,
-							iris => 1,
+							iris      => 1,
 						);
 					}
 

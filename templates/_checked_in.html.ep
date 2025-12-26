@@ -221,18 +221,6 @@
 					</ul>
 				</p>
 			% }
-			% if (@{stash('connections_iris') // [] } or @{stash('connections_hafas') // []}) {
-				<span class="card-title" style="margin-top: 2ex;">Verbindungen</span>
-				% if ($journey->{arrival_countdown} < 0) {
-					<p>Fahrt auswählen zum Einchecken mit Zielwahl.</p>
-				% }
-				% if (@{stash('connections_iris') // [] }) {
-					%= include '_connections', connections => stash('connections_iris'), checkin_from => $journey->{arrival_countdown} < 0 ? $journey->{arr_eva} : undef;
-				% }
-				% if (@{stash('connections_hafas') // [] }) {
-					%= include '_connections_hafas', connections => stash('connections_hafas'), checkin_from => $journey->{arrival_countdown} < 0 ? $journey->{arr_eva} : undef;
-				% }
-			% }
 			% if (defined $journey->{arrival_countdown} and $journey->{arrival_countdown} <= 0) {
 				<p style="margin-top: 2ex;">
 					%= L('status.delayed-auto-checkout')
