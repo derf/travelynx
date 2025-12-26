@@ -98,28 +98,70 @@
 				% }
 			</div>
 			<div class="carousel-item" href="#three">
-				<h2>High Scores</h2>
+				<h2><%= L('review.high-scores.header') %></h2>
 				% if ($review->{longest_t_id}) {
-					<p><a href="/journey/<%= $review->{longest_t_id} %>">Längste Fahrt</a>:
-						<strong><%= $review->{longest_t_time} %></strong> mit <strong><%= $review->{longest_t_type} %> <%= $review->{longest_t_lineno} %></strong> von <%= $review->{longest_t_from} %> nach <%= $review->{longest_t_to} %>.</p>
+					<p>
+						<a href="/journey/<%= $review->{longest_t_id} %>"><%= L('review.high-scores.longest-trip.link') %></a>:
+						%= L('review.high-scores.longest-trip.pre')
+						<strong><%= $review->{longest_t_time} %></strong>
+						%= L('review.high-scores.with')
+						<strong><%= $review->{longest_t_type} %> <%= $review->{longest_t_lineno} %></strong>
+						%= L('review.high-scores.from')
+						%= $review->{longest_t_from}
+						%= L('review.high-scores.to')
+						<%= $review->{longest_t_to} %><%= L('review.high-scores.longest-trip.post') %>
+					</p>
 					% if ($review->{longest_km_id} == $review->{longest_t_id}) {
-						<p>Mit <strong><%= $review->{longest_km_km} %> km</strong> war sie gleichzeitig deine weiteste Fahrt.</p>
+						<p>
+							%= L('review.high-scores.farthest-trip-eq-longest.pre')
+							<strong><%= $review->{longest_km_km} %> km</strong><%= L('review.high-scores.farthest-trip-eq-longest.post') %>
+						</p>
 					% }
 				% }
 				% if ($review->{longest_km_id} and $review->{longest_km_id} != $review->{longest_t_id}) {
-					<p><a href="/journey/<%= $review->{longest_km_id} %>">Größte Entfernung</a>:
-						<strong><%= $review->{longest_km_km} %> km</strong> mit <strong><%= $review->{longest_km_type} %> <%= $review->{longest_km_lineno} %></strong> von <%= $review->{longest_km_from} %> nach <%= $review->{longest_km_to} %>.</p>
+					<p>
+						<a href="/journey/<%= $review->{longest_km_id} %>"><%= L('review.high-scores.farthest-trip.link') %></a>:
+						%= L('review.high-scores.farthest-trip.pre')
+						<strong><%= $review->{longest_km_km} %> km</strong>
+						%= L('review.high-scores.with')
+						<strong><%= $review->{longest_km_type} %> <%= $review->{longest_km_lineno} %></strong>
+						%= L('review.high-scores.from')
+						%= $review->{longest_km_from}
+						%= L('review.high-scores.to')
+						<%= $review->{longest_km_to} %><%= L('review.high-scores.farthest-trip.post') %>
+					</p>
 				% }
 				% if ($review->{shortest_t_id}) {
-					<p><a href="/journey/<%= $review->{shortest_t_id} %>">Kürzeste Fahrt</a>:
-						<strong><%= $review->{shortest_t_time} %></strong> mit <strong><%= $review->{shortest_t_type} %> <%= $review->{shortest_t_lineno} %></strong> von <%= $review->{shortest_t_from} %> nach <%= $review->{shortest_t_to} %>.</p>
+					<p>
+						<a href="/journey/<%= $review->{shortest_t_id} %>"><%= L('review.high-scores.shortest-trip.link') %></a>:
+						%= L('review.high-scores.shortest-trip.pre')
+						<strong><%= $review->{shortest_t_time} %></strong>
+						%= L('review.high-scores.with')
+						<strong><%= $review->{shortest_t_type} %> <%= $review->{shortest_t_lineno} %></strong>
+						%= L('review.high-scores.from')
+						<%= $review->{shortest_t_from} %>
+						%= L('review.high-scores.to')
+						<%= $review->{shortest_t_to} %><%= L('review.high-scores.shortest-trip.post') %>
+					</p>
 					% if ($review->{shortest_km_id} == $review->{shortest_t_id}) {
-						<p>Mit <strong><%= $review->{shortest_km_m} %> m</strong> war sie gleichzeitig dein kleinster Katzensprung.</p>
+						<p>
+							%= L('review.high-scores.closest-trip-eq-shortest.pre')
+							<strong><%= $review->{shortest_km_m} %> m</strong><%= L('review.high-scores.closest-trip-eq-shortest.post') %>
+						</p>
 					% }
 				% }
 				% if ($review->{shortest_km_id} and $review->{shortest_km_id} != $review->{shortest_t_id}) {
-					<p><a href="/journey/<%= $review->{shortest_km_id} %>">Kleinster Katzensprung</a>:
-						<strong><%= $review->{shortest_km_m} %> m</strong> mit <strong><%= $review->{shortest_km_type} %> <%= $review->{shortest_km_lineno} %></strong> von <%= $review->{shortest_km_from} %> nach <%= $review->{shortest_km_to} %>.</p>
+					<p>
+						<a href="/journey/<%= $review->{shortest_km_id} %>"><%= L('review.high-scores.closest-trip.link') %></a>:
+						%= L('review.high-scores.closest-trip.pre')
+						<strong><%= $review->{shortest_km_m} %> m</strong>
+						%= L('review.high-scores.with')
+						<strong><%= $review->{shortest_km_type} %> <%= $review->{shortest_km_lineno} %></strong>
+						%= L('review.high-scores.from')
+						<%= $review->{shortest_km_from} %>
+						%= L('review.high-scores.to')
+						<%= $review->{shortest_km_to} %><%= L('review.high-scores.closest-trip.post') %>
+					</p>
 				% }
 			</div>
 			<div class="carousel-item" href="#four">

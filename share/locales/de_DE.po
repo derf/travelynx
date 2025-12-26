@@ -592,6 +592,69 @@ msgstr "zu spät ab und schlich mit"
 msgid "review.delay-increasing.post"
 msgstr " ins Ziel."
 
+msgid "review.high-scores.header"
+msgstr "High Scores"
+
+msgid "review.high-scores.with"
+msgstr "mit"
+
+msgid "review.high-scores.from"
+msgstr "von"
+
+msgid "review.high-scores.to"
+msgstr "nach"
+
+msgid "review.high-scores.longest-trip.link"
+msgstr "Längste Fahrt"
+
+msgid "review.high-scores.longest-trip.pre"
+msgstr " "
+
+msgid "review.high-scores.longest-trip.post"
+msgstr "."
+
+msgid "review.high-scores.farthest-trip-eq-longest.pre"
+msgstr "Mit"
+
+msgid "review.high-scores.farthest-trip-eq-longest.post"
+msgstr " war sie gleichzeitig deine weiteste Fahrt."
+
+msgid "review.high-scores.farthest-trip.link"
+msgstr "Größte Entfernung"
+
+msgid "review.high-scores.farthest-trip.pre"
+msgstr " "
+
+msgid "review.high-scores.farthest-trip.post"
+msgstr "."
+
+msgid "review.high-scores.shortest-trip.link"
+msgstr "Kürzeste Fahrt"
+
+msgid "review.high-scores.shortest-trip.pre"
+msgstr " "
+
+msgid "review.high-scores.shortest-trip.post"
+msgstr "."
+
+msgid "review.high-scores.closest-trip-eq-shortest.pre"
+msgstr "Mit"
+
+msgid "review.high-scores.closest-trip-eq-shortest.post"
+msgstr " war sie gleichzeitig dein kleinster Katzensprung."
+
+msgid "review.high-scores.farthest-trip.link"
+msgstr "Größte Entfernung"
+
+msgid "review.high-scores.closest-trip.link"
+msgstr "Kleinster Katzensprung"
+
+msgid "review.high-scores.closest-trip.pre"
+msgstr " "
+
+msgid "review.high-scores.closest-trip.post"
+msgstr "."
+
 # _checked_in.html.ep, _public_status_card.html.ep
 
 msgid "status.is-checked-in"

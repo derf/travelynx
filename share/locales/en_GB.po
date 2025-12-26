@@ -592,6 +592,66 @@ msgstr "and increased it to"
 msgid "review.delay-increasing.post"
 msgstr " at the destination."
 
+msgid "review.high-scores.header"
+msgstr "High Scores"
+
+msgid "review.high-scores.with"
+msgstr "with"
+
+msgid "review.high-scores.from"
+msgstr "from"
+
+msgid "review.high-scores.to"
+msgstr "to"
+
+msgid "review.high-scores.longest-trip.link"
+msgstr "Longest Leg"
+
+msgid "review.high-scores.longest-trip.pre"
+msgstr " "
+
+msgid "review.high-scores.longest-trip.post"
+msgstr "."
+
+msgid "review.high-scores.farthest-trip-eq-longest.pre"
+msgstr "With a distance of"
+
+msgid "review.high-scores.farthest-trip-eq-longest.post"
+msgstr ", it also was your longest leap."
+
+msgid "review.high-scores.farthest-trip.link"
+msgstr "Longest Leap"
+
+msgid "review.high-scores.farthest-trip.pre"
+msgstr " "
+
+msgid "review.high-scores.farthest-trip.post"
+msgstr "."
+
+msgid "review.high-scores.shortest-trip.link"
+msgstr "Tiniest Trip"
+
+msgid "review.high-scores.shortest-trip.pre"
+msgstr " "
+
+msgid "review.high-scores.shortest-trip.post"
+msgstr "."
+
+msgid "review.high-scores.closest-trip-eq-shortest.pre"
+msgstr "With a distance of"
+
+msgid "review.high-scores.closest-trip-eq-shortest.post"
+msgstr ", it was also your closest checkin / checkout couple."
+
+msgid "review.high-scores.closest-trip.link"
+msgstr "Closest Checkout"
+
+msgid "review.high-scores.closest-trip.pre"
+msgstr " "
+
+msgid "review.high-scores.closest-trip.post"
+msgstr "."
+
 # _checked_in.html.ep, _public_status_card.html.ep
 
 msgid "status.is-checked-in"
