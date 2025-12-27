@@ -90,7 +90,7 @@
 				%= include '_suggestions_dbris', suggestions => stash('suggestions'), checkin_from => $eva;
 			% }
 			% elsif ($efa) {
-				%= include '_suggestions_efa', suggestions => stash('suggestions'), checkin_from => $eva;
+				%= include '_connections_efa', suggestions => stash('suggestions'), checkin_from => $eva;
 			% }
 			% else {
 				%= include '_suggestions_iris', suggestions => stash('suggestions'), checkin_from => $eva;

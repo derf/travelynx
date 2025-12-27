@@ -943,34 +943,28 @@ sub station {
 				@results = map { $_->[0] }
 				  sort { $b->[1] <=> $a->[1] }
 				  map { [ $_, $_->datetime->epoch ] } $status->results;
-				$status = {
-					station_eva      => $status->stop->id_num,
-					station_name     => $status->stop->full_name,
-					related_stations => [],
-				};
 				my $backend_id
 				  = $self->stations->get_backend_id( efa => $efa_service );
 				my @destinations = $self->journeys->get_connection_targets(
 					uid        => $uid,
 					backend_id => $backend_id,
-					eva        => $status->{station_eva},
+					eva        => $status->stop->id_num,
 				);
-				for my $dep (@results) {
-					destination: for my $dest (@destinations) {
-						for my $stop ( $dep->route_post ) {
-							if ( $stop->full_name eq $dest->{name} ) {
-								push( @suggestions,
-									[ $dep, $dest, $stop->arr ] );
-								next destination;
-							}
-						}
-					}
-				}
+				@suggestions = $self->efa->grep_suggestions(
+					status       => $status,
+					destinations => \@destinations
+				);
+				@suggestions = sort { $a->[0]{sort_ts} <=> $b->[0]{sort_ts} }
+				  grep {
+					      $_->[0]{sort_ts} >= $now - 300
+					  and $_->[0]{sort_ts} <= $now + 1800
+				  } @suggestions;
 
-				@suggestions = map { $_->[0] }
-				  sort { $a->[1] <=> $b->[1] }
-				  grep { $_->[1] >= $now - 300 and $_->[1] <= $now + 1800 }
-				  map  { [ $_, $_->[0]->datetime->epoch ] } @suggestions;
+				$status = {
+					station_eva      => $status->stop->id_num,
+					station_name     => $status->stop->full_name,
+					related_stations => [],
+				};
 			}
 			elsif ($motis_service) {
 				@results = map { $_->[0] }
