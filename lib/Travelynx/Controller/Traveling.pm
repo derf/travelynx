@@ -2293,8 +2293,6 @@ sub set_polyline {
 		my $context = XML::LibXML::XPathContext->new($root);
 		$context->registerNs( 'gpx', 'http://www.topografix.com/GPX/1/1' );
 
-		use Data::Dumper;
-
 		my @polyline;
 		for my $point (
 			$context->findnodes('/gpx:gpx/gpx:trk/gpx:trkseg/gpx:trkpt') )
