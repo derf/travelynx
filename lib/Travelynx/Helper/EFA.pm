@@ -62,10 +62,10 @@ sub grep_suggestions {
 			for my $stop ( $dep->route_post ) {
 				if ( $stop->full_name eq $dest->{name} ) {
 					if ( not $dep->is_cancelled ) {
-						$via_count{ $dep->stop_id_num } += 1;
+						$via_count{ $dest->{name} } += 1;
 					}
 					if (    $max_per_dest
-						and $via_count{ $dep->stop_id_num } > $max_per_dest )
+						and $via_count{ $dest->{name} } > $max_per_dest )
 					{
 						next destination;
 					}
