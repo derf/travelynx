@@ -784,6 +784,8 @@ sub station {
 	}
 
 	my @suggestions;
+	my $use_history         = $self->users->use_history( uid => $uid );
+	my $suggestions_enabled = $use_history & 0x01;
 
 	my $promise;
 	if ($dbris_service) {
@@ -878,21 +880,27 @@ sub station {
 				  sort { $b->[1] <=> $a->[1] }
 				  map { [ $_, $_->dep->epoch ] } $status->results;
 
-				my ($eva) = ( $station =~ m{ [@] L = (\d+) }x );
-				my $backend_id
-				  = $self->stations->get_backend_id( dbris => $dbris_service );
-				my @destinations = $self->journeys->get_connection_targets(
-					uid        => $uid,
-					backend_id => $backend_id,
-					eva        => $eva
-				);
-				@suggestions = $self->dbris->grep_suggestions(
-					status       => $status,
-					destinations => \@destinations
-				);
+				if ($suggestions_enabled) {
+					my ($eva) = ( $station =~ m{ [@] L = (\d+) }x );
+					my $backend_id
+					  = $self->stations->get_backend_id(
+						dbris => $dbris_service );
 
-				@suggestions = sort { $a->[0]{sort_ts} <=> $b->[0]{sort_ts} }
-				  grep { $_->[0]{sort_ts} >= $now - 300 } @suggestions;
+					my @destinations = $self->journeys->get_connection_targets(
+						uid        => $uid,
+						backend_id => $backend_id,
+						eva        => $eva
+					);
+
+					@suggestions = $self->dbris->grep_suggestions(
+						status       => $status,
+						destinations => \@destinations
+					);
+
+					@suggestions
+					  = sort { $a->[0]{sort_ts} <=> $b->[0]{sort_ts} }
+					  grep { $_->[0]{sort_ts} >= $now - 300 } @suggestions;
+				}
 
 				$status = {
 					station_eva      => $station,
@@ -928,22 +936,29 @@ sub station {
 				@results = map { $_->[0] }
 				  sort { $b->[1] <=> $a->[1] }
 				  map { [ $_, $_->datetime->epoch ] } $status->results;
-				my $backend_id
-				  = $self->stations->get_backend_id( efa => $efa_service );
-				my @destinations = $self->journeys->get_connection_targets(
-					uid        => $uid,
-					backend_id => $backend_id,
-					eva        => $status->stop->id_num,
-				);
-				@suggestions = $self->efa->grep_suggestions(
-					status       => $status,
-					destinations => \@destinations
-				);
-				@suggestions = sort { $a->[0]{sort_ts} <=> $b->[0]{sort_ts} }
-				  grep {
-					      $_->[0]{sort_ts} >= $now - 300
-					  and $_->[0]{sort_ts} <= $now + 1800
-				  } @suggestions;
+
+				if ($suggestions_enabled) {
+					my $backend_id
+					  = $self->stations->get_backend_id( efa => $efa_service );
+
+					my @destinations = $self->journeys->get_connection_targets(
+						uid        => $uid,
+						backend_id => $backend_id,
+						eva        => $status->stop->id_num,
+					);
+
+					@suggestions = $self->efa->grep_suggestions(
+						status       => $status,
+						destinations => \@destinations
+					);
+
+					@suggestions
+					  = sort { $a->[0]{sort_ts} <=> $b->[0]{sort_ts} }
+					  grep {
+						      $_->[0]{sort_ts} >= $now - 300
+						  and $_->[0]{sort_ts} <= $now + 1800
+					  } @suggestions;
+				}
 
 				$status = {
 					station_eva      => $status->stop->id_num,
@@ -975,27 +990,27 @@ sub station {
 					[ $_, $_->departure->epoch // $_->sched_departure->epoch ]
 				  } @results;
 
-				my @destinations = $self->journeys->get_connection_targets(
-					uid        => $uid,
-					backend_id => 0,
-					eva        => $status->{station_eva},
-				);
-
-				for my $dep (@results) {
-					destination: for my $dest (@destinations) {
-						for my $via_name ( $dep->route_post ) {
-							if ( $via_name eq $dest->{name} ) {
-								push( @suggestions, [ $dep, $dest ] );
-								next destination;
+				if ($suggestions_enabled) {
+					my @destinations = $self->journeys->get_connection_targets(
+						uid        => $uid,
+						backend_id => 0,
+						eva        => $status->{station_eva},
+					);
+					for my $dep (@results) {
+						destination: for my $dest (@destinations) {
+							for my $via_name ( $dep->route_post ) {
+								if ( $via_name eq $dest->{name} ) {
+									push( @suggestions, [ $dep, $dest ] );
+									next destination;
+								}
 							}
 						}
 					}
+					@suggestions = map { $_->[0] }
+					  sort { $a->[1] <=> $b->[1] }
+					  grep { $_->[1] >= $now - 300 }
+					  map  { [ $_, $_->[0]->departure->epoch ] } @suggestions;
 				}
-
-				@suggestions = map { $_->[0] }
-				  sort { $a->[1] <=> $b->[1] }
-				  grep { $_->[1] >= $now - 300 }
-				  map  { [ $_, $_->[0]->departure->epoch ] } @suggestions;
 			}
 
 			my $user_status = $self->get_user_status;

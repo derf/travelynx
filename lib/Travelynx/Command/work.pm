@@ -53,6 +53,9 @@ sub run {
 		my $arr      = $entry->{arr_eva};
 		my $train_id = $entry->{train_id};
 
+		my $use_history         = $self->app->users->use_history( uid => $uid );
+		my $suggestions_enabled = $use_history & 0x02;
+
 		if ( $train_id eq 'manual' ) {
 			if (    $arr
 				and $entry->{real_arr_ts}
@@ -201,7 +204,9 @@ sub run {
 							uid     => $uid
 						)->wait;
 					}
-					elsif ( $entry->{real_arr_ts} - $now->epoch < 900 ) {
+					elsif ( $suggestions_enabled
+						and $entry->{real_arr_ts} - $now->epoch < 900 )
+					{
 						my @destinations
 						  = $self->app->journeys->get_connection_targets(
 							uid        => $uid,
@@ -332,7 +337,9 @@ sub run {
 							uid     => $uid
 						)->wait;
 					}
-					elsif ( $entry->{real_arr_ts} - $now->epoch < 900 ) {
+					elsif ( $suggestions_enabled
+						and $entry->{real_arr_ts} - $now->epoch < 900 )
+					{
 						my @destinations
 						  = $self->app->journeys->get_connection_targets(
 							uid        => $uid,
