@@ -223,6 +223,11 @@ msgstr "Fix distance calculation and visualization of ring line trips. Trips sho
 msgid "changelog.2-17.1"
 msgstr "Map data (“polylines”) for individual trips can now be exported and imported in the GPX format. This allows map data to be corrected or augmented after the fact. The GPX import/export is compatible with BRouter-Web."
 
+msgid "changelog.2-18.1"
+msgstr "Checkin and connection suggestions are now available again for DBRIS, EFA, and IRIS backends. HAFAS backends lack the required station board data. MOTIS backends may lack the required data as well."
+
+msgid "changelog.2-18.2"
+msgstr "Total distance calculation in the history now includes trips that lack appropriate route data (i.e., where only beeline distance / distance as the crow flies is available). Before this release, such trips were ignored when computing monthly and yearly statistics."
 
 # history.html.ep
 msgid "history.review"

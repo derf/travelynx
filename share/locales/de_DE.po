@@ -223,6 +223,12 @@ msgstr "Korrekte Berechnung und Visualisierung der Wegstrecke bei Fahrten mit Ri
 msgid "changelog.2-17.1"
 msgstr "Kartendaten („Polylines“) zu einzelnen Fahrten können nun als GPX ex- und importiert werden. Somit können Kartendaten nachträglich korrigiert oder nachgepflegt werden. Das GPX-Datenformat ist mit BRouter-Web kompatibel."
 
+msgid "changelog.2-18.1"
+msgstr "Checkin- und Verbindungsvorschläge sind für DBRIS-, EFA- und IRIS-Backends wieder verfügbar. Bei HAFAS-Backends fehlen die dazu notwendigen Daten in der Abfahrtstafel. Bei MOTIS-Backends fehlen die Daten möglicherweise ebenfalls."
+
+msgid "changelog.2-18.2"
+msgstr "Bei der Reisestreckenberechnung für vergangene Fahrten werden nun auch Fahrten mit ungenügender Datenlage (d.h. bei denen ausschließlich die Entfernung nach Luftlinie verfügbar ist) berücksichtigt. Bislang wurden diese für monatliche und jährliche Statistiken ignoriert."
+
 # history.html.ep
 
 msgid "history.review"
