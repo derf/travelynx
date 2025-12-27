@@ -201,17 +201,61 @@ sub get_departures_p {
 	}
 }
 
+sub get_connections_p {
+	my ( $self, %opt ) = @_;
+	my $promise      = Mojo::Promise->new;
+	my $destinations = $opt{destinations};
+
+	$self->get_departures_p(
+		station      => $opt{station},
+		timestamp    => $opt{timestamp},
+		lookbehind   => 0,
+		lookahead    => 60,
+		with_related => 1,
+	)->then(
+		sub {
+			my ($res) = @_;
+			my @suggestions = $self->grep_suggestions(
+				results      => $res->{results},
+				destinations => $destinations,
+				max_per_dest => 2
+			);
+			@suggestions
+			  = sort { $a->[0]{sort_ts} <=> $b->[0]{sort_ts} } @suggestions;
+			$promise->resolve( \@suggestions );
+			return;
+		}
+	)->catch(
+		sub {
+			my ($err) = @_;
+			$promise->reject("get_departures_p($opt{station}): $err");
+			return;
+		}
+	)->wait;
+	return $promise;
+}
+
 sub grep_suggestions {
 	my ( $self, %opt ) = @_;
 	my $results      = $opt{results};
 	my $destinations = $opt{destinations};
+	my $max_per_dest = $opt{max_per_dest};
 
 	my @suggestions;
+	my %via_count;
 
 	for my $dep ( @{$results} ) {
 		destination: for my $dest ( @{$destinations} ) {
 			for my $via_name ( $dep->route_post ) {
 				if ( $via_name eq $dest->{name} ) {
+					if ( not $dep->departure_is_cancelled ) {
+						$via_count{ $dep->station_uic } += 1;
+					}
+					if (    $max_per_dest
+						and $via_count{ $dep->station_uic } > $max_per_dest )
+					{
+						next destination;
+					}
 					my $dep_json = {
 						id => $dep->train_id,
 						ts =>

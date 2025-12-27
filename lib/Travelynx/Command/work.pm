@@ -782,6 +782,41 @@ sub run {
 						$self->app->add_stationinfo( $uid, 0, $train->train_id,
 							$dep, $arr );
 					}
+					if ( $now->epoch - $entry->{real_arr_ts} < 900 ) {
+						my @destinations
+						  = $self->app->journeys->get_connection_targets(
+							uid        => $uid,
+							backend_id => $entry->{backend_id},
+							eva        => $arr,
+							exclude    => $dep,
+						  );
+						$self->app->iris->get_connections_p(
+							station      => $arr,
+							timestamp    => $entry->{real_arr},
+							destinations => \@destinations
+						)->then(
+							sub {
+								my ($suggestions) = @_;
+								$self->app->in_transit->update_data(
+									uid      => $uid,
+									train_id => $train_id,
+									data     => {
+										connection_suggestions_iris =>
+										  $suggestions
+									},
+								);
+								return;
+							}
+						)->catch(
+							sub {
+								my ($err) = @_;
+								$self->app->log->debug(
+"work($uid) @ DBRIS $entry->{backend_name}: get_departures_p($arr): $err"
+								);
+								return;
+							}
+						)->wait;
+					}
 				}
 				elsif ( $entry->{real_arr_ts} ) {
 					my ( undef, $error ) = $self->app->checkout_p(

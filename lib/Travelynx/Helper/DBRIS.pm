@@ -234,8 +234,8 @@ sub grep_suggestions {
 			ts            => ( $dep->sched_dep // $dep->dep )->epoch,
 			sort_ts       => $dep->dep->epoch,
 			is_cancelled  => $dep->is_cancelled,
-			stop_eva      => $dep->{stop_eva},
-			maybe_line_no => $dep->{maybe_line_no},
+			stop_eva      => $dep->stop_eva,
+			maybe_line_no => $dep->maybe_line_no,
 			sched_hhmm    => $dep->sched_dep->strftime('%H:%M'),
 			rt_hhmm       => $dep->dep->strftime('%H:%M'),
 			delay         => $dep->delay,
@@ -247,11 +247,27 @@ sub grep_suggestions {
 			if (    $dep->destination
 				and $dep->destination eq $dest->{name} )
 			{
+				if ( not $dep->is_cancelled ) {
+					$via_count{ $dep->stop_eva } += 1;
+				}
+				if (    $max_per_dest
+					and $via_count{ $dep->stop_eva } > $max_per_dest )
+				{
+					next destination;
+				}
 				push( @suggestions, [ $dep_json, $dest ] );
 				next destination;
 			}
 			for my $via_name ( $dep->via ) {
 				if ( $via_name eq $dest->{name} ) {
+					if ( not $dep->is_cancelled ) {
+						$via_count{ $dep->stop_eva } += 1;
+					}
+					if (    $max_per_dest
+						and $via_count{ $dep->stop_eva } > $max_per_dest )
+					{
+						next destination;
+					}
 					push( @suggestions, [ $dep_json, $dest ] );
 					next destination;
 				}

@@ -2,7 +2,7 @@
 <div class="row">
 	<div class="col s12">
 		<p>
-			Travelynx kann bei DBRIS- und EFA-Backends anhand deiner
+			Travelynx kann bei DBRIS-, EFA- und IRIS-Backends anhand deiner
 			vergangenen Fahrten Verbindungen zum Einchecken vorschlagen. Fährst
 			zu z.B regelmäßig von Dortmund Hbf nach Essen Hbf, werden dir in
 			Dortmund bevorzugt Fahrten angezeigt, die Essen passieren. Bei
