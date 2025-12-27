@@ -127,6 +127,39 @@ sub get_departures_p {
 	);
 }
 
+sub get_connections_p {
+	my ( $self, %opt ) = @_;
+	my $promise      = Mojo::Promise->new;
+	my $destinations = $opt{destinations};
+
+	$self->get_departures_p(
+		station    => '@L=' . $opt{station},
+		timestamp  => $opt{timestamp},
+		lookbehind => 0,
+		lookahead  => 60,
+	)->then(
+		sub {
+			my ($status) = @_;
+			my @suggestions = $self->grep_suggestions(
+				status       => $status,
+				destinations => $destinations,
+				max_per_dest => 2
+			);
+			@suggestions
+			  = sort { $a->[0]{sort_ts} <=> $b->[0]{sort_ts} } @suggestions;
+			$promise->resolve( \@suggestions );
+			return;
+		}
+	)->catch(
+		sub {
+			my ($err) = @_;
+			$promise->reject("get_departures_p($opt{station}): $err");
+			return;
+		}
+	)->wait;
+	return $promise;
+}
+
 sub get_journey_p {
 	my ( $self, %opt ) = @_;
 
@@ -184,6 +217,49 @@ sub get_wagonorder_p {
 		},
 		developer_mode => $self->{log}->is_level('debug') ? 1 : 0,
 	);
+}
+
+sub grep_suggestions {
+	my ( $self, %opt ) = @_;
+	my $status       = $opt{status};
+	my $destinations = $opt{destinations};
+	my $max_per_dest = $opt{max_per_dest};
+
+	my @suggestions;
+	my %via_count;
+
+	for my $dep ( $status->results ) {
+		my $dep_json = {
+			id            => $dep->id,
+			ts            => ( $dep->sched_dep // $dep->dep )->epoch,
+			sort_ts       => $dep->dep->epoch,
+			is_cancelled  => $dep->is_cancelled,
+			stop_eva      => $dep->{stop_eva},
+			maybe_line_no => $dep->{maybe_line_no},
+			sched_hhmm    => $dep->sched_dep->strftime('%H:%M'),
+			rt_hhmm       => $dep->dep->strftime('%H:%M'),
+			delay         => $dep->delay,
+			platform      => $dep->platform,
+			type          => $dep->type,
+			line          => $dep->line,
+		};
+		destination: for my $dest ( @{$destinations} ) {
+			if (    $dep->destination
+				and $dep->destination eq $dest->{name} )
+			{
+				push( @suggestions, [ $dep_json, $dest ] );
+				next destination;
+			}
+			for my $via_name ( $dep->via ) {
+				if ( $via_name eq $dest->{name} ) {
+					push( @suggestions, [ $dep_json, $dest ] );
+					next destination;
+				}
+			}
+		}
+	}
+
+	return @suggestions;
 }
 
 1;

@@ -878,15 +878,6 @@ sub station {
 				  sort { $b->[1] <=> $a->[1] }
 				  map { [ $_, $_->dep->epoch ] } $status->results;
 
-				$status = {
-					station_eva      => $station,
-					related_stations => [],
-				};
-
-				if ( $station =~ m{ [@] O = (?<name> [^@]+ ) [@] }x ) {
-					$status->{station_name} = $+{name};
-				}
-
 				my ($eva) = ( $station =~ m{ [@] L = (\d+) }x );
 				my $backend_id
 				  = $self->stations->get_backend_id( dbris => $dbris_service );
@@ -895,28 +886,22 @@ sub station {
 					backend_id => $backend_id,
 					eva        => $eva
 				);
+				@suggestions = $self->dbris->grep_suggestions(
+					status       => $status,
+					destinations => \@destinations
+				);
 
-				for my $dep (@results) {
-					destination: for my $dest (@destinations) {
-						if (    $dep->destination
-							and $dep->destination eq $dest->{name} )
-						{
-							push( @suggestions, [ $dep, $dest ] );
-							next destination;
-						}
-						for my $via_name ( $dep->via ) {
-							if ( $via_name eq $dest->{name} ) {
-								push( @suggestions, [ $dep, $dest ] );
-								next destination;
-							}
-						}
-					}
+				@suggestions = sort { $a->[0]{sort_ts} <=> $b->[0]{sort_ts} }
+				  grep { $_->[0]{sort_ts} >= $now - 300 } @suggestions;
+
+				$status = {
+					station_eva      => $station,
+					related_stations => [],
+				};
+
+				if ( $station =~ m{ [@] O = (?<name> [^@]+ ) [@] }x ) {
+					$status->{station_name} = $+{name};
 				}
-
-				@suggestions = map { $_->[0] }
-				  sort { $a->[1] <=> $b->[1] }
-				  grep { $_->[1] >= $now - 300 }
-				  map  { [ $_, $_->[0]->dep->epoch ] } @suggestions;
 			}
 			elsif ($hafas_service) {
 

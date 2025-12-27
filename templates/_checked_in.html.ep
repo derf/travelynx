@@ -221,6 +221,13 @@
 					</ul>
 				</p>
 			% }
+			% if (my @suggestions = @{$journey->{extra_data}{connection_suggestions_dbris} // []}) {
+				<span class="card-title" style="margin-top: 2ex;">Verbindungen</span>
+				% if ($journey->{arrival_countdown} < 0) {
+					<p>Fahrt auswählen zum Einchecken mit Zielwahl.</p>
+				% }
+				%= include '_connections_dbris', dbris => $journey->{backend_name}, suggestions => \@suggestions, checkin_from => $journey->{arrival_countdown} < 0 ? $journey->{arr_eva} : undef
+			% }
 			% if (my @suggestions = @{$journey->{extra_data}{connection_suggestions_efa} // []}) {
 				<span class="card-title" style="margin-top: 2ex;">Verbindungen</span>
 				% if ($journey->{arrival_countdown} < 0) {

@@ -190,16 +190,52 @@ sub run {
 				  )->wait;
 
 				if (    $arr
-					and $entry->{real_arr_ts}
-					and $now->epoch - $entry->{real_arr_ts} > 900 )
+					and $entry->{real_arr_ts} )
 				{
-					$self->app->checkout_p(
-						station => $arr,
-						force   => 2,
-						dep_eva => $dep,
-						arr_eva => $arr,
-						uid     => $uid
-					)->wait;
+					if ( $now->epoch - $entry->{real_arr_ts} > 900 ) {
+						$self->app->checkout_p(
+							station => $arr,
+							force   => 2,
+							dep_eva => $dep,
+							arr_eva => $arr,
+							uid     => $uid
+						)->wait;
+					}
+					elsif ( $entry->{real_arr_ts} - $now->epoch < 900 ) {
+						my @destinations
+						  = $self->app->journeys->get_connection_targets(
+							uid        => $uid,
+							backend_id => $entry->{backend_id},
+							eva        => $arr,
+							exclude    => $dep,
+						  );
+						$self->app->dbris->get_connections_p(
+							station      => $arr,
+							timestamp    => $entry->{real_arr},
+							destinations => \@destinations
+						)->then(
+							sub {
+								my ($suggestions) = @_;
+								$self->app->in_transit->update_data(
+									uid      => $uid,
+									train_id => $train_id,
+									data     => {
+										connection_suggestions_dbris =>
+										  $suggestions
+									},
+								);
+								return;
+							}
+						)->catch(
+							sub {
+								my ($err) = @_;
+								$self->app->log->debug(
+"work($uid) @ DBRIS $entry->{backend_name}: get_departures_p($arr): $err"
+								);
+								return;
+							}
+						)->wait;
+					}
 				}
 			};
 			if ($@) {

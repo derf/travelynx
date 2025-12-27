@@ -87,7 +87,7 @@
 		<div class="col s12">
 			<p>Häufig genutzte Verbindungen – Fahrt auswählen zum Einchecken mit Zielwahl</p>
 			% if ($dbris) {
-				%= include '_suggestions_dbris', suggestions => stash('suggestions'), checkin_from => $eva;
+				%= include '_connections_dbris', suggestions => stash('suggestions'), checkin_from => $eva;
 			% }
 			% elsif ($efa) {
 				%= include '_connections_efa', suggestions => stash('suggestions'), checkin_from => $eva;

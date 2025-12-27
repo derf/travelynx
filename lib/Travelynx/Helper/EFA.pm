@@ -56,6 +56,7 @@ sub grep_suggestions {
 
 	my @suggestions;
 	my %via_count;
+
 	for my $dep ( $status->results ) {
 		destination: for my $dest ( @{$destinations} ) {
 			for my $stop ( $dep->route_post ) {
