@@ -996,20 +996,16 @@ sub station {
 						backend_id => 0,
 						eva        => $status->{station_eva},
 					);
-					for my $dep (@results) {
-						destination: for my $dest (@destinations) {
-							for my $via_name ( $dep->route_post ) {
-								if ( $via_name eq $dest->{name} ) {
-									push( @suggestions, [ $dep, $dest ] );
-									next destination;
-								}
-							}
-						}
-					}
-					@suggestions = map { $_->[0] }
-					  sort { $a->[1] <=> $b->[1] }
-					  grep { $_->[1] >= $now - 300 }
-					  map  { [ $_, $_->[0]->departure->epoch ] } @suggestions;
+					@suggestions = $self->iris->grep_suggestions(
+						results      => \@results,
+						destinations => \@destinations
+					);
+					@suggestions
+					  = sort { $a->[0]{sort_ts} <=> $b->[0]{sort_ts} }
+					  grep {
+						      $_->[0]{sort_ts} >= $now - 300
+						  and $_->[0]{sort_ts} <= $now + 1800
+					  } @suggestions;
 				}
 			}
 

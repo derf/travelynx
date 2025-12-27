@@ -3,37 +3,37 @@
 		% my ($train, $dest) = @{$res};
 		% my $row_class = '';
 		% my $link_class = 'action-checkin';
-		% if ($train->departure_is_cancelled) {
+		% if ($train->{departure_is_cancelled}) {
 			% $row_class = 'cancelled';
 			% $link_class = 'action-cancelled-from';
 		% }
 		% if ($checkin_from) {
 			<li class="collection-item <%= $row_class %> <%= $link_class %>"
-			data-station="<%= $train->station_uic %>"
-			data-train="<%= $train->train_id %>"
-			data-ts="<%= ($train->sched_departure // $train->departure)->epoch %>"
+			data-station="<%= $train->{station_uic} %>"
+			data-train="<%= $train->{id} %>"
+			data-ts="<%= $train->{ts} %>"
 			data-dest="<%= $dest->{name} %>">
 		% }
 		% else {
 			<li class="collection-item <%= $row_class %>">
 		% }
 			<a class="dep-time" href="#">
-				% if ($train->departure_is_cancelled) {
-					%= $train->sched_departure->strftime('%H:%M')
+				% if ($train->{departure_is_cancelled}) {
+					%= $train->{sched_hhmm}
 				% }
 				% else {
-					%= $train->departure->strftime('%H:%M')
+					%= $train->{rt_hhmm}
 				% }
-				% if ($train->departure_delay) {
-					%= sprintf('(%+d)', $train->departure_delay)
+				% if ($train->{departure_delay}) {
+					%= sprintf('(%+d)', $train->{departure_delay})
 				% }
 			</a>
 			<span class="connect-platform-wrapper">
-				% if ($train->platform) {
-					<span>Gleis <%= $train->platform %></span>
+				% if ($train->{platform}) {
+					<span>Gleis <%= $train->{platform} %></span>
 				% }
-				<span class="dep-line <%= $train->type // q{} %>">
-					%= $train->line
+				<span class="dep-line <%= $train->{type} // q{} %>">
+					%= $train->{line}
 				</span>
 			</span>
 			<span class="dep-dest">

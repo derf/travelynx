@@ -201,6 +201,41 @@ sub get_departures_p {
 	}
 }
 
+sub grep_suggestions {
+	my ( $self, %opt ) = @_;
+	my $results      = $opt{results};
+	my $destinations = $opt{destinations};
+
+	my @suggestions;
+
+	for my $dep ( @{$results} ) {
+		destination: for my $dest ( @{$destinations} ) {
+			for my $via_name ( $dep->route_post ) {
+				if ( $via_name eq $dest->{name} ) {
+					my $dep_json = {
+						id => $dep->train_id,
+						ts =>
+						  ( $dep->sched_departure // $dep->departure )->epoch,
+						sort_ts                => $dep->departure->epoch,
+						station_uic            => $dep->station_uic,
+						departure_is_cancelled => $dep->departure_is_cancelled,
+						sched_hhmm => $dep->sched_departure->strftime('%H:%M'),
+						rt_hhmm    => $dep->departure->strftime('%H:%M'),
+						departure_delay => $dep->departure_delay,
+						platform        => $dep->platform,
+						type            => $dep->type,
+						line            => $dep->line,
+					};
+					push( @suggestions, [ $dep_json, $dest ] );
+					next destination;
+				}
+			}
+		}
+	}
+
+	return @suggestions;
+}
+
 sub route_diff {
 	my ( $self, $train ) = @_;
 	my @json_route;

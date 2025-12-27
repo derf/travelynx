@@ -93,7 +93,7 @@
 				%= include '_connections_efa', suggestions => stash('suggestions'), checkin_from => $eva;
 			% }
 			% else {
-				%= include '_suggestions_iris', suggestions => stash('suggestions'), checkin_from => $eva;
+				%= include '_connections_iris', suggestions => stash('suggestions'), checkin_from => $eva;
 			% }
 		</div>
 	</div>
