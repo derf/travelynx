@@ -2108,6 +2108,7 @@ sub get_connection_targets {
 	my $min_count  = $opt{min_count} // 3;
 	my $backend_id = $opt{backend_id};
 	my $dest_id    = $opt{eva};
+	my $exclude_id = $opt{exclude};
 
 	$self->{log}->debug(
 "get_connection_targets(uid => $uid, backend_id => $backend_id, dest_id => $dest_id)"
@@ -2163,6 +2164,9 @@ sub get_connection_targets {
 		backend_id => $opt{backend_id},
 		evas       => [@destinations]
 	);
+	if ( defined $exclude_id ) {
+		@destinations = grep { $_->{eva} != $exclude_id } @destinations;
+	}
 	return @destinations;
 }
 
