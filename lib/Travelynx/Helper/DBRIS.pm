@@ -251,6 +251,7 @@ sub grep_suggestions {
 					$via_count{ $dest->{name} } += 1;
 				}
 				if (    $max_per_dest
+					and $via_count{ $dest->{name} }
 					and $via_count{ $dest->{name} } > $max_per_dest )
 				{
 					next destination;
@@ -264,6 +265,7 @@ sub grep_suggestions {
 						$via_count{ $dest->{name} } += 1;
 					}
 					if (    $max_per_dest
+						and $via_count{ $dest->{name} }
 						and $via_count{ $dest->{name} } > $max_per_dest )
 					{
 						next destination;
