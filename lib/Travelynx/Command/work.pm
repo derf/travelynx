@@ -782,7 +782,9 @@ sub run {
 						$self->app->add_stationinfo( $uid, 0, $train->train_id,
 							$dep, $arr );
 					}
-					if ( $now->epoch - $entry->{real_arr_ts} < 900 ) {
+					if ( defined $entry->{real_arr_ts}
+						and $now->epoch - $entry->{real_arr_ts} < 900 )
+					{
 						my @destinations
 						  = $self->app->journeys->get_connection_targets(
 							uid        => $uid,
