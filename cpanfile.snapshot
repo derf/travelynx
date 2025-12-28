@@ -1652,25 +1652,25 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 6.30
       Locale::Maketext 1.17
-  Log-Report-1.43
-    pathname: M/MA/MARKOV/Log-Report-1.43.tar.gz
+  Log-Report-1.44
+    pathname: M/MA/MARKOV/Log-Report-1.44.tar.gz
     provides:
-      Log::Report 1.43
-      Log::Report::DBIC::Profiler 1.43
-      Log::Report::Die 1.43
-      Log::Report::Dispatcher 1.43
-      Log::Report::Dispatcher::Callback 1.43
-      Log::Report::Dispatcher::File 1.43
-      Log::Report::Dispatcher::Log4perl 1.43
-      Log::Report::Dispatcher::LogDispatch 1.43
-      Log::Report::Dispatcher::Perl 1.43
-      Log::Report::Dispatcher::Syslog 1.43
-      Log::Report::Dispatcher::Try 1.43
-      Log::Report::Domain 1.43
-      Log::Report::Exception 1.43
-      Log::Report::Message 1.43
-      Log::Report::Translator 1.43
-      MojoX::Log::Report 1.43
+      Log::Report 1.44
+      Log::Report::DBIC::Profiler 1.44
+      Log::Report::Die 1.44
+      Log::Report::Dispatcher 1.44
+      Log::Report::Dispatcher::Callback 1.44
+      Log::Report::Dispatcher::File 1.44
+      Log::Report::Dispatcher::Log4perl 1.44
+      Log::Report::Dispatcher::LogDispatch 1.44
+      Log::Report::Dispatcher::Perl 1.44
+      Log::Report::Dispatcher::Syslog 1.44
+      Log::Report::Dispatcher::Try 1.44
+      Log::Report::Domain 1.44
+      Log::Report::Exception 1.44
+      Log::Report::Message 1.44
+      Log::Report::Translator 1.44
+      MojoX::Log::Report 1.44
     requirements:
       Devel::GlobalDestruction 0.09
       Encode 2.00
@@ -2714,18 +2714,18 @@ DISTRIBUTIONS
       TimeDate 1.21
     requirements:
       ExtUtils::MakeMaker 0
-  Travel-Status-DE-DBRIS-0.19
-    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.19.tar.gz
+  Travel-Status-DE-DBRIS-0.20
+    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.20.tar.gz
     provides:
-      Travel::Status::DE::DBRIS 0.19
-      Travel::Status::DE::DBRIS::Formation 0.19
-      Travel::Status::DE::DBRIS::Formation::Carriage 0.19
-      Travel::Status::DE::DBRIS::Formation::Group 0.19
-      Travel::Status::DE::DBRIS::Formation::Sector 0.19
-      Travel::Status::DE::DBRIS::Journey 0.19
-      Travel::Status::DE::DBRIS::JourneyAtStop 0.19
-      Travel::Status::DE::DBRIS::Location 0.19
-      Travel::Status::DE::DBRIS::Operators 0.19
+      Travel::Status::DE::DBRIS 0.20
+      Travel::Status::DE::DBRIS::Formation 0.20
+      Travel::Status::DE::DBRIS::Formation::Carriage 0.20
+      Travel::Status::DE::DBRIS::Formation::Group 0.20
+      Travel::Status::DE::DBRIS::Formation::Sector 0.20
+      Travel::Status::DE::DBRIS::Journey 0.20
+      Travel::Status::DE::DBRIS::JourneyAtStop 0.20
+      Travel::Status::DE::DBRIS::Location 0.20
+      Travel::Status::DE::DBRIS::Operators 0.20
     requirements:
       Carp 0
       Class::Accessor 0.16
