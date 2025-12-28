@@ -18,25 +18,7 @@ $(document).ready(function() {
 
 		$('div.geolocation').append(errnode);
 
-		const recent = $('div.geolocation').data('recent');
-		if (recent) {
-			const stops = recent.split('|');
-			const res = $(document.createElement('p'));
-			$.each(stops, function(i, stop) {
-				const parts = stop.split(';');
-				const [ eva, name, dbris, efa, hafas, motis ] = parts;
-
-				const node = $('<a class="tablerow" href="/s/' + eva + '?dbris=' + (dbris||0) + '&amp;efa=' + (efa||0) + '&amp;hafas=' + (hafas||0) + '&amp;motis=' + (motis||0) + '"><span>' + name + '</span></a>');
-				node.click(function() {
-					$('nav .preloader-wrapper').addClass('active');
-				});
-				res.append(node);
-			});
-			$('p.geolocationhint').text('Letzte Ziele:');
-			getPlaceholder().replaceWith(res);
-		} else {
-			getPlaceholder().remove();
-		}
+		getPlaceholder().remove();
 	};
 
 	const processResult = function(data) {

@@ -339,6 +339,9 @@ msgstr "!"
 msgid "landingpage.not-checked-in"
 msgstr "You are not checked in at the moment"
 
+msgid "landingpage.recent-stops"
+msgstr "Latest destinations"
+
 msgid "landingpage.stop-geosearch"
 msgstr "Look for stops nearby"
 

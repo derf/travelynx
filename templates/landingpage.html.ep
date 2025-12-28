@@ -57,7 +57,15 @@
 						<div class="card-content">
 							<span class="card-title"><%= L('landingpage.greeting-prefix') %> <%= $user->{name} %><%= L('landingpage.greeting-suffix') %></span>
 							<p><%= L('landingpage.not-checked-in') %>.</p>
-							<div class="geolocation" data-recent="<%= join('|', map { $_->{external_id_or_eva} . ';' . $_->{name} . ';' . $_->{dbris} . ';' . $_->{efa} . ';' . $_->{hafas} . ';' . $_->{motis} } @{stash('recent_targets') // []} ) %>" data-backend="<%= $user->{backend_id} %>">
+							% if (@{stash('recent_targets') // []}) {
+								<p class="geolocationhint"><%= L('landingpage.recent-stops') %>:</p>
+								<p>
+									% for my $recent ( @{stash('recent_targets') // []} ) {
+										<a class="tablerow" href="/s/<%= $recent->{external_id_or_eva} %>?dbris=<%= $recent->{dbris} %>&amp;efa=<%= $recent->{efa} %>&amp;hafas=<%= $recent->{hafas} %>&amp;motis=<%= $recent->{motis} %>"><span><%= $recent->{name} %></span></a>
+									% }
+								</p>
+							% }
+							<div class="geolocation" data-backend="<%= $user->{backend_id} %>">
 								<a class="btn waves-effect waves-light btn-flat request"><%= L('landingpage.stop-geosearch') %></a>
 							</div>
 							%= hidden_field backend_dbris => $user->{backend_dbris}
