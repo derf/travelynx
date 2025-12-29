@@ -11,5 +11,5 @@
 </div>
 
 % if (stash('journeys')) {
-	%= include '_history_trains', date_format => '%d.%m.', journeys => stash('journeys');
+	%= include '_history_trains', date_format => '%d.%m.', journeys => stash('journeys'), order => 'asc';
 % }

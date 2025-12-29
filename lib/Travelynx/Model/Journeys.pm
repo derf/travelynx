@@ -698,9 +698,14 @@ sub get {
 		user_id   => $uid,
 		cancelled => 0
 	);
+
+	my $order_key = '-desc';
+	if ( $opt{sort} and $opt{sort} eq 'asc' ) {
+		$order_key = '-asc';
+	}
 	my %order = (
 		order_by => {
-			-desc => 'real_dep_ts',
+			$order_key => 'real_dep_ts',
 		}
 	);
 

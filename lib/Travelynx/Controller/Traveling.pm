@@ -1582,6 +1582,7 @@ sub yearly_history {
 		uid           => $self->current_user->{id},
 		after         => $interval_start,
 		before        => $interval_end,
+		sort          => 'asc',
 		with_datetime => 1
 	);
 
@@ -1664,6 +1665,7 @@ sub monthly_history {
 		uid           => $self->current_user->{id},
 		after         => $interval_start,
 		before        => $interval_end,
+		sort          => 'asc',
 		with_datetime => 1
 	);
 

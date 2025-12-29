@@ -27,44 +27,79 @@
 					</span>
 				</a>
 
-				<ul class="route-history">
-					<li>
-						<i class="material-icons tiny" aria-label="nach">radio_button_unchecked</i>
-
-						<a href="<%= $detail_link %>" class="unmarked">
-						% if (param('cancelled') and $travel->{sched_arrival}->epoch != 0) {
-							%= $travel->{sched_arrival}->strftime('%H:%M')
-						% }
-						% else {
-							% if ($travel->{rt_arrival}->epoch == 0 and $travel->{sched_arrival}->epoch == 0) {
-								<i class="material-icons">timer_off</i>
-							% } else {
-								%= $travel->{rt_arrival}->strftime('%H:%M');
-								% if ($travel->{delay_arr} and int($travel->{delay_arr} / 60)) {
-									(<%= sprintf('%+d', $travel->{delay_arr} / 60) %>)
+				<ul class="route-history route-history-<%= stash('order') // q{} %>">
+					% if (stash('order') and stash('order') eq 'asc') {
+						<li class="order-asc">
+							<i class="material-icons tiny" aria-label="von">play_circle_filled</i>
+							<a href="<%= $detail_link %>" class="unmarked">
+							% if (param('cancelled')) {
+								%= $travel->{sched_departure}->strftime('%H:%M')
+							% }
+							% else {
+								<%= $travel->{rt_departure}->strftime('%H:%M') %>
+								% if ($travel->{delay_dep} and int($travel->{delay_dep} / 60)) {
+									(<%= sprintf('%+d', $travel->{delay_dep} / 60) %>)
 								% }
 							% }
-						% }
-						<strong><%= $travel->{to_name} %></strong>
-						</a>
-					</li>
-
-					<li>
-						<i class="material-icons tiny" aria-label="von">play_circle_filled</i>
-
-						<a href="<%= $detail_link %>" class="unmarked">
-						% if (param('cancelled')) {
-							%= $travel->{sched_departure}->strftime('%H:%M')
-						% }
-						% else {
-							<%= $travel->{rt_departure}->strftime('%H:%M') %>
-							% if ($travel->{delay_dep} and int($travel->{delay_dep} / 60)) {
-								(<%= sprintf('%+d', $travel->{delay_dep} / 60) %>)
+							<strong><%= $travel->{from_name} %></strong>
+							</a>
+						</li>
+						<li class="order-asc">
+							<i class="material-icons tiny" aria-label="nach">radio_button_unchecked</i>
+							<a href="<%= $detail_link %>" class="unmarked">
+							% if (param('cancelled') and $travel->{sched_arrival}->epoch != 0) {
+								%= $travel->{sched_arrival}->strftime('%H:%M')
 							% }
-						% }
-						<strong><%= $travel->{from_name} %></strong>
-						</a>
-					</li>
+							% else {
+								% if ($travel->{rt_arrival}->epoch == 0 and $travel->{sched_arrival}->epoch == 0) {
+									<i class="material-icons">timer_off</i>
+								% } else {
+									%= $travel->{rt_arrival}->strftime('%H:%M');
+									% if ($travel->{delay_arr} and int($travel->{delay_arr} / 60)) {
+										(<%= sprintf('%+d', $travel->{delay_arr} / 60) %>)
+									% }
+								% }
+							% }
+							<strong><%= $travel->{to_name} %></strong>
+							</a>
+						</li>
+					% }
+					% else {
+						<li class="order-desc">
+							<i class="material-icons tiny" aria-label="nach">radio_button_unchecked</i>
+							<a href="<%= $detail_link %>" class="unmarked">
+							% if (param('cancelled') and $travel->{sched_arrival}->epoch != 0) {
+								%= $travel->{sched_arrival}->strftime('%H:%M')
+							% }
+							% else {
+								% if ($travel->{rt_arrival}->epoch == 0 and $travel->{sched_arrival}->epoch == 0) {
+									<i class="material-icons">timer_off</i>
+								% } else {
+									%= $travel->{rt_arrival}->strftime('%H:%M');
+									% if ($travel->{delay_arr} and int($travel->{delay_arr} / 60)) {
+										(<%= sprintf('%+d', $travel->{delay_arr} / 60) %>)
+									% }
+								% }
+							% }
+							<strong><%= $travel->{to_name} %></strong>
+							</a>
+						</li>
+						<li class="order-desc">
+							<i class="material-icons tiny" aria-label="von">play_circle_filled</i>
+							<a href="<%= $detail_link %>" class="unmarked">
+							% if (param('cancelled')) {
+								%= $travel->{sched_departure}->strftime('%H:%M')
+							% }
+							% else {
+								<%= $travel->{rt_departure}->strftime('%H:%M') %>
+								% if ($travel->{delay_dep} and int($travel->{delay_dep} / 60)) {
+									(<%= sprintf('%+d', $travel->{delay_dep} / 60) %>)
+								% }
+							% }
+							<strong><%= $travel->{from_name} %></strong>
+							</a>
+						</li>
+					% }
 				</ul>
 			</li>
 		% }

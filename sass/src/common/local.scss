@@ -163,15 +163,30 @@ ul.route-history > li {
 	}
 
 	// route icon bubble
-	i.material-icons {
-		&[aria-label=nach] {
-			padding-top: 0.4rem;
+	&.order-asc {
+		i.material-icons {
+			&[aria-label=von] {
+				display: block;
+				transform: rotate(90deg);
+				height: 1rem;
+				margin-top: 0.4rem;
+			}
+			&[aria-label=nach] {
+				padding-top: 0.4rem;
+			}
 		}
-		&[aria-label=von] {
-			display: block;
-			transform: rotate(-90deg);
-			height: 1rem;
-			margin-top: 0.4rem;
+	}
+	&.order-desc {
+		i.material-icons {
+			&[aria-label=nach] {
+				padding-top: 0.4rem;
+			}
+			&[aria-label=von] {
+				display: block;
+				transform: rotate(-90deg);
+				height: 1rem;
+				margin-top: 0.4rem;
+			}
 		}
 	}
 

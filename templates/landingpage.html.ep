@@ -106,7 +106,7 @@
 		</div>
 	% }
 	<h2 style="margin-left: 0.75rem;"><%= L('landingpage.latest-trips') %></h2>
-	%= include '_history_trains', date_format => L('landingpage.date-format'), journeys => [journeys->get(uid => $user->{id}, limit => 5, with_datetime => 1)];
+	%= include '_history_trains', date_format => L('landingpage.date-format'), journeys => [journeys->get(uid => $user->{id}, limit => 5, with_datetime => 1)], order => 'desc';
 % }
 % else {
 	<div class="row">
