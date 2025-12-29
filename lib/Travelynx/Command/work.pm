@@ -215,8 +215,11 @@ sub run {
 							exclude    => $dep,
 						  );
 						$self->app->dbris->get_connections_p(
-							station      => $arr,
-							timestamp    => $entry->{real_arr},
+							station   => $arr,
+							timestamp => DateTime->from_epoch(
+								epoch     => $entry->{real_arr_ts},
+								time_zone => 'Europe/Berlin'
+							),
 							destinations => \@destinations
 						)->then(
 							sub {
@@ -348,9 +351,12 @@ sub run {
 							exclude    => $dep,
 						  );
 						$self->app->efa->get_connections_p(
-							service      => $entry->{backend_name},
-							name         => $arr,
-							timestamp    => $entry->{real_arr},
+							service   => $entry->{backend_name},
+							name      => $arr,
+							timestamp => DateTime->from_epoch(
+								epoch     => $entry->{real_arr_ts},
+								time_zone => 'Europe/Berlin'
+							),
 							destinations => \@destinations
 						)->then(
 							sub {
@@ -794,8 +800,11 @@ sub run {
 							exclude    => $dep,
 						  );
 						$self->app->iris->get_connections_p(
-							station      => $arr,
-							timestamp    => $entry->{real_arr},
+							station   => $arr,
+							timestamp => DateTime->from_epoch(
+								epoch     => $entry->{real_arr_ts},
+								time_zone => 'Europe/Berlin'
+							),
 							destinations => \@destinations
 						)->then(
 							sub {
