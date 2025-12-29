@@ -1046,20 +1046,20 @@ sub get_latest_checkout_stations {
 	my @ret;
 
 	while ( my $row = $res->hash ) {
-		push(
-			@ret,
-			{
-				name               => $row->{arr_name},
-				eva                => $row->{arr_eva},
-				external_id_or_eva => $row->{arr_external_id}
-				  // $row->{arr_eva},
-				dbris      => $row->{is_dbris} ? $row->{backend_name} : 0,
-				efa        => $row->{is_efa}   ? $row->{backend_name} : 0,
-				hafas      => $row->{is_hafas} ? $row->{backend_name} : 0,
-				motis      => $row->{is_motis} ? $row->{backend_name} : 0,
-				backend_id => $row->{backend_id},
-			}
-		);
+		my $entry = {
+			name               => $row->{arr_name},
+			eva                => $row->{arr_eva},
+			external_id_or_eva => $row->{arr_external_id} // $row->{arr_eva},
+			dbris              => $row->{is_dbris} ? $row->{backend_name} : 0,
+			efa                => $row->{is_efa}   ? $row->{backend_name} : 0,
+			hafas              => $row->{is_hafas} ? $row->{backend_name} : 0,
+			motis              => $row->{is_motis} ? $row->{backend_name} : 0,
+			backend_id         => $row->{backend_id},
+		};
+		if ( $row->{is_dbris} ) {
+			$entry->{external_id_or_eva} = '@L=' . $row->{arr_eva};
+		}
+		push( @ret, $entry );
 	}
 
 	return @ret;
