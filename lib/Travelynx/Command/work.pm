@@ -782,7 +782,8 @@ sub run {
 						$self->app->add_stationinfo( $uid, 0, $train->train_id,
 							$dep, $arr );
 					}
-					if ( defined $entry->{real_arr_ts}
+					if (    $suggestions_enabled
+						and defined $entry->{real_arr_ts}
 						and $now->epoch - $entry->{real_arr_ts} < 900 )
 					{
 						my @destinations
