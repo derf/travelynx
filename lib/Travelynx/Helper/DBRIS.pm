@@ -132,6 +132,10 @@ sub get_connections_p {
 	my $promise      = Mojo::Promise->new;
 	my $destinations = $opt{destinations};
 
+	$self->{log}->debug(
+"get_connections_p(station => $opt{station}, timestamp => $opt{timestamp})"
+	);
+
 	$self->get_departures_p(
 		station    => '@L=' . $opt{station},
 		timestamp  => $opt{timestamp},
