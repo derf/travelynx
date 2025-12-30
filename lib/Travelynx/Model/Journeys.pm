@@ -1565,6 +1565,17 @@ sub compute_review {
 				}
 			}
 		}
+		if ( $journey->{user_data}{him_msg}
+			and @{ $journey->{user_data}{him_msg} } )
+		{
+			$message_count += 1;
+			for my $message ( @{ $journey->{user_data}{him_msg} } ) {
+				if ( not $seen{ $message->{lead} } ) {
+					$num_by_message{ $message->{lead} } += 1;
+					$seen{ $message->{lead} } = 1;
+				}
+			}
+		}
 
 		if ( $journey->{type} ) {
 			$num_by_linetype{ $journey->{type} } += 1;
