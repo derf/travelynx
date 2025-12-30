@@ -203,22 +203,32 @@
 				</p>
 				% if ($review->{most_delayed_id}) {
 					<p>
-						Mit <strong><%= $review->{most_delayed_delay_arr} %></strong> hatte <a href="/journey/<%= $review->{most_delayed_id} %>"><%= $review->{most_delayed_type} %> <%= $review->{most_delayed_lineno} %></a> <%= $review->{most_delayed_from} %> → <%= $review->{most_delayed_to} %> die größte Verspätung.
+						%= L('review.most-delayed.pre')
+						<strong><%= $review->{most_delayed_delay_arr} %></strong><%= L('review.most-delayed.mid') %>
+						<a href="/journey/<%= $review->{most_delayed_id} %>"><%= $review->{most_delayed_type} %> <%= $review->{most_delayed_lineno} %></a> <%= $review->{most_delayed_from} %> → <%= $review->{most_delayed_to} %><%= L('review.most-delayed.post') %>
 					</p>
 				% }
 				% if ($review->{most_delay_id}) {
 					<p>
-						Die Fahrt mit <a href="/journey/<%= $review->{most_delay_id} %>"><%= $review->{most_delay_type} %> <%= $review->{most_delay_lineno} %></a>
-						von <%= $review->{most_delay_from} %> nach <%= $review->{most_delay_to} %> verlief besonders gemächlich:
-						sie dauerte <strong><%= $review->{most_delay_delta} %></strong> länger als geplant.
+						%= L('review.most-delay.pre')
+						<a href="/journey/<%= $review->{most_delay_id} %>"><%= $review->{most_delay_type} %> <%= $review->{most_delay_lineno} %></a>
+						%= L('review.most-delay.from')
+						%= $review->{most_delay_from}
+						%= L('review.most-delay.to')
+						%= $review->{most_delay_to}
+						%= L('review.most-delay.mid')
+						<strong><%= $review->{most_delay_delta} %></strong><%= L('review.most-delay.post') %>
 					</p>
 				% }
 				% if ($review->{most_undelay_id}) {
 					<p>
-						In <a href="/journey/<%= $review->{most_undelay_id} %>"><%= $review->{most_undelay_type} %> <%= $review->{most_undelay_lineno} %></a>
-						wurde hingegen Vmax ausgereizt und die Strecke von
-						<%= $review->{most_undelay_from} %> nach <%= $review->{most_undelay_to} %>
-						<strong><%= $review->{most_undelay_delta} %></strong> schneller absolviert als vorgesehen.
+						%= L('review.most-undelay.pre')
+						<a href="/journey/<%= $review->{most_undelay_id} %>"><%= $review->{most_undelay_type} %> <%= $review->{most_undelay_lineno} %></a>
+						%= L('review.most-undelay.from')
+						%= $review->{most_undelay_from}
+						%= L('review.most-undelay.to')
+						%= $review->{most_undelay_to}
+						<strong><%= $review->{most_undelay_delta} %></strong><%= L('review.most-undelay.post') %>
 					</p>
 				% }
 			</div>

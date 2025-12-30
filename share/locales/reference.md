@@ -2,9 +2,9 @@
 
 * de-DE: 100.0% complete (0 missing)
 * en-GB: 100.0% complete (0 missing)
-* fr-FR: 22.3% complete (206 missing)
-* hu-HU: 61.5% complete (102 missing)
-* pl-PL: 70.6% complete (78 missing)
+* fr-FR: 21.2% complete (219 missing)
+* hu-HU: 58.6% complete (115 missing)
+* pl-PL: 67.3% complete (91 missing)
 
 ### 
 
@@ -1816,6 +1816,110 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  deiner geplanten Fahrten sind ausgefallen.
 * en-GB:  of your trips were cancelled.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.most-delayed.pre
+
+* de-DE: Mit
+* en-GB: With
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.most-delayed.mid
+
+* de-DE:  hatte
+* en-GB: , 
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.most-delayed.post
+
+* de-DE:  die größte Verspätung.
+* en-GB:  effortlessly took the first place.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.most-delay.pre
+
+* de-DE: Die Fahrt mit
+* en-GB: The trip with
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.most-delay.from
+
+* de-DE: von
+* en-GB: from
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.most-delay.to
+
+* de-DE: nach
+* en-GB: to
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.most-delay.mid
+
+* de-DE: verlief besonders gemächlich: sie dauerte
+* en-GB: was super serene: it took
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.most-delay.post
+
+* de-DE:  länger als geplant.
+* en-GB:  longer than scheduled.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.most-undelay.pre
+
+* de-DE: In
+* en-GB: On the other hand,
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.most-undelay.from
+
+* de-DE: wurde hingegen Vmax ausgereizt und die Strecke von
+* en-GB: took the handle to the table and managed to go from
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.most-undelay.to
+
+* de-DE: nach
+* en-GB: to
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.most-undelay.mid
+
+* de-DE:  
+* en-GB:  an impressive
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.most-undelay.post
+
+* de-DE:  schneller absolviert als vorgesehen.
+* en-GB:  faster than anticipated.
 * fr-FR *missing*
 * hu-HU *missing*
 * pl-PL *missing*

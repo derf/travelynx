@@ -697,6 +697,45 @@ msgstr " "
 msgid "review.cancelled-percent.post"
 msgstr " deiner geplanten Fahrten sind ausgefallen."
 
+msgid "review.most-delayed.pre"
+msgstr "Mit"
+
+msgid "review.most-delayed.mid"
+msgstr " hatte"
+
+msgid "review.most-delayed.post"
+msgstr " die größte Verspätung."
+
+msgid "review.most-delay.pre"
+msgstr "Die Fahrt mit"
+
+msgid "review.most-delay.from"
+msgstr "von"
+
+msgid "review.most-delay.to"
+msgstr "nach"
+
+msgid "review.most-delay.mid"
+msgstr "verlief besonders gemächlich: sie dauerte"
+
+msgid "review.most-delay.post"
+msgstr " länger als geplant."
+
+msgid "review.most-undelay.pre"
+msgstr "In"
+
+msgid "review.most-undelay.from"
+msgstr "wurde hingegen Vmax ausgereizt und die Strecke von"
+
+msgid "review.most-undelay.to"
+msgstr "nach"
+
+msgid "review.most-undelay.mid"
+msgstr " "
+
+msgid "review.most-undelay.post"
+msgstr " schneller absolviert als vorgesehen."
+
 # _checked_in.html.ep, _public_status_card.html.ep
 
 msgid "status.is-checked-in"

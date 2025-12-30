@@ -693,6 +693,45 @@ msgstr " "
 msgid "review.cancelled-percent.post"
 msgstr " of your trips were cancelled."
 
+msgid "review.most-delayed.pre"
+msgstr "With"
+
+msgid "review.most-delayed.mid"
+msgstr ", "
+
+msgid "review.most-delayed.post"
+msgstr " effortlessly took the first place."
+
+msgid "review.most-delay.pre"
+msgstr "The trip with"
+
+msgid "review.most-delay.from"
+msgstr "from"
+
+msgid "review.most-delay.to"
+msgstr "to"
+
+msgid "review.most-delay.mid"
+msgstr "was super serene: it took"
+
+msgid "review.most-delay.post"
+msgstr " longer than scheduled."
+
+msgid "review.most-undelay.pre"
+msgstr "On the other hand,"
+
+msgid "review.most-undelay.from"
+msgstr "took the handle to the table and managed to go from"
+
+msgid "review.most-undelay.to"
+msgstr "to"
+
+msgid "review.most-undelay.mid"
+msgstr " an impressive"
+
+msgid "review.most-undelay.post"
+msgstr " faster than anticipated."
+
 # _checked_in.html.ep, _public_status_card.html.ep
 
 msgid "status.is-checked-in"
