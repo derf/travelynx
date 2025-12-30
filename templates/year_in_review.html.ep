@@ -167,28 +167,37 @@
 			<div class="carousel-item" href="#four">
 				<h2>Oepsie Woepsie</h2>
 				% if ($review->{issue1_count}) {
-					<p><strong><%= $review->{issue_percent} %></strong> aller Fahrten liefen nicht wie vorgesehen ab.<br/>
-						Die häufigsten Anmerkungen waren:</p>
+					<p>
+						%= L('review.annotated-percent.pre')
+						<strong><%= $review->{issue_percent} %></strong><%= L('review.annotated-percent.post') %><br/>
+						%= L('review.top-annotations')
+					</p>
 					% for my $i (1 .. 3) {
 						% if ($review->{"issue${i}_count"}) {
 							<p><strong><%= $review->{"issue${i}_count"} %>×</strong> „<%= $review->{"issue${i}_text"} %>“</p>
 						% }
 					% }
 				% }
-				<p>Lediglich <strong><%= $review->{punctual_percent_h} %></strong> der Fahrten waren pünktlich auf die Minute.</p>
+				<p>
+					%= L('review.punctual-percent.pre')
+					<strong><%= $review->{punctual_percent_h} %></strong><%= L('review.punctual-percent.post') %>
+				</p>
 			</div>
 			<div class="carousel-item" href="#five">
 				<h2>De trein is stukkie wukkie</h2>
 				<p>
 					% if ($review->{fgr_percent} >= 0.1) {
-						<strong><%= $review->{fgr_percent_h} %></strong> deiner Fahrten hatten mindestens eine Stunde Verspätung
+						%= L('review.hour-delay-percent.pre')
+						<strong><%= $review->{fgr_percent_h} %></strong><%= L('review.hour-delay-percent.post') %>
 					% }
 					% if ($review->{cancel_count}) {
 						% if ($review->{fgr_percent} >= 0.1) {
-							und <strong><%= $review->{cancel_count} %></strong> kamen gar nicht erst am Ziel an.
+							%= L('review.and-cancelled-percent.pre')
+							<strong><%= $review->{cancel_count} %></strong><%= L('review.and-cancelled-percent.post') %>
 						% }
 						% else {
-							<strong><%= $review->{cancel_count} %></strong> deiner geplanten Fahrten sind ausgefallen.
+							%= L('review.cancelled-percent.pre')
+							<strong><%= $review->{cancel_count} %></strong><%= L('review.and-cancelled-percent.post') %>
 						% }
 					% }
 				</p>

@@ -660,6 +660,39 @@ msgstr " "
 msgid "review.high-scores.closest-trip.post"
 msgstr "."
 
+msgid "review.annotated-percent.pre"
+msgstr " "
+
+msgid "review.annotated-percent.post"
+msgstr " of all trips came with remarks related to delays or disruptions."
+
+msgid "review.top-annotations"
+msgstr "Most frequent remarks:"
+
+msgid "review.punctual-percent.pre"
+msgstr "Merely"
+
+msgid "review.punctual-percent.post"
+msgstr " of all trips were right on schedule."
+
+msgid "review.hour-delay-percent.pre"
+msgstr " "
+
+msgid "review.hour-delay-percent.post"
+msgstr " of your trips were delayed by at least an hour"
+
+msgid "review.and-cancelled-percent.pre"
+msgstr "and"
+
+msgid "review.and-cancelled-percent.post"
+msgstr " did not even make it to your destination."
+
+msgid "review.cancelled-percent.pre"
+msgstr " "
+
+msgid "review.cancelled-percent.post"
+msgstr " of your trips were cancelled."
+
 # _checked_in.html.ep, _public_status_card.html.ep
 
 msgid "status.is-checked-in"

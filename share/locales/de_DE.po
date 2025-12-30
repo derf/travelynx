@@ -664,6 +664,39 @@ msgstr " "
 msgid "review.high-scores.closest-trip.post"
 msgstr "."
 
+msgid "review.annotated-percent.pre"
+msgstr " "
+
+msgid "review.annotated-percent.post"
+msgstr " aller Fahrten waren mit Angaben zu Verspätungen oder Einschränkungen versehen."
+
+msgid "review.top-annotations"
+msgstr "Die häufigsten Anmerkungen waren:"
+
+msgid "review.punctual-percent.pre"
+msgstr "Lediglich"
+
+msgid "review.punctual-percent.post"
+msgstr " der Fahrten waren pünktlich auf die Minute."
+
+msgid "review.hour-delay-percent.pre"
+msgstr " "
+
+msgid "review.hour-delay-percent.post"
+msgstr " deiner Fahrten hatten mindestens eine Stunde Verspätung"
+
+msgid "review.and-cancelled-percent.pre"
+msgstr "und"
+
+msgid "review.and-cancelled-percent.post"
+msgstr " kamen gar nicht erst am Ziel an."
+
+msgid "review.cancelled-percent.pre"
+msgstr " "
+
+msgid "review.cancelled-percent.post"
+msgstr " deiner geplanten Fahrten sind ausgefallen."
+
 # _checked_in.html.ep, _public_status_card.html.ep
 
 msgid "status.is-checked-in"
