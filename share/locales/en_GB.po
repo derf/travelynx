@@ -580,7 +580,7 @@ msgid "review.delay-decreasing.pre"
 msgstr "It departed"
 
 msgid "review.delay-decreasing.mid"
-msgstr "later than scheduled, but managed to partially make up for that. When reahing its destination, it was delayed by only"
+msgstr "later than scheduled, but managed to partially make up for that. When reaching its destination, it was delayed by only"
 
 msgid "review.delay-decreasing.post"
 msgstr "."
