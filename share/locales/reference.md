@@ -2,9 +2,9 @@
 
 * de-DE: 100.0% complete (0 missing)
 * en-GB: 100.0% complete (0 missing)
-* fr-FR: 30.9% complete (129 missing)
-* hu-HU: 86.7% complete (25 missing)
-* pl-PL: 100.0% complete (0 missing)
+* fr-FR: 22.3% complete (206 missing)
+* hu-HU: 61.5% complete (102 missing)
+* pl-PL: 70.6% complete (78 missing)
 
 ### 
 
@@ -128,7 +128,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Fehler
 * en-GB: Error
-* fr-FR: Erreur
+* fr-FR: erreur
 * hu-HU: Hiba
 * pl-PL: Błąd
 
@@ -166,7 +166,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  
 * fr-FR *missing*
 * hu-HU:  
-* pl-PL:
+* pl-PL:  
 
 ### about.source-code
 
@@ -588,6 +588,32 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * hu-HU *missing*
 * pl-PL: Dane mapy („Polylines”) dla pojedynczych przejazdów można teraz eksportować i importować jako pliki GPX. Dzięki temu dane mapy można później poprawić lub uzupełnić. Format danych GPX jest kompatybilny z BRouter-Web.
 
+### changelog.2-18.1
+
+* de-DE: Checkin- und Verbindungsvorschläge sind für DBRIS-, EFA- und IRIS-Backends wieder verfügbar. Bei HAFAS-Backends fehlen die dazu notwendigen Daten in der Abfahrtstafel. Bei MOTIS-Backends fehlen die Daten möglicherweise ebenfalls.
+* en-GB: Checkin and connection suggestions are now available again for DBRIS, EFA, and IRIS backends. HAFAS backends lack the required station board data. MOTIS backends may lack the required data as well.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### changelog.2-18.2
+
+* de-DE: Bei der Reisestreckenberechnung für vergangene Fahrten werden nun auch Fahrten mit ungenügender Datenlage (d.h. bei denen ausschließlich die Entfernung nach Luftlinie verfügbar ist) berücksichtigt. Bislang wurden diese für monatliche und jährliche Statistiken ignoriert.
+* en-GB: Total distance calculation in the history now includes trips that lack appropriate route data (i.e., where only beeline distance / distance as the crow flies is available). Before this release, such trips were ignored when computing monthly and yearly statistics.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+## history.html.ep
+
+### history.review
+
+* de-DE: Rückblick
+* en-GB: Review
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
 ## journey.html.ep
 
 ### journey.not-found
@@ -855,6 +881,14 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * fr-FR *missing*
 * hu-HU: Jelenleg nem vagy becsekkolva
 * pl-PL: Nie jesteś obecnie zameldowany.
+
+### landingpage.recent-stops
+
+* de-DE: Letzte Ziele
+* en-GB: Latest destinations
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
 
 ### landingpage.stop-geosearch
 
@@ -1166,7 +1200,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Our
 * fr-FR *missing*
 * hu-HU: Az
-* pl-PL:
+* pl-PL *missing*
 
 ### register.privacy
 
@@ -1199,6 +1233,592 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * fr-FR *missing*
 * hu-HU: Kérjük, vedd figyelembe: Travelynx egy ingyenes és bármi rendelkezésre állási garacia nélküli hobbi projekt. Be nem tervezett leállások, illetve a teljes oldal hírtelen bezárása nincs tervben, de bármikor előfordulhat.
 * pl-PL: Uwaga: Travelynx jest prywatnym projektem bez gwarancji dostępności. Niezapowiedziane przerwy w działaniu lub krótkoterminowe wyłączenie tej strony nie są planowane, ale są możliwe.
+
+## year_in_review.html.ep
+
+### review.header.pre
+
+* de-DE: Jahresrückblick
+* en-GB:  
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.header.post
+
+* de-DE:  
+* en-GB: in Review
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.trips-stops.pre
+
+* de-DE: Du hast in diesem Jahr
+* en-GB: You have logged
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.trips-stops.mid
+
+* de-DE: von und zu
+* en-GB: across
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.trips-stops.post
+
+* de-DE:  in travelynx erfasst.
+* en-GB: .
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.trips
+
+* de-DE: Fahrten
+* en-GB: trips
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.stops
+
+* de-DE: Betriebsstellen
+* en-GB: stops
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.trips-per-day.pre
+
+* de-DE: Das sind mehr als
+* en-GB: This comes down to more than
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.trips-per-day
+
+* de-DE: Fahrten pro Tag
+* en-GB: trips per day
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.trips-per-day.post
+
+* de-DE: !
+* en-GB: !
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.travel-time.pre
+
+* de-DE: Insgesamt hast du mindestens
+* en-GB: In total, you spent at least
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.travel-time.of-year
+
+* de-DE: des Jahres
+* en-GB: of the entire year
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.travel-time.post
+
+* de-DE: unterwegs verbracht.
+* en-GB: in transit.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.travel-distance.pre
+
+* de-DE: Dabei hast du ca.
+* en-GB: In doing so, you traversed a total distance of approx.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.travel-distance.post
+
+* de-DE:  zurückgelegt.
+* en-GB: .
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.equivalent-circumference.pre
+
+* de-DE: Das entspricht
+* en-GB: This equals
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.equivalent-circumference.mid
+
+* de-DE: Fahrten um die Erde
+* en-GB: trips around the earth
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.equivalent-circumference.post
+
+* de-DE: .
+* en-GB: .
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.equivalent-diagonal.pre
+
+* de-DE: Das entspricht
+* en-GB: This equals
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.equivalent-diagonal.mid
+
+* de-DE: Reisen zum Mittelpunkt der Erde und zurück
+* en-GB: journeys to the centre of the earth and back
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.equivalent-diagonal.post
+
+* de-DE: .
+* en-GB: .
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.next-page
+
+* de-DE: Hier streichen oder unten klicken für nächste Seite
+* en-GB: Swip here or click below for next page
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.mean-trip.header
+
+* de-DE: Eine typische Fahrt
+* en-GB: An average Trip
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.mean-trip-3.pre
+
+* de-DE: … führte dich mit
+* en-GB: … meant taking
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.mean-trip-3.mid
+
+* de-DE: durch das Dreieck
+* en-GB: within the
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.mean-trip-3.post
+
+* de-DE: .
+* en-GB:  triangle.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.mean-trip-2.pre
+
+* de-DE: … befand sich jederzeit auf deiner Pendelstrecke zwischen
+* en-GB: … was always along your commute between
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.mean-trip-2.mid
+
+* de-DE: und
+* en-GB: and
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.mean-trip-2.post
+
+* de-DE: .
+* en-GB: .
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.time-distance.pre
+
+* de-DE: Im Mittel benötigte sie
+* en-GB: On average, it took
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.time-distance.mid
+
+* de-DE: für eine Entfernung von ca.
+* en-GB: to cover approx.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.time-distance.post
+
+* de-DE: .
+* en-GB: .
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.on-time
+
+* de-DE: Außerdem war sie <strong>komplett pünktlich</strong>. Beeindruckend!
+* en-GB: It was consistently <strong>on time</strong>. Impressive!
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.delay-decreasing.pre
+
+* de-DE: Sie fuhr
+* en-GB: It departed
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.delay-decreasing.mid
+
+* de-DE: zu spät ab, konnte aber einen Teil der Verspätung wieder herausholen. Ihr Ziel erreichte sie nur noch
+* en-GB: later than scheduled, but managed to partially make up for that. When reaching its destination, it was delayed by only
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.delay-decreasing.post
+
+* de-DE:  später als vorgesehen.
+* en-GB: .
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.delay-constant.pre
+
+* de-DE: Sie fuhr
+* en-GB: It departured
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.delay-constant.post
+
+* de-DE:  zu spät ab und kam mit der gleichen Verspätung am Ziel an.
+* en-GB:  too late and arrived with the same delay.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.delay-increasing.pre
+
+* de-DE: Sie fuhr
+* en-GB: It departed with a delay of
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.delay-increasing.mid
+
+* de-DE: zu spät ab und schlich mit
+* en-GB: and increased it to
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.delay-increasing.post
+
+* de-DE:  ins Ziel.
+* en-GB:  at the destination.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.high-scores.header
+
+* de-DE: High Scores
+* en-GB: High Scores
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.high-scores.with
+
+* de-DE: mit
+* en-GB: with
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.high-scores.from
+
+* de-DE: von
+* en-GB: from
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.high-scores.to
+
+* de-DE: nach
+* en-GB: to
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.high-scores.longest-trip.link
+
+* de-DE: Längste Fahrt
+* en-GB: Longest Leg
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.high-scores.longest-trip.pre
+
+* de-DE:  
+* en-GB:  
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.high-scores.longest-trip.post
+
+* de-DE: .
+* en-GB: .
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.high-scores.farthest-trip-eq-longest.pre
+
+* de-DE: Mit
+* en-GB: With a distance of
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.high-scores.farthest-trip-eq-longest.post
+
+* de-DE:  war sie gleichzeitig deine weiteste Fahrt.
+* en-GB: , it also was your longest leap.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.high-scores.farthest-trip.link
+
+* de-DE: Größte Entfernung
+* en-GB: Longest Leap
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.high-scores.farthest-trip.pre
+
+* de-DE:  
+* en-GB:  
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.high-scores.farthest-trip.post
+
+* de-DE: .
+* en-GB: .
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.high-scores.shortest-trip.link
+
+* de-DE: Kürzeste Fahrt
+* en-GB: Tiniest Trip
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.high-scores.shortest-trip.pre
+
+* de-DE:  
+* en-GB:  
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.high-scores.shortest-trip.post
+
+* de-DE: .
+* en-GB: .
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.high-scores.closest-trip-eq-shortest.pre
+
+* de-DE: Mit
+* en-GB: With a distance of
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.high-scores.closest-trip-eq-shortest.post
+
+* de-DE:  war sie gleichzeitig dein kleinster Katzensprung.
+* en-GB: , it was also your closest checkin / checkout couple.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.high-scores.farthest-trip.link
+
+* de-DE: Größte Entfernung
+* en-GB: Longest Leap
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.high-scores.closest-trip.link
+
+* de-DE: Kleinster Katzensprung
+* en-GB: Closest Checkout
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.high-scores.closest-trip.pre
+
+* de-DE:  
+* en-GB:  
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.high-scores.closest-trip.post
+
+* de-DE: .
+* en-GB: .
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.annotated-percent.pre
+
+* de-DE:  
+* en-GB:  
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.annotated-percent.post
+
+* de-DE:  aller Fahrten waren mit Angaben zu Verspätungen oder Einschränkungen versehen.
+* en-GB:  of all trips came with remarks related to delays or disruptions.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.top-annotations
+
+* de-DE: Die häufigsten Anmerkungen waren:
+* en-GB: Most frequent remarks:
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.punctual-percent.pre
+
+* de-DE: Lediglich
+* en-GB: Merely
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.punctual-percent.post
+
+* de-DE:  der Fahrten waren pünktlich auf die Minute.
+* en-GB:  of all trips were right on schedule.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.hour-delay-percent.pre
+
+* de-DE:  
+* en-GB:  
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.hour-delay-percent.post
+
+* de-DE:  deiner Fahrten hatten mindestens eine Stunde Verspätung
+* en-GB:  of your trips were delayed by at least an hour
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.and-cancelled-percent.pre
+
+* de-DE: und
+* en-GB: and
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.and-cancelled-percent.post
+
+* de-DE:  kamen gar nicht erst am Ziel an.
+* en-GB:  did not even make it to your destination.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.cancelled-percent.pre
+
+* de-DE:  
+* en-GB:  
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### review.cancelled-percent.post
+
+* de-DE:  deiner geplanten Fahrten sind ausgefallen.
+* en-GB:  of your trips were cancelled.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
 
 ## _checked_in.html.ep, _public_status_card.html.ep
 
@@ -1524,7 +2144,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: scheduled
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL: zgodnie z rozkładem
+* pl-PL: Zgodnie z rozkładem
 
 ### stats.transfer-time
 
@@ -1607,3 +2227,4 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * fr-FR: Voiture
 * hu-HU: Kocsi
 * pl-PL: Wagon
+
