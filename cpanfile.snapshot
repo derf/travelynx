@@ -2714,18 +2714,18 @@ DISTRIBUTIONS
       TimeDate 1.21
     requirements:
       ExtUtils::MakeMaker 0
-  Travel-Status-DE-DBRIS-0.20
-    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.20.tar.gz
+  Travel-Status-DE-DBRIS-0.21
+    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.21.tar.gz
     provides:
-      Travel::Status::DE::DBRIS 0.20
-      Travel::Status::DE::DBRIS::Formation 0.20
-      Travel::Status::DE::DBRIS::Formation::Carriage 0.20
-      Travel::Status::DE::DBRIS::Formation::Group 0.20
-      Travel::Status::DE::DBRIS::Formation::Sector 0.20
-      Travel::Status::DE::DBRIS::Journey 0.20
-      Travel::Status::DE::DBRIS::JourneyAtStop 0.20
-      Travel::Status::DE::DBRIS::Location 0.20
-      Travel::Status::DE::DBRIS::Operators 0.20
+      Travel::Status::DE::DBRIS 0.21
+      Travel::Status::DE::DBRIS::Formation 0.21
+      Travel::Status::DE::DBRIS::Formation::Carriage 0.21
+      Travel::Status::DE::DBRIS::Formation::Group 0.21
+      Travel::Status::DE::DBRIS::Formation::Sector 0.21
+      Travel::Status::DE::DBRIS::Journey 0.21
+      Travel::Status::DE::DBRIS::JourneyAtStop 0.21
+      Travel::Status::DE::DBRIS::Location 0.21
+      Travel::Status::DE::DBRIS::Operators 0.21
     requirements:
       Carp 0
       Class::Accessor 0.16
