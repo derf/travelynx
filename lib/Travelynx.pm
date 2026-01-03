@@ -466,6 +466,64 @@ sub startup {
 	);
 
 	$self->helper(
+		'LT' => sub {
+			my ( $self, $minutes ) = @_;
+
+			my @ret;
+
+			if ( $minutes >= 14 * 24 * 60 ) {
+				push( @ret,
+					int( $minutes / ( 7 * 24 * 60 ) ) . q{ }
+					  . $self->L('LT.weeks') );
+			}
+			elsif ( $minutes >= 7 * 24 * 60 ) {
+				push( @ret, '1 ' . $self->L('LT.week') );
+			}
+			$minutes %= 7 * 24 * 60;
+
+			if ( $minutes >= 2 * 24 * 60 ) {
+				push( @ret,
+					int( $minutes / ( 24 * 60 ) ) . q{ }
+					  . $self->L('LT.days') );
+			}
+			elsif ( $minutes >= 24 * 60 ) {
+				push( @ret, '1 ' . $self->L('LT.day') );
+			}
+			$minutes %= 24 * 60;
+
+			if ( $minutes >= 2 * 60 ) {
+				push( @ret,
+					int( $minutes / 60 ) . q{ } . $self->L('LT.hours') );
+			}
+			elsif ( $minutes >= 60 ) {
+				push( @ret, '1 ' . $self->L('LT.hour') );
+			}
+			$minutes %= 60;
+
+			if ( $minutes >= 2 ) {
+				push( @ret, "$minutes " . $self->L('LT.minutes') );
+			}
+			elsif ($minutes) {
+				push( @ret, '1 ' . $self->L('LT.minute') );
+			}
+
+			if ( @ret == 0 ) {
+				return $self->L('LT.zero-minutes');
+			}
+
+			if ( @ret == 1 ) {
+				return $ret[0];
+			}
+
+			my $last = pop(@ret);
+			return
+			    join( ', ', @ret )
+			  . $self->L( @ret > 1 ? 'LT.final-and' : 'LT.and' )
+			  . " $last";
+		}
+	);
+
+	$self->helper(
 		'now' => sub {
 			return DateTime->now( time_zone => 'Europe/Berlin' );
 		}

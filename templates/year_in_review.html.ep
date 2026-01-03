@@ -17,12 +17,12 @@
 					% if ($review->{traveling_min_total} > 525) {
 						%= L('review.travel-time.pre')
 						<strong><%= $review->{traveling_percentage_year} %> <%= L('review.travel-time.of-year') %></strong>
-						(<%= $review->{traveling_time_year} %>)
+						(<%= LT($review->{traveling_time_year}) %>)
 						%= L('review.travel-time.post')
 					% }
 					% else {
 						%= L('review.travel-time.pre')
-						<strong><%= $review->{traveling_time_year} %></strong>
+						<strong><%= LT($review->{traveling_time_year}) %></strong>
 						%= L('review.travel-time.post')
 					% }
 				</p>
@@ -67,7 +67,7 @@
 				</p>
 				<p>
 					%= L('review.time-distance.pre')
-					<strong><%= $review->{typical_time} %></strong>
+					<strong><%= LT($review->{typical_time}) %></strong>
 					%= L('review.time-distance.mid')
 					<strong><%= $review->{typical_km} %> km</strong> (<%= $review->{typical_kmh} %> km/h)<%= L('review.time-distance.post') %>
 				</p>
@@ -80,17 +80,17 @@
 					<p>
 						% if ($review->{typical_delay_arr} < $review->{typical_delay_dep}) {
 							%= L('review.delay-decreasing.pre')
-							<strong><%= $review->{typical_delay_dep_h} %></strong>
+							<strong><%= LT($review->{typical_delay_dep}) %></strong>
 							%= L('review.delay-decreasing.mid')
-							<strong><%= $review->{typical_delay_arr_h} %></strong><%= L('review.delay-decreasing.post') %>
+							<strong><%= LT($review->{typical_delay_arr}) %></strong><%= L('review.delay-decreasing.post') %>
 						% }
 						% elsif ($review->{typical_delay_arr} == $review->{typical_delay_dep}) {
 							%= L('review.delay-constant.pre')
-							<strong><%= $review->{typical_delay_dep_h} %></strong><%= L('review.delay-constant.post') %>
+							<strong><%= LT($review->{typical_delay_dep}) %></strong><%= L('review.delay-constant.post') %>
 						% }
 						% else {
 							%= L('review.delay-increasing.pre')
-							<strong><%= $review->{typical_delay_dep_h} %></strong>
+							<strong><%= LT($review->{typical_delay_dep}) %></strong>
 							%= L('review.delay-increasing.mid')
 							<strong>+<%= $review->{typical_delay_arr} %></strong><%= L('review.delay-increasing.post') %>
 						% }
@@ -103,7 +103,7 @@
 					<p>
 						<a href="/journey/<%= $review->{longest_t_id} %>"><%= L('review.high-scores.longest-trip.link') %></a>:
 						%= L('review.high-scores.longest-trip.pre')
-						<strong><%= $review->{longest_t_time} %></strong>
+						<strong><%= LT($review->{longest_t_min}) %></strong>
 						%= L('review.high-scores.with')
 						<strong><%= $review->{longest_t_type} %> <%= $review->{longest_t_lineno} %></strong>
 						%= L('review.high-scores.from')
@@ -135,7 +135,7 @@
 					<p>
 						<a href="/journey/<%= $review->{shortest_t_id} %>"><%= L('review.high-scores.shortest-trip.link') %></a>:
 						%= L('review.high-scores.shortest-trip.pre')
-						<strong><%= $review->{shortest_t_time} %></strong>
+						<strong><%= LT($review->{shortest_t_min}) %></strong>
 						%= L('review.high-scores.with')
 						<strong><%= $review->{shortest_t_type} %> <%= $review->{shortest_t_lineno} %></strong>
 						%= L('review.high-scores.from')
@@ -204,7 +204,7 @@
 				% if ($review->{most_delayed_id}) {
 					<p>
 						%= L('review.most-delayed.pre')
-						<strong><%= $review->{most_delayed_delay_arr} %></strong><%= L('review.most-delayed.mid') %>
+						<strong><%= LT($review->{most_delayed_delay_arr}) %></strong><%= L('review.most-delayed.mid') %>
 						<a href="/journey/<%= $review->{most_delayed_id} %>"><%= $review->{most_delayed_type} %> <%= $review->{most_delayed_lineno} %></a> <%= $review->{most_delayed_from} %> → <%= $review->{most_delayed_to} %><%= L('review.most-delayed.post') %>
 					</p>
 				% }
@@ -217,7 +217,7 @@
 						%= L('review.most-delay.to')
 						%= $review->{most_delay_to}
 						%= L('review.most-delay.mid')
-						<strong><%= $review->{most_delay_delta} %></strong><%= L('review.most-delay.post') %>
+						<strong><%= LT($review->{most_delay_delta}) %></strong><%= L('review.most-delay.post') %>
 					</p>
 				% }
 				% if ($review->{most_undelay_id}) {
@@ -228,7 +228,7 @@
 						%= $review->{most_undelay_from}
 						%= L('review.most-undelay.to')
 						%= $review->{most_undelay_to}
-						<strong><%= $review->{most_undelay_delta} %></strong><%= L('review.most-undelay.post') %>
+						<strong><%= LT($review->{most_undelay_delta}) %></strong><%= L('review.most-undelay.post') %>
 					</p>
 				% }
 			</div>

@@ -46,6 +46,43 @@ msgid "header.error"
 msgstr "Error"
 
 #
+# LT (localized duration)
+#
+
+msgid "LT.weeks"
+msgstr "weeks"
+
+msgid "LT.week"
+msgstr "week"
+
+msgid "LT.days"
+msgstr "days"
+
+msgid "LT.day"
+msgstr "day"
+
+msgid "LT.hours"
+msgstr "hours"
+
+msgid "LT.hour"
+msgstr "hour"
+
+msgid "LT.minutes"
+msgstr "minutes"
+
+msgid "LT.minute"
+msgstr "minute"
+
+msgid "LT.zero-minutes"
+msgstr "0 minutes"
+
+msgid "LT.final-and"
+msgstr ", and"
+
+msgid "LT.and"
+msgstr " and"
+
+#
 # Templates
 #
 

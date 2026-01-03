@@ -34,14 +34,14 @@
 					% }
 					data-arrival="<%= $journey->{real_arrival}->epoch %>">
 					% if ($journey->{departure_countdown} > 60) {
-						Abfahrt in <%= journeys->min_to_human(int($journey->{departure_countdown} / 60)) %>
+						Abfahrt in <%= LT(int($journey->{departure_countdown} / 60)) %>
 					% }
 					% elsif ($journey->{departure_countdown} > 0) {
 						Abfahrt in weniger als einer Minute
 					% }
 					% elsif (defined $journey->{arrival_countdown}) {
 						% if ($journey->{arrival_countdown} > 60) {
-							<%= L('status.arrival-in.pre') %> <%= journeys->min_to_human(int($journey->{arrival_countdown} / 60)) %> <%= L('status.arrival-in.post') %>
+							<%= L('status.arrival-in.pre') %> <%= LT(int($journey->{arrival_countdown} / 60)) %> <%= L('status.arrival-in.post') %>
 						% }
 						% elsif ($journey->{arrival_countdown} > 0) {
 							%= L('status.arrival-soon')
