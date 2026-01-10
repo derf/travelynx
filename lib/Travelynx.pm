@@ -1461,15 +1461,24 @@ sub startup {
 						arrival_eva => $new_checkout_station_id
 					);
 
-					# If in_transit already contains arrival data for another estimated
-					# destination, we must invalidate it.
 					if ( defined $journey->{checkout_station_id}
 						and $journey->{checkout_station_id}
 						!= $new_checkout_station_id )
 					{
+						# If in_transit already contains arrival data for another estimated
+						# destination, we must invalidate it.
 						$self->in_transit->unset_arrival_data(
 							uid => $uid,
 							db  => $db
+						);
+
+						# The same applies to suggestions
+						$self->in_transit->update_data(
+							uid  => $uid,
+							db   => $db,
+							data => {
+								connection_suggestions_iris => [],
+							},
 						);
 					}
 
@@ -1797,6 +1806,17 @@ sub startup {
 						uid                   => $uid,
 						db                    => $db,
 						cancelled_destination => $found->[0],
+					);
+				}
+				else {
+					# remove connection suggestions that may have been saved for a different target station
+					$self->in_transit->update_data(
+						uid  => $uid,
+						db   => $db,
+						data => {
+							connection_suggestions_dbris => [],
+							connection_suggestions_efa   => [],
+						},
 					);
 				}
 
