@@ -2205,8 +2205,19 @@ sub polyline_add_stops {
 		}
 		$route_i += 1;
 	}
-	$route_i = 0;
+	$route_i = -1;
 	for my $stop ( @{$route} ) {
+		$route_i += 1;
+		if ( $opt{partial} ) {
+			if ( $route_i == 0 ) {
+				$polyline->[0][2] = $stop->[1];
+				next;
+			}
+			if ( $route_i == $#{$route} ) {
+				$polyline->[-1][2] = $stop->[1];
+				next;
+			}
+		}
 		my $key = $route_i . ';' . $stop->[1];
 		if ( $min_dist{$key} ) {
 			if ( defined $polyline->[ $min_dist{$key}{index} ][2] ) {
@@ -2232,7 +2243,6 @@ sub polyline_add_stops {
 			$polyline->[ $min_dist{$key}{index} ][2]
 			  = $stop->[1];
 		}
-		$route_i += 1;
 	}
 	return;
 }
@@ -2350,6 +2360,7 @@ sub set_polyline {
 		my $err = $self->polyline_add_stops(
 			polyline => \@polyline,
 			route    => \@route,
+			partial  => ( $self->param('upload-partial') ? 1 : 0 ),
 		);
 
 		if ($err) {
