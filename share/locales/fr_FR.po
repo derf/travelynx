@@ -8,6 +8,7 @@ msgstr ""
 #
 # Global Strings
 #
+
 msgid "strftime.datetime"
 msgstr "%d/%m/%Y %Hh%M %Z"
 
@@ -45,9 +46,48 @@ msgid "header.error"
 msgstr "erreur"
 
 #
+# LT (localized duration)
+#
+
+msgid "LT.weeks"
+msgstr "semaines"
+
+msgid "LT.week"
+msgstr "semaine"
+
+msgid "LT.days"
+msgstr "jours"
+
+msgid "LT.day"
+msgstr "jour"
+
+msgid "LT.hours"
+msgstr "heures"
+
+msgid "LT.hour"
+msgstr "heure"
+
+msgid "LT.minutes"
+msgstr "minutes"
+
+msgid "LT.minute"
+msgstr "minute"
+
+msgid "LT.zero-minutes"
+msgstr "0 minutes"
+
+msgid "LT.final-and"
+msgstr ", et"
+
+msgid "LT.and"
+msgstr " et"
+
+#
 # Templates
 #
+
 # about.html.ep
+
 msgid "about.developed-by.lead"
 msgstr "Développé par"
 
@@ -73,13 +113,7 @@ msgid "about.data-sources.last-and"
 msgstr ", et"
 
 msgid "about.disclaimer"
-msgstr ""
-"Travelynx est un projet personnel. Il est fourni gratuitement, sans aucune "
-"garantie de disponibilité. Des indisponibilités inattendues ou une "
-"suppresion de l'ensemble du site à bref délai ne sont pas prévus, mais "
-"toujours possibles. En fonction du temps libre et de la motivation "
-"disponible, les demandes de fonctionnalités, les rapports de bugs et autres "
-"messages sont traités rapidement, avec un retard ou pas du tout."
+msgstr "Travelynx est un projet personnel. Il est fourni gratuitement, sans aucune garantie de disponibilité. Des indisponibilités inattendues ou une suppresion de l'ensemble du site à bref délai ne sont pas prévus, mais toujours possibles. En fonction du temps libre et de la motivation disponible, les demandes de fonctionnalités, les rapports de bugs et autres messages sont traités rapidement, avec un retard ou pas du tout."
 
 msgid "about.contact"
 msgstr "Contact"
@@ -89,6 +123,8 @@ msgstr "Bogues"
 
 msgid "about.changelog"
 msgstr "Liste des changements"
+
+# account.html.ep
 
 msgid "account.changed-name"
 msgstr "Nom mis à jour"
@@ -120,10 +156,6 @@ msgstr "Le webhook a été mis à jour"
 msgid "account.cleared-notifications"
 msgstr "Les notifications ont été purgées"
 
-#
-# Templates
-#
-# account.html.ep
 msgid "account.account"
 msgstr "Mon compte"
 
@@ -167,8 +199,7 @@ msgid "account.webhook.active"
 msgstr "Actif"
 
 msgid "account.traewelling.unsupported"
-msgstr ""
-"Non supporté en raison d'une incompatibilité avec bahn.de et transitous"
+msgstr "Non supporté en raison d'une incompatibilité avec bahn.de et transitous"
 
 msgid "account.registration-date"
 msgstr "Enregistré le"
@@ -215,6 +246,7 @@ msgid "account.interaction.requests.outgoing.some"
 msgstr "sortantes"
 
 # changelog.html.ep
+
 msgid "changelog.added"
 msgstr "Nouvelles fonctionnalités"
 
@@ -222,46 +254,50 @@ msgid "changelog.bugfix"
 msgstr "Correctifs"
 
 msgid "changelog.2-16.1"
-msgstr ""
-"Ajout des traductions. Certaines parties de travelynx sont maintenant "
-"disponibles en anglais, et une partie d'entre elles sont également "
-"disponibles en français, hongrois et polonais. Plus de traductions, langues "
-"et manuels de traduction seront disponibles à l'avenir. La sélection de la "
-"langue respecte l'en-tête Accept-Language et peut être configurée sur la "
-"page des paramètres de compte."
+msgstr "Ajout des traductions. Certaines parties de travelynx sont maintenant disponibles en anglais, et une partie d'entre elles sont également disponibles en français, hongrois et polonais. Plus de traductions, langues et manuels de traduction seront disponibles à l'avenir. La sélection de la langue respecte l'en-tête Accept-Language et peut être configurée sur la page des paramètres de compte."
 
 msgid "changelog.2-16.2"
-msgstr ""
-"Correction du calcul des distances et visualisation des lignes circulaires. "
-"Les voyages affichés sur la carte historique sont encore partiellement "
-"incorrects."
+msgstr "Correction du calcul des distances et visualisation des lignes circulaires. Les voyages affichés sur la carte historique sont encore partiellement incorrects."
 
 msgid "changelog.2-17.1"
-msgstr ""
-"Les données de carte (\"Polylines\") des trajets individuels peuvent "
-"maintenant être exportées et importées au format GPX. Cela permet de "
-"corriger ou compléter les données de carte a posteriori. Les imports/exports "
-"GPX sont compatibles avec BRouter-Web."
+msgstr "Les données de carte (\"Polylines\") des trajets individuels peuvent maintenant être exportées et importées au format GPX. Cela permet de corriger ou compléter les données de carte a posteriori. Les imports/exports GPX sont compatibles avec BRouter-Web."
+
+msgid "changelog.2-18.1"
+msgstr "L'enregistrement et les suggestions de correspondances sont maintenant disponibles à nouveau pour les backends DBRIS, EFA et IRIS. Les backends HAFAS n'ont pas les données de tableau de station requises. Les backends MOTIS backends peuvent également ne pas avoir ces données."
+
+msgid "changelog.2-18.2"
+msgstr "Le calcul de la distance totale dans l'historique inclut maintenant les voyages qui n'ont pas les données de trajet appropriées (par exemple où seule la distance à vol d'oiseau est disponible). Avant cette version, de tels trajets étaient ignorés lors du calcul des statistiques mensuelles et annuelles"
+
+# history.html.ep
+msgid "history.review"
+msgstr "Résumé"
 
 # journey.html.ep
+
 msgid "journey.not-found"
 msgstr "Trajet non trouvé."
 
+#, short
 msgid "journey.trip"
 msgstr "Trajet"
 
+#, short
 msgid "journey.from"
 msgstr "De"
 
+#, short
 msgid "journey.to"
 msgstr "À"
 
+#, short
 msgid "journey.departure"
 msgstr "Départ"
 
+#, short
 msgid "journey.arrival"
 msgstr "Arrivée"
 
+#, short
 msgid "journey.distance"
 msgstr "Distance"
 
@@ -271,21 +307,27 @@ msgstr "("
 msgid "journey.beeline.post"
 msgstr "à vol d'oiseau)"
 
+#, short
 msgid "journey.speed"
 msgstr "Vitesse"
 
+#, short
 msgid "journey.operator"
 msgstr "Transporteur"
 
+#, short
 msgid "journey.messages"
 msgstr "Messages"
 
+#, short
 msgid "journey.comment"
 msgstr "Commentaires"
 
+#, short
 msgid "journey.carriages"
 msgstr "Voitures"
 
+#, short
 msgid "journey.route"
 msgstr "Itinéraire"
 
@@ -314,20 +356,10 @@ msgid "journey.map.upload-partial"
 msgstr "Téléverser une partie de l'itinéraire"
 
 msgid "journey.map.info.download"
-msgstr ""
-"Format JSON : [[lon, lat, station ID], ...], avec latitude/longitude en "
-"coordonnées WGS84. Les fichiers GPX files sont compatibles avec BRouter."
+msgstr "Format JSON : [[lon, lat, station ID], ...], avec latitude/longitude en coordonnées WGS84. Les fichiers GPX files sont compatibles avec BRouter."
 
 msgid "journey.map.info.upload"
-msgstr ""
-"Les téléversements GPX doivent contenir une seule trace avec un seul segment "
-"de trace (comme fourni par l'export BRouter). Ils doivent couvrir soit "
-"l'itinéraire entier, soit uniquement le segment du trajet qui correspond à "
-"l'enregistrement. Merci d'utiliser le bouton de téléversement approprié, "
-"sinon cela pourrait échouer. Il n'y a pas besoin de spécifier un ID de "
-"station lors de l'envoi des pistes. Il faut noter que les téléversements "
-"remplacent de manière irréversible les données de carte précédemment "
-"stockées."
+msgstr "Les téléversements GPX doivent contenir une seule trace avec un seul segment de trace (comme fourni par l'export BRouter). Ils doivent couvrir soit l'itinéraire entier, soit uniquement le segment du trajet qui correspond à l'enregistrement. Merci d'utiliser le bouton de téléversement approprié, sinon cela pourrait échouer. Il n'y a pas besoin de spécifier un ID de station lors de l'envoi des pistes. Il faut noter que les téléversements remplacent de manière irréversible les données de carte précédemment stockées."
 
 msgid "journey.danger"
 msgstr "Zone de danger"
@@ -336,6 +368,7 @@ msgid "journey.delete"
 msgstr "Supprimer"
 
 # landingpage.html.ep
+
 msgid "landingpage.greeting-prefix"
 msgstr "Bonjour,"
 
@@ -345,12 +378,16 @@ msgstr "!"
 msgid "landingpage.not-checked-in"
 msgstr "Vous n'êtes pas enregistré pour le moment."
 
+msgid "landingpage.recent-stops"
+msgstr "Dernières destinations"
+
 msgid "landingpage.stop-geosearch"
 msgstr "Rechercher des arrêts à proximité"
 
 msgid "landingpage.manual-stop-entry"
 msgstr "Saisir l'arrêt manuellement"
 
+#, As short as possible
 msgid "landingpage.departures"
 msgstr "Départs"
 
@@ -361,14 +398,7 @@ msgid "landingpage.date-format"
 msgstr "%d.%m.%Y"
 
 msgid "landingpage.about"
-msgstr ""
-"Travelynx facilite l'enregistrement dans les transports en commun (comme les "
-"bus, trams ou trains) en Allemagne, Autriche, Suisse, Luxembourg, Irlande, "
-"Danemark, certaines parties des USA, et plus (dont la France). De cette "
-"manière, vous pouvez suivre vos propres voyages (y compris sur une carte et "
-"avec des données en temps réel), les partager avec d'autres, et étudier des "
-"questions particulièrement pertinentes comme \"Combien d'heures ai-je passé "
-"dans les transports en commun le mois dernier ?\"."
+msgstr "Travelynx facilite l'enregistrement dans les transports en commun (comme les bus, trams ou trains) en Allemagne, Autriche, Suisse, Luxembourg, Irlande, Danemark, certaines parties des USA, et plus (dont la France). De cette manière, vous pouvez suivre vos propres voyages (y compris sur une carte et avec des données en temps réel), les partager avec d'autres, et étudier des questions particulièrement pertinentes comme \"Combien d'heures ai-je passé dans les transports en commun le mois dernier ?\"."
 
 msgid "landingpage.traewelling.pre"
 msgstr "L'idée d'un tel service a d'abord été proposée et implémentée par"
@@ -380,14 +410,11 @@ msgid "landingpage.features"
 msgstr "Fonctionnalités :"
 
 msgid "landingpage.features.log"
-msgstr ""
-"Enregistrement des heures de départ et d'arrivée prévues et temps-réel aux "
-"arrêts de départ et de destination"
+msgstr "Enregistrement des heures de départ et d'arrivée prévues et temps-réel aux arrêts de départ et de destination"
 
 msgid "landingpage.features.share"
 msgstr "Partage du trajet actuel et des voyages passés avec d'autres personnes"
 
-# landingpage.html.ep
 msgid "landingpage.features.api-pre"
 msgstr "Des web-hooks et une "
 
@@ -395,29 +422,19 @@ msgid "landingpage.features.api-link"
 msgstr "API"
 
 msgid "landingpage.features.api-post"
-msgstr ""
-"pour des enregistrements automatiques et le transfert du statut actuel à "
-"d'autres applications"
+msgstr "pour des enregistrements automatiques et le transfert du statut actuel à d'autres applications"
 
 msgid "landingpage.features.stats"
 msgstr "Des statistiques à propos des temps de trajet et des retards"
 
-# landingpage.html.ep
 msgid "landingpage.features.passenger-rights"
-msgstr ""
-"Une aide pour traiter les formulaires pour exercer ses droits de voyageur"
+msgstr "Une aide pour traiter les formulaires pour exercer ses droits de voyageur"
 
 msgid "landingpage.features.public"
-msgstr ""
-"Optionnel : Statut de voyage public et données publiques sur les voyages "
-"passés"
+msgstr "Optionnel : Statut de voyage public et données publiques sur les voyages passés"
 
 msgid "landingpage.disclaimer.lead"
-msgstr ""
-"Travelynx est un projet personnel. Il est proposé gratuitement, sans aucune "
-"garantie de disponibilité. Des interruptions de service inattendues ou une "
-"suppression de tout le site sous préavis court ne sont pas prévues, mais "
-"toujours possibles."
+msgstr "Travelynx est un projet personnel. Il est proposé gratuitement, sans aucune garantie de disponibilité. Des interruptions de service inattendues ou une suppression de tout le site sous préavis court ne sont pas prévues, mais toujours possibles."
 
 msgid "landingpage.disclaimer.source-pre"
 msgstr "Si vous le souhaitez, vous pouvez télécharger le"
@@ -429,18 +446,20 @@ msgid "landingpage.disclaimer.source-post"
 msgstr "et héberger votre propre instance."
 
 # language.html.ep
+
 msgid "language.language"
 msgstr "Langue"
 
 msgid "language.browser-default"
 msgstr "Utiliser la(les) langue(s) demandée(s) par le navigateur"
 
-msgid "login.accept-tos-pre"
-msgstr "En vous connectant, vous acceptez les"
-
 # login.html.ep
+
 msgid "login.tos"
 msgstr "conditions d'utilisation"
+
+msgid "login.accept-tos-pre"
+msgstr "En vous connectant, vous acceptez les"
 
 msgid "login.accept-tos-post"
 msgstr "."
@@ -452,6 +471,7 @@ msgid "login.registration-disabled"
 msgstr "Cette instance n'accepte pas actuellement de nouvelles inscriptions."
 
 # register.html.ep
+
 msgid "register.name"
 msgstr "Nom (alphanumeric)"
 
@@ -462,30 +482,22 @@ msgid "register.password"
 msgstr "Mot de passe"
 
 msgid "register.repeat-password"
-msgstr "Vérifier le mot de passe"
-
-msgid "register.accept-tos-pre"
-msgstr "En envoyant ce formulaire d'inscription, vous acceptez les"
+msgstr "Répéter le mot de passe"
 
 msgid "register.tos"
 msgstr "conditions d'utilisation"
+
+msgid "register.accept-tos-pre"
+msgstr "En envoyant ce formulaire d'inscription, vous acceptez les"
 
 msgid "register.accept-tos-post"
 msgstr "."
 
 msgid "register.expect-confirmation-link"
-msgstr ""
-"Après avoir envoyé votre demande d'inscription, un lien de confirmation sera "
-"envoyé à l'adresse e-mail fournie. Vous pourrez vous connecter sur votre "
-"compte travelynx après avoir ouvert ce lien. Le lien est valide pendant 48 "
-"heures."
+msgstr "Après avoir envoyé votre demande d'inscription, un lien de confirmation sera envoyé à l'adresse e-mail fournie. Vous pourrez vous connecter sur votre compte travelynx après avoir ouvert ce lien. Le lien est valide pendant 48 heures."
 
 msgid "register.why-mail"
-msgstr ""
-"Nous collectons votre adresse de courriel dans les seuls buts de confirmer "
-"votre enregistrement, remettre à zéro votre mot de passe et vous fournir des "
-"informations importantes à propos de votre compte. Votre adresse de courriel "
-"ne sera jamais partagée avec un tiers."
+msgstr "Nous collectons votre adresse de courriel dans les seuls buts de confirmer votre enregistrement, remettre à zéro votre mot de passe et vous fournir des informations importantes à propos de votre compte. Votre adresse de courriel ne sera jamais partagée avec un tiers."
 
 msgid "register.privacy-pre"
 msgstr "Notre"
@@ -494,23 +506,273 @@ msgid "register.privacy"
 msgstr "politique de confidentialité"
 
 msgid "register.privacy-post"
-msgstr ""
-"décrit les données additionnelles que nous collectons, comment nous les "
-"stockons et pour quel usage."
+msgstr "décrit les données additionnelles que nous collectons, comment nous les stockons et pour quel usage."
 
 msgid "register.account-deletion"
-msgstr ""
-"Les comptes sont automatiquement supprimés après un an d'inactivité. Vous "
-"recevrez un courriel vous informant de cette suppression et vous laissant "
-"quatre semaines pour intervenir."
+msgstr "Les comptes sont automatiquement supprimés après un an d'inactivité. Vous recevrez un courriel vous informant de cette suppression et vous laissant quatre semaines pour intervenir."
 
 msgid "register.disclaimer"
-msgstr ""
-"Veuillez noter que : Travelynx est un projet personnel non commercial et "
-"fourni tel quel. Nous n'offrons pas de garantie par rapport à la "
-"disponibilité du service ou une fin inopinée du projet."
+msgstr "Veuillez noter que : Travelynx est un projet personnel non commercial et fourni tel quel. Nous n'offrons pas de garantie par rapport à la disponibilité du service ou une fin inopinée du projet."
+
+# year_in_review.html.ep
+
+msgid "review.header.pre"
+msgstr " "
+
+msgid "review.header.post"
+msgstr "en résumé"
+
+msgid "review.trips-stops.pre"
+msgstr "Vous vous êtes enregistré"
+
+msgid "review.trips-stops.mid"
+msgstr "à travers"
+
+msgid "review.trips-stops.post"
+msgstr "."
+
+msgid "review.trips"
+msgstr "trajets"
+
+msgid "review.stops"
+msgstr "arrêts"
+
+msgid "review.trips-per-day.pre"
+msgstr "Ceci équivaut à plus de"
+
+msgid "review.trips-per-day"
+msgstr "trajets par jour"
+
+msgid "review.trips-per-day.post"
+msgstr "!"
+
+msgid "review.travel-time.pre"
+msgstr "Au total, vous avez passé au moins"
+
+msgid "review.travel-time.of-year"
+msgstr "de l'année entière"
+
+msgid "review.travel-time.post"
+msgstr "en voyage."
+
+msgid "review.travel-distance.pre"
+msgstr "En faisant cela, vous avez parcouru une distance totale d'approximativement"
+
+msgid "review.travel-distance.post"
+msgstr "."
+
+msgid "review.equivalent-circumference.pre"
+msgstr "Ceci équivaut à"
+
+msgid "review.equivalent-circumference.mid"
+msgstr "voyages autour de la Terre"
+
+msgid "review.equivalent-circumference.post"
+msgstr "."
+
+msgid "review.equivalent-diagonal.pre"
+msgstr "Ceci équivaut à"
+
+msgid "review.equivalent-diagonal.mid"
+msgstr "voyages aller/retour au centre de la Terre"
+
+msgid "review.equivalent-diagonal.post"
+msgstr "."
+
+msgid "review.next-page"
+msgstr "Glisser ici ou cliquer ci-dessous pour la page suivante"
+
+msgid "review.mean-trip.header"
+msgstr "Un trajet moyen"
+
+msgid "review.mean-trip-3.pre"
+msgstr "… signifie prendre"
+
+msgid "review.mean-trip-3.mid"
+msgstr "dans le"
+
+msgid "review.mean-trip-3.post"
+msgstr " triangle."
+
+msgid "review.mean-trip-2.pre"
+msgstr "… a toujours été pendant votre trajet entre"
+
+msgid "review.mean-trip-2.mid"
+msgstr "et"
+
+msgid "review.mean-trip-2.post"
+msgstr "."
+
+msgid "review.time-distance.pre"
+msgstr "En moyenne, cela a pris"
+
+msgid "review.time-distance.mid"
+msgstr "pour couvrir approximativement"
+
+msgid "review.time-distance.post"
+msgstr "."
+
+msgid "review.on-time"
+msgstr "Il a été régulièrement <strong>à l'heure</strong>. Impressionnant !"
+
+msgid "review.delay-decreasing.pre"
+msgstr "Il est parti"
+
+msgid "review.delay-decreasing.mid"
+msgstr "après son horaire prévu, mais est parvenu à le rattraper en partie. À son arrivée à destination, il était retardé de seulement"
+
+msgid "review.delay-decreasing.post"
+msgstr "."
+
+msgid "review.delay-constant.pre"
+msgstr "Il est parti"
+
+msgid "review.delay-constant.post"
+msgstr " trop tard et est arrivé avec le même retard."
+
+msgid "review.delay-increasing.pre"
+msgstr "Il est parti avec un retard de"
+
+msgid "review.delay-increasing.mid"
+msgstr "qui a augmenté à"
+
+msgid "review.delay-increasing.post"
+msgstr " à destination."
+
+msgid "review.high-scores.header"
+msgstr "Meilleurs résultats"
+
+msgid "review.high-scores.with"
+msgstr "avec"
+
+msgid "review.high-scores.from"
+msgstr "de"
+
+msgid "review.high-scores.to"
+msgstr "à"
+
+msgid "review.high-scores.longest-trip.link"
+msgstr "Segment le plus long"
+
+msgid "review.high-scores.longest-trip.pre"
+msgstr " "
+
+msgid "review.high-scores.longest-trip.post"
+msgstr "."
+
+msgid "review.high-scores.farthest-trip-eq-longest.pre"
+msgstr "Avec une distance de"
+
+msgid "review.high-scores.farthest-trip-eq-longest.post"
+msgstr ", c'était également votre trajet le plus éloigné."
+
+msgid "review.high-scores.farthest-trip.link"
+msgstr "Trajet le plus éloigné"
+
+msgid "review.high-scores.farthest-trip.pre"
+msgstr " "
+
+msgid "review.high-scores.farthest-trip.post"
+msgstr "."
+
+msgid "review.high-scores.shortest-trip.link"
+msgstr "Trajet le plus court"
+
+msgid "review.high-scores.shortest-trip.pre"
+msgstr " "
+
+msgid "review.high-scores.shortest-trip.post"
+msgstr "."
+
+msgid "review.high-scores.closest-trip-eq-shortest.pre"
+msgstr "Avec une distance de"
+
+msgid "review.high-scores.closest-trip-eq-shortest.post"
+msgstr ", c'était également votre couple enregistrement/clôture le plus proche."
+
+msgid "review.high-scores.closest-trip.link"
+msgstr "Clôture la plus proche"
+
+msgid "review.high-scores.closest-trip.pre"
+msgstr " "
+
+msgid "review.high-scores.closest-trip.post"
+msgstr "."
+
+msgid "review.annotated-percent.pre"
+msgstr " "
+
+msgid "review.annotated-percent.post"
+msgstr " de tous les trajets avec des commentaires en lien avec des retards ou des annulations."
+
+msgid "review.top-annotations"
+msgstr "Commentaires les plus fréquents :"
+
+msgid "review.punctual-percent.pre"
+msgstr "Environ"
+
+msgid "review.punctual-percent.post"
+msgstr " de tous les trajets étaient pile à l'heure."
+
+msgid "review.hour-delay-percent.pre"
+msgstr " "
+
+msgid "review.hour-delay-percent.post"
+msgstr " de vos trajets étaient retardés d'au moins une heure"
+
+msgid "review.and-cancelled-percent.pre"
+msgstr "et"
+
+msgid "review.and-cancelled-percent.post"
+msgstr " ne sont même pas arrivés à destination."
+
+msgid "review.cancelled-percent.pre"
+msgstr " "
+
+msgid "review.cancelled-percent.post"
+msgstr " de vos trajets ont été annulés."
+
+msgid "review.most-delayed.pre"
+msgstr "Avec"
+
+msgid "review.most-delayed.mid"
+msgstr ", "
+
+msgid "review.most-delayed.post"
+msgstr " qui a pris sans problème la première place."
+
+msgid "review.most-delay.pre"
+msgstr "Le trajet avec"
+
+msgid "review.most-delay.from"
+msgstr "de"
+
+msgid "review.most-delay.to"
+msgstr "à"
+
+msgid "review.most-delay.mid"
+msgstr "était très serein : il a pris"
+
+msgid "review.most-delay.post"
+msgstr " de plus que prévu."
+
+msgid "review.most-undelay.pre"
+msgstr "D'autre part,"
+
+msgid "review.most-undelay.from"
+msgstr "s'est déplacé à fond les ballons et est parvenu à aller de"
+
+msgid "review.most-undelay.to"
+msgstr "à"
+
+msgid "review.most-undelay.mid"
+msgstr " avec incroyablement"
+
+msgid "review.most-undelay.post"
+msgstr " de moins que prévu."
 
 # _checked_in.html.ep, _public_status_card.html.ep
+
 msgid "status.is-checked-in"
 msgstr "en chemin"
 
@@ -523,36 +785,44 @@ msgstr ""
 msgid "status.share"
 msgstr "Partager"
 
-# _checked_in.html.ep, _public_status_card.html.ep
 msgid "status.check-out"
 msgstr "clôture"
 
+#, noun or verb
 msgid "status.boarding-in.pre"
 msgstr "Arrive dans"
 
+#, noun or verb
 msgid "status.boarding-in.post"
 msgstr " "
 
+#, noun or verb
 msgid "status.boarding-soon"
-msgstr "Arrive dans moins d'une minute"
+msgstr "Arrive maintenant"
 
+#, noun or verb
 msgid "status.departure-in.pre"
 msgstr "Part dans"
 
+#, noun or verb
 msgid "status.departure-in.post"
 msgstr " "
 
+#, noun or verb
 msgid "status.departure-soon"
 msgstr "Départ proche"
 
+#, noun or verb
 msgid "status.arrival-in.pre"
 msgstr "Arrive dans"
 
+#, noun or verb
 msgid "status.arrival-in.post"
 msgstr " "
 
+#, noun or verb
 msgid "status.arrival-soon"
-msgstr "Arrive dans moins d'une minute"
+msgstr "Arrive maintenant"
 
 msgid "status.arrival-unknown"
 msgstr "Heure d'arrivée inconnue"
@@ -573,11 +843,12 @@ msgid "status.arrive-on.post"
 msgstr " "
 
 msgid "status.delayed-auto-checkout"
-msgstr ""
+msgstr "Votre trajet sera automatiquement clôturé au bout d'une heure et demie après l'heure d'arrivée prévue."
 
 msgid "status.realtime-unavailable"
 msgstr "Données temps-réel indisponibles"
 
+#, service messages related to the trip
 msgid "status.messages"
 msgstr "Notifications"
 
@@ -593,23 +864,25 @@ msgstr "Voitures"
 msgid "status.route"
 msgstr "Itinéraire"
 
+#, shown during destination selection
 msgid "status.undo"
 msgstr "Annuler"
 
+#, shown during destination selection
 msgid "status.privacy-level"
 msgstr "Confidentialité"
 
+#, shown once check-in is completed
 msgid "status.undo-checkin"
 msgstr "Annuler l'enregistrement"
 
-# _checked_in.html.ep, _public_status_card.html.ep
 msgid "status.force-checkout-lead"
-msgstr ""
-"travelynx réalisera une clôture de l'itinéraire une heure et demie après "
-"l'arrivée. En cas de problèmes de mise à jour de données ou de backend :"
+msgstr "travelynx réalisera une clôture de l'itinéraire une heure et demie après l'arrivée. En cas de problèmes de mise à jour de données ou de backend :"
 
 msgid "status.force-checkout"
 msgstr "Forcer la clôture"
+
+# _history_stats.html.ep
 
 msgid "stats.trips"
 msgstr "Voyages"
@@ -626,11 +899,11 @@ msgstr "heures"
 msgid "stats.per-schedule"
 msgstr "planifié"
 
-msgid "stats.transfer-time"
-msgstr "Temps de correspondance"
-
 msgid "stats.total-delay"
 msgstr "Retard total"
+
+msgid "stats.transfer-time"
+msgstr "Temps de correspondance"
 
 msgid "stats.on-dep"
 msgstr "au départ"
@@ -639,6 +912,7 @@ msgid "stats.on-arr"
 msgstr "à l'arrivée"
 
 # _wagons.html.ep
+
 msgid "wagons.name-as-type"
 msgstr "sous le nom de"
 
