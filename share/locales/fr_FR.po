@@ -843,7 +843,7 @@ msgid "status.arrive-on.post"
 msgstr " "
 
 msgid "status.delayed-auto-checkout"
-msgstr "Votre trajet sera automatiquement clôturé au bout d'une heure et demie après l'heure d'arrivée prévue."
+msgstr "Votre trajet sera automatiquement clôturé au bout d'une demi-heure après l'heure d'arrivée prévue."
 
 msgid "status.realtime-unavailable"
 msgstr "Données temps-réel indisponibles"
@@ -877,7 +877,7 @@ msgid "status.undo-checkin"
 msgstr "Annuler l'enregistrement"
 
 msgid "status.force-checkout-lead"
-msgstr "travelynx réalisera une clôture de l'itinéraire une heure et demie après l'arrivée. En cas de problèmes de mise à jour de données ou de backend :"
+msgstr "travelynx réalisera une clôture de l'itinéraire une demi-heure après l'arrivée. En cas de problèmes de mise à jour de données ou de backend :"
 
 msgid "status.force-checkout"
 msgstr "Forcer la clôture"
