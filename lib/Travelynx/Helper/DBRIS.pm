@@ -251,34 +251,38 @@ sub grep_suggestions {
 			if (    $dep->destination
 				and $dep->destination eq $dest->{name} )
 			{
-				if ( not $dep->is_cancelled ) {
-					$via_count{ $dest->{name} } += 1;
-				}
-				if (    $max_per_dest
-					and $via_count{ $dest->{name} }
-					and $via_count{ $dest->{name} } > $max_per_dest )
-				{
-					next destination;
-				}
 				push( @suggestions, [ $dep_json, $dest ] );
 				next destination;
 			}
 			for my $via_name ( $dep->via ) {
 				if ( $via_name eq $dest->{name} ) {
-					if ( not $dep->is_cancelled ) {
-						$via_count{ $dest->{name} } += 1;
-					}
-					if (    $max_per_dest
-						and $via_count{ $dest->{name} }
-						and $via_count{ $dest->{name} } > $max_per_dest )
-					{
-						next destination;
-					}
 					push( @suggestions, [ $dep_json, $dest ] );
 					next destination;
 				}
 			}
 		}
+	}
+
+	if ($max_per_dest) {
+		@suggestions
+		  = sort { $a->[0]{sort_ts} <=> $b->[0]{sort_ts} } @suggestions;
+		my @filtered;
+		destination: for my $dest ( @{$destinations} ) {
+			for my $pair (@suggestions) {
+				if ( not $pair->[0]{is_cancelled} ) {
+					$via_count{ $dest->{name} } += 1;
+				}
+				if (    not $pair->[0]{is_cancelled}
+					and $pair->[1]{name} eq $dest->{name}
+					and $via_count{ $dest->{name} }
+					and $via_count{ $dest->{name} } > $max_per_dest )
+				{
+					next destination;
+				}
+				push( @filtered, $pair );
+			}
+		}
+		@suggestions = @filtered;
 	}
 
 	return @suggestions;
