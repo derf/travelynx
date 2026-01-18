@@ -46,6 +46,43 @@ msgid "header.error"
 msgstr ""
 
 #
+# LT (localized duration)
+#
+
+msgid "LT.weeks"
+msgstr ""
+
+msgid "LT.week"
+msgstr ""
+
+msgid "LT.days"
+msgstr ""
+
+msgid "LT.day"
+msgstr ""
+
+msgid "LT.hours"
+msgstr ""
+
+msgid "LT.hour"
+msgstr ""
+
+msgid "LT.minutes"
+msgstr ""
+
+msgid "LT.minute"
+msgstr ""
+
+msgid "LT.zero-minutes"
+msgstr ""
+
+msgid "LT.final-and"
+msgstr ""
+
+msgid "LT.and"
+msgstr ""
+
+#
 # Templates
 #
 
@@ -223,6 +260,16 @@ msgstr ""
 msgid "changelog.2-17.1"
 msgstr ""
 
+msgid "changelog.2-18.1"
+msgstr ""
+
+msgid "changelog.2-18.2"
+msgstr ""
+
+# history.html.ep
+msgid "history.review"
+msgstr ""
+
 # journey.html.ep
 
 msgid "journey.not-found"
@@ -327,6 +374,9 @@ msgid "landingpage.greeting-suffix"
 msgstr ""
 
 msgid "landingpage.not-checked-in"
+msgstr ""
+
+msgid "landingpage.recent-stops"
 msgstr ""
 
 msgid "landingpage.stop-geosearch"
@@ -460,6 +510,263 @@ msgid "register.account-deletion"
 msgstr ""
 
 msgid "register.disclaimer"
+msgstr ""
+
+# year_in_review.html.ep
+
+msgid "review.header.pre"
+msgstr ""
+
+msgid "review.header.post"
+msgstr ""
+
+msgid "review.trips-stops.pre"
+msgstr ""
+
+msgid "review.trips-stops.mid"
+msgstr ""
+
+msgid "review.trips-stops.post"
+msgstr ""
+
+msgid "review.trips"
+msgstr ""
+
+msgid "review.stops"
+msgstr ""
+
+msgid "review.trips-per-day.pre"
+msgstr ""
+
+msgid "review.trips-per-day"
+msgstr ""
+
+msgid "review.trips-per-day.post"
+msgstr ""
+
+msgid "review.travel-time.pre"
+msgstr ""
+
+msgid "review.travel-time.of-year"
+msgstr ""
+
+msgid "review.travel-time.post"
+msgstr ""
+
+msgid "review.travel-distance.pre"
+msgstr ""
+
+msgid "review.travel-distance.post"
+msgstr ""
+
+msgid "review.equivalent-circumference.pre"
+msgstr ""
+
+msgid "review.equivalent-circumference.mid"
+msgstr ""
+
+msgid "review.equivalent-circumference.post"
+msgstr ""
+
+msgid "review.equivalent-diagonal.pre"
+msgstr ""
+
+msgid "review.equivalent-diagonal.mid"
+msgstr ""
+
+msgid "review.equivalent-diagonal.post"
+msgstr ""
+
+msgid "review.next-page"
+msgstr ""
+
+msgid "review.mean-trip.header"
+msgstr ""
+
+msgid "review.mean-trip-3.pre"
+msgstr ""
+
+msgid "review.mean-trip-3.mid"
+msgstr ""
+
+msgid "review.mean-trip-3.post"
+msgstr ""
+
+msgid "review.mean-trip-2.pre"
+msgstr ""
+
+msgid "review.mean-trip-2.mid"
+msgstr ""
+
+msgid "review.mean-trip-2.post"
+msgstr ""
+
+msgid "review.time-distance.pre"
+msgstr ""
+
+msgid "review.time-distance.mid"
+msgstr ""
+
+msgid "review.time-distance.post"
+msgstr ""
+
+msgid "review.on-time"
+msgstr ""
+
+msgid "review.delay-decreasing.pre"
+msgstr ""
+
+msgid "review.delay-decreasing.mid"
+msgstr ""
+
+msgid "review.delay-decreasing.post"
+msgstr ""
+
+msgid "review.delay-constant.pre"
+msgstr ""
+
+msgid "review.delay-constant.post"
+msgstr ""
+
+msgid "review.delay-increasing.pre"
+msgstr ""
+
+msgid "review.delay-increasing.mid"
+msgstr ""
+
+msgid "review.delay-increasing.post"
+msgstr ""
+
+msgid "review.high-scores.header"
+msgstr ""
+
+msgid "review.high-scores.with"
+msgstr ""
+
+msgid "review.high-scores.from"
+msgstr ""
+
+msgid "review.high-scores.to"
+msgstr ""
+
+msgid "review.high-scores.longest-trip.link"
+msgstr ""
+
+msgid "review.high-scores.longest-trip.pre"
+msgstr ""
+
+msgid "review.high-scores.longest-trip.post"
+msgstr ""
+
+msgid "review.high-scores.farthest-trip-eq-longest.pre"
+msgstr ""
+
+msgid "review.high-scores.farthest-trip-eq-longest.post"
+msgstr ""
+
+msgid "review.high-scores.farthest-trip.link"
+msgstr ""
+
+msgid "review.high-scores.farthest-trip.pre"
+msgstr ""
+
+msgid "review.high-scores.farthest-trip.post"
+msgstr ""
+
+msgid "review.high-scores.shortest-trip.link"
+msgstr ""
+
+msgid "review.high-scores.shortest-trip.pre"
+msgstr ""
+
+msgid "review.high-scores.shortest-trip.post"
+msgstr ""
+
+msgid "review.high-scores.closest-trip-eq-shortest.pre"
+msgstr ""
+
+msgid "review.high-scores.closest-trip-eq-shortest.post"
+msgstr ""
+
+msgid "review.high-scores.closest-trip.link"
+msgstr ""
+
+msgid "review.high-scores.closest-trip.pre"
+msgstr ""
+
+msgid "review.high-scores.closest-trip.post"
+msgstr ""
+
+msgid "review.annotated-percent.pre"
+msgstr ""
+
+msgid "review.annotated-percent.post"
+msgstr ""
+
+msgid "review.top-annotations"
+msgstr ""
+
+msgid "review.punctual-percent.pre"
+msgstr ""
+
+msgid "review.punctual-percent.post"
+msgstr ""
+
+msgid "review.hour-delay-percent.pre"
+msgstr ""
+
+msgid "review.hour-delay-percent.post"
+msgstr ""
+
+msgid "review.and-cancelled-percent.pre"
+msgstr ""
+
+msgid "review.and-cancelled-percent.post"
+msgstr ""
+
+msgid "review.cancelled-percent.pre"
+msgstr ""
+
+msgid "review.cancelled-percent.post"
+msgstr ""
+
+msgid "review.most-delayed.pre"
+msgstr ""
+
+msgid "review.most-delayed.mid"
+msgstr ""
+
+msgid "review.most-delayed.post"
+msgstr ""
+
+msgid "review.most-delay.pre"
+msgstr ""
+
+msgid "review.most-delay.from"
+msgstr ""
+
+msgid "review.most-delay.to"
+msgstr ""
+
+msgid "review.most-delay.mid"
+msgstr ""
+
+msgid "review.most-delay.post"
+msgstr ""
+
+msgid "review.most-undelay.pre"
+msgstr ""
+
+msgid "review.most-undelay.from"
+msgstr ""
+
+msgid "review.most-undelay.to"
+msgstr ""
+
+msgid "review.most-undelay.mid"
+msgstr ""
+
+msgid "review.most-undelay.post"
 msgstr ""
 
 # _checked_in.html.ep, _public_status_card.html.ep

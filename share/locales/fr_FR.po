@@ -228,8 +228,6 @@ msgstr "Aucun compte ne peut vous suivre"
 msgid "account.profile"
 msgstr "Page de profil publique"
 
-#, fuzzy
-#| msgid "account.interaction.open-requests"
 msgid "account.interaction.requests"
 msgstr "requêtes en attente"
 
@@ -780,7 +778,7 @@ msgid "status.is-not-checked-in"
 msgstr "n'est pas en chemin"
 
 msgid "status.select-destination"
-msgstr ""
+msgstr "Choisir la destination"
 
 msgid "status.share"
 msgstr "Partager"
