@@ -2,9 +2,9 @@
 
 * de-DE: 100.0% complete (0 missing)
 * en-GB: 100.0% complete (0 missing)
-* fr-FR: 21.2% complete (219 missing)
-* hu-HU: 58.6% complete (115 missing)
-* pl-PL: 67.3% complete (91 missing)
+* fr-FR: 99.3% complete (2 missing)
+* hu-HU: 56.4% complete (126 missing)
+* pl-PL: 64.7% complete (102 missing)
 
 ### 
 
@@ -132,6 +132,96 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * hu-HU: Hiba
 * pl-PL: Błąd
 
+## LT (localized duration)
+
+### LT.weeks
+
+* de-DE: Wochen
+* en-GB: weeks
+* fr-FR: semaines
+* hu-HU *missing*
+* pl-PL *missing*
+
+### LT.week
+
+* de-DE: Woche
+* en-GB: week
+* fr-FR: semaine
+* hu-HU *missing*
+* pl-PL *missing*
+
+### LT.days
+
+* de-DE: Tage
+* en-GB: days
+* fr-FR: jours
+* hu-HU *missing*
+* pl-PL *missing*
+
+### LT.day
+
+* de-DE: Tag
+* en-GB: day
+* fr-FR: jour
+* hu-HU *missing*
+* pl-PL *missing*
+
+### LT.hours
+
+* de-DE: Stunden
+* en-GB: hours
+* fr-FR: heures
+* hu-HU *missing*
+* pl-PL *missing*
+
+### LT.hour
+
+* de-DE: Stunde
+* en-GB: hour
+* fr-FR: heure
+* hu-HU *missing*
+* pl-PL *missing*
+
+### LT.minutes
+
+* de-DE: Minuten
+* en-GB: minutes
+* fr-FR: minutes
+* hu-HU *missing*
+* pl-PL *missing*
+
+### LT.minute
+
+* de-DE: Minute
+* en-GB: minute
+* fr-FR: minute
+* hu-HU *missing*
+* pl-PL *missing*
+
+### LT.zero-minutes
+
+* de-DE: 0 Minuten
+* en-GB: 0 minutes
+* fr-FR: 0 minutes
+* hu-HU *missing*
+* pl-PL *missing*
+
+### LT.final-and
+
+* de-DE:  und
+* en-GB: , and
+* fr-FR: , et
+* hu-HU *missing*
+* pl-PL *missing*
+
+### LT.and
+
+* de-DE:  und
+* en-GB:  and
+* fr-FR:  et
+* hu-HU *missing*
+* pl-PL *missing*
+
 ## Templates
 
 ## about.html.ep
@@ -140,7 +230,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Entwickelt von
 * en-GB: Developed by
-* fr-FR *missing*
+* fr-FR: Développé par
 * hu-HU: Fejlesztették:
 * pl-PL: Stworzone przez
 
@@ -148,7 +238,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: und
 * en-GB: and
-* fr-FR *missing*
+* fr-FR: et
 * hu-HU: ,
 * pl-PL: i
 
@@ -156,7 +246,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: weiteren
 * en-GB: others
-* fr-FR *missing*
+* fr-FR: autres
 * hu-HU: többiek
 * pl-PL: innych
 
@@ -164,7 +254,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  
 * en-GB:  
-* fr-FR *missing*
+* fr-FR:  
 * hu-HU:  
 * pl-PL:  
 
@@ -172,7 +262,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Quelltext
 * en-GB: Source code
-* fr-FR *missing*
+* fr-FR: Code source
 * hu-HU: A Forráskód
 * pl-PL: Kod źródłowy
 
@@ -180,7 +270,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: lizensiert unter AGPL v3
 * en-GB: available under the terms of AGPL v3
-* fr-FR *missing*
+* fr-FR: disponible sous licence AGPL v3
 * hu-HU: az AGPL v3 licensz alatt elérhető
 * pl-PL: objęty licencją AGPL v3
 
@@ -188,7 +278,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Backends
 * en-GB: Backends
-* fr-FR *missing*
+* fr-FR: Backends
 * hu-HU: Backendek:
 * pl-PL: Backends
 
@@ -196,7 +286,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  und
 * en-GB: , and
-* fr-FR *missing*
+* fr-FR: , et
 * hu-HU:  és
 * pl-PL:  i
 
@@ -204,7 +294,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Travelynx ist ein kostenfreies, privat betriebenes Projekt ohne Verfügbarkeitsgarantie. Unangekündigte Downtimes oder eine kurzfristige Einstellung dieser Seite sind nicht vorgesehen, aber möglich. Feature Requests, Bug Reports und sonstige Nachrichten werden je nach Kapazität und Motivation zeitnah, verzögert oder gar nicht bearbeitet / beantwortet.
 * en-GB: Travelynx is a hobby project. It is provided free of charge, without any kind of availability guarantees. Unexpected downtimes or a cancellation of the entire site on short notice are not planned, but always possible. Depending on available spare time and motivation, feature requests, bug reports, and other messages are processed promptly, with delay, or not at all.
-* fr-FR *missing*
+* fr-FR: Travelynx est un projet personnel. Il est fourni gratuitement, sans aucune garantie de disponibilité. Des indisponibilités inattendues ou une suppresion de l'ensemble du site à bref délai ne sont pas prévus, mais toujours possibles. En fonction du temps libre et de la motivation disponible, les demandes de fonctionnalités, les rapports de bugs et autres messages sont traités rapidement, avec un retard ou pas du tout.
 * hu-HU: Travelynx egy ingyenes és bármi rendelkezésre állási garacia nélküli hobbi projekt. Be nem tervezett leállások, illetve a teljes oldal hírtelen bezárása nincs tervben, de bármikor előfordulhat. Feature requesteket, bug reportokat és egyéb üzeneteket kapacitástól és motivációtól függően azonnal, megkésve vagy akár soha sem lesznek feldolgozva.
 * pl-PL: Travelynx to bezpłatny, prywatnie prowadzony projekt, który nie gwarantuje dostępności. Nieplanowane przerwy w działaniu lub nagłe zakończenie działania strony nie są przewidziane, ale mogą się zdarzyć. Prośby o nowe funkcje, zgłoszenia błędów oraz inne wiadomości są rozpatrywane i odpowiadane w zależności od dostępnych zasobów i motywacji — szybko, z opóźnieniem lub wcale.
 
@@ -212,7 +302,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Kontakt
 * en-GB: Contact
-* fr-FR *missing*
+* fr-FR: Contact
 * hu-HU: Kapcsolat
 * pl-PL: Kontakt
 
@@ -220,7 +310,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Bugs
 * en-GB: Bugs
-* fr-FR *missing*
+* fr-FR: Bogues
 * hu-HU: Bugok
 * pl-PL: Błędy
 
@@ -228,7 +318,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Änderungen
 * en-GB: Changelog
-* fr-FR *missing*
+* fr-FR: Liste des changements
 * hu-HU: Changelog
 * pl-PL: Zmiany
 
@@ -238,7 +328,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Name geändert
 * en-GB: Updated name
-* fr-FR *missing*
+* fr-FR: Nom mis à jour
 * hu-HU: Név frissítve
 * pl-PL: Nazwa została zmieniona
 
@@ -246,7 +336,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Mail-Adresse geändert
 * en-GB: Updated email address
-* fr-FR *missing*
+* fr-FR: Adresse de courriel mise à jour
 * hu-HU: E-Mail cím frissítve
 * pl-PL: Adres e-mail został zmieniony
 
@@ -254,7 +344,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Passwort geändert
 * en-GB: Updated password
-* fr-FR *missing*
+* fr-FR: Mot de passe mis à jour
 * hu-HU: Jelszó frissítve
 * pl-PL: Hasło zostało zmienione
 
@@ -262,7 +352,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Sprache geändert
 * en-GB: Changed language
-* fr-FR *missing*
+* fr-FR: Langue mise à jour
 * hu-HU: Nyelv változtatva
 * pl-PL: Język został zmieniony
 
@@ -270,7 +360,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Einstellungen zu öffentlichen Account-Daten geändert
 * en-GB: Privacy settings have been saved
-* fr-FR *missing*
+* fr-FR: Les paramètres de confidentialité ont été enregistrés
 * hu-HU: Láthatósági beállítások mentve
 * pl-PL: Zmieniono ustawienia dotyczące publicznych danych konta
 
@@ -278,7 +368,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Einstellungen zur Interaktionen mit anderen Accounts geändert
 * en-GB: Social settings have been saved
-* fr-FR *missing*
+* fr-FR: Les paramètres sociaux ont été enregistrés
 * hu-HU: Interakciós beállítások mentve
 * pl-PL: Zmieniono ustawienia dotyczące interakcji z innymi kontami
 
@@ -286,7 +376,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Träwelling-Verknüpfung aktualisiert
 * en-GB: Träwelling settings have been saved
-* fr-FR *missing*
+* fr-FR: Les paramètres Träwelling ont été enregistrés
 * hu-HU: Träwelling beállítások mentve
 * pl-PL: Zaktualizowano powiązanie z Träwelling
 
@@ -294,7 +384,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Einstellungen zu vorgeschlagenen Verbindungen geändert
 * en-GB: Connection suggestion settings have been saved
-* fr-FR *missing*
+* fr-FR: Les paramètres de suggestion de correspondances ont été enregistrés
 * hu-HU: Átszállásos javaslati beállítások mentve
 * pl-PL: Zmieniono ustawienia dotyczące proponowanych połączeń
 
@@ -302,7 +392,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Web Hook aktualisiert
 * en-GB: Web Hook has been updated
-* fr-FR *missing*
+* fr-FR: Le webhook a été mis à jour
 * hu-HU: Web Hook frissítve
 * pl-PL: Zaktualizowano Webhook
 
@@ -310,7 +400,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Benachrichtigungen gelesen
 * en-GB: Notifications have been cleared
-* fr-FR *missing*
+* fr-FR: Les notifications ont été purgées
 * hu-HU: Értesítések törölve
 * pl-PL: Powiadomienia zostały przeczytane
 
@@ -390,7 +480,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Webhook
 * en-GB: Webhook
-* fr-FR *missing*
+* fr-FR: Webhook
 * hu-HU: Webhook
 * pl-PL: Webhook
 
@@ -398,7 +488,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Nicht eingerichtet
 * en-GB: No webhook configured
-* fr-FR *missing*
+* fr-FR: Aucun webhook configuré
 * hu-HU: Nincs beállitva
 * pl-PL: Nie skonfigurowano
 
@@ -406,7 +496,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Aktiv, noch nicht ausgeführt
 * en-GB: Active; pending
-* fr-FR *missing*
+* fr-FR: Actif, en attente
 * hu-HU: Aktív, jóváhagyás folyamatban
 * pl-PL: Aktywny, jeszcze nie wykonany
 
@@ -414,7 +504,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Aktiv, fehlerhaft
 * en-GB: Active; erroneous
-* fr-FR *missing*
+* fr-FR: Actif, en erreur
 * hu-HU: Aktív, hibás
 * pl-PL: Aktywny, błąd wykonania
 
@@ -422,7 +512,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Aktiv
 * en-GB: Active
-* fr-FR *missing*
+* fr-FR: Actif
 * hu-HU: Aktív
 * pl-PL: Aktywny
 
@@ -430,7 +520,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Wird wegen Inkompatibilität zwischen bahn.de und transitous derzeit nicht unterstützt
 * en-GB: Unsupported due to incompatibility with bahn.de and transitous
-* fr-FR *missing*
+* fr-FR: Non supporté en raison d'une incompatibilité avec bahn.de et transitous
 * hu-HU: Jelenleg nem támogatott a bahn.de és a transitous közötti inkompatibilitás miatt
 * pl-PL: Obecnie nieobsługiwane z powodu niekompatybilności między bahn.de a transitous
 
@@ -438,7 +528,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Registriert am
 * en-GB: Registered on
-* fr-FR *missing*
+* fr-FR: Enregistré le
 * hu-HU: Regisztrálva
 * pl-PL: Zarejestrowano dnia
 
@@ -502,7 +592,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Öffentliches Profil
 * en-GB: Public profile page
-* fr-FR *missing*
+* fr-FR: Page de profil publique
 * hu-HU *missing*
 * pl-PL: Profil publiczny
 
@@ -518,7 +608,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: keine eingehend
 * en-GB: none incoming
-* fr-FR *missing*
+* fr-FR: aucune entrante
 * hu-HU *missing*
 * pl-PL: brak przychodzących
 
@@ -526,7 +616,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: eingehend
 * en-GB: incoming
-* fr-FR *missing*
+* fr-FR: entrantes
 * hu-HU *missing*
 * pl-PL: przychodzące
 
@@ -534,7 +624,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: keine ausgehend
 * en-GB: none outgoing
-* fr-FR *missing*
+* fr-FR: aucune sortante
 * hu-HU *missing*
 * pl-PL: brak wychodzących
 
@@ -542,7 +632,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: ausgehend
 * en-GB: outgoing
-* fr-FR *missing*
+* fr-FR: sortantes
 * hu-HU *missing*
 * pl-PL: wychodzące
 
@@ -552,7 +642,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Neues Feature
 * en-GB: New Feature
-* fr-FR *missing*
+* fr-FR: Nouvelles fonctionnalités
 * hu-HU: Új fícsör
 * pl-PL: Nowa funkcja
 
@@ -560,7 +650,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Bugfix
 * en-GB: Bugfix
-* fr-FR *missing*
+* fr-FR: Correctifs
 * hu-HU: Bugfix
 * pl-PL: Poprawka błędu
 
@@ -568,7 +658,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Infrastruktur zur Übersetzung von travelynx in andere Sprachen. Der Großteil der Website ist noch Deutsch; einzelne Seiten sind bereits auf Englisch und Teilmengen davon zusätzlich auf Französisch, Polnisch und Ungarisch verfügbar. Weitere Übersetzungen und ggf. Sprachen sowie Dokumentation zur Unterstützung dabei folgen bei Zeiten. Die Sprache wird auf Basis des Accept-Language-Headers ausgewählt und kann zusätzlich in den Account-Einstellungen konfiguriert werden.
 * en-GB: Localization support. Parts of travelynx are now available in English, and a subset of those is also available in French, Hungarian, and Polish. Further translations, languages, and translation how-tos will follow in due time. Locale selection respects the Accept-Language header and can be configured on the account settings page.
-* fr-FR *missing*
+* fr-FR: Ajout des traductions. Certaines parties de travelynx sont maintenant disponibles en anglais, et une partie d'entre elles sont également disponibles en français, hongrois et polonais. Plus de traductions, langues et manuels de traduction seront disponibles à l'avenir. La sélection de la langue respecte l'en-tête Accept-Language et peut être configurée sur la page des paramètres de compte.
 * hu-HU: Lokalizáció. A travelynx most már angolul, részben pedig franciául, magyarul és lengyelül is elérhető. További fordítások, nyelvek és fordítási útmutatók következnek majd a megfelelő időben. A lokalizáció kiválasztása tiszteletben tartja az Accept-Language fejlécet, és a fiókbeállítások oldalon is beállítható.
 * pl-PL: Infrastruktura do tłumaczenia Travelynx na inne języki. Większość strony nadal jest po niemiecku; pojedyncze strony są już dostępne po angielsku, a ich częściowo także po francusku, polsku i węgiersku. Kolejne tłumaczenia oraz ewentualne nowe języki i dokumentacja wspierająca ten proces pojawią się z czasem. Język jest wybierany na podstawie nagłówka Accept-Language i może być dodatkowo skonfigurowany w ustawieniach konta.
 
@@ -576,7 +666,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Korrekte Berechnung und Visualisierung der Wegstrecke bei Fahrten mit Ringlinien. Die Anzeige der Fahrten in der Fahrtenkarte ist noch teilweise fehlerhaft.
 * en-GB: Fix distance calculation and visualization of ring line trips. Trips shown in the history map are still partially incorrect.
-* fr-FR *missing*
+* fr-FR: Correction du calcul des distances et visualisation des lignes circulaires. Les voyages affichés sur la carte historique sont encore partiellement incorrects.
 * hu-HU: A távolságszámítás és a gyűrűsvonali utazások megjelenítése javítva lett. Az előzménytérképen megjelenített utazások még mindig részben hibásak.
 * pl-PL: Poprawne obliczanie i wizualizacja trasy przejazdu dla linii okrężnych. Wyświetlanie przejazdów na mapie podróży nadal zawiera częściowe błędy.
 
@@ -584,7 +674,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Kartendaten („Polylines“) zu einzelnen Fahrten können nun als GPX ex- und importiert werden. Somit können Kartendaten nachträglich korrigiert oder nachgepflegt werden. Das GPX-Datenformat ist mit BRouter-Web kompatibel.
 * en-GB: Map data (“polylines”) for individual trips can now be exported and imported in the GPX format. This allows map data to be corrected or augmented after the fact. The GPX import/export is compatible with BRouter-Web.
-* fr-FR *missing*
+* fr-FR: Les données de carte ("Polylines") des trajets individuels peuvent maintenant être exportées et importées au format GPX. Cela permet de corriger ou compléter les données de carte a posteriori. Les imports/exports GPX sont compatibles avec BRouter-Web.
 * hu-HU *missing*
 * pl-PL: Dane mapy („Polylines”) dla pojedynczych przejazdów można teraz eksportować i importować jako pliki GPX. Dzięki temu dane mapy można później poprawić lub uzupełnić. Format danych GPX jest kompatybilny z BRouter-Web.
 
@@ -592,7 +682,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Checkin- und Verbindungsvorschläge sind für DBRIS-, EFA- und IRIS-Backends wieder verfügbar. Bei HAFAS-Backends fehlen die dazu notwendigen Daten in der Abfahrtstafel. Bei MOTIS-Backends fehlen die Daten möglicherweise ebenfalls.
 * en-GB: Checkin and connection suggestions are now available again for DBRIS, EFA, and IRIS backends. HAFAS backends lack the required station board data. MOTIS backends may lack the required data as well.
-* fr-FR *missing*
+* fr-FR: L'enregistrement et les suggestions de correspondances sont maintenant disponibles à nouveau pour les backends DBRIS, EFA et IRIS. Les backends HAFAS n'ont pas les données de tableau de station requises. Les backends MOTIS backends peuvent également ne pas avoir ces données.
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -600,7 +690,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Bei der Reisestreckenberechnung für vergangene Fahrten werden nun auch Fahrten mit ungenügender Datenlage (d.h. bei denen ausschließlich die Entfernung nach Luftlinie verfügbar ist) berücksichtigt. Bislang wurden diese für monatliche und jährliche Statistiken ignoriert.
 * en-GB: Total distance calculation in the history now includes trips that lack appropriate route data (i.e., where only beeline distance / distance as the crow flies is available). Before this release, such trips were ignored when computing monthly and yearly statistics.
-* fr-FR *missing*
+* fr-FR: Le calcul de la distance totale dans l'historique inclut maintenant les voyages qui n'ont pas les données de trajet appropriées (par exemple où seule la distance à vol d'oiseau est disponible). Avant cette version, de tels trajets étaient ignorés lors du calcul des statistiques mensuelles et annuelles
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -610,7 +700,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Rückblick
 * en-GB: Review
-* fr-FR *missing*
+* fr-FR: Résumé
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -620,7 +710,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Fahrt nicht gefunden.
 * en-GB: Trip not found.
-* fr-FR *missing*
+* fr-FR: Trajet non trouvé.
 * hu-HU: Utazás nem találva.
 * pl-PL: Przejazd nie został znaleziony.
 
@@ -630,7 +720,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Fahrt
 * en-GB: Trip
-* fr-FR *missing*
+* fr-FR: Trajet
 * hu-HU: Utazás
 * pl-PL: Przejazd
 
@@ -640,7 +730,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Von
 * en-GB: From
-* fr-FR *missing*
+* fr-FR: De
 * hu-HU: Honnan
 * pl-PL: Z
 
@@ -650,7 +740,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Nach
 * en-GB: To
-* fr-FR *missing*
+* fr-FR: À
 * hu-HU: Hova
 * pl-PL: Do
 
@@ -660,7 +750,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Abfahrt
 * en-GB: Departure
-* fr-FR *missing*
+* fr-FR: Départ
 * hu-HU: Indulás
 * pl-PL: Odjazd
 
@@ -670,7 +760,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Ankunft
 * en-GB: Arrival
-* fr-FR *missing*
+* fr-FR: Arrivée
 * hu-HU: Érkezés
 * pl-PL: Przyjazd
 
@@ -680,7 +770,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Strecke
 * en-GB: Distance
-* fr-FR *missing*
+* fr-FR: Distance
 * hu-HU: Távolság
 * pl-PL: Dystans
 
@@ -688,7 +778,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: (Luftlinie: 
 * en-GB: (
-* fr-FR *missing*
+* fr-FR: (
 * hu-HU: (Légvonalban: 
 * pl-PL: (Linia prosta: 
 
@@ -696,7 +786,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: )
 * en-GB:  as the crow flies)
-* fr-FR *missing*
+* fr-FR: à vol d'oiseau)
 * hu-HU: )
 * pl-PL: )
 
@@ -706,7 +796,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Tempo
 * en-GB: Speed
-* fr-FR *missing*
+* fr-FR: Vitesse
 * hu-HU: Sebesség
 * pl-PL: Prędkość
 
@@ -716,7 +806,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Betrieb
 * en-GB: Operator
-* fr-FR *missing*
+* fr-FR: Transporteur
 * hu-HU: Üzemeltető
 * pl-PL: Operator
 
@@ -726,7 +816,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Meldungen
 * en-GB: Messages
-* fr-FR *missing*
+* fr-FR: Messages
 * hu-HU: Jelentések
 * pl-PL: Komunikaty
 
@@ -736,7 +826,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Kommentar
 * en-GB: Comment
-* fr-FR *missing*
+* fr-FR: Commentaires
 * hu-HU: Megjegyzés
 * pl-PL: Komentarz
 
@@ -746,7 +836,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Rollmaterial
 * en-GB: Carriages
-* fr-FR *missing*
+* fr-FR: Voitures
 * hu-HU: Járművek
 * pl-PL: Skład pociągu
 
@@ -756,7 +846,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Route
 * en-GB: Route
-* fr-FR *missing*
+* fr-FR: Itinéraire
 * hu-HU: Útvonal
 * pl-PL: Trasa
 
@@ -764,7 +854,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Teilen
 * en-GB: Share
-* fr-FR *missing*
+* fr-FR: Partager
 * hu-HU: Megosztás
 * pl-PL: Udostępnij
 
@@ -772,7 +862,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Exportieren
 * en-GB: Export
-* fr-FR *missing*
+* fr-FR: Exporter
 * hu-HU: Exportálás
 * pl-PL: Eksportuj
 
@@ -780,7 +870,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Bearbeiten
 * en-GB: Edit
-* fr-FR *missing*
+* fr-FR: Modifier
 * hu-HU: Szerkesztés
 * pl-PL: Edytuj
 
@@ -788,7 +878,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Kartendaten
 * en-GB: Map Data
-* fr-FR *missing*
+* fr-FR: Données de carte
 * hu-HU *missing*
 * pl-PL: Dane mapy
 
@@ -796,7 +886,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Herunterladen
 * en-GB: Download
-* fr-FR *missing*
+* fr-FR: Télécharger
 * hu-HU *missing*
 * pl-PL: Pobierz
 
@@ -804,7 +894,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Hochladen
 * en-GB: Upload
-* fr-FR *missing*
+* fr-FR: Téléverser
 * hu-HU *missing*
 * pl-PL: Prześlij
 
@@ -812,7 +902,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Komplette Route
 * en-GB: Upload full route
-* fr-FR *missing*
+* fr-FR: Téléverser tout l'itinéraire
 * hu-HU *missing*
 * pl-PL: Cała trasa
 
@@ -820,7 +910,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Gefahrenes Segment
 * en-GB: Upload travelled segment
-* fr-FR *missing*
+* fr-FR: Téléverser une partie de l'itinéraire
 * hu-HU *missing*
 * pl-PL: Przejechany odcinek
 
@@ -828,7 +918,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: JSON-Format: [[lon, lat, ID], ...] in WGS84-Koordinaten. GPX-Dateien sind mit BRouter kompatibel.
 * en-GB: JSON format: [[lon, lat, station ID], ...], with lon/lat in WGS84 coordinates. GPX files are compatible with BRouter.
-* fr-FR *missing*
+* fr-FR: Format JSON : [[lon, lat, station ID], ...], avec latitude/longitude en coordonnées WGS84. Les fichiers GPX files sont compatibles avec BRouter.
 * hu-HU *missing*
 * pl-PL: Format JSON: [[lon, lat, ID], ...] w współrzędnych WGS84. Pliki GPX są kompatybilne z BRouter.
 
@@ -836,7 +926,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: GPX-Uploads müssen ein einzelnes track-Element mit einem einzelnen track segment enthalten. Ein BRouter-GPX-Export erfüllt diese Vorgaben. Uploads müssen entweder die komplette Route des Verkehrsmittels oder nur den zu diesem Checkin zugehörigen Abschnitt enthalten. Beim Hochladen bitte die passende Schaltfläche auswählen. IDs von Halten müssen beim Upload nicht angegeben werden. Bitte beachten: Beim Einspielen eigener Kartendaten werden die zuvor gespeicherten unwiderruflich gelöscht.
 * en-GB: GPX uploads must contain a single track with a single track segment (such as provided by BRouter's export). They must cover either the full route or just the travelled route segment that belongs to this checkin. Please use the appropriate upload button, otherwise chaos may ensue. There is no need to specify station IDs when uploading tracks. Note that uploads irreversibly replace previously stored map data.
-* fr-FR *missing*
+* fr-FR: Les téléversements GPX doivent contenir une seule trace avec un seul segment de trace (comme fourni par l'export BRouter). Ils doivent couvrir soit l'itinéraire entier, soit uniquement le segment du trajet qui correspond à l'enregistrement. Merci d'utiliser le bouton de téléversement approprié, sinon cela pourrait échouer. Il n'y a pas besoin de spécifier un ID de station lors de l'envoi des pistes. Il faut noter que les téléversements remplacent de manière irréversible les données de carte précédemment stockées.
 * hu-HU *missing*
 * pl-PL: Pliki GPX muszą zawierać jeden element track z jednym segmentem track. Eksport GPX z BRouter spełnia te wymagania. Przesyłane dane muszą zawierać całą trasę środka transportu lub tylko odcinek odpowiadający temu checkinowi. Przy przesyłaniu wybierz odpowiedni przycisk. ID przystanków nie muszą być podane. Uwaga: przesłanie własnych danych mapy bezpowrotnie usuwa wcześniej zapisane dane.
 
@@ -844,7 +934,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Danger Zone
 * en-GB: Danger Zone
-* fr-FR *missing*
+* fr-FR: Zone de danger
 * hu-HU *missing*
 * pl-PL: Danger Zone
 
@@ -852,7 +942,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Löschen
 * en-GB: Delete
-* fr-FR *missing*
+* fr-FR: Supprimer
 * hu-HU: Törlés
 * pl-PL: Usuń
 
@@ -862,7 +952,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Hallo,
 * en-GB: Hello,
-* fr-FR *missing*
+* fr-FR: Bonjour,
 * hu-HU: Üdv,
 * pl-PL: Cześć,
 
@@ -870,7 +960,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: !
 * en-GB: !
-* fr-FR *missing*
+* fr-FR: !
 * hu-HU: !
 * pl-PL: !
 
@@ -878,7 +968,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Du bist gerade nicht eingecheckt
 * en-GB: You are not checked in at the moment
-* fr-FR *missing*
+* fr-FR: Vous n'êtes pas enregistré pour le moment.
 * hu-HU: Jelenleg nem vagy becsekkolva
 * pl-PL: Nie jesteś obecnie zameldowany.
 
@@ -886,7 +976,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Letzte Ziele
 * en-GB: Latest destinations
-* fr-FR *missing*
+* fr-FR: Dernières destinations
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -894,7 +984,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Stationen in der Umgebung suchen
 * en-GB: Look for stops nearby
-* fr-FR *missing*
+* fr-FR: Rechercher des arrêts à proximité
 * hu-HU: Közeledben lévő megállók keresése
 * pl-PL: Szukaj stacji w pobliżu
 
@@ -902,7 +992,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Manuelle Eingabe
 * en-GB: Enter stop manually
-* fr-FR *missing*
+* fr-FR: Saisir l'arrêt manuellement
 * hu-HU: Megálló manuális bevitele
 * pl-PL: Wprowadź ręcznie
 
@@ -912,7 +1002,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Abfahrten
 * en-GB: Departures
-* fr-FR *missing*
+* fr-FR: Départs
 * hu-HU: Járatok innen
 * pl-PL: Odjazdy
 
@@ -920,7 +1010,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Letzte Fahrten
 * en-GB: Latest Trips
-* fr-FR *missing*
+* fr-FR: Derniers voyages
 * hu-HU: Legutóbbi utazások
 * pl-PL: Ostatnie przejazdy
 
@@ -928,7 +1018,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: %d.%m.%Y
 * en-GB: %b %d %Y
-* fr-FR *missing*
+* fr-FR: %d.%m.%Y
 * hu-HU: %Y.%m.%d
 * pl-PL: %d.%m.%Y
 
@@ -936,7 +1026,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Travelynx erlaubt das Einchecken in Verkehrsmittel (Busse, Bahnen, Züge) unter anderem in Deutschland, Österreich, der Schweiz, Luxemburg, Irland, Dänemark und Teilen der USA. So können die eigenen Fahrten später inklusive Echtzeitdaten und eingetragenen Servicemeldungen nachvollzogen und brennende Fragen wie „Wie viele Stunden war ich letzten Monat unterwegs?“ beantwortet werden.
 * en-GB: Travelynx facilitates checkins into public transit (such as buses, trams, or trains) in Germany, Austria, Switzerlanz, Luxembourg, Ireland, Denmark, parts of the USA, and more. This way, you can track your own journeys (often including map and real-time data), share them with others, and examine highly relevant questions such as “how many hours did I spend in public transit in the past month?”.
-* fr-FR *missing*
+* fr-FR: Travelynx facilite l'enregistrement dans les transports en commun (comme les bus, trams ou trains) en Allemagne, Autriche, Suisse, Luxembourg, Irlande, Danemark, certaines parties des USA, et plus (dont la France). De cette manière, vous pouvez suivre vos propres voyages (y compris sur une carte et avec des données en temps réel), les partager avec d'autres, et étudier des questions particulièrement pertinentes comme "Combien d'heures ai-je passé dans les transports en commun le mois dernier ?".
 * hu-HU: Travelynx-el tömegközlekedési eszközökre (pl. Buszokra, Villamosokra, Vonatokra) be lehet csekkolni, többek között Németországban, Ausztriában, Svájcban, Luxemburgban, Írországban, Dániában és az USA egyes részeiben. Így nyomon követheted az utazásaidat (gyakran térképes és valós idejű adatokkal együtt), megoszthatod azokat másokkal, és a rendkívüli fontos kérdéseidre, mint például „hány órát tömegközlekedtem az elmúlt hónapban?”, is kapsz választ.
 * pl-PL: Travelynx umożliwia zameldowanie się w środkach transportu (autobusach, tramwajach, pociągach) między innymi w Niemczech, Austrii, Szwajcarii, Luksemburgu, Irlandii, Danii i niektórych częściach Stanów Zjednoczonych. Dzięki temu można później śledzić własne podróże wraz z danymi w czasie rzeczywistym i komunikatami serwisowymi oraz uzyskać odpowiedzi na palące pytania, takie jak „Ile godzin spędziłem w podróży w zeszłym miesiącu?”.
 
@@ -944,7 +1034,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Die Idee dazu kommt von
 * en-GB: The idea for such a service was first proposed and implemented by
-* fr-FR *missing*
+* fr-FR: L'idée d'un tel service a d'abord été proposée et implémentée par
 * hu-HU: Az elsők akiknek hasonló ötlete volt és azt kivitelezték a
 * pl-PL: Pomysł pochodzi od
 
@@ -952,7 +1042,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  
 * en-GB:  
-* fr-FR *missing*
+* fr-FR:  
 * hu-HU:  volt
 * pl-PL:  
 
@@ -960,7 +1050,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Features:
 * en-GB: Features:
-* fr-FR *missing*
+* fr-FR: Fonctionnalités :
 * hu-HU *missing*
 * pl-PL: Funkcje:
 
@@ -968,7 +1058,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Protokoll von Fahrplan- und Echtzeitdaten an Start- und Zielbahnhof
 * en-GB: Log of scheduled and real-time departure and arrival times at departure and destination stop
-* fr-FR *missing*
+* fr-FR: Enregistrement des heures de départ et d'arrivée prévues et temps-réel aux arrêts de départ et de destination
 * hu-HU: Menetrend szerinti és valós idejű adatok naplózása. (indulási és célállomásokon)
 * pl-PL: Protokół danych rozkładu jazdy i danych w czasie rzeczywistym na stacji początkowej i końcowej
 
@@ -976,7 +1066,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Teilen von aktuellen und vergangenen Fahrten mit anderen Personen
 * en-GB: Sharing the current check-in and past journeys with others
-* fr-FR *missing*
+* fr-FR: Partage du trajet actuel et des voyages passés avec d'autres personnes
 * hu-HU: Jelenlegi és korábbi utazások megosztása másokkal
 * pl-PL: Udostępnianie aktualnych i przeszłych przejazdów innym osobom
 
@@ -984,7 +1074,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Web-Hooks und
 * en-GB: Web-Hooks and an
-* fr-FR *missing*
+* fr-FR: Des web-hooks et une 
 * hu-HU: Web-Hook-ok és egy
 * pl-PL: Webhooki oraz
 
@@ -992,7 +1082,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: API
 * en-GB: API
-* fr-FR *missing*
+* fr-FR: API
 * hu-HU: API
 * pl-PL: API
 
@@ -1000,7 +1090,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: zum automatisierten Einchecken und Auslesen des aktuellen Status
 * en-GB: for automatic check-ins and passing the current status to other applications
-* fr-FR *missing*
+* fr-FR: pour des enregistrements automatiques et le transfert du statut actuel à d'autres applications
 * hu-HU: az automatikus becsekkeléshez és az aktuális státusz leolvasásához
 * pl-PL: do automatycznego zameldowania się i odczytu aktualnego statusu
 
@@ -1008,7 +1098,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Statistiken über Reisezeiten und Verspätungen
 * en-GB: Stats about journey times and delays
-* fr-FR *missing*
+* fr-FR: Des statistiques à propos des temps de trajet et des retards
 * hu-HU: Statisztikák az utazások időtartamáról és a késésekről
 * pl-PL: Statystyki dotyczące czasu podróży i opóźnień
 
@@ -1016,7 +1106,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Unterstützung beim Ausfüllen von Fahrgastrechteformularen
 * en-GB: Support when dealing with passenger rights forms
-* fr-FR *missing*
+* fr-FR: Une aide pour traiter les formulaires pour exercer ses droits de voyageur
 * hu-HU: Támogatás az utasjogi formanyomtatványok kitöltéséhez
 * pl-PL: Wsparcie przy wypełnianiu formularzy praw pasażera
 
@@ -1024,7 +1114,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Optional: Öffentlicher Reisestatus und öffentliche Angaben zu vergangenen Fahrten
 * en-GB: Optional: public travel status and public data about past journeys
-* fr-FR *missing*
+* fr-FR: Optionnel : Statut de voyage public et données publiques sur les voyages passés
 * hu-HU: Opcionális: utazási státusz és a korábbi utazásokról szóló adatok nyilvánosítása
 * pl-PL: Opcjonalnie: publiczny status podróży i publiczne dane o przeszłych przejazdach
 
@@ -1032,7 +1122,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Travelynx ist ein kostenfreies, privat betriebenes Projekt ohne Verfügbarkeitsgarantie. Unangekündigte Downtimes oder eine kurzfristige Einstellung dieser Seite sind nicht vorgesehen, aber möglich.
 * en-GB: Travelynx is a hobby project. It is provided free of charge, without any kind of availability guarantees. Unexpected downtimes or a cancellation of the entire site on short notice are not planned, but always possible.
-* fr-FR *missing*
+* fr-FR: Travelynx est un projet personnel. Il est proposé gratuitement, sans aucune garantie de disponibilité. Des interruptions de service inattendues ou une suppression de tout le site sous préavis court ne sont pas prévues, mais toujours possibles.
 * hu-HU: Travelynx egy ingyenes és bármi rendelkezésre állási garacia nélküli hobbi projekt. Be nem tervezett leállások, illetve a teljes oldal hírtelen bezárása nincs tervben, de bármikor előfordulhat.
 * pl-PL: Travelynx jest bezpłatnym, prywatnym projektem bez gwarancji dostępności. Nieprzewidziane przerwy w działaniu lub krótkoterminowe wyłączenie tej strony nie są planowane, ale są możliwe.
 
@@ -1040,7 +1130,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Wer mag, kann auch den
 * en-GB: If you like, you can download the
-* fr-FR *missing*
+* fr-FR: Si vous le souhaitez, vous pouvez télécharger le
 * hu-HU: Aki szeretné az letöltheti a
 * pl-PL: Kto chce, może również pobrać
 
@@ -1048,7 +1138,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Quelltext
 * en-GB: source code
-* fr-FR *missing*
+* fr-FR: code source
 * hu-HU: forráskódot
 * pl-PL: kod źródłowy
 
@@ -1056,7 +1146,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: laden und eine eigene Instanz aufsetzen.
 * en-GB: and host your own instance.
-* fr-FR *missing*
+* fr-FR: et héberger votre propre instance.
 * hu-HU: is és saját szervert működtethet.
 * pl-PL: i skonfigurować własną instancję.
 
@@ -1066,7 +1156,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Sprache
 * en-GB: Language
-* fr-FR *missing*
+* fr-FR: Langue
 * hu-HU: Nyelv
 * pl-PL: Język
 
@@ -1074,7 +1164,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Gleiche Sprache wie Web-Browser
 * en-GB: Use language(s) requested by browser
-* fr-FR *missing*
+* fr-FR: Utiliser la(les) langue(s) demandée(s) par le navigateur
 * hu-HU: A webböngésző nyelve(i)
 * pl-PL: Ten sam język co przeglądarka internetowa
 
@@ -1100,7 +1190,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: zu.
 * en-GB:  
-* fr-FR:  
+* fr-FR: .
 * hu-HU:  
 * pl-PL:  
 
@@ -1150,7 +1240,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Passwort wiederholen
 * en-GB: Repeat password
-* fr-FR: Vérifier le mot de passe
+* fr-FR: Répéter le mot de passe
 * hu-HU: Jelszó újra
 * pl-PL: Powtórz hasło
 
@@ -1174,7 +1264,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: zu.
 * en-GB: .
-* fr-FR:  
+* fr-FR: .
 * hu-HU:  
 * pl-PL:  
 
@@ -1190,7 +1280,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Die Mail-Adresse wird ausschließlich zur Bestätigung der Anmeldung, für die „Passwort vergessen“-Funktionalität und für wichtige Informationen über den Account verwendet und nicht an Dritte weitergegeben.
 * en-GB: We collect your email address solely fo the purposes of confirming your registration, resetting your password and providing you with important information about your account. Your email address will never be shared with third parties.
-* fr-FR *missing*
+* fr-FR: Nous collectons votre adresse de courriel dans les seuls buts de confirmer votre enregistrement, remettre à zéro votre mot de passe et vous fournir des informations importantes à propos de votre compte. Votre adresse de courriel ne sera jamais partagée avec un tiers.
 * hu-HU: Az e-mail címet csak a regisztráció megerősítésére, az „Elfelejtett jelszó” funkcióhoz és a fiókkal kapcsolatos fontos információkhoz használjuk, és nem adjuk tovább harmadik félnek.
 * pl-PL: Adres e-mail będzie wykorzystywany wyłącznie do potwierdzenia rejestracji, funkcji „Zapomniałem hasła” oraz ważnych informacji dotyczących konta i nie będzie udostępniany osobom trzecim.
 
@@ -1198,7 +1288,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Die
 * en-GB: Our
-* fr-FR *missing*
+* fr-FR: Notre
 * hu-HU: Az
 * pl-PL *missing*
 
@@ -1206,7 +1296,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Datenschutzerklärung
 * en-GB: privacy policy
-* fr-FR *missing*
+* fr-FR: politique de confidentialité
 * hu-HU: adatkezelési tájékoztató
 * pl-PL: Polityka prywatności
 
@@ -1214,7 +1304,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: beschreibt weitere erhobene Daten sowie deren Zweck und Speicherfristen.
 * en-GB: describes additional data that we collect, how we store it and for what purpose.
-* fr-FR *missing*
+* fr-FR: décrit les données additionnelles que nous collectons, comment nous les stockons et pour quel usage.
 * hu-HU: leírja az egyéb begyűjtött adatokat, valamit azok célját és tárolási időtartamát.
 * pl-PL: opisuje inne gromadzone dane, a także ich cel i okresy przechowywania.
 
@@ -1222,7 +1312,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Accounts werden nach einem Jahr ohne Aktivität per E-Mail über die bevorstehende Löschung informiert und nach vier weiteren Wochen ohne Aktivität automatisch gelöscht.
 * en-GB: Accounts are automatically deleted after a year without activity. You will receive an email informing you about the deletion and giving you four weeks to intervene.
-* fr-FR: .
+* fr-FR: Les comptes sont automatiquement supprimés après un an d'inactivité. Vous recevrez un courriel vous informant de cette suppression et vous laissant quatre semaines pour intervenir.
 * hu-HU: A fiókokat egy év inaktivitás után e-mailben értesítjük a közelgő törlésről, és további négy hét inaktivitás után automatikusan törlődnek.
 * pl-PL: Po roku braku aktywności użytkownicy otrzymują wiadomość e-mail z informacją o zbliżającym się usunięciu konta, a po kolejnych czterech tygodniach braku aktywności konta są automatycznie usuwane.
 
@@ -1230,7 +1320,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Bitte beachten: Travelynx ist ein privat betriebenes Projekt ohne Verfügbarkeitsgarantie. Unangekündigte Downtimes oder eine kurzfristige Einstellung dieser Seite sind nicht vorgesehen, aber möglich.
 * en-GB: Please be aware: Travelynx is a non-commerical personal project and is provided as is. We do not make guarantees in regards to availability of the service or a sudden end of the project.
-* fr-FR *missing*
+* fr-FR: Veuillez noter que : Travelynx est un projet personnel non commercial et fourni tel quel. Nous n'offrons pas de garantie par rapport à la disponibilité du service ou une fin inopinée du projet.
 * hu-HU: Kérjük, vedd figyelembe: Travelynx egy ingyenes és bármi rendelkezésre állási garacia nélküli hobbi projekt. Be nem tervezett leállások, illetve a teljes oldal hírtelen bezárása nincs tervben, de bármikor előfordulhat.
 * pl-PL: Uwaga: Travelynx jest prywatnym projektem bez gwarancji dostępności. Niezapowiedziane przerwy w działaniu lub krótkoterminowe wyłączenie tej strony nie są planowane, ale są możliwe.
 
@@ -1240,7 +1330,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Jahresrückblick
 * en-GB:  
-* fr-FR *missing*
+* fr-FR:  
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1248,7 +1338,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  
 * en-GB: in Review
-* fr-FR *missing*
+* fr-FR: en résumé
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1256,7 +1346,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Du hast in diesem Jahr
 * en-GB: You have logged
-* fr-FR *missing*
+* fr-FR: Vous vous êtes enregistré
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1264,7 +1354,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: von und zu
 * en-GB: across
-* fr-FR *missing*
+* fr-FR: à travers
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1272,7 +1362,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  in travelynx erfasst.
 * en-GB: .
-* fr-FR *missing*
+* fr-FR: .
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1280,7 +1370,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Fahrten
 * en-GB: trips
-* fr-FR *missing*
+* fr-FR: trajets
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1288,7 +1378,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Betriebsstellen
 * en-GB: stops
-* fr-FR *missing*
+* fr-FR: arrêts
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1296,7 +1386,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Das sind mehr als
 * en-GB: This comes down to more than
-* fr-FR *missing*
+* fr-FR: Ceci équivaut à plus de
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1304,7 +1394,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Fahrten pro Tag
 * en-GB: trips per day
-* fr-FR *missing*
+* fr-FR: trajets par jour
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1312,7 +1402,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: !
 * en-GB: !
-* fr-FR *missing*
+* fr-FR: !
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1320,7 +1410,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Insgesamt hast du mindestens
 * en-GB: In total, you spent at least
-* fr-FR *missing*
+* fr-FR: Au total, vous avez passé au moins
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1328,7 +1418,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: des Jahres
 * en-GB: of the entire year
-* fr-FR *missing*
+* fr-FR: de l'année entière
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1336,7 +1426,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: unterwegs verbracht.
 * en-GB: in transit.
-* fr-FR *missing*
+* fr-FR: en voyage.
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1344,7 +1434,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Dabei hast du ca.
 * en-GB: In doing so, you traversed a total distance of approx.
-* fr-FR *missing*
+* fr-FR: En faisant cela, vous avez parcouru une distance totale d'approximativement
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1352,7 +1442,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  zurückgelegt.
 * en-GB: .
-* fr-FR *missing*
+* fr-FR: .
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1360,7 +1450,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Das entspricht
 * en-GB: This equals
-* fr-FR *missing*
+* fr-FR: Ceci équivaut à
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1368,7 +1458,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Fahrten um die Erde
 * en-GB: trips around the earth
-* fr-FR *missing*
+* fr-FR: voyages autour de la Terre
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1376,7 +1466,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: .
 * en-GB: .
-* fr-FR *missing*
+* fr-FR: .
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1384,7 +1474,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Das entspricht
 * en-GB: This equals
-* fr-FR *missing*
+* fr-FR: Ceci équivaut à
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1392,7 +1482,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Reisen zum Mittelpunkt der Erde und zurück
 * en-GB: journeys to the centre of the earth and back
-* fr-FR *missing*
+* fr-FR: voyages aller/retour au centre de la Terre
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1400,7 +1490,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: .
 * en-GB: .
-* fr-FR *missing*
+* fr-FR: .
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1408,7 +1498,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Hier streichen oder unten klicken für nächste Seite
 * en-GB: Swip here or click below for next page
-* fr-FR *missing*
+* fr-FR: Glisser ici ou cliquer ci-dessous pour la page suivante
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1416,7 +1506,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Eine typische Fahrt
 * en-GB: An average Trip
-* fr-FR *missing*
+* fr-FR: Un trajet moyen
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1424,7 +1514,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: … führte dich mit
 * en-GB: … meant taking
-* fr-FR *missing*
+* fr-FR: … signifie prendre
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1432,7 +1522,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: durch das Dreieck
 * en-GB: within the
-* fr-FR *missing*
+* fr-FR: dans le
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1440,7 +1530,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: .
 * en-GB:  triangle.
-* fr-FR *missing*
+* fr-FR:  triangle.
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1448,7 +1538,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: … befand sich jederzeit auf deiner Pendelstrecke zwischen
 * en-GB: … was always along your commute between
-* fr-FR *missing*
+* fr-FR: … a toujours été pendant votre trajet entre
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1456,7 +1546,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: und
 * en-GB: and
-* fr-FR *missing*
+* fr-FR: et
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1464,7 +1554,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: .
 * en-GB: .
-* fr-FR *missing*
+* fr-FR: .
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1472,7 +1562,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Im Mittel benötigte sie
 * en-GB: On average, it took
-* fr-FR *missing*
+* fr-FR: En moyenne, cela a pris
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1480,7 +1570,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: für eine Entfernung von ca.
 * en-GB: to cover approx.
-* fr-FR *missing*
+* fr-FR: pour couvrir approximativement
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1488,7 +1578,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: .
 * en-GB: .
-* fr-FR *missing*
+* fr-FR: .
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1496,7 +1586,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Außerdem war sie <strong>komplett pünktlich</strong>. Beeindruckend!
 * en-GB: It was consistently <strong>on time</strong>. Impressive!
-* fr-FR *missing*
+* fr-FR: Il a été régulièrement <strong>à l'heure</strong>. Impressionnant !
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1504,7 +1594,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Sie fuhr
 * en-GB: It departed
-* fr-FR *missing*
+* fr-FR: Il est parti
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1512,7 +1602,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: zu spät ab, konnte aber einen Teil der Verspätung wieder herausholen. Ihr Ziel erreichte sie nur noch
 * en-GB: later than scheduled, but managed to partially make up for that. When reaching its destination, it was delayed by only
-* fr-FR *missing*
+* fr-FR: après son horaire prévu, mais est parvenu à le rattraper en partie. À son arrivée à destination, il était retardé de seulement
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1520,7 +1610,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  später als vorgesehen.
 * en-GB: .
-* fr-FR *missing*
+* fr-FR: .
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1528,7 +1618,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Sie fuhr
 * en-GB: It departured
-* fr-FR *missing*
+* fr-FR: Il est parti
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1536,7 +1626,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  zu spät ab und kam mit der gleichen Verspätung am Ziel an.
 * en-GB:  too late and arrived with the same delay.
-* fr-FR *missing*
+* fr-FR:  trop tard et est arrivé avec le même retard.
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1544,7 +1634,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Sie fuhr
 * en-GB: It departed with a delay of
-* fr-FR *missing*
+* fr-FR: Il est parti avec un retard de
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1552,7 +1642,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: zu spät ab und schlich mit
 * en-GB: and increased it to
-* fr-FR *missing*
+* fr-FR: qui a augmenté à
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1560,7 +1650,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  ins Ziel.
 * en-GB:  at the destination.
-* fr-FR *missing*
+* fr-FR:  à destination.
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1568,7 +1658,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: High Scores
 * en-GB: High Scores
-* fr-FR *missing*
+* fr-FR: Meilleurs résultats
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1576,7 +1666,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: mit
 * en-GB: with
-* fr-FR *missing*
+* fr-FR: avec
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1584,7 +1674,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: von
 * en-GB: from
-* fr-FR *missing*
+* fr-FR: de
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1592,7 +1682,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: nach
 * en-GB: to
-* fr-FR *missing*
+* fr-FR: à
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1600,7 +1690,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Längste Fahrt
 * en-GB: Longest Leg
-* fr-FR *missing*
+* fr-FR: Segment le plus long
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1608,7 +1698,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  
 * en-GB:  
-* fr-FR *missing*
+* fr-FR:  
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1616,7 +1706,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: .
 * en-GB: .
-* fr-FR *missing*
+* fr-FR: .
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1624,7 +1714,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Mit
 * en-GB: With a distance of
-* fr-FR *missing*
+* fr-FR: Avec une distance de
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1632,7 +1722,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  war sie gleichzeitig deine weiteste Fahrt.
 * en-GB: , it also was your longest leap.
-* fr-FR *missing*
+* fr-FR: , c'était également votre trajet le plus éloigné.
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1640,7 +1730,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Größte Entfernung
 * en-GB: Longest Leap
-* fr-FR *missing*
+* fr-FR: Trajet le plus éloigné
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1648,7 +1738,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  
 * en-GB:  
-* fr-FR *missing*
+* fr-FR:  
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1656,7 +1746,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: .
 * en-GB: .
-* fr-FR *missing*
+* fr-FR: .
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1664,7 +1754,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Kürzeste Fahrt
 * en-GB: Tiniest Trip
-* fr-FR *missing*
+* fr-FR: Trajet le plus court
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1672,7 +1762,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  
 * en-GB:  
-* fr-FR *missing*
+* fr-FR:  
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1680,7 +1770,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: .
 * en-GB: .
-* fr-FR *missing*
+* fr-FR: .
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1688,7 +1778,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Mit
 * en-GB: With a distance of
-* fr-FR *missing*
+* fr-FR: Avec une distance de
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1696,7 +1786,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  war sie gleichzeitig dein kleinster Katzensprung.
 * en-GB: , it was also your closest checkin / checkout couple.
-* fr-FR *missing*
+* fr-FR: , c'était également votre couple enregistrement/clôture le plus proche.
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1704,7 +1794,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Größte Entfernung
 * en-GB: Longest Leap
-* fr-FR *missing*
+* fr-FR: Trajet le plus éloigné
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1712,7 +1802,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Kleinster Katzensprung
 * en-GB: Closest Checkout
-* fr-FR *missing*
+* fr-FR: Clôture la plus proche
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1720,7 +1810,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  
 * en-GB:  
-* fr-FR *missing*
+* fr-FR:  
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1728,7 +1818,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: .
 * en-GB: .
-* fr-FR *missing*
+* fr-FR: .
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1736,7 +1826,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  
 * en-GB:  
-* fr-FR *missing*
+* fr-FR:  
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1744,7 +1834,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  aller Fahrten waren mit Angaben zu Verspätungen oder Einschränkungen versehen.
 * en-GB:  of all trips came with remarks related to delays or disruptions.
-* fr-FR *missing*
+* fr-FR:  de tous les trajets avec des commentaires en lien avec des retards ou des annulations.
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1752,7 +1842,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Die häufigsten Anmerkungen waren:
 * en-GB: Most frequent remarks:
-* fr-FR *missing*
+* fr-FR: Commentaires les plus fréquents :
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1760,7 +1850,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Lediglich
 * en-GB: Merely
-* fr-FR *missing*
+* fr-FR: Environ
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1768,7 +1858,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  der Fahrten waren pünktlich auf die Minute.
 * en-GB:  of all trips were right on schedule.
-* fr-FR *missing*
+* fr-FR:  de tous les trajets étaient pile à l'heure.
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1776,7 +1866,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  
 * en-GB:  
-* fr-FR *missing*
+* fr-FR:  
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1784,7 +1874,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  deiner Fahrten hatten mindestens eine Stunde Verspätung
 * en-GB:  of your trips were delayed by at least an hour
-* fr-FR *missing*
+* fr-FR:  de vos trajets étaient retardés d'au moins une heure
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1792,7 +1882,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: und
 * en-GB: and
-* fr-FR *missing*
+* fr-FR: et
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1800,7 +1890,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  kamen gar nicht erst am Ziel an.
 * en-GB:  did not even make it to your destination.
-* fr-FR *missing*
+* fr-FR:  ne sont même pas arrivés à destination.
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1808,7 +1898,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  
 * en-GB:  
-* fr-FR *missing*
+* fr-FR:  
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1816,7 +1906,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  deiner geplanten Fahrten sind ausgefallen.
 * en-GB:  of your trips were cancelled.
-* fr-FR *missing*
+* fr-FR:  de vos trajets ont été annulés.
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1824,7 +1914,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Mit
 * en-GB: With
-* fr-FR *missing*
+* fr-FR: Avec
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1832,7 +1922,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  hatte
 * en-GB: , 
-* fr-FR *missing*
+* fr-FR: , 
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1840,7 +1930,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  die größte Verspätung.
 * en-GB:  effortlessly took the first place.
-* fr-FR *missing*
+* fr-FR:  qui a pris sans problème la première place.
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1848,7 +1938,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Die Fahrt mit
 * en-GB: The trip with
-* fr-FR *missing*
+* fr-FR: Le trajet avec
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1856,7 +1946,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: von
 * en-GB: from
-* fr-FR *missing*
+* fr-FR: de
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1864,7 +1954,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: nach
 * en-GB: to
-* fr-FR *missing*
+* fr-FR: à
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1872,7 +1962,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: verlief besonders gemächlich: sie dauerte
 * en-GB: was super serene: it took
-* fr-FR *missing*
+* fr-FR: était très serein : il a pris
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1880,7 +1970,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  länger als geplant.
 * en-GB:  longer than scheduled.
-* fr-FR *missing*
+* fr-FR:  de plus que prévu.
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1888,7 +1978,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: In
 * en-GB: On the other hand,
-* fr-FR *missing*
+* fr-FR: D'autre part,
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1896,7 +1986,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: wurde hingegen Vmax ausgereizt und die Strecke von
 * en-GB: took the handle to the table and managed to go from
-* fr-FR *missing*
+* fr-FR: s'est déplacé à fond les ballons et est parvenu à aller de
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1904,7 +1994,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: nach
 * en-GB: to
-* fr-FR *missing*
+* fr-FR: à
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1912,7 +2002,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  
 * en-GB:  an impressive
-* fr-FR *missing*
+* fr-FR:  avec incroyablement
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1920,7 +2010,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  schneller absolviert als vorgesehen.
 * en-GB:  faster than anticipated.
-* fr-FR *missing*
+* fr-FR:  de moins que prévu.
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1962,7 +2052,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Auschecken
 * en-GB: check out
-* fr-FR *missing*
+* fr-FR: clôture
 * hu-HU: Kicsekkelés
 * pl-PL: Wymelduj się
 
@@ -1972,7 +2062,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Einfahrt in
 * en-GB: arrives in
-* fr-FR *missing*
+* fr-FR: Arrive dans
 * hu-HU:  
 * pl-PL: Wjazd za
 
@@ -1982,7 +2072,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  
 * en-GB:  
-* fr-FR *missing*
+* fr-FR:  
 * hu-HU: -en belül érkezik
 * pl-PL:  
 
@@ -1992,7 +2082,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: fährt ein
 * en-GB: now arriving
-* fr-FR *missing*
+* fr-FR: Arrive maintenant
 * hu-HU: A beszállás hamarosan következik
 * pl-PL: wjeżdża
 
@@ -2002,7 +2092,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Abfahrt in
 * en-GB: departs in
-* fr-FR *missing*
+* fr-FR: Part dans
 * hu-HU:  
 * pl-PL: Odjazd za
 
@@ -2012,7 +2102,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  
 * en-GB:  
-* fr-FR *missing*
+* fr-FR:  
 * hu-HU: -en belül indul
 * pl-PL:  
 
@@ -2022,7 +2112,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: fährt ab
 * en-GB: now departing
-* fr-FR *missing*
+* fr-FR: Départ proche
 * hu-HU: Egy percen belül indul
 * pl-PL: odjeżdża
 
@@ -2052,7 +2142,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Ankunft in weniger als einer Minute
 * en-GB: now arriving
-* fr-FR: Arrive dans moins d'une minute
+* fr-FR: Arrive maintenant
 * hu-HU: Egy percen belül érkezik
 * pl-PL: Dojazd za mniej niż minutę
 
@@ -2076,7 +2166,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: von
 * en-GB: from
-* fr-FR *missing*
+* fr-FR: de
 * hu-HU:  
 * pl-PL: z
 
@@ -2084,7 +2174,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  
 * en-GB:  
-* fr-FR *missing*
+* fr-FR:  
 * hu-HU: vágányról indul
 * pl-PL:  
 
@@ -2092,7 +2182,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: auf
 * en-GB: on
-* fr-FR *missing*
+* fr-FR: à
 * hu-HU:  
 * pl-PL: na
 
@@ -2100,7 +2190,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE:  
 * en-GB:  
-* fr-FR *missing*
+* fr-FR:  
 * hu-HU: vágányra érkezik
 * pl-PL:  
 
@@ -2108,7 +2198,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Der automatische Checkout erfolgt spätestens eine halbe Stunde nach der Ankunft.
 * en-GB: You will be automatically checked out no less than half an hour after the expected arrival time.
-* fr-FR *missing*
+* fr-FR: Votre trajet sera automatiquement clôturé au bout d'une demi-heure après l'heure d'arrivée prévue.
 * hu-HU: Körülbelül tíz perccel az érkezés után automatikusan kicsekkolódsz.
 * pl-PL: Automatyczne wymeldowanie nastąpi najpóźniej pół godziny po przyjeździe.
 
@@ -2116,7 +2206,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Keine Echtzeitdaten vorhanden
 * en-GB: Real-time data unavailable
-* fr-FR *missing*
+* fr-FR: Données temps-réel indisponibles
 * hu-HU: Valós idejű adatok nem állnak rendelkezésre
 * pl-PL: Brak danych w czasie rzeczywistym
 
@@ -2126,7 +2216,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Meldungen
 * en-GB: Notifications
-* fr-FR *missing*
+* fr-FR: Notifications
 * hu-HU: Jelentések
 * pl-PL: Komunikaty
 
@@ -2134,7 +2224,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Karte
 * en-GB: Map
-* fr-FR *missing*
+* fr-FR: Carte
 * hu-HU: Térkép
 * pl-PL: Mapa
 
@@ -2142,7 +2232,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Ziel ändern?
 * en-GB: Change destination
-* fr-FR *missing*
+* fr-FR: Changer la destination
 * hu-HU: Célváltás?
 * pl-PL: Zmień cel?
 
@@ -2158,7 +2248,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Route
 * en-GB: Route
-* fr-FR: Route
+* fr-FR: Itinéraire
 * hu-HU: Útvonal
 * pl-PL: Trasa
 
@@ -2168,7 +2258,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Rückgängig
 * en-GB: Undo
-* fr-FR *missing*
+* fr-FR: Annuler
 * hu-HU: Visszavonás
 * pl-PL: Cofnij
 
@@ -2178,7 +2268,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Sichtbarkeit
 * en-GB: Privacy
-* fr-FR *missing*
+* fr-FR: Confidentialité
 * hu-HU: Láthatóság
 * pl-PL: Widoczność
 
@@ -2188,7 +2278,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Checkin rückgängig
 * en-GB: Undo check-in
-* fr-FR *missing*
+* fr-FR: Annuler l'enregistrement
 * hu-HU: Becsekkelés visszavonása
 * pl-PL: Cofnij meldowanie
 
@@ -2196,7 +2286,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Maximal eine halbe Stunde nach der Ankunft erfolgt ein automatischer Checkout. Falls das Backend ausgefallen ist oder die Fahrt aus anderen Gründen verloren ging:
 * en-GB: travelynx will perform an automatic check-out no less than half an hour after arrival. In case of backend or data update issues:
-* fr-FR *missing*
+* fr-FR: travelynx réalisera une clôture de l'itinéraire une demi-heure après l'arrivée. En cas de problèmes de mise à jour de données ou de backend :
 * hu-HU: Körülbelül tíz perccel az érkezés után automatikusan kicsekkolódsz. Ha a backend leállt, vagy az utazás más okokból elveszlett:
 * pl-PL: Automatyczne wymeldowanie nastąpi najpóźniej pół godziny po przyjeździe. Jeśli backend nie działa lub przejazd został utracony z innych powodów:
 
@@ -2204,7 +2294,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Jetzt auschecken
 * en-GB: Force checkout
-* fr-FR *missing*
+* fr-FR: Forcer la clôture
 * hu-HU: Most kicsekkelni
 * pl-PL: Wymelduj się teraz
 
@@ -2214,7 +2304,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Fahrten
 * en-GB: Trips
-* fr-FR *missing*
+* fr-FR: Voyages
 * hu-HU *missing*
 * pl-PL: Ilość przejazdów
 
@@ -2222,7 +2312,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Entfernung
 * en-GB: Distance
-* fr-FR *missing*
+* fr-FR: Distance
 * hu-HU *missing*
 * pl-PL: Dystans
 
@@ -2230,7 +2320,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Fahrtzeit
 * en-GB: Travel Time
-* fr-FR *missing*
+* fr-FR: Temps de parcours
 * hu-HU *missing*
 * pl-PL: Czas przejazdów
 
@@ -2238,7 +2328,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Stunden
 * en-GB: hours
-* fr-FR *missing*
+* fr-FR: heures
 * hu-HU *missing*
 * pl-PL: godzin
 
@@ -2246,7 +2336,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: nach Fahrplan
 * en-GB: scheduled
-* fr-FR *missing*
+* fr-FR: planifié
 * hu-HU *missing*
 * pl-PL: Zgodnie z rozkładem
 
@@ -2254,7 +2344,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Wartezeit (Umstiege)
 * en-GB: Transfer Time
-* fr-FR *missing*
+* fr-FR: Temps de correspondance
 * hu-HU *missing*
 * pl-PL: Czas oczekiwania (przesiadki)
 
@@ -2262,7 +2352,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Kumulierte Verspätung
 * en-GB: Total Delay
-* fr-FR *missing*
+* fr-FR: Retard total
 * hu-HU *missing*
 * pl-PL: Skumulowane opóźnienie
 
@@ -2270,7 +2360,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Bei Abfahrt
 * en-GB: on departure
-* fr-FR *missing*
+* fr-FR: au départ
 * hu-HU *missing*
 * pl-PL: Przy odjeździe
 
@@ -2278,7 +2368,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Bei Ankunft
 * en-GB: on arrival
-* fr-FR *missing*
+* fr-FR: à l'arrivée
 * hu-HU *missing*
 * pl-PL: Przy przyjeździe
 
