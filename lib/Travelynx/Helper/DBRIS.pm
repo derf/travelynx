@@ -230,7 +230,6 @@ sub grep_suggestions {
 	my $max_per_dest = $opt{max_per_dest};
 
 	my @suggestions;
-	my %via_count;
 
 	for my $dep ( $status->results ) {
 		my $dep_json = {
@@ -264,21 +263,17 @@ sub grep_suggestions {
 	}
 
 	if ($max_per_dest) {
+		my %via_count;
 		@suggestions
 		  = sort { $a->[0]{sort_ts} <=> $b->[0]{sort_ts} } @suggestions;
 		my @filtered;
-		destination: for my $dest ( @{$destinations} ) {
-			for my $pair (@suggestions) {
-				if ( not $pair->[0]{is_cancelled} ) {
-					$via_count{ $dest->{name} } += 1;
-				}
-				if (    not $pair->[0]{is_cancelled}
-					and $pair->[1]{name} eq $dest->{name}
-					and $via_count{ $dest->{name} }
-					and $via_count{ $dest->{name} } > $max_per_dest )
-				{
-					next destination;
-				}
+		for my $pair (@suggestions) {
+			my $dep  = $pair->[0];
+			my $dest = $pair->[1]{name};
+			if ( not $dep->{is_cancelled} ) {
+				$via_count{$dest} += 1;
+			}
+			if ( not $via_count{$dest} or $via_count{$dest} <= $max_per_dest ) {
 				push( @filtered, $pair );
 			}
 		}
