@@ -55,21 +55,11 @@ sub grep_suggestions {
 	my $max_per_dest = $opt{max_per_dest};
 
 	my @suggestions;
-	my %via_count;
 
 	for my $dep ( $status->results ) {
 		destination: for my $dest ( @{$destinations} ) {
 			for my $stop ( $dep->route_post ) {
 				if ( $stop->full_name eq $dest->{name} ) {
-					if ( not $dep->is_cancelled ) {
-						$via_count{ $dest->{name} } += 1;
-					}
-					if (    $max_per_dest
-						and $via_count{ $dest->{name} }
-						and $via_count{ $dest->{name} } > $max_per_dest )
-					{
-						next destination;
-					}
 					my $dep_json = {
 						id => $dep->id,
 						ts => ( $dep->sched_datetime // $dep->datetime )->epoch,
@@ -90,6 +80,25 @@ sub grep_suggestions {
 			}
 		}
 	}
+
+	if ($max_per_dest) {
+		my %via_count;
+		@suggestions
+		  = sort { $a->[0]{sort_ts} <=> $b->[0]{sort_ts} } @suggestions;
+		my @filtered;
+		for my $pair (@suggestions) {
+			my $dep  = $pair->[0];
+			my $dest = $pair->[1]{name};
+			if ( not $dep->{is_cancelled} ) {
+				$via_count{$dest} += 1;
+			}
+			if ( not $via_count{$dest} or $via_count{$dest} <= $max_per_dest ) {
+				push( @filtered, $pair );
+			}
+		}
+		@suggestions = @filtered;
+	}
+
 	return @suggestions;
 }
 
