@@ -113,6 +113,12 @@ sub get_tripid_p {
 	my $train      = $opt{train};
 	my $train_desc = $train->type . ' ' . $train->train_no;
 	$train_desc =~ s{^- }{};
+	if ( grep { $_ eq 'S' } $train->classes ) {
+		$train_desc = 'DB ' . $train->train_no;
+	}
+	elsif ( grep { $_ eq 'N' } $train->classes or not scalar $train->classes ) {
+		$train_desc = $train->train_no;
+	}
 
 	$opt{service} //= 'ÖBB';
 
