@@ -33,7 +33,7 @@
 				<i class="material-icons" aria-label="Keine Echtzeitdaten vorhanden" style="font-size: 16px;">gps_off</i>
 			% }
 		</a>
-		<span class="dep-line <%= trip_type_css_selector(($travel->{type} // q{}) =~ tr{a-zA-Z_-}{}cdr, ($travel->{line} // q{}) =~ s{ ^ \D+ \K \d .* $ }{}rx) %>">
+		<span class="dep-line <%= trip_type_css_selector(($result->{type} // q{}) =~ tr{a-zA-Z_-}{}cdr, ($result->{line} // q{}) =~ s{ ^ \D+ \K \d .* $ }{}rx) %>">
 			%= $result->line
 		</span>
 		<span class="dep-dest">

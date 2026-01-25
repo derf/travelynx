@@ -42,7 +42,7 @@
 						%= $dep->{platform}
 					</span>
 				% }
-				<span class="dep-line <%= trip_type_css_selector(($travel->{type} // q{}) =~ tr{a-zA-Z_-}{}cdr, ($travel->{line} // q{}) =~ s{ ^ \D+ \K \d .* $ }{}rx) %>">
+				<span class="dep-line <%= trip_type_css_selector(($dep->{type} // q{}) =~ tr{a-zA-Z_-}{}cdr, ($dep->{line} // q{}) =~ s{ ^ \D+ \K \d .* $ }{}rx) %>">
 					%= $dep->{line}
 				</span>
 			</span>
