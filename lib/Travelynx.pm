@@ -36,6 +36,20 @@ use Travelynx::Model::Stations;
 use Travelynx::Model::Traewelling;
 use Travelynx::Model::Users;
 
+my %valid_train_type = map { $_ => 1 } qw(
+  Bus BUS NachtBus Niederflurbus Stadtbus StadtBus MetroBus PlusBus Landbus
+  Regionalbus RegionalBus SB ExpressBus BSV RVV-Bus-Linie Buslinie Omnibus
+  RegioBus RUF AST RufTaxi Rufbus Linientaxi
+  Fhre Fh Schiff SCH KAT FERRY
+  STR Tram TRAM Str Strb STB Straenbahn NachtTram Stadtbahn Niederflurstrab
+  Trm S RS RER SKW METRO
+  S-Bahn U M SUBWAY U-Bahn UBAHN
+  Schw-B Schwebebahn H-Bahn
+  RE IRE REX REGIONAL_FAST_RAIL RB MEX TER R REGIONAL_RAIL Regionalzug R-Bahn
+  BRB ECD IC ICE EC ECE D IR TGV OGV EST FR TLK EIC EIP HIGHSPEED_RAIL
+  LONG_DISTANCE RJ RJX NJ EN NIGHT_RAIL ICN WB FLX
+);
+
 sub check_password {
 	my ( $password, $hash ) = @_;
 
@@ -229,6 +243,18 @@ sub startup {
 			}
 			return $self->url_for($path)
 			  ->base( $self->app->config->{base_url} );
+		}
+	);
+
+	$self->helper(
+		trip_type_css_selector => sub {
+			my ( $self, @candidates ) = @_;
+			for my $c (@candidates) {
+				if ( defined $c and $valid_train_type{$c} ) {
+					return $c;
+				}
+			}
+			return q{};
 		}
 	);
 
