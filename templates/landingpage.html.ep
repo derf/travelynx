@@ -61,7 +61,7 @@
 								<p class="geolocationhint"><%= L('landingpage.recent-stops') %>:</p>
 								<p>
 									% for my $recent ( @{stash('recent_targets') // []} ) {
-										<a class="tablerow" href="/s/<%= $recent->{external_id_or_eva} %>?dbris=<%= $recent->{dbris} %>&amp;efa=<%= $recent->{efa} %>&amp;hafas=<%= $recent->{hafas} %>&amp;motis=<%= $recent->{motis} %>"><span><%= $recent->{name} %></span><span style="float:right;">(<%= $recent->{dbris} // $recent->{efa} // $recent->{hafas} // $recent->{motis} // 'IRIS' %>)</span></a>
+										<a class="tablerow" href="/s/<%= $recent->{external_id_or_eva} %>?dbris=<%= $recent->{dbris} %>&amp;efa=<%= $recent->{efa} %>&amp;hafas=<%= $recent->{hafas} %>&amp;motis=<%= $recent->{motis} %>"><span><%= $recent->{name} %></span><span style="float:right;">(<%= $recent->{dbris} || $recent->{efa} || $recent->{hafas} || $recent->{motis} || 'IRIS' %>)</span></a>
 									% }
 								</p>
 							% }
