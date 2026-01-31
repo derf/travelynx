@@ -1424,12 +1424,6 @@ sub sorted_history {
 	my $sort_by    = $self->param('sort_by')    || 'delay_arr';
 	my $sort_order = $self->param('sort_order') || 'desc';
 
-	my @journeys = $self->journeys->get(
-		uid           => $self->current_user->{id},
-		with_datetime => 1,
-		verbose       => ( $sort_by =~ m{_duration} ? 1 : 0 ),
-	);
-
 	my $key = 'delay_arr';
 	if ( $sort_by
 		=~ m{ ^ (?: delay_arr | delay_dep | sched_duration | rt_duration ) $ }x
@@ -1438,16 +1432,13 @@ sub sorted_history {
 		$key = $sort_by;
 	}
 
-	if ( $key =~ m{ _duration }x ) {
-		@journeys = grep { defined $_->{$key} } @journeys;
-	}
-
-	my $sort_lambda = sub { $a->{$key} <=> $b->{$key} };
-	if ( $sort_order eq 'desc' ) {
-		$sort_lambda = sub { $b->{$key} <=> $a->{$key} };
-	}
-
-	@journeys = sort { &$sort_lambda } @journeys;
+	my @journeys = $self->journeys->get(
+		uid           => $self->current_user->{id},
+		with_datetime => 1,
+		limit         => 100,
+		sort          => $sort_order eq 'desc' ? 'desc' : 'asc',
+		sort_by       => $key,
+	);
 
 	$self->render(
 		template => 'sorted_history',

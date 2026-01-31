@@ -655,7 +655,7 @@ sub get {
 	}
 	my %order = (
 		order_by => {
-			$order_key => 'real_dep_ts',
+			$order_key => $opt{sort_by} || 'real_dep_ts',
 		}
 	);
 
@@ -684,6 +684,10 @@ sub get {
 	}
 	elsif ( $opt{before} ) {
 		$where{real_dep_ts} = { '<=', $opt{before}->epoch };
+	}
+
+	if ( $opt{sort_by} ) {
+		$where{ $opt{sort_by} } = { '!=', undef };
 	}
 
 	if ( $opt{with_polyline} ) {
