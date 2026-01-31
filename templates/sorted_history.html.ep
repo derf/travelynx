@@ -5,13 +5,13 @@
 		<div class="input-field col s12 m12 l6">
 			<div>
 				<label>
-					%= radio_button sort_by => 'delay_arr'
+					%= radio_button sort_by => 'delay_dep'
 					<span>Verspätung bei Abfahrt</span>
 				</label>
 			</div>
 			<div>
 				<label>
-					%= radio_button sort_by => 'delay_dep'
+					%= radio_button sort_by => 'delay_arr'
 					<span>Verspätung bei Ankunft</span>
 				</label>
 			</div>
