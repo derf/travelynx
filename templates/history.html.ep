@@ -14,6 +14,14 @@ Für Details ein Jahr auswählen.
 		<a href="/history/commute" class="waves-effect waves-light btn"><i class="material-icons left" aria-hidden="true">search</i> nach Station</a>
 	</div>
 </div>
+<div class="row">
+	<div class="col s12 m12 l5 center-align">
+	</div>
+	<div class="col s12 m12 l2">&nbsp;</div>
+	<div class="col s12 m12 l5 center-align">
+		<a href="/history/sorted" class="waves-effect waves-light btn"><i class="material-icons left" aria-hidden="true">sort</i> High Scores</a>
+	</div>
+</div>
 
 <h2>Ausfälle und Verspätungen</h2>
 <div class="row">
