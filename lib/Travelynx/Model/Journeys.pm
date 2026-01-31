@@ -642,7 +642,7 @@ sub get {
 
 	my @select
 	  = (
-		qw(journey_id is_dbris is_iris is_hafas is_motis backend_name backend_id train_type train_line train_no checkin_ts sched_dep_ts real_dep_ts dep_eva dep_ds100 dep_name dep_platform dep_lat dep_lon checkout_ts sched_arr_ts real_arr_ts arr_eva arr_ds100 arr_name arr_platform arr_lat arr_lon cancelled edited route messages user_data visibility effective_visibility)
+		qw(journey_id is_dbris is_iris is_hafas is_motis backend_name backend_id train_type train_line train_no checkin_ts sched_dep_ts real_dep_ts delay_dep dep_eva dep_ds100 dep_name dep_platform dep_lat dep_lon checkout_ts sched_arr_ts real_arr_ts delay_arr arr_eva arr_ds100 arr_name arr_platform arr_lat arr_lon rt_duration sched_duration cancelled edited route messages user_data visibility effective_visibility)
 	  );
 	my %where = (
 		user_id   => $uid,
@@ -722,6 +722,7 @@ sub get {
 			checkin_ts           => $entry->{checkin_ts},
 			sched_dep_ts         => $entry->{sched_dep_ts},
 			rt_dep_ts            => $entry->{real_dep_ts},
+			delay_dep            => $entry->{delay_dep},
 			to_eva               => $entry->{arr_eva},
 			to_ds100             => $entry->{arr_ds100},
 			to_name              => $entry->{arr_name},
@@ -730,6 +731,9 @@ sub get {
 			checkout_ts          => $entry->{checkout_ts},
 			sched_arr_ts         => $entry->{sched_arr_ts},
 			rt_arr_ts            => $entry->{real_arr_ts},
+			delay_arr            => $entry->{delay_arr},
+			sched_duration       => $entry->{sched_duration},
+			rt_duration          => $entry->{rt_duration},
 			messages             => $entry->{messages},
 			route                => $entry->{route},
 			edited               => $entry->{edited},
@@ -759,12 +763,6 @@ sub get {
 			$ref->{checkout}      = epoch_to_dt( $ref->{checkout_ts} );
 			$ref->{sched_arrival} = epoch_to_dt( $ref->{sched_arr_ts} );
 			$ref->{rt_arrival}    = epoch_to_dt( $ref->{rt_arr_ts} );
-			if ( $ref->{rt_dep_ts} and $ref->{sched_dep_ts} ) {
-				$ref->{delay_dep} = $ref->{rt_dep_ts} - $ref->{sched_dep_ts};
-			}
-			if ( $ref->{rt_arr_ts} and $ref->{sched_arr_ts} ) {
-				$ref->{delay_arr} = $ref->{rt_arr_ts} - $ref->{sched_arr_ts};
-			}
 		}
 		if ( $opt{with_route_datetime} ) {
 			for my $stop ( @{ $ref->{route} } ) {
@@ -798,14 +796,6 @@ sub get {
 				push( @parsed_messages, [ epoch_to_dt($ts), $msg ] );
 			}
 			$ref->{messages} = [ reverse @parsed_messages ];
-			$ref->{sched_duration}
-			  = defined $ref->{sched_arr_ts}
-			  ? $ref->{sched_arr_ts} - $ref->{sched_dep_ts}
-			  : undef;
-			$ref->{rt_duration}
-			  = defined $ref->{rt_arr_ts}
-			  ? $ref->{rt_arr_ts} - $ref->{rt_dep_ts}
-			  : undef;
 			my ( $km_polyline, $km_route, $km_beeline, $skip )
 			  = $self->get_travel_distance($ref);
 			$ref->{km_route}     = $km_polyline || $km_route || $km_beeline;
