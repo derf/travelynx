@@ -63,7 +63,7 @@
 						<th>Verspätung</th>
 					% }
 					% else {
-						<th></th>
+						<th>Dauer</th>
 					% }
 				</tr>
 			</thead>
