@@ -266,7 +266,7 @@ msgstr ""
 msgid "changelog.2-18.2"
 msgstr ""
 
-# history.html.ep
+# history_by_year.html.ep
 msgid "history.review"
 msgstr ""
 

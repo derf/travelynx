@@ -266,7 +266,7 @@ msgstr "L'enregistrement et les suggestions de correspondances sont maintenant d
 msgid "changelog.2-18.2"
 msgstr "Le calcul de la distance totale dans l'historique inclut maintenant les voyages qui n'ont pas les données de trajet appropriées (par exemple où seule la distance à vol d'oiseau est disponible). Avant cette version, de tels trajets étaient ignorés lors du calcul des statistiques mensuelles et annuelles"
 
-# history.html.ep
+# history_by_year.html.ep
 msgid "history.review"
 msgstr "Résumé"
 

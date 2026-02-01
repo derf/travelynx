@@ -694,7 +694,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * hu-HU *missing*
 * pl-PL *missing*
 
-## history.html.ep
+## history_by_year.html.ep
 
 ### history.review
 
