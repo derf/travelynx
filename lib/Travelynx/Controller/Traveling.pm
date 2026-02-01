@@ -1421,8 +1421,15 @@ sub map_history {
 sub sorted_history {
 	my ($self) = @_;
 
-	my $sort_by    = $self->param('sort_by')    || 'delay_arr';
-	my $sort_order = $self->param('sort_order') || 'desc';
+	if ( not $self->param('sort_by') ) {
+		$self->param( sort_by => 'delay_arr' );
+	}
+	if ( not $self->param('sort_order') ) {
+		$self->param( sort_order => 'desc' );
+	}
+
+	my $sort_by    = $self->param('sort_by');
+	my $sort_order = $self->param('sort_order');
 
 	my $key = 'delay_arr';
 	if ( $sort_by
