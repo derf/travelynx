@@ -266,6 +266,12 @@ msgstr "Checkin and connection suggestions are now available again for DBRIS, EF
 msgid "changelog.2-18.2"
 msgstr "Total distance calculation in the history now includes trips that lack appropriate route data (i.e., where only beeline distance / distance as the crow flies is available). Before this release, such trips were ignored when computing monthly and yearly statistics."
 
+msgid "changelog.2-19.1"
+msgstr "High score of all past checkins sorted by delay or duration. More attributes may follow."
+
+msgid "changelog.2-19.2"
+msgstr "Minor life support adjustments for the legacy IRIS backend: map data should now be available in slightly more cases than before."
+
 # history.html.ep
 
 msgid "history.high-scores"

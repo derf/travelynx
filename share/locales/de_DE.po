@@ -266,6 +266,12 @@ msgstr "Checkin- und Verbindungsvorschläge sind für DBRIS-, EFA- und IRIS-Back
 msgid "changelog.2-18.2"
 msgstr "Bei der Reisestreckenberechnung für vergangene Fahrten werden nun auch Fahrten mit ungenügender Datenlage (d.h. bei denen ausschließlich die Entfernung nach Luftlinie verfügbar ist) berücksichtigt. Bislang wurden diese für monatliche und jährliche Statistiken ignoriert."
 
+msgid "changelog.2-19.1"
+msgstr "Sortierung vergangener Fahrtten nach Verspätung oder Dauer. Weitere Attribute folgen ggf."
+
+msgid "changelog.2-19.2"
+msgstr "IRIS-Backend: Geringfügige Verbesserung der Verfügbarkeit von Kartendaten. Das Backend ist weiterhin abgekündigt und kann jederzeit entfallen."
+
 # history.html.ep
 
 msgid "history.high-scores"
