@@ -2,9 +2,9 @@
 
 * de-DE: 100.0% complete (0 missing)
 * en-GB: 100.0% complete (0 missing)
-* fr-FR: 99.3% complete (2 missing)
-* hu-HU: 56.4% complete (126 missing)
-* pl-PL: 64.7% complete (102 missing)
+* fr-FR: 95.1% complete (15 missing)
+* hu-HU: 53.6% complete (141 missing)
+* pl-PL: 61.5% complete (117 missing)
 
 ### 
 
@@ -600,7 +600,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Offene anfragen
 * en-GB: Pending requests
-* fr-FR *missing*
+* fr-FR: requêtes en attente
 * hu-HU *missing*
 * pl-PL: Otwarte zapytania
 
@@ -691,6 +691,32 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Bei der Reisestreckenberechnung für vergangene Fahrten werden nun auch Fahrten mit ungenügender Datenlage (d.h. bei denen ausschließlich die Entfernung nach Luftlinie verfügbar ist) berücksichtigt. Bislang wurden diese für monatliche und jährliche Statistiken ignoriert.
 * en-GB: Total distance calculation in the history now includes trips that lack appropriate route data (i.e., where only beeline distance / distance as the crow flies is available). Before this release, such trips were ignored when computing monthly and yearly statistics.
 * fr-FR: Le calcul de la distance totale dans l'historique inclut maintenant les voyages qui n'ont pas les données de trajet appropriées (par exemple où seule la distance à vol d'oiseau est disponible). Avant cette version, de tels trajets étaient ignorés lors du calcul des statistiques mensuelles et annuelles
+* hu-HU *missing*
+* pl-PL *missing*
+
+### changelog.2-19.1
+
+* de-DE: Sortierung vergangener Fahrten nach Verspätung oder Dauer. Weitere Attribute folgen ggf.
+* en-GB: High score of all past checkins sorted by delay or duration. More attributes may follow.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### changelog.2-19.2
+
+* de-DE: IRIS-Backend: Geringfügige Verbesserung der Verfügbarkeit von Kartendaten. Das Backend ist weiterhin abgekündigt und kann jederzeit entfallen.
+* en-GB: Minor life support adjustments for the legacy IRIS backend: map data should now be available in slightly more cases than before.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+## history.html.ep
+
+### history.high-scores
+
+* de-DE: Nach Eigenschaft
+* en-GB: By Attribute
+* fr-FR *missing*
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1323,6 +1349,104 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * fr-FR: Veuillez noter que : Travelynx est un projet personnel non commercial et fourni tel quel. Nous n'offrons pas de garantie par rapport à la disponibilité du service ou une fin inopinée du projet.
 * hu-HU: Kérjük, vedd figyelembe: Travelynx egy ingyenes és bármi rendelkezésre állási garacia nélküli hobbi projekt. Be nem tervezett leállások, illetve a teljes oldal hírtelen bezárása nincs tervben, de bármikor előfordulhat.
 * pl-PL: Uwaga: Travelynx jest prywatnym projektem bez gwarancji dostępności. Niezapowiedziane przerwy w działaniu lub krótkoterminowe wyłączenie tej strony nie są planowane, ale są możliwe.
+
+## sorted_history.html.ep
+
+### sorted-history.header
+
+* de-DE: High Scores
+* en-GB: High Scores
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### sorted-history.delay-dep
+
+* de-DE: Verspätung bei Abfahrt
+* en-GB: Departure Delay
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### sorted-history.delay-arr
+
+* de-DE: Verspätung bei Ankunft
+* en-GB: Arrival Delay
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### sorted-history.sched-duration
+
+* de-DE: Geplante Dauer
+* en-GB: Scheduled Duration
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### sorted-history.rt-duration
+
+* de-DE: Tatsächliche Dauer
+* en-GB: Actual Duration
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### sorted-history.desc
+
+* de-DE: Absteigend
+* en-GB: Descending
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### sorted-history.asc
+
+* de-DE: Aufsteigend
+* en-GB: Ascending
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### sorted-history.submit
+
+* de-DE: Anzeigen
+* en-GB: Show
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### sorted-history.date
+
+* de-DE: Datum
+* en-GB: Date
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### sorted-history.trip
+
+* de-DE: Fahrt
+* en-GB: Trip
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### sorted-history.delay
+
+* de-DE: Verspätung
+* en-GB: Delay
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### sorted-history.duration
+
+* de-DE: Dauer
+* en-GB: Duration
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
 
 ## year_in_review.html.ep
 
@@ -2036,7 +2160,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Ziel wählen
 * en-GB: Choose destination
-* fr-FR *missing*
+* fr-FR: Choisir la destination
 * hu-HU: Cél kiválasztása
 * pl-PL: Wybierz cel
 
