@@ -518,6 +518,44 @@ msgstr "Accounts are automatically deleted after a year without activity. You wi
 msgid "register.disclaimer"
 msgstr "Please be aware: Travelynx is a non-commerical personal project and is provided as is. We do not make guarantees in regards to availability of the service or a sudden end of the project."
 
+# sorted_history.html.ep
+
+msgid "sorted-history.header"
+msgstr "High Scores"
+
+msgid "sorted-history.delay-dep"
+msgstr "Departure Delay"
+
+msgid "sorted-history.delay-arr"
+msgstr "Arrival Delay"
+
+msgid "sorted-history.sched-duration"
+msgstr "Scheduled Duration"
+
+msgid "sorted-history.rt-duration"
+msgstr "Actual Duration"
+
+msgid "sorted-history.desc"
+msgstr "Descending"
+
+msgid "sorted-history.asc"
+msgstr "Ascending"
+
+msgid "sorted-history.submit"
+msgstr "Show"
+
+msgid "sorted-history.date"
+msgstr "Date"
+
+msgid "sorted-history.trip"
+msgstr "Trip"
+
+msgid "sorted-history.delay"
+msgstr "Delay"
+
+msgid "sorted-history.duration"
+msgstr "Duration"
+
 # year_in_review.html.ep
 
 msgid "review.header.pre"

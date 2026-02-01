@@ -1422,7 +1422,7 @@ sub sorted_history {
 	my ($self) = @_;
 
 	if ( not $self->param('sort_by') ) {
-		$self->param( sort_by => 'delay_arr' );
+		$self->param( sort_by => 'delay-arr' );
 	}
 	if ( not $self->param('sort_order') ) {
 		$self->param( sort_order => 'desc' );
@@ -1433,10 +1433,10 @@ sub sorted_history {
 
 	my $key = 'delay_arr';
 	if ( $sort_by
-		=~ m{ ^ (?: delay_arr | delay_dep | sched_duration | rt_duration ) $ }x
+		=~ m{ ^ (?: delay-arr | delay-dep | sched-duration | rt-duration ) $ }x
 	  )
 	{
-		$key = $sort_by;
+		$key = $sort_by =~ tr{-}{_}r;
 	}
 
 	my @journeys = $self->journeys->get(
