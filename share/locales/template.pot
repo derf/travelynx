@@ -266,6 +266,17 @@ msgstr ""
 msgid "changelog.2-18.2"
 msgstr ""
 
+msgid "changelog.2-19.1"
+msgstr ""
+
+msgid "changelog.2-19.2"
+msgstr ""
+
+# history.html.ep
+
+msgid "history.high-scores"
+msgstr ""
+
 # history_by_year.html.ep
 msgid "history.review"
 msgstr ""
@@ -510,6 +521,44 @@ msgid "register.account-deletion"
 msgstr ""
 
 msgid "register.disclaimer"
+msgstr ""
+
+# sorted_history.html.ep
+
+msgid "sorted-history.header"
+msgstr ""
+
+msgid "sorted-history.delay-dep"
+msgstr ""
+
+msgid "sorted-history.delay-arr"
+msgstr ""
+
+msgid "sorted-history.sched-duration"
+msgstr ""
+
+msgid "sorted-history.rt-duration"
+msgstr ""
+
+msgid "sorted-history.desc"
+msgstr ""
+
+msgid "sorted-history.asc"
+msgstr ""
+
+msgid "sorted-history.submit"
+msgstr ""
+
+msgid "sorted-history.date"
+msgstr ""
+
+msgid "sorted-history.trip"
+msgstr ""
+
+msgid "sorted-history.delay"
+msgstr ""
+
+msgid "sorted-history.duration"
 msgstr ""
 
 # year_in_review.html.ep

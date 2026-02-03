@@ -266,6 +266,17 @@ msgstr "L'enregistrement et les suggestions de correspondances sont maintenant d
 msgid "changelog.2-18.2"
 msgstr "Le calcul de la distance totale dans l'historique inclut maintenant les voyages qui n'ont pas les données de trajet appropriées (par exemple où seule la distance à vol d'oiseau est disponible). Avant cette version, de tels trajets étaient ignorés lors du calcul des statistiques mensuelles et annuelles"
 
+msgid "changelog.2-19.1"
+msgstr "Meilleurs scores de tous les enregistrements passés triés par retard ou durée. Plus d'attributs pourraient suivre."
+
+msgid "changelog.2-19.2"
+msgstr "Ajustements mineurs de durée de vie pour le backend historique IRIS : les données de carte devraient être maintenant disponibles dans quelques cas supplémentaires par rapport à précédemment."
+
+# history.html.ep
+
+msgid "history.high-scores"
+msgstr "Par attribut"
+
 # history_by_year.html.ep
 msgid "history.review"
 msgstr "Résumé"
@@ -303,7 +314,7 @@ msgid "journey.beeline.pre"
 msgstr "("
 
 msgid "journey.beeline.post"
-msgstr "à vol d'oiseau)"
+msgstr " à vol d'oiseau)"
 
 #, short
 msgid "journey.speed"
@@ -511,6 +522,44 @@ msgstr "Les comptes sont automatiquement supprimés après un an d'inactivité. 
 
 msgid "register.disclaimer"
 msgstr "Veuillez noter que : Travelynx est un projet personnel non commercial et fourni tel quel. Nous n'offrons pas de garantie par rapport à la disponibilité du service ou une fin inopinée du projet."
+
+# sorted_history.html.ep
+
+msgid "sorted-history.header"
+msgstr "Meilleurs Scores"
+
+msgid "sorted-history.delay-dep"
+msgstr "Retard au départ"
+
+msgid "sorted-history.delay-arr"
+msgstr "Retard à l'arrivée"
+
+msgid "sorted-history.sched-duration"
+msgstr "Durée prévue"
+
+msgid "sorted-history.rt-duration"
+msgstr "Durée réelle"
+
+msgid "sorted-history.desc"
+msgstr "Descendant"
+
+msgid "sorted-history.asc"
+msgstr "Ascendant"
+
+msgid "sorted-history.submit"
+msgstr "Afficher"
+
+msgid "sorted-history.date"
+msgstr "Date"
+
+msgid "sorted-history.trip"
+msgstr "Voyage"
+
+msgid "sorted-history.delay"
+msgstr "Retard"
+
+msgid "sorted-history.duration"
+msgstr "Durée"
 
 # year_in_review.html.ep
 
