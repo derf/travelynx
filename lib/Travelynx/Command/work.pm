@@ -36,10 +36,11 @@ sub run {
 		$self->app->log->debug("Removed ${num_incomplete} incomplete checkins");
 	}
 
-	my $errors             = 0;
-	my $backend_issues     = 0;
-	my $rate_limit_counts  = 0;
 	my $dbris_rate_limited = 0;
+	my $backend_issues     = 0;
+	my $errors             = 0;
+	my $rate_limit_counts  = 0;
+	my $skipped            = 0;
 
 	for my $entry ( $self->app->in_transit->get_all_active ) {
 
@@ -47,7 +48,8 @@ sub run {
 			and DateTime->now( time_zone => 'Europe/Berlin' )->epoch
 			- $now->epoch > $timeout )
 		{
-			last;
+			$skipped += 1;
+			next;
 		}
 
 		if ( -e 'maintenance' ) {
@@ -877,12 +879,12 @@ sub run {
 		if ( $self->app->mode eq 'development' ) {
 			$self->app->log->debug( 'POST '
 				  . $self->app->config->{influxdb}->{url}
-				  . " worker${tags} runtime_seconds=${worker_duration},errors=${errors},backend_errors=${backend_issues},ratelimit_count=${rate_limit_counts}"
+				  . " worker${tags} runtime_seconds=${worker_duration},errors=${errors},backend_errors=${backend_issues},ratelimit_count=${rate_limit_counts},skipped=${skipped}"
 			);
 		}
 		else {
 			$self->app->ua->post_p( $self->app->config->{influxdb}->{url},
-"worker${tags} runtime_seconds=${worker_duration},errors=${errors},backend_errors=${backend_issues},ratelimit_count=${rate_limit_counts}"
+"worker${tags} runtime_seconds=${worker_duration},errors=${errors},backend_errors=${backend_issues},ratelimit_count=${rate_limit_counts},skipped=${skipped}"
 			)->wait;
 		}
 	}
