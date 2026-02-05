@@ -18,7 +18,7 @@ has description => 'Update real-time data of active journeys';
 has usage => sub { shift->extract_usage };
 
 sub run {
-	my ( $self, $backend ) = @_;
+	my ( $self, $backend, $timeout ) = @_;
 
 	my $now              = DateTime->now( time_zone => 'Europe/Berlin' );
 	my $checkin_deadline = $now->clone->subtract( hours => 48 );
@@ -42,6 +42,13 @@ sub run {
 	my $dbris_rate_limited = 0;
 
 	for my $entry ( $self->app->in_transit->get_all_active ) {
+
+		if ( $timeout
+			and DateTime->now( time_zone => 'Europe/Berlin' )->epoch
+			- $now->epoch > $timeout )
+		{
+			last;
+		}
 
 		if ( -e 'maintenance' ) {
 			$self->app->log->debug('work: "maintenance" file found, aborting');
