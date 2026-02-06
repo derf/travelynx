@@ -3,7 +3,7 @@
 	<div class="card">
 		<div class="card-content">
 			<i class="material-icons right sync-failed-marker grey-text" style="display: none;">cloud_off</i>
-			% if ($journey->{last_update_delta} and $journey->{last_update_delta} > 300) {
+			% if ($journey->{last_update_delta} and $journey->{last_update_delta} > 400) {
 				<i class="material-icons right grey-text">sync_problem</i>
 			% }
 			% if (not $journey->{arr_name}) {
@@ -274,7 +274,7 @@
 					% }
 				</p>
 			% }
-			% if ($journey->{last_update_delta} and $journey->{last_update_delta} > 300) {
+			% if ($journey->{last_update_delta} and $journey->{last_update_delta} > 400) {
 				<p style="margin-top: 2em;">
 					<i class="material-icons left">warning</i>
 					%= L('status.realtime-old.1')
