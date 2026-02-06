@@ -48,7 +48,7 @@ sub get_agent {
 		$agent->proxy->https($proxy);
 	}
 
-	return $agent;
+	return $agent->request_timeout(15);
 }
 
 sub geosearch_p {
@@ -122,7 +122,7 @@ sub get_departures_p {
 		num_vias       => 42,
 		cache          => $self->{realtime_cache},
 		promise        => 'Mojo::Promise',
-		user_agent     => $self->get_agent->request_timeout(10),
+		user_agent     => $self->get_agent,
 		developer_mode => $self->{log}->is_level('debug') ? 1 : 0,
 	);
 }
@@ -174,7 +174,7 @@ sub get_journey_p {
 		with_polyline  => $opt{with_polyline},
 		cache          => $self->{realtime_cache},
 		promise        => 'Mojo::Promise',
-		user_agent     => $self->get_agent->request_timeout(10),
+		user_agent     => $self->get_agent,
 		developer_mode => $self->{log}->is_level('debug') ? 1 : 0,
 	)->then(
 		sub {
@@ -212,7 +212,7 @@ sub get_wagonorder_p {
 		cache         => $self->{main_cache},
 		failure_cache => $self->{realtime_cache},
 		promise       => 'Mojo::Promise',
-		user_agent    => $self->get_agent->request_timeout(10),
+		user_agent    => $self->get_agent,
 		formation     => {
 			departure    => $opt{datetime},
 			eva          => $opt{eva},
