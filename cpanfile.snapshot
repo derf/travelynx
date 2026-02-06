@@ -985,6 +985,16 @@ DISTRIBUTIONS
       perl 5.008004
       strict 0
       warnings 0
+  Devel-CheckLib-1.16
+    pathname: M/MA/MATTN/Devel-CheckLib-1.16.tar.gz
+    provides:
+      Devel::CheckLib 1.16
+    requirements:
+      Exporter 0
+      ExtUtils::MakeMaker 0
+      File::Spec 0
+      File::Temp 0.16
+      perl 5.004050
   Devel-GlobalDestruction-0.14
     pathname: H/HA/HAARG/Devel-GlobalDestruction-0.14.tar.gz
     provides:
@@ -2714,18 +2724,18 @@ DISTRIBUTIONS
       TimeDate 1.21
     requirements:
       ExtUtils::MakeMaker 0
-  Travel-Status-DE-DBRIS-0.22
-    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.22.tar.gz
+  Travel-Status-DE-DBRIS-0.23
+    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.23.tar.gz
     provides:
-      Travel::Status::DE::DBRIS 0.22
-      Travel::Status::DE::DBRIS::Formation 0.22
-      Travel::Status::DE::DBRIS::Formation::Carriage 0.22
-      Travel::Status::DE::DBRIS::Formation::Group 0.22
-      Travel::Status::DE::DBRIS::Formation::Sector 0.22
-      Travel::Status::DE::DBRIS::Journey 0.22
-      Travel::Status::DE::DBRIS::JourneyAtStop 0.22
-      Travel::Status::DE::DBRIS::Location 0.22
-      Travel::Status::DE::DBRIS::Operators 0.22
+      Travel::Status::DE::DBRIS 0.23
+      Travel::Status::DE::DBRIS::Formation 0.23
+      Travel::Status::DE::DBRIS::Formation::Carriage 0.23
+      Travel::Status::DE::DBRIS::Formation::Group 0.23
+      Travel::Status::DE::DBRIS::Formation::Sector 0.23
+      Travel::Status::DE::DBRIS::Journey 0.23
+      Travel::Status::DE::DBRIS::JourneyAtStop 0.23
+      Travel::Status::DE::DBRIS::Location 0.23
+      Travel::Status::DE::DBRIS::Operators 0.23
     requirements:
       Carp 0
       Class::Accessor 0.16
@@ -2741,19 +2751,20 @@ DISTRIBUTIONS
       Test::Compile 0
       Test::More 0
       Test::Pod 0
+      UUID 0
       perl v5.20.0
-  Travel-Status-DE-HAFAS-6.24
-    pathname: D/DE/DERF/Travel-Status-DE-HAFAS-6.24.tar.gz
+  Travel-Status-DE-HAFAS-6.25
+    pathname: D/DE/DERF/Travel-Status-DE-HAFAS-6.25.tar.gz
     provides:
-      Travel::Status::DE::HAFAS 6.24
-      Travel::Status::DE::HAFAS::Journey 6.24
-      Travel::Status::DE::HAFAS::Location 6.24
-      Travel::Status::DE::HAFAS::Message 6.24
-      Travel::Status::DE::HAFAS::Polyline 6.24
-      Travel::Status::DE::HAFAS::Product 6.24
-      Travel::Status::DE::HAFAS::Services 6.24
-      Travel::Status::DE::HAFAS::Stop 6.24
-      Travel::Status::DE::HAFAS::StopFinder 6.24
+      Travel::Status::DE::HAFAS 6.25
+      Travel::Status::DE::HAFAS::Journey 6.25
+      Travel::Status::DE::HAFAS::Location 6.25
+      Travel::Status::DE::HAFAS::Message 6.25
+      Travel::Status::DE::HAFAS::Polyline 6.25
+      Travel::Status::DE::HAFAS::Product 6.25
+      Travel::Status::DE::HAFAS::Services 6.25
+      Travel::Status::DE::HAFAS::Stop 6.25
+      Travel::Status::DE::HAFAS::StopFinder 6.25
     requirements:
       Carp 0
       Class::Accessor 0.16
@@ -2771,12 +2782,12 @@ DISTRIBUTIONS
       Test::More 0
       Test::Pod 0
       perl v5.14.0
-  Travel-Status-DE-IRIS-2.01
-    pathname: D/DE/DERF/Travel-Status-DE-IRIS-2.01.tar.gz
+  Travel-Status-DE-IRIS-2.02
+    pathname: D/DE/DERF/Travel-Status-DE-IRIS-2.02.tar.gz
     provides:
-      Travel::Status::DE::IRIS 2.01
-      Travel::Status::DE::IRIS::Result 2.01
-      Travel::Status::DE::IRIS::Stations 2.01
+      Travel::Status::DE::IRIS 2.02
+      Travel::Status::DE::IRIS::Result 2.02
+      Travel::Status::DE::IRIS::Stations 2.02
     requirements:
       Carp 0
       Class::Accessor 0
@@ -2955,6 +2966,26 @@ DISTRIBUTIONS
       perl 5.008001
       strict 0
       utf8 0
+      warnings 0
+  UUID-0.37
+    pathname: J/JR/JRM/UUID-0.37.tar.gz
+    provides:
+      UUID 0.37
+    requirements:
+      Carp 0
+      Config 0
+      Devel::CheckLib 1.14
+      DynaLoader 0
+      Exporter 0
+      ExtUtils::MakeMaker 7.06
+      File::Spec 0
+      File::Temp 0.10
+      List::Util 1.29
+      Time::HiRes 0
+      blib 0
+      perl 5.005063
+      strict 0
+      vars 0
       warnings 0
   UUID-Tiny-1.04
     pathname: C/CA/CAUGUSTIN/UUID-Tiny-1.04.tar.gz
