@@ -2,9 +2,9 @@
 
 * de-DE: 100.0% complete (0 missing)
 * en-GB: 100.0% complete (0 missing)
-* fr-FR: 95.1% complete (15 missing)
-* hu-HU: 53.6% complete (141 missing)
-* pl-PL: 61.5% complete (117 missing)
+* fr-FR: 98.4% complete (5 missing)
+* hu-HU: 52.8% complete (146 missing)
+* pl-PL: 60.5% complete (122 missing)
 
 ### 
 
@@ -698,7 +698,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Sortierung vergangener Fahrten nach Verspätung oder Dauer. Weitere Attribute folgen ggf.
 * en-GB: High score of all past checkins sorted by delay or duration. More attributes may follow.
-* fr-FR *missing*
+* fr-FR: Meilleurs scores de tous les enregistrements passés triés par retard ou durée. Plus d'attributs pourraient suivre.
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -706,7 +706,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: IRIS-Backend: Geringfügige Verbesserung der Verfügbarkeit von Kartendaten. Das Backend ist weiterhin abgekündigt und kann jederzeit entfallen.
 * en-GB: Minor life support adjustments for the legacy IRIS backend: map data should now be available in slightly more cases than before.
-* fr-FR *missing*
+* fr-FR: Ajustements mineurs de durée de vie pour le backend historique IRIS : les données de carte devraient être maintenant disponibles dans quelques cas supplémentaires par rapport à précédemment.
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -716,7 +716,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Nach Eigenschaft
 * en-GB: By Attribute
-* fr-FR *missing*
+* fr-FR: Par attribut
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -812,7 +812,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: )
 * en-GB:  as the crow flies)
-* fr-FR: à vol d'oiseau)
+* fr-FR:  à vol d'oiseau)
 * hu-HU: )
 * pl-PL: )
 
@@ -1356,7 +1356,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: High Scores
 * en-GB: High Scores
-* fr-FR *missing*
+* fr-FR: Meilleurs Scores
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1364,7 +1364,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Verspätung bei Abfahrt
 * en-GB: Departure Delay
-* fr-FR *missing*
+* fr-FR: Retard au départ
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1372,7 +1372,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Verspätung bei Ankunft
 * en-GB: Arrival Delay
-* fr-FR *missing*
+* fr-FR: Retard à l'arrivée
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1380,7 +1380,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Geplante Dauer
 * en-GB: Scheduled Duration
-* fr-FR *missing*
+* fr-FR: Durée prévue
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1388,7 +1388,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Tatsächliche Dauer
 * en-GB: Actual Duration
-* fr-FR *missing*
+* fr-FR: Durée réelle
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1396,7 +1396,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Absteigend
 * en-GB: Descending
-* fr-FR *missing*
+* fr-FR: Descendant
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1404,7 +1404,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Aufsteigend
 * en-GB: Ascending
-* fr-FR *missing*
+* fr-FR: Ascendant
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1412,7 +1412,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Anzeigen
 * en-GB: Show
-* fr-FR *missing*
+* fr-FR: Afficher
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1420,7 +1420,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Datum
 * en-GB: Date
-* fr-FR *missing*
+* fr-FR: Date
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1428,7 +1428,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Fahrt
 * en-GB: Trip
-* fr-FR *missing*
+* fr-FR: Voyage
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1436,7 +1436,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Verspätung
 * en-GB: Delay
-* fr-FR *missing*
+* fr-FR: Retard
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -1444,7 +1444,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 
 * de-DE: Dauer
 * en-GB: Duration
-* fr-FR *missing*
+* fr-FR: Durée
 * hu-HU *missing*
 * pl-PL *missing*
 
@@ -2333,6 +2333,46 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * fr-FR: Données temps-réel indisponibles
 * hu-HU: Valós idejű adatok nem állnak rendelkezésre
 * pl-PL: Brak danych w czasie rzeczywistym
+
+### status.realtime-old.1
+
+* de-DE: Echtzeitdaten wurden zuletzt um
+* en-GB: Real time data has last been updated at
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### status.realtime-old.2
+
+* de-DE: Uhr (vor mehr als
+* en-GB: (more than
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### status.realtime-old.3
+
+* de-DE: Minuten) aktualisiert.
+* en-GB: minutes ago).
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### status.realtime-old.cause-dbris
+
+* de-DE: Wahrscheinlich wurde travelynx von bahn.de blockiert.
+* en-GB: Looks like travelynx has been blocked by bahn.de.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
+
+### status.realtime-old.cause-others
+
+* de-DE: Möglicherweise sind Teile von travelynx und/oder das genutzte Backend defekt.
+* en-GB: Parts of travelynx and/or the backend may be defective.
+* fr-FR *missing*
+* hu-HU *missing*
+* pl-PL *missing*
 
 ### status.messages
 
