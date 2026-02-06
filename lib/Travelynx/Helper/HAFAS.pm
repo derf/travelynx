@@ -119,6 +119,9 @@ sub get_tripid_p {
 	if ( $train->type eq 'ECE' ) {
 		$train_desc = 'EC ' . $train->train_no;
 	}
+	if ( $train->type eq 'OE' ) {
+		$train_desc = $train->train_no;
+	}
 	elsif ( grep { $_ eq 'S' } $train->classes ) {
 		$train_desc = 'DB ' . $train->train_no;
 	}
@@ -326,11 +329,16 @@ sub get_route_p {
 				# borders ("Gr" as in "Grenze") are only returned by HAFAS.
 				# They are not stations.
 				my @hafas_stations
-				  = grep { $_ !~ m{(\(Gr\)|\)Gr)$} } @station_list;
+				  = grep { $_ !~ m{(?:\(Gr\)|\)Gr|(?: |/)Staatsgrenze)$} }
+				  @station_list;
 
 				# Manual fixes
 				@hafas_stations
 				  = map { s{ [(]Rheinland[)]}{}r } @hafas_stations;
+				@hafas_stations
+				  = map { s{Lindau [(]Bodensee[)] }{Lindau-}r } @hafas_stations;
+				@hafas_stations
+				  = map { s{ [(]Tiefgeschoß[)]}{}r } @hafas_stations;
 
 				my $iris_stations  = join( '|', @iris_stations );
 				my $hafas_stations = join( '|', @hafas_stations );
