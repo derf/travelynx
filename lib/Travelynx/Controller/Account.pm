@@ -1099,7 +1099,11 @@ sub backend_form {
 			$backend->{name}     = 'IRIS';
 			$backend->{longname} = 'Deutsche Bahn: IRIS-TTS';
 			$backend->{homepage} = 'https://www.bahn.de';
-			$backend->{legacy}   = 1;
+
+			# With the current bahn.de issues, IRIS is kind of the next best
+			# choice... at least in some regards
+			# $backend->{legacy}   = 1;
+			$backend->{recommended} = 1;
 		}
 		elsif ( $backend->{dbris} ) {
 			$type                   = 'DBRIS';

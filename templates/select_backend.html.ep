@@ -45,6 +45,7 @@
 			<h3>Empfohlen</h3>
 				<p style="text-align: justify;">
 					<strong>bahn.de</strong> für Regional- und Fernverkehr in Deutschland.
+					<strong>IRIS</strong> für den Fall, dass bahn.de mal wieder nicht will.
 					<strong>ÖBB</strong> für Nah-, Regional- und Fernverkehr in Österreich sowie Regional- und Fernverkehr in der EU.
 				</p>
 		</div>
@@ -68,9 +69,10 @@
 	% }
 	<div class="row">
 		<div class="col s12">
-			<h3>Experimentell oder abgekündigt</h3>
+			<h3>Experimentell, problematisch oder abgekündigt</h3>
 				<p style="text-align: justify;">
 					Einchecken auf eigene Gefahr.
+					bahn.de ist prinzipiell nutzbar, kann jedoch wegen agressiver Lastkontrolle seitens bahn.de oft erst bei Ankunft am Ziel die Echtzeitdaten aktualisieren.
 				</p>
 		</div>
 	</div>
@@ -89,7 +91,7 @@
 			<strong>ÖBB</strong> liefern Kartendaten und Wagenreihungen für Fernverkehr in Deutschland und Umgebung, jedoch keine Meldungen. Echtzeitdaten sind teilweise verfügbar.
 		</p>
 		<p>
-			<strong>Deutsche Bahn: IRIS-TTS</strong> liefert Echtzeitdaten (nur am Start- und Zielbahnhof), Wagenreihungen und Verspätungsmeldungen für Regional- und Fernverkehr in Deutschland. Kartendaten und Angaben zu Unterwegshalten sind nur teilweise verfügbar. Dieses Backend wird nicht mehr weiterentwickelt. Die zugehörige API wird voraussichtlich im Laufe des Jahres 2025 abgeschaltet.
+			<strong>Deutsche Bahn: IRIS-TTS</strong> liefert Echtzeitdaten (nur am Start- und Zielbahnhof) und Verspätungsmeldungen für Regional- und Fernverkehr in Deutschland. Wagenreihungen, Kartendaten und Angaben zu Unterwegshalten sind nur teilweise verfügbar. Dieses Backend wird nur noch sehr grundlegend weiterentwickelt. Die zugehörige API wird seit einigen Jahren „sehr bald“ abgeschaltet.
 		</p>
 		<p>
 			<strong>Transitous</strong> ist ein Aggregator für eine Vielzahl von Verkehrsunternehmen.

@@ -86,7 +86,7 @@
 			% }
 		</div>
 	</div>
-	% if (not $user->{backend_name}) {
+	% if (0 and not $user->{backend_name}) {
 		<div class="row">
 			<div class="col s12">
 				<div class="card purple white-text">
