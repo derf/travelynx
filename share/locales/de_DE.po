@@ -899,6 +899,21 @@ msgstr "Der automatische Checkout erfolgt spätestens eine halbe Stunde nach der
 msgid "status.realtime-unavailable"
 msgstr "Keine Echtzeitdaten vorhanden"
 
+msgid "status.realtime-old.1"
+msgstr "Echtzeitdaten wurden zuletzt um"
+
+msgid "status.realtime-old.2"
+msgstr "Uhr (vor mehr als"
+
+msgid "status.realtime-old.3"
+msgstr "Minuten) aktualisiert."
+
+msgid "status.realtime-old.cause-dbris"
+msgstr "Wahrscheinlich wurde travelynx von bahn.de blockiert."
+
+msgid "status.realtime-old.cause-others"
+msgstr "Möglicherweise sind Teile von travelynx und/oder das genutzte Backend defekt."
+
 #, service messages related to the trip
 msgid "status.messages"
 msgstr "Meldungen"

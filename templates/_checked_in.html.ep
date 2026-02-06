@@ -275,19 +275,18 @@
 				</p>
 			% }
 			% if ($journey->{last_update_delta} and $journey->{last_update_delta} > 300) {
-				<p class="grey-text" style="margin-top: 2em;">
+				<p style="margin-top: 2em;">
 					<i class="material-icons left">warning</i>
-					Echtzeitdaten wurden zuletzt um
+					%= L('status.realtime-old.1')
 					%= $journey->{last_update}->strftime('%H:%M')
-					Uhr (vor mehr als
+					%= L('status.realtime-old.2')
 					%= int($journey->{last_update_delta} / 60)
-					Minuten) aktualisiert.
+					%= L('status.realtime-old.3')
 					% if ($journey->{is_dbris}) {
-						Wahrscheinlich wurde travelynx vom Backend blockiert.
+						%= L('status.realtime-old.cause-dbris')
 					% }
 					% else {
-						Möglicherweise sind Teile von travelynx und/oder das
-						genutzte Backend defekt.
+						%= L('status.realtime-old.cause-others')
 					% }
 				</p>
 			% }

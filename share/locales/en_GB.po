@@ -896,6 +896,21 @@ msgstr "You will be automatically checked out no less than half an hour after th
 msgid "status.realtime-unavailable"
 msgstr "Real-time data unavailable"
 
+msgid "status.realtime-old.1"
+msgstr "Real time data has last been updated at"
+
+msgid "status.realtime-old.2"
+msgstr "(more than"
+
+msgid "status.realtime-old.3"
+msgstr "minutes ago)."
+
+msgid "status.realtime-old.cause-dbris"
+msgstr "Looks like travelynx has been blocked by bahn.de."
+
+msgid "status.realtime-old.cause-others"
+msgstr "Parts of travelynx and/or the backend may be defective."
+
 #, service messages related to the trip
 msgid "status.messages"
 msgstr "Notifications"
