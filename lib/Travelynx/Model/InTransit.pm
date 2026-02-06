@@ -189,7 +189,8 @@ sub add {
 				route              => $json->encode( \@route ),
 				data               => $json->encode(
 					{
-						rt => $stop->rt_dep ? 1 : 0,
+						rt          => $stop->rt_dep ? 1 : 0,
+						last_update => $now->epoch,
 						%{ $data // {} }
 					}
 				),
@@ -251,7 +252,8 @@ sub add {
 				route              => $json->encode( \@route ),
 				data               => $json->encode(
 					{
-						rt => $stop->{rt_dep} ? 1 : 0,
+						rt          => $stop->{rt_dep} ? 1 : 0,
+						last_update => $now->epoch,
 						%{ $data // {} }
 					}
 				),
@@ -354,7 +356,8 @@ sub add {
 				route              => $json->encode( \@route ),
 				data               => $json->encode(
 					{
-						rt => $stop->{rt_dep} ? 1 : 0,
+						rt          => $stop->{rt_dep} ? 1 : 0,
+						last_update => $now->epoch,
 						%{ $data // {} }
 					}
 				),
@@ -533,6 +536,11 @@ sub postprocess {
 	$ret->{extra_data}         = $ret->{data};
 	$ret->{comment}            = $ret->{user_data}{comment};
 	$ret->{wagongroups}        = $ret->{user_data}{wagongroups};
+
+	if ( $ret->{extra_data}{last_update} ) {
+		$ret->{last_update} = epoch_to_dt( $ret->{extra_data}{last_update} );
+		$ret->{last_update_delta} = $now->epoch - $ret->{last_update}->epoch;
+	}
 
 	if ( $ret->{sched_dep_ts} and $ret->{real_dep_ts} ) {
 		$ret->{dep_delay} = $ret->{real_dep_ts} - $ret->{sched_dep_ts};
@@ -1051,6 +1059,9 @@ sub update_departure_dbris {
 		$ephemeral_data->{rt} = 1;
 	}
 
+	$ephemeral_data->{last_update}
+	  = DateTime->now( time_zone => 'Europe/Berlin' )->epoch;
+
 	$ephemeral_data->{him_msg}  = [];
 	$persistent_data->{him_msg} = [];
 	for my $msg ( $journey->messages ) {
@@ -1108,6 +1119,9 @@ sub update_departure_efa {
 	if ( $stop->rt_dep ) {
 		$ephemeral_data->{rt} = 1;
 	}
+
+	$ephemeral_data->{last_update}
+	  = DateTime->now( time_zone => 'Europe/Berlin' )->epoch;
 
 	# selecting on user_id and train_no avoids a race condition if a user checks
 	# into a new train while we are fetching data for their previous journey. In
@@ -1170,6 +1184,9 @@ sub update_departure_hafas {
 	if ( $stop->{rt_dep} ) {
 		$ephemeral_data->{rt} = 1;
 	}
+
+	$ephemeral_data->{last_update}
+	  = DateTime->now( time_zone => 'Europe/Berlin' )->epoch;
 
 	# selecting on user_id and train_no avoids a race condition if a user checks
 	# into a new train while we are fetching data for their previous journey. In
@@ -1249,6 +1266,9 @@ sub update_arrival_dbris {
 	if ( $stop->{rt_arr} ) {
 		$ephemeral_data->{rt} = 1;
 	}
+
+	$ephemeral_data->{last_update}
+	  = DateTime->now( time_zone => 'Europe/Berlin' )->epoch;
 
 	$ephemeral_data->{him_msg}  = [];
 	$persistent_data->{him_msg} = [];
@@ -1345,6 +1365,9 @@ sub update_arrival_efa {
 	if ( $stop->rt_arr ) {
 		$ephemeral_data->{rt} = 1;
 	}
+
+	$ephemeral_data->{last_update}
+	  = DateTime->now( time_zone => 'Europe/Berlin' )->epoch;
 
 	my @route;
 	for my $j_stop ( $journey->route ) {
@@ -1467,6 +1490,9 @@ sub update_arrival_hafas {
 	if ( $stop->{rt_arr} ) {
 		$ephemeral_data->{rt} = 1;
 	}
+
+	$ephemeral_data->{last_update}
+	  = DateTime->now( time_zone => 'Europe/Berlin' )->epoch;
 
 	my @route;
 	for my $j_stop ( $journey->route ) {

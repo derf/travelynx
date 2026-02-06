@@ -2,7 +2,10 @@
 <div class="autorefresh">
 	<div class="card">
 		<div class="card-content">
-			<i class="material-icons right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
+			<i class="material-icons right sync-failed-marker grey-text" style="display: none;">cloud_off</i>
+			% if ($journey->{last_update_delta} and $journey->{last_update_delta} > 300) {
+				<i class="material-icons right grey-text">sync_problem</i>
+			% }
 			% if (not $journey->{arr_name}) {
 				<span class="card-title center-align"><%= L('status.select-destination') %></span>
 			% }
@@ -268,6 +271,23 @@
 							% }
 							</span>
 						</a>
+					% }
+				</p>
+			% }
+			% if ($journey->{last_update_delta} and $journey->{last_update_delta} > 300) {
+				<p class="grey-text" style="margin-top: 2em;">
+					<i class="material-icons left">warning</i>
+					Echtzeitdaten wurden zuletzt um
+					%= $journey->{last_update}->strftime('%H:%M')
+					Uhr (vor mehr als
+					%= int($journey->{last_update_delta} / 60)
+					Minuten) aktualisiert.
+					% if ($journey->{is_dbris}) {
+						Wahrscheinlich wurde travelynx vom Backend blockiert.
+					% }
+					% else {
+						Möglicherweise sind Teile von travelynx und/oder das
+						genutzte Backend defekt.
 					% }
 				</p>
 			% }
