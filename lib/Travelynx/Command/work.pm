@@ -48,7 +48,7 @@ sub run {
 			and DateTime->now( time_zone => 'Europe/Berlin' )->epoch
 			- $now->epoch > $timeout )
 		{
-			if ( not $backend or $enry->{"is_${backend}"} ) {
+			if ( not $backend or $entry->{"is_${backend}"} ) {
 				$skipped += 1;
 			}
 			next;
