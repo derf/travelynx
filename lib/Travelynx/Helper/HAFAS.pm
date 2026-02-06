@@ -10,7 +10,8 @@ use 5.020;
 use utf8;
 
 use DateTime;
-use Encode qw(decode);
+use Encode     qw(decode);
+use List::Util qw(max);
 use JSON;
 use Mojo::Promise;
 use Mojo::UserAgent;
@@ -112,8 +113,13 @@ sub get_tripid_p {
 
 	my $train      = $opt{train};
 	my $train_desc = $train->type . ' ' . $train->train_no;
+	my $old_desc   = $train_desc;
+
 	$train_desc =~ s{^- }{};
-	if ( grep { $_ eq 'S' } $train->classes ) {
+	if ( $train->type eq 'ECE' ) {
+		$train_desc = 'EC ' . $train->train_no;
+	}
+	elsif ( grep { $_ eq 'S' } $train->classes ) {
 		$train_desc = 'DB ' . $train->train_no;
 	}
 	elsif ( grep { $_ eq 'N' } $train->classes or not scalar $train->classes ) {
@@ -142,13 +148,15 @@ sub get_tripid_p {
 			my @results = $hafas->results;
 
 			if ( not @results ) {
-				$self->{log}->debug("get_tripid_p($train_desc): no results");
+				$self->{log}
+				  ->debug("get_tripid_p($old_desc -> $train_desc): no results");
 				$promise->reject(
 					"journeyMatch($train_desc) returned no results");
 				return;
 			}
 
-			$self->{log}->debug("get_tripid_p($train_desc): success");
+			$self->{log}
+			  ->debug("get_tripid_p($old_desc -> $train_desc): success");
 
 			my $result = $results[0];
 			if ( @results > 1 ) {
@@ -166,7 +174,8 @@ sub get_tripid_p {
 	)->catch(
 		sub {
 			my ($err) = @_;
-			$self->{log}->debug("get_tripid_p($train_desc): error $err");
+			$self->{log}
+			  ->debug("get_tripid_p($old_desc -> $train_desc): error $err");
 			$promise->reject($err);
 			return;
 		}
@@ -312,12 +321,19 @@ sub get_route_p {
 							[ $coord->{lon}, $coord->{lat} ] );
 					}
 				}
-				my $iris_stations = join( '|', $opt{train}->route );
+				my @iris_stations = $opt{train}->route;
 
-				# borders (Gr" as in "Grenze") are only returned by HAFAS.
+				# borders ("Gr" as in "Grenze") are only returned by HAFAS.
 				# They are not stations.
-				my $hafas_stations
-				  = join( '|', grep { $_ !~ m{(\(Gr\)|\)Gr)$} } @station_list );
+				my @hafas_stations
+				  = grep { $_ !~ m{(\(Gr\)|\)Gr)$} } @station_list;
+
+				# Manual fixes
+				@hafas_stations
+				  = map { s{ [(]Rheinland[)]}{}r } @hafas_stations;
+
+				my $iris_stations  = join( '|', @iris_stations );
+				my $hafas_stations = join( '|', @hafas_stations );
 
 				if ( $iris_stations eq $hafas_stations
 					or index( $hafas_stations, $iris_stations ) != -1 )
@@ -333,6 +349,18 @@ sub get_route_p {
 						  . $opt{train}->line
 						  . ": IRIS route does not agree with HAFAS route: $iris_stations != $hafas_stations"
 					);
+					for my $i ( 0 .. max( $#iris_stations, $#hafas_stations ) )
+					{
+						my $iris  = $iris_stations[$i]  // q{};
+						my $hafas = $hafas_stations[$i] // q{};
+						$self->{log}->debug(
+							sprintf(
+								'Entry %02d: %20s %s %20s',
+								$i,                            $iris,
+								$iris eq $hafas ? '==' : '<>', $hafas
+							)
+						);
+					}
 				}
 			}
 
