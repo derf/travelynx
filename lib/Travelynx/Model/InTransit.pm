@@ -711,8 +711,14 @@ sub get_timeline {
 sub get_all_active {
 	my ( $self, %opt ) = @_;
 	my $db = $opt{db} // $self->{pg}->db;
-	return $db->select( 'in_transit_str', '*', { cancelled => 0 } )
-	  ->hashes->each;
+
+	my @res = $db->select(
+		'in_transit_str', '*',
+		{ cancelled => 0 },
+		{ -asc      => 'real_arr_ts' }
+	)->hashes->each;
+
+	return @res;
 }
 
 sub get_checkout_ids {
