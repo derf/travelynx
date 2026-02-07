@@ -119,7 +119,7 @@ sub get_tripid_p {
 	if ( $train->type eq 'ECE' ) {
 		$train_desc = 'EC ' . $train->train_no;
 	}
-	if ( $train->type eq 'OE' ) {
+	elsif ( $train->type =~ m{ ^ NBE | OE }x ) {
 		$train_desc = $train->train_no;
 	}
 	elsif ( grep { $_ eq 'S' } $train->classes ) {
