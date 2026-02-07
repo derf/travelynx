@@ -709,14 +709,33 @@ sub startup {
 						return;
 					}
 
+					my @route = $self->iris->route_diff($train);
+
+					# IRIS does not provide EVA IDs and lat/lon data for the route.
+					# In most cases, we can later on add those via ÖBB HAFAS.
+					# In case that does not work: see if our database can help.
+					for my $stop (@route) {
+						if (
+							my $stop_data = $self->stations->get_by_name(
+								$stop->[0], iris => 1
+							)
+						  )
+						{
+							$stop->[1]      = $stop_data->{eva};
+							$stop->[2]{lat} = $stop_data->{lat};
+							$stop->[2]{lon} = $stop_data->{lon};
+						}
+						say $stop->[0];
+					}
+
 					eval {
 						$self->in_transit->add(
 							uid           => $uid,
 							db            => $db,
 							departure_eva => $eva,
 							train         => $train,
-							route      => [ $self->iris->route_diff($train) ],
-							backend_id =>
+							route         => \@route,
+							backend_id    =>
 							  $self->stations->get_backend_id( iris => 1 ),
 						);
 					};
