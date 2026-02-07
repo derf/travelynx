@@ -2782,12 +2782,12 @@ DISTRIBUTIONS
       Test::More 0
       Test::Pod 0
       perl v5.14.0
-  Travel-Status-DE-IRIS-2.02
-    pathname: D/DE/DERF/Travel-Status-DE-IRIS-2.02.tar.gz
+  Travel-Status-DE-IRIS-2.03
+    pathname: D/DE/DERF/Travel-Status-DE-IRIS-2.03.tar.gz
     provides:
-      Travel::Status::DE::IRIS 2.02
-      Travel::Status::DE::IRIS::Result 2.02
-      Travel::Status::DE::IRIS::Stations 2.02
+      Travel::Status::DE::IRIS 2.03
+      Travel::Status::DE::IRIS::Result 2.03
+      Travel::Status::DE::IRIS::Stations 2.03
     requirements:
       Carp 0
       Class::Accessor 0
