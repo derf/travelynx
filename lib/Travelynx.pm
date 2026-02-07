@@ -2392,10 +2392,11 @@ sub startup {
 				my $sd = $station->[2]{sched_dep};
 				my $rd = $station->[2]{rt_dep} || $station->[2]{sched_dep};
 
-				$station_desc .= $sa ? $sa->strftime(';%s') : ';0';
-				$station_desc .= $ra ? $ra->strftime(';%s') : ';0';
-				$station_desc .= $sd ? $sd->strftime(';%s') : ';0';
-				$station_desc .= $rd ? $rd->strftime(';%s') : ';0';
+				$station_desc .= $sa ? $sa->strftime(';%s')        : ';0';
+				$station_desc .= $ra ? $ra->strftime(';%s')        : ';0';
+				$station_desc .= $sd ? $sd->strftime(';%s')        : ';0';
+				$station_desc .= $rd ? $rd->strftime(';%s')        : ';0';
+				$station_desc .= $station->[2]{isCancelled} ? ';1' : ';0';
 
 				push( @route, $station_desc );
 			}

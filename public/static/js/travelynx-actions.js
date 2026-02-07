@@ -41,7 +41,7 @@ function upd_journey_data() {
 			j_stops = [];
 			for (var stop_id in stops) {
 				var stopdata = stops[stop_id].split(';');
-				for (var i = 1; i < 5; i++) {
+				for (var i = 1; i < 6; i++) {
 					stopdata[i] = parseInt(stopdata[i]);
 				}
 				j_stops.push(stopdata);
@@ -151,7 +151,7 @@ function tvly_update_timeline() {
 	});
 }
 function tvly_journey_progress() {
-	var now = Date.now() / 1000;
+	const now = Date.now() / 1000;
 	var progress = 0;
 	if (j_duration > 0) {
 		progress = 1 - ((j_arrival - now) / j_duration);
@@ -164,21 +164,28 @@ function tvly_journey_progress() {
 		$('.progress .determinate').css('width', (progress * 100) + '%');
 
 		for (stop in j_stops) {
-			var stop_name = j_stops[stop][0];
-			var sched_arr = j_stops[stop][1];
-			var rt_arr = j_stops[stop][2];
-			var sched_dep = j_stops[stop][3];
-			var rt_dep = j_stops[stop][4];
+			const stop_name = j_stops[stop][0];
+			const sched_arr = j_stops[stop][1];
+			const rt_arr = j_stops[stop][2];
+			const sched_dep = j_stops[stop][3];
+			const rt_dep = j_stops[stop][4];
+			const is_cancelled = j_stops[stop][5];
 			if (stop_name == j_dest) {
 				$('.next-stop').html('');
 				break;
 			}
 			if ((rt_arr != 0) && (rt_arr - now > 0)) {
-				$('.next-stop').html(stop_name + '<br/>' + hhmm(rt_arr) + odelay(sched_arr, rt_arr));
+				if (is_cancelled) {
+					$('.next-stop').html(stop_name + '<br/>entfällt');
+				} else {
+					$('.next-stop').html(stop_name + '<br/>' + hhmm(rt_arr) + odelay(sched_arr, rt_arr));
+				}
 				break;
 			}
 			if ((rt_dep != 0) && (rt_dep - now > 0)) {
-				if (rt_arr != 0) {
+				if (is_cancelled) {
+					$('.next-stop').html(stop_name + '<br/>entfällt');
+				} else if (rt_arr != 0) {
 					$('.next-stop').html(stop_name + '<br/>' + hhmm(rt_arr) + ' → ' + hhmm(rt_dep) + odelay(sched_dep, rt_dep));
 				} else {
 					$('.next-stop').html(stop_name + '<br/>' + hhmm(rt_dep) + odelay(sched_dep, rt_dep));
