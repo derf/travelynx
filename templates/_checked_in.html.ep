@@ -276,7 +276,7 @@
 			% }
 			% if ($journey->{last_update_delta} and $journey->{last_update_delta} > 400) {
 				<p style="margin-top: 2em;">
-					<i class="material-icons left">warning</i>
+					<i class="material-icons left">sync_problem</i>
 					%= L('status.realtime-old.1')
 					%= $journey->{last_update}->strftime('%H:%M')
 					%= L('status.realtime-old.2')
