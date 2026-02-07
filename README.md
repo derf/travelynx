@@ -57,7 +57,7 @@ ref in travelynx.conf if you are using a fork with custom changes.
 
 Mirrors of the travelynx repository are maintained at the following locations:
 
-* [Chaosdorf](https://chaosdorf.de/git/derf/travelynx)
+* [Chaosdorf](https://git.chaosdorf.de/derf/travelynx)
 * [Codeberg](https://codeberg.org/derf/travelynx)
 * [Finalrewind](https://git.finalrewind.org/derf/travelynx)
 * [GitHub](https://github.com/derf/travelynx)
