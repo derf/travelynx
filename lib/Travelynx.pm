@@ -725,7 +725,6 @@ sub startup {
 							$stop->[2]{lat} = $stop_data->{lat};
 							$stop->[2]{lon} = $stop_data->{lon};
 						}
-						say $stop->[0];
 					}
 
 					eval {
