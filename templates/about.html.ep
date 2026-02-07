@@ -2,8 +2,8 @@
 	<div class="col s12">
 		<a href="https://finalrewind.org/projects/travelynx">travelynx</a> v<%= stash('version') // '???' %><br/>
 		<%= L('about.developed-by.lead') %> <a href="https://finalrewind.org">derf</a>
-		<%= L('about.developed-by.and') %> <a href="https://github.com/derf/travelynx/graphs/contributors"><%= L('about.developed-by.others') %></a> <%= L('about.developed-by.tail') %> <%= L('about.developed-by.tail') %><br/>
-		<a href="<%= app->config->{ref}{source} // 'https://git.finalrewind.org/travelynx' %>"><%= L('about.source-code') %></a> <%= L('about.licence-agplv3') %><br/><br/>
+		<%= L('about.developed-by.and') %> <a href="https://git.finalrewind.org/derf/travelynx/activity/contributors"><%= L('about.developed-by.others') %></a> <%= L('about.developed-by.tail') %> <%= L('about.developed-by.tail') %><br/>
+		<a href="<%= app->config->{ref}{source} // 'https://git.finalrewind.org/derf/travelynx' %>"><%= L('about.source-code') %></a> <%= L('about.licence-agplv3') %><br/><br/>
 		<%= L('about.data-sources') %>:
 		<a href="https://finalrewind.org/projects/Travel-Status-DE-DBRIS/">Travel::Status::DE::DBRIS</a>
 		v<%= $Travel::Status::DE::DBRIS::VERSION %>,
