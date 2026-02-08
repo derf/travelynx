@@ -119,13 +119,17 @@ sub get_tripid_p {
 	if ( $train->type eq 'ECE' ) {
 		$train_desc = 'EC ' . $train->train_no;
 	}
-	elsif ( $train->type =~ m{ ^ NBE | OE }x ) {
+	elsif ( $train->type
+		=~ m{ ^ (?: ABR | ag | ALX | EB | MRB | NBE | STB | TLX | OE ) $ }x )
+	{
 		$train_desc = $train->train_no;
 	}
 	elsif ( grep { $_ eq 'S' } $train->classes ) {
 		$train_desc = 'DB ' . $train->train_no;
 	}
-	elsif ( grep { $_ eq 'N' } $train->classes or not scalar $train->classes ) {
+	elsif ( ( grep { $_ eq 'N' } $train->classes or not scalar $train->classes )
+		and $train->type ne 'FLX' )
+	{
 		$train_desc = $train->train_no;
 	}
 
