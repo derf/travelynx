@@ -328,9 +328,10 @@ sub get_route_p {
 
 				# borders ("Gr" as in "Grenze") are only returned by HAFAS.
 				# They are not stations.
-				my @hafas_stations
-				  = grep { $_ !~ m{(?:\(Gr\)|\)Gr|(?: |/)Staatsgrenze)$} }
-				  @station_list;
+				my @hafas_stations = grep {
+					$_
+					  !~ m{(?:\(Gr\)|\)Gr|(?: |/)Staatsgrenze|Granica panstwa)$}
+				} @station_list;
 
 				# Manual fixes
 				@hafas_stations
