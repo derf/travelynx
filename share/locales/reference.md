@@ -140,7 +140,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: weeks
 * fr-FR: semaines
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: tygodni
 
 ### LT.week
 
@@ -148,7 +148,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: week
 * fr-FR: semaine
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: tydzień
 
 ### LT.days
 
@@ -156,7 +156,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: days
 * fr-FR: jours
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: dni
 
 ### LT.day
 
@@ -164,7 +164,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: day
 * fr-FR: jour
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: dzień
 
 ### LT.hours
 
@@ -172,7 +172,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: hours
 * fr-FR: heures
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: godzin
 
 ### LT.hour
 
@@ -180,7 +180,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: hour
 * fr-FR: heure
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: godzina
 
 ### LT.minutes
 
@@ -188,7 +188,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: minutes
 * fr-FR: minutes
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: minut
 
 ### LT.minute
 
@@ -196,7 +196,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: minute
 * fr-FR: minute
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: minuta
 
 ### LT.zero-minutes
 
@@ -204,7 +204,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: 0 minutes
 * fr-FR: 0 minutes
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: 0 minut
 
 ### LT.final-and
 
@@ -212,7 +212,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: , and
 * fr-FR: , et
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL:  i
 
 ### LT.and
 
@@ -220,7 +220,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  and
 * fr-FR:  et
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL:  i
 
 ## Templates
 
@@ -684,7 +684,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Checkin and connection suggestions are now available again for DBRIS, EFA, and IRIS backends. HAFAS backends lack the required station board data. MOTIS backends may lack the required data as well.
 * fr-FR: L'enregistrement et les suggestions de correspondances sont maintenant disponibles à nouveau pour les backends DBRIS, EFA et IRIS. Les backends HAFAS n'ont pas les données de tableau de station requises. Les backends MOTIS backends peuvent également ne pas avoir ces données.
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Propozycje check-inów i połączen są znów dostępne dla backendów DBRIS, EFA i IRIS. W przypadku backendów HAFAS brakuje potrzebnych danych w tabeli odjazdów. W przypadku backendów MOTIS dane też mogą być niedostępne.
 
 ### changelog.2-18.2
 
@@ -692,7 +692,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Total distance calculation in the history now includes trips that lack appropriate route data (i.e., where only beeline distance / distance as the crow flies is available). Before this release, such trips were ignored when computing monthly and yearly statistics.
 * fr-FR: Le calcul de la distance totale dans l'historique inclut maintenant les voyages qui n'ont pas les données de trajet appropriées (par exemple où seule la distance à vol d'oiseau est disponible). Avant cette version, de tels trajets étaient ignorés lors du calcul des statistiques mensuelles et annuelles
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Przy obliczaniu tras podróży dla przejazdów z przeszłości uwzględniane są teraz również przejazdy z niewystarczającymi danymi (czyli te, dla których dostępna jest wyłącznie odległość w linii prostej). Do tej pory były one pomijane w statystykach miesięcznych i rocznych.
 
 ### changelog.2-19.1
 
@@ -700,7 +700,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: High score of all past checkins sorted by delay or duration. More attributes may follow.
 * fr-FR: Meilleurs scores de tous les enregistrements passés triés par retard ou durée. Plus d'attributs pourraient suivre.
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Sortowanie poprzednich przejazdów według opóźnienia lub czasu trwania. W razie możliwości dodane zostaną kolejne atrybuty.
 
 ### changelog.2-19.2
 
@@ -708,7 +708,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Minor life support adjustments for the legacy IRIS backend: map data should now be available in slightly more cases than before.
 * fr-FR: Ajustements mineurs de durée de vie pour le backend historique IRIS : les données de carte devraient être maintenant disponibles dans quelques cas supplémentaires par rapport à précédemment.
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Backend IRIS: Nieznaczna poprawa dostępności danych mapowych. Backend nadal jest wypowiedziany i może zostać wycofany w dowolnym momencie.
 
 ## history.html.ep
 
@@ -718,7 +718,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: By Attribute
 * fr-FR: Par attribut
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Według kryteriów
 
 ## history_by_year.html.ep
 
@@ -728,7 +728,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Review
 * fr-FR: Résumé
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Podsumowanie
 
 ## journey.html.ep
 

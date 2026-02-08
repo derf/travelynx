@@ -46,6 +46,43 @@ msgid "header.error"
 msgstr "Błąd"
 
 #
+# LT (localized duration)
+#
+
+msgid "LT.weeks"
+msgstr "tygodni"
+
+msgid "LT.week"
+msgstr "tydzień"
+
+msgid "LT.days"
+msgstr "dni"
+
+msgid "LT.day"
+msgstr "dzień"
+
+msgid "LT.hours"
+msgstr "godzin"
+
+msgid "LT.hour"
+msgstr "godzina"
+
+msgid "LT.minutes"
+msgstr "minut"
+
+msgid "LT.minute"
+msgstr "minuta"
+
+msgid "LT.zero-minutes"
+msgstr "0 minut"
+
+msgid "LT.final-and"
+msgstr " i"
+
+msgid "LT.and"
+msgstr " i"
+
+#
 # Templates
 #
 
@@ -222,6 +259,28 @@ msgstr "Poprawne obliczanie i wizualizacja trasy przejazdu dla linii okrężnych
 
 msgid "changelog.2-17.1"
 msgstr "Dane mapy („Polylines”) dla pojedynczych przejazdów można teraz eksportować i importować jako pliki GPX. Dzięki temu dane mapy można później poprawić lub uzupełnić. Format danych GPX jest kompatybilny z BRouter-Web."
+
+msgid "changelog.2-18.1"
+msgstr "Propozycje check-inów i połączen są znów dostępne dla backendów DBRIS, EFA i IRIS. W przypadku backendów HAFAS brakuje potrzebnych danych w tabeli odjazdów. W przypadku backendów MOTIS dane też mogą być niedostępne."
+
+msgid "changelog.2-18.2"
+msgstr "Przy obliczaniu tras podróży dla przejazdów z przeszłości uwzględniane są teraz również przejazdy z niewystarczającymi danymi (czyli te, dla których dostępna jest wyłącznie odległość w linii prostej). Do tej pory były one pomijane w statystykach miesięcznych i rocznych."
+
+msgid "changelog.2-19.1"
+msgstr "Sortowanie poprzednich przejazdów według opóźnienia lub czasu trwania. W razie możliwości dodane zostaną kolejne atrybuty."
+
+msgid "changelog.2-19.2"
+msgstr "Backend IRIS: Nieznaczna poprawa dostępności danych mapowych. Backend nadal jest wypowiedziany i może zostać wycofany w dowolnym momencie."
+
+# history.html.ep
+
+msgid "history.high-scores"
+msgstr "Według kryteriów"
+
+# history_by_year.html.ep
+
+msgid "history.review"
+msgstr "Podsumowanie"
 
 # journey.html.ep
 
