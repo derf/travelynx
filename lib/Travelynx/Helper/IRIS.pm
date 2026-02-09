@@ -99,6 +99,10 @@ sub get_departures_p {
 	my $lookahead    = $opt{lookahead}    // 30;
 	my $with_related = $opt{with_related} // 0;
 
+	my $datetime
+	  = ( $opt{datetime} // DateTime->now( time_zone => 'Europe/Berlin' ) )
+	  ->subtract( minutes => $lookbehind );
+
 	# Berlin Hbf exists twice:
 	# - BLS / 8011160
 	# - BL / 8098160 (formerly "Berlin Hbf (tief)")
@@ -125,10 +129,9 @@ sub get_departures_p {
 			realtime_cache => $self->{realtime_cache},
 			keep_transfers => 1,
 			lookbehind     => 20,
-			datetime       => DateTime->now( time_zone => 'Europe/Berlin' )
-			  ->subtract( minutes => $lookbehind ),
-			lookahead   => $lookbehind + $lookahead,
-			lwp_options => {
+			datetime       => $datetime,
+			lookahead      => $lookbehind + $lookahead,
+			lwp_options    => {
 				timeout => 10,
 				agent   => 'travelynx/'
 				  . $self->{version}
@@ -212,9 +215,9 @@ sub get_connections_p {
 
 	$self->get_departures_p(
 		station      => $opt{station},
-		timestamp    => $opt{timestamp},
+		datetime     => $opt{timestamp},
 		lookbehind   => 0,
-		lookahead    => 60,
+		lookahead    => 90,
 		with_related => 1,
 	)->then(
 		sub {
