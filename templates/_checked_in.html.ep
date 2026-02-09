@@ -384,7 +384,7 @@
 	% if ($journey->{arr_name} and @{$journey->{extra_data}{him_msg} // []}) {
 		<div class="card" style="margin-top: <%= scalar @{stash('timeline') // []} ? '1.5rem' : '3em' %>;">
 			<div class="card-content">
-				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
+				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">cloud_off</i>
 				<span class="card-title"><%= L('status.messages') %></span>
 				% if (@{$journey->{extra_data}{him_msg} // []}) {
 					<p style="margin-bottom: 2ex;">
@@ -415,7 +415,7 @@
 	% if ($journey->{arr_name}) {
 		<div class="card" style="margin-top: 3em;">
 			<div class="card-content">
-				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
+				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">cloud_off</i>
 				<span class="card-title"><%= L('status.map') %></span>
 				<div id="map" style="height: 70vh;">
 				</div>
@@ -425,7 +425,7 @@
 		% if ($journey->{extra_data}{manual}) {
 			<div class="card" style="margin-top: 3em;">
 				<div class="card-content">
-					<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
+					<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">cloud_off</i>
 					<span class="card-title">Manueller Checkin</span>
 				</div>
 				<div class="card-action">
@@ -438,7 +438,7 @@
 		% else {
 			<div class="card" style="margin-top: 3em;">
 				<div class="card-content">
-					<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
+					<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">cloud_off</i>
 					<span class="card-title"><%= L('status.change-destination') %></span>
 					<div class="targetlist">
 					% for my $station (@{$journey->{route_after}}) {
