@@ -120,7 +120,7 @@ sub get_tripid_p {
 		$train_desc = 'EC ' . $train->train_no;
 	}
 	elsif ( $train->type
-		=~ m{ ^ (?: ABR | ag | ALX | BRB | EB | ERB | HLB | MRB | NBE | STB | TLX | OE | VIA ) $ }x
+		=~ m{ ^ (?: ABR | ag | ALX | AVG | BRB | EB | ERB | HLB | MRB | NBE | STB | TLX | OE | VIA ) $ }x
 	  )
 	{
 		$train_desc = $train->train_no;
