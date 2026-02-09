@@ -747,7 +747,8 @@ sub startup {
 
 					# mustn't be called during a transaction
 					if ( not $opt{in_transaction} ) {
-						$self->add_route_timestamps( $uid, $train, 1 );
+
+						# $self->add_route_timestamps( uid => $uid, train => $train );
 						$self->add_wagonorder(
 							uid          => $uid,
 							train_id     => $train->train_id,
@@ -1705,7 +1706,13 @@ sub startup {
 					}
 					if ( not $opt{in_transaction} ) {
 						$self->run_hook( $uid, 'update' );
-						$self->add_route_timestamps( $uid, $train, 0, 1 );
+						$self->add_route_timestamps(
+							uid             => $uid,
+							train           => $train,
+							update_polyline => 1,
+							from_eva        => $dep_eva,
+							to_eva          => $arr_eva
+						);
 						$self->add_wagonorder(
 							uid        => $uid,
 							train_id   => $train->train_id,
@@ -2087,9 +2094,11 @@ sub startup {
 	# HAFAS already has all relevant information.
 	$self->helper(
 		'add_route_timestamps' => sub {
-			my ( $self, $uid, $train, $is_departure, $update_polyline ) = @_;
+			my ( $self, %opt ) = @_;
 
-			$uid //= $self->current_user->{id};
+			my $uid             = $opt{uid} // $self->current_user->{id};
+			my $train           = $opt{train};
+			my $update_polyline = $opt{update_polyline};
 
 			my $db = $self->pg->db;
 
@@ -2116,7 +2125,11 @@ sub startup {
 				  = Mojo::Promise->resolve( $in_transit->{data}{trip_id} );
 			}
 			else {
-				$tripid_promise = $self->hafas->get_tripid_p( train => $train );
+				$tripid_promise = $self->hafas->get_tripid_p(
+					train    => $train,
+					from_eva => $opt{from_eva},
+					to_eva   => $opt{to_eva}
+				);
 			}
 
 			$tripid_promise->then(

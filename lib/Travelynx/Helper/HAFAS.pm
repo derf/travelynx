@@ -165,17 +165,30 @@ sub get_tripid_p {
 			$self->{log}
 			  ->debug("get_tripid_p($old_desc -> $train_desc): success");
 
-			my $result = $results[0];
-			if ( @results > 1 ) {
-				for my $journey (@results) {
-					if ( ( $journey->route )[0]->loc->name eq $train->origin ) {
-						$result = $journey;
-						last;
-					}
+			for my $journey (@results) {
+				if (
+					List::Util::any { $_->loc->eva == $opt{from_eva} }
+					$journey->route
+					and List::Util::any { $_->loc->eva == $opt{to_eva} }
+					$journey->route
+				  )
+				{
+					$promise->resolve( $journey->id );
+					return;
 				}
 			}
 
-			$promise->resolve( $result->id );
+			for my $journey (@results) {
+				if ( ( $journey->route )[0]->loc->name eq $train->origin ) {
+					$promise->resolve( $journey->id );
+					return;
+				}
+			}
+
+			my $num_trips = scalar @results;
+			$promise->reject(
+"get_tripid_p($old_desc -> $train_desc): found no matches in $num_trips trips"
+			);
 			return;
 		}
 	)->catch(
