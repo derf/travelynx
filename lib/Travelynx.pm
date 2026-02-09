@@ -1710,8 +1710,8 @@ sub startup {
 							uid             => $uid,
 							train           => $train,
 							update_polyline => 1,
-							from_eva        => $dep_eva,
-							to_eva          => $arr_eva
+							from_eva        => $journey->{checkin_station_id},
+							to_eva          => $new_checkout_station_id,
 						);
 						$self->add_wagonorder(
 							uid        => $uid,
