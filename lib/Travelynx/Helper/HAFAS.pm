@@ -341,53 +341,12 @@ sub get_route_p {
 							[ $coord->{lon}, $coord->{lat} ] );
 					}
 				}
-				my @iris_stations = $opt{train}->route;
 
-				# borders ("Gr" as in "Grenze") are only returned by HAFAS.
-				# They are not stations.
-				my @hafas_stations = grep {
-					$_
-					  !~ m{(?:\(Gr\)|\)Gr|(?: |/)Staatsgrenze|Granica panstwa)$}
-				} @station_list;
-
-				# Manual fixes
-				@hafas_stations
-				  = map { s{ [(]Rheinland[)]}{}r } @hafas_stations;
-				@hafas_stations
-				  = map { s{Lindau [(]Bodensee[)] }{Lindau-}r } @hafas_stations;
-				@hafas_stations
-				  = map { s{ [(]Tiefgeschoß[)]}{}r } @hafas_stations;
-
-				my $iris_stations  = join( '|', @iris_stations );
-				my $hafas_stations = join( '|', @hafas_stations );
-
-				if ( $iris_stations eq $hafas_stations
-					or index( $hafas_stations, $iris_stations ) != -1 )
-				{
-					$polyline = {
-						from_eva => ( $journey->route )[0]->loc->eva,
-						to_eva   => ( $journey->route )[-1]->loc->eva,
-						coords   => \@coordinate_list,
-					};
-				}
-				else {
-					$self->{log}->debug( 'Ignoring polyline for '
-						  . $opt{train}->line
-						  . ": IRIS route does not agree with HAFAS route: $iris_stations != $hafas_stations"
-					);
-					for my $i ( 0 .. max( $#iris_stations, $#hafas_stations ) )
-					{
-						my $iris  = $iris_stations[$i]  // q{};
-						my $hafas = $hafas_stations[$i] // q{};
-						$self->{log}->debug(
-							sprintf(
-								'Entry %02d: %20s %s %20s',
-								$i,                            $iris,
-								$iris eq $hafas ? '==' : '<>', $hafas
-							)
-						);
-					}
-				}
+				$polyline = {
+					from_eva => ( $journey->route )[0]->loc->eva,
+					to_eva   => ( $journey->route )[-1]->loc->eva,
+					coords   => \@coordinate_list,
+				};
 			}
 
 			$self->{log}->debug("get_route_p($opt{trip_id}): success");
