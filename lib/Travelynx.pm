@@ -1441,8 +1441,6 @@ sub startup {
 			my ( $self, %opt ) = @_;
 
 			my $station      = $opt{station};
-			my $dep_eva      = $opt{dep_eva};
-			my $arr_eva      = $opt{arr_eva};
 			my $with_related = $opt{with_related} // 0;
 			my $force        = $opt{force};
 			my $uid          = $opt{uid} // $self->current_user->{id};
@@ -1450,6 +1448,10 @@ sub startup {
 			my $user         = $self->get_user_status( $uid, $db );
 			my $train_id     = $user->{train_id};
 			my $hafas        = $opt{hafas};
+
+			# only set when called via work.pm
+			my $dep_eva = $opt{dep_eva};
+			my $arr_eva = $opt{arr_eva};
 
 			my $promise = Mojo::Promise->new;
 
@@ -1723,7 +1725,8 @@ sub startup {
 							train_no   => $train->train_no
 						);
 						$self->add_stationinfo( $uid, 0, $train->train_id,
-							$dep_eva, $new_checkout_station_id );
+							$journey->{checkin_station_id},
+							$new_checkout_station_id );
 					}
 					$promise->resolve( 1, undef );
 					return;
