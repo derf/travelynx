@@ -25,6 +25,20 @@
 			%= include '_backend_line', user => $user, backend => $backend
 		% }
 	% }
+	<div class="row">
+		<div class="col s12">
+			<h3>Empfohlen</h3>
+				<p style="text-align: justify;">
+					<strong>IRIS</strong> für Regional- und Fernverkehr in Deutschland.
+					<strong>ÖBB</strong> für Nah-, Regional- und Fernverkehr in Österreich sowie Regional- und Fernverkehr in der EU.
+					<strong>Verbünde</strong> (sofern verfügbar, siehe unten) für Nahverkehr.
+					<strong>bahn.de</strong> für den Fall, dass keines der obigen Backends geeignet ist.
+				</p>
+		</div>
+	</div>
+	% for my $backend (grep { $_->{recommended} } @{ stash('backends') // [] }) {
+		%= include '_backend_line', user => $user, backend => $backend
+	% }
 	% if (@{stash('suggestions') // []}) {
 		<div class="row">
 			<div class="col s12">
@@ -39,19 +53,6 @@
 		% for my $backend (@{ stash('suggestions') // [] }) {
 			%= include '_backend_line', user => $user, backend => $backend
 		% }
-	% }
-	<div class="row">
-		<div class="col s12">
-			<h3>Empfohlen</h3>
-				<p style="text-align: justify;">
-					<strong>bahn.de</strong> für Regional- und Fernverkehr in Deutschland.
-					<strong>IRIS</strong> für den Fall, dass bahn.de mal wieder nicht will.
-					<strong>ÖBB</strong> für Nah-, Regional- und Fernverkehr in Österreich sowie Regional- und Fernverkehr in der EU.
-				</p>
-		</div>
-	</div>
-	% for my $backend (grep { $_->{recommended} } @{ stash('backends') // [] }) {
-		%= include '_backend_line', user => $user, backend => $backend
 	% }
 	<div class="row">
 		<div class="col s12">
@@ -84,14 +85,20 @@
 	<div class="col s12">
 		<h2 id="help">Details</h2>
 		<p>
-			<strong>Deutsche Bahn: bahn.de</strong> ist eine gute Wahl für Fahrten des Nah-, Regional- und Fernverkehrs innerhalb Deutschlands.
+			<strong>Deutsche Bahn: bahn.de</strong> ist prinzipiell eine gute Wahl für Fahrten des Nah-, Regional- und Fernverkehrs innerhalb Deutschlands.
 			Dieses Backend bietet überwiegend korrekte Echtzeit- und Kartendaten sowie Wagenreihungen.
 			Bei Nahverkehrsfahrten sind die Echtzeit- und Kartendaten meist nicht so gut wie bei den APIs des jeweiligen Verkehrsverbunds.
-		<p>
-			<strong>ÖBB</strong> liefern Kartendaten und Wagenreihungen für Fernverkehr in Deutschland und Umgebung, jedoch keine Meldungen. Echtzeitdaten sind teilweise verfügbar.
+			Derzeit (Februar 2026) wird travelynx von der vor bahn.de geschalteten Web Application Firewall ausgebremst, so dass Echtzeitdaten für aktuelle Checkins zu Stoßzeiten teils nur mit ein bis zwei Stunden Verzögerung verfügbar sind.
 		</p>
 		<p>
-			<strong>Deutsche Bahn: IRIS-TTS</strong> liefert Echtzeitdaten (nur am Start- und Zielbahnhof) und Verspätungsmeldungen für Regional- und Fernverkehr in Deutschland. Wagenreihungen, Kartendaten und Angaben zu Unterwegshalten sind nur teilweise verfügbar. Dieses Backend wird nur noch sehr grundlegend weiterentwickelt. Die zugehörige API wird seit einigen Jahren „sehr bald“ abgeschaltet.
+			<strong>Deutsche Bahn: IRIS-TTS</strong> liefert Echtzeitdaten (meist nur am Start- und Zielbahnhof) und Verspätungsmeldungen für Regional- und Fernverkehr in Deutschland.
+			Wagenreihungen, Kartendaten und Angaben zu Unterwegshalten meist ebenfalls verfügbar.
+			Die zugehörige API wird seit einigen Jahren „sehr bald“ abgeschaltet.
+		</p>
+		<p>
+			<strong>ÖBB</strong> liefern Kartendaten und Wagenreihungen für Fernverkehr in Deutschland und Umgebung, jedoch keine Meldungen.
+			Echtzeitdaten sind teilweise verfügbar.
+			In Österreich und dem europäischen Ausland sind sie meist die beste Wahl.
 		</p>
 		<p>
 			<strong>Transitous</strong> ist ein Aggregator für eine Vielzahl von Verkehrsunternehmen.
