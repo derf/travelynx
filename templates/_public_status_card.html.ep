@@ -54,7 +54,7 @@
 						% }
 					% }
 					% elsif ($journey->{arr_name}) {
-						%= L('status.arrival-unknown')
+						<!-- %= L('status.arrival-unknown') -->
 					% }
 				</div>
 				<div class="progress" style="height: 1ex;">
@@ -83,7 +83,7 @@
 						% }
 					% }
 					% elsif ($journey->{arr_name}) {
-						noch nicht bekannt
+						%= L('status.arrival-time-unknown')
 					% }
 				</div>
 				<div class="center-align hide-on-small-only">

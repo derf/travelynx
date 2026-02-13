@@ -893,6 +893,9 @@ msgstr "auf"
 msgid "status.arrive-on.post"
 msgstr " "
 
+msgid "status.arrival-time-unknown"
+msgstr "irgendwann"
+
 msgid "status.delayed-auto-checkout"
 msgstr "Der automatische Checkout erfolgt spätestens eine halbe Stunde nach der Ankunft."
 

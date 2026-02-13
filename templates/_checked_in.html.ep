@@ -56,7 +56,7 @@
 						% }
 					% }
 					% elsif ($journey->{arr_name}) {
-						Ankunft in mehr als zwei Stunden
+						<!-- %= L('status.arrival-unknown') -->
 					% }
 					% if ($journey->{departure_countdown} > 0 and $journey->{dep_platform}) {
 						% if ($journey->{dep_direction} and $journey->{dep_direction} eq 'r') {
@@ -139,7 +139,7 @@
 							% }
 						% }
 						% else {
-							noch nicht bekannt
+							%= L('status.arrival-time-unknown')
 						% }
 					</div>
 					<div class="center-align hide-on-small-only next-stop">
@@ -209,10 +209,8 @@
 									entfällt
 								% }
 								% else {
-									% if ($station->[2]{arr}) {
-										%= $station->[2]{arr}->strftime('%H:%M')
-										→
-									% }
+									%= $station->[2]{arr}->strftime('%H:%M')
+									→
 									%= $station->[2]{dep}->strftime('%H:%M')
 								% }
 								% if ($station->[2]{dep_delay}) {
