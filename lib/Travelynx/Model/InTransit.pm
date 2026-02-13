@@ -1698,10 +1698,16 @@ sub estimate_trip_position {
 
 	my $prev_ts;
 	for my $i ( 0 .. $#route ) {
-		my $ts = $route[$i][2]{rt_arr} // $route[$i][2]{sched_arr}
-		  // $route[$i][2]{rt_dep} // $route[$i][2]{sched_dep} // 0;
-		my $ts_dep = $route[$i][2]{rt_dep} // $route[$i][2]{sched_dep}
-		  // $route[$i][2]{rt_arr} // $route[$i][2]{sched_arr} // 0;
+		my $ts
+		  = $route[$i][2]{rt_arr}
+		  || $route[$i][2]{sched_arr}
+		  || $route[$i][2]{rt_dep}
+		  || $route[$i][2]{sched_dep} // 0;
+		my $ts_dep
+		  = $route[$i][2]{rt_dep}
+		  || $route[$i][2]{sched_dep}
+		  || $route[$i][2]{rt_arr}
+		  || $route[$i][2]{sched_arr} // 0;
 		if ( $ts and $ts_dep and $now >= $ts and $now <= $ts_dep ) {
 
 			# Currently at a stop
