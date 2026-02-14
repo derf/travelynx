@@ -2179,6 +2179,9 @@ sub startup {
 						my $new_eva   = $new_route->[$i]->{eva};
 						my $new_entry = $new_route->[$i];
 
+						$new_name =~ s{ [(]Rheinland[)]}{};
+						$new_name =~ s{ [(]Tiefgeschoß[)]}{};
+
 						if ( defined $old_name and $old_name eq $new_name ) {
 							if ( $old_entry->{rt_arr}
 								and not $new_entry->{rt_arr} )
