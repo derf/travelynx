@@ -3,8 +3,11 @@
 	<div class="card">
 		<div class="card-content">
 			<i class="material-icons right sync-failed-marker grey-text" style="display: none;">cloud_off</i>
-			% if ($journey->{last_update_delta} and $journey->{last_update_delta} > 400) {
+			% if ($journey->{extra_data}{rt} and $journey->{last_update_delta} and $journey->{last_update_delta} > 400) {
 				<i class="material-icons right grey-text">sync_problem</i>
+			% }
+			% elsif (not $journey->{extra_data}{rt}) {
+				<i class="material-icons right grey-text">gps_off</i>
 			% }
 			% if (not $journey->{arr_name}) {
 				<span class="card-title center-align"><%= L('status.select-destination') %></span>
@@ -302,7 +305,7 @@
 					% }
 				</p>
 			% }
-			% if ($journey->{last_update_delta} and $journey->{last_update_delta} > 400) {
+			% if ($journey->{extra_data}{rt} and $journey->{last_update_delta} and $journey->{last_update_delta} > 400) {
 				<p style="margin-top: 2em;">
 					<i class="material-icons left">sync_problem</i>
 					%= L('status.realtime-old.1')
