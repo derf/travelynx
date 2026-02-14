@@ -2952,7 +2952,12 @@ sub startup {
 				# Work around inconsistencies caused by a multiple EVA IDs mapping to the same station name
 				if ( $from_index == -1 ) {
 					for my $entry ( @{ $journey->{route} // [] } ) {
-						if ( $entry->[0] eq $journey->{from_name} ) {
+						if (
+							$entry->[0] eq (
+								$journey->{from_name} // $journey->{dep_name}
+							)
+						  )
+						{
 							$from_eva = $entry->[1];
 							$from_index
 							  = first_index { $_->[2] and $_->[2] == $from_eva }
@@ -2964,7 +2969,9 @@ sub startup {
 
 				if ( $to_index == -1 ) {
 					for my $entry ( @{ $journey->{route} // [] } ) {
-						if ( $entry->[0] eq $journey->{to_name} ) {
+						if ( $entry->[0] eq
+							( $journey->{to_name} // $journey->{arr_name} ) )
+						{
 							$to_eva = $entry->[1];
 							$to_index
 							  = first_index { $_->[2] and $_->[2] == $to_eva }
