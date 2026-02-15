@@ -1697,11 +1697,18 @@ sub estimate_trip_position {
 	my $now = DateTime->now( time_zone => 'Europe/Berlin' )->epoch;
 
 	my $prev_ts;
+	my $delta = 1;
 	for my $i ( 0 .. $#route ) {
-		my $ts = $route[$i][2]{rt_arr} // $route[$i][2]{sched_arr}
-		  // $route[$i][2]{rt_dep} // $route[$i][2]{sched_dep} // 0;
-		my $ts_dep = $route[$i][2]{rt_dep} // $route[$i][2]{sched_dep}
-		  // $route[$i][2]{rt_arr} // $route[$i][2]{sched_arr} // 0;
+		my $ts
+		  = $route[$i][2]{rt_arr}
+		  || $route[$i][2]{sched_arr}
+		  || $route[$i][2]{rt_dep}
+		  || $route[$i][2]{sched_dep} // 0;
+		my $ts_dep
+		  = $route[$i][2]{rt_dep}
+		  || $route[$i][2]{sched_dep}
+		  || $route[$i][2]{rt_arr}
+		  || $route[$i][2]{sched_arr} // 0;
 		if ( $ts and $ts_dep and $now >= $ts and $now <= $ts_dep ) {
 
 			# Currently at a stop
@@ -1715,7 +1722,7 @@ sub estimate_trip_position {
 		{
 			@now_latlon = $self->estimate_trip_position_between_stops(
 				now      => $now,
-				from     => $route[ $i - 1 ],
+				from     => $route[ $i - $delta ],
 				from_ts  => $prev_ts,
 				to       => $route[$i],
 				to_ts    => $ts,
@@ -1723,7 +1730,13 @@ sub estimate_trip_position {
 			);
 			last;
 		}
-		$prev_ts = $ts_dep;
+		if ($ts_dep) {
+			$prev_ts = $ts_dep;
+			$delta   = 1;
+		}
+		else {
+			$delta += 1;
+		}
 	}
 
 	if (    not @now_latlon

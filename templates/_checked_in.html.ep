@@ -3,8 +3,11 @@
 	<div class="card">
 		<div class="card-content">
 			<i class="material-icons right sync-failed-marker grey-text" style="display: none;">cloud_off</i>
-			% if ($journey->{last_update_delta} and $journey->{last_update_delta} > 400) {
+			% if ($journey->{extra_data}{rt} and $journey->{last_update_delta} and $journey->{last_update_delta} > 400) {
 				<i class="material-icons right grey-text">sync_problem</i>
+			% }
+			% elsif (not $journey->{extra_data}{rt}) {
+				<i class="material-icons right grey-text">gps_off</i>
 			% }
 			% if (not $journey->{arr_name}) {
 				<span class="card-title center-align"><%= L('status.select-destination') %></span>
@@ -56,7 +59,7 @@
 						% }
 					% }
 					% elsif ($journey->{arr_name}) {
-						Ankunft in mehr als zwei Stunden
+						<!-- %= L('status.arrival-unknown') -->
 					% }
 					% if ($journey->{departure_countdown} > 0 and $journey->{dep_platform}) {
 						% if ($journey->{dep_direction} and $journey->{dep_direction} eq 'r') {
@@ -139,7 +142,7 @@
 							% }
 						% }
 						% else {
-							noch nicht bekannt
+							%= L('status.arrival-time-unknown')
 						% }
 					</div>
 					<div class="center-align hide-on-small-only next-stop">
@@ -209,10 +212,8 @@
 									entfällt
 								% }
 								% else {
-									% if ($station->[2]{arr}) {
-										%= $station->[2]{arr}->strftime('%H:%M')
-										→
-									% }
+									%= $station->[2]{arr}->strftime('%H:%M')
+									→
 									%= $station->[2]{dep}->strftime('%H:%M')
 								% }
 								% if ($station->[2]{dep_delay}) {
@@ -304,7 +305,7 @@
 					% }
 				</p>
 			% }
-			% if ($journey->{last_update_delta} and $journey->{last_update_delta} > 400) {
+			% if ($journey->{extra_data}{rt} and $journey->{last_update_delta} and $journey->{last_update_delta} > 400) {
 				<p style="margin-top: 2em;">
 					<i class="material-icons left">sync_problem</i>
 					%= L('status.realtime-old.1')
@@ -384,7 +385,7 @@
 	% if ($journey->{arr_name} and @{$journey->{extra_data}{him_msg} // []}) {
 		<div class="card" style="margin-top: <%= scalar @{stash('timeline') // []} ? '1.5rem' : '3em' %>;">
 			<div class="card-content">
-				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
+				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">cloud_off</i>
 				<span class="card-title"><%= L('status.messages') %></span>
 				% if (@{$journey->{extra_data}{him_msg} // []}) {
 					<p style="margin-bottom: 2ex;">
@@ -415,7 +416,7 @@
 	% if ($journey->{arr_name}) {
 		<div class="card" style="margin-top: 3em;">
 			<div class="card-content">
-				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
+				<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">cloud_off</i>
 				<span class="card-title"><%= L('status.map') %></span>
 				<div id="map" style="height: 70vh;">
 				</div>
@@ -425,7 +426,7 @@
 		% if ($journey->{extra_data}{manual}) {
 			<div class="card" style="margin-top: 3em;">
 				<div class="card-content">
-					<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
+					<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">cloud_off</i>
 					<span class="card-title">Manueller Checkin</span>
 				</div>
 				<div class="card-action">
@@ -438,7 +439,7 @@
 		% else {
 			<div class="card" style="margin-top: 3em;">
 				<div class="card-content">
-					<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">sync_problem</i>
+					<i class="material-icons small right sync-failed-marker grey-text" style="display: none;">cloud_off</i>
 					<span class="card-title"><%= L('status.change-destination') %></span>
 					<div class="targetlist">
 					% for my $station (@{$journey->{route_after}}) {

@@ -747,7 +747,8 @@ sub startup {
 
 					# mustn't be called during a transaction
 					if ( not $opt{in_transaction} ) {
-						$self->add_route_timestamps( $uid, $train, 1 );
+
+						# $self->add_route_timestamps( uid => $uid, train => $train );
 						$self->add_wagonorder(
 							uid          => $uid,
 							train_id     => $train->train_id,
@@ -1440,8 +1441,6 @@ sub startup {
 			my ( $self, %opt ) = @_;
 
 			my $station      = $opt{station};
-			my $dep_eva      = $opt{dep_eva};
-			my $arr_eva      = $opt{arr_eva};
 			my $with_related = $opt{with_related} // 0;
 			my $force        = $opt{force};
 			my $uid          = $opt{uid} // $self->current_user->{id};
@@ -1449,6 +1448,10 @@ sub startup {
 			my $user         = $self->get_user_status( $uid, $db );
 			my $train_id     = $user->{train_id};
 			my $hafas        = $opt{hafas};
+
+			# only set when called via work.pm
+			my $dep_eva = $opt{dep_eva};
+			my $arr_eva = $opt{arr_eva};
 
 			my $promise = Mojo::Promise->new;
 
@@ -1705,7 +1708,13 @@ sub startup {
 					}
 					if ( not $opt{in_transaction} ) {
 						$self->run_hook( $uid, 'update' );
-						$self->add_route_timestamps( $uid, $train, 0, 1 );
+						$self->add_route_timestamps(
+							uid             => $uid,
+							train           => $train,
+							update_polyline => 1,
+							from_eva        => $journey->{checkin_station_id},
+							to_eva          => $new_checkout_station_id,
+						);
 						$self->add_wagonorder(
 							uid        => $uid,
 							train_id   => $train->train_id,
@@ -1716,7 +1725,8 @@ sub startup {
 							train_no   => $train->train_no
 						);
 						$self->add_stationinfo( $uid, 0, $train->train_id,
-							$dep_eva, $new_checkout_station_id );
+							$journey->{checkin_station_id},
+							$new_checkout_station_id );
 					}
 					$promise->resolve( 1, undef );
 					return;
@@ -2087,9 +2097,11 @@ sub startup {
 	# HAFAS already has all relevant information.
 	$self->helper(
 		'add_route_timestamps' => sub {
-			my ( $self, $uid, $train, $is_departure, $update_polyline ) = @_;
+			my ( $self, %opt ) = @_;
 
-			$uid //= $self->current_user->{id};
+			my $uid             = $opt{uid} // $self->current_user->{id};
+			my $train           = $opt{train};
+			my $update_polyline = $opt{update_polyline};
 
 			my $db = $self->pg->db;
 
@@ -2116,7 +2128,11 @@ sub startup {
 				  = Mojo::Promise->resolve( $in_transit->{data}{trip_id} );
 			}
 			else {
-				$tripid_promise = $self->hafas->get_tripid_p( train => $train );
+				$tripid_promise = $self->hafas->get_tripid_p(
+					train    => $train,
+					from_eva => $opt{from_eva},
+					to_eva   => $opt{to_eva}
+				);
 			}
 
 			$tripid_promise->then(
@@ -2162,6 +2178,9 @@ sub startup {
 						my $new_name  = $new_route->[$i]->{name};
 						my $new_eva   = $new_route->[$i]->{eva};
 						my $new_entry = $new_route->[$i];
+
+						$new_name =~ s{ [(]Rheinland[)]}{};
+						$new_name =~ s{ [(]Tiefgeschoß[)]}{};
 
 						if ( defined $old_name and $old_name eq $new_name ) {
 							if ( $old_entry->{rt_arr}
@@ -2933,7 +2952,12 @@ sub startup {
 				# Work around inconsistencies caused by a multiple EVA IDs mapping to the same station name
 				if ( $from_index == -1 ) {
 					for my $entry ( @{ $journey->{route} // [] } ) {
-						if ( $entry->[0] eq $journey->{from_name} ) {
+						if (
+							$entry->[0] eq (
+								$journey->{from_name} // $journey->{dep_name}
+							)
+						  )
+						{
 							$from_eva = $entry->[1];
 							$from_index
 							  = first_index { $_->[2] and $_->[2] == $from_eva }
@@ -2945,7 +2969,9 @@ sub startup {
 
 				if ( $to_index == -1 ) {
 					for my $entry ( @{ $journey->{route} // [] } ) {
-						if ( $entry->[0] eq $journey->{to_name} ) {
+						if ( $entry->[0] eq
+							( $journey->{to_name} // $journey->{arr_name} ) )
+						{
 							$to_eva = $entry->[1];
 							$to_index
 							  = first_index { $_->[2] and $_->[2] == $to_eva }
