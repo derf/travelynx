@@ -120,7 +120,8 @@ sub get_tripid_p {
 		$train_desc = 'EC ' . $train->train_no;
 	}
 	elsif ( $train->type
-		=~ m{ ^ (?: ABR | ag | ALX | EB | MRB | NBE | STB | TLX | OE ) $ }x )
+		=~ m{ ^ (?: ABR | ag | ALX | AVG | BRB | EB | ERB | HLB | MRB | NBE | STB | TLX | OE | VIA ) $ }x
+	  )
 	{
 		$train_desc = $train->train_no;
 	}
@@ -165,17 +166,30 @@ sub get_tripid_p {
 			$self->{log}
 			  ->debug("get_tripid_p($old_desc -> $train_desc): success");
 
-			my $result = $results[0];
-			if ( @results > 1 ) {
-				for my $journey (@results) {
-					if ( ( $journey->route )[0]->loc->name eq $train->origin ) {
-						$result = $journey;
-						last;
-					}
+			for my $journey (@results) {
+				if (
+					List::Util::any { $_->loc->eva == $opt{from_eva} }
+					$journey->route
+					and List::Util::any { $_->loc->eva == $opt{to_eva} }
+					$journey->route
+				  )
+				{
+					$promise->resolve( $journey->id );
+					return;
 				}
 			}
 
-			$promise->resolve( $result->id );
+			for my $journey (@results) {
+				if ( ( $journey->route )[0]->loc->name eq $train->origin ) {
+					$promise->resolve( $journey->id );
+					return;
+				}
+			}
+
+			my $num_trips = scalar @results;
+			$promise->reject(
+"get_tripid_p($old_desc -> $train_desc): found no matches in $num_trips trips"
+			);
 			return;
 		}
 	)->catch(
@@ -328,53 +342,12 @@ sub get_route_p {
 							[ $coord->{lon}, $coord->{lat} ] );
 					}
 				}
-				my @iris_stations = $opt{train}->route;
 
-				# borders ("Gr" as in "Grenze") are only returned by HAFAS.
-				# They are not stations.
-				my @hafas_stations = grep {
-					$_
-					  !~ m{(?:\(Gr\)|\)Gr|(?: |/)Staatsgrenze|Granica panstwa)$}
-				} @station_list;
-
-				# Manual fixes
-				@hafas_stations
-				  = map { s{ [(]Rheinland[)]}{}r } @hafas_stations;
-				@hafas_stations
-				  = map { s{Lindau [(]Bodensee[)] }{Lindau-}r } @hafas_stations;
-				@hafas_stations
-				  = map { s{ [(]Tiefgeschoß[)]}{}r } @hafas_stations;
-
-				my $iris_stations  = join( '|', @iris_stations );
-				my $hafas_stations = join( '|', @hafas_stations );
-
-				if ( $iris_stations eq $hafas_stations
-					or index( $hafas_stations, $iris_stations ) != -1 )
-				{
-					$polyline = {
-						from_eva => ( $journey->route )[0]->loc->eva,
-						to_eva   => ( $journey->route )[-1]->loc->eva,
-						coords   => \@coordinate_list,
-					};
-				}
-				else {
-					$self->{log}->debug( 'Ignoring polyline for '
-						  . $opt{train}->line
-						  . ": IRIS route does not agree with HAFAS route: $iris_stations != $hafas_stations"
-					);
-					for my $i ( 0 .. max( $#iris_stations, $#hafas_stations ) )
-					{
-						my $iris  = $iris_stations[$i]  // q{};
-						my $hafas = $hafas_stations[$i] // q{};
-						$self->{log}->debug(
-							sprintf(
-								'Entry %02d: %20s %s %20s',
-								$i,                            $iris,
-								$iris eq $hafas ? '==' : '<>', $hafas
-							)
-						);
-					}
-				}
+				$polyline = {
+					from_eva => ( $journey->route )[0]->loc->eva,
+					to_eva   => ( $journey->route )[-1]->loc->eva,
+					coords   => \@coordinate_list,
+				};
 			}
 
 			$self->{log}->debug("get_route_p($opt{trip_id}): success");

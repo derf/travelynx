@@ -703,7 +703,12 @@ sub run {
 						}
 					}
 					else {
-						$self->app->add_route_timestamps( $uid, $train, 1 );
+						$self->app->add_route_timestamps(
+							uid      => $uid,
+							train    => $train,
+							from_eva => $dep,
+							to_eva   => $arr
+						);
 						$self->app->add_wagonorder(
 							uid          => $uid,
 							train_id     => $train->train_id,
@@ -781,8 +786,11 @@ sub run {
 					}
 					else {
 						$self->app->add_route_timestamps(
-							$uid, $train, 0,
-							(
+							uid             => $uid,
+							train           => $train,
+							from_eva        => $dep,
+							to_eva          => $arr,
+							update_polyline => (
 								defined $entry->{real_arr_ts}
 								  and $now->epoch > $entry->{real_arr_ts}
 							) ? 1 : 0

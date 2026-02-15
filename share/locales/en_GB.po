@@ -890,6 +890,9 @@ msgstr "on"
 msgid "status.arrive-on.post"
 msgstr " "
 
+msgid "status.arrival-time-unknown"
+msgstr "eventually"
+
 msgid "status.delayed-auto-checkout"
 msgstr "You will be automatically checked out no less than half an hour after the expected arrival time."
 
