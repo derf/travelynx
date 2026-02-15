@@ -521,6 +521,304 @@ msgstr "Po roku braku aktywności użytkownicy otrzymują wiadomość e-mail z i
 msgid "register.disclaimer"
 msgstr "Uwaga: Travelynx jest prywatnym projektem bez gwarancji dostępności. Niezapowiedziane przerwy w działaniu lub krótkoterminowe wyłączenie tej strony nie są planowane, ale są możliwe."
 
+# sorted_history.html.ep
+
+msgid "sorted-history.header"
+msgstr "Najlepsze wyniki"
+
+msgid "sorted-history.delay-dep"
+msgstr "Opóźnienie odjazdu"
+
+msgid "sorted-history.delay-arr"
+msgstr "Opóźnienie przy przyjeździe"
+
+msgid "sorted-history.sched-duration"
+msgstr "Planowany czas trwania"
+
+msgid "sorted-history.rt-duration"
+msgstr "Rzeczywisty czas trwania"
+
+msgid "sorted-history.desc"
+msgstr "Absteigend"
+
+msgid "sorted-history.asc"
+msgstr "Aufsteigend"
+
+msgid "sorted-history.submit"
+msgstr "Anzeigen"
+
+msgid "sorted-history.date"
+msgstr "Data"
+
+msgid "sorted-history.trip"
+msgstr "podróż"
+
+msgid "sorted-history.delay"
+msgstr "opóźnienie"
+
+msgid "sorted-history.duration"
+msgstr "Dauer"
+
+# year_in_review.html.ep
+
+msgid "review.header.pre"
+msgstr "Podsumowanie roku"
+
+msgid "review.header.post"
+msgstr " "
+
+msgid "review.trips-stops.pre"
+msgstr "Du hast in diesem Jahr"
+
+msgid "review.trips-stops.mid"
+msgstr "von und zu"
+
+msgid "review.trips-stops.post"
+msgstr " in travelynx erfasst."
+
+msgid "review.trips"
+msgstr "Fahrten"
+
+msgid "review.stops"
+msgstr "Betriebsstellen"
+
+msgid "review.trips-per-day.pre"
+msgstr "Das sind mehr als"
+
+msgid "review.trips-per-day"
+msgstr "Liczba przejazdówna dziennie"
+
+msgid "review.trips-per-day.post"
+msgstr "!"
+
+msgid "review.travel-time.pre"
+msgstr "W sumie spędziłeś co najmniej"
+
+msgid "review.travel-time.of-year"
+msgstr "roku"
+
+msgid "review.travel-time.post"
+msgstr "w podróży."
+
+msgid "review.travel-distance.pre"
+msgstr "Dabei hast du ca."
+
+msgid "review.travel-distance.post"
+msgstr " zurückgelegt."
+
+msgid "review.equivalent-circumference.pre"
+msgstr "Das entspricht"
+
+msgid "review.equivalent-circumference.mid"
+msgstr "Fahrten um die Erde"
+
+msgid "review.equivalent-circumference.post"
+msgstr "."
+
+msgid "review.equivalent-diagonal.pre"
+msgstr "Das entspricht"
+
+msgid "review.equivalent-diagonal.mid"
+msgstr "Reisen zum Mittelpunkt der Erde und zurück"
+
+msgid "review.equivalent-diagonal.post"
+msgstr "."
+
+msgid "review.next-page"
+msgstr "Hier streichen oder unten klicken für nächste Seite"
+
+msgid "review.mean-trip.header"
+msgstr "Eine typische Fahrt"
+
+msgid "review.mean-trip-3.pre"
+msgstr "… führte dich mit"
+
+msgid "review.mean-trip-3.mid"
+msgstr "durch das Dreieck"
+
+msgid "review.mean-trip-3.post"
+msgstr "."
+
+msgid "review.mean-trip-2.pre"
+msgstr "… befand sich jederzeit auf deiner Pendelstrecke zwischen"
+
+msgid "review.mean-trip-2.mid"
+msgstr "und"
+
+msgid "review.mean-trip-2.post"
+msgstr "."
+
+msgid "review.time-distance.pre"
+msgstr "Im Mittel benötigte sie"
+
+msgid "review.time-distance.mid"
+msgstr "für eine Entfernung von ca."
+
+msgid "review.time-distance.post"
+msgstr "."
+
+msgid "review.on-time"
+msgstr "Außerdem war sie <strong>komplett pünktlich</strong>. Beeindruckend!"
+
+msgid "review.delay-decreasing.pre"
+msgstr "Sie fuhr"
+
+msgid "review.delay-decreasing.mid"
+msgstr "zu spät ab, konnte aber einen Teil der Verspätung wieder herausholen. Ihr Ziel erreichte sie nur noch"
+
+msgid "review.delay-decreasing.post"
+msgstr " später als vorgesehen."
+
+msgid "review.delay-constant.pre"
+msgstr "Sie fuhr"
+
+msgid "review.delay-constant.post"
+msgstr " zu spät ab und kam mit der gleichen Verspätung am Ziel an."
+
+msgid "review.delay-increasing.pre"
+msgstr "Sie fuhr"
+
+msgid "review.delay-increasing.mid"
+msgstr "zu spät ab und schlich mit"
+
+msgid "review.delay-increasing.post"
+msgstr " ins Ziel."
+
+msgid "review.high-scores.header"
+msgstr "High Scores"
+
+msgid "review.high-scores.with"
+msgstr "mit"
+
+msgid "review.high-scores.from"
+msgstr "von"
+
+msgid "review.high-scores.to"
+msgstr "nach"
+
+msgid "review.high-scores.longest-trip.link"
+msgstr "Längste Fahrt"
+
+msgid "review.high-scores.longest-trip.pre"
+msgstr " "
+
+msgid "review.high-scores.longest-trip.post"
+msgstr "."
+
+msgid "review.high-scores.farthest-trip-eq-longest.pre"
+msgstr "Mit"
+
+msgid "review.high-scores.farthest-trip-eq-longest.post"
+msgstr " war sie gleichzeitig deine weiteste Fahrt."
+
+msgid "review.high-scores.farthest-trip.link"
+msgstr "Größte Entfernung"
+
+msgid "review.high-scores.farthest-trip.pre"
+msgstr " "
+
+msgid "review.high-scores.farthest-trip.post"
+msgstr "."
+
+msgid "review.high-scores.shortest-trip.link"
+msgstr "Kürzeste Fahrt"
+
+msgid "review.high-scores.shortest-trip.pre"
+msgstr " "
+
+msgid "review.high-scores.shortest-trip.post"
+msgstr "."
+
+msgid "review.high-scores.closest-trip-eq-shortest.pre"
+msgstr "Mit"
+
+msgid "review.high-scores.closest-trip-eq-shortest.post"
+msgstr " war sie gleichzeitig dein kleinster Katzensprung."
+
+msgid "review.high-scores.farthest-trip.link"
+msgstr "Größte Entfernung"
+
+msgid "review.high-scores.closest-trip.link"
+msgstr "Kleinster Katzensprung"
+
+msgid "review.high-scores.closest-trip.pre"
+msgstr " "
+
+msgid "review.high-scores.closest-trip.post"
+msgstr "."
+
+msgid "review.annotated-percent.pre"
+msgstr " "
+
+msgid "review.annotated-percent.post"
+msgstr " aller Fahrten waren mit Angaben zu Verspätungen oder Einschränkungen versehen."
+
+msgid "review.top-annotations"
+msgstr "Die häufigsten Anmerkungen waren:"
+
+msgid "review.punctual-percent.pre"
+msgstr "Lediglich"
+
+msgid "review.punctual-percent.post"
+msgstr " der Fahrten waren pünktlich auf die Minute."
+
+msgid "review.hour-delay-percent.pre"
+msgstr " "
+
+msgid "review.hour-delay-percent.post"
+msgstr " deiner Fahrten hatten mindestens eine Stunde Verspätung"
+
+msgid "review.and-cancelled-percent.pre"
+msgstr "und"
+
+msgid "review.and-cancelled-percent.post"
+msgstr " kamen gar nicht erst am Ziel an."
+
+msgid "review.cancelled-percent.pre"
+msgstr " "
+
+msgid "review.cancelled-percent.post"
+msgstr " deiner geplanten Fahrten sind ausgefallen."
+
+msgid "review.most-delayed.pre"
+msgstr "Mit"
+
+msgid "review.most-delayed.mid"
+msgstr " hatte"
+
+msgid "review.most-delayed.post"
+msgstr " die größte Verspätung."
+
+msgid "review.most-delay.pre"
+msgstr "Die Fahrt mit"
+
+msgid "review.most-delay.from"
+msgstr "von"
+
+msgid "review.most-delay.to"
+msgstr "nach"
+
+msgid "review.most-delay.mid"
+msgstr "verlief besonders gemächlich: sie dauerte"
+
+msgid "review.most-delay.post"
+msgstr " länger als geplant."
+
+msgid "review.most-undelay.pre"
+msgstr "In"
+
+msgid "review.most-undelay.from"
+msgstr "wurde hingegen Vmax ausgereizt und die Strecke von"
+
+msgid "review.most-undelay.to"
+msgstr "nach"
+
+msgid "review.most-undelay.mid"
+msgstr " "
+
+msgid "review.most-undelay.post"
+msgstr " schneller absolviert als vorgesehen."
+
 # _checked_in.html.ep, _public_status_card.html.ep
 
 msgid "status.is-checked-in"
