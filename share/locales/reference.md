@@ -4,7 +4,7 @@
 * en-GB: 100.0% complete (0 missing)
 * fr-FR: 98.4% complete (5 missing)
 * hu-HU: 52.8% complete (146 missing)
-* pl-PL: 60.5% complete (122 missing)
+* pl-PL: 100.0% complete (0 missing)
 
 ### 
 
@@ -1004,7 +1004,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Latest destinations
 * fr-FR: Dernières destinations
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Ostatnie cele podróży
 
 ### landingpage.stop-geosearch
 
@@ -1316,7 +1316,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Our
 * fr-FR: Notre
 * hu-HU: Az
-* pl-PL *missing*
+* pl-PL: 
 
 ### register.privacy
 
@@ -1358,7 +1358,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: High Scores
 * fr-FR: Meilleurs Scores
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Najlepsze wyniki
 
 ### sorted-history.delay-dep
 
@@ -1366,7 +1366,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Departure Delay
 * fr-FR: Retard au départ
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Opóźnienie odjazdu
 
 ### sorted-history.delay-arr
 
@@ -1374,7 +1374,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Arrival Delay
 * fr-FR: Retard à l'arrivée
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Opóźnienie przy przyjeździe
 
 ### sorted-history.sched-duration
 
@@ -1382,7 +1382,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Scheduled Duration
 * fr-FR: Durée prévue
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Planowany czas trwania
 
 ### sorted-history.rt-duration
 
@@ -1390,7 +1390,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Actual Duration
 * fr-FR: Durée réelle
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Rzeczywisty czas trwania
 
 ### sorted-history.desc
 
@@ -1398,7 +1398,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Descending
 * fr-FR: Descendant
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Malejąco
 
 ### sorted-history.asc
 
@@ -1406,7 +1406,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Ascending
 * fr-FR: Ascendant
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Rosnąco
 
 ### sorted-history.submit
 
@@ -1414,7 +1414,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Show
 * fr-FR: Afficher
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Wyświetl
 
 ### sorted-history.date
 
@@ -1422,7 +1422,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Date
 * fr-FR: Date
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Data
 
 ### sorted-history.trip
 
@@ -1430,7 +1430,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Trip
 * fr-FR: Voyage
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Podróż
 
 ### sorted-history.delay
 
@@ -1438,7 +1438,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Delay
 * fr-FR: Retard
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Opóźnienie
 
 ### sorted-history.duration
 
@@ -1446,7 +1446,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Duration
 * fr-FR: Durée
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Czas
 
 ## year_in_review.html.ep
 
@@ -1456,7 +1456,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  
 * fr-FR:  
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Podsumowanie roku
 
 ### review.header.post
 
@@ -1464,7 +1464,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: in Review
 * fr-FR: en résumé
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: 
 
 ### review.trips-stops.pre
 
@@ -1472,7 +1472,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: You have logged
 * fr-FR: Vous vous êtes enregistré
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: W tym roku zarejestrowałeś w travelynx
 
 ### review.trips-stops.mid
 
@@ -1480,7 +1480,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: across
 * fr-FR: à travers
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: podróży do i z
 
 ### review.trips-stops.post
 
@@ -1488,7 +1488,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: .
 * fr-FR: .
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: stacji.
 
 ### review.trips
 
@@ -1496,7 +1496,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: trips
 * fr-FR: trajets
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: przejazdy
 
 ### review.stops
 
@@ -1504,7 +1504,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: stops
 * fr-FR: arrêts
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: stacje
 
 ### review.trips-per-day.pre
 
@@ -1512,7 +1512,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: This comes down to more than
 * fr-FR: Ceci équivaut à plus de
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: To więcej jak
 
 ### review.trips-per-day
 
@@ -1520,7 +1520,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: trips per day
 * fr-FR: trajets par jour
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: przejazdów dziennie
 
 ### review.trips-per-day.post
 
@@ -1528,7 +1528,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: !
 * fr-FR: !
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: !
 
 ### review.travel-time.pre
 
@@ -1536,7 +1536,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: In total, you spent at least
 * fr-FR: Au total, vous avez passé au moins
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: W sumie spędziłeś co minimum
 
 ### review.travel-time.of-year
 
@@ -1544,7 +1544,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: of the entire year
 * fr-FR: de l'année entière
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: roku
 
 ### review.travel-time.post
 
@@ -1552,7 +1552,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: in transit.
 * fr-FR: en voyage.
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: w podróży.
 
 ### review.travel-distance.pre
 
@@ -1560,7 +1560,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: In doing so, you traversed a total distance of approx.
 * fr-FR: En faisant cela, vous avez parcouru une distance totale d'approximativement
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: W tym czasie przejechałeś około
 
 ### review.travel-distance.post
 
@@ -1568,7 +1568,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: .
 * fr-FR: .
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: .
 
 ### review.equivalent-circumference.pre
 
@@ -1576,7 +1576,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: This equals
 * fr-FR: Ceci équivaut à
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Odpowiada to
 
 ### review.equivalent-circumference.mid
 
@@ -1584,7 +1584,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: trips around the earth
 * fr-FR: voyages autour de la Terre
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: podróżom dookoła Ziemi.
 
 ### review.equivalent-circumference.post
 
@@ -1592,7 +1592,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: .
 * fr-FR: .
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: .
 
 ### review.equivalent-diagonal.pre
 
@@ -1600,7 +1600,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: This equals
 * fr-FR: Ceci équivaut à
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Odpowiada to
 
 ### review.equivalent-diagonal.mid
 
@@ -1608,7 +1608,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: journeys to the centre of the earth and back
 * fr-FR: voyages aller/retour au centre de la Terre
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: podróżom do środka Ziemi i z powrotem.
 
 ### review.equivalent-diagonal.post
 
@@ -1616,7 +1616,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: .
 * fr-FR: .
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: .
 
 ### review.next-page
 
@@ -1624,7 +1624,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Swip here or click below for next page
 * fr-FR: Glisser ici ou cliquer ci-dessous pour la page suivante
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Przesuń tutaj lub kliknij poniżej, aby przejść do następnej strony.
 
 ### review.mean-trip.header
 
@@ -1632,7 +1632,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: An average Trip
 * fr-FR: Un trajet moyen
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Typowa podróż
 
 ### review.mean-trip-3.pre
 
@@ -1640,7 +1640,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: … meant taking
 * fr-FR: … signifie prendre
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: … prowadziła cię
 
 ### review.mean-trip-3.mid
 
@@ -1648,7 +1648,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: within the
 * fr-FR: dans le
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: przez trójkąt
 
 ### review.mean-trip-3.post
 
@@ -1656,7 +1656,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  triangle.
 * fr-FR:  triangle.
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: .
 
 ### review.mean-trip-2.pre
 
@@ -1664,7 +1664,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: … was always along your commute between
 * fr-FR: … a toujours été pendant votre trajet entre
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: … zawsze znajdowała się na trasie między
 
 ### review.mean-trip-2.mid
 
@@ -1672,7 +1672,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: and
 * fr-FR: et
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: i
 
 ### review.mean-trip-2.post
 
@@ -1680,7 +1680,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: .
 * fr-FR: .
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: .
 
 ### review.time-distance.pre
 
@@ -1688,7 +1688,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: On average, it took
 * fr-FR: En moyenne, cela a pris
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Średnio trwała ona
 
 ### review.time-distance.mid
 
@@ -1696,7 +1696,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: to cover approx.
 * fr-FR: pour couvrir approximativement
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: na dystansie ok.
 
 ### review.time-distance.post
 
@@ -1704,7 +1704,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: .
 * fr-FR: .
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: .
 
 ### review.on-time
 
@@ -1712,7 +1712,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: It was consistently <strong>on time</strong>. Impressive!
 * fr-FR: Il a été régulièrement <strong>à l'heure</strong>. Impressionnant !
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Ponadto była <strong>całkowicie punktualna</strong>. Imponujące!
 
 ### review.delay-decreasing.pre
 
@@ -1720,7 +1720,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: It departed
 * fr-FR: Il est parti
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Odjeżdżała z
 
 ### review.delay-decreasing.mid
 
@@ -1728,7 +1728,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: later than scheduled, but managed to partially make up for that. When reaching its destination, it was delayed by only
 * fr-FR: après son horaire prévu, mais est parvenu à le rattraper en partie. À son arrivée à destination, il était retardé de seulement
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: opóźnieniem, ale zdołała nadrobić jego część. Do celu dotarła już tylko
 
 ### review.delay-decreasing.post
 
@@ -1736,7 +1736,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: .
 * fr-FR: .
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL:  później, niż przewidziano.
 
 ### review.delay-constant.pre
 
@@ -1744,7 +1744,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: It departured
 * fr-FR: Il est parti
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Odjeżdżała z
 
 ### review.delay-constant.post
 
@@ -1752,7 +1752,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  too late and arrived with the same delay.
 * fr-FR:  trop tard et est arrivé avec le même retard.
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL:  opóźnieniem i docierała do celu z tym samym opóźnieniem
 
 ### review.delay-increasing.pre
 
@@ -1760,7 +1760,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: It departed with a delay of
 * fr-FR: Il est parti avec un retard de
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Odjechała z
 
 ### review.delay-increasing.mid
 
@@ -1768,7 +1768,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: and increased it to
 * fr-FR: qui a augmenté à
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: opóźnieniem i wlokła się do celu z prędkością
 
 ### review.delay-increasing.post
 
@@ -1776,7 +1776,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  at the destination.
 * fr-FR:  à destination.
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: .
 
 ### review.high-scores.header
 
@@ -1784,7 +1784,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: High Scores
 * fr-FR: Meilleurs résultats
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Najlepsze wyniki
 
 ### review.high-scores.with
 
@@ -1792,7 +1792,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: with
 * fr-FR: avec
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: w
 
 ### review.high-scores.from
 
@@ -1800,7 +1800,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: from
 * fr-FR: de
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: z
 
 ### review.high-scores.to
 
@@ -1808,7 +1808,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: to
 * fr-FR: à
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: do
 
 ### review.high-scores.longest-trip.link
 
@@ -1816,7 +1816,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Longest Leg
 * fr-FR: Segment le plus long
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Najdłuższa podróż
 
 ### review.high-scores.longest-trip.pre
 
@@ -1824,7 +1824,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  
 * fr-FR:  
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL:
 
 ### review.high-scores.longest-trip.post
 
@@ -1832,7 +1832,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: .
 * fr-FR: .
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: .
 
 ### review.high-scores.farthest-trip-eq-longest.pre
 
@@ -1840,7 +1840,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: With a distance of
 * fr-FR: Avec une distance de
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Dystans
 
 ### review.high-scores.farthest-trip-eq-longest.post
 
@@ -1848,7 +1848,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: , it also was your longest leap.
 * fr-FR: , c'était également votre trajet le plus éloigné.
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL:  sprawił, że była to jednocześnie Twoja najdalsza podróż.
 
 ### review.high-scores.farthest-trip.link
 
@@ -1856,7 +1856,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Longest Leap
 * fr-FR: Trajet le plus éloigné
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Najdalsza podróż
 
 ### review.high-scores.farthest-trip.pre
 
@@ -1864,7 +1864,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  
 * fr-FR:  
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: 
 
 ### review.high-scores.farthest-trip.post
 
@@ -1872,7 +1872,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: .
 * fr-FR: .
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: .
 
 ### review.high-scores.shortest-trip.link
 
@@ -1880,7 +1880,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Tiniest Trip
 * fr-FR: Trajet le plus court
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Najkrótsza podróż
 
 ### review.high-scores.shortest-trip.pre
 
@@ -1888,7 +1888,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  
 * fr-FR:  
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: 
 
 ### review.high-scores.shortest-trip.post
 
@@ -1896,7 +1896,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: .
 * fr-FR: .
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: .
 
 ### review.high-scores.closest-trip-eq-shortest.pre
 
@@ -1904,7 +1904,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: With a distance of
 * fr-FR: Avec une distance de
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Zaledwie
 
 ### review.high-scores.closest-trip-eq-shortest.post
 
@@ -1912,7 +1912,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: , it was also your closest checkin / checkout couple.
 * fr-FR: , c'était également votre couple enregistrement/clôture le plus proche.
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL:  – to był Twój absolutnie najmniejszy rzut beretem.
 
 ### review.high-scores.farthest-trip.link
 
@@ -1920,7 +1920,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Longest Leap
 * fr-FR: Trajet le plus éloigné
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Największa odległość
 
 ### review.high-scores.closest-trip.link
 
@@ -1928,7 +1928,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Closest Checkout
 * fr-FR: Clôture la plus proche
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Najmniejszy rzut beretem
 
 ### review.high-scores.closest-trip.pre
 
@@ -1936,7 +1936,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  
 * fr-FR:  
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: 
 
 ### review.high-scores.closest-trip.post
 
@@ -1944,7 +1944,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: .
 * fr-FR: .
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: .
 
 ### review.annotated-percent.pre
 
@@ -1952,7 +1952,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  
 * fr-FR:  
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: 
 
 ### review.annotated-percent.post
 
@@ -1960,7 +1960,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  of all trips came with remarks related to delays or disruptions.
 * fr-FR:  de tous les trajets avec des commentaires en lien avec des retards ou des annulations.
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: wszystkich podróży zawierało informacje o opóźnieniach lub utrudnieniach.
 
 ### review.top-annotations
 
@@ -1968,7 +1968,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Most frequent remarks:
 * fr-FR: Commentaires les plus fréquents :
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Najczęściej występujące uwagi to:
 
 ### review.punctual-percent.pre
 
@@ -1976,7 +1976,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Merely
 * fr-FR: Environ
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Zaledwie
 
 ### review.punctual-percent.post
 
@@ -1984,7 +1984,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  of all trips were right on schedule.
 * fr-FR:  de tous les trajets étaient pile à l'heure.
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL:  przejazdów było punktualnych co do minuty.
 
 ### review.hour-delay-percent.pre
 
@@ -1992,7 +1992,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  
 * fr-FR:  
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: 
 
 ### review.hour-delay-percent.post
 
@@ -2000,7 +2000,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  of your trips were delayed by at least an hour
 * fr-FR:  de vos trajets étaient retardés d'au moins une heure
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: twoich przejazdów miało co najmniej godzinę opóźnienia,
 
 ### review.and-cancelled-percent.pre
 
@@ -2008,7 +2008,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: and
 * fr-FR: et
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: a
 
 ### review.and-cancelled-percent.post
 
@@ -2016,7 +2016,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  did not even make it to your destination.
 * fr-FR:  ne sont même pas arrivés à destination.
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: w ogóle nie dotarło do celu.
 
 ### review.cancelled-percent.pre
 
@@ -2024,7 +2024,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  
 * fr-FR:  
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: 
 
 ### review.cancelled-percent.post
 
@@ -2032,7 +2032,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  of your trips were cancelled.
 * fr-FR:  de vos trajets ont été annulés.
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: zaplanowanych przez ciebie podróży nie odbyło się.
 
 ### review.most-delayed.pre
 
@@ -2040,7 +2040,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: With
 * fr-FR: Avec
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Z opóźnieniem wynoszącym
 
 ### review.most-delayed.mid
 
@@ -2048,7 +2048,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: , 
 * fr-FR: , 
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL:  podróż
 
 ### review.most-delayed.post
 
@@ -2056,7 +2056,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  effortlessly took the first place.
 * fr-FR:  qui a pris sans problème la première place.
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL:  zanotowała największe opóźnienie.
 
 ### review.most-delay.pre
 
@@ -2064,7 +2064,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: The trip with
 * fr-FR: Le trajet avec
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Podróż
 
 ### review.most-delay.from
 
@@ -2072,7 +2072,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: from
 * fr-FR: de
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: z
 
 ### review.most-delay.to
 
@@ -2080,7 +2080,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: to
 * fr-FR: à
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: do
 
 ### review.most-delay.mid
 
@@ -2088,7 +2088,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: was super serene: it took
 * fr-FR: était très serein : il a pris
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: była wyjątkowo wolna: trwała o
 
 ### review.most-delay.post
 
@@ -2096,7 +2096,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  longer than scheduled.
 * fr-FR:  de plus que prévu.
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL:  dłużej, niż planowano.
 
 ### review.most-undelay.pre
 
@@ -2104,7 +2104,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: On the other hand,
 * fr-FR: D'autre part,
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: W
 
 ### review.most-undelay.from
 
@@ -2112,7 +2112,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: took the handle to the table and managed to go from
 * fr-FR: s'est déplacé à fond les ballons et est parvenu à aller de
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: wyciśnięto natomiast maksimum z Vmax, dzięki czemu trasa z
 
 ### review.most-undelay.to
 
@@ -2120,7 +2120,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: to
 * fr-FR: à
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: do
 
 ### review.most-undelay.mid
 
@@ -2128,7 +2128,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  an impressive
 * fr-FR:  avec incroyablement
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: została pokonana o
 
 ### review.most-undelay.post
 
@@ -2136,7 +2136,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB:  faster than anticipated.
 * fr-FR:  de moins que prévu.
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: szybciej, niż przewidziano.
 
 ## _checked_in.html.ep, _public_status_card.html.ep
 
@@ -2340,7 +2340,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Real time data has last been updated at
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Dane w czasie rzeczywistym zostały ostatnio zaktualizowane o
 
 ### status.realtime-old.2
 
@@ -2348,7 +2348,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: (more than
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: (ponad
 
 ### status.realtime-old.3
 
@@ -2356,7 +2356,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: minutes ago).
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: minut temu).
 
 ### status.realtime-old.cause-dbris
 
@@ -2364,7 +2364,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Looks like travelynx has been blocked by bahn.de.
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Prawdopodobnie travelynx został zablokowany przez bahn.de.
 
 ### status.realtime-old.cause-others
 
@@ -2372,7 +2372,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Parts of travelynx and/or the backend may be defective.
 * fr-FR *missing*
 * hu-HU *missing*
-* pl-PL *missing*
+* pl-PL: Być może elementy travelynx i/lub wykorzystywany backend uległy awarii.
 
 ### status.messages
 
