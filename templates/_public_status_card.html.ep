@@ -310,8 +310,14 @@
 					% elsif ( $journey->{is_motis} ) {
 						data-motis="<%= $journey->{backend_name} %>"
 					% }
-					data-station="<%= $journey->{dep_eva} %>"
-					data-dest="<%= $journey->{arr_eva} %>"
+					% if ( $journey->{is_motis} ) {
+						data-station="<%= $journey->{dep_external_id} %>"
+						data-dest="<%= $journey->{arr_external_id} %>"
+					% }
+					% else {
+						data-station="<%= $journey->{dep_eva} %>"
+						data-dest="<%= $journey->{arr_eva} %>"
+					% }
 					data-train="<%= $journey->{train_id} %>"
 					data-ts="<%= ( $journey->{sched_departure} // $journey->{real_departure} )->epoch %>"
 				>
