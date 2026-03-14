@@ -13,7 +13,38 @@
 				% else {
 					<a href="/p/<%= $name %>"><%= $name %></a> <%= L('status.is-checked-in') %>
 				% }
-				<i class="material-icons right"><%= visibility_icon($journey->{effective_visibility_str}) %></i>
+				% if (stash('from_timeline') and is_user_authenticated() and not get_user_status()->{checked_in}) {
+					<a class="blue-text action-checkin right" style="margin-right: 0;"
+						% if ( $journey->{is_dbris} ) {
+							data-dbris="<%= $journey->{backend_name} %>"
+							data-suffix="<%= $journey->{train_line} // $journey->{train_no} %>"
+						% }
+						% elsif ( $journey->{is_efa} ) {
+							data-efa="<%= $journey->{backend_name} %>"
+						% }
+						% elsif ( $journey->{is_hafas} ) {
+							data-hafas="<%= $journey->{backend_name} %>"
+						% }
+						% elsif ( $journey->{is_motis} ) {
+							data-motis="<%= $journey->{backend_name} %>"
+						% }
+						% if ( $journey->{is_motis} ) {
+							data-station="<%= $journey->{dep_external_id} %>"
+							data-dest="<%= $journey->{arr_external_id} %>"
+						% }
+						% else {
+							data-station="<%= $journey->{dep_eva} %>"
+							data-dest="<%= $journey->{arr_eva} %>"
+						% }
+						data-train="<%= $journey->{train_id} %>"
+						data-ts="<%= ( $journey->{sched_departure} // $journey->{real_departure} )->epoch %>"
+					>
+						<i class="material-icons">person_add</i>
+					</a>
+				% }
+				% else {
+					<i class="material-icons right"><%= visibility_icon($journey->{effective_visibility_str}) %></i>
+				% }
 				% if (not $journey->{extra_data}{rt}) {
 					<i class="material-icons right grey-text">gps_off</i>
 				% }
@@ -294,7 +325,7 @@
 				</div>
 			% }
 		</div>
-		% if (is_user_authenticated() and not get_user_status()->{checked_in}) {
+		% if (is_user_authenticated() and not get_user_status()->{checked_in} and not stash('from_timeline')) {
 			<div class="card-action" style="display: flex; justify-content: end">
 				<a class="blue-text action-checkin" style="margin-right: 0;"
 					% if ( $journey->{is_dbris} ) {
