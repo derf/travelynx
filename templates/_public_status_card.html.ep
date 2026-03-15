@@ -30,7 +30,7 @@
 						% }
 						% if ( $journey->{is_motis} ) {
 							data-station="<%= $journey->{dep_external_id} %>"
-							data-dest="<%= $journey->{arr_external_id} %>"
+							data-dest="<%= $journey->{arr_eva} %>"
 						% }
 						% else {
 							data-station="<%= $journey->{dep_eva} %>"
@@ -343,7 +343,7 @@
 					% }
 					% if ( $journey->{is_motis} ) {
 						data-station="<%= $journey->{dep_external_id} %>"
-						data-dest="<%= $journey->{arr_external_id} %>"
+						data-dest="<%= $journey->{arr_eva} %>"
 					% }
 					% else {
 						data-station="<%= $journey->{dep_eva} %>"
