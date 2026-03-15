@@ -974,6 +974,25 @@ sub unset_arrival_data {
 	);
 }
 
+sub set_realtime {
+	my ( $self, %opt ) = @_;
+	my $uid = $opt{uid};
+	my $db  = $opt{db} // $self->{pg}->db;
+
+	my $res_h = $db->select( 'in_transit', [ 'data' ], { user_id => $uid } )->expand->hash;
+	my $ephemeral_data = $res_h ? $res_h->{data} : {};
+
+	$ephemeral_data->{rt} = 1;
+
+	$db->update(
+		'in_transit',
+		{
+			data => JSON->new->encode($ephemeral_data),
+		},
+		{ user_id => $uid }
+	);
+}
+
 sub update_departure {
 	my ( $self, %opt ) = @_;
 	my $uid     = $opt{uid};
