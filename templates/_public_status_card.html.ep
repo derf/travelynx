@@ -352,7 +352,7 @@
 					data-train="<%= $journey->{train_id} %>"
 					data-ts="<%= ( $journey->{sched_departure} // $journey->{real_departure} )->epoch %>"
 				>
-					<i class="material-icons left">send</i>
+					<i class="material-icons left">person_add</i>
 					%= L('status.copy-checkin')
 				</a>
 			</div>
