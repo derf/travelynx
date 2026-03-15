@@ -30,7 +30,7 @@
 						% }
 						% if ( $journey->{is_motis} ) {
 							data-station="<%= $journey->{dep_external_id} %>"
-							data-dest="<%= $journey->{arr_external_id} %>"
+							data-dest="<%= $journey->{arr_eva} %>"
 						% }
 						% else {
 							data-station="<%= $journey->{dep_eva} %>"
@@ -39,7 +39,7 @@
 						data-train="<%= $journey->{train_id} %>"
 						data-ts="<%= ( $journey->{sched_departure} // $journey->{real_departure} )->epoch %>"
 					>
-						<i class="material-icons">person_add</i>
+						<i class="material-icons right">person_add</i>
 					</a>
 				% }
 				% else {
@@ -343,7 +343,7 @@
 					% }
 					% if ( $journey->{is_motis} ) {
 						data-station="<%= $journey->{dep_external_id} %>"
-						data-dest="<%= $journey->{arr_external_id} %>"
+						data-dest="<%= $journey->{arr_eva} %>"
 					% }
 					% else {
 						data-station="<%= $journey->{dep_eva} %>"
@@ -352,7 +352,7 @@
 					data-train="<%= $journey->{train_id} %>"
 					data-ts="<%= ( $journey->{sched_departure} // $journey->{real_departure} )->epoch %>"
 				>
-					<i class="material-icons left">send</i>
+					<i class="material-icons left">person_add</i>
 					%= L('status.copy-checkin')
 				</a>
 			</div>
