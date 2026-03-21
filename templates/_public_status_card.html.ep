@@ -13,7 +13,7 @@
 				% else {
 					<a href="/p/<%= $name %>"><%= $name %></a> <%= L('status.is-checked-in') %>
 				% }
-				% if (stash('from_timeline') and is_user_authenticated() and not get_user_status()->{checked_in}) {
+				% if (stash('from_timeline') and is_user_authenticated() and not get_user_status()->{checked_in} and $journey->{train_id} ne 'manual') {
 					<a class="blue-text action-checkin right" style="margin-right: 0;"
 						% if ( $journey->{is_dbris} ) {
 							data-dbris="<%= $journey->{backend_name} %>"
@@ -325,7 +325,7 @@
 				</div>
 			% }
 		</div>
-		% if (is_user_authenticated() and not get_user_status()->{checked_in} and not stash('from_timeline')) {
+		% if (is_user_authenticated() and not get_user_status()->{checked_in} and not stash('from_timeline') and $journey->{train_id} ne 'manual') {
 			<div class="card-action" style="display: flex; justify-content: end">
 				<a class="blue-text action-checkin" style="margin-right: 0;"
 					% if ( $journey->{is_dbris} ) {
