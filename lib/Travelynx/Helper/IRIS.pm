@@ -25,7 +25,7 @@ sub get_departures {
 	my ( $self, %opt ) = @_;
 	my $station      = $opt{station};
 	my $lookbehind   = $opt{lookbehind}   // 180;
-	my $lookahead    = $opt{lookahead}    // 30;
+	my $lookahead    = $opt{lookahead}    // 45;
 	my $with_related = $opt{with_related} // 0;
 
 	# Berlin Hbf exists twice:
@@ -96,7 +96,7 @@ sub get_departures_p {
 	my ( $self, %opt ) = @_;
 	my $station      = $opt{station};
 	my $lookbehind   = $opt{lookbehind}   // 180;
-	my $lookahead    = $opt{lookahead}    // 30;
+	my $lookahead    = $opt{lookahead}    // 45;
 	my $with_related = $opt{with_related} // 0;
 
 	my $datetime
