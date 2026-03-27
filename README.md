@@ -59,4 +59,3 @@ Mirrors of the travelynx repository are maintained at the following locations:
 
 * [Codeberg](https://codeberg.org/derf/travelynx)
 * [Finalrewind](https://git.finalrewind.org/derf/travelynx)
-* [GitHub](https://github.com/derf/travelynx)
