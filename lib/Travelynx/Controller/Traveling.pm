@@ -941,7 +941,8 @@ sub station {
 			elsif ($efa_service) {
 				@results = map { $_->[0] }
 				  sort { $b->[1] <=> $a->[1] }
-				  map { [ $_, $_->datetime->epoch ] } $status->results;
+				  map  { [ $_, $_->datetime->epoch ] }
+				  grep { $_->datetime } $status->results;
 
 				if ($suggestions_enabled) {
 					my $backend_id
