@@ -39,12 +39,12 @@ $ENV{__TRAVELYNX_TEST_MINI_IRIS} = 1;
 $t->app->start( 'database', 'migrate' );
 
 my $csrf_token
-  = $t->ua->get('/register')->res->dom->at('input[name=csrf_token]')
-  ->attr('value');
+  = $t->ua->get( $t->app->config->{registration}{link} )
+  ->res->dom->at('input[name=csrf_token]')->attr('value');
 
 # Successful registration
 $t->post_ok(
-	'/register' => form => {
+	$t->app->config->{registration}{link} => form => {
 		csrf_token => $csrf_token,
 		dt         => 1,
 		user       => 'someone',
@@ -57,7 +57,7 @@ $t->status_is(200)->content_like(qr{Verifizierungslink});
 
 # Failed registration (CSRF)
 $t->post_ok(
-	'/register' => form => {
+	$t->app->config->{registration}{link} => form => {
 		csrf_token => $csrf_token,
 		user       => 'noone',
 		email      => 'foo2@example.org',
@@ -69,7 +69,7 @@ $t->status_is(400)->content_like(qr{CSRF});
 
 # Failed registration (user name not available)
 $t->post_ok(
-	'/register' => form => {
+	$t->app->config->{registration}{link} => form => {
 		csrf_token => $csrf_token,
 		dt         => 1,
 		user       => 'someone',
