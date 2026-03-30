@@ -94,7 +94,8 @@ sub startup {
 	chomp $self->config->{version};
 	$self->defaults( version => $self->config->{version} // 'UNKNOWN' );
 
-	$self->config->{registration}{link} = '/register/' . 10 + int( rand(70) );
+	$self->config->{registration}{link}
+	  = '/register/' . ( 10 + int( rand(70) ) );
 
 	$self->plugin(
 		authentication => {
