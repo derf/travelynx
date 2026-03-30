@@ -867,7 +867,7 @@ sub station {
 		$promise = $self->iris->get_departures_p(
 			station      => $station,
 			lookbehind   => 120,
-			lookahead    => 30,
+			lookahead    => 40,
 			with_related => 1,
 		);
 	}
