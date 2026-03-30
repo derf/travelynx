@@ -15,11 +15,13 @@ require "$FindBin::Bin/../index.pl";
 
 my $t = Test::Mojo->new('Travelynx');
 
+my $reg_link = $t->app->config->{registration}{link};
+
 $t->ua->on( start => sub { $_[1]->req->headers->accept_language('de-DE') } );
 
 $t->get_ok('/')->status_is(200);
-$t->text_like( 'a[href="/register"]' => qr{Registrieren} );
-$t->text_like( 'a[href="/login"]'    => qr{Anmelden} );
+$t->text_like( 'a[href="' . $reg_link . '"]' => qr{Registrieren} );
+$t->text_like( 'a[href="/login"]'            => qr{Anmelden} );
 
 $t->get_ok('/about')->status_is(200);
 $t->get_ok('/api')->status_is(200);
@@ -33,7 +35,7 @@ $t->text_like( 'button' => qr{Anmelden} );
 
 $t->get_ok('/recover')->status_is(200);
 
-$t->get_ok('/register')->status_is(200);
+$t->get_ok($reg_link)->status_is(200);
 $t->element_exists('input[name="csrf_token"]');
 $t->element_exists('a[href="/impressum"]');
 $t->text_like( 'button' => qr{Registrieren} );
