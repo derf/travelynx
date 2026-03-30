@@ -41,7 +41,7 @@ my %valid_train_type = map { $_ => 1 } qw(
   Regionalbus RegionalBus SB ExpressBus BSV RVV-Bus-Linie Buslinie Omnibus
   RegioBus RUF AST RufTaxi Rufbus Linientaxi
   Fhre Fh Schiff SCH KAT FERRY
-  STR Tram TRAM Str Strb STB Straenbahn NachtTram Stadtbahn Niederflurstrab
+  STR Tram TRAM Str Strb STB Stb Straenbahn NachtTram Stadtbahn Niederflurstrab
   Trm S RS RER SKW METRO
   S-Bahn U M SUBWAY U-Bahn UBAHN
   Schw-B Schwebebahn H-Bahn
