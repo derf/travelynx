@@ -1660,7 +1660,8 @@ sub startup {
 							{
 								$cache_ts->set(
 									year  => $+{year},
-									month => $+{month}
+									month => $+{month},
+									day   => 1,
 								);
 							}
 							$self->journey_stats_cache->invalidate(
@@ -1841,7 +1842,8 @@ sub startup {
 					{
 						$cache_ts->set(
 							year  => $+{year},
-							month => $+{month}
+							month => $+{month},
+							day   => 1,
 						);
 					}
 					$self->journey_stats_cache->invalidate(
