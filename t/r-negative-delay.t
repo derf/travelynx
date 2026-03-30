@@ -17,11 +17,15 @@ require "$FindBin::Bin/../index.pl";
 
 my $t = Test::Mojo->new('Travelynx');
 
+my $reg_link = $t->app->config->{registration}{link};
+
 $t->ua->on( start => sub { $_[1]->req->headers->accept_language('de-DE') } );
 
 if ( not $t->app->config->{db} ) {
 	plan( skip_all => 'No database configured' );
 }
+
+my $reg_link = $t->app->config->{registration}{link};
 
 $t->app->pg->db->query(
 	'drop schema if exists travelynx_regr_negative_delay cascade');
@@ -40,12 +44,12 @@ $ENV{__TRAVELYNX_TEST_MINI_IRIS} = 0;
 $t->app->start( 'database', 'migrate' );
 
 my $csrf_token
-  = $t->ua->get('/register')->res->dom->at('input[name=csrf_token]')
+  = $t->ua->get($eg_link)->res->dom->at('input[name=csrf_token]')
   ->attr('value');
 
 # Successful registration
 $t->post_ok(
-	'/register' => form => {
+	$req_link => form => {
 		csrf_token => $csrf_token,
 		dt         => 1,
 		user       => 'someone',

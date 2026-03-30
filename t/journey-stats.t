@@ -23,6 +23,8 @@ if ( not $t->app->config->{db} ) {
 	plan( skip_all => 'No database configured' );
 }
 
+my $reg_link = $t->app->config->{registration}{link};
+
 $t->app->pg->db->query('drop schema if exists travelynx_test_11 cascade');
 $t->app->pg->db->query('create schema travelynx_test_11');
 $t->app->pg->db->query('set search_path to travelynx_test_11');
@@ -39,12 +41,12 @@ $ENV{__TRAVELYNX_TEST_MINI_IRIS} = 0;
 $t->app->start( 'database', 'migrate' );
 
 my $csrf_token
-  = $t->ua->get('/register')->res->dom->at('input[name=csrf_token]')
+  = $t->ua->get($reg_link)->res->dom->at('input[name=csrf_token]')
   ->attr('value');
 
 # Successful registration
 $t->post_ok(
-	'/register' => form => {
+	$reg_link => form => {
 		csrf_token => $csrf_token,
 		dt         => 1,
 		user       => 'someone',
