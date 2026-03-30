@@ -345,7 +345,7 @@ sub register {
 	}
 
 	if ( not $dt
-		or DateTime->now( time_zone => 'Europe/Berlin' )->epoch - $dt < 10 )
+		or DateTime->now( time_zone => 'Europe/Berlin' )->epoch - $dt < 3 )
 	{
 		# a human user should take at least ten seconds to fill out the form.
 		# Throw a CSRF error at presumed spammers.

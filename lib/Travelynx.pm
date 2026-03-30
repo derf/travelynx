@@ -94,6 +94,8 @@ sub startup {
 	chomp $self->config->{version};
 	$self->defaults( version => $self->config->{version} // 'UNKNOWN' );
 
+	$self->config->{registration}{link} = '/register/' . 10 + int( rand(70) );
+
 	$self->plugin(
 		authentication => {
 			autoload_user => 1,
@@ -3234,8 +3236,10 @@ sub startup {
 	}
 
 	if ( not $self->config->{registration}{disabled} ) {
-		$r->get('/register')->to('account#registration_form');
-		$r->post('/register')->to('account#register');
+		$r->get( $self->config->{registration}{link} )
+		  ->to('account#registration_form')
+		  ->name('registration_form');
+		$r->post( $self->config->{registration}{link} )->to('account#register');
 	}
 
 	my $authed_r = $r->under(

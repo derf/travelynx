@@ -1,7 +1,7 @@
 % if (my $invalid = stash('invalid')) {
 	%= include '_invalid_input', invalid => $invalid
 % }
-%= form_for '/register' => (method => 'POST') => begin
+%= form_for $self->url_for => (method => 'POST') => begin
 	%= csrf_field
 	%= hidden_field dt => DateTime->now(time_zone => 'Europe/Berlin')->epoch
 	<div class="row">
