@@ -1415,7 +1415,8 @@ sub startup {
 				{
 					$cache_ts->set(
 						year  => $+{year},
-						month => $+{month}
+						month => $+{month},
+						day   => 1,
 					);
 				}
 
