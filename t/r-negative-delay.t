@@ -47,7 +47,7 @@ my $csrf_token
 
 # Successful registration
 $t->post_ok(
-	$req_link => form => {
+	$reg_link => form => {
 		csrf_token => $csrf_token,
 		dt         => 1,
 		user       => 'someone',
