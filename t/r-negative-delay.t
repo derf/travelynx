@@ -17,8 +17,6 @@ require "$FindBin::Bin/../index.pl";
 
 my $t = Test::Mojo->new('Travelynx');
 
-my $reg_link = $t->app->config->{registration}{link};
-
 $t->ua->on( start => sub { $_[1]->req->headers->accept_language('de-DE') } );
 
 if ( not $t->app->config->{db} ) {
