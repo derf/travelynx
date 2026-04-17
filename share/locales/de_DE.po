@@ -251,6 +251,9 @@ msgstr "Neues Feature"
 msgid "changelog.bugfix"
 msgstr "Bugfix"
 
+msgid "changelog.improvement"
+msgstr "Verbesserung"
+
 msgid "changelog.2-16.1"
 msgstr "Infrastruktur zur Übersetzung von travelynx in andere Sprachen. Der Großteil der Website ist noch Deutsch; einzelne Seiten sind bereits auf Englisch und Teilmengen davon zusätzlich auf Französisch, Polnisch und Ungarisch verfügbar. Weitere Übersetzungen und ggf. Sprachen sowie Dokumentation zur Unterstützung dabei folgen bei Zeiten. Die Sprache wird auf Basis des Accept-Language-Headers ausgewählt und kann zusätzlich in den Account-Einstellungen konfiguriert werden."
 
@@ -271,6 +274,15 @@ msgstr "Sortierung vergangener Fahrten nach Verspätung oder Dauer. Weitere Attr
 
 msgid "changelog.2-19.2"
 msgstr "IRIS-Backend: Geringfügige Verbesserung der Verfügbarkeit von Kartendaten. Das Backend ist weiterhin abgekündigt und kann jederzeit entfallen."
+
+msgid "changelog.2-20.1"
+msgstr "„Mitfaren“-Button: Checkins anderer Accounts können nun übernommen werden, d.h. es wird ein Checkin mit identischem Start/Ziel und Verkehrsmittel erzeugt. Mitfahren ist nur möglich, wenn der eigene Account gerade nicht eingecheckt ist."
+
+msgid "changelog.2-20.2"
+msgstr "Besserer Umgang mit Backend-spezifischen Blockaden und Verzögerungen. Trotz allem ist dbris / bahn.de derzeit nur auf kleinen Instanzen (maximal 10 gleichzeitige Checkins) mit allen Features nutzbar."
+
+msgid "changelog.2-20.3"
+msgstr "Das IRIS-Backend ist nun wieder mit fast allen gewohnten Features nutzbar und bietet sich voraussichtlich bis Ende 2026 als Alternative zu bahn.de an."
 
 # history.html.ep
 

@@ -251,6 +251,9 @@ msgstr "New Feature"
 msgid "changelog.bugfix"
 msgstr "Bugfix"
 
+msgid "changelog.improvement"
+msgstr "Improvement"
+
 msgid "changelog.2-16.1"
 msgstr "Localization support. Parts of travelynx are now available in English, and a subset of those is also available in French, Hungarian, and Polish. Further translations, languages, and translation how-tos will follow in due time. Locale selection respects the Accept-Language header and can be configured on the account settings page."
 
@@ -271,6 +274,15 @@ msgstr "High score of all past checkins sorted by delay or duration. More attrib
 
 msgid "changelog.2-19.2"
 msgstr "Minor life support adjustments for the legacy IRIS backend: map data should now be available in slightly more cases than before."
+
+msgid "changelog.2-20.1"
+msgstr "“Join in” button: checkins of followees and other accounts can now be transformed into a checkin with identical data for your own account. This is only possible if your account is not already checked in."
+
+msgid "changelog.2-20.2"
+msgstr "Improved handling of backend-specific blocks and rate limits. Nevertheless, until further notice, dbris / bahn.de are only fully usable on small instances (no more than 10 concurrent checkins)."
+
+msgid "changelog.2-20.3"
+msgstr "The IRIS backend has been restored with almost all features. In many cases, it now is a viable alternative to bahn.de, at least until the end of 2026."
 
 # history.html.ep
 
