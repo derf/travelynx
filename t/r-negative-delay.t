@@ -42,7 +42,7 @@ $ENV{__TRAVELYNX_TEST_MINI_IRIS} = 0;
 $t->app->start( 'database', 'migrate' );
 
 my $csrf_token
-  = $t->ua->get($eg_link)->res->dom->at('input[name=csrf_token]')
+  = $t->ua->get($reg_link)->res->dom->at('input[name=csrf_token]')
   ->attr('value');
 
 # Successful registration
