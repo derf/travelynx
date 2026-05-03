@@ -391,7 +391,12 @@
 					<p style="margin-bottom: 2ex;">
 						<ul>
 							% for my $message (@{$journey->{extra_data}{him_msg} // []}) {
-								<li> <i class="material-icons tiny"><%= ($message->{prio} and $message->{prio} eq 'HOCH') ? 'warning' : 'info' %></i> <%= $message->{header} %> <%= $message->{lead} %></li>
+								% if ($message->{url}) {
+									<li> <i class="material-icons tiny"><%= ($message->{prio} and $message->{prio} eq 'HOCH') ? 'warning' : 'info' %></i> <a href="<%= $message->{url} %>" class="contrast-color-text"> <%= $message->{header} %> <%= $message->{lead} %></a></li>
+								% }
+								% else {
+									<li> <i class="material-icons tiny"><%= ($message->{prio} and $message->{prio} eq 'HOCH') ? 'warning' : 'info' %></i> <%= $message->{header} %> <%= $message->{lead} %> <%= $message->{url} %></li>
+								% }
 							% }
 						</ul>
 					</p>

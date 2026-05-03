@@ -314,12 +314,17 @@ sub add {
 		my @messages;
 		for my $msg ( $journey->messages ) {
 			if ( not $msg->{ueberschrift} ) {
+				my $url;
+				if ( $msg->{text} =~ m{ ( http s? :// \S+ ) [.]?+ }x ) {
+					$url = $1;
+				}
 				push(
 					@{ $data->{him_msg} },
 					{
 						header => q{},
 						prio   => $msg->{prioritaet},
-						lead   => $msg->{text}
+						lead   => $msg->{text},
+						url    => $url,
 					}
 				);
 				push(
@@ -1066,12 +1071,17 @@ sub update_departure_dbris {
 	$persistent_data->{him_msg} = [];
 	for my $msg ( $journey->messages ) {
 		if ( not $msg->{ueberschrift} ) {
+			my $url;
+			if ( $msg->{text} =~ m{ ( http s? :// \S+ ) [.]?+ }x ) {
+				$url = $1;
+			}
 			push(
 				@{ $ephemeral_data->{him_msg} },
 				{
 					header => q{},
 					prio   => $msg->{prioritaet},
-					lead   => $msg->{text}
+					lead   => $msg->{text},
+					url    => $url,
 				}
 			);
 			push(
@@ -1274,12 +1284,17 @@ sub update_arrival_dbris {
 	$persistent_data->{him_msg} = [];
 	for my $msg ( $journey->messages ) {
 		if ( not $msg->{ueberschrift} ) {
+			my $url;
+			if ( $msg->{text} =~ m{ ( http s? :// \S+ ) [.]?+ }x ) {
+				$url = $1;
+			}
 			push(
 				@{ $ephemeral_data->{him_msg} },
 				{
 					header => q{},
 					prio   => $msg->{prioritaet},
-					lead   => $msg->{text}
+					lead   => $msg->{text},
+					url    => $url,
 				}
 			);
 			push(
