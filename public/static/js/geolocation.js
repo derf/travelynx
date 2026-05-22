@@ -36,31 +36,31 @@ $(document).ready(function() {
 						name = candidate.name,
 						dbris = candidate.dbris,
 						distance = candidate.distance.toFixed(1);
-					node = $('<a class="tablerow" href="/s/' + eva + '?dbris=' + dbris + '"><span><i class="material-icons" aria-hidden="true">directions</i>' + name + '</span></a>');
+					node = $('<a class="tablerow" href="/s/' + eva + '?dbris=' + dbris + '"><span>' + name + '</span></a>');
 				} else if (candidate.efa) {
 					const eva = candidate.eva,
 						name = candidate.name,
 						efa = candidate.efa,
 						distance = candidate.distance.toFixed(1);
 
-					node = $('<a class="tablerow" href="/s/' + eva + '?efa=' + efa + '"><span><i class="material-icons" aria-hidden="true">directions</i>' + name + '</span></a>');
+					node = $('<a class="tablerow" href="/s/' + eva + '?efa=' + efa + '"><span>' + name + '</span><span class="distance">' + distance + ' km</span></a>');
 				} else if (candidate.hafas) {
 					const eva = candidate.eva,
 						name = candidate.name,
 						hafas = candidate.hafas,
 						distance = candidate.distance.toFixed(1);
 
-					node = $('<a class="tablerow" href="/s/' + eva + '?hafas=' + hafas + '"><span><i class="material-icons" aria-hidden="true">directions</i>' + name + '</span></a>');
+					node = $('<a class="tablerow" href="/s/' + eva + '?hafas=' + hafas + '"><span>' + name + '</span><span class="distance">' + distance + ' km</span></a>');
 				} else if (candidate.motis) {
 					const { id, name, motis } = candidate;
 
-					node = $('<a class="tablerow" href="/s/' + id + '?motis=' + motis + '"><span><i class="material-icons" aria-hidden="true">directions</i>' + name + '</span></a>');
+					node = $('<a class="tablerow" href="/s/' + id + '?motis=' + motis + '"><span>' + name + '</span></a>');
 				} else {
 					const eva = candidate.eva,
 						name = candidate.name,
 						distance = candidate.distance.toFixed(1);
 
-					node = $('<a class="tablerow" href="/s/' + eva + '"><span><i class="material-icons" aria-hidden="true">train</i>' + name + '</span></a>');
+					node = $('<a class="tablerow" href="/s/' + eva + '"><span>' + name + '</span><span class="distance">' + distance + ' km</span></a>');
 				}
 
 				node.click(function() {
