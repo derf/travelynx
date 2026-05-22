@@ -36,7 +36,7 @@ $(document).ready(function() {
 						name = candidate.name,
 						dbris = candidate.dbris,
 						distance = candidate.distance.toFixed(1);
-					node = $('<a class="tablerow" href="/s/' + eva + '?dbris=' + dbris + '"><span>' + name + '</span></a>');
+					node = $('<a class="tablerow" href="/s/' + eva + '?dbris=' + dbris + '"><span>' + name + '</span><span class="distance">' + distance + ' km</span></a>');
 				} else if (candidate.efa) {
 					const eva = candidate.eva,
 						name = candidate.name,
