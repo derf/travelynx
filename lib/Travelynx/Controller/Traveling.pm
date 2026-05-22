@@ -185,13 +185,16 @@ sub geolocation {
 			longitude => $lon
 		)->then(
 			sub {
-				my ($dbris) = @_;
-				my @results = map {
+				my ($dbris)  = @_;
+				my $distance = GIS::Distance->new;
+				my @results  = map {
 					{
 						name     => $_->name,
 						eva      => $_->eva,
-						distance => 0,
-						dbris    => $dbris_service,
+						distance => $distance->distance_metal(
+							$lat, $lon, $_->lat, $_->lon
+						),
+						dbris => $dbris_service,
 					}
 				} uniq_by { $_->name } $dbris->results;
 				if ( @results > 10 ) {
@@ -239,7 +242,7 @@ sub geolocation {
 					{
 						name     => $_->full_name,
 						eva      => $_->id_code,
-						distance => 0,
+						distance => $_->distance_m / 1e3,
 						efa      => $efa_service,
 					}
 				} $efa->results;
