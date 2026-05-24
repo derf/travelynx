@@ -283,8 +283,16 @@ sub update_distances {
 			my $rows = $db->update(
 				'journeys',
 				{
-					distance_beeline => $km_beeline ? int( $km_beeline * 1e3 )
+					# km_beeline is always returned. However, journeys may
+					# start and end at the same stop, in which case it is 0.
+					# Store this value literally.
+					distance_beeline => defined $km_beeline
+					? int( $km_beeline * 1e3 )
 					: undef,
+
+					# If km_polyline or km_route are 0, this indicates a lack
+					# of polyline data / lack of geocoordinates for the route.
+					# Store those as NULL values to indicate missing data.
 					distance_route => $km_route ? int( $km_route * 1e3 )
 					: undef,
 					distance_polyline => $km_polyline
