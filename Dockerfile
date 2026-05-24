@@ -1,4 +1,4 @@
-FROM debian:buster-slim as files
+FROM docker.io/debian:buster-slim as files
 
 ARG travelynx_version=git
 
@@ -18,7 +18,7 @@ RUN ln -sf ../local/imprint.html.ep templates && \
 RUN sed -i "s/qx{git describe --dirty}/'${travelynx_version}'/" lib/Travelynx/Controller/Static.pm
 RUN sed -i "s/\$self->plugin('Config');/\$self->plugin('Config'); \$self->config->{version} = '${travelynx_version}';/" lib/Travelynx.pm
 
-FROM perl:5.30-slim
+FROM docker.io/perl:5.30-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG APT_LISTCHANGES_FRONTEND=none
