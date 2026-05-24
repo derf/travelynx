@@ -1384,6 +1384,9 @@ sub startup {
 					);
 				}
 
+				delete $journey->{distance_beeline};
+				delete $journey->{distance_route};
+				delete $journey->{distance_polyline};
 				delete $journey->{edited};
 				delete $journey->{id};
 

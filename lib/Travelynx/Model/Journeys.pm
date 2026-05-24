@@ -251,7 +251,56 @@ sub add {
 		return ( undef, 'add_journey failed: ' . $@ );
 	}
 
+	# We need lat/lon data in order to determine distances -- we could query
+	# the stations table before inserting into journey, or we could just re-use
+	# existing code paths. The latter is easier and only slightly slower.
+	$self->update_distances(
+		db         => $db,
+		uid        => $uid,
+		journey_id => $journey_id
+	);
+
 	return ( $journey_id, undef );
+}
+
+sub update_distances {
+	my ( $self, %opt ) = @_;
+	my $db         = $opt{db};
+	my $uid        = $opt{uid};
+	my $journey_id = $opt{journey_id};
+
+	my $journey = $self->get_single(
+		db            => $db,
+		uid           => $uid,
+		journey_id    => $journey_id,
+		with_polyline => 1
+	);
+	if ($journey) {
+		eval {
+			my ( $km_polyline, $km_route, $km_beeline, $skip )
+			  = $self->get_travel_distance($journey);
+
+			my $rows = $db->update(
+				'journeys',
+				{
+					distance_beeline => $km_beeline ? int( $km_beeline * 1e3 )
+					: undef,
+					distance_route => $km_route ? int( $km_route * 1e3 )
+					: undef,
+					distance_polyline => $km_polyline
+					? int( $km_polyline * 1e3 )
+					: undef,
+				},
+				{
+					id      => $journey_id,
+					user_id => $uid,
+				}
+			)->rows;
+		};
+		if ($@) {
+			$self->{log}->error("update_distances($journey_id): $@");
+		}
+	}
 }
 
 sub add_from_in_transit {
@@ -269,8 +318,16 @@ sub add_from_in_transit {
 	delete $journey->{data};
 	$journey->{checkout_time} = DateTime->now( time_zone => 'Europe/Berlin' );
 
-	return $db->insert( 'journeys', $journey, { returning => 'id' } )
-	  ->hash->{id};
+	my $journey_id
+	  = $db->insert( 'journeys', $journey, { returning => 'id' } )->hash->{id};
+
+	$self->update_distances(
+		db         => $db,
+		uid        => $journey->{user_id},
+		journey_id => $journey_id
+	);
+
+	return $journey_id;
 }
 
 sub update {
@@ -466,6 +523,11 @@ sub update {
 			db  => $db,
 			uid => $uid,
 		);
+		$self->update_distances(
+			db         => $db,
+			uid        => $uid,
+			journey_id => $journey_id
+		);
 		return undef;
 	}
 	return "update($journey_id): did not match any journey part";
@@ -606,6 +668,11 @@ sub set_polyline {
 		);
 	}
 
+	$self->update_distances(
+		db         => $db,
+		uid        => $uid,
+		journey_id => $opt{journey_id}
+	);
 }
 
 sub set_polyline_id {
