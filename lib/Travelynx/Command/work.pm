@@ -449,6 +449,14 @@ sub run {
 							return;
 						}
 
+						if ( defined $entry->{data} ) {
+							my $ephemeral_data = JSON->new->decode( $entry->{data} );
+
+							if ( $journey->is_realtime and not $ephemeral_data->{rt} ) {
+								$self->app->in_transit->set_realtime( uid => $uid );
+							}
+						}
+
 						if ( $found_departure->realtime_departure ) {
 							$self->app->in_transit->update_departure_motis(
 								uid      => $uid,
