@@ -35,7 +35,7 @@ sub compute_distances {
 			$updated++;
 		}
 		if ( $i == $total or ( $i % 100 ) == 0 ) {
-			printf( "%.f%% complete\n", $i * 100 / $total );
+			printf( "%6.2f%% complete\n", $i * 100 / $total );
 		}
 		$i++;
 	}
