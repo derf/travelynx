@@ -11,6 +11,46 @@ has description => 'Deal with monthly and yearly statistics';
 
 has usage => sub { shift->extract_usage };
 
+sub compute_distances {
+	my ($self) = @_;
+
+	my $db      = $self->app->pg->db;
+	my $total   = $db->select( 'journeys', 'count(*) as count' )->hash->{count};
+	my $i       = 1;
+	my $updated = 0;
+
+	say
+	  'Storing travel distances for past journeys, this make take a while ...';
+
+	for
+	  my $journey ( $db->select( 'journeys', [qw[id user_id distance_beeline]] )
+		->hashes->each )
+	{
+		if ( not defined $journey->{distance_beeline} ) {
+			$self->app->journeys->update_distances(
+				db         => $db,
+				uid        => $journey->{user_id},
+				journey_id => $journey->{id}
+			);
+			$updated++;
+		}
+		if ( $i == $total or ( $i % 100 ) == 0 ) {
+			printf( "%.f%% complete\n", $i * 100 / $total );
+		}
+		$i++;
+	}
+	say "Added travel distances to $updated of $i journeys";
+}
+
+sub purge {
+	my ($self) = @_;
+
+	say 'Purging cached journey stats: TRUNCATE TABLE journey_stats';
+
+	my $db = $self->app->pg->db;
+	$db->query('truncate table journey_stats;');
+}
+
 sub refresh_all {
 	my ($self) = @_;
 
@@ -42,8 +82,14 @@ sub refresh_all {
 sub run {
 	my ( $self, $cmd, @arg ) = @_;
 
-	if ( $cmd eq 'refresh-all' ) {
+	if ( $cmd eq 'compute-distances' ) {
+		$self->compute_distances(@arg);
+	}
+	elsif ( $cmd eq 'refresh-all' ) {
 		$self->refresh_all(@arg);
+	}
+	elsif ( $cmd eq 'purge' ) {
+		$self->purge(@arg);
 	}
 
 }
