@@ -1376,16 +1376,16 @@ DISTRIBUTIONS
       parent 0
       perl 5.008001
       strictures 2.000000
-  HTML-Parser-3.83
-    pathname: O/OA/OALDERS/HTML-Parser-3.83.tar.gz
+  HTML-Parser-3.85
+    pathname: O/OA/OALDERS/HTML-Parser-3.85.tar.gz
     provides:
-      HTML::Entities 3.83
-      HTML::Filter 3.83
-      HTML::HeadParser 3.83
-      HTML::LinkExtor 3.83
-      HTML::Parser 3.83
-      HTML::PullParser 3.83
-      HTML::TokeParser 3.83
+      HTML::Entities 3.85
+      HTML::Filter 3.85
+      HTML::HeadParser 3.85
+      HTML::LinkExtor 3.85
+      HTML::Parser 3.85
+      HTML::PullParser 3.85
+      HTML::TokeParser 3.85
     requirements:
       Carp 0
       Exporter 0
@@ -2287,13 +2287,13 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 6.56
       Test::More 0.94
       perl 5.006000
-  Role-Tiny-2.002004
-    pathname: H/HA/HAARG/Role-Tiny-2.002004.tar.gz
+  Role-Tiny-2.002005
+    pathname: H/HA/HAARG/Role-Tiny-2.002005.tar.gz
     provides:
-      Role::Tiny 2.002004
-      Role::Tiny::With 2.002004
+      Role::Tiny 2.002005
+      Role::Tiny::With 2.002005
     requirements:
-      Exporter 5.57
+      Exporter 0
       perl 5.006
   SQL-Abstract-2.000001
     pathname: M/MS/MSTROUT/SQL-Abstract-2.000001.tar.gz
@@ -2738,18 +2738,18 @@ DISTRIBUTIONS
     requirements:
       Carp 0
       ExtUtils::MakeMaker 0
-  Travel-Status-DE-DBRIS-0.28
-    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.28.tar.gz
+  Travel-Status-DE-DBRIS-0.29
+    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.29.tar.gz
     provides:
-      Travel::Status::DE::DBRIS 0.28
-      Travel::Status::DE::DBRIS::Formation 0.28
-      Travel::Status::DE::DBRIS::Formation::Carriage 0.28
-      Travel::Status::DE::DBRIS::Formation::Group 0.28
-      Travel::Status::DE::DBRIS::Formation::Sector 0.28
-      Travel::Status::DE::DBRIS::Journey 0.28
-      Travel::Status::DE::DBRIS::JourneyAtStop 0.28
-      Travel::Status::DE::DBRIS::Location 0.28
-      Travel::Status::DE::DBRIS::Operators 0.28
+      Travel::Status::DE::DBRIS 0.29
+      Travel::Status::DE::DBRIS::Formation 0.29
+      Travel::Status::DE::DBRIS::Formation::Carriage 0.29
+      Travel::Status::DE::DBRIS::Formation::Group 0.29
+      Travel::Status::DE::DBRIS::Formation::Sector 0.29
+      Travel::Status::DE::DBRIS::Journey 0.29
+      Travel::Status::DE::DBRIS::JourneyAtStop 0.29
+      Travel::Status::DE::DBRIS::Location 0.29
+      Travel::Status::DE::DBRIS::Operators 0.29
     requirements:
       Carp 0
       Class::Accessor 0.16
@@ -2981,10 +2981,10 @@ DISTRIBUTIONS
       strict 0
       utf8 0
       warnings 0
-  UUID-0.37
-    pathname: J/JR/JRM/UUID-0.37.tar.gz
+  UUID-0.38
+    pathname: J/JR/JRM/UUID-0.38.tar.gz
     provides:
-      UUID 0.37
+      UUID 0.38
     requirements:
       Carp 0
       Config 0
@@ -2994,10 +2994,9 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 7.06
       File::Spec 0
       File::Temp 0.10
-      List::Util 1.29
       Time::HiRes 0
       blib 0
-      perl 5.005063
+      perl 5.008001
       strict 0
       vars 0
       warnings 0
@@ -3045,57 +3044,60 @@ DISTRIBUTIONS
       base 0
       lib 0
       perl 5.008
-  WWW-RobotRules-6.02
-    pathname: G/GA/GAAS/WWW-RobotRules-6.02.tar.gz
+  WWW-RobotRules-6.03
+    pathname: O/OA/OALDERS/WWW-RobotRules-6.03.tar.gz
     provides:
-      WWW::RobotRules 6.02
-      WWW::RobotRules::AnyDBM_File 6.00
-      WWW::RobotRules::InCore 6.02
+      WWW::RobotRules 6.03
+      WWW::RobotRules::AnyDBM_File 6.03
+      WWW::RobotRules::DB_File 6.03
+      WWW::RobotRules::InCore 6.03
     requirements:
       AnyDBM_File 0
+      Carp 0
       ExtUtils::MakeMaker 0
       Fcntl 0
       URI 1.10
       perl 5.008001
-  XML-LibXML-2.0210
-    pathname: S/SH/SHLOMIF/XML-LibXML-2.0210.tar.gz
+      strict 0
+  XML-LibXML-2.0213
+    pathname: T/TO/TODDR/XML-LibXML-2.0213.tar.gz
     provides:
-      XML::LibXML 2.0210
-      XML::LibXML::Attr 2.0210
-      XML::LibXML::AttributeHash 2.0210
-      XML::LibXML::Boolean 2.0210
-      XML::LibXML::CDATASection 2.0210
-      XML::LibXML::Comment 2.0210
-      XML::LibXML::Common 2.0210
-      XML::LibXML::Devel 2.0210
-      XML::LibXML::Document 2.0210
-      XML::LibXML::DocumentFragment 2.0210
-      XML::LibXML::Dtd 2.0210
-      XML::LibXML::Element 2.0210
-      XML::LibXML::ErrNo 2.0210
-      XML::LibXML::Error 2.0210
-      XML::LibXML::InputCallback 2.0210
-      XML::LibXML::Literal 2.0210
-      XML::LibXML::NamedNodeMap 2.0210
-      XML::LibXML::Namespace 2.0210
-      XML::LibXML::Node 2.0210
-      XML::LibXML::NodeList 2.0210
-      XML::LibXML::Number 2.0210
-      XML::LibXML::PI 2.0210
-      XML::LibXML::Pattern 2.0210
-      XML::LibXML::Reader 2.0210
-      XML::LibXML::RegExp 2.0210
-      XML::LibXML::RelaxNG 2.0210
-      XML::LibXML::SAX 2.0210
-      XML::LibXML::SAX::AttributeNode 2.0210
-      XML::LibXML::SAX::Builder 2.0210
-      XML::LibXML::SAX::Generator 2.0210
-      XML::LibXML::SAX::Parser 2.0210
-      XML::LibXML::Schema 2.0210
-      XML::LibXML::Text 2.0210
-      XML::LibXML::XPathContext 2.0210
-      XML::LibXML::XPathExpression 2.0210
-      XML::LibXML::_SAXParser 2.0210
+      XML::LibXML 2.0213
+      XML::LibXML::Attr 2.0213
+      XML::LibXML::AttributeHash 2.0213
+      XML::LibXML::Boolean 2.0213
+      XML::LibXML::CDATASection 2.0213
+      XML::LibXML::Comment 2.0213
+      XML::LibXML::Common 2.0213
+      XML::LibXML::Devel 2.0213
+      XML::LibXML::Document 2.0213
+      XML::LibXML::DocumentFragment 2.0213
+      XML::LibXML::Dtd 2.0213
+      XML::LibXML::Element 2.0213
+      XML::LibXML::ErrNo 2.0213
+      XML::LibXML::Error 2.0213
+      XML::LibXML::InputCallback 2.0213
+      XML::LibXML::Literal 2.0213
+      XML::LibXML::NamedNodeMap 2.0213
+      XML::LibXML::Namespace 2.0213
+      XML::LibXML::Node 2.0213
+      XML::LibXML::NodeList 2.0213
+      XML::LibXML::Number 2.0213
+      XML::LibXML::PI 2.0213
+      XML::LibXML::Pattern 2.0213
+      XML::LibXML::Reader 2.0213
+      XML::LibXML::RegExp 2.0213
+      XML::LibXML::RelaxNG 2.0213
+      XML::LibXML::SAX 2.0213
+      XML::LibXML::SAX::AttributeNode 2.0213
+      XML::LibXML::SAX::Builder 2.0213
+      XML::LibXML::SAX::Generator 2.0213
+      XML::LibXML::SAX::Parser 2.0213
+      XML::LibXML::Schema 2.0213
+      XML::LibXML::Text 2.0213
+      XML::LibXML::XPathContext 2.0213
+      XML::LibXML::XPathExpression 2.0213
+      XML::LibXML::_SAXParser 2.0213
     requirements:
       Alien::Base::Wrapper 0
       Alien::Libxml2 0.14
@@ -3119,7 +3121,6 @@ DISTRIBUTIONS
       parent 0
       perl 5.008001
       strict 0
-      vars 0
       warnings 0
   XML-NamespaceSupport-1.12
     pathname: P/PE/PERIGRIN/XML-NamespaceSupport-1.12.tar.gz
