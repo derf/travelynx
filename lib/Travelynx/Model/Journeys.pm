@@ -1122,10 +1122,16 @@ sub get_years {
 	for my $year (@years) {
 		my $stats = $self->stats_cache->get(
 			uid   => $opt{uid},
-			year  => $year,
+			year  => $year->[0],
 			month => 0,
 		);
-		$year->[2] = $stats // {};
+		if ( not $stats ) {
+			$stats = $self->get_stats(
+				uid  => $opt{uid},
+				year => $year->[0],
+			);
+		}
+		$year->[2] = $stats;
 	}
 	return @years;
 }
@@ -1162,8 +1168,16 @@ sub get_months_for_year {
 				month => $row->{month}
 			);
 
+			if ( not $stats ) {
+				$stats = $self->get_stats(
+					uid   => $opt{uid},
+					year  => $year,
+					month => $row->{month},
+				);
+			}
+
 			# undef -> no journeys for this month; empty hash -> no cached stats
-			$ret[ $row->{month} - 1 ][2] = $stats // {};
+			$ret[ $row->{month} - 1 ][2] = $stats;
 		}
 	}
 	return @ret;

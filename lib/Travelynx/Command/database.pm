@@ -36,25 +36,18 @@ latter is quite expensive and could cause long load times on the history pages.
 
 Adding this data for all journeys stored so far would take minutes to hours
 depending on database size, and is therefore not done as part of this
-migration. Please run the following command at your earliest convenience:
+migration. Please run the following commands at your earliest convenience:
 
 $ carton exec perl index.pl stats compute-distances
+$ carton exec perl index.pl stats purge-cache
 
 (adjust "carton exec" prefix, "sudo -u ...", environment variables, etc.
 as necessary for your setup -- use the same invocation as for, e.g.,
 "perl index.pl maintenance")
 
-The command can operate while the travelynx services are running. Until this
-post-migration script has completed, users may be confronted with invalid or
-missing distance data in their history view for the current year and month.
-
-There is a short window in which such invalid distances may be cached -- this
-will happen whenever a user completes a journey and then opens the history page
-for the current year or the current month. If you want to ensure that all
-cached data is valid, you can follow up with the follow two commands:
-
-$ carton exec perl index.pl stats purge
-$ carton exec perl index.pl stats refresh-all
+The command can operate while the travelynx services are running. Until these
+post-migration steps has been completed, users may observe invalid or missing
+distance data in their travel statistics for the current year and month.
 
 EOF
 

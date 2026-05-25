@@ -42,7 +42,7 @@ sub compute_distances {
 	say "Added travel distances to $updated of $i journeys";
 }
 
-sub purge {
+sub purge_cache {
 	my ($self) = @_;
 
 	say 'Purging cached journey stats: TRUNCATE TABLE journey_stats';
@@ -88,8 +88,8 @@ sub run {
 	elsif ( $cmd eq 'refresh-all' ) {
 		$self->refresh_all(@arg);
 	}
-	elsif ( $cmd eq 'purge' ) {
-		$self->purge(@arg);
+	elsif ( $cmd eq 'purge-cache' ) {
+		$self->purge_cache(@arg);
 	}
 
 }
