@@ -51,42 +51,11 @@ sub purge_cache {
 	$db->query('truncate table journey_stats;');
 }
 
-sub refresh_all {
-	my ($self) = @_;
-
-	my $db  = $self->app->pg->db;
-	my $now = DateTime->now( time_zone => 'Europe/Berlin' );
-
-	say 'Refreshing all stats, this may take a while ...';
-
-	my $total = $db->select( 'users', 'count(*) as count', { status => 1 } )
-	  ->hash->{count};
-	my $i = 1;
-
-	for
-	  my $user ( $db->select( 'users', ['id'], { status => 1 } )->hashes->each )
-	{
-		$self->app->journeys->generate_missing_stats( uid => $user->{id} );
-		$self->app->journeys->get_stats(
-			uid        => $user->{id},
-			year       => $now->year,
-			write_only => 1,
-		);
-		if ( $i == $total or ( $i % 10 ) == 0 ) {
-			printf( "%.f%% complete\n", $i * 100 / $total );
-		}
-		$i++;
-	}
-}
-
 sub run {
 	my ( $self, $cmd, @arg ) = @_;
 
 	if ( $cmd eq 'compute-distances' ) {
 		$self->compute_distances(@arg);
-	}
-	elsif ( $cmd eq 'refresh-all' ) {
-		$self->refresh_all(@arg);
 	}
 	elsif ( $cmd eq 'purge-cache' ) {
 		$self->purge_cache(@arg);

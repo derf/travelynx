@@ -98,25 +98,4 @@ sub invalidate {
 	);
 }
 
-sub get_yyyymm_having_stats {
-	my ( $self, %opt ) = @_;
-	my $uid = $opt{uid};
-	my $db  = $opt{db} // $self->{pg}->db;
-	my $res = $db->select(
-		'journey_stats',
-		[ 'year', 'month' ],
-		{ user_id  => $uid },
-		{ order_by => { -asc => [ 'year', 'month' ] } }
-	);
-
-	my @ret;
-	for my $row ( $res->hashes->each ) {
-		if ( $row->{month} != 0 ) {
-			push( @ret, [ $row->{year}, $row->{month} ] );
-		}
-	}
-
-	return @ret;
-}
-
 1;
