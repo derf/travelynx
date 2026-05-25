@@ -4,6 +4,7 @@ requires 'Crypt::Eksblowfish';
 requires 'DateTime';
 requires 'DateTime::Format::Strptime';
 requires 'Email::Sender::Simple';
+requires 'File::Slurp';
 requires 'GIS::Distance';
 requires 'GIS::Distance::Fast';
 requires 'IO::Socket::Socks', '>= 0.64';
