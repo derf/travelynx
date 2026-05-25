@@ -859,6 +859,9 @@ sub get {
 		}
 
 		if ( $opt{verbose} ) {
+			( $ref->{route_dep_index}, $ref->{route_arr_index} )
+			  = $self->get_route_indexes($ref);
+
 			my $rename = $self->{renamed_station};
 			for my $stop ( @{ $ref->{route} } ) {
 				if ( $stop->[0] =~ m{^Betriebsstelle nicht bekannt (\d+)$} ) {
@@ -1287,6 +1290,56 @@ sub sanity_check {
 	return undef;
 }
 
+sub get_route_indexes {
+	my ( $self, $journey ) = @_;
+	my $route_ref = $journey->{route};
+	my $from_ts   = $journey->{sched_dep_ts} // $journey->{rt_dep_ts};
+	my $to_ts     = $journey->{sched_arr_ts} // $journey->{rt_arr_ts};
+
+	# A trip may pass the same stop multiple times.
+	# Thus, two criteria must be met to select the start/end of the actual route:
+	# * stop name or ID matches, and
+	# * one of:
+	#   - arrival/departure time at the stop matches, or
+	#   - the stop does not have arrival/departure time
+	# In the latter case, we still face the risk of selecting the wrong
+	# start/end stop. However, we have no way of finding the right one. As the
+	# majority of trips do not pass the same stop multiple times, it's better
+	# to risk having a few inaccurate distances than not calculating the
+	# distance for any journey that lacks sched_dep/rt_dep or
+	# sched_from/rt_from.
+
+	my $route_start = first_index {
+		(
+			(
+				     $_->[1] and $_->[1] == $journey->{from_eva}
+				  or $_->[0] eq $journey->{from_name}
+			)
+			  and ( not( defined $_->[2]{sched_dep} or defined $_->[2]{rt_dep} )
+				or ( $_->[2]{sched_dep} // $_->[2]{rt_dep} ) == $from_ts )
+		)
+	}
+	@{$route_ref};
+
+	# Here, we need to use last_index. In case of ring lines, the first index
+	# will not have sched_arr/rt_arr set, but we should not select it as route
+	# end...
+	my $route_end = last_index {
+		(
+			(
+				     $_->[1] and $_->[1] == $journey->{to_eva}
+				  or $_->[0] eq $journey->{to_name}
+			)
+			  and ( not( defined $_->[2]{sched_arr} or defined $_->[2]{rt_arr} )
+				or ( $_->[2]{sched_arr} // $_->[2]{rt_arr} )
+				== ( $to_ts // 0 ) )
+		)
+	}
+	@{$route_ref};
+
+	return ( $route_start, $route_end );
+}
+
 sub get_travel_distance {
 	my ( $self, $journey ) = @_;
 
@@ -1351,6 +1404,8 @@ sub get_travel_distance {
 	my $geo                   = GIS::Distance->new();
 	my $distance_beeline
 	  = $geo->distance_metal( @{$from_latlon}, @{$to_latlon} );
+
+	# TODO use my ($route_start, $route_end) = $self->get_route_indexes(...)
 
 	# A trip may pass the same stop multiple times.
 	# Thus, two criteria must be met to select the start/end of the actual route:
