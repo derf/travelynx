@@ -1444,7 +1444,8 @@ sub get_travel_distance {
 		(
 			( $_->[1] and $_->[1] == $to_eva or $_->[0] eq $to )
 			  and ( not( defined $_->[2]{sched_arr} or defined $_->[2]{rt_arr} )
-				or ( $_->[2]{sched_arr} // $_->[2]{rt_arr} ) == $to_ts )
+				or ( $_->[2]{sched_arr} // $_->[2]{rt_arr} )
+				== ( $to_ts // 0 ) )
 		)
 	}
 	@{$route_ref};
