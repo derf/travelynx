@@ -38,8 +38,8 @@ Adding this data for all journeys stored so far would take minutes to hours
 depending on database size, and is therefore not done as part of this
 migration. Please run the following commands at your earliest convenience:
 
-$ carton exec perl index.pl stats compute-distances
-$ carton exec perl index.pl stats purge-cache
+$ carton exec perl index.pl stats compute-distances -m production
+$ carton exec perl index.pl stats purge-cache -m production
 
 (adjust "carton exec" prefix, "sudo -u ...", environment variables, etc.
 as necessary for your setup -- use the same invocation as for, e.g.,
