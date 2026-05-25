@@ -880,21 +880,25 @@ sub get {
 				push( @parsed_messages, [ epoch_to_dt($ts), $msg ] );
 			}
 			$ref->{messages} = [ reverse @parsed_messages ];
-			my ( $km_polyline, $km_route, $km_beeline, $skip )
-			  = $self->get_travel_distance($ref);
-			$ref->{km_route}     = $km_polyline || $km_route || $km_beeline;
-			$ref->{skip_route}   = $km_polyline ? 0 : $skip;
-			$ref->{km_beeline}   = $km_beeline;
-			$ref->{skip_beeline} = $skip;
+			if ( defined $ref->{distance} ) {
+				$ref->{km_route} = $ref->{distance} / 1e3;
+			}
+			if ( defined $ref->{distance_beeline} ) {
+				$ref->{km_beeline} = $ref->{distance_beeline} / 1e3;
+			}
 			my $kmh_divisor
 			  = ( $ref->{rt_duration} // $ref->{sched_duration} // 999999 )
 			  / 3600;
-			$ref->{kmh_route}
-			  = $kmh_divisor ? $ref->{km_route} / $kmh_divisor : -1;
-			$ref->{kmh_beeline}
-			  = $kmh_divisor
-			  ? $ref->{km_beeline} / $kmh_divisor
-			  : -1;
+			if ( $ref->{km_route} ) {
+				$ref->{kmh_route}
+				  = $kmh_divisor ? $ref->{km_route} / $kmh_divisor : -1;
+			}
+			if ( $ref->{km_beeline} ) {
+				$ref->{kmh_beeline}
+				  = $kmh_divisor
+				  ? $ref->{km_beeline} / $kmh_divisor
+				  : -1;
+			}
 		}
 
 		push( @travels, $ref );
@@ -1906,8 +1910,8 @@ sub compute_stats {
 
 	for my $journey (@journeys) {
 		$num_trains++;
-		$km_route   += $journey->{km_route};
-		$km_beeline += $journey->{km_beeline};
+		$km_route   += $journey->{km_route}   // 0;
+		$km_beeline += $journey->{km_beeline} // 0;
 		if (    $journey->{sched_duration}
 			and $journey->{sched_duration} > 0 )
 		{
@@ -2058,12 +2062,11 @@ sub get_stats {
 	}
 
 	my @journeys = $self->get(
-		uid           => $uid,
-		cancelled     => 0,
-		verbose       => 1,
-		with_polyline => 1,
-		after         => $interval_start,
-		before        => $interval_end
+		uid       => $uid,
+		cancelled => 0,
+		verbose   => 1,
+		after     => $interval_start,
+		before    => $interval_end
 	);
 	my $stats = $self->compute_stats(@journeys);
 
