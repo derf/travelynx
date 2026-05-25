@@ -1658,6 +1658,12 @@ sub yearly_history {
 		$with_review = 1;
 	}
 
+	my %km_by_day;
+	for my $journey (@journeys) {
+		my $mmdd = $journey->{sched_departure}->strftime('%m/%d');
+		$km_by_day{$mmdd} += $journey->{distance} / 1e3;
+	}
+
 	$self->respond_to(
 		json => {
 			json => {
@@ -1669,6 +1675,7 @@ sub yearly_history {
 			template    => 'history_by_year',
 			title       => "travelynx: $year",
 			journeys    => [@journeys],
+			km_by_day   => \%km_by_day,
 			year        => $year,
 			have_review => $with_review,
 			statistics  => $stats
@@ -1734,6 +1741,12 @@ sub monthly_history {
 
 	my $month_name = $months[ $month - 1 ];
 
+	my %km_by_day;
+	for my $journey (@journeys) {
+		my $mmdd = $journey->{sched_departure}->strftime('%m/%d');
+		$km_by_day{$mmdd} += $journey->{distance} / 1e3;
+	}
+
 	$self->respond_to(
 		json => {
 			json => {
@@ -1745,6 +1758,7 @@ sub monthly_history {
 			template    => 'history_by_month',
 			title       => "travelynx: $month_name $year",
 			journeys    => [@journeys],
+			km_by_day   => \%km_by_day,
 			year        => $year,
 			month       => $month,
 			month_name  => $month_name,

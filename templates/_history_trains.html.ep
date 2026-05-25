@@ -11,6 +11,9 @@
 			% if ($olddate ne $date) {
 				<li class="collection-item history-date-change">
 					<b><%= $date %></b>
+					% if (my $km = (stash('km_by_day') // {})->{$travel->{sched_departure}->strftime('%m/%d')}) {
+						<span style="float: right; font-weight: normal;"><%= sprintf('%.f km', $km) %></span>
+					% }
 				</li>
 				% $olddate = $date
 			% }
