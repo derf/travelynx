@@ -1405,42 +1405,7 @@ sub get_travel_distance {
 	my $distance_beeline
 	  = $geo->distance_metal( @{$from_latlon}, @{$to_latlon} );
 
-	# TODO use my ($route_start, $route_end) = $self->get_route_indexes(...)
-
-	# A trip may pass the same stop multiple times.
-	# Thus, two criteria must be met to select the start/end of the actual route:
-	# * stop name or ID matches, and
-	# * one of:
-	#   - arrival/departure time at the stop matches, or
-	#   - the stop does not have arrival/departure time
-	# In the latter case, we still face the risk of selecting the wrong
-	# start/end stop. However, we have no way of finding the right one. As the
-	# majority of trips do not pass the same stop multiple times, it's better
-	# to risk having a few inaccurate distances than not calculating the
-	# distance for any journey that lacks sched_dep/rt_dep or
-	# sched_from/rt_from.
-
-	my $route_start = first_index {
-		(
-			( $_->[1] and $_->[1] == $from_eva or $_->[0] eq $from )
-			  and ( not( defined $_->[2]{sched_dep} or defined $_->[2]{rt_dep} )
-				or ( $_->[2]{sched_dep} // $_->[2]{rt_dep} ) == $from_ts )
-		)
-	}
-	@{$route_ref};
-
-	# Here, we need to use last_index. In case of ring lines, the first index
-	# will not have sched_arr/rt_arr set, but we should not select it as route
-	# end...
-	my $route_end = last_index {
-		(
-			( $_->[1] and $_->[1] == $to_eva or $_->[0] eq $to )
-			  and ( not( defined $_->[2]{sched_arr} or defined $_->[2]{rt_arr} )
-				or ( $_->[2]{sched_arr} // $_->[2]{rt_arr} )
-				== ( $to_ts // 0 ) )
-		)
-	}
-	@{$route_ref};
+	my ( $route_start, $route_end ) = $self->get_route_indexes($journey);
 
 	if ( not( defined $route_start and defined $route_end ) ) {
 		return ( 0, 0, $distance_beeline );
