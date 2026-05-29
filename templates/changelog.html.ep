@@ -2,6 +2,21 @@
 
 <div class="row">
 	<div class="col s12 m1 l1">
+		2.21
+	</div>
+	<div class="col s12 m11 l11">
+		<p>
+			<i class="material-icons left" aria-label="<%= L('changelog.improvement') %>">star</i>
+			%= L('changelog.2-21.1')
+		</p>
+		<p>
+			<i class="material-icons left" aria-label="<%= L('changelog.announcement') %>">announcement</i>
+			%= L('changelog.2-21.2')
+		</p>
+	</div>
+
+<div class="row">
+	<div class="col s12 m1 l1">
 		2.20
 	</div>
 	<div class="col s12 m11 l11">

@@ -254,6 +254,9 @@ msgstr "Bugfix"
 msgid "changelog.improvement"
 msgstr "Improvement"
 
+msgid "changelog.announcement"
+msgstr "Announcement"
+
 msgid "changelog.2-16.1"
 msgstr "Localization support. Parts of travelynx are now available in English, and a subset of those is also available in French, Hungarian, and Polish. Further translations, languages, and translation how-tos will follow in due time. Locale selection respects the Accept-Language header and can be configured on the account settings page."
 
@@ -283,6 +286,12 @@ msgstr "Improved handling of backend-specific blocks and rate limits. Neverthele
 
 msgid "changelog.2-20.3"
 msgstr "The IRIS backend has been restored with almost all features. In many cases, it now is a viable alternative to bahn.de, at least until the end of 2026."
+
+msgid "changelog.2-21.1"
+msgstr "Statistics on past journeys are now computed immediately rather than being deferred until the corresponding detail view has been opened. History pages now load much faster."
+
+msgid "changelog.2-21.2"
+msgstr "If you are running your own instance, you'll need to run 'perl index.pl stats compute-distances -m production' and 'perl index.pl stats purge-cache -m production' after the upgrade. compute-distances may take a while; it can run in the background while the travelynx web service and workers are operating normally."
 
 # history.html.ep
 
