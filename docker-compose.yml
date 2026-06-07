@@ -2,43 +2,32 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-version: "3.6"
-x-common-env: &common-env
-  TRAVELYNX_DB_HOST: database
-  TRAVELYNX_DB_NAME: travelynx
-  TRAVELYNX_DB_USERNAME: travelynx
-  TRAVELYNX_DB_PASSWORD: travelynx
-  TRAVELYNX_SECRET: 12345678
-  TRAVELYNX_MAIL_DISABLE: 1
-  MOJO_MODE: development
-
-x-common-config: &common-config
-  volumes:
-    - ./examples/docker/travelynx.conf:/app/travelynx.conf
-  build: .
-  networks:
-    - backend
-  
 services:
-  database:
-    image: postgres:11
-    networks:
-      - backend
-    environment: 
-      <<: *common-env
-    volumes:
-      - ./examples/docker/postgres-init.sh:/docker-entrypoint-initdb.d/init.sh
   travelynx:
-    <<: *common-config
+    build: .
+    volumes:
+      - ./travelynx.conf:/app/travelynx.conf
+      - ./travelynx-conf:/app/local
     ports:
-      - "8000:8093"
-    environment:
-      <<: *common-env
-  cron:
-    <<: *common-config
-    environment:
-      <<: *common-env
-      CRON: 1
+      - 127.0.0.1:8000:8093
+    links:
+      - db
+    restart: unless-stopped
 
-networks:
-  backend:
+  cron:
+    build: .
+    volumes:
+      - ./travelynx.conf:/app/travelynx.conf
+      - ./travelynx-conf:/app/local
+    command: worker
+    links:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:17
+    env_file: db.env
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
