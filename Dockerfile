@@ -1,4 +1,4 @@
-FROM docker.io/debian:trixie-slim as files
+FROM docker.io/debian:trixie-slim AS files
 
 ARG travelynx_version=git
 
