@@ -8,6 +8,7 @@ COPY lib/ /app/lib/
 COPY public/ /app/public/
 COPY templates/ /app/templates/
 COPY share/ /app/share/
+COPY ext/ /app/ext/
 
 WORKDIR /app
 
@@ -18,7 +19,7 @@ RUN ln -sf ../local/imprint.html.ep templates && \
 RUN sed -i "s/qx{git describe --dirty}/'${travelynx_version}'/" lib/Travelynx/Controller/Static.pm
 RUN sed -i "s/\$self->plugin('Config');/\$self->plugin('Config'); \$self->config->{version} = '${travelynx_version}';/" lib/Travelynx.pm
 
-FROM docker.io/perl:5.42-slim
+FROM docker.io/perl:5.40-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG APT_LISTCHANGES_FRONTEND=none
@@ -34,6 +35,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 	libc6-dev \
 	libdb5.3 \
 	libdb5.3-dev \
+	libpq5 \
 	libpq-dev \
 	libssl3t64 \
 	libssl-dev \
