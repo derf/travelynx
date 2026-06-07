@@ -4,18 +4,24 @@ This document describes how to host your own travelynx instance.
 
 ## Dependencies
 
- * perl ≥ 5.20
- * carton
- * build-essential
- * libpq-dev
+On Debian 13 (trixie), the following packages are required:
+
+ * perl ≥ 5.40
+ * carton (Perl package manager)
+ * build-essential (C/C++ compiler and build utilities)
  * git
+ * libdb5.3-dev
+ * libpq-dev
+ * libssl-dev
+ * libxml2-dev
+ * zlib1g-dev
 
 ## Installation
 
 travelynx depends on a set of Perl modules which are documented in `cpanfile`.
-After installing the dependencies mentioned above, you can use carton to
+After installing the dependencies mentioned above, you can use **carton** to
 install Perl depenencies locally. You may alsobe able to use cpanminus;
-however this method is untested.
+however, this method is untested.
 
 In the project root directory (where `cpanfile` resides), run
 
@@ -23,9 +29,9 @@ In the project root directory (where `cpanfile` resides), run
 carton install --deployment
 ```
 
-and set `PERL5LIB=.../local/lib/perl5` before executing any travelynx
-commands (see configs in the examples directory) or wrap them with `carton
-exec`, e.g. `carton exec hypnotoad index.pl`
+Afterwards, either set `PERL5LIB=.../local/lib/perl5` before executing any
+travelynx commands (see configs in the examples directory), or wrap them with
+`carton exec`, e.g. `carton exec hypnotoad index.pl`
 
 ## Setup
 
@@ -68,33 +74,19 @@ ambiguous in this setup manual.
 
 Note that Deutsche Bahn have put parts of their API behind an IP reputation
 filter. In general, checkins with the bahn.de backend will only be possible if
-travelynx is accessing it from a residential (non-server) IP range.  See the
+travelynx is accessing it from a residential (non-server) IP range. See the
 dbris bahn.de proxy / proxies setting in `example/travelynx.conf` for
 workarounds.
 
 ## Updating
 
-It is recommended to run travelynx directly from the git repository. When
-updating, the workflow depends on whether schema updates need to be applied
-or not.
+It is recommended to run travelynx directly from the git repository.  This way,
+**examples/update.sh** will automatically perform a git pull and apply any
+required database migrations. For releases that bump dependency versions or
+introduce new dependencies, run **examples/update.sh with-deps**.
 
-```
-git pull
-carton install --deployment # if you are using carton: update dependencies
-chmod -R a+rX . # only needed if travelynx is running under a different user
-if perl index.pl database has-current-schema; then
-    systemctl reload travelynx
-else
-    systemctl stop travelynx
-    perl index.pl database migrate
-    systemctl start travelynx
-fi
-```
-
-Note that this is subject to change -- the application may perform schema
-updates automatically in the future. If you used carton for installation,
-use `carton exec perl ...` in the snippet above; otherwise, export
-`PERL5LIB=.../local/lib/perl5`.
+If you are not using carton, or have some other peculiarities in your setup,
+you may need to adjust the script.
 
 ## Setup with Docker
 ---
