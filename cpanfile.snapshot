@@ -133,6 +133,30 @@ DISTRIBUTIONS
       ExtUtils::CBuilder 0
       ExtUtils::MakeMaker 6.52
       perl 5.006
+  Alien-cmake3-0.10
+    pathname: P/PL/PLICEASE/Alien-cmake3-0.10.tar.gz
+    provides:
+      Alien::cmake3 0.10
+    requirements:
+      Alien::Base 0.92
+      Alien::Build 1.19
+      Alien::Build::MM 0.32
+      Archive::Tar 0
+      Capture::Tiny 0
+      ExtUtils::MakeMaker 6.52
+      File::Which 0
+      HTTP::Tiny 0.044
+      IO::Socket::SSL 1.56
+      IO::Zlib 0
+      Mojo::DOM 0
+      Mojolicious 7.00
+      Mozilla::CA 0
+      Net::SSLeay 1.49
+      Path::Tiny 0
+      Sort::Versions 0
+      URI 0
+      URI::Escape 0
+      perl 5.008001
   B-Hooks-EndOfScope-0.28
     pathname: E/ET/ETHER/B-Hooks-EndOfScope-0.28.tar.gz
     provides:
@@ -393,8 +417,8 @@ DISTRIBUTIONS
       Test::More 0.88
       Time::HiRes 0
       version 0
-  DBI-1.647
-    pathname: H/HM/HMBRAND/DBI-1.647.tgz
+  DBI-1.648
+    pathname: H/HM/HMBRAND/DBI-1.648.tgz
     provides:
       Bundle::DBI 12.008696
       DBD::DBM 0.08
@@ -407,15 +431,15 @@ DISTRIBUTIONS
       DBD::ExampleP::db 12.014311
       DBD::ExampleP::dr 12.014311
       DBD::ExampleP::st 12.014311
-      DBD::File 0.44
-      DBD::File::DataSource::File 0.44
-      DBD::File::DataSource::Stream 0.44
-      DBD::File::Statement 0.44
-      DBD::File::Table 0.44
-      DBD::File::TableSource::FileSystem 0.44
-      DBD::File::db 0.44
-      DBD::File::dr 0.44
-      DBD::File::st 0.44
+      DBD::File 0.45
+      DBD::File::DataSource::File 0.45
+      DBD::File::DataSource::Stream 0.45
+      DBD::File::Statement 0.45
+      DBD::File::Table 0.45
+      DBD::File::TableSource::FileSystem 0.45
+      DBD::File::db 0.45
+      DBD::File::dr 0.45
+      DBD::File::st 0.45
       DBD::Gofer 0.015327
       DBD::Gofer::Policy::Base 0.010088
       DBD::Gofer::Policy::classic 0.010088
@@ -450,7 +474,7 @@ DISTRIBUTIONS
       DBD::Sponge::dr 12.010003
       DBD::Sponge::st 12.010003
       DBDI 12.015129
-      DBI 1.647
+      DBI 1.648
       DBI::Const::GetInfo::ANSI 2.008697
       DBI::Const::GetInfo::ODBC 2.011374
       DBI::Const::GetInfoReturn 2.008697
@@ -490,7 +514,7 @@ DISTRIBUTIONS
       DBI::SQL::Nano::Table_ 1.015544
       DBI::Util::CacheMemory 0.010315
       DBI::Util::_accessor 0.009479
-      DBI::common 1.647
+      DBI::common 1.648
     requirements:
       ExtUtils::MakeMaker 6.48
       Test::Simple 0.90
@@ -1310,6 +1334,20 @@ DISTRIBUTIONS
       POSIX 0
       strict 0
       warnings 0
+  File-Slurper-0.014
+    pathname: L/LE/LEONT/File-Slurper-0.014.tar.gz
+    provides:
+      File::Slurper 0.014
+    requirements:
+      Carp 0
+      Encode 2.11
+      Exporter 5.57
+      ExtUtils::MakeMaker 0
+      PerlIO::encoding 0
+      constant 0
+      perl 5.008
+      strict 0
+      warnings 0
   File-Which-1.27
     pathname: P/PL/PLICEASE/File-Which-1.27.tar.gz
     provides:
@@ -1430,19 +1468,19 @@ DISTRIBUTIONS
       Time::Zone 0
       perl 5.006002
       strict 0
-  HTTP-Message-7.01
-    pathname: O/OA/OALDERS/HTTP-Message-7.01.tar.gz
+  HTTP-Message-7.02
+    pathname: O/OA/OALDERS/HTTP-Message-7.02.tar.gz
     provides:
-      HTTP::Config 7.01
-      HTTP::Headers 7.01
-      HTTP::Headers::Auth 7.01
-      HTTP::Headers::ETag 7.01
-      HTTP::Headers::Util 7.01
-      HTTP::Message 7.01
-      HTTP::Request 7.01
-      HTTP::Request::Common 7.01
-      HTTP::Response 7.01
-      HTTP::Status 7.01
+      HTTP::Config 7.02
+      HTTP::Headers 7.02
+      HTTP::Headers::Auth 7.02
+      HTTP::Headers::ETag 7.02
+      HTTP::Headers::Util 7.02
+      HTTP::Message 7.02
+      HTTP::Request 7.02
+      HTTP::Request::Common 7.02
+      HTTP::Response 7.02
+      HTTP::Status 7.02
     requirements:
       Carp 0
       Clone 0.46
@@ -1502,6 +1540,17 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       Test::Simple 0.45
+  IO-Compress-Brotli-0.022
+    pathname: T/TI/TIMLEGGE/IO-Compress-Brotli-0.022.tar.gz
+    provides:
+      IO::Compress::Brotli 0.022
+      IO::Uncompress::Brotli 0.022
+    requirements:
+      Alien::cmake3 0
+      File::Slurper 0
+      Getopt::Long 0
+      Time::HiRes 0
+      perl 5.008000
   IO-HTML-1.004
     pathname: C/CJ/CJM/IO-HTML-1.004.tar.gz
     provides:
@@ -1663,25 +1712,25 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 6.30
       Locale::Maketext 1.17
-  Log-Report-1.45
-    pathname: M/MA/MARKOV/Log-Report-1.45.tar.gz
+  Log-Report-1.46
+    pathname: M/MA/MARKOV/Log-Report-1.46.tar.gz
     provides:
-      Log::Report 1.45
-      Log::Report::DBIC::Profiler 1.45
-      Log::Report::Die 1.45
-      Log::Report::Dispatcher 1.45
-      Log::Report::Dispatcher::Callback 1.45
-      Log::Report::Dispatcher::File 1.45
-      Log::Report::Dispatcher::Log4perl 1.45
-      Log::Report::Dispatcher::LogDispatch 1.45
-      Log::Report::Dispatcher::Perl 1.45
-      Log::Report::Dispatcher::Syslog 1.45
-      Log::Report::Dispatcher::Try 1.45
-      Log::Report::Domain 1.45
-      Log::Report::Exception 1.45
-      Log::Report::Message 1.45
-      Log::Report::Translator 1.45
-      MojoX::Log::Report 1.45
+      Log::Report 1.46
+      Log::Report::DBIC::Profiler 1.46
+      Log::Report::Die 1.46
+      Log::Report::Dispatcher 1.46
+      Log::Report::Dispatcher::Callback 1.46
+      Log::Report::Dispatcher::File 1.46
+      Log::Report::Dispatcher::Log4perl 1.46
+      Log::Report::Dispatcher::LogDispatch 1.46
+      Log::Report::Dispatcher::Perl 1.46
+      Log::Report::Dispatcher::Syslog 1.46
+      Log::Report::Dispatcher::Try 1.46
+      Log::Report::Domain 1.46
+      Log::Report::Exception 1.46
+      Log::Report::Message 1.46
+      Log::Report::Translator 1.46
+      MojoX::Log::Report 1.46
     requirements:
       Devel::GlobalDestruction 0.09
       Encode 2.00
@@ -1952,8 +2001,8 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       Mojolicious 9.41
       perl 5.020
-  Mojolicious-9.45
-    pathname: S/SR/SRI/Mojolicious-9.45.tar.gz
+  Mojolicious-9.46
+    pathname: S/SR/SRI/Mojolicious-9.46.tar.gz
     provides:
       Mojo undef
       Mojo::Asset undef
@@ -2023,7 +2072,7 @@ DISTRIBUTIONS
       Mojo::UserAgent::Transactor undef
       Mojo::Util undef
       Mojo::WebSocket undef
-      Mojolicious 9.45
+      Mojolicious 9.46
       Mojolicious::Command undef
       Mojolicious::Command::Author::cpanify undef
       Mojolicious::Command::Author::generate undef
@@ -2125,6 +2174,12 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       Module::Runtime 0.014
+  Mozilla-CA-20250602
+    pathname: L/LW/LWP/Mozilla-CA-20250602.tar.gz
+    provides:
+      Mozilla::CA 20250602
+    requirements:
+      ExtUtils::MakeMaker 0
   Net-HTTP-6.24
     pathname: O/OA/OALDERS/Net-HTTP-6.24.tar.gz
     provides:
@@ -2330,6 +2385,16 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       SQL::Abstract 2.0
       perl 5.016
+  Sort-Versions-1.62
+    pathname: N/NE/NEILB/Sort-Versions-1.62.tar.gz
+    provides:
+      Sort::Versions 1.62
+    requirements:
+      Exporter 0
+      ExtUtils::MakeMaker 0
+      perl 5.006
+      strict 0
+      warnings 0
   Specio-0.53
     pathname: D/DR/DROLSKY/Specio-0.53.tar.gz
     provides:
@@ -2738,18 +2803,18 @@ DISTRIBUTIONS
     requirements:
       Carp 0
       ExtUtils::MakeMaker 0
-  Travel-Status-DE-DBRIS-0.29
-    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.29.tar.gz
+  Travel-Status-DE-DBRIS-0.31
+    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.31.tar.gz
     provides:
-      Travel::Status::DE::DBRIS 0.29
-      Travel::Status::DE::DBRIS::Formation 0.29
-      Travel::Status::DE::DBRIS::Formation::Carriage 0.29
-      Travel::Status::DE::DBRIS::Formation::Group 0.29
-      Travel::Status::DE::DBRIS::Formation::Sector 0.29
-      Travel::Status::DE::DBRIS::Journey 0.29
-      Travel::Status::DE::DBRIS::JourneyAtStop 0.29
-      Travel::Status::DE::DBRIS::Location 0.29
-      Travel::Status::DE::DBRIS::Operators 0.29
+      Travel::Status::DE::DBRIS 0.31
+      Travel::Status::DE::DBRIS::Formation 0.31
+      Travel::Status::DE::DBRIS::Formation::Carriage 0.31
+      Travel::Status::DE::DBRIS::Formation::Group 0.31
+      Travel::Status::DE::DBRIS::Formation::Sector 0.31
+      Travel::Status::DE::DBRIS::Journey 0.31
+      Travel::Status::DE::DBRIS::JourneyAtStop 0.31
+      Travel::Status::DE::DBRIS::Location 0.31
+      Travel::Status::DE::DBRIS::Operators 0.31
     requirements:
       Carp 0
       Class::Accessor 0.16
@@ -2757,6 +2822,8 @@ DISTRIBUTIONS
       DateTime::Format::Strptime 0
       File::Slurp 9999.19
       Getopt::Long 0
+      HTTP::Request 6.39
+      IO::Uncompress::Brotli 0.004_002
       JSON 0
       LWP::Protocol::https 0
       LWP::UserAgent 0
@@ -2902,66 +2969,66 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       common::sense 0
-  URI-5.34
-    pathname: O/OA/OALDERS/URI-5.34.tar.gz
+  URI-5.35
+    pathname: O/OA/OALDERS/URI-5.35.tar.gz
     provides:
-      URI 5.34
-      URI::Escape 5.34
-      URI::Heuristic 5.34
-      URI::IRI 5.34
-      URI::QueryParam 5.34
-      URI::Split 5.34
-      URI::URL 5.34
-      URI::WithBase 5.34
-      URI::data 5.34
-      URI::file 5.34
-      URI::file::Base 5.34
-      URI::file::FAT 5.34
-      URI::file::Mac 5.34
-      URI::file::OS2 5.34
-      URI::file::QNX 5.34
-      URI::file::Unix 5.34
-      URI::file::Win32 5.34
-      URI::ftp 5.34
-      URI::ftpes 5.34
-      URI::ftps 5.34
-      URI::geo 5.34
-      URI::gopher 5.34
-      URI::http 5.34
-      URI::https 5.34
-      URI::icap 5.34
-      URI::icaps 5.34
-      URI::irc 5.34
-      URI::ircs 5.34
-      URI::ldap 5.34
-      URI::ldapi 5.34
-      URI::ldaps 5.34
-      URI::mailto 5.34
-      URI::mms 5.34
-      URI::news 5.34
-      URI::nntp 5.34
-      URI::nntps 5.34
-      URI::otpauth 5.34
-      URI::pop 5.34
-      URI::rlogin 5.34
-      URI::rsync 5.34
-      URI::rtsp 5.34
-      URI::rtspu 5.34
-      URI::scp 5.34
-      URI::sftp 5.34
-      URI::sip 5.34
-      URI::sips 5.34
-      URI::smb 5.34
-      URI::smtp 5.34
-      URI::snews 5.34
-      URI::ssh 5.34
-      URI::telnet 5.34
-      URI::tn3270 5.34
-      URI::urn 5.34
-      URI::urn::isbn 5.34
-      URI::urn::oid 5.34
-      URI::ws 5.34
-      URI::wss 5.34
+      URI 5.35
+      URI::Escape 5.35
+      URI::Heuristic 5.35
+      URI::IRI 5.35
+      URI::QueryParam 5.35
+      URI::Split 5.35
+      URI::URL 5.35
+      URI::WithBase 5.35
+      URI::data 5.35
+      URI::file 5.35
+      URI::file::Base 5.35
+      URI::file::FAT 5.35
+      URI::file::Mac 5.35
+      URI::file::OS2 5.35
+      URI::file::QNX 5.35
+      URI::file::Unix 5.35
+      URI::file::Win32 5.35
+      URI::ftp 5.35
+      URI::ftpes 5.35
+      URI::ftps 5.35
+      URI::geo 5.35
+      URI::gopher 5.35
+      URI::http 5.35
+      URI::https 5.35
+      URI::icap 5.35
+      URI::icaps 5.35
+      URI::irc 5.35
+      URI::ircs 5.35
+      URI::ldap 5.35
+      URI::ldapi 5.35
+      URI::ldaps 5.35
+      URI::mailto 5.35
+      URI::mms 5.35
+      URI::news 5.35
+      URI::nntp 5.35
+      URI::nntps 5.35
+      URI::otpauth 5.35
+      URI::pop 5.35
+      URI::rlogin 5.35
+      URI::rsync 5.35
+      URI::rtsp 5.35
+      URI::rtspu 5.35
+      URI::scp 5.35
+      URI::sftp 5.35
+      URI::sip 5.35
+      URI::sips 5.35
+      URI::smb 5.35
+      URI::smtp 5.35
+      URI::snews 5.35
+      URI::ssh 5.35
+      URI::telnet 5.35
+      URI::tn3270 5.35
+      URI::urn 5.35
+      URI::urn::isbn 5.35
+      URI::urn::oid 5.35
+      URI::ws 5.35
+      URI::wss 5.35
     requirements:
       Carp 0
       Cwd 0
