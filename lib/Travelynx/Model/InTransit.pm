@@ -315,8 +315,9 @@ sub add {
 		for my $msg ( $journey->messages ) {
 			if ( not $msg->{ueberschrift} ) {
 				my $url;
-				if ( $msg->{text} =~ m{ ( http s? :// \S+ ) [.]?+ }x ) {
+				if ( $msg->{text} =~ m{ ( http s? :// \S+ ) }x ) {
 					$url = $1;
+					$url =~ s{ [.] $ }{}x;
 				}
 				push(
 					@{ $data->{him_msg} },
@@ -1072,8 +1073,9 @@ sub update_departure_dbris {
 	for my $msg ( $journey->messages ) {
 		if ( not $msg->{ueberschrift} ) {
 			my $url;
-			if ( $msg->{text} =~ m{ ( http s? :// \S+ ) [.]?+ }x ) {
+			if ( $msg->{text} =~ m{ ( http s? :// \S+ ) }x ) {
 				$url = $1;
+				$url =~ s{ [.] $ }{}x;
 			}
 			push(
 				@{ $ephemeral_data->{him_msg} },
@@ -1285,8 +1287,9 @@ sub update_arrival_dbris {
 	for my $msg ( $journey->messages ) {
 		if ( not $msg->{ueberschrift} ) {
 			my $url;
-			if ( $msg->{text} =~ m{ ( http s? :// \S+ ) [.]?+ }x ) {
+			if ( $msg->{text} =~ m{ ( http s? :// \S+ ) }x ) {
 				$url = $1;
+				$url =~ s{ [.] $ }{}x;
 			}
 			push(
 				@{ $ephemeral_data->{him_msg} },
