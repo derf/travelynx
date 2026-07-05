@@ -862,7 +862,7 @@ msgstr "Join in"
 
 #, noun or verb
 msgid "status.boarding-in.pre"
-msgstr "arrives in"
+msgstr "boarding in"
 
 #, noun or verb
 msgid "status.boarding-in.post"
