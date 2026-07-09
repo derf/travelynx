@@ -1571,9 +1571,12 @@ sub json_export {
 
 	$self->res->headers->content_disposition(
 		"attachment; filename=travelynx-export-${name}.json;");
+
+	# backends are required for 'index.pl import journeys'
 	$self->render(
 		json => {
 			account    => $db->select( 'users', '*', { id => $uid } )->hash,
+			backends   => [ $self->stations->get_backends( db => $db ) ],
 			in_transit => [
 				$db->select( 'in_transit_str', '*', { user_id => $uid } )
 				  ->hashes->each
