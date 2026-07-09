@@ -46,7 +46,7 @@ sub add_user {
 }
 
 sub delete_user {
-	my ( $self, $uid ) = @_;
+	my ( $self, $uid, $name ) = @_;
 
 	my $user_data = $self->app->users->get( uid => $uid );
 
@@ -55,9 +55,37 @@ sub delete_user {
 		return;
 	}
 
+	if ( $user_data->{name} ne $name ) {
+		say
+"User name $name does not match UID $uid. Account will not be marked for deletion.";
+		return;
+	}
+
 	$self->app->users->flag_deletion( uid => $uid );
 
-	say "User $user_data->{name} (UID $uid) has been flagged for deletion.";
+	say "User $user_data->{name} (UID $uid) has been marked for deletion.";
+	say 'The account and all corresponding data will be deleted in three days.';
+}
+
+sub undelete_user {
+	my ( $self, $uid, $name ) = @_;
+
+	my $user_data = $self->app->users->get( uid => $uid );
+
+	if ( not $user_data ) {
+		say "UID $uid does not exist.";
+		return;
+	}
+
+	if ( $user_data->{name} ne $name ) {
+		say
+"User name $name does not match UID $uid. Account will not be marked for deletion.";
+		return;
+	}
+
+	$self->app->users->unflag_deletion( uid => $uid );
+
+	say "User $user_data->{name} (UID $uid) is no longer marked for deletion.";
 }
 
 sub really_delete_user {
@@ -65,11 +93,26 @@ sub really_delete_user {
 
 	my $user_data = $self->app->users->get( uid => $uid );
 
+	if ( not $user_data ) {
+		say "UID $uid does not exist.";
+		return;
+	}
+
 	if ( $user_data->{name} ne $name ) {
 		say
 		  "User name $name does not match UID $uid. Account deletion aborted.";
 		return;
 	}
+
+	say "About to immediately and irrevocably delete user ${name} (UID ${uid})";
+	say 'If this was a mistake, press Ctrl+C now.';
+	say q{};
+	$| = 1;
+	for my $i ( reverse 1 .. 6 ) {
+		print "\r\e[2KCommencing deletion in ${i} seconds ...";
+		sleep(1);
+	}
+	print "\r\e[2K";
 
 	my $count = $self->app->users->delete( uid => $uid );
 
@@ -82,11 +125,17 @@ sub really_delete_user {
 sub run {
 	my ( $self, $command, @args ) = @_;
 
-	if ( $command eq 'add' ) {
+	if ( not $command ) {
+		$self->help;
+	}
+	elsif ( $command eq 'add' ) {
 		$self->add_user(@args);
 	}
 	elsif ( $command eq 'delete' ) {
 		$self->delete_user(@args);
+	}
+	elsif ( $command eq 'undelete' ) {
+		$self->undelete_user(@args);
 	}
 	elsif ( $command eq 'DELETE' ) {
 		$self->really_delete_user(@args);
@@ -107,11 +156,15 @@ __END__
   Adds user [name] with a temporary password, which is shown on stdout.
   Users can change the password once logged in.
 
-  Usage: index.pl account delete [uid]
+  Usage: index.pl account delete <uid> <name>
 
-  Request deletion of user [uid]. This has the same effect as using the
+  Request deletion of user <uid>. This has the same effect as using the
   account deletion button. The user account and all corresponding data will
   be deleted by a maintenance run after three days.
+
+  Usage: index.pl account undelete <uid> <name>
+
+  Abort pending deletion request of user <uid>.
 
   Usage: index.pl account DELETE [uid] [name]
 
