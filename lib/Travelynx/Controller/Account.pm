@@ -1563,10 +1563,14 @@ sub account {
 
 sub json_export {
 	my ($self) = @_;
-	my $uid = $self->current_user->{id};
+	my $user   = $self->current_user;
+	my $uid    = $user->{id};
+	my $name   = $user->{name};
 
 	my $db = $self->pg->db;
 
+	$self->res->headers->content_disposition(
+		"attachment; filename=travelynx-export-${name}.json;");
 	$self->render(
 		json => {
 			account    => $db->select( 'users', '*', { id => $uid } )->hash,

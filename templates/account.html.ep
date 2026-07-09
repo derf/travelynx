@@ -373,7 +373,7 @@
 	<div class="col s12">
 		<h2>Export</h2>
 		<ul>
-			<li><a href="/export.json">Rohdaten</a> (Kein API-Ersatz, das Format kann sich jederzeit ändern)</li>
+			<li><a href="/account/export">Rohdaten</a> (Kein API-Ersatz, das Format kann sich jederzeit ändern)</li>
 		</ul>
 	</div>
 </div>
