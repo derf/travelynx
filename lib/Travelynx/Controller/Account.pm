@@ -1575,7 +1575,8 @@ sub json_export {
 	# backends are required for 'index.pl import journeys'
 	$self->render(
 		json => {
-			account    => $db->select( 'users', '*', { id => $uid } )->hash,
+			account =>
+			  $db->select( 'users', '*', { id => $uid } )->expand->hash,
 			backends   => [ $self->stations->get_backends( db => $db ) ],
 			in_transit => [
 				$db->select( 'in_transit_str', '*', { user_id => $uid } )
