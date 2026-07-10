@@ -1579,11 +1579,11 @@ sub json_export {
 			backends   => [ $self->stations->get_backends( db => $db ) ],
 			in_transit => [
 				$db->select( 'in_transit_str', '*', { user_id => $uid } )
-				  ->hashes->each
+				  ->expand->hashes->each
 			],
 			journeys => [
 				$db->select( 'journeys_str', '*', { user_id => $uid } )
-				  ->hashes->each
+				  ->expand->hashes->each
 			],
 		}
 	);
