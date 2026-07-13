@@ -58,6 +58,9 @@ Finally, configure the web service:
 
 * Set up a travelynx service using the service supervisor of your choice
   (see `examples/travelynx.service` for a systemd unit file)
+* Ensure that `public/tmp` is writable by the user running the travelynx service
+* create templates/imprint.html.ep and enter imprint as well as privacy policy data.
+* create templates/terms-of-service.html.ep and enter your terms of service.
 * Configure your web server to reverse-provy requests to the travelynx
   instance. See `examples/nginx-site` for an nginx config.
 * Install a `timeout 5m perl index.pl work -m production` cronjob. It is used
@@ -65,7 +68,7 @@ Finally, configure the web service:
   every three minutes or so, see `examples/cron`.
 
 You can now start the travelynx service, navigate to the website and register
-your first account. There is no admin account, all management is performed
+your first account. There is no admin account; all management is performed
 via cron or (in non-standard cases) on the command line.
 
 Please open an issue on <https://github.com/derf/travelynx/issues> or send a
