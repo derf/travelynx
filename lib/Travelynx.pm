@@ -3228,6 +3228,9 @@ sub startup {
 	  ->to('profile#journey_details');
 	$r->get('/.well-known/webfinger')->to('account#webfinger');
 	$r->get('/dyn/:av/autocomplete.js')->to('api#autocomplete');
+	$r->any('/tmp/*whatever' => sub {
+		shift->render('not_found', status => 404);
+	});
 	$r->post('/api/v1/import')->to('api#import_v1');
 	$r->post('/api/v1/travel')->to('api#travel_v1');
 	$r->post('/action')->to('traveling#travel_action');
@@ -3284,6 +3287,7 @@ sub startup {
 	  ->to( 'traveling#cancelled', format => undef );
 	$authed_r->get('/checkin/add')->to('traveling#add_intransit_form');
 	$authed_r->get('/fgr')->to('passengerrights#list_candidates');
+	$authed_r->get('/account/download-export')->to('account#download_export')->name('account_download_export');
 	$authed_r->get('/account/password')->to('account#password_form');
 	$authed_r->get('/account/mail')->to('account#change_mail');
 	$authed_r->get('/account/name')->to('account#change_name');
@@ -3321,6 +3325,7 @@ sub startup {
 	$authed_r->post('/account/insight')->to('account#insight');
 	$authed_r->post('/account/language')->to('account#change_language');
 	$authed_r->post('/account/select_backend')->to('account#change_backend');
+	$authed_r->post('/account/export')->to('account#export')->name('account_export');
 	$authed_r->post('/checkin/add')->to('traveling#add_intransit_form');
 	$authed_r->post('/journey/add')->to('traveling#add_journey_form');
 	$authed_r->post('/polyline/set')->to('traveling#set_polyline');

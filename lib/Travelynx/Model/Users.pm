@@ -97,6 +97,61 @@ sub mark_deletion_notified {
 	);
 }
 
+sub set_export {
+	my ( $self, %opt ) = @_;
+	my $uid             = $opt{uid};
+	my $db              = $opt{db} // $self->{pg}->db;
+	my $request_status  = $opt{status};
+	my $export_filename = $opt{filename};
+
+	$db->update(
+		'users',
+		{
+			export_requested => $request_status,
+			export_filename  => $export_filename,
+		},
+		{ id => $uid }
+	);
+}
+
+sub get_export {
+	my ( $self, %opt ) = @_;
+	my $uid = $opt{uid};
+	my $db  = $opt{db} // $self->{pg}->db;
+
+	my $res = $db->select(
+		'users',
+		[ 'export_requested', 'export_filename' ],
+		{ id => $uid }
+	)->hash;
+
+	return ( $res->{export_requested}, $res->{export_filename} );
+}
+
+sub get_export_filenames {
+	my ( $self, %opt ) = @_;
+	my $db = $opt{db} // $self->{pg}->db;
+
+	my $res = $db->select(
+		'users',
+		[ 'id', 'export_filename' ],
+		{ export_requested => 2 }
+	);
+
+	return $res->hashes->each;
+}
+
+sub get_export_requests {
+	my ( $self, %opt ) = @_;
+	my $db = $opt{db} // $self->{pg}->db;
+
+	my $res = $db->select( 'users', ['id'], { export_requested => 1 } );
+
+	my @uids = map { $_->{id} } $res->hashes->each;
+
+	return @uids;
+}
+
 sub verify_registration_token {
 	my ( $self, %opt ) = @_;
 	my $uid   = $opt{uid};

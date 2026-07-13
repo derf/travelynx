@@ -3819,6 +3819,30 @@ qq{select distinct checkout_station_id from in_transit where backend_id = 0;}
 			}
 		);
 	},
+
+	# v73 -> v74
+	# Use asynchronous background worker for data export
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				drop view users_with_backend;
+				alter table users
+					add column export_requested smallint,
+					add column export_filename varchar(64);
+				create view users_with_backend as select
+					users.id as id, users.name as name, status, public_level,
+					language, email, password, registered_at, last_seen,
+					deletion_requested, deletion_notified, use_history,
+					accept_follows, notifications, profile, backend_id, iris,
+					hafas, efa, dbris, motis, backend.name as backend_name
+					from users
+					left join backends as backend on users.backend_id = backend.id
+					;
+				update schema_version set version = 74;
+			}
+		);
+	},
 );
 
 sub sync_dbdb {

@@ -156,6 +156,9 @@ msgstr "Web Hook aktualisiert"
 msgid "account.cleared-notifications"
 msgstr "Benachrichtigungen gelesen"
 
+msgid "account.export-started"
+msgstr "Account-Daten werden exportiert"
+
 msgid "account.account"
 msgstr "Account"
 

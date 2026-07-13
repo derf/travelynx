@@ -733,6 +733,52 @@ sub social_action {
 	$self->redirect_to($redirect_to);
 }
 
+sub download_export {
+	my ($self) = @_;
+	my $user = $self->current_user;
+	my ( $export_status, $export_filename )
+	  = $self->users->get_export( uid => $user->{id} );
+
+	if ( $export_status == 2 ) {
+		$self->res->headers->content_disposition(
+			"attachment; filename=${export_filename};");
+		$self->reply->static("tmp/${export_filename}");
+	}
+	else {
+		$self->redirect_to('/account');
+	}
+
+}
+
+sub export {
+	my ($self) = @_;
+	my $user = $self->current_user;
+
+	if ( $self->validation->csrf_protect->has_error('csrf_token') ) {
+		$self->render(
+			'bad_request',
+			csrf   => 1,
+			status => 400
+		);
+		return;
+	}
+
+	if ( $self->param('action') and $self->param('action') eq 'export' ) {
+		my ( $export_status, $export_filename )
+		  = $self->users->get_export( uid => $user->{id} );
+		if ($export_filename) {
+			unlink("public/tmp/${export_filename}");
+		}
+		$self->users->set_export(
+			uid      => $user->{id},
+			status   => 1,
+			filename => undef,
+		);
+		$self->flash( success => 'export' );
+	}
+	$self->redirect_to('account');
+}
+
 sub profile {
 	my ($self) = @_;
 	my $user = $self->current_user;
@@ -1548,6 +1594,8 @@ sub account {
 	my $followers = $self->users->has_followers( uid => $uid );
 	my $following = $self->users->has_followees( uid => $uid );
 	my $blocked   = $self->users->has_blocked_users( uid => $uid );
+	my ( $export_status, $export_filename )
+	  = $self->users->get_export( uid => $uid );
 
 	$self->render(
 		'account',
@@ -1557,6 +1605,8 @@ sub account {
 		num_followers          => $followers,
 		num_following          => $following,
 		num_blocked            => $blocked,
+		export_status          => $export_status,
+		export_filename        => $export_filename,
 	);
 	$self->users->mark_seen( uid => $uid );
 }

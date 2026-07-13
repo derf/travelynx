@@ -10,6 +10,7 @@ use Mojo::Promise;
 use utf8;
 
 use DateTime;
+use File::Slurp qw(write_file);
 use JSON;
 use List::Util;
 
@@ -22,7 +23,6 @@ sub run {
 
 	my $now              = DateTime->now( time_zone => 'Europe/Berlin' );
 	my $checkin_deadline = $now->clone->subtract( hours => 48 );
-	my $json             = JSON->new;
 
 	if ( -e 'maintenance' ) {
 		$self->app->log->debug('work: "maintenance" file found, aborting');
@@ -875,6 +875,53 @@ sub run {
 			eval { };
 		}
 
+	}
+
+	if ( not $backend or $backend eq 'export-user-data' ) {
+		my $db           = $self->app->pg->db;
+		my $json         = JSON->new->utf8;
+		my $now_yyyymmdd = $now->strftime('%Y%m%d');
+		for my $uid ( $self->app->users->get_export_requests ) {
+			my $user_data = {
+				account =>
+				  $db->select( 'users', '*', { id => $uid } )->expand->hash,
+				backends => [ $self->app->stations->get_backends( db => $db ) ],
+				in_transit => [
+					$db->select( 'in_transit_str', '*', { user_id => $uid } )
+					  ->expand->hashes->each
+				],
+				journeys => [
+					$db->select( 'journeys_str', '*', { user_id => $uid } )
+					  ->expand->hashes->each
+				],
+			};
+			my $name     = $user_data->{account}{name};
+			my $filename = "travelynx-export-${name}-${now_yyyymmdd}.json";
+
+			write_file( "public/tmp/$filename", $json->encode($user_data) );
+
+			$self->app->users->set_export(
+				uid      => $uid,
+				status   => 2,
+				filename => $filename,
+			);
+		}
+		for my $res ( $self->app->users->get_export_filenames ) {
+			my $uid      = $res->{id};
+			my $filename = $res->{export_filename};
+			if ( $filename =~ m{ (\d{8}) [.] json $ }x ) {
+				my $yyyymmdd = $1;
+				if ( $now_yyyymmdd - $yyyymmdd >= 2 ) {
+					unlink("public/tmp/${filename}")
+					  or warn("could not unlink public/tmp/${filename}: $!");
+					$self->app->users->set_export(
+						uid      => $uid,
+						status   => 0,
+						filename => undef
+					);
+				}
+			}
+		}
 	}
 
 	my $started_at       = $now;
