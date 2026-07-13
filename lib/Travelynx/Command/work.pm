@@ -898,7 +898,12 @@ sub run {
 			my $name     = $user_data->{account}{name};
 			my $filename = "travelynx-export-${name}-${now_yyyymmdd}.json";
 
-			write_file( "public/tmp/$filename", $json->encode($user_data) );
+			eval {
+				write_file( "public/tmp/$filename", $json->encode($user_data) );
+			};
+			if ($@) {
+				$self->app->log->error("export-user-data($uid): $@");
+			}
 
 			$self->app->users->set_export(
 				uid      => $uid,
@@ -913,7 +918,8 @@ sub run {
 				my $yyyymmdd = $1;
 				if ( $now_yyyymmdd - $yyyymmdd >= 2 ) {
 					unlink("public/tmp/${filename}")
-					  or warn("could not unlink public/tmp/${filename}: $!");
+					  or $self->app->log->error(
+						"could not unlink public/tmp/${filename}: $!");
 					$self->app->users->set_export(
 						uid      => $uid,
 						status   => 0,
