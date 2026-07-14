@@ -223,7 +223,7 @@ sub add {
 		sched_arrival       => $opt{sched_arrival},
 		real_arrival        => $opt{rt_arrival},
 		checkout_time       => $now,
-		edited              => 0x3fff,
+		edited              => $opt{edited} // 0x3fff,
 		cancelled           => $opt{cancelled} ? 1 : 0,
 		route               => JSON->new->encode( \@route ),
 		backend_id          => $opt{backend_id},
@@ -696,7 +696,7 @@ sub set_polyline_id {
 		'journeys',
 		{
 			polyline_id => $polyline_id,
-			edited      => $edited | 0x0040
+			edited      => $edited,
 		},
 		{
 			user_id => $uid,

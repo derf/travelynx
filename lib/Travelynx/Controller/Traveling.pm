@@ -2437,7 +2437,7 @@ sub set_polyline {
 		$self->journeys->set_polyline(
 			uid        => $uid,
 			journey_id => $journey_id,
-			edited     => $journey->{edited},
+			edited     => $journey->{edited} | 0x0040,
 			polyline   => \@polyline,
 			from_eva   => $route[0][1],
 			to_eva     => $route[-1][1],
