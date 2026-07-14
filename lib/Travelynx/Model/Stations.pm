@@ -135,6 +135,41 @@ sub get_backends {
 	return @ret;
 }
 
+# stations => [[name, eva, lat, lon, source], ...]
+# TODO motis / external_ids are not supported yet
+sub upsert_import {
+	my ( $self, %opt ) = @_;
+	my $db         = $opt{db} // $self->{pg}->db;
+	my @entries    = @{ $opt{stations} // [] };
+	my $batch_size = $opt{batch_size} // 100;
+
+	for my $i ( 0 .. int( @entries / $batch_size ) - 1 ) {
+		my @bind = map { @{ $entries[$_] } }
+		  ( ( $i * $batch_size ) .. ( $i * $batch_size + $batch_size - 1 ) );
+		$db->query(
+			qq{
+				insert into stations (name, eva, lat, lon, source, archived)
+				values
+			}
+			  . ( '(?, ?, ?, ?, ?, false),' x ( $batch_size - 1 ) )
+			  . qq{(?, ?, ?, ?, ?, false)
+				on conflict (eva, source) do update set name = EXCLUDED.name, lat = EXCLUDED.lat, lon = EXCLUDED.lon, archived = EXCLUDED.archived;
+			}, @bind
+		);
+	}
+	if ( @entries % $batch_size ) {
+		for my $i ( int( @entries / $batch_size ) * $batch_size .. $#entries ) {
+			$db->query(
+				qq{insert into stations (name, eva, lat, lon, source, archived)
+					values
+					(?, ?, ?, ?, ?, false)
+					on conflict (eva, source) do update set name = EXCLUDED.name, lat = EXCLUDED.lat, lon = EXCLUDED.lon, archived = EXCLUDED.archived;
+				}, @{ $entries[$i] }
+			);
+		}
+	}
+}
+
 # Slow for MOTIS backends
 sub add_or_update {
 	my ( $self, %opt ) = @_;
@@ -206,8 +241,10 @@ sub add_or_update {
 			);
 			return;
 		}
-		if (not $stop->latlon) {
-			die('Backend Error: Stop "' . $stop->full_name . '" has no geo coordinates');
+		if ( not $stop->latlon ) {
+			die(    'Backend Error: Stop "'
+				  . $stop->full_name
+				  . '" has no geo coordinates' );
 		}
 		$opt{db}->insert(
 			'stations',

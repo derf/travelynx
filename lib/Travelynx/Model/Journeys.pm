@@ -209,21 +209,28 @@ sub add {
 		);
 	}
 
+	if ( $opt{json_route} ) {
+		@route = @{ $opt{json_route} };
+	}
+
 	my $entry = {
 		user_id             => $uid,
 		train_type          => $opt{train_type},
 		train_line          => $opt{train_line},
 		train_no            => $opt{train_no},
-		train_id            => 'manual',
+		train_id            => $opt{train_id} // 'manual',
 		checkin_station_id  => $dep_station->{eva},
-		checkin_time        => $now,
+		checkin_time        => $opt{checkin_time} // $now,
+		dep_platform        => $opt{dep_platform},
 		sched_departure     => $opt{sched_departure},
 		real_departure      => $opt{rt_departure},
 		checkout_station_id => $arr_station->{eva},
+		checkout_time       => $opt{checkout_time} // $now,
+		arr_platform        => $opt{arr_platform},
 		sched_arrival       => $opt{sched_arrival},
 		real_arrival        => $opt{rt_arrival},
-		checkout_time       => $now,
 		edited              => $opt{edited} // 0x3fff,
+		visibility          => $opt{visibility},
 		cancelled           => $opt{cancelled} ? 1 : 0,
 		route               => JSON->new->encode( \@route ),
 		backend_id          => $opt{backend_id},
@@ -232,6 +239,10 @@ sub add {
 	if ( $opt{comment} ) {
 		$entry->{user_data}
 		  = JSON->new->encode( { comment => $opt{comment} } );
+	}
+
+	if ( $opt{messages} ) {
+		$entry->{messages} = JSON->new->encode( $opt{messages} );
 	}
 
 	my $journey_id = undef;
