@@ -122,6 +122,44 @@ sub really_delete_user {
 	return;
 }
 
+sub delete_journeys {
+	my ( $self, $uid, $name ) = @_;
+
+	my $user_data = $self->app->users->get( uid => $uid );
+
+	if ( not $user_data ) {
+		say "UID $uid does not exist.";
+		return;
+	}
+
+	if ( $user_data->{name} ne $name ) {
+		say
+		  "User name $name does not match UID $uid. Account deletion aborted.";
+		return;
+	}
+
+	say
+"About to immediately and irrevocably delete all journeys of user ${name} (UID ${uid})";
+	say 'If this was a mistake, press Ctrl+C now.';
+	say q{};
+	$| = 1;
+	for my $i ( reverse 1 .. 6 ) {
+		print "\r\e[2KCommencing deletion in ${i} seconds ...";
+		sleep(1);
+	}
+	print "\r\e[2K";
+
+	my $db = $self->app->pg->db;
+	my $rows;
+	eval { $rows = $db->delete( 'journeys', { user_id => $uid } )->rows; };
+	if ($@) {
+		$self->app->log->error("DELETE-JOURNEYS($uid): $@");
+		return;
+	}
+
+	printf( "Deleted %s journeys\n", $rows );
+}
+
 sub run {
 	my ( $self, $command, @args ) = @_;
 
@@ -139,6 +177,9 @@ sub run {
 	}
 	elsif ( $command eq 'DELETE' ) {
 		$self->really_delete_user(@args);
+	}
+	elsif ( $command eq 'DELETE-JOURNEYS' ) {
+		$self->delete_journeys(@args);
 	}
 	else {
 		$self->help;
