@@ -140,7 +140,6 @@ sub import_journeys {
 		}
 		my $backend_id = $self->app->stations->get_backend_id(%backend_query);
 
-		# TODO Wagenreihung, Meldungen
 		my ( $new_journey_id, $error ) = $self->app->journeys->add(
 			db              => $db,
 			uid             => $uid,
@@ -162,6 +161,7 @@ sub import_journeys {
 			rt_arrival      => scalar epoch_to_dt( $journey->{real_arr_ts} ),
 			json_route      => $journey->{route},
 			messages        => $journey->{messages},
+			user_data       => $journey->{user_data},
 			visibility      => $journey->{visibility},
 		);
 

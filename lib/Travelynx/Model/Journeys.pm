@@ -236,7 +236,10 @@ sub add {
 		backend_id          => $opt{backend_id},
 	};
 
-	if ( $opt{comment} ) {
+	if ( $opt{user_data} ) {
+		$entry->{user_data} = JSON->new->encode( $opt{user_data} );
+	}
+	elsif ( $opt{comment} ) {
 		$entry->{user_data}
 		  = JSON->new->encode( { comment => $opt{comment} } );
 	}
