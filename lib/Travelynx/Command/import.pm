@@ -47,7 +47,7 @@ sub import_stops {
 
 			my %backend_query;
 			for my $type (qw(dbris efa hafas motis)) {
-				if ( $row->[ $col{"is_${type}"} ] ) {
+				if ( $row->[ $col{ ${type} } ] ) {
 					$backend_query{$type} = $row->[ $col{backend} ];
 				}
 			}
@@ -58,7 +58,7 @@ sub import_stops {
 				@queue,
 				[
 					$row->[ $col{name} ],
-					$row->[ $col{eva} ],
+					$row->[ $col{id} ],
 					$row->[ $col{lat} ],
 					$row->[ $col{lon} ],
 					$backend_id,
