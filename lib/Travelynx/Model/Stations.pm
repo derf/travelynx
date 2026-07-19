@@ -135,8 +135,29 @@ sub get_backends {
 	return @ret;
 }
 
+# { (db,) backend_id, name, eval, external_id, lat, lon }
+sub import_with_external_id {
+	my ( $self, %opt ) = @_;
+	my $db = $opt{db} // $self->{pg}->db;
+
+	$db->query(
+		qq {
+			with new_station as (
+				insert into stations_external_ids (backend_id, external_id)
+				values (?, ?)
+				returning eva, backend_id
+			)
+			insert into stations (eva, name, lat, lon, source, archived)
+			values ((select eva from new_station), ?, ?, ?, (select backend_id from new_station), ?)
+		},
+		(
+			$opt{backend_id}, $opt{external_id}, $opt{name},
+			$opt{lat},        $opt{lon},         0,
+		)
+	);
+}
+
 # stations => [[name, eva, lat, lon, source], ...]
-# TODO motis / external_ids are not supported yet
 sub upsert_import {
 	my ( $self, %opt ) = @_;
 	my $db         = $opt{db} // $self->{pg}->db;
@@ -295,7 +316,6 @@ sub add_or_update {
 					values (?, ?)
 					returning eva, backend_id
 				)
-
 				insert into stations (eva, name, lat, lon, source, archived)
 				values ((select eva from new_station), ?, ?, ?, (select backend_id from new_station), ?)
 				returning *

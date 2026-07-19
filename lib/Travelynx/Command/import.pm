@@ -43,6 +43,7 @@ sub import_stops {
 	my %col;
 	my $i = 0;
 	my @queue;
+	my @extId_queue;
 	while ( my $row = $csv->getline($fh) ) {
 		if ( not %col ) {
 			%col = map { $row->[$_] => $_ } ( 0 .. $#{$row} );
@@ -57,6 +58,11 @@ sub import_stops {
 			}
 			my $backend_id
 			  = $self->app->stations->get_backend_id(%backend_query);
+
+			if ( $row->[ $col{extId} ] ) {
+				push( @extId_queue, [ $row, $backend_id ] );
+				next;
+			}
 
 			push(
 				@queue,
@@ -75,12 +81,50 @@ sub import_stops {
 			$self->app->stations->upsert_import(
 				db         => $db,
 				stations   => \@queue,
-				batch_size => 100,
+				batch_size => scalar @queue,
 			);
 			@queue = ();
 		}
 	}
 	say "\r\e[2KImported ${i} stops";
+
+	$i = 0;
+	my $num_extIds = scalar @extId_queue;
+	say "Importing ${num_extIds} stops with external IDs ...";
+	for my $entry (@extId_queue) {
+		my ( $row, $backend_id ) = @{$entry};
+		my $s = $self->app->stations->get_by_external_id(
+			db          => $db,
+			external_id => $row->[ $col{extId} ],
+			backend_id  => $backend_id
+		);
+		if ( not $s ) {
+			eval {
+				$self->app->stations->import_with_external_id(
+					db          => $db,
+					backend_id  => $backend_id,
+					name        => $row->[ $col{name} ],
+					eva         => $row->[ $col{id} ],
+					external_id => $row->[ $col{extId} ],
+					lat         => $row->[ $col{lat} ],
+					lon         => $row->[ $col{lon} ],
+				);
+			};
+			if ($@) {
+				say q{};
+				say STDERR 'Failed to import ' . join( q{,}, @{$row} );
+				say STDERR q{};
+				say STDERR $@;
+				say STDERR q{};
+				say STDERR 'Import aborted.';
+				exit 1;
+			}
+		}
+		if ( ++$i % 100 == 0 ) {
+			printf( "\r\e[2KImporting external ID #%d (%5.1f%% done) ...",
+				$i, $i * 100 / @extId_queue );
+		}
+	}
 
 	close($fh);
 
@@ -113,6 +157,9 @@ sub import_journeys {
 	for my $backend ( @{ $import->{backends} // [] } ) {
 		$backend{ $backend->{id} } = $backend;
 	}
+
+	# TODO special handling for dep_external_id / arr_external_id
+	# → use IDs from database, not IDs from journey entry.
 
 	my @journeys = sort { $a->{journey_id} <=> $b->{journey_id} }
 	  @{ $import->{journeys} // [] };
