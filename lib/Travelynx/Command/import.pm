@@ -32,7 +32,11 @@ sub import_stops {
 	open( my $fh, '<:encoding(utf-8)', $csv_filename )
 	  or die("open($csv_filename): $!\n");
 
-	say "Importing stops, this may take a while ...";
+	binmode( STDOUT, ':encoding(utf-8)' );
+
+	my $n_bytes = ( stat($fh) )[7];
+	printf( "Importing ≈%.f stops, this may take a while ...\n",
+		$n_bytes / 80, );
 	$| = 1;
 
 	my $csv = Text::CSV->new( { eol => "\r\n" } );
@@ -66,7 +70,8 @@ sub import_stops {
 			);
 		}
 		if ( ++$i % 100 == 0 ) {
-			printf( "\r\e[2KImporting stop #%d ...", $i );
+			printf( "\r\e[2KImporting stop #%d (%5.1f%% done) ...",
+				$i, tell($fh) * 100 / $n_bytes );
 			$self->app->stations->upsert_import(
 				db         => $db,
 				stations   => \@queue,
