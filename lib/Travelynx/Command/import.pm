@@ -86,6 +86,17 @@ sub import_stops {
 			@queue = ();
 		}
 	}
+
+	if (@queue) {
+		$self->app->stations->upsert_import(
+			db         => $db,
+			stations   => \@queue,
+			batch_size => scalar @queue,
+		);
+		$i += @queue;
+		@queue = ();
+	}
+
 	say "\r\e[2KImported ${i} stops";
 
 	$i = 0;
