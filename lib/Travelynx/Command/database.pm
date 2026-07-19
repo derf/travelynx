@@ -3843,6 +3843,29 @@ qq{select distinct checkout_station_id from in_transit where backend_id = 0;}
 			}
 		);
 	},
+
+	# v74 -> v75
+	# Include external IDs in dumpstops output
+	sub {
+		my ($db) = @_;
+		$db->query(
+			qq{
+				create view stations_export as
+					select stations.name as name,
+					stations.eva as eva, lat, lon,
+					backends.name as backend,
+					dbris, efa, iris, hafas, motis,
+					stations_external_ids.external_id as external_id
+					from stations
+					left join backends
+						on source = backends.id
+					left join stations_external_ids on
+						stations.eva = stations_external_ids.eva and
+						stations.source = stations_external_ids.backend_id;
+				update schema_version set version = 75;
+			}
+		);
+	},
 );
 
 sub sync_dbdb {

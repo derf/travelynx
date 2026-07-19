@@ -24,13 +24,17 @@ sub run {
 		  or die("open($filename): $!\n");
 
 		my $csv = Text::CSV->new( { eol => "\r\n" } );
-		$csv->combine(qw(name eva lat lon backend is_dbris is_efa is_iris is_hafas is_motis));
+		$csv->combine(
+			qw(name id extId lat lon backend dbris efa iris hafas motis));
 		print $fh $csv->string;
 
 		my $iter = $self->app->stations->get_db_iterator;
 		while ( my $row = $iter->hash ) {
 			$csv->combine(
-				@{$row}{qw{name eva lat lon backend is_dbris is_efa is_iris is_hafas is_motis}} );
+				@{$row}{
+					qw{name eva external_id lat lon backend dbris efa iris hafas motis}
+				}
+			);
 			print $fh $csv->string;
 		}
 		close($fh);

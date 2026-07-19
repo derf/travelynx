@@ -374,9 +374,10 @@ sub add_meta {
 }
 
 sub get_db_iterator {
-	my ($self) = @_;
+	my ( $self, %opt ) = @_;
+	my $table = $opt{table} // 'stations_export';
 
-	return $self->{pg}->db->select( 'stations_str', '*' );
+	return $self->{pg}->db->select( $table, '*' );
 }
 
 sub get_meta {
