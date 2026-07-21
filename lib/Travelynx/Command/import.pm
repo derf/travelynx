@@ -142,7 +142,7 @@ sub import_stops {
 }
 
 sub import_journeys {
-	my ( $self, $uid, $name, $json_filename ) = @_;
+	my ( $self, $uid, $name, $stops_filename, $json_filename ) = @_;
 
 	my $user_data = $self->app->users->get( uid => $uid );
 
@@ -154,6 +154,31 @@ sub import_journeys {
 	if ( $user_data->{name} ne $name ) {
 		say STDERR "User name $name does not match UID $uid. Import aborted.";
 		return;
+	}
+
+	open( my $fh, '<:encoding(utf-8)', $stops_filename )
+	  or die("open($stops_filename): $!\n");
+
+	say 'Building ID to ExtID map for MOTIS stops';
+	my $csv = Text::CSV->new( { eol => "\r\n" } );
+	my %col;
+	my %id_to_extid_by_backend;
+	while ( my $row = $csv->getline($fh) ) {
+		if ( not %col ) {
+			%col = map { $row->[$_] => $_ } ( 0 .. $#{$row} );
+		}
+		elsif ( $row->[ $col{extId} ] ) {
+			my %backend_query;
+			for my $type (qw(dbris efa hafas motis)) {
+				if ( $row->[ $col{ ${type} } ] ) {
+					$backend_query{$type} = $row->[ $col{backend} ];
+				}
+			}
+			my $backend_id
+			  = $self->app->stations->get_backend_id(%backend_query);
+			$id_to_extid_by_backend{$backend_id}{ $row->[ $col{id} ] }
+			  = $row->[ $col{extId} ];
+		}
 	}
 
 	my $import = JSON->new->utf8->decode( scalar read_file($json_filename) );
@@ -183,16 +208,9 @@ sub import_journeys {
 
 	printf( "Importing %d journeys, this may take a while ...\n",
 		$num_journeys );
+	$| = 1;
 
 	for my $journey (@journeys) {
-
-		#printf("Importing journey %8d  %s  →  %s  (%d → %d)\n",
-		#	$journey->{journey_id},
-		#	$journey->{dep_name},
-		#	$journey->{arr_name},
-		#	$journey->{dep_eva},
-		#	$journey->{arr_eva},
-		#);
 
 		my $backend_info = $backend{ $journey->{backend_id} };
 		my %backend_query;
@@ -202,6 +220,47 @@ sub import_journeys {
 			}
 		}
 		my $backend_id = $self->app->stations->get_backend_id(%backend_query);
+
+		printf(
+			"\r\e[2K%5.1f%% done (#%d %s → %s)",
+			$i++ * 100 / $num_journeys, $journey->{journey_id},
+			$journey->{dep_name},       $journey->{arr_name},
+		);
+
+		if ( $backend_query{motis} ) {
+
+			# our DB has different station IDs than the export
+			$journey->{dep_eva} = $self->app->stations->get_by_external_id(
+				db          => $db,
+				backend_id  => $backend_id,
+				external_id =>
+				  $id_to_extid_by_backend{$backend_id}{ $journey->{dep_eva} }
+			)->{eva};
+			$journey->{arr_eva} = $self->app->stations->get_by_external_id(
+				db          => $db,
+				backend_id  => $backend_id,
+				external_id =>
+				  $id_to_extid_by_backend{$backend_id}{ $journey->{arr_eva} }
+			)->{eva};
+			for my $stop ( @{ $journey->{route} // [] } ) {
+				$stop->[1] = $self->app->stations->get_by_external_id(
+					db          => $db,
+					backend_id  => $backend_id,
+					external_id =>
+					  $id_to_extid_by_backend{$backend_id}{ $stop->[1] }
+				)->{eva};
+			}
+			for my $entry ( @{ $journey->{polyline} // [] } ) {
+				if ( @{$entry} > 2 ) {
+					$entry->[2] = $self->app->stations->get_by_external_id(
+						db          => $db,
+						backend_id  => $backend_id,
+						external_id =>
+						  $id_to_extid_by_backend{$backend_id}{ $entry->[2] }
+					)->{eva};
+				}
+			}
+		}
 
 		my ( $new_journey_id, $error ) = $self->app->journeys->add(
 			db              => $db,
@@ -245,12 +304,9 @@ sub import_journeys {
 				polyline   => $journey->{polyline},
 			);
 		}
-
-		if ( $i++ % 100 == 0 ) {
-			printf( "%5.1f%% done ...\n", $i * 100 / $num_journeys );
-		}
 	}
 	$tx->commit;
+	say "\r\e[2Kdone";
 }
 
 sub run {
@@ -278,4 +334,4 @@ __END__
 
   Usage: index.pl import stops <stops.csv>
 
-  Usage: index.pl import userdata <uid> <name> <export.json>
+  Usage: index.pl import userdata <uid> <name> <stops.csv> <export.json>
