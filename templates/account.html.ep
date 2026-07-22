@@ -162,6 +162,10 @@
 				</tr>
 			% }
 			<tr>
+				<th scope="row"><%= L('account.uid') %></th>
+				<td><%= $acc->{id} %></td>
+			</tr>
+			<tr>
 				<th scope="row"><%= L('account.registration-date') %></th>
 				<td><%= $acc->{registered_at}->strftime(L('strftime.datetime')) %></td>
 			</tr>

@@ -204,6 +204,9 @@ msgstr "Active"
 msgid "account.traewelling.unsupported"
 msgstr "Unsupported due to incompatibility with bahn.de and transitous"
 
+msgid "account.uid"
+msgstr "Account ID"
+
 msgid "account.registration-date"
 msgstr "Registered on"
 
