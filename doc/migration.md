@@ -28,8 +28,7 @@ travelynx calls the former “eva” and the latter “external\_id” or extID.
 So, in order for an import to work, there are two requirements:
 
 * The target instance must know all stops used within your trips.
+  `import stops` takes care of this.
 * When importing, numeric stop IDs used for MOTIS trips must be mapped from the IDs on the source instanece to the corresponding IDs on the target instance.
   These are typically *not* identical, but can be mapped via the source instance's stops.csv export and (slow) extID lookups on the target instance.
-
-The `import journeys` command takes care of this.
-It may take a while to do so, though.
+  `import journeys takes care of this – it may take a while to do so, though.
