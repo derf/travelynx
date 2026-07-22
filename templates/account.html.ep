@@ -377,7 +377,7 @@
 		<h2>Export</h2>
 		<p>
 			Hier besteht die Möglichkeit, sämtliche Daten (Einstellungen, Profil und Fahrten) des eigenen Accounts zu exporteren.
-			Diese können beispielsweise als Backup, DSGVO-Export oder zur Migration auf eine andere travelynx-Instanz genutzt werden.
+			Diese können beispielsweise als Backup, DSGVO-Export oder (zusammen mit <a href="/static/stops.csv">stops.csv</a>) zur Migration auf eine andere travelynx-Instanz genutzt werden.
 		</p>
 		% if ($export_status == 0) {
 			%= form_for 'account_export' => begin
