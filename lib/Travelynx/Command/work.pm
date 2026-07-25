@@ -67,7 +67,9 @@ sub run {
 		my $use_history         = $self->app->users->use_history( uid => $uid );
 		my $suggestions_enabled = $use_history & 0x02;
 
-		if ( $train_id eq 'manual' ) {
+		if ( $train_id eq 'manual'
+			and ( not $backend or $backend eq 'manual' ) )
+		{
 			if (    $arr
 				and $entry->{real_arr_ts}
 				and $now->epoch - $entry->{real_arr_ts} > 900 )
