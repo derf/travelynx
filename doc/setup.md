@@ -6,7 +6,7 @@ This document describes how to host your own travelynx instance.
 
 Parts of this documentation make the following assumptions
 
-* The travelynx web service and associated commands will be run by the UNIX user `travelyx`, which you have already set up.
+* The travelynx web service and associated commands will be run by the UNIX user `travelynx`, which you have already set up.
 * You have a git clone of https://git.finalrewind.org/derf/travelynx.git in a suitable directory, e.g. `/srv/www/travelynx`.
 * The git clone is readable by the `travelynx` user (this applies to both `.git` and all checked-out files).
 
