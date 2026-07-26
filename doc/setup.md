@@ -29,7 +29,7 @@ On Debian 13 (trixie), the following packages are required:
 ## Installation
 
 travelynx depends on a set of Perl modules which are documented in `cpanfile`.
-After installing the dependencies mentioned above, you can use **carton** to install Perl depenencies locally.
+After installing the dependencies mentioned above, you can use **carton** to install Perl dependencies locally.
 You may alsobe able to use cpanminus; however, this method is untested.
 
 In the project root directory (where `cpanfile` resides, e.g., `/srv/www/travelynx`), run
@@ -118,7 +118,7 @@ privacy policy. For the sake of this readme, we assume that you are using the
 * create local/imprint.html.ep and enter imprint as well as privacy policy data.
 * create local/terms-of-service.html.ep and enter your terms of service.
 * Configure your web server to reverse-provy requests to the travelynx
-  instance. See `examples/nginx-site` for an nginx config.
+  instance. See `examples/nginx-site` for a nginx config.
 
 travelynx consists of two runtimes: the web application and a background
 worker. Your service supervisor (or docker compose / docker stack / kubernetes
