@@ -16,6 +16,7 @@ use List::MoreUtils qw(firstval);
 use Mojo::Promise;
 use Mojo::UserAgent;
 use Travel::Status::DE::DBRIS;
+use Travel::Status::DE::IRIS::Stations;
 
 sub new {
 	my ( $class, %opt ) = @_;
