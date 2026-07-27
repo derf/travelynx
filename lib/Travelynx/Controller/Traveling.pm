@@ -1342,7 +1342,7 @@ sub map_history {
 	my ($self) = @_;
 
 	if ( not $self->param('route_type') ) {
-		$self->param( route_type => 'polybee' );
+		$self->param( route_type => 'polyline' );
 	}
 
 	my $route_type    = $self->param('route_type');
