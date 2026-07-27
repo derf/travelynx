@@ -118,7 +118,7 @@ privacy policy. For the sake of this readme, we assume that you are using the
 * create local/imprint.html.ep and enter imprint as well as privacy policy data.
 * create local/terms-of-service.html.ep and enter your terms of service.
 * Configure your web server to reverse-provy requests to the travelynx
-  instance. See `examples/nginx-site` for a nginx config.
+  instance. See `examples/nginx-site` for an nginx config.
 
 travelynx consists of two runtimes: the web application and a background
 worker. Your service supervisor (or docker compose / docker stack / kubernetes
