@@ -40,48 +40,60 @@ sub get_backend_id {
 	my $backend_id = 0;
 
 	if ( $opt{dbris} ) {
-		$backend_id = $db->select(
+		my $res = $db->select(
 			'backends',
 			['id'],
 			{
 				dbris => 1,
 				name  => $opt{dbris}
 			}
-		)->hash->{id};
-		$self->{backend_id}{dbris}{ $opt{dbris} } = $backend_id;
+		)->hash;
+		if ($res) {
+			return $self->{backend_id}{dbris}{ $opt{dbris} } = $res->{id};
+		}
+		die("Unknown DBRIS backend '$opt{dbris}'");
 	}
 	elsif ( $opt{efa} ) {
-		$backend_id = $db->select(
+		my $res = $db->select(
 			'backends',
 			['id'],
 			{
 				efa  => 1,
 				name => $opt{efa}
 			}
-		)->hash->{id};
-		$self->{backend_id}{efa}{ $opt{efa} } = $backend_id;
+		)->hash;
+		if ($res) {
+			return $self->{backend_id}{efa}{ $opt{efa} } = $res->{id};
+		}
+		die("Unknown EFA backend '$opt{efa}'");
 	}
 	elsif ( $opt{hafas} ) {
-		$backend_id = $db->select(
+		my $res = $db->select(
 			'backends',
 			['id'],
 			{
 				hafas => 1,
 				name  => $opt{hafas}
 			}
-		)->hash->{id};
-		$self->{backend_id}{hafas}{ $opt{hafas} } = $backend_id;
+		)->hash;
+		if ($res) {
+			return $self->{backend_id}{hafas}{ $opt{hafas} } = $res->{id};
+		}
+		die("Unknown HAFAS backend '$opt{hafas}'");
 	}
 	elsif ( $opt{motis} ) {
-		$backend_id = $db->select(
+		my $res = $db->select(
 			'backends',
 			['id'],
 			{
 				motis => 1,
 				name  => $opt{motis}
 			}
-		)->hash->{id};
-		$self->{backend_id}{motis}{ $opt{motis} } = $backend_id;
+		)->hash;
+		if ($res) {
+			return $self->{backend_id}{motis}{ $opt{motis} } = $res->{id};
+		}
+		die("Unknown MOTIS backend '$opt{motis}'");
 	}
 
 	return $backend_id;

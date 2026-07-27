@@ -61,8 +61,31 @@ sub import_stops {
 					$backend_query{$type} = $row->[ $col{backend} ];
 				}
 			}
-			my $backend_id
-			  = $self->app->stations->get_backend_id(%backend_query);
+			my $backend_id;
+			eval {
+				$backend_id
+				  = $self->app->stations->get_backend_id(%backend_query);
+			};
+			if ( $@ and $@ =~ m{Unknown \S+ backend} ) {
+
+				# Backends come and go. If the instance we're importing from
+				# is old, it may contain backends that are no longer provided
+				# by the EFA, HAFAS, etc. modules. But it may still contain
+				# stops (and, possibly, journeys) for such backends. In that
+				# case, we need to add the backend here.
+				$backend_id = $db->insert(
+					'backends',
+					{
+						dbris => $row->[ $col{dbris} ],
+						efa   => $row->[ $col{efa} ],
+						hafas => $row->[ $col{hafas} ],
+						iris  => 0,
+						motis => $row->[ $col{motis} ],
+						name  => $row->[ $col{backend} ],
+					},
+					{ returning => 'id' },
+				)->hash->{id};
+			}
 
 			if ( $row->[ $col{extId} ] ) {
 				push( @extId_queue, [ $row, $backend_id ] );
