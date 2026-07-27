@@ -69,6 +69,4 @@ __END__
 
 =head1 SYNOPSIS
 
-  Usage: index.pl stats refresh-all
-
-  Refreshes all stats
+  Usage: index.pl stats compute-distances|purge-cache
