@@ -299,6 +299,15 @@ msgstr "Statistiken zu vergangenen Fahrten werden nun sofort und nicht erst bei 
 msgid "changelog.2-21.2"
 msgstr "Admins von travelynx-Installationen führen nach dem Update bitte 'perl index.pl stats compute-distances -m production' sowie 'perl index.pl stats purge-cache -m production' aus. compute-distances kann je nach Größe der Installation einige Minuten bis Stunden benötigen – der travelynx Web-Service sowie die Worker-Prozesse können währenddessen normal weiterlaufen."
 
+msgid "changelog.2-22.1"
+msgstr "Daten von travelynx-Accounts können nun zwischen Instanzen migriert werden. Auf der Ziel-Instanz sind für den Import Admin-Rechte (CLI-Zugriff) erforderlich."
+
+msgid "changelog.2-22.2"
+msgstr "DBRIS / bahn.de: Unterstützung für DS100 / Ril100-Kürzel in der Abfahrtstafel (Patch von networkException)."
+
+msgid "changelog.2-22.3"
+msgstr "Das DBRIS / bahn.de-Backend ist (vorerst) wieder vollumfänglich nutzbar."
+
 # history.html.ep
 
 msgid "history.high-scores"

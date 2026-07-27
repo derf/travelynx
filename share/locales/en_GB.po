@@ -299,6 +299,15 @@ msgstr "Statistics on past journeys are now computed immediately rather than bei
 msgid "changelog.2-21.2"
 msgstr "If you are running your own instance, you'll need to run 'perl index.pl stats compute-distances -m production' and 'perl index.pl stats purge-cache -m production' after the upgrade. compute-distances may take a while; it can run in the background while the travelynx web service and workers are operating normally."
 
+msgid "changelog.2-22.1"
+msgstr "Users can now migrate past trips across travelynx instances. Note that this requires admin rights (CLI access) on the target instance."
+
+msgid "changelog.2-22.2"
+msgstr "DBRIS / bahn.de: departure board: support DS100 / Ril100 station codes (patch by networkException)."
+
+msgid "changelog.2-22.3"
+msgstr "The DBRIS / bahn.de backend is fully usable again (for now)."
+
 # history.html.ep
 
 msgid "history.high-scores"
