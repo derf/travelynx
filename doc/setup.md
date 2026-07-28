@@ -29,7 +29,7 @@ On Debian 13 (trixie), the following packages are required:
 ## Installation
 
 travelynx depends on a set of Perl modules which are documented in `cpanfile`.
-After installing the dependencies mentioned above, you can use **carton** to install Perl depenencies locally.
+After installing the dependencies mentioned above, you can use **carton** to install Perl dependencies locally.
 You may alsobe able to use cpanminus; however, this method is untested.
 
 In the project root directory (where `cpanfile` resides, e.g., `/srv/www/travelynx`), run
