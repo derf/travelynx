@@ -1443,12 +1443,12 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 6.46
       perl 5.010001
-  HTTP-Cookies-6.11
-    pathname: O/OA/OALDERS/HTTP-Cookies-6.11.tar.gz
+  HTTP-Cookies-6.12
+    pathname: O/OA/OALDERS/HTTP-Cookies-6.12.tar.gz
     provides:
-      HTTP::Cookies 6.11
-      HTTP::Cookies::Microsoft 6.11
-      HTTP::Cookies::Netscape 6.11
+      HTTP::Cookies 6.12
+      HTTP::Cookies::Microsoft 6.12
+      HTTP::Cookies::Netscape 6.12
     requirements:
       Carp 0
       ExtUtils::MakeMaker 0
@@ -1469,19 +1469,19 @@ DISTRIBUTIONS
       Time::Zone 0
       perl 5.006002
       strict 0
-  HTTP-Message-7.02
-    pathname: O/OA/OALDERS/HTTP-Message-7.02.tar.gz
+  HTTP-Message-7.04
+    pathname: O/OA/OALDERS/HTTP-Message-7.04.tar.gz
     provides:
-      HTTP::Config 7.02
-      HTTP::Headers 7.02
-      HTTP::Headers::Auth 7.02
-      HTTP::Headers::ETag 7.02
-      HTTP::Headers::Util 7.02
-      HTTP::Message 7.02
-      HTTP::Request 7.02
-      HTTP::Request::Common 7.02
-      HTTP::Response 7.02
-      HTTP::Status 7.02
+      HTTP::Config 7.04
+      HTTP::Headers 7.04
+      HTTP::Headers::Auth 7.04
+      HTTP::Headers::ETag 7.04
+      HTTP::Headers::Util 7.04
+      HTTP::Message 7.04
+      HTTP::Request 7.04
+      HTTP::Request::Common 7.04
+      HTTP::Response 7.04
+      HTTP::Status 7.04
     requirements:
       Carp 0
       Clone 0.46
@@ -1629,11 +1629,10 @@ DISTRIBUTIONS
       Scalar::Util 0
       perl 5.006002
       strict 0
-  LWP-Protocol-https-6.15
-    pathname: O/OA/OALDERS/LWP-Protocol-https-6.15.tar.gz
+  LWP-Protocol-https-6.17
+    pathname: O/OA/OALDERS/LWP-Protocol-https-6.17.tar.gz
     provides:
-      LWP::Protocol::https 6.15
-      LWP::Protocol::https::Socket 6.15
+      LWP::Protocol::https 6.17
     requirements:
       ExtUtils::MakeMaker 0
       IO::Socket::SSL 1.970
@@ -1953,12 +1952,12 @@ DISTRIBUTIONS
       Try::Tiny 0
       strict 0
       warnings 0
-  Module-Pluggable-6.3
-    pathname: S/SI/SIMONW/Module-Pluggable-6.3.tar.gz
+  Module-Pluggable-6.4
+    pathname: S/SI/SIMONW/Module-Pluggable-6.4.tar.gz
     provides:
       Devel::InnerPackage 0.4
-      Module::Pluggable 6.3
-      Module::Pluggable::Object 5.2
+      Module::Pluggable 6.4
+      Module::Pluggable::Object 5.3
     requirements:
       Exporter 5.57
       ExtUtils::MakeMaker 0
@@ -2002,8 +2001,8 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       Mojolicious 9.41
       perl 5.020
-  Mojolicious-9.48
-    pathname: S/SR/SRI/Mojolicious-9.48.tar.gz
+  Mojolicious-9.49
+    pathname: S/SR/SRI/Mojolicious-9.49.tar.gz
     provides:
       Mojo undef
       Mojo::Asset undef
@@ -2073,7 +2072,7 @@ DISTRIBUTIONS
       Mojo::UserAgent::Transactor undef
       Mojo::Util undef
       Mojo::WebSocket undef
-      Mojolicious 9.48
+      Mojolicious 9.49
       Mojolicious::Command undef
       Mojolicious::Command::Author::cpanify undef
       Mojolicious::Command::Author::generate undef
@@ -2922,16 +2921,16 @@ DISTRIBUTIONS
       Test::More 0
       URI::Escape 0
       perl v5.10.1
-  Travel-Status-MOTIS-0.03
-    pathname: D/DE/DERF/Travel-Status-MOTIS-0.03.tar.gz
+  Travel-Status-MOTIS-0.04
+    pathname: D/DE/DERF/Travel-Status-MOTIS-0.04.tar.gz
     provides:
-      Travel::Status::MOTIS 0.03
-      Travel::Status::MOTIS::Polyline 0.03
-      Travel::Status::MOTIS::Services 0.03
-      Travel::Status::MOTIS::Stop 0.03
-      Travel::Status::MOTIS::Stopover 0.03
-      Travel::Status::MOTIS::Trip 0.03
-      Travel::Status::MOTIS::TripAtStopover 0.03
+      Travel::Status::MOTIS 0.04
+      Travel::Status::MOTIS::Polyline 0.04
+      Travel::Status::MOTIS::Services 0.04
+      Travel::Status::MOTIS::Stop 0.04
+      Travel::Status::MOTIS::Stopover 0.04
+      Travel::Status::MOTIS::Trip 0.04
+      Travel::Status::MOTIS::TripAtStopover 0.04
     requirements:
       Carp 0
       Class::Accessor 0.16

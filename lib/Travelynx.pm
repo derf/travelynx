@@ -892,7 +892,7 @@ sub startup {
 						# lines between stops. that's not helpful.
 						if ( @station_list == @coordinate_list ) {
 							$self->log->debug( 'Ignoring polyline for '
-								  . $trip->route_name
+								  . $trip->display_name
 								  . ' as it only consists of straight lines between stops.'
 							);
 						}

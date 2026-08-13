@@ -984,8 +984,7 @@ sub station {
 
 				$status = {
 					station_eva  => $station,
-					station_name =>
-					  $status->{results}->[0]->stopover->stop->name,
+					station_name => $status->{result}->name,
 					related_stations => [],
 				};
 			}

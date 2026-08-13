@@ -33,7 +33,7 @@
 			% }
 		</a>
 		<span class="dep-line <%= $result->mode %>" style="background-color: #<%= $result->route_color // q{} %>;">
-			%= $result->route_name
+			%= $result->display_name
 		</span>
 		<span class="dep-dest">
 			% if ($result->is_cancelled) {

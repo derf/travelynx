@@ -417,7 +417,7 @@ sub add {
 				train_type   => $journey->mode,
 				train_no     => q{},
 				train_id     => $journey->id,
-				train_line   => $journey->route_name,
+				train_line   => $journey->display_name,
 				sched_departure => $stopover->scheduled_departure,
 				real_departure  => $stopover->departure,
 				route           => $json->encode( \@route ),
