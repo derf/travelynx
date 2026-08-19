@@ -1282,8 +1282,8 @@ sub sanity_check {
 	{
 		return 'Die Fahrt ist länger als drei Tage.';
 	}
-	if ( $journey->{kmh_route} > 500 or $journey->{kmh_beeline} > 500 ) {
-		return 'Die berechnete Geschwindigkeit beträgt über 500 km/h.'
+	if ( $journey->{kmh_route} > 2000 or $journey->{kmh_beeline} > 2000 ) {
+		return 'Die berechnete Geschwindigkeit beträgt über 2000 km/h.'
 		  . ' Das wirkt unrealistisch.';
 	}
 	if ( $journey->{route} and @{ $journey->{route} } > 199 ) {
