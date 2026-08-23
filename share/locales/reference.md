@@ -6,7 +6,7 @@
 * hu-HU: 100.0% complete (0 missing)
 * pl-PL: 97.2% complete (9 missing)
 
-(Total #: 317 per language)
+(Total #: 316 per language)
 
 ### 
 
@@ -1947,14 +1947,6 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * fr-FR: , c'était également votre couple enregistrement/clôture le plus proche.
 * hu-HU: -el a Legközelebbi check-in / check-out pár is egyben.
 * pl-PL:  – to był Twój absolutnie najmniejszy rzut beretem.
-
-### review.high-scores.farthest-trip.link
-
-* de-DE: Größte Entfernung
-* en-GB: Longest Leap
-* fr-FR: Trajet le plus éloigné
-* hu-HU: Legnagyobb távolság
-* pl-PL: Największa odległość
 
 ### review.high-scores.closest-trip.link
 
