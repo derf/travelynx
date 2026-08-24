@@ -738,9 +738,6 @@ msgstr "Zaledwie"
 msgid "review.high-scores.closest-trip-eq-shortest.post"
 msgstr " – to był Twój absolutnie najmniejszy rzut beretem."
 
-msgid "review.high-scores.farthest-trip.link"
-msgstr "Największa odległość"
-
 msgid "review.high-scores.closest-trip.link"
 msgstr "Najmniejszy rzut beretem"
 
