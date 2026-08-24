@@ -774,9 +774,6 @@ msgstr "Mit"
 msgid "review.high-scores.closest-trip-eq-shortest.post"
 msgstr " war sie gleichzeitig dein kleinster Katzensprung."
 
-msgid "review.high-scores.farthest-trip.link"
-msgstr "Größte Entfernung"
-
 msgid "review.high-scores.closest-trip.link"
 msgstr "Kleinster Katzensprung"
 

@@ -46,6 +46,43 @@ msgid "header.error"
 msgstr "Hiba"
 
 #
+# LT (localized duration)
+#
+
+msgid "LT.weeks"
+msgstr "hét"
+
+msgid "LT.week"
+msgstr "hét"
+
+msgid "LT.days"
+msgstr "nap"
+
+msgid "LT.day"
+msgstr "nap"
+
+msgid "LT.hours"
+msgstr "óra"
+
+msgid "LT.hour"
+msgstr "óra"
+
+msgid "LT.minutes"
+msgstr "perc"
+
+msgid "LT.minute"
+msgstr "perc"
+
+msgid "LT.zero-minutes"
+msgstr "0 perc"
+
+msgid "LT.final-and"
+msgstr ", és"
+
+msgid "LT.and"
+msgstr " és"
+
+#
 # Templates
 #
 
@@ -119,6 +156,9 @@ msgstr "Web Hook frissítve"
 msgid "account.cleared-notifications"
 msgstr "Értesítések törölve"
 
+msgid "account.export-started"
+msgstr "Fiókadatok exportálása folyamatban"
+
 msgid "account.account"
 msgstr "Fiók"
 
@@ -164,6 +204,9 @@ msgstr "Aktív"
 msgid "account.traewelling.unsupported"
 msgstr "Jelenleg nem támogatott a bahn.de és a transitous közötti inkompatibilitás miatt"
 
+msgid "account.uid"
+msgstr "Fiók ID"
+
 msgid "account.registration-date"
 msgstr "Regisztrálva"
 
@@ -188,6 +231,24 @@ msgstr "követési kérések"
 msgid "account.interaction.disabled"
 msgstr "Senki sem követhet"
 
+msgid "account.profile"
+msgstr "Nyílvános profiloldalad"
+
+msgid "account.interaction.requests"
+msgstr "Követési kérések"
+
+msgid "account.interaction.requests.incoming.none"
+msgstr "nincs beérkező kérés"
+
+msgid "account.interaction.requests.incoming.some"
+msgstr "beérkező kérés"
+
+msgid "account.interaction.requests.outgoing.none"
+msgstr "nincs kimenő kérés"
+
+msgid "account.interaction.requests.outgoing.some"
+msgstr "kimenő kérés"
+
 # changelog.html.ep
 
 msgid "changelog.added"
@@ -196,11 +257,66 @@ msgstr "Új fícsör"
 msgid "changelog.bugfix"
 msgstr "Bugfix"
 
+msgid "changelog.improvement"
+msgstr "Fejlesztés"
+
+msgid "changelog.announcement"
+msgstr "Közlemény"
+
 msgid "changelog.2-16.1"
 msgstr "Lokalizáció. A travelynx most már angolul, részben pedig franciául, magyarul és lengyelül is elérhető. További fordítások, nyelvek és fordítási útmutatók következnek majd a megfelelő időben. A lokalizáció kiválasztása tiszteletben tartja az Accept-Language fejlécet, és a fiókbeállítások oldalon is beállítható."
 
 msgid "changelog.2-16.2"
 msgstr "A távolságszámítás és a gyűrűsvonali utazások megjelenítése javítva lett. Az előzménytérképen megjelenített utazások még mindig részben hibásak."
+
+msgid "changelog.2-17.1"
+msgstr "Az egyes utak térképadatai („Polylines”) mostantól GPX formátumban exportálhatók és importálhatók. Ez lehetővé teszi a térképadatok utólagos javítását vagy kiegészítését. A GPX import/export kompatibilis a BRouter-Web programmal."
+
+msgid "changelog.2-18.1"
+msgstr "A becsekellés és az átszállási javaslatok ismét működnek a DBRIS, EFA és IRIS backendeknél. A HAFAS backendből hiányoznak a szükséges indulásjelző adatok. Előfordulhat, hogy a MOTIS backendekből is hiányoznak a szükséges adatok."
+
+msgid "changelog.2-18.2"
+msgstr "Az előzményekben a teljes távolság kiszámításánál most már azokat az utakat is vesz figyelembe, amelyekhez nem állnak rendelkezésre megfelelő útvonaladatok (azaz ahol csak légvonalban mért távolság / légvonalban mért távolság áll rendelkezésre). A mostani verzió előtt az ilyen utakat ki lettek hagyva a havi és éves statisztikák kiszámításakor."
+
+msgid "changelog.2-19.1"
+msgstr "Korábbi utazások rendezése késés vagy időtartam szerint. További attribútumok is követhetik."
+
+msgid "changelog.2-19.2"
+msgstr "Enyhe javítások a legacy IRIS backendhez: a térképadatok mostantól valamivel több esetben érhetőek el, mint korábban. Ez a backend deprecated lett és a jövőben akár törölve lehetne."
+
+msgid "changelog.2-20.1"
+msgstr "„Együtt utazunk!” gomb: Ha valakivel együtt utazol akkor az ő fiókjából másolhatod a check-int, ami azt jelenti, hogy létrejön egy azonos kiindulási, célállomású és közlekedési móddal rendelkező check-in. Viszont csak akkor tudsz valakihez így csatlakozni, ha a saját fiókod jelenleg nem vagy becsekkolva."
+
+msgid "changelog.2-20.2"
+msgstr "A backend-specifikus blokkok és késések kezelésének javítása. Ennek ellenére a dbris/bahn.de jelenleg csak kis szervereken működik teljes mértékben (maximum 10 egyidejű check-in)."
+
+msgid "changelog.2-20.3"
+msgstr "Az IRIS backend ismét teljes mértékben működőképes, szinte az összes megszokott funkcióval, és várhatóan 2026 végéig alternatívát kínál a bahn.de-vel szemben."
+
+msgid "changelog.2-21.1"
+msgstr "A korábbi utazások statisztikáit mostantól azonnal kiszámítja a rendszer, nem csak a részletes nézet megnyitásakor. Ezenkívül a megfelelő oldalak mostantól lényegesen gyorsabban töltődnek be."
+
+msgid "changelog.2-21.2"
+msgstr "A frissítés után azok a rendszergazdák akik saját travelynx szervert futtatnak, a következő parancsokat kell végrehajtani: 'perl index.pl stats compute-distances -m production' és 'perl index.pl stats purge-cache -m production'. Mérettől függően a compute-distances futtatása néhány perctől több óráig is eltarthat; a travelynx web-szerviz és a worker process-ek közben is normálisan futhatnak tovább."
+
+msgid "changelog.2-22.1"
+msgstr "A felhasználók mostantól migrálhatják a korábbi utakat a travelynx szeverek között. Fontos megjegyezni, hogy ehhez rendszergazdai jogosultságok (CLI hozzáférés) szükségesek a célszerveren."
+
+msgid "changelog.2-22.2"
+msgstr "DBRIS / bahn.de: DS100/Ril100 kódok támogatása az indulásjelzőben (patchelve networkException-nek köszönhetően)."
+
+msgid "changelog.2-22.3"
+msgstr "A DBRIS / bahn.de backend ismét teljes mértékben használható (egyelőre)."
+
+# history.html.ep
+
+msgid "history.high-scores"
+msgstr "Attribútum szerint"
+
+# history_by_year.html.ep
+
+msgid "history.review"
+msgstr "Évi áttekintés"
 
 # journey.html.ep
 
@@ -270,6 +386,30 @@ msgstr "Exportálás"
 msgid "journey.edit"
 msgstr "Szerkesztés"
 
+msgid "journey.map-data"
+msgstr "Térképadatok"
+
+msgid "journey.map.download"
+msgstr "Letöltés"
+
+msgid "journey.map.upload"
+msgstr "Feltöltés"
+
+msgid "journey.map.upload-full"
+msgstr "Teljes útvonal feltöltése"
+
+msgid "journey.map.upload-partial"
+msgstr "Útvonal szegmens feltöltése"
+
+msgid "journey.map.info.download"
+msgstr "JSON formátum: [[lon, lat, station ID], ...], ahol lon/lat a WGS84 koordinátás hosszúsági/szélességi fokok. A GPX fájlok kompatibilisek a BRouterrel."
+
+msgid "journey.map.info.upload"
+msgstr "A GPX feltöltéseknek egyetlen track-elemet kell tartalmazniuk egyetlen track szegmenssel. Egy BRouter GPX export megfelel ezeknek a követelményeknek. A feltöltéseknek tartalmazniuk kell vagy a közlekedési mód által megtett teljes útvonalat, vagy csak a check-innek megfelelő konkrét szakaszt. Feltöltéskor válaszd ki a megfelelő gombot. A station ID-t nem kell megadni a feltöltés során. Figyelem: Az egyéni térképadatok feltöltése visszavonhatatlanul törli az összes korábban tárolt térképadatokat!"
+
+msgid "journey.danger"
+msgstr "Danger Zone"
+
 msgid "journey.delete"
 msgstr "Törlés"
 
@@ -283,6 +423,9 @@ msgstr "!"
 
 msgid "landingpage.not-checked-in"
 msgstr "Jelenleg nem vagy becsekkolva"
+
+msgid "landingpage.recent-stops"
+msgstr "Legutóbbi célok"
 
 msgid "landingpage.stop-geosearch"
 msgstr "Közeledben lévő megállók keresése"
@@ -310,7 +453,7 @@ msgid "landingpage.traewelling.post"
 msgstr " volt"
 
 msgid "landingpage.features"
-msgstr "Fícsörök:" # not sure if this or rather "Feature-ök" I've seen both be used before.
+msgstr "Fícsörök:"
 
 msgid "landingpage.features.log"
 msgstr "Menetrend szerinti és valós idejű adatok naplózása. (indulási és célállomásokon)"
@@ -417,6 +560,301 @@ msgstr "A fiókokat egy év inaktivitás után e-mailben értesítjük a közelg
 msgid "register.disclaimer"
 msgstr "Kérjük, vedd figyelembe: Travelynx egy ingyenes és bármi rendelkezésre állási garacia nélküli hobbi projekt. Be nem tervezett leállások, illetve a teljes oldal hírtelen bezárása nincs tervben, de bármikor előfordulhat."
 
+# sorted_history.html.ep
+
+msgid "sorted-history.header"
+msgstr "High Score-ok"
+
+msgid "sorted-history.delay-dep"
+msgstr "Indulási késés"
+
+msgid "sorted-history.delay-arr"
+msgstr "Érkezési késés"
+
+msgid "sorted-history.sched-duration"
+msgstr "Tervezett időtartam"
+
+msgid "sorted-history.rt-duration"
+msgstr "Tényleges időtartam"
+
+msgid "sorted-history.desc"
+msgstr "Csökkenő"
+
+msgid "sorted-history.asc"
+msgstr "Növekvő"
+
+msgid "sorted-history.submit"
+msgstr "Megjelenítés"
+
+msgid "sorted-history.date"
+msgstr "Dátum"
+
+msgid "sorted-history.trip"
+msgstr "Utazás"
+
+msgid "sorted-history.delay"
+msgstr "Késés"
+
+msgid "sorted-history.duration"
+msgstr "Időtartam"
+
+# year_in_review.html.ep
+
+msgid "review.header.pre"
+msgstr "Áttekintés:"
+
+msgid "review.header.post"
+msgstr " "
+
+msgid "review.trips-stops.pre"
+msgstr "Ebben az évben"
+
+msgid "review.trips-stops.mid"
+msgstr "rogzítettél"
+
+msgid "review.trips-stops.post"
+msgstr " át."
+
+msgid "review.trips"
+msgstr "utazásokat"
+
+msgid "review.stops"
+msgstr "megállón"
+
+msgid "review.trips-per-day.pre"
+msgstr "Átlagolva naponta több mint"
+
+msgid "review.trips-per-day"
+msgstr " "
+
+msgid "review.trips-per-day.post"
+msgstr "!"
+
+msgid "review.travel-time.pre"
+msgstr "Összesen több mint"
+
+msgid "review.travel-time.of-year"
+msgstr "-át az évnek"
+
+msgid "review.travel-time.post"
+msgstr "tömegközlekedéssel töltötted."
+
+msgid "review.travel-distance.pre"
+msgstr "Közben kb."
+
+msgid "review.travel-distance.post"
+msgstr "-t tettél meg."
+
+msgid "review.equivalent-circumference.pre"
+msgstr "Ami megfelel"
+
+msgid "review.equivalent-circumference.mid"
+msgstr "utazásnak a Föld körül"
+
+msgid "review.equivalent-circumference.post"
+msgstr "."
+
+msgid "review.equivalent-diagonal.pre"
+msgstr "Ami megfelel"
+
+msgid "review.equivalent-diagonal.mid"
+msgstr "utazásnak a Föld középpontjába és vissza"
+
+msgid "review.equivalent-diagonal.post"
+msgstr "."
+
+msgid "review.next-page"
+msgstr "Itt swipe-olj vagy a lenti gombra nyomj, hogy a következő oldalra juss"
+
+msgid "review.mean-trip.header"
+msgstr "Egy átlagos utazásod"
+
+msgid "review.mean-trip-3.pre"
+msgstr "…"
+
+msgid "review.mean-trip-3.mid"
+msgstr "-al vitt a/az"
+
+msgid "review.mean-trip-3.post"
+msgstr " háromszögön át."
+
+msgid "review.mean-trip-2.pre"
+msgstr "… a/az"
+
+msgid "review.mean-trip-2.mid"
+msgstr "és"
+
+msgid "review.mean-trip-2.post"
+msgstr "közötti ingadozás volt."
+
+msgid "review.time-distance.pre"
+msgstr "Átlagban"
+
+msgid "review.time-distance.mid"
+msgstr "-be telt, hogy kb."
+
+msgid "review.time-distance.post"
+msgstr "-t tegyen meg."
+
+msgid "review.on-time"
+msgstr "Méghozzá <strong>mindig időben</strong> volt. Lenyűgöző!"
+
+msgid "review.delay-decreasing.pre"
+msgstr " "
+
+msgid "review.delay-decreasing.mid"
+msgstr "késéssel indult, de sikerült behoznia a lemaradás egy részét. Csupán"
+
+msgid "review.delay-decreasing.post"
+msgstr " késéssel ért célba mint tervezve."
+
+msgid "review.delay-constant.pre"
+msgstr " "
+
+msgid "review.delay-constant.post"
+msgstr " késéssel indult, és ugyanilyen késéssel érkezett meg."
+
+msgid "review.delay-increasing.pre"
+msgstr " "
+
+msgid "review.delay-increasing.mid"
+msgstr "késéssel indult, és"
+
+msgid "review.delay-increasing.post"
+msgstr " késéssel kúszott be a célállomásba."
+
+msgid "review.high-scores.header"
+msgstr "High Scores"
+
+msgid "review.high-scores.with"
+msgstr "a/az"
+
+msgid "review.high-scores.from"
+msgstr "-el"
+
+msgid "review.high-scores.to"
+msgstr "-tól"
+
+msgid "review.high-scores.longest-trip.link"
+msgstr "Leghosszabb utazásod"
+
+msgid "review.high-scores.longest-trip.pre"
+msgstr " "
+
+msgid "review.high-scores.longest-trip.post"
+msgstr "-ig."
+
+msgid "review.high-scores.farthest-trip-eq-longest.pre"
+msgstr " "
+
+msgid "review.high-scores.farthest-trip-eq-longest.post"
+msgstr "-es hosszával ez volt egyben a legtávolabbi utad is."
+
+msgid "review.high-scores.farthest-trip.link"
+msgstr "Legnagyobb távolság"
+
+msgid "review.high-scores.farthest-trip.pre"
+msgstr " "
+
+msgid "review.high-scores.farthest-trip.post"
+msgstr "-ig."
+
+msgid "review.high-scores.shortest-trip.link"
+msgstr "Legrövidebb utazásod"
+
+msgid "review.high-scores.shortest-trip.pre"
+msgstr " "
+
+msgid "review.high-scores.shortest-trip.post"
+msgstr "-ig."
+
+msgid "review.high-scores.closest-trip-eq-shortest.pre"
+msgstr " "
+
+msgid "review.high-scores.closest-trip-eq-shortest.post"
+msgstr "-el a Legközelebbi check-in / check-out pár is egyben."
+
+msgid "review.high-scores.closest-trip.link"
+msgstr "Legközelebbi kicsekkelés"
+
+msgid "review.high-scores.closest-trip.pre"
+msgstr " "
+
+msgid "review.high-scores.closest-trip.post"
+msgstr "-ig."
+
+msgid "review.annotated-percent.pre"
+msgstr "Az utazásaidnak"
+
+msgid "review.annotated-percent.post"
+msgstr "-a késésekkel vagy fennakadásokkal kapcsolatos megjegyzései voltak."
+
+msgid "review.top-annotations"
+msgstr "Leggyakoribb megjegyzések:"
+
+msgid "review.punctual-percent.pre"
+msgstr "Utazásaidból csak"
+
+msgid "review.punctual-percent.post"
+msgstr "-a volt percre pontos."
+
+msgid "review.hour-delay-percent.pre"
+msgstr "Utazásaid"
+
+msgid "review.hour-delay-percent.post"
+msgstr "-ának legalább egy órás késése volt"
+
+msgid "review.and-cancelled-percent.pre"
+msgstr "és"
+
+msgid "review.and-cancelled-percent.post"
+msgstr " el sem érte a célodat."
+
+msgid "review.cancelled-percent.pre"
+msgstr " "
+
+msgid "review.cancelled-percent.post"
+msgstr " nem érte el célodat."
+
+msgid "review.most-delayed.pre"
+msgstr " "
+
+msgid "review.most-delayed.mid"
+msgstr " késéssel, a/az"
+
+msgid "review.most-delayed.post"
+msgstr " probléma nélkül érte el az első helyet."
+
+msgid "review.most-delay.pre"
+msgstr "A/Az"
+
+msgid "review.most-delay.from"
+msgstr " "
+
+msgid "review.most-delay.to"
+msgstr "-tól"
+
+msgid "review.most-delay.mid"
+msgstr "-ig különösen lassú tempóban haladt:"
+
+msgid "review.most-delay.post"
+msgstr "-el tovább tartott mint tervezve."
+
+msgid "review.most-undelay.pre"
+msgstr "Viszont, a/az"
+
+msgid "review.most-undelay.from"
+msgstr " "
+
+msgid "review.most-undelay.to"
+msgstr "-tól"
+
+msgid "review.most-undelay.mid"
+msgstr "-ig közlekedve teljesen ki lett használva a max sebesség, és"
+
+msgid "review.most-undelay.post"
+msgstr "-el hamarabb ért oda mint tervezve."
+
 # _checked_in.html.ep, _public_status_card.html.ep
 
 msgid "status.is-checked-in"
@@ -433,6 +871,9 @@ msgstr "Megosztás"
 
 msgid "status.check-out"
 msgstr "Kicsekkelés"
+
+msgid "status.copy-checkin"
+msgstr "Együtt utazunk!"
 
 #, noun or verb
 msgid "status.boarding-in.pre"
@@ -488,11 +929,29 @@ msgstr " "
 msgid "status.arrive-on.post"
 msgstr "vágányra érkezik"
 
+msgid "status.arrival-time-unknown"
+msgstr "…nem derül ki"
+
 msgid "status.delayed-auto-checkout"
 msgstr "Körülbelül tíz perccel az érkezés után automatikusan kicsekkolódsz."
 
 msgid "status.realtime-unavailable"
 msgstr "Valós idejű adatok nem állnak rendelkezésre"
+
+msgid "status.realtime-old.1"
+msgstr "Valós idejű adatok utoljára"
+
+msgid "status.realtime-old.2"
+msgstr "órakor lett frissítve (több mint"
+
+msgid "status.realtime-old.3"
+msgstr "perce)."
+
+msgid "status.realtime-old.cause-dbris"
+msgstr "Valószínűleg bahn.de blokkolta a travelynx-t."
+
+msgid "status.realtime-old.cause-others"
+msgstr "Lehet, hogy travelynx egyes részei és/vagy a használt Backend hibás."
 
 #, service messages related to the trip
 msgid "status.messages"
@@ -510,6 +969,12 @@ msgstr "Kocsik"
 msgid "status.route"
 msgstr "Útvonal"
 
+msgid "status.cancelled-stop"
+msgstr "elmarad"
+
+msgid "status.additional-stop"
+msgstr "pótmegálló"
+
 #, shown during destination selection
 msgid "status.undo"
 msgstr "Visszavonás"
@@ -520,13 +985,42 @@ msgstr "Láthatóság"
 
 #, shown once check-in is completed
 msgid "status.undo-checkin"
-msgstr "Becsekkelés visszavonása"
+msgstr "Check-in visszavonása"
 
 msgid "status.force-checkout-lead"
 msgstr "Körülbelül tíz perccel az érkezés után automatikusan kicsekkolódsz. Ha a backend leállt, vagy az utazás más okokból elveszlett:"
 
 msgid "status.force-checkout"
 msgstr "Most kicsekkelni"
+
+# _history_stats.html.ep
+
+msgid "stats.trips"
+msgstr "Utazások"
+
+msgid "stats.distance"
+msgstr "Távolság"
+
+msgid "stats.time"
+msgstr "Utazási idő"
+
+msgid "stats.hours"
+msgstr "óra"
+
+msgid "stats.per-schedule"
+msgstr "tervezett"
+
+msgid "stats.total-delay"
+msgstr "Összegzett késés"
+
+msgid "stats.transfer-time"
+msgstr "Átszállási idő"
+
+msgid "stats.on-dep"
+msgstr "indulásnál"
+
+msgid "stats.on-arr"
+msgstr "érkezésnél"
 
 # _wagons.html.ep
 
