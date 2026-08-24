@@ -2,11 +2,9 @@
 
 * de-DE: 100.0% complete (0 missing)
 * en-GB: 100.0% complete (0 missing)
-* fr-FR: 95.9% complete (13 missing)
+* fr-FR: 93.5% complete (21 missing)
 * hu-HU: 100.0% complete (0 missing)
-* pl-PL: 97.2% complete (9 missing)
-
-(Total #: 316 per language)
+* pl-PL: 94.8% complete (17 missing)
 
 ### 
 
@@ -221,7 +219,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE:  und
 * en-GB:  and
 * fr-FR:  et
-* hu-HU: és
+* hu-HU:  és
 * pl-PL:  i
 
 ## Templates
@@ -743,6 +741,70 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * fr-FR: Ajustements mineurs de durée de vie pour le backend historique IRIS : les données de carte devraient être maintenant disponibles dans quelques cas supplémentaires par rapport à précédemment.
 * hu-HU: Enyhe javítások a legacy IRIS backendhez: a térképadatok mostantól valamivel több esetben érhetőek el, mint korábban. Ez a backend deprecated lett és a jövőben akár törölve lehetne.
 * pl-PL: Backend IRIS: Nieznaczna poprawa dostępności danych mapowych. Backend nadal jest wypowiedziany i może zostać wycofany w dowolnym momencie.
+
+### changelog.2-20.1
+
+* de-DE: „Mitfaren“-Button: Checkins anderer Accounts können nun übernommen werden, d.h. es wird ein Checkin mit identischem Start/Ziel und Verkehrsmittel erzeugt. Mitfahren ist nur möglich, wenn der eigene Account gerade nicht eingecheckt ist.
+* en-GB: “Join in” button: checkins of followees and other accounts can now be transformed into a checkin with identical data for your own account. This is only possible if your account is not already checked in.
+* fr-FR *missing*
+* hu-HU: „Együtt utazunk!” gomb: Ha valakivel együtt utazol akkor az ő fiókjából másolhatod a check-int, ami azt jelenti, hogy létrejön egy azonos kiindulási, célállomású és közlekedési móddal rendelkező check-in. Viszont csak akkor tudsz valakihez így csatlakozni, ha a saját fiókod jelenleg nem vagy becsekkolva.
+* pl-PL *missing*
+
+### changelog.2-20.2
+
+* de-DE: Besserer Umgang mit Backend-spezifischen Blockaden und Verzögerungen. Trotz allem ist dbris / bahn.de derzeit nur auf kleinen Instanzen (maximal 10 gleichzeitige Checkins) mit allen Features nutzbar.
+* en-GB: Improved handling of backend-specific blocks and rate limits. Nevertheless, until further notice, dbris / bahn.de are only fully usable on small instances (no more than 10 concurrent checkins).
+* fr-FR *missing*
+* hu-HU: A backend-specifikus blokkok és késések kezelésének javítása. Ennek ellenére a dbris/bahn.de jelenleg csak kis szervereken működik teljes mértékben (maximum 10 egyidejű check-in).
+* pl-PL *missing*
+
+### changelog.2-20.3
+
+* de-DE: Das IRIS-Backend ist nun wieder mit fast allen gewohnten Features nutzbar und bietet sich voraussichtlich bis Ende 2026 als Alternative zu bahn.de an.
+* en-GB: The IRIS backend has been restored with almost all features. In many cases, it now is a viable alternative to bahn.de, at least until the end of 2026.
+* fr-FR *missing*
+* hu-HU: Az IRIS backend ismét teljes mértékben működőképes, szinte az összes megszokott funkcióval, és várhatóan 2026 végéig alternatívát kínál a bahn.de-vel szemben.
+* pl-PL *missing*
+
+### changelog.2-21.1
+
+* de-DE: Statistiken zu vergangenen Fahrten werden nun sofort und nicht erst bei Öffnen der Detailansicht berechnet. Zusätzlich laden die entsprechenden Seiten nun deutlich schneller.
+* en-GB: Statistics on past journeys are now computed immediately rather than being deferred until the corresponding detail view has been opened. History pages now load much faster.
+* fr-FR *missing*
+* hu-HU: A korábbi utazások statisztikáit mostantól azonnal kiszámítja a rendszer, nem csak a részletes nézet megnyitásakor. Ezenkívül a megfelelő oldalak mostantól lényegesen gyorsabban töltődnek be.
+* pl-PL *missing*
+
+### changelog.2-21.2
+
+* de-DE: Admins von travelynx-Installationen führen nach dem Update bitte 'perl index.pl stats compute-distances -m production' sowie 'perl index.pl stats purge-cache -m production' aus. compute-distances kann je nach Größe der Installation einige Minuten bis Stunden benötigen – der travelynx Web-Service sowie die Worker-Prozesse können währenddessen normal weiterlaufen.
+* en-GB: If you are running your own instance, you'll need to run 'perl index.pl stats compute-distances -m production' and 'perl index.pl stats purge-cache -m production' after the upgrade. compute-distances may take a while; it can run in the background while the travelynx web service and workers are operating normally.
+* fr-FR *missing*
+* hu-HU: A frissítés után azok a rendszergazdák akik saját travelynx szervert futtatnak, a következő parancsokat kell végrehajtani: 'perl index.pl stats compute-distances -m production' és 'perl index.pl stats purge-cache -m production'. Mérettől függően a compute-distances futtatása néhány perctől több óráig is eltarthat; a travelynx web-szerviz és a worker process-ek közben is normálisan futhatnak tovább.
+* pl-PL *missing*
+
+### changelog.2-22.1
+
+* de-DE: Daten von travelynx-Accounts können nun zwischen Instanzen migriert werden. Auf der Ziel-Instanz sind für den Import Admin-Rechte (CLI-Zugriff) erforderlich.
+* en-GB: Users can now migrate past trips across travelynx instances. Note that this requires admin rights (CLI access) on the target instance.
+* fr-FR *missing*
+* hu-HU: A felhasználók mostantól migrálhatják a korábbi utakat a travelynx szeverek között. Fontos megjegyezni, hogy ehhez rendszergazdai jogosultságok (CLI hozzáférés) szükségesek a célszerveren.
+* pl-PL *missing*
+
+### changelog.2-22.2
+
+* de-DE: DBRIS / bahn.de: Unterstützung für DS100 / Ril100-Kürzel in der Abfahrtstafel (Patch von networkException).
+* en-GB: DBRIS / bahn.de: departure board: support DS100 / Ril100 station codes (patch by networkException).
+* fr-FR *missing*
+* hu-HU: DBRIS / bahn.de: DS100/Ril100 kódok támogatása az indulásjelzőben (patchelve networkException-nek köszönhetően).
+* pl-PL *missing*
+
+### changelog.2-22.3
+
+* de-DE: Das DBRIS / bahn.de-Backend ist (vorerst) wieder vollumfänglich nutzbar.
+* en-GB: The DBRIS / bahn.de backend is fully usable again (for now).
+* fr-FR *missing*
+* hu-HU: A DBRIS / bahn.de backend ismét teljes mértékben használható (egyelőre).
+* pl-PL *missing*
 
 ## history.html.ep
 
@@ -1890,7 +1952,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * en-GB: Longest Leap
 * fr-FR: Trajet le plus éloigné
 * hu-HU: Legnagyobb távolság
-* pl-PL: Największa odległość
+* pl-PL: Najdalsza podróż
 
 ### review.high-scores.farthest-trip.pre
 
@@ -2219,7 +2281,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 *noun or verb*
 
 * de-DE: Einfahrt in
-* en-GB: arrives in
+* en-GB: boarding in
 * fr-FR: Arrive dans
 * hu-HU:  
 * pl-PL: Wjazd za
@@ -2501,7 +2563,7 @@ Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 && (n<10 || n>=20) ? 1
 * de-DE: Checkin rückgängig
 * en-GB: Undo check-in
 * fr-FR: Annuler l'enregistrement
-* hu-HU: Becsekkelés visszavonása
+* hu-HU: Check-in visszavonása
 * pl-PL: Cofnij meldowanie
 
 ### status.force-checkout-lead
