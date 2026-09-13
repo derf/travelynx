@@ -7,88 +7,88 @@ DISTRIBUTIONS
       Algorithm::Diff::_impl 1.201
     requirements:
       ExtUtils::MakeMaker 0
-  Alien-Build-2.84
-    pathname: P/PL/PLICEASE/Alien-Build-2.84.tar.gz
+  Alien-Build-2.87
+    pathname: P/PL/PLICEASE/Alien-Build-2.87.tar.gz
     provides:
-      Alien::Base 2.84
-      Alien::Base::PkgConfig 2.84
-      Alien::Base::Wrapper 2.84
-      Alien::Build 2.84
-      Alien::Build::CommandSequence 2.84
-      Alien::Build::Helper 2.84
-      Alien::Build::Interpolate 2.84
-      Alien::Build::Interpolate::Default 2.84
-      Alien::Build::Interpolate::Helper 2.84
-      Alien::Build::Log 2.84
-      Alien::Build::Log::Abbreviate 2.84
-      Alien::Build::Log::Default 2.84
-      Alien::Build::MM 2.84
-      Alien::Build::Meta 2.84
-      Alien::Build::Plugin 2.84
-      Alien::Build::Plugin::Build::Autoconf 2.84
-      Alien::Build::Plugin::Build::CMake 2.84
-      Alien::Build::Plugin::Build::Copy 2.84
-      Alien::Build::Plugin::Build::MSYS 2.84
-      Alien::Build::Plugin::Build::Make 2.84
-      Alien::Build::Plugin::Build::SearchDep 2.84
-      Alien::Build::Plugin::Core::CleanInstall 2.84
-      Alien::Build::Plugin::Core::Download 2.84
-      Alien::Build::Plugin::Core::FFI 2.84
-      Alien::Build::Plugin::Core::Gather 2.84
-      Alien::Build::Plugin::Core::Legacy 2.84
-      Alien::Build::Plugin::Core::Override 2.84
-      Alien::Build::Plugin::Core::Setup 2.84
-      Alien::Build::Plugin::Core::Tail 2.84
-      Alien::Build::Plugin::Decode::DirListing 2.84
-      Alien::Build::Plugin::Decode::DirListingFtpcopy 2.84
-      Alien::Build::Plugin::Decode::HTML 2.84
-      Alien::Build::Plugin::Decode::Mojo 2.84
-      Alien::Build::Plugin::Digest::Negotiate 2.84
-      Alien::Build::Plugin::Digest::SHA 2.84
-      Alien::Build::Plugin::Digest::SHAPP 2.84
-      Alien::Build::Plugin::Download::Negotiate 2.84
-      Alien::Build::Plugin::Extract::ArchiveTar 2.84
-      Alien::Build::Plugin::Extract::ArchiveZip 2.84
-      Alien::Build::Plugin::Extract::CommandLine 2.84
-      Alien::Build::Plugin::Extract::Directory 2.84
-      Alien::Build::Plugin::Extract::File 2.84
-      Alien::Build::Plugin::Extract::Negotiate 2.84
-      Alien::Build::Plugin::Fetch::CurlCommand 2.84
-      Alien::Build::Plugin::Fetch::HTTPTiny 2.84
-      Alien::Build::Plugin::Fetch::LWP 2.84
-      Alien::Build::Plugin::Fetch::Local 2.84
-      Alien::Build::Plugin::Fetch::LocalDir 2.84
-      Alien::Build::Plugin::Fetch::NetFTP 2.84
-      Alien::Build::Plugin::Fetch::Wget 2.84
-      Alien::Build::Plugin::Gather::IsolateDynamic 2.84
-      Alien::Build::Plugin::PkgConfig::CommandLine 2.84
-      Alien::Build::Plugin::PkgConfig::LibPkgConf 2.84
-      Alien::Build::Plugin::PkgConfig::MakeStatic 2.84
-      Alien::Build::Plugin::PkgConfig::Negotiate 2.84
-      Alien::Build::Plugin::PkgConfig::PP 2.84
-      Alien::Build::Plugin::Prefer::BadVersion 2.84
-      Alien::Build::Plugin::Prefer::GoodVersion 2.84
-      Alien::Build::Plugin::Prefer::SortVersions 2.84
-      Alien::Build::Plugin::Probe::CBuilder 2.84
-      Alien::Build::Plugin::Probe::CommandLine 2.84
-      Alien::Build::Plugin::Probe::Vcpkg 2.84
-      Alien::Build::Plugin::Test::Mock 2.84
-      Alien::Build::PluginMeta 2.84
-      Alien::Build::Temp 2.84
-      Alien::Build::TempDir 2.84
-      Alien::Build::Util 2.84
-      Alien::Build::Version::Basic 2.84
-      Alien::Build::rc 2.84
-      Alien::Role 2.84
-      Alien::Util 2.84
-      Test::Alien 2.84
-      Test::Alien::Build 2.84
-      Test::Alien::CanCompile 2.84
-      Test::Alien::CanPlatypus 2.84
-      Test::Alien::Diag 2.84
-      Test::Alien::Run 2.84
-      Test::Alien::Synthetic 2.84
-      alienfile 2.84
+      Alien::Base 2.87
+      Alien::Base::PkgConfig 2.87
+      Alien::Base::Wrapper 2.87
+      Alien::Build 2.87
+      Alien::Build::CommandSequence 2.87
+      Alien::Build::Helper 2.87
+      Alien::Build::Interpolate 2.87
+      Alien::Build::Interpolate::Default 2.87
+      Alien::Build::Interpolate::Helper 2.87
+      Alien::Build::Log 2.87
+      Alien::Build::Log::Abbreviate 2.87
+      Alien::Build::Log::Default 2.87
+      Alien::Build::MM 2.87
+      Alien::Build::Meta 2.87
+      Alien::Build::Plugin 2.87
+      Alien::Build::Plugin::Build::Autoconf 2.87
+      Alien::Build::Plugin::Build::CMake 2.87
+      Alien::Build::Plugin::Build::Copy 2.87
+      Alien::Build::Plugin::Build::MSYS 2.87
+      Alien::Build::Plugin::Build::Make 2.87
+      Alien::Build::Plugin::Build::SearchDep 2.87
+      Alien::Build::Plugin::Core::CleanInstall 2.87
+      Alien::Build::Plugin::Core::Download 2.87
+      Alien::Build::Plugin::Core::FFI 2.87
+      Alien::Build::Plugin::Core::Gather 2.87
+      Alien::Build::Plugin::Core::Legacy 2.87
+      Alien::Build::Plugin::Core::Override 2.87
+      Alien::Build::Plugin::Core::Setup 2.87
+      Alien::Build::Plugin::Core::Tail 2.87
+      Alien::Build::Plugin::Decode::DirListing 2.87
+      Alien::Build::Plugin::Decode::DirListingFtpcopy 2.87
+      Alien::Build::Plugin::Decode::HTML 2.87
+      Alien::Build::Plugin::Decode::Mojo 2.87
+      Alien::Build::Plugin::Digest::Negotiate 2.87
+      Alien::Build::Plugin::Digest::SHA 2.87
+      Alien::Build::Plugin::Digest::SHAPP 2.87
+      Alien::Build::Plugin::Download::Negotiate 2.87
+      Alien::Build::Plugin::Extract::ArchiveTar 2.87
+      Alien::Build::Plugin::Extract::ArchiveZip 2.87
+      Alien::Build::Plugin::Extract::CommandLine 2.87
+      Alien::Build::Plugin::Extract::Directory 2.87
+      Alien::Build::Plugin::Extract::File 2.87
+      Alien::Build::Plugin::Extract::Negotiate 2.87
+      Alien::Build::Plugin::Fetch::CurlCommand 2.87
+      Alien::Build::Plugin::Fetch::HTTPTiny 2.87
+      Alien::Build::Plugin::Fetch::LWP 2.87
+      Alien::Build::Plugin::Fetch::Local 2.87
+      Alien::Build::Plugin::Fetch::LocalDir 2.87
+      Alien::Build::Plugin::Fetch::NetFTP 2.87
+      Alien::Build::Plugin::Fetch::Wget 2.87
+      Alien::Build::Plugin::Gather::IsolateDynamic 2.87
+      Alien::Build::Plugin::PkgConfig::CommandLine 2.87
+      Alien::Build::Plugin::PkgConfig::LibPkgConf 2.87
+      Alien::Build::Plugin::PkgConfig::MakeStatic 2.87
+      Alien::Build::Plugin::PkgConfig::Negotiate 2.87
+      Alien::Build::Plugin::PkgConfig::PP 2.87
+      Alien::Build::Plugin::Prefer::BadVersion 2.87
+      Alien::Build::Plugin::Prefer::GoodVersion 2.87
+      Alien::Build::Plugin::Prefer::SortVersions 2.87
+      Alien::Build::Plugin::Probe::CBuilder 2.87
+      Alien::Build::Plugin::Probe::CommandLine 2.87
+      Alien::Build::Plugin::Probe::Vcpkg 2.87
+      Alien::Build::Plugin::Test::Mock 2.87
+      Alien::Build::PluginMeta 2.87
+      Alien::Build::Temp 2.87
+      Alien::Build::TempDir 2.87
+      Alien::Build::Util 2.87
+      Alien::Build::Version::Basic 2.87
+      Alien::Build::rc 2.87
+      Alien::Role 2.87
+      Alien::Util 2.87
+      Test::Alien 2.87
+      Test::Alien::Build 2.87
+      Test::Alien::CanCompile 2.87
+      Test::Alien::CanPlatypus 2.87
+      Test::Alien::Diag 2.87
+      Test::Alien::Run 2.87
+      Test::Alien::Synthetic 2.87
+      alienfile 2.87
     requirements:
       Capture::Tiny 0.17
       Digest::SHA 0
@@ -100,7 +100,7 @@ DISTRIBUTIONS
       File::chdir 0
       JSON::PP 0
       List::Util 1.33
-      Path::Tiny 0.077
+      Path::Tiny 0.130
       PkgConfig 0.14026
       Test2::API 1.302096
       Text::ParseWords 3.26
@@ -145,11 +145,10 @@ DISTRIBUTIONS
       Capture::Tiny 0
       ExtUtils::MakeMaker 6.52
       File::Which 0
+      HTML::LinkExtor 0
       HTTP::Tiny 0.044
       IO::Socket::SSL 1.56
       IO::Zlib 0
-      Mojo::DOM 0
-      Mojolicious 7.00
       Mozilla::CA 0
       Net::SSLeay 1.49
       Path::Tiny 0
@@ -405,11 +404,11 @@ DISTRIBUTIONS
       Crypt::RC4 2.02
     requirements:
       ExtUtils::MakeMaker 0
-  DBD-Pg-3.20.2
-    pathname: T/TU/TURNSTEP/DBD-Pg-3.20.2.tar.gz
+  DBD-Pg-3.21.2
+    pathname: T/TU/TURNSTEP/DBD-Pg-3.21.2.tar.gz
     provides:
-      Bundle::DBD::Pg v3.20.2
-      DBD::Pg v3.20.2
+      Bundle::DBD::Pg v3.21.2
+      DBD::Pg v3.21.2
     requirements:
       DBI 1.614
       ExtUtils::MakeMaker 6.58
@@ -417,134 +416,40 @@ DISTRIBUTIONS
       Test::More 0.88
       Time::HiRes 0
       version 0
-  DBI-1.651
-    pathname: H/HM/HMBRAND/DBI-1.651.tgz
+  DBI-1.653
+    pathname: H/HM/HMBRAND/DBI-1.653.tgz
     provides:
-      Bundle::DBI 12.008696
-      DBD::DBM 0.08
-      DBD::DBM::Statement 0.08
-      DBD::DBM::Table 0.08
-      DBD::DBM::db 0.08
-      DBD::DBM::dr 0.08
-      DBD::DBM::st 0.08
-      DBD::ExampleP 12.014311
-      DBD::ExampleP::db 12.014311
-      DBD::ExampleP::dr 12.014311
-      DBD::ExampleP::st 12.014311
-      DBD::File 0.45
-      DBD::File::DataSource::File 0.45
-      DBD::File::DataSource::Stream 0.45
-      DBD::File::Statement 0.45
-      DBD::File::Table 0.45
-      DBD::File::TableSource::FileSystem 0.45
-      DBD::File::db 0.45
-      DBD::File::dr 0.45
-      DBD::File::st 0.45
-      DBD::Gofer 0.015327
-      DBD::Gofer::Policy::Base 0.010088
-      DBD::Gofer::Policy::classic 0.010088
-      DBD::Gofer::Policy::pedantic 0.010088
-      DBD::Gofer::Policy::rush 0.010088
-      DBD::Gofer::Transport::Base 0.014121
-      DBD::Gofer::Transport::corostream undef
-      DBD::Gofer::Transport::null 0.010088
-      DBD::Gofer::Transport::pipeone 0.010088
-      DBD::Gofer::Transport::stream 0.014599
-      DBD::Gofer::db 0.015327
-      DBD::Gofer::dr 0.015327
-      DBD::Gofer::st 0.015327
-      DBD::Mem 0.001
-      DBD::Mem::DataSource 0.001
-      DBD::Mem::Statement 0.001
-      DBD::Mem::Table 0.001
-      DBD::Mem::db 0.001
-      DBD::Mem::dr 0.001
-      DBD::Mem::st 0.001
-      DBD::NullP 12.014715
-      DBD::NullP::db 12.014715
-      DBD::NullP::dr 12.014715
-      DBD::NullP::st 12.014715
-      DBD::Proxy 0.2004
-      DBD::Proxy::RPC::PlClient 0.2004
-      DBD::Proxy::db 0.2004
-      DBD::Proxy::dr 0.2004
-      DBD::Proxy::st 0.2004
-      DBD::Sponge 12.010003
-      DBD::Sponge::db 12.010003
-      DBD::Sponge::dr 12.010003
-      DBD::Sponge::st 12.010003
-      DBDI 12.015129
-      DBI 1.651
-      DBI::Const::GetInfo::ANSI 2.008697
-      DBI::Const::GetInfo::ODBC 2.011374
-      DBI::Const::GetInfoReturn 2.008697
-      DBI::Const::GetInfoType 2.008697
-      DBI::DBD 12.015129
-      DBI::DBD::Metadata 2.014214
-      DBI::DBD::SqlEngine 0.06
-      DBI::DBD::SqlEngine::DataSource 0.06
-      DBI::DBD::SqlEngine::Statement 0.06
-      DBI::DBD::SqlEngine::Table 0.06
-      DBI::DBD::SqlEngine::TableSource 0.06
-      DBI::DBD::SqlEngine::TieMeta 0.06
-      DBI::DBD::SqlEngine::TieTables 0.06
-      DBI::DBD::SqlEngine::db 0.06
-      DBI::DBD::SqlEngine::dr 0.06
-      DBI::DBD::SqlEngine::st 0.06
-      DBI::Gofer::Execute 0.014283
-      DBI::Gofer::Request 0.012537
-      DBI::Gofer::Response 0.011566
-      DBI::Gofer::Serializer::Base 0.009950
-      DBI::Gofer::Serializer::DataDumper 0.009950
-      DBI::Gofer::Serializer::Storable 0.015586
-      DBI::Gofer::Transport::Base 0.012537
-      DBI::Gofer::Transport::pipeone 0.012537
-      DBI::Gofer::Transport::stream 0.012537
-      DBI::Profile 2.015065
-      DBI::ProfileData 2.010008
-      DBI::ProfileDumper 2.015325
-      DBI::ProfileDumper::Apache 2.014121
-      DBI::ProfileSubs 0.009396
-      DBI::ProxyServer 0.3005
-      DBI::ProxyServer::db 0.3005
-      DBI::ProxyServer::dr 0.3005
-      DBI::ProxyServer::st 0.3005
-      DBI::SQL::Nano 1.015544
-      DBI::SQL::Nano::Statement_ 1.015544
-      DBI::SQL::Nano::Table_ 1.015544
-      DBI::Util::CacheMemory 0.010315
-      DBI::Util::_accessor 0.009479
-      DBI::common 1.651
+      DBI 1.653
     requirements:
       ExtUtils::MakeMaker 6.48
       Module::Load 0.22
       Test::Simple 0.96
-      perl 5.008001
-  Data-OptList-0.114
-    pathname: R/RJ/RJBS/Data-OptList-0.114.tar.gz
+      perl 5.012000
+  Data-OptList-0.115
+    pathname: R/RJ/RJBS/Data-OptList-0.115.tar.gz
     provides:
-      Data::OptList 0.114
+      Data::OptList 0.115
     requirements:
       ExtUtils::MakeMaker 6.78
       List::Util 0
-      Params::Util 0
+      Params::SomeUtil 0
       Sub::Install 0.921
       perl 5.012
       strict 0
       warnings 0
-  DateTime-1.66
-    pathname: D/DR/DROLSKY/DateTime-1.66.tar.gz
+  DateTime-1.67
+    pathname: D/DR/DROLSKY/DateTime-1.67.tar.gz
     provides:
-      DateTime 1.66
-      DateTime::Duration 1.66
-      DateTime::Helpers 1.66
-      DateTime::Infinite 1.66
-      DateTime::Infinite::Future 1.66
-      DateTime::Infinite::Past 1.66
-      DateTime::LeapSecond 1.66
-      DateTime::PP 1.66
-      DateTime::PPExtra 1.66
-      DateTime::Types 1.66
+      DateTime 1.67
+      DateTime::Duration 1.67
+      DateTime::Helpers 1.67
+      DateTime::Infinite 1.67
+      DateTime::Infinite::Future 1.67
+      DateTime::Infinite::Past 1.67
+      DateTime::LeapSecond 1.67
+      DateTime::PP 1.67
+      DateTime::PPExtra 1.67
+      DateTime::Types 1.67
     requirements:
       Carp 0
       DateTime::Locale 1.06
@@ -635,15 +540,15 @@ DISTRIBUTIONS
       parent 0
       strict 0
       warnings 0
-  DateTime-Locale-1.45
-    pathname: D/DR/DROLSKY/DateTime-Locale-1.45.tar.gz
+  DateTime-Locale-1.46
+    pathname: D/DR/DROLSKY/DateTime-Locale-1.46.tar.gz
     provides:
-      DateTime::Locale 1.45
-      DateTime::Locale::Base 1.45
-      DateTime::Locale::Catalog 1.45
-      DateTime::Locale::Data 1.45
-      DateTime::Locale::FromData 1.45
-      DateTime::Locale::Util 1.45
+      DateTime::Locale 1.46
+      DateTime::Locale::Base 1.46
+      DateTime::Locale::Catalog 1.46
+      DateTime::Locale::Data 1.46
+      DateTime::Locale::FromData 1.46
+      DateTime::Locale::Util 1.46
     requirements:
       Carp 0
       Dist::CheckConflicts 0.02
@@ -1617,10 +1522,10 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 6.52
       Types::Serialiser 0
       common::sense 0
-  LWP-MediaTypes-6.04
-    pathname: O/OA/OALDERS/LWP-MediaTypes-6.04.tar.gz
+  LWP-MediaTypes-6.05
+    pathname: O/OA/OALDERS/LWP-MediaTypes-6.05.tar.gz
     provides:
-      LWP::MediaTypes 6.04
+      LWP::MediaTypes 6.05
     requirements:
       Carp 0
       Exporter 0
@@ -1769,39 +1674,39 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 6.42
       Test::More 0
       perl 5.005
-  MIME-tools-5.517
-    pathname: D/DS/DSKOLL/MIME-tools-5.517.tar.gz
+  MIME-tools-5.518
+    pathname: D/DS/DSKOLL/MIME-tools-5.518.tar.gz
     provides:
-      MIME::Body 5.517
-      MIME::Body::File 5.517
-      MIME::Body::InCore 5.517
-      MIME::Body::Scalar 5.517
-      MIME::Decoder 5.517
-      MIME::Decoder::Base64 5.517
-      MIME::Decoder::BinHex 5.517
-      MIME::Decoder::Binary 5.517
-      MIME::Decoder::Gzip64 5.517
-      MIME::Decoder::NBit 5.517
-      MIME::Decoder::QuotedPrint 5.517
-      MIME::Decoder::UU 5.517
-      MIME::Entity 5.517
-      MIME::Field::ConTraEnc 5.517
-      MIME::Field::ContDisp 5.517
-      MIME::Field::ContType 5.517
-      MIME::Field::ParamVal 5.517
-      MIME::Head 5.517
-      MIME::Parser 5.517
+      MIME::Body 5.518
+      MIME::Body::File 5.518
+      MIME::Body::InCore 5.518
+      MIME::Body::Scalar 5.518
+      MIME::Decoder 5.518
+      MIME::Decoder::Base64 5.518
+      MIME::Decoder::BinHex 5.518
+      MIME::Decoder::Binary 5.518
+      MIME::Decoder::Gzip64 5.518
+      MIME::Decoder::NBit 5.518
+      MIME::Decoder::QuotedPrint 5.518
+      MIME::Decoder::UU 5.518
+      MIME::Entity 5.518
+      MIME::Field::ConTraEnc 5.518
+      MIME::Field::ContDisp 5.518
+      MIME::Field::ContType 5.518
+      MIME::Field::ParamVal 5.518
+      MIME::Head 5.518
+      MIME::Parser 5.518
       MIME::Parser::FileInto undef
       MIME::Parser::FileUnder undef
       MIME::Parser::Filer undef
       MIME::Parser::Reader undef
       MIME::Parser::Results undef
-      MIME::Tools 5.517
+      MIME::Tools 5.518
       MIME::WordDecoder undef
       MIME::WordDecoder::ISO_8859 undef
       MIME::WordDecoder::US_ASCII undef
       MIME::WordDecoder::UTF_8 undef
-      MIME::Words 5.517
+      MIME::Words 5.518
     requirements:
       ExtUtils::MakeMaker 6.59
       File::Path 1
@@ -2174,10 +2079,10 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       Module::Runtime 0.014
-  Mozilla-CA-20250602
-    pathname: L/LW/LWP/Mozilla-CA-20250602.tar.gz
+  Mozilla-CA-20260813
+    pathname: L/LW/LWP/Mozilla-CA-20260813.tar.gz
     provides:
-      Mozilla::CA 20250602
+      Mozilla::CA 20260813
     requirements:
       ExtUtils::MakeMaker 0
   Net-HTTP-6.24
@@ -2254,22 +2159,17 @@ DISTRIBUTIONS
       perl 5.006001
       strict 0
       warnings 0
-  Params-Util-1.102
-    pathname: R/RE/REHSACK/Params-Util-1.102.tar.gz
+  Params-SomeUtil-1.11
+    pathname: P/PL/PLICEASE/Params-SomeUtil-1.11.tar.gz
     provides:
-      Params::Util 1.102
-      Params::Util::PP 1.102
+      Params::SomeUtil 1.11
     requirements:
-      Carp 0
-      ExtUtils::MakeMaker 0
-      File::Basename 0
-      File::Copy 0
-      File::Path 0
-      File::Spec 0
-      IPC::Cmd 0
+      ExtUtils::CBuilder 0.27
+      ExtUtils::MakeMaker 6.52
+      File::Spec 0.80
       Scalar::Util 1.18
-      XSLoader 0.22
-      parent 0
+      Test::More 0.87
+      perl 5.005030
   Params-Validate-1.31
     pathname: D/DR/DROLSKY/Params-Validate-1.31.tar.gz
     provides:
@@ -2480,16 +2380,16 @@ DISTRIBUTIONS
       HTML::Entities 0
       Test::More 0.86
       Unicode::GCString 0
-  Sub-Exporter-0.991
-    pathname: R/RJ/RJBS/Sub-Exporter-0.991.tar.gz
+  Sub-Exporter-0.992
+    pathname: R/RJ/RJBS/Sub-Exporter-0.992.tar.gz
     provides:
-      Sub::Exporter 0.991
-      Sub::Exporter::Util 0.991
+      Sub::Exporter 0.992
+      Sub::Exporter::Util 0.992
     requirements:
       Carp 0
       Data::OptList 0.100
       ExtUtils::MakeMaker 6.78
-      Params::Util 0.14
+      Params::SomeUtil 0.14
       Sub::Install 0.92
       perl 5.012
       strict 0
@@ -2803,18 +2703,18 @@ DISTRIBUTIONS
     requirements:
       Carp 0
       ExtUtils::MakeMaker 0
-  Travel-Status-DE-DBRIS-0.32
-    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.32.tar.gz
+  Travel-Status-DE-DBRIS-0.33
+    pathname: D/DE/DERF/Travel-Status-DE-DBRIS-0.33.tar.gz
     provides:
-      Travel::Status::DE::DBRIS 0.32
-      Travel::Status::DE::DBRIS::Formation 0.32
-      Travel::Status::DE::DBRIS::Formation::Carriage 0.32
-      Travel::Status::DE::DBRIS::Formation::Group 0.32
-      Travel::Status::DE::DBRIS::Formation::Sector 0.32
-      Travel::Status::DE::DBRIS::Journey 0.32
-      Travel::Status::DE::DBRIS::JourneyAtStop 0.32
-      Travel::Status::DE::DBRIS::Location 0.32
-      Travel::Status::DE::DBRIS::Operators 0.32
+      Travel::Status::DE::DBRIS 0.33
+      Travel::Status::DE::DBRIS::Formation 0.33
+      Travel::Status::DE::DBRIS::Formation::Carriage 0.33
+      Travel::Status::DE::DBRIS::Formation::Group 0.33
+      Travel::Status::DE::DBRIS::Formation::Sector 0.33
+      Travel::Status::DE::DBRIS::Journey 0.33
+      Travel::Status::DE::DBRIS::JourneyAtStop 0.33
+      Travel::Status::DE::DBRIS::Location 0.33
+      Travel::Status::DE::DBRIS::Operators 0.33
     requirements:
       Carp 0
       Class::Accessor 0.16
@@ -2969,66 +2869,66 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       common::sense 0
-  URI-5.35
-    pathname: O/OA/OALDERS/URI-5.35.tar.gz
+  URI-5.37
+    pathname: O/OA/OALDERS/URI-5.37.tar.gz
     provides:
-      URI 5.35
-      URI::Escape 5.35
-      URI::Heuristic 5.35
-      URI::IRI 5.35
-      URI::QueryParam 5.35
-      URI::Split 5.35
-      URI::URL 5.35
-      URI::WithBase 5.35
-      URI::data 5.35
-      URI::file 5.35
-      URI::file::Base 5.35
-      URI::file::FAT 5.35
-      URI::file::Mac 5.35
-      URI::file::OS2 5.35
-      URI::file::QNX 5.35
-      URI::file::Unix 5.35
-      URI::file::Win32 5.35
-      URI::ftp 5.35
-      URI::ftpes 5.35
-      URI::ftps 5.35
-      URI::geo 5.35
-      URI::gopher 5.35
-      URI::http 5.35
-      URI::https 5.35
-      URI::icap 5.35
-      URI::icaps 5.35
-      URI::irc 5.35
-      URI::ircs 5.35
-      URI::ldap 5.35
-      URI::ldapi 5.35
-      URI::ldaps 5.35
-      URI::mailto 5.35
-      URI::mms 5.35
-      URI::news 5.35
-      URI::nntp 5.35
-      URI::nntps 5.35
-      URI::otpauth 5.35
-      URI::pop 5.35
-      URI::rlogin 5.35
-      URI::rsync 5.35
-      URI::rtsp 5.35
-      URI::rtspu 5.35
-      URI::scp 5.35
-      URI::sftp 5.35
-      URI::sip 5.35
-      URI::sips 5.35
-      URI::smb 5.35
-      URI::smtp 5.35
-      URI::snews 5.35
-      URI::ssh 5.35
-      URI::telnet 5.35
-      URI::tn3270 5.35
-      URI::urn 5.35
-      URI::urn::isbn 5.35
-      URI::urn::oid 5.35
-      URI::ws 5.35
-      URI::wss 5.35
+      URI 5.37
+      URI::Escape 5.37
+      URI::Heuristic 5.37
+      URI::IRI 5.37
+      URI::QueryParam 5.37
+      URI::Split 5.37
+      URI::URL 5.37
+      URI::WithBase 5.37
+      URI::data 5.37
+      URI::file 5.37
+      URI::file::Base 5.37
+      URI::file::FAT 5.37
+      URI::file::Mac 5.37
+      URI::file::OS2 5.37
+      URI::file::QNX 5.37
+      URI::file::Unix 5.37
+      URI::file::Win32 5.37
+      URI::ftp 5.37
+      URI::ftpes 5.37
+      URI::ftps 5.37
+      URI::geo 5.37
+      URI::gopher 5.37
+      URI::http 5.37
+      URI::https 5.37
+      URI::icap 5.37
+      URI::icaps 5.37
+      URI::irc 5.37
+      URI::ircs 5.37
+      URI::ldap 5.37
+      URI::ldapi 5.37
+      URI::ldaps 5.37
+      URI::mailto 5.37
+      URI::mms 5.37
+      URI::news 5.37
+      URI::nntp 5.37
+      URI::nntps 5.37
+      URI::otpauth 5.37
+      URI::pop 5.37
+      URI::rlogin 5.37
+      URI::rsync 5.37
+      URI::rtsp 5.37
+      URI::rtspu 5.37
+      URI::scp 5.37
+      URI::sftp 5.37
+      URI::sip 5.37
+      URI::sips 5.37
+      URI::smb 5.37
+      URI::smtp 5.37
+      URI::snews 5.37
+      URI::ssh 5.37
+      URI::telnet 5.37
+      URI::tn3270 5.37
+      URI::urn 5.37
+      URI::urn::isbn 5.37
+      URI::urn::oid 5.37
+      URI::ws 5.37
+      URI::wss 5.37
     requirements:
       Carp 0
       Cwd 0
@@ -3040,6 +2940,7 @@ DISTRIBUTIONS
       MIME::Base64 2
       Net::Domain 0
       Scalar::Util 0
+      Unicode::Normalize 0
       constant 0
       integer 0
       overload 0
@@ -3048,10 +2949,10 @@ DISTRIBUTIONS
       strict 0
       utf8 0
       warnings 0
-  UUID-0.38
-    pathname: J/JR/JRM/UUID-0.38.tar.gz
+  UUID-0.39
+    pathname: J/JR/JRM/UUID-0.39.tar.gz
     provides:
-      UUID 0.38
+      UUID 0.39
     requirements:
       Carp 0
       Config 0
@@ -3092,10 +2993,10 @@ DISTRIBUTIONS
       MIME::Charset v1.6.2
       Test::More 0.45
       perl 5.008
-  Variable-Magic-0.64
-    pathname: V/VP/VPIT/Variable-Magic-0.64.tar.gz
+  Variable-Magic-0.65
+    pathname: V/VP/VPIT/Variable-Magic-0.65.tar.gz
     provides:
-      Variable::Magic 0.64
+      Variable::Magic 0.65
     requirements:
       Carp 0
       Config 0
