@@ -235,7 +235,7 @@ msgid "account.profile"
 msgstr "Öffentliches Profil"
 
 msgid "account.interaction.requests"
-msgstr "Offene anfragen"
+msgstr "Offene Anfragen"
 
 msgid "account.interaction.requests.incoming.none"
 msgstr "keine eingehend"
