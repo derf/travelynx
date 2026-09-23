@@ -897,6 +897,7 @@ sub run {
 					  ->expand->hashes->each
 				],
 			};
+			delete $user_data->{account}{password};
 			my $name     = $user_data->{account}{name};
 			my $filename = "travelynx-export-${name}-${now_yyyymmdd}.json";
 
