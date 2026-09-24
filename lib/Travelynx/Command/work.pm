@@ -84,7 +84,9 @@ sub run {
 			}
 		}
 
-		elsif ( $entry->{is_dbris} and ( not $backend or $backend eq 'dbris' ) )
+		elsif ( $entry->{is_dbris}
+			and ( not $backend or $backend eq 'dbris' )
+			and $train_id ne 'manual' )
 		{
 
 			eval {
@@ -266,7 +268,10 @@ sub run {
 			}
 		}
 
-		elsif ( $entry->{is_efa} and ( not $backend or $backend eq 'efa' ) ) {
+		elsif ( $entry->{is_efa}
+			and ( not $backend or $backend eq 'efa' )
+			and $train_id ne 'manual' )
+		{
 			eval {
 				$self->app->efa->get_journey_p(
 					trip_id => $train_id,
@@ -403,7 +408,9 @@ sub run {
 			}
 		}
 
-		elsif ( $entry->{is_motis} and ( not $backend or $backend eq 'motis' ) )
+		elsif ( $entry->{is_motis}
+			and ( not $backend or $backend eq 'motis' )
+			and $train_id ne 'manual' )
 		{
 
 			eval {
@@ -504,7 +511,9 @@ sub run {
 			}
 		}
 
-		elsif ( $entry->{is_hafas} and ( not $backend or $backend eq 'hafas' ) )
+		elsif ( $entry->{is_hafas}
+			and ( not $backend or $backend eq 'hafas' )
+			and $train_id ne 'manual' )
 		{
 
 			eval {
@@ -648,7 +657,10 @@ sub run {
 		# update departure data for up to 15 minutes after departure and
 		# delaying automatic checkout by at least 10 minutes.
 
-		elsif ( $entry->{is_iris} and ( not $backend or $backend eq 'iris' ) ) {
+		elsif ( $entry->{is_iris}
+			and ( not $backend or $backend eq 'iris' )
+			and $train_id ne 'manual' )
+		{
 			eval {
 				if ( $now->epoch - $entry->{real_dep_ts} < 900 ) {
 					my $status = $self->app->iris->get_departures(
