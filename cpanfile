@@ -29,3 +29,6 @@ requires 'Travel::Status::DE::HAFAS', '>= 6.20';
 requires 'Travel::Status::DE::IRIS';
 requires 'UUID::Tiny';
 requires 'XML::LibXML';
+
+requires 'MIME::Base64';
+requires 'Authen::SASL';

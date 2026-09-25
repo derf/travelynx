@@ -6,11 +6,13 @@ package Travelynx::Helper::Sendmail;
 
 use strict;
 use warnings;
+use feature 'try';
 
-use 5.020;
+use 5.040;
 
+use DateTime;
 use Encode                qw(encode);
-use Email::Sender::Simple qw(try_to_sendmail);
+use Email::Sender::Simple qw(sendmail);
 use MIME::Entity;
 
 sub new {
@@ -23,13 +25,15 @@ sub custom {
 	my ( $self, $to, $subject, $body ) = @_;
 
 	my $reg_mail = MIME::Entity->build(
-		To       => $to,
-		From     => $self->{config}{from},
-		Subject  => encode( 'MIME-Header', $subject ),
-		Type     => 'text/plain',
-		Charset  => 'UTF-8',
-		Encoding => 'quoted-printable',
-		Data     => encode( 'utf-8', $body ),
+		To             => $to,
+		From           => $self->{config}{from},
+		Subject        => encode( 'MIME-Header', $subject ),
+		Type           => 'text/plain;format=flowed',
+		Charset        => 'UTF-8',
+		Encoding       => 'quoted-printable',
+		Data           => encode( 'utf-8', $body ),
+		"MIME-Version" => '1.0',
+		"Date"         => DateTime->now->strftime("%a, %d %b %Y %H:%M:%S %z"),
 	);
 
 	if ( $self->{config}->{disabled} ) {
@@ -39,7 +43,13 @@ sub custom {
 		return 1;
 	}
 
-	return try_to_sendmail($reg_mail);
+	try {
+		return sendmail($reg_mail);
+	}
+	catch ($e) {
+		$self->{log}->error("Sendmail.pm: sendmail error ${e}");
+		return 0;
+	}
 }
 
 sub age_deletion_notification {
