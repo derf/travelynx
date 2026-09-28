@@ -1467,7 +1467,14 @@ sub json_history {
 	my ($self) = @_;
 
 	$self->render(
-		json => [ $self->journeys->get( uid => $self->current_user->{id} ) ] );
+		json => [
+			$self->journeys->get(
+				uid           => $self->current_user->{id},
+				with_polyline => 1,
+				verbose       => 1
+			)
+		]
+	);
 }
 
 sub csv_history {
