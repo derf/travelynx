@@ -70,3 +70,8 @@ tags
 
 ### theme stuff ###
 sass/node_modules
+
+### IDEs ###
+.idea/
+.vscode/
+.vs/
