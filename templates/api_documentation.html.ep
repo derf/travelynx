@@ -141,6 +141,20 @@
 	"comment" : "Beliebiger Text" <span class="explanation">(optional, überschreibt vorherigen Kommentar)</span>
 }
 		</pre>
+		<p>Payload zum Einchecken per MOTIS-Backend (Transitous), optional mit Zielwahl. toStation musst mit den Unterwegshalten übereinstimmen, z.B. "Hauptbahnhof (U Gleis 2+4), Essen (Ruhr)" statt "Essen Hbf".</p>
+		<pre class="api-example">
+{
+	"token" : "<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>",
+	"action" : "checkin",
+	"motis" : "transitous", <span class="explanation">(MOTIS-Instanz)</span>
+	"train" : {
+		"journeyID" : "20261005_00:21_de-DELFI_3426294544", <span class="explanation">(MOTIS tripId)</span>
+	}
+	"fromStation" : "de-DELFI_de:05374:44101:7:72", <span class="explanation">(MOTIS stopId)</span>
+	"toStation" : "Gummersbach Bf", <span class="explanation">(optional, zurzeit Name, siehe <a target="_blank" href="https://codeberg.org/derf/travelynx/issues/7">Codeberg-Issue</a>)</span>
+	"comment" : "Beliebiger Text" <span class="explanation">(optional, überschreibt vorherigen Kommentar)</span>
+}
+		</pre>
 		<p>Payload zur Wahl eines neuen Ziels, wenn bereits eingecheckt:</p>
 		<pre class="api-example">
 {
