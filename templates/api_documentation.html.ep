@@ -24,60 +24,60 @@
 		<p>
 		Beispiel / Layout:
 		</p>
-		<p style="font-family: Monospace;">
-		{<br/>
-			"deprecated" : true / false, (falls true: Diese API-Version wird irgendwann abgeschaltet, bitte auf eine neue umsteigen)<br/>
-			"actionTime" : 1234567, (UNIX-Timestamp des letzten Checkin/Checkout)<br/>
-			"checkedIn" : true / false,<br/>
-			"comment": "Kommentar",<br/>
-			"backend": {<br/>
-				"id": 1,<br/>
-				"name": "DB",<br/>
-				"type": "HAFAS",<br/>
-			},<br/>
-			"fromStation" : { (letzter Checkin)<br/>
-				"name" : "Essen Hbf",<br/>
-				"ds100" : "EE", (ggf. null)<br/>
-				"uic" : 8000098,<br/>
-				"latitude" : 51.451355,<br/>
-				"longitude" : 7.014793,<br/>
-				"platform" : "12", (ggf. null)<br/>
-				"scheduledTime": 1556083680,<br/>
-				"realTime": 1556083680<br/>
-			},<br/>
-			"toStation" : { (zugehöriger Checkout. Wenn noch nicht eingetragen, sind alle Felder null)<br/>
-				"name" : "Essen Stadtwald",<br/>
-				"ds100" : "EESA", (ggf. null)<br/>
-				"uic" : 8001896,<br/>
-				"latitude" : 51.422853,<br/>
-				"longitude" : 7.023296,<br/>
-				"platform" : "2", (ggf. null)<br/>
-				"scheduledTime": 1556083980, (ggf. null)<br/>
-				"realTime": 1556083980 (ggf. null)<br/>
-			},<br/>
-			"intermediateStops" : [ (Unterwegshalte zwischen fromStation und toStation) <br/>
-			{<br/>
-				"name" : "Essen Süd",<br/>
-				"scheduledArrival" : 1556083800, (ggf. null)<br/>
-				"realArrival" : 1556083800, (ggf. null, nach Ankunft identisch mit scheduledArrival)<br/>
-				"scheduledDeparture" : 1556083860, (ggf. null)<br/>
-				"realDeparture" : 1556083860 (ggf. null, nach Abfahrt identisch mit scheduledDeparture)<br/>
-			},<br/>
-			…<br/>
-			],<br/>
-			"train" : {<br/>
-				"type" : "S", (aktueller / letzter Fahrttyp)<br/>
-				"line" : "6", (Linie als String, nicht immer numerisch, ggf. null)<br/>
-				"no" : "30634", (Fahrtnummer als String, ggf. null oder leer)<br/>
-				"id" : "7512500863736016593" (IRIS- oder HAFAS-spezifische Fahrt-ID)<br/>
-				"hafasId" : "1|224479|0|80|30082023" (HAFAS-spezifische Fahrt-ID falls bekannt, ggf. null)<br/>
-			},<br/>
-			"visibility" : {<br/>
-				"desc": "private" / "unlisted" / "followers" / "travelynx" / "public",<br/>
-				"level": 10 / 30 / 60 / 80 / 100<br/>
-			}<br/>
-		}
-		</p>
+		<pre class="api-example">
+{
+	"deprecated" : true / false, <span class="explanation">(falls true: Diese API-Version wird irgendwann abgeschaltet, bitte auf eine neue umsteigen)</span>
+	"actionTime" : 1234567, <span class="explanation">(UNIX-Timestamp des letzten Checkin/Checkout)</span>
+	"checkedIn" : true / false,
+	"comment": "Kommentar",
+	"backend": {
+		"id": 1,
+		"name": "DB",
+		"type": "HAFAS",
+	},
+	"fromStation" : { <span class="explanation">(letzter Checkin)</span>
+		"name" : "Essen Hbf",
+		"ds100" : "EE", <span class="explanation">(ggf. null)</span>
+		"uic" : 8000098,
+		"latitude" : 51.451355,
+		"longitude" : 7.014793,
+		"platform" : "12", <span class="explanation">(ggf. null)</span>
+		"scheduledTime": 1556083680,
+		"realTime": 1556083680
+	},
+	"toStation" : { <span class="explanation">(zugehöriger Checkout. Wenn noch nicht eingetragen, sind alle Felder null)</span>
+		"name" : "Essen Stadtwald",
+		"ds100" : "EESA", <span class="explanation">(ggf. null)</span>
+		"uic" : 8001896,
+		"latitude" : 51.422853,
+		"longitude" : 7.023296,
+		"platform" : "2", <span class="explanation">(ggf. null)</span>
+		"scheduledTime": 1556083980, <span class="explanation">(ggf. null)</span>
+		"realTime": 1556083980 <span class="explanation">(ggf. null)</span>
+	},
+	"intermediateStops" : [ <span class="explanation">(Unterwegshalte zwischen fromStation und toStation) </span>
+		{
+			"name" : "Essen Süd",
+			"scheduledArrival" : 1556083800, <span class="explanation">(ggf. null)</span>
+			"realArrival" : 1556083800, <span class="explanation">(ggf. null, nach Ankunft identisch mit scheduledArrival)</span>
+			"scheduledDeparture" : 1556083860, <span class="explanation">(ggf. null)</span>
+			"realDeparture" : 1556083860 <span class="explanation">(ggf. null, nach Abfahrt identisch mit scheduledDeparture)</span>
+		},
+		<span class="explanation">…</span>
+	],
+	"train" : {
+		"type" : "S", <span class="explanation">(aktueller / letzter Fahrttyp)</span>
+		"line" : "6", <span class="explanation">(Linie als String, nicht immer numerisch, ggf. null)</span>
+		"no" : "30634", <span class="explanation">(Fahrtnummer als String, ggf. null oder leer)</span>
+		"id" : "7512500863736016593" <span class="explanation">(IRIS- oder HAFAS-spezifische Fahrt-ID)</span>
+		"hafasId" : "1|224479|0|80|30082023" <span class="explanation">(HAFAS-spezifische Fahrt-ID falls bekannt, ggf. null)</span>
+	},
+	"visibility" : {
+		"desc": "private" / "unlisted" / "followers" / "travelynx" / "public",
+		"level": 10 / 30 / 60 / 80 / 100
+	}
+}
+		</pre>
 		<p>
 			Im Fehlerfall: <span style="font-family: Monospace;">{ "error" : "Begründung" }</span>
 		</p>
@@ -113,72 +113,72 @@
 			curl -X POST -H "Content-Type: application/json" -d '{"token":"<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>"}' <%= $api_root %>/travel
 		</p>
 		<p>Payload zum Einchecken per IRIS-Backend (Schienenverkehr DE/DB), optional mit Zielwahl:</p>
-		<p style="font-family: Monospace;">
-		{<br/>
-			"token" : "<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>",<br/>
-			"action" : "checkin",<br/>
-			"train" : {<br/>
-				"type" : "ICE",<br/>
-				"no" : "1234",<br/>
-			}<br/>
-			"fromStation" : "Essen Hbf", (DS100 oder EVA-Nummer sind ebenfalls möglich)<br/>
-			"toStation" : "Berlin Hbf", (optional, DS100 oder EVA-Nummer sind ebenfalls möglich)<br/>
-			"comment" : "Beliebiger Text" (optional, überschreibt vorherigen Kommentar)<br/>
-		}
-		</p>
+		<pre class="api-example">
+{
+	"token" : "<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>",
+	"action" : "checkin",
+	"train" : {
+		"type" : "ICE",
+		"no" : "1234",
+	}
+	"fromStation" : "Essen Hbf", <span class="explanation">(DS100 oder EVA-Nummer sind ebenfalls möglich)</span>
+	"toStation" : "Berlin Hbf", <span class="explanation">(optional, DS100 oder EVA-Nummer sind ebenfalls möglich)</span>
+	"comment" : "Beliebiger Text" <span class="explanation">(optional, überschreibt vorherigen Kommentar)</span>
+}
+		</pre>
 		<p>Payload zum Einchecken per HAFAS-Backend (Nahverkehr und außerhalb DE/DB), optional mit Zielwahl. fromStation und toStation müssen mit den Unterwegshalten übereinstimmen, z.B. "Hauptbahnhof (U Gleis 2+4), Essen (Ruhr)" statt "Essen Hbf".</p>
-		<p style="font-family: Monospace;">
-		{<br/>
-			"token" : "<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>",<br/>
-			"action" : "checkin",<br/>
-			"dbris" : "bahn.de", (DBRIS-Instanz – Default: bahn.de)<br/>
-			"hafas" : null, (HAFAS-Instanz, falls verwendet, sonste null)<br/>
-			"train" : {<br/>
-				"journeyID" : "2|#VN#1#ST#1742845592#PI#0#ZI#315136#TA#0#DA#270325#1S#8000080#1T#1841#LS#8006486#LT#2024#PU#80#RT#1#CA#RE#ZE#10773#ZB#RE10773#PC#3#FR#8000080#FT#1841#TO#8006486#TT#2024#",<br/>
-			}<br/>
-			"fromStation" : 8000080, (Name oder EVA-Nummer – bei bahn.de nur EVA-Nummer)<br/>
-			"toStation" : 8006486, (optional, Name oder EVA-Nummer – bei bahn.de nur EVA-Nummer)<br/>
-			"comment" : "Beliebiger Text" (optional, überschreibt vorherigen Kommentar)<br/>
-		}
-		</p>
+		<pre class="api-example">
+{
+	"token" : "<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>",
+	"action" : "checkin",
+	"dbris" : "bahn.de", <span class="explanation">(DBRIS-Instanz – Default: bahn.de)</span>
+	"hafas" : null, <span class="explanation">(HAFAS-Instanz, falls verwendet, sonste null)</span>
+	"train" : {
+		"journeyID" : "2|#VN#1#ST#1742845592#PI#0#ZI#315136#TA#0#DA#270325#1S#8000080#1T#1841#LS#8006486#LT#2024#PU#80#RT#1#CA#RE#ZE#10773#ZB#RE10773#PC#3#FR#8000080#FT#1841#TO#8006486#TT#2024#",
+	}
+	"fromStation" : 8000080, <span class="explanation">(Name oder EVA-Nummer – bei bahn.de nur EVA-Nummer)</span>
+	"toStation" : 8006486, <span class="explanation">(optional, Name oder EVA-Nummer – bei bahn.de nur EVA-Nummer)</span>
+	"comment" : "Beliebiger Text" <span class="explanation">(optional, überschreibt vorherigen Kommentar)</span>
+}
+		</pre>
 		<p>Payload zur Wahl eines neuen Ziels, wenn bereits eingecheckt:</p>
-		<p style="font-family: Monospace;">
-		{<br/>
-			"token" : "<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>",<br/>
-			"action" : "checkout",<br/>
-			"force" : true/false, (wenn true: Checkout jetzt durchführen und auftretende Fehler ignorieren. Kann zu Logeinträgen ohne Ankunftszeit führen.)<br/>
-			"toStation" : "Berlin Hbf", (DS100 oder EVA-Nummer sind ebenfalls möglich)<br/>
-			"comment" : "Beliebiger Text" (optional, überschreibt vorherigen Kommentar)<br/>
-		}
-		</p>
+		<pre class="api-example">
+{
+	"token" : "<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>",
+	"action" : "checkout",
+	"force" : true/false, <span class="explanation">(wenn true: Checkout jetzt durchführen und auftretende Fehler ignorieren. Kann zu Logeinträgen ohne Ankunftszeit führen.)</span>
+	"toStation" : "Berlin Hbf", <span class="explanation">(DS100 oder EVA-Nummer sind ebenfalls möglich)</span>
+	"comment" : "Beliebiger Text" <span class="explanation">(optional, überschreibt vorherigen Kommentar)</span>
+}
+		</pre>
 		<p>Payload zum Rückgängigmachen eines Checkins (nur während der Fahrt möglich):</p>
-		<p style="font-family: Monospace;">
-		{<br/>
-			"token" : "<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>",<br/>
-			"action" : "undo"<br/>
-		}
-		</p>
+		<pre class="api-example">
+{
+	"token" : "<%= $uid %>-<%= $token->{travel} // 'TOKEN' %>",
+	"action" : "undo"
+}
+		</pre>
 		<p>
 			Antwort bei Erfolg:
 		</p>
-		<p style="font-family: Monospace;">
-		{<br/>
-			"success" : true,<br/>
-			"deprecated" : true / false, (falls true: Diese API-Version wird irgendwann abgeschaltet, bitte auf eine neue umsteigen)<br/>
-			"status" : { aktueller Nutzerstatus gemäß Status-API }<br/>
-		}
-		</p>
+		<pre class="api-example">
+{
+	"success" : true,
+	"deprecated" : true / false, <span class="explanation">(falls true: Diese API-Version wird irgendwann abgeschaltet, bitte auf eine neue umsteigen)</span>
+	"status" : { <span class="explanation">aktueller Nutzerstatus gemäß Status-API</span> }
+}
+		</pre>
 		<p>
 			Antwort bei Fehler:
 		</p>
-		<p style="font-family: Monospace;">
-		{<br/>
-			"success" : false,<br/>
-			"deprecated" : true / false, (falls true: Diese API-Version wird irgendwann abgeschaltet, bitte auf eine neue umsteigen)<br/>
-			"error" : "Begründung",<br/>
-			"status" : { aktueller Nutzerstatus gemäß Status-API } (nur bei gültigem Token)<br/>
-		}
-		</p>
+		<pre class="api-example">
+{
+	"success" : false,
+	"deprecated" : true / false, <span class="explanation">(falls true: Diese API-Version wird irgendwann abgeschaltet, bitte auf eine neue umsteigen)</span>
+	"error" : "Begründung",
+	"status" : { <span class="explanation">aktueller Nutzerstatus gemäß Status-API</span> } <span class="explanation">(nur bei gültigem Token)</span>
+}
+		</pre>
 	</div>
 </div>
 
@@ -201,54 +201,53 @@
 			curl -X POST -H "Content-Type: application/json" -d '{"token":"<%= $uid %>-<%= $token->{import} // 'TOKEN' %>"}' <%= $api_root %>/import
 		</p>
 		<p>Payload (alle nicht als optional markierten Felder sind Pflicht):</p>
-		<p style="font-family: Monospace;">
-		{<br/>
-			"token" : "<%= $uid %>-<%= $token->{import} // 'TOKEN' %>",<br/>
-			"dryRun" : true/false, (optional: wenn true, wird die Eingabe validiert, aber keine Fahrt angelegt)<br/>
-			"lax" : true/false, (optional: wenn true, werden unbekannte Unterwegshalte akzeptiert)<br/>
-			"cancelled" : true/false, (Ausfall?)<br/>
-			"train" : {<br/>
-			"type" : "S", (Typ, z.B. ICE, RE, S, U)<br/>
-			"line" : "6", (Linie als String, bei Zügen ohne Linie wie IC/ICE u.ä. null)<br/>
-			"no" : "30634", (Nummer als String, ggf. null oder leer)<br/>
-			},<br/>
-			"fromStation" : { (Start / Checkin)<br/>
-				"name" : "Essen Hbf", (Name oder DS100)<br/>
-				"scheduledTime": 1556083680, (UNIX-Timestamp)<br/>
-				"realTime": 1556083680, (UNIX-Timestamp, optional, default == scheduledTime)<br/>
-			},<br/>
-			"toStation" : { (Ziel / Checkout)<br/>
-				"name" : "Essen Stadtwald", (Name oder DS100)<br/>
-				"scheduledTime": 1556083980, (UNIX-Timestamp)<br/>
-				"realTime": 1556083980, (UNIX-Timestamp, optional, default == scheduledTime)<br/>
-			},<br/>
-			"intermediateStops" : [ (optionale Liste mit Unterwegshalten als Name oder DS100, darf keine Stationen vor Checkin oder nach Checkout beinhalten)<br/>
-				"Essen Süd",<br/>
-			],<br/>
-			"comment" : "Beliebiger Text" (optionaler Freitext-Kommentar)<br/>
-		}
-		</p>
+		<pre class="api-example">
+{
+	"token" : "<%= $uid %>-<%= $token->{import} // 'TOKEN' %>",
+	"dryRun" : true/false, <span class="explanation">(optional: wenn true, wird die Eingabe validiert, aber keine Fahrt angelegt)</span>
+	"lax" : true/false, <span class="explanation">(optional: wenn true, werden unbekannte Unterwegshalte akzeptiert)</span>
+	"cancelled" : true/false, <span class="explanation">(Ausfall?)</span>
+	"train" : {
+	"type" : "S", <span class="explanation">(Typ, z.B. ICE, RE, S, U)</span>
+	"line" : "6", <span class="explanation">(Linie als String, bei Zügen ohne Linie wie IC/ICE u.ä. null)</span>
+	"no" : "30634", <span class="explanation">(Nummer als String, ggf. null oder leer)</span>
+	},
+	"fromStation" : { <span class="explanation">(Start / Checkin)</span>
+		"name" : "Essen Hbf", <span class="explanation">(Name oder DS100)</span>
+		"scheduledTime": 1556083680, <span class="explanation">(UNIX-Timestamp)</span>
+		"realTime": 1556083680, <span class="explanation">(UNIX-Timestamp, optional, default == scheduledTime)</span>
+	},
+	"toStation" : { <span class="explanation">(Ziel / Checkout)</span>
+		"name" : "Essen Stadtwald", <span class="explanation">(Name oder DS100)</span>
+		"scheduledTime": 1556083980, <span class="explanation">(UNIX-Timestamp)</span>
+		"realTime": 1556083980, <span class="explanation">(UNIX-Timestamp, optional, default == scheduledTime)</span>
+	},
+	"intermediateStops" : [ <span class="explanation">(optionale Liste mit Unterwegshalten als Name oder DS100, darf keine Stationen vor Checkin oder nach Checkout beinhalten)</span>
+		"Essen Süd",
+	],
+	"comment" : "Beliebiger Text" <span class="explanation">(optionaler Freitext-Kommentar)</span>
+}
+		</pre>
 		<p>
 			Antwort bei Erfolg (der Inhalt von "result" ist von dryRun unabhängig):
 		</p>
-		<p style="font-family: Monospace;">
-		{<br/>
-			"success" : true,<br/>
-			"deprecated" : true / false, (falls true: Diese API-Version wird irgendwann abgeschaltet, bitte auf eine neue umsteigen)<br/>
-			"id" : 1234, (ID der eingetragenen Fahrt)<br/>
-			"result" : { ... } (Eingetragene Daten. Das Datenformat kann sich
-			ohne Berücksichtigung der API-Version ändern)<br/>
-		}
-		</p>
+		<pre class="api-example">
+{
+	"success" : true,
+	"deprecated" : true / false, <span class="explanation">(falls true: Diese API-Version wird irgendwann abgeschaltet, bitte auf eine neue umsteigen)</span>
+	"id" : 1234, <span class="explanation">(ID der eingetragenen Fahrt)</span>
+	"result" : { ... } <span class="explanation">(Eingetragene Daten. Das Datenformat kann sich ohne Berücksichtigung der API-Version ändern)</span>
+}
+		</pre>
 		<p>
 			Antwort bei Fehler:
 		</p>
-		<p style="font-family: Monospace;">
-		{<br/>
-			"success" : false,<br/>
-			"deprecated" : true / false, (falls true: Diese API-Version wird irgendwann abgeschaltet, bitte auf eine neue umsteigen)<br/>
-			"error" : "Begründung"<br/>
-		}
-		</p>
+		<pre class="api-example">
+{
+	"success" : false,
+	"deprecated" : true / false, <span class="explanation">(falls true: Diese API-Version wird irgendwann abgeschaltet, bitte auf eine neue umsteigen)</span>
+	"error" : "Begründung"
+}
+		</pre>
 	</div>
 </div>
