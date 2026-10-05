@@ -412,16 +412,16 @@ sub add {
 				? 1
 				: 0,
 				checkin_station_id => $stopover->stop->{eva},
-				checkin_time => DateTime->now( time_zone => 'Europe/Berlin' ),
-				dep_platform => $stopover->track,
-				train_type   => $journey->mode,
-				train_no     => q{},
-				train_id     => $journey->id,
-				train_line   => $journey->display_name,
-				sched_departure => $stopover->scheduled_departure,
-				real_departure  => $stopover->departure,
-				route           => $json->encode( \@route ),
-				data            => $json->encode(
+				checkin_time       => DateTime->now( time_zone => 'Europe/Berlin' ),
+				dep_platform       => $stopover->track,
+				train_type         => $journey->mode,
+				train_no           => $journey->trip_short_name // q{},
+				train_id           => $journey->id,
+				train_line         => $journey->display_name,
+				sched_departure    => $stopover->scheduled_departure,
+				real_departure     => $stopover->departure,
+				route              => $json->encode( \@route ),
+				data               => $json->encode(
 					{
 						rt => $stopover->{is_realtime} ? 1 : 0,
 						%{ $data // {} }
