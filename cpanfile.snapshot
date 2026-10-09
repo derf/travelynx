@@ -2912,16 +2912,16 @@ DISTRIBUTIONS
       Test::More 0
       URI::Escape 0
       perl v5.10.1
-  Travel-Status-MOTIS-0.05
-    pathname: D/DE/DERF/Travel-Status-MOTIS-0.05.tar.gz
+  Travel-Status-MOTIS-0.06
+    pathname: D/DE/DERF/Travel-Status-MOTIS-0.06.tar.gz
     provides:
-      Travel::Status::MOTIS 0.05
-      Travel::Status::MOTIS::Polyline 0.05
-      Travel::Status::MOTIS::Services 0.05
-      Travel::Status::MOTIS::Stop 0.05
-      Travel::Status::MOTIS::Stopover 0.05
-      Travel::Status::MOTIS::Trip 0.05
-      Travel::Status::MOTIS::TripAtStopover 0.05
+      Travel::Status::MOTIS 0.06
+      Travel::Status::MOTIS::Polyline 0.06
+      Travel::Status::MOTIS::Services 0.06
+      Travel::Status::MOTIS::Stop 0.06
+      Travel::Status::MOTIS::Stopover 0.06
+      Travel::Status::MOTIS::Trip 0.06
+      Travel::Status::MOTIS::TripAtStopover 0.06
     requirements:
       Carp 0
       Class::Accessor 0.16
