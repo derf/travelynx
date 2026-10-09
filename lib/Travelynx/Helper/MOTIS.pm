@@ -111,7 +111,7 @@ sub get_departures_p {
 		service   => $opt{service},
 		timestamp => $timestamp,
 		stop_id   => $opt{station_id},
-		results   => 60,
+		window    => ( $opt{lookbehind} + $opt{lookahead} ) * 60,
 	);
 }
 
