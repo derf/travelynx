@@ -323,6 +323,10 @@
 						<br/>
 					% }
 				</div>
+				<div class="grey-text" style="margin-top: 2ex;">
+					<i class="material-icons tiny" aria-hidden="true"><%= $journey->{is_hafas} ? 'directions' : 'train' %></i>
+					<%= $journey->{backend_name} || 'IRIS' %>
+				</div>
 			% }
 		</div>
 		% if (is_user_authenticated() and not get_user_status()->{checked_in} and not stash('from_timeline') and $journey->{train_id} ne 'manual') {
