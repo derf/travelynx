@@ -1,7 +1,7 @@
 package Travelynx;
 
 # Copyright (C) 2020-2023 Birte Kristina Friesel
-# Copyright (C) 2025 networkException <git@nwex.de>
+# Copyright (C) 2025-2026 networkException <git@nwex.de>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -785,12 +785,14 @@ sub startup {
 		'_checkin_motis_p' => sub {
 			my ( $self, %opt ) = @_;
 
-			my $station  = $opt{station};
 			my $train_id = $opt{train_id};
+
+			# select departure stop by stop id or departure timestamp
+			my $station  = $opt{station};
 			my $ts       = $opt{ts};
+
 			my $uid      = $opt{uid} // $self->current_user->{id};
 			my $db       = $opt{db}  // $self->pg->db;
-			my $hafas;
 
 			my $promise = Mojo::Promise->new;
 
@@ -803,7 +805,8 @@ sub startup {
 					my $found_stopover;
 
 					for my $stopover ( $trip->stopovers ) {
-						if ( $stopover->stop->id eq $station ) {
+						if ( $station and $stopover->stop->id eq $station
+							or ( not $station and $ts ) ) {
 							$found_stopover = $stopover;
 
 							# Lines may serve the same stop several times.
@@ -820,7 +823,7 @@ sub startup {
 
 					if ( not $found_stopover ) {
 						$promise->reject(
-"Did not find stopover at '$station' within trip '$train_id'"
+"Did not find stopover at '$station' @ $ts within trip '$train_id'"
 						);
 						return;
 					}
@@ -838,6 +841,8 @@ sub startup {
 						db    => $db,
 						motis => $opt{motis},
 					);
+
+					$self->app->log->debug("Found stopover at station '" . $found_stopover->stop->name . "' within trip '$train_id' (using station '" . ($station // '') . "' @ $ts)");
 
 					eval {
 						$self->in_transit->add(
@@ -1756,7 +1761,10 @@ sub startup {
 		'_checkout_journey_p' => sub {
 			my ( $self, %opt ) = @_;
 
-			my $station = $opt{station};
+			# select checkout station either by station or arrival timestamp
+			my $station      = $opt{station};
+			my $ts			 = $opt{ts};
+
 			my $force   = $opt{force};
 			my $uid     = $opt{uid} // $self->current_user->{id};
 			my $db      = $opt{db}  // $self->pg->db;
@@ -1778,7 +1786,7 @@ sub startup {
 			my $found;
 			my $has_arrived;
 			for my $stop ( @{ $journey->{route_after} } ) {
-				if ( $station eq $stop->[0] or $station eq $stop->[1] ) {
+				if ( $station and ( $station eq $stop->[0] or $station eq $stop->[1] ) or $stop->[2]{sched_arr}->epoch eq $opt{ts} ) {
 					$found = $stop;
 					$self->in_transit->set_arrival_eva(
 						uid         => $uid,
@@ -2777,7 +2785,7 @@ sub startup {
 				return $promise->resolve;
 			}
 			$self->log->debug(
-"... checked in : $traewelling->{dep_name} $traewelling->{dep_eva} -> $traewelling->{arr_name} $traewelling->{arr_eva}"
+"... checked in : $traewelling->{dep_name} @ $traewelling->{dep_dt} -> $traewelling->{arr_name} @ $traewelling->{arr_dt}"
 			);
 			$self->users->mark_seen( uid => $uid );
 			my $user_status = $self->get_user_status($uid);
@@ -2790,17 +2798,19 @@ sub startup {
 			my $db = $self->pg->db;
 			my $tx = $db->begin;
 
-			$self->_checkin_dbris_p(
-				station        => $traewelling->{dep_eva},
+			$self->_checkin_motis_p(
+				motis          => 'transitous',
+				ts			   => $traewelling->{dep_dt}->epoch,
 				train_id       => $traewelling->{trip_id},
 				uid            => $uid,
 				in_transaction => 1,
-				db             => $db
+				db             => $db,
 			)->then(
 				sub {
 					$self->log->debug("... handled origin");
 					return $self->_checkout_journey_p(
-						station        => $traewelling->{arr_eva},
+						motis          => 'transitous',
+						ts             => $traewelling->{arr_dt}->epoch,
 						train_id       => $traewelling->{trip_id},
 						uid            => $uid,
 						in_transaction => 1,
