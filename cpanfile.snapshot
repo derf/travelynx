@@ -145,11 +145,10 @@ DISTRIBUTIONS
       Capture::Tiny 0
       ExtUtils::MakeMaker 6.52
       File::Which 0
+      HTML::LinkExtor 0
       HTTP::Tiny 0.044
       IO::Socket::SSL 1.56
       IO::Zlib 0
-      Mojo::DOM 0
-      Mojolicious 7.00
       Mozilla::CA 0
       Net::SSLeay 1.49
       Path::Tiny 0
@@ -1997,8 +1996,8 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       Mojolicious 9.41
       perl 5.020
-  Mojolicious-9.49
-    pathname: S/SR/SRI/Mojolicious-9.49.tar.gz
+  Mojolicious-9.50
+    pathname: S/SR/SRI/Mojolicious-9.50.tar.gz
     provides:
       Mojo undef
       Mojo::Asset undef
@@ -2068,7 +2067,7 @@ DISTRIBUTIONS
       Mojo::UserAgent::Transactor undef
       Mojo::Util undef
       Mojo::WebSocket undef
-      Mojolicious 9.49
+      Mojolicious 9.50
       Mojolicious::Command undef
       Mojolicious::Command::Author::cpanify undef
       Mojolicious::Command::Author::generate undef
