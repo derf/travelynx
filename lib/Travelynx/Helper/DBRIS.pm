@@ -35,6 +35,11 @@ sub get_agent {
 	my ($self) = @_;
 
 	my $agent = $self->{user_agent};
+
+	# Requird to workaround Akamai BMP UserAgent fingerprinting (which includes
+	# the supported TLS cipher suites) employed by bahn.de
+	$agent->tls_options( { SSL_ciphersuites => 'TLS_AES_256_GCM_SHA384' } );
+
 	my $proxy;
 	if ( my @proxies = @{ $self->{service_config}{'bahn.de'}{proxies} // [] } )
 	{

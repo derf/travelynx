@@ -36,7 +36,6 @@ In the project root directory (where `cpanfile` resides, e.g., `/srv/www/travely
 
 ```
 carton install --deployment
-patch -p1 < doc/tls-ciphers.patch
 ```
 
 Afterwards, either set `PERL5LIB=/srv/www/travelynx/local/lib/perl5` (or similar) before executing any travelynx commands (see configs in the examples directory), or wrap them with `carton exec`, e.g. `carton exec hypnotoad index.pl`
