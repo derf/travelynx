@@ -84,6 +84,16 @@ Note that Deutsche Bahn have put parts of their API behind an IP reputation filt
 In general, checkins with the bahn.de backend will only be possible if travelynx is accessing it from a residential (non-server) IP range.
 See the dbris bahn.de proxy / proxies setting in `example/travelynx.conf` for workarounds.
 
+### Akamai BMP / bahn.de TLS fingerprinting
+
+You may need to patch the TLS cipher suites advertised by travelynx.
+If you're getting HTTP 403 errors for the bahn.de backend, run the
+following and re-start travelynx:
+
+```
+patch -p1 < doc/tls-ciphers.patch
+```
+
 ## Updating
 
 It is recommended to run travelynx directly from the git repository.  This way,
@@ -93,6 +103,15 @@ introduce new dependencies, run **examples/update.sh with-deps**.
 
 If you are not using carton, or have some other peculiarities in your setup,
 you may need to adjust the script.
+
+### Akamai BMP / bahn.de TLS fingerprinting
+
+If you're getting HTTP 403 errors for the bahn.de backend after a **with-deps**
+update, run the following and re-start travelynx:
+
+```
+patch -p1 < doc/tls-ciphers.patch
+```
 
 ## Setup with Docker (EXPERIMENTAL)
 ---
