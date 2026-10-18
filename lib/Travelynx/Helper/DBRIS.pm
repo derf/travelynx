@@ -74,16 +74,21 @@ sub get_station_id_p {
 
 	my $promise = Mojo::Promise->new;
 
-	my $ds100_match = firstval { $station_name eq $_->[0] } Travel::Status::DE::IRIS::Stations::get_stations();
+	my $ds100_match = firstval { $station_name eq $_->[0] }
+	Travel::Status::DE::IRIS::Stations::get_stations();
 
 	if ($ds100_match) {
-		$promise->resolve({
-			eva  => $ds100_match->[2],
-			id   => "A=1\@L=" . $ds100_match->[2] . "\@O=" . $ds100_match->[1] . "@",
-			lat  => $ds100_match->[4],
-			lon  => $ds100_match->[3],
-			name => $ds100_match->[1],
-		});
+		$promise->resolve(
+			{
+				eva => $ds100_match->[2],
+				id  => "A=1\@L="
+				  . $ds100_match->[2] . "\@O="
+				  . $ds100_match->[1] . "@",
+				lat  => $ds100_match->[4],
+				lon  => $ds100_match->[3],
+				name => $ds100_match->[1],
+			}
+		);
 
 		return $promise;
 	}
