@@ -39,7 +39,7 @@ use Travelynx::Model::Users;
 my %valid_train_type = map { $_ => 1 } qw(
   Bus BUS NachtBus Niederflurbus Stadtbus StadtBus MetroBus PlusBus Landbus
   Regionalbus RegionalBus SB ExpressBus BSV RVV-Bus-Linie Buslinie Omnibus
-  RegioBus RUF AST RufTaxi Rufbus Linientaxi
+  RegioBus Solobus RUF AST RufTaxi Rufbus Linientaxi
   Fhre Fh Schiff SCH KAT FERRY
   STR Tram TRAM Str Strb STB Stb Straenbahn NachtTram Stadtbahn Niederflurstrab
   Trm RT S RS RER SKW METRO
