@@ -3332,6 +3332,7 @@ sub startup {
 	$authed_r->post('/journey/comment')->to('traveling#comment_form');
 	$authed_r->post('/journey/visibility')->to('traveling#visibility_form');
 	$authed_r->post('/journey/edit')->to('traveling#edit_journey');
+	$authed_r->post('/journey/copy')->to('profile#journey_copy');
 	$authed_r->post('/journey/passenger_rights/*filename')
 	  ->to('passengerrights#generate');
 	$authed_r->post('/account/password')->to('account#change_password');

@@ -1,6 +1,7 @@
 package Travelynx::Controller::Profile;
 
 # Copyright (C) 2020-2023 Birte Kristina Friesel
+# Copyright (C) 2026 networkException <git@nwex.de>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 use Mojo::Base 'Mojolicious::Controller';
@@ -47,6 +48,77 @@ sub journey_token_ok {
 		return 1;
 	}
 	return;
+}
+
+sub journey_check_access {
+	my ($self, %opt) = @_;
+	my $name         = $opt{name};
+	my $journey_id   = $opt{journey_id};
+
+	my $user         = $self->users->get_privacy_by( name => $name );
+
+	$self->param( journey_id => $journey_id );
+
+	my $my_user;
+	my $relation;
+	my $inverse_relation;
+	my $is_self;
+	if ( $self->is_user_authenticated ) {
+		$my_user = $self->current_user;
+		if ( $my_user->{id} == $user->{id} ) {
+			$is_self = 1;
+			$my_user = undef;
+		}
+		else {
+			$relation = $self->users->get_relation(
+				subject => $my_user->{id},
+				object  => $user->{id}
+			);
+		}
+	}
+
+	if ( not( $user and $journey_id and $journey_id =~ m{ ^ \d+ $ }x ) ) {
+		return;
+	}
+
+	my $journey = $self->journeys->get_single(
+		uid        => $user->{id},
+		journey_id => $journey_id,
+		verbose    => 1,
+		%{ $opt{options} // {} },
+	);
+
+	if ( not $journey ) {
+		return;
+	}
+
+	my $is_past;
+	if ( not $user->{past_all} ) {
+		my $now = DateTime->now( time_zone => 'Europe/Berlin' );
+		if ( $journey->{sched_dep_ts} < $now->subtract( weeks => 4 )->epoch ) {
+			$is_past = 1;
+		}
+	}
+
+	my $visibility = $journey->{effective_visibility};
+
+	if (
+		not(   ( $visibility == 100 and not $is_past )
+			or ( $visibility >= 80 and $my_user  and not $is_past )
+			or ( $visibility >= 60 and $relation and $relation eq 'follows' )
+			or ( $visibility >= 60 and $is_self )
+			or ( $visibility >= 30 and $self->journey_token_ok($journey) ) )
+	  )
+	{
+		return;
+	}
+
+	if ( $journey->{user_data}{comment}
+		and not $user->{comments_visible} )
+	{
+		delete $journey->{user_data}{comment};
+	}
+	return $journey;
 }
 
 # Controllers
@@ -208,76 +280,19 @@ sub journey_details {
 	my ($self)     = @_;
 	my $name       = $self->stash('name');
 	my $journey_id = $self->stash('id');
-	my $user       = $self->users->get_privacy_by( name => $name );
 
-	$self->param( journey_id => $journey_id );
-
-	my $my_user;
-	my $relation;
-	my $inverse_relation;
-	my $is_self;
-	if ( $self->is_user_authenticated ) {
-		$my_user = $self->current_user;
-		if ( $my_user->{id} == $user->{id} ) {
-			$is_self = 1;
-			$my_user = undef;
+	my $journey = $self->journey_check_access(
+		journey_id => $journey_id,
+		name       => $name,
+		options    => {
+			with_datetime       => 1,
+			with_route_datetime => 1,
+			with_polyline       => 1,
+			with_visibility     => 1,
 		}
-		else {
-			$relation = $self->users->get_relation(
-				subject => $my_user->{id},
-				object  => $user->{id}
-			);
-		}
-	}
-
-	if ( not( $user and $journey_id and $journey_id =~ m{ ^ \d+ $ }x ) ) {
-		$self->render(
-			'journey',
-			status  => 404,
-			error   => 'notfound',
-			journey => {}
-		);
-		return;
-	}
-
-	my $journey = $self->journeys->get_single(
-		uid                 => $user->{id},
-		journey_id          => $journey_id,
-		verbose             => 1,
-		with_datetime       => 1,
-		with_route_datetime => 1,
-		with_polyline       => 1,
-		with_visibility     => 1,
 	);
 
 	if ( not $journey ) {
-		$self->render(
-			'journey',
-			status  => 404,
-			error   => 'notfound',
-			journey => {}
-		);
-		return;
-	}
-
-	my $is_past;
-	if ( not $user->{past_all} ) {
-		my $now = DateTime->now( time_zone => 'Europe/Berlin' );
-		if ( $journey->{sched_dep_ts} < $now->subtract( weeks => 4 )->epoch ) {
-			$is_past = 1;
-		}
-	}
-
-	my $visibility = $journey->{effective_visibility};
-
-	if (
-		not(   ( $visibility == 100 and not $is_past )
-			or ( $visibility >= 80 and $my_user  and not $is_past )
-			or ( $visibility >= 60 and $relation and $relation eq 'follows' )
-			or ( $visibility >= 60 and $is_self )
-			or ( $visibility >= 30 and $self->journey_token_ok($journey) ) )
-	  )
-	{
 		$self->render(
 			'journey',
 			status  => 404,
@@ -329,11 +344,7 @@ sub journey_details {
 		journeys       => [$journey],
 		include_manual => 1,
 	);
-	if ( $journey->{user_data}{comment}
-		and not $user->{comments_visible} )
-	{
-		delete $journey->{user_data}{comment};
-	}
+
 	$self->render(
 		'journey',
 		title     => "travelynx: $title",
@@ -346,6 +357,96 @@ sub journey_details {
 		opengraph => \%og_data,
 		%{$map_data},
 	);
+}
+
+sub journey_copy {
+	my ($self)     = @_;
+	my $name       = $self->param('name');
+	my $journey_id = $self->param('journey_id');
+
+	my $journey = $self->journey_check_access(
+		journey_id => $journey_id,
+		name       => $name,
+		options    => {
+			with_datetime   => 1,
+			with_polyline   => 1,
+			with_visibility => 1,
+		}
+	);
+
+	if ( not $journey ) {
+		$self->render(
+			'journey',
+			status  => 404,
+			error   => 'notfound',
+			journey => {}
+		);
+		return;
+	}
+
+	my $uid = $self->current_user->{id};
+
+	my $db = $self->pg->db;
+	my $tx = $db->begin;
+
+	my ( $new_journey_id, $error ) = $self->journeys->add(
+		db              => $db,
+		uid             => $uid,
+		backend_id      => $journey->{backend_id},
+		cancelled       => $journey->{cancelled},
+		checkin_time    => $journey->{checkin},
+		edited          => $journey->{edited},
+		train_type      => $journey->{type},
+		train_line      => $journey->{line},
+		train_no        => $journey->{no},
+		train_id        => $journey->{id},
+		dep_station     => $journey->{from_eva},
+		dep_platform    => $journey->{from_platform},
+		sched_departure => $journey->{sched_departure},
+		rt_departure    => $journey->{rt_departure},
+		arr_station     => $journey->{to_eva},
+		arr_platform    => $journey->{to_platform},
+		sched_arrival   => $journey->{sched_arrival},
+		rt_arrival      => $journey->{rt_arrival},
+		json_route      => $journey->{route},
+		messages        => $journey->{messages},
+		user_data       => $journey->{user_data},
+	);
+
+	if ( not $error ) {
+		my $journey = $self->journeys->get_single(
+			uid        => $uid,
+			db         => $db,
+			journey_id => $new_journey_id,
+			verbose    => 1
+		);
+		$error = $self->journeys->sanity_check($journey);
+	}
+
+	if ($error) {
+		$self->render(
+			'add_journey',
+			with_autocomplete => 1,
+			status            => 400,
+			error             => $error,
+		);
+	}
+	else {
+		if ( $journey->{polyline} ) {
+			$self->app->journeys->set_polyline(
+				db         => $db,
+				uid        => $uid,
+				journey_id => $new_journey_id,
+				edited     => $journey->{edited},
+				from_eva   => $journey->{from_eva},
+				to_eva     => $journey->{to_eva},
+				polyline   => $journey->{polyline},
+			);
+		}
+
+		$tx->commit;
+		$self->redirect_to("/");
+	}
 }
 
 sub user_status {

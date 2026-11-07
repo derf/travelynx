@@ -413,6 +413,9 @@ msgstr "Danger Zone"
 msgid "journey.delete"
 msgstr "Löschen"
 
+msgid "journey.copy"
+msgstr "Mitfahren"
+
 # landingpage.html.ep
 
 msgid "landingpage.greeting-prefix"
