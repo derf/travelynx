@@ -50,15 +50,6 @@ sub get_agent {
 		$agent->proxy->https($proxy);
 	}
 
-	# Requird to workaround Akamai BMP UserAgent fingerprinting (which includes
-	# the supported TLS cipher suites) employed by bahn.de
-	$agent->tls_options(
-		{
-			SSL_ciphersuites =>
-			  'TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256',
-		}
-	);
-
 	return $agent->request_timeout(15);
 }
 
