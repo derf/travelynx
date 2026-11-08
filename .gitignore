@@ -68,5 +68,10 @@ tags
 
 # End of https://www.gitignore.io/api/vim,perl
 
+### IDE folders ###
+.idea/
+.vs/
+.vscode/
+
 ### theme stuff ###
 sass/node_modules

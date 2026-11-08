@@ -227,7 +227,7 @@ ul.route-history > li {
 	min-width: 6ch;
 	margin: 0 auto;
 
-	&.Bus, &.BUS, &.NachtBus, &.Niederflurbus, &.Stadtbus, &.StadtBus, &.MetroBus, &.PlusBus, &.Landbus, &.Regionalbus, &.RegionalBus, &.SB, &.ExpressBus, &.BSV, &.RVV-Bus-Linie, &.Buslinie, &.Omnibus, &.RegioBus {
+	&.Bus, &.BUS, &.NachtBus, &.Niederflurbus, &.Stadtbus, &.StadtBus, &.MetroBus, &.PlusBus, &.Landbus, &.Regionalbus, &.RegionalBus, &.SB, &.ExpressBus, &.BSV, &.RVV-Bus-Linie, &.Buslinie, &.Omnibus, &.RegioBus, &.Solobus {
 		background-color: #a3167e;
 		border-radius: 5rem;
 		padding: .2rem .5rem;
@@ -246,7 +246,7 @@ ul.route-history > li {
 		padding: .2rem .5rem;
 	}
 
-	&.STR, &.Tram, &.TRAM, &.Str, &.Strb, &.STB, &.Stb, &.Straenbahn, &.NachtTram, &.Stadtbahn, &.Niederflurstrab, &.Trm {
+	&.STR, &.Tram, &.TRAM, &.Str, &.Strb, &.STB, &.Stb, &.Straenbahn, &.NachtTram, &.Stadtbahn, &.Niederflurstrab, &.Trm, &.RT {
 		background-color: #c5161c;
 		border-radius: 5rem;
 		padding: .2rem .5rem;
@@ -305,7 +305,7 @@ ul.route-history > li {
 		background-color: #2e85ce;
 	}
 
-	&.FLX {
+	&.FLX, &.FlixBus {
 		background-color: #71d800;
 		color: black;
 	}

@@ -39,15 +39,15 @@ use Travelynx::Model::Users;
 my %valid_train_type = map { $_ => 1 } qw(
   Bus BUS NachtBus Niederflurbus Stadtbus StadtBus MetroBus PlusBus Landbus
   Regionalbus RegionalBus SB ExpressBus BSV RVV-Bus-Linie Buslinie Omnibus
-  RegioBus RUF AST RufTaxi Rufbus Linientaxi
+  RegioBus Solobus RUF AST RufTaxi Rufbus Linientaxi
   Fhre Fh Schiff SCH KAT FERRY
   STR Tram TRAM Str Strb STB Stb Straenbahn NachtTram Stadtbahn Niederflurstrab
-  Trm S RS RER SKW METRO
+  Trm RT S RS RER SKW METRO
   S-Bahn U M SUBWAY U-Bahn UBAHN
   Schw-B Schwebebahn H-Bahn
   RE IRE REX REGIONAL_FAST_RAIL CJX Os RB MEX TER R REGIONAL_RAIL Regionalzug R-Bahn Sp
   BRB ECD IC ICE EC ECE D SC IR TGV OGV EST FR TLK EIC EIP EUR HIGHSPEED_RAIL
-  LONG_DISTANCE RJ RJX NJ EN NIGHT_RAIL ICN WB FLX
+  LONG_DISTANCE RJ RJX NJ EN NIGHT_RAIL ICN WB FLX FlixBus
 );
 
 sub check_password {
