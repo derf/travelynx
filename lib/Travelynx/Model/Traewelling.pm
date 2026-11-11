@@ -1,6 +1,7 @@
 package Travelynx::Model::Traewelling;
 
 # Copyright (C) 2020-2023 Birte Kristina Friesel
+# Copyright (C) 2026 networkException <git@nwex.de>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -214,6 +215,8 @@ sub get_pushable_accounts {
 		qq{select t.user_id as uid, t.token as token, t.data as data,
 			i.user_data as user_data,
 			i.dep_eva as dep_eva, i.arr_eva as arr_eva,
+			dep_station_external_id.external_id as dep_external_id,
+			arr_station_external_id.external_id as arr_external_id,
 			i.data as journey_data, i.train_type as train_type,
 			i.train_line as train_line, i.train_no as train_no,
 			i.checkin_ts as checkin_ts,
@@ -222,9 +225,11 @@ sub get_pushable_accounts {
 			i.effective_visibility as visibility
 			from traewelling as t
 			join in_transit_str as i on t.user_id = i.user_id
+			join stations_external_ids as dep_station_external_id on i.dep_eva = dep_station_external_id.eva and i.backend_id = dep_station_external_id.backend_id
+			join stations_external_ids as arr_station_external_id on i.arr_eva = arr_station_external_id.eva and i.backend_id = arr_station_external_id.backend_id
 			where t.push_sync = True
 			and i.arr_eva is not null
-			and i.backend_id = (select id from backends where dbris = true and name = 'bahn.de')
+			and i.backend_id = (select id from backends where motis = true and name = 'transitous')
 			and i.cancelled = False
 		}
 	);

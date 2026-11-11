@@ -1,7 +1,7 @@
 package Travelynx::Helper::Traewelling;
 
 # Copyright (C) 2020-2023 Birte Kristina Friesel
-# Copyright (C) 2023 networkException <git@nwex.de>
+# Copyright (C) 2023-2026 networkException <git@nwex.de>
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -95,51 +95,29 @@ sub get_status_p {
 					my $checkin_at
 					  = $self->parse_datetime( $status->{createdAt} );
 
+					my $trip_id  = $status->{train}{hafasId};
+
 					my $dep_dt = $self->parse_datetime(
 						$status->{train}{origin}{departurePlanned} );
 					my $arr_dt = $self->parse_datetime(
 						$status->{train}{destination}{arrivalPlanned} );
-
-					my $dep_eva
-					  = $status->{train}{origin}{evaIdentifier};
-					my $arr_eva
-					  = $status->{train}{destination}{evaIdentifier};
-
-					my $dep_ds100
-					  = $status->{train}{origin}{rilIdentifier};
-					my $arr_ds100
-					  = $status->{train}{destination}{rilIdentifier};
 
 					my $dep_name
 					  = $status->{train}{origin}{name};
 					my $arr_name
 					  = $status->{train}{destination}{name};
 
-					my $category = $status->{train}{category};
-					my $linename = $status->{train}{lineName};
-					my $train_no = $status->{train}{journeyNumber};
-					my $trip_id  = $status->{train}{hafasId};
-					my ( $train_type, $train_line ) = split( qr{ }, $linename );
 					$promise->resolve(
 						{
 							http       => $tx->res->code,
 							status_id  => $status_id,
 							message    => $message,
 							checkin    => $checkin_at,
+							trip_id    => $trip_id,
 							dep_dt     => $dep_dt,
-							dep_eva    => $dep_eva,
-							dep_ds100  => $dep_ds100,
 							dep_name   => $dep_name,
 							arr_dt     => $arr_dt,
-							arr_eva    => $arr_eva,
-							arr_ds100  => $arr_ds100,
 							arr_name   => $arr_name,
-							trip_id    => $trip_id,
-							train_no   => $train_no,
-							train_type => $train_type,
-							line       => $linename,
-							line_no    => $train_line,
-							category   => $category,
 						}
 					);
 					return;
@@ -297,17 +275,18 @@ sub checkin_p {
 	}
 
 	my $request = {
-		tripId   => $opt{trip_id},
-		lineName => $opt{train_type} . ' '
+		tripId   			  	  => $opt{trip_id},
+		lineName 			  	  => $opt{train_type} . ' '
 		  . ( $opt{train_line} // $opt{train_no} ),
-		ibnr        => \1,
-		start       => q{} . $opt{dep_eva},
-		destination => q{} . $opt{arr_eva},
-		departure   => $departure_ts,
-		arrival     => $arrival_ts,
-		toot        => $opt{data}{toot}  ? \1 : \0,
-		tweet       => $opt{data}{tweet} ? \1 : \0,
-		visibility  =>
+		startIdentifierType   	  => "motis",
+		startIdentifier       	  => q{} . $opt{dep_external_id},
+		destinationIdentifierType => "motis",
+		destinationIdentifier 	  => q{} . $opt{arr_external_id},
+		departure   			  => $departure_ts,
+		arrival     			  => $arrival_ts,
+		toot        			  => $opt{data}{toot}  ? \1 : \0,
+		tweet       			  => $opt{data}{tweet} ? \1 : \0,
+		visibility  			  =>
 		  convert_travelynx_to_traewelling_visibility( $opt{visibility} )
 	};
 
@@ -316,7 +295,7 @@ sub checkin_p {
 	}
 
 	my $debug_prefix
-	  = "v1/trains/checkin('$request->{lineName}' $request->{tripId} $request->{start} -> $request->{destination})";
+	  = "v1/trains/checkin('$request->{lineName}' $request->{tripId} $request->{startIdentifier} -> $request->{destinationIdentifier})";
 
 	my $promise = Mojo::Promise->new;
 
